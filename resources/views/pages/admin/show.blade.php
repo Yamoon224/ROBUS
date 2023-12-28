@@ -389,7 +389,7 @@
                                         <span
                                         class="alert alert-secondary mr-10 inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                         Phone :{{ $user->phone  ?? null}}
-                                    </span>
+                                    </span> 
                                        
                                 </div>
                                 <div class="col-span-12 lg:col-span-4">
