@@ -1,0 +1,628 @@
+[
+  {
+    "name": "Niamey", 
+    "lat": "13.5150", 
+    "lng": "2.1175", 
+     "country_id":157,
+    
+    "admin_name": "Niamey", 
+    
+    "population": "1026848", 
+    "population_proper": "1026848"
+  }, 
+  {
+    "name": "Maradi", 
+    "lat": "13.4833", 
+    "lng": "7.1000", 
+     "country_id":157,
+    
+    "admin_name": "Maradi", 
+   
+    "population": "267249", 
+    "population_proper": "267249"
+  }, 
+  {
+    "name": "Zinder", 
+    "lat": "13.8053", 
+    "lng": "8.9883", 
+     "country_id":157,
+    
+    "admin_name": "Zinder", 
+   
+    "population": "235605", 
+    "population_proper": "235605"
+  }, 
+  {
+    "name": "Tahoua", 
+    "lat": "14.8903", 
+    "lng": "5.2642", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+   
+    "population": "117826", 
+    "population_proper": "117826"
+  }, 
+  {
+    "name": "Agadez", 
+    "lat": "16.9959", 
+    "lng": "7.9828", 
+     "country_id":157,
+    
+    "admin_name": "Agadez", 
+   
+    "population": "117770", 
+    "population_proper": "117770"
+  }, 
+  {
+    "name": "Sabara Bangou", 
+    "lat": "15.1177", 
+    "lng": "1.9960", 
+     "country_id":157,
+    "admin_name": "Tillabéri", 
+   
+    "population": "111490", 
+    "population_proper": "111490"
+  }, 
+  {
+    "name": "Arlit", 
+    "lat": "18.7333", 
+    "lng": "7.3833", 
+     "country_id":157,
+    
+    "admin_name": "Agadez", 
+    
+    "population": "78651", 
+    "population_proper": "78651"
+  }, 
+  {
+    "name": "Birnin Konni", 
+    "lat": "13.7904", 
+    "lng": "5.2599", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+    
+    "population": "65252", 
+    "population_proper": "65252"
+  }, 
+  {
+    "name": "Dosso", 
+    "lat": "13.0500", 
+    "lng": "3.2000", 
+     "country_id":157,
+    
+    "admin_name": "Dosso", 
+   
+    "population": "58671", 
+    "population_proper": "58671"
+  }, 
+  {
+    "name": "Matamey", 
+    "lat": "13.4000", 
+    "lng": "8.6000", 
+     "country_id":157,
+    
+    "admin_name": "Zinder", 
+   
+    "population": "58025", 
+    "population_proper": "58025"
+  }, 
+  {
+    "name": "Gaya", 
+    "lat": "11.8878", 
+    "lng": "3.4467", 
+     "country_id":157,
+    
+    "admin_name": "Dosso", 
+    
+    "population": "45465", 
+    "population_proper": "45465"
+  }, 
+  {
+    "name": "Kollo", 
+    "lat": "13.0167", 
+    "lng": "1.8833", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+   
+    "population": "42192", 
+    "population_proper": "42192"
+  }, 
+  {
+    "name": "Dabaga", 
+    "lat": "17.2667", 
+    "lng": "8.1000", 
+     "country_id":157,
+    
+    "admin_name": "Agadez", 
+   
+    "population": "35000", 
+    "population_proper": "35000"
+  }, 
+  {
+    "name": "Ayorou", 
+    "lat": "14.7350", 
+    "lng": "0.9200", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+   
+    "population": "32958", 
+    "population_proper": "32958"
+  }, 
+  {
+    "name": "Diffa", 
+    "lat": "13.3171", 
+    "lng": "12.6089", 
+     "country_id":157,
+    
+    "admin_name": "Diffa", 
+   
+    "population": "30988", 
+    "population_proper": "30988"
+  }, 
+  {
+    "name": "Madaoua", 
+    "lat": "14.0762", 
+    "lng": "5.9586", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+    
+    "population": "24804", 
+    "population_proper": "24804"
+  }, 
+  {
+    "name": "Tillabéri", 
+    "lat": "14.2120", 
+    "lng": "1.4531", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+   
+    "population": "19262", 
+    "population_proper": "19262"
+  }, 
+  {
+    "name": "Nguigmi", 
+    "lat": "14.2532", 
+    "lng": "13.1108", 
+     "country_id":157,
+    
+    "admin_name": "Diffa", 
+    
+    "population": "17897", 
+    "population_proper": "17897"
+  }, 
+  {
+    "name": "Guidan Roumdji", 
+    "lat": "13.6575", 
+    "lng": "6.6958", 
+     "country_id":157,
+    
+    "admin_name": "Maradi", 
+    
+    "population": "17525", 
+    "population_proper": "17525"
+  }, 
+  {
+    "name": "Baléyara", 
+    "lat": "13.7840", 
+    "lng": "2.9500", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+   
+    "population": "16063", 
+    "population_proper": "16063"
+  }, 
+  {
+    "name": "Gouré", 
+    "lat": "13.9874", 
+    "lng": "10.2700", 
+     "country_id":157,
+    
+    "admin_name": "Zinder", 
+    
+    "population": "14639", 
+    "population_proper": "14639"
+  }, 
+  {
+    "name": "Galmi", 
+    "lat": "13.9660", 
+    "lng": "5.6750", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+   
+    "population": "13888", 
+    "population_proper": "13888"
+  }, 
+  {
+    "name": "Kawara", 
+    "lat": "14.0706", 
+    "lng": "5.6715", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+   
+    "population": "9064", 
+    "population_proper": "9064"
+  }, 
+  {
+    "name": "Takiéta", 
+    "lat": "13.6806", 
+    "lng": "8.5292", 
+     "country_id":157,
+    
+    "admin_name": "Zinder", 
+   
+    "population": "8554", 
+    "population_proper": "8554"
+  }, 
+  {
+    "name": "Dabnou", 
+    "lat": "14.1585", 
+    "lng": "5.3513", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+   
+    "population": "7861", 
+    "population_proper": "7861"
+  }, 
+  {
+    "name": "Bani Bangou", 
+    "lat": "15.0408", 
+    "lng": "2.7050", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+   
+    "population": "6788", 
+    "population_proper": "6788"
+  }, 
+  {
+    "name": "Tyourout", 
+    "lat": "14.1542", 
+    "lng": "5.4391", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+   
+    "population": "6470", 
+    "population_proper": "6470"
+  }, 
+  {
+    "name": "Kouli Kouara", 
+    "lat": "13.8667", 
+    "lng": "1.4833", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+   
+    "population": "5413", 
+    "population_proper": "5413"
+  }, 
+  {
+    "name": "Nobi", 
+    "lat": "14.0172", 
+    "lng": "5.5364", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+   
+    "population": "4425", 
+    "population_proper": "4425"
+  }, 
+  {
+    "name": "Sabanga", 
+    "lat": "14.1833", 
+    "lng": "5.6500", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+   
+    "population": "4094", 
+    "population_proper": "4094"
+  }, 
+  {
+    "name": "Kélakam", 
+    "lat": "13.5561", 
+    "lng": "11.7408", 
+     "country_id":157,
+    
+    "admin_name": "Diffa", 
+   
+    "population": "3533", 
+    "population_proper": "3533"
+  }, 
+  {
+    "name": "Takorka", 
+    "lat": "13.9238", 
+    "lng": "6.1795", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+   
+    "population": "3505", 
+    "population_proper": "3505"
+  }, 
+  {
+    "name": "Magaria", 
+    "lat": "12.9983", 
+    "lng": "8.9099", 
+     "country_id":157,
+    
+    "admin_name": "Zinder", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kantché", 
+    "lat": "13.5393", 
+    "lng": "8.4629", 
+     "country_id":157,
+    
+    "admin_name": "Zinder", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bouza", 
+    "lat": "14.4229", 
+    "lng": "6.0428", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Madarounfa", 
+    "lat": "13.3087", 
+    "lng": "7.1560", 
+     "country_id":157,
+    
+    "admin_name": "Maradi", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Aguié", 
+    "lat": "13.5060", 
+    "lng": "7.7786", 
+     "country_id":157,
+    
+    "admin_name": "Maradi", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Mirriah", 
+    "lat": "13.7073", 
+    "lng": "9.1501", 
+     "country_id":157,
+    
+    "admin_name": "Zinder", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tessaoua", 
+    "lat": "13.7574", 
+    "lng": "7.9874", 
+     "country_id":157,
+    
+    "admin_name": "Maradi", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Keïta", 
+    "lat": "14.7551", 
+    "lng": "5.7749", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Illéla", 
+    "lat": "14.4605", 
+    "lng": "5.2437", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Birnin Gaouré", 
+    "lat": "13.0817", 
+    "lng": "2.9110", 
+     "country_id":157,
+    
+    "admin_name": "Dosso", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Mayahi", 
+    "lat": "13.9553", 
+    "lng": "7.6712", 
+     "country_id":157,
+    
+    "admin_name": "Maradi", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Loga", 
+    "lat": "13.6132", 
+    "lng": "3.2358", 
+     "country_id":157,
+    
+    "admin_name": "Dosso", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dakoro", 
+    "lat": "14.5106", 
+    "lng": "6.7650", 
+     "country_id":157,
+    
+    "admin_name": "Maradi", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Téra", 
+    "lat": "14.0078", 
+    "lng": "0.7531", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kollo", 
+    "lat": "13.3043", 
+    "lng": "2.3390", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dogondoutchi", 
+    "lat": "13.6403", 
+    "lng": "4.0265", 
+     "country_id":157,
+    
+    "admin_name": "Dosso", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Abalak", 
+    "lat": "15.4509", 
+    "lng": "6.2793", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Filingué", 
+    "lat": "14.3521", 
+    "lng": "3.3168", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Say", 
+    "lat": "13.1007", 
+    "lng": "2.3689", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tchintabaraden", 
+    "lat": "15.8969", 
+    "lng": "5.7985", 
+     "country_id":157,
+    
+    "admin_name": "Tahoua", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ouallam", 
+    "lat": "14.3164", 
+    "lng": "2.0860", 
+     "country_id":157,
+    
+    "admin_name": "Tillabéri", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tanout", 
+    "lat": "14.9709", 
+    "lng": "8.8879", 
+     "country_id":157,
+    
+    "admin_name": "Zinder", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Maïné Soroa", 
+    "lat": "13.2114", 
+    "lng": "12.0241", 
+     "country_id":157,
+    
+    "admin_name": "Diffa", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tchirozérine", 
+    "lat": "17.2210", 
+    "lng": "7.7614", 
+     "country_id":157,
+    
+    "admin_name": "Agadez", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bilma", 
+    "lat": "18.6853", 
+    "lng": "12.9164", 
+     "country_id":157,
+    
+    "admin_name": "Agadez", 
+    
+    "population": "", 
+    "population_proper": ""
+  }
+]

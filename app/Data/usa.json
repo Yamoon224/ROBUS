@@ -1,0 +1,1322 @@
+[
+  {
+    "name": "New York", 
+    "lat": "51.5072", 
+    "lng": "-0.1275", 
+     "country_id":1,
+     
+    "admin_name": "London, name of", 
+    
+    "population": "11262000", 
+    "population_proper": "8825001"
+  }, 
+  {
+    "name": "Los Angeles", 
+    "lat": "52.4800", 
+    "lng": "-1.9025", 
+     "country_id":1,
+     
+    "admin_name": "Los Angeles", 
+     
+    "population": "2919600", 
+    "population_proper": "1137100"
+  }, 
+  {
+    "name": "Chicago", 
+    "lat": "53.4794", 
+    "lng": "-2.2453", 
+     "country_id":1,
+     
+    "admin_name": "Chicago", 
+     
+    "population": "2705000", 
+    "population_proper": "547627"
+  }, 
+  {
+    "name": "Houston", 
+    "lat": "53.4075", 
+    "lng": "-2.9919", 
+     "country_id":1,
+     
+    "admin_name": "Houston", 
+     
+    "population": "864122", 
+    "population_proper": "513441"
+  }, 
+  {
+    "name": "Phoenix", 
+    "lat": "50.8058", 
+    "lng": "-1.0872", 
+     "country_id":1,
+     
+    "admin_name": "Phoenix", 
+     
+    "population": "855679", 
+    "population_proper": "248440"
+  }, 
+  {
+    "name": "Philadelphie", 
+    "lat": "50.9025", 
+    "lng": "-1.4042", 
+     "country_id":1,
+     
+    "admin_name": "Philadelphie", 
+     
+    "population": "855569", 
+    "population_proper": "271173"
+  }, 
+  {
+    "name": "San Antonio", 
+    "lat": "52.9533", 
+    "lng": "-1.1500", 
+     "country_id":1,
+     
+    "admin_name": "San Antonio", 
+     
+    "population": "768638", 
+    "population_proper": "289301"
+  }, 
+  {
+    "name": "San Diego", 
+    "lat": "51.4536", 
+    "lng": "-2.5975", 
+     "country_id":1,
+     
+    "admin_name": "San Diego, name of", 
+     
+    "population": "567111", 
+    "population_proper": "567111"
+  }, 
+  {
+    "name": "Dallas", 
+    "lat": "52.6344", 
+    "lng": "-1.1319", 
+     "country_id":1,
+     
+    "admin_name": "Dallas", 
+     
+    "population": "508916", 
+    "population_proper": "464395"
+  }, 
+  {
+    "name": "San José", 
+    "lat": "52.4081", 
+    "lng": "-1.5106", 
+     "country_id":1,
+     
+    "admin_name": "San José", 
+     
+    "population": "362690", 
+    "population_proper": "362690"
+  }, 
+  {
+    "name": "Austin", 
+    "lat": "54.5964", 
+    "lng": "-5.9300", 
+     "country_id":1,
+     
+    "admin_name": "Austin", 
+     
+    "population": "333871", 
+    "population_proper": "333871"
+  }, 
+  {
+    "name": "Jacksonville", 
+    "lat": "53.4083", 
+    "lng": "-2.1494", 
+     "country_id":1,
+     
+    "admin_name": "Jacksonville", 
+     
+    "population": "295200", 
+    "population_proper": "295200"
+  }, 
+  {
+    "name": "Fort Worth", 
+    "lat": "53.8000", 
+    "lng": "-1.7500", 
+     "country_id":1,
+     
+    "admin_name": "Fort Worth", 
+     
+    "population": "293277", 
+    "population_proper": "293277"
+  }, 
+  {
+    "name": "Columbus", 
+    "lat": "50.3714", 
+    "lng": "-4.1422", 
+     "country_id":1,
+     
+    "admin_name": "Columbus", 
+     
+    "population": "267918", 
+    "population_proper": "267918"
+  }, 
+  {
+    "name": "Indianapolis", 
+    "lat": "52.9217", 
+    "lng": "-1.4767", 
+     "country_id":1,
+     
+    "admin_name": "Indianapolis", 
+     
+    "population": "255394", 
+    "population_proper": "255394"
+  }, 
+  {
+    "name": "Charlotte", 
+    "lat": "51.4947", 
+    "lng": "-0.1353", 
+     "country_id":1,
+     
+    "admin_name": "Charlotte", 
+     
+    "population": "255324", 
+    "population_proper": "255324"
+  }, 
+  {
+    "name": "San Francisco", 
+    "lat": "52.5833", 
+    "lng": "-2.1333", 
+     "country_id":1,
+     
+    "admin_name": "San Francisco", 
+     
+    "population": "250970", 
+    "population_proper": "250970"
+  }, 
+  {
+    "name": "Seattle", 
+    "lat": "52.6286", 
+    "lng": "1.2928", 
+     "country_id":1,
+     
+    "admin_name": "Seattle", 
+     
+    "population": "213166", 
+    "population_proper": "195971"
+  }, 
+  {
+    "name": "Denver", 
+    "lat": "51.8783", 
+    "lng": "-0.4147", 
+     "country_id":1,
+     
+    "admin_name": "Denver", 
+     
+    "population": "213052", 
+    "population_proper": "213052"
+  }, 
+  {
+    "name": "Washington DC", 
+    "lat": "52.4130", 
+    "lng": "-1.7780", 
+     "country_id":1,
+     
+    "admin_name": "Washington DC", 
+     
+    "population": "206674", 
+    "population_proper": "206674"
+  }, 
+  {
+    "name": "Nashville", 
+    "lat": "51.5440", 
+    "lng": "-0.1027", 
+     "country_id":1,
+     
+    "admin_name": "Nashville", 
+     
+    "population": "206125", 
+    "population_proper": "206125"
+  }, 
+  {
+    "name": "Oklahoma name", 
+    "lat": "57.1500", 
+    "lng": "-2.1100", 
+     "country_id":1,
+     
+    "admin_name": "Oklahoma name name", 
+     
+    "population": "200680", 
+    "population_proper": "200680"
+  }, 
+  {
+    "name": "El Paso", 
+    "lat": "51.3727", 
+    "lng": "-0.1099", 
+     "country_id":1,
+     
+    "admin_name": "El Paso", 
+     
+    "population": "192064", 
+    "population_proper": "192064"
+  }, 
+  {
+    "name": "Boston", 
+    "lat": "50.7200", 
+    "lng": "-1.8800", 
+     "country_id":1,
+     
+    "admin_name": "Boston", 
+     
+    "population": "187503", 
+    "population_proper": "187503"
+  }, 
+  {
+    "name": "Portland", 
+    "lat": "51.5800", 
+    "lng": "0.4900", 
+     "country_id":1,
+     
+    "admin_name": "Portland", 
+     
+    "population": "185900", 
+    "population_proper": "185900"
+  }, 
+  {
+    "name": "Las Vegas", 
+    "lat": "51.5575", 
+    "lng": "0.0858", 
+     "country_id":1,
+     
+    "admin_name": "Las Vegas", 
+     
+    "population": "168168", 
+    "population_proper": "168168"
+  }, 
+  {
+    "name": "Détroit", 
+    "lat": "53.3900", 
+    "lng": "-2.5900", 
+     "country_id":1,
+     
+    "admin_name": "Détroit", 
+     
+    "population": "165456", 
+    "population_proper": "165456"
+  }, 
+  {
+    "name": "Louisville", 
+    "lat": "51.4600", 
+    "lng": "-2.5050", 
+     "country_id":1,
+     
+    "admin_name": "Louisville", 
+     
+    "population": "160260", 
+    "population_proper": "160260"
+  }, 
+  {
+    "name": "Memphis", 
+    "lat": "51.7519", 
+    "lng": "-1.2578", 
+     "country_id":1,
+     
+    "admin_name": "Memphis", 
+     
+    "population": "152000", 
+    "population_proper": "152000"
+  }, 
+  {
+    "name": "Baltimore", 
+    "lat": "51.5836", 
+    "lng": "-0.3464", 
+     "country_id":1,
+     
+    "admin_name": "Baltimore", 
+     
+    "population": "149246", 
+    "population_proper": "149246"
+  }, 
+  {
+    "name": "Milwaukee", 
+    "lat": "52.5190", 
+    "lng": "-1.9950", 
+     "country_id":1,
+     
+    "admin_name": "Milwaukee", 
+     
+    "population": "146386", 
+    "population_proper": "146386"
+  }, 
+  {
+    "name": "Albuquerque", 
+    "lat": "51.8644", 
+    "lng": "-2.2444", 
+     "country_id":1,
+     
+    "admin_name": "Albuquerque", 
+     
+    "population": "145563", 
+    "population_proper": "145563"
+  }, 
+  {
+    "name": "Fresno", 
+    "lat": "53.8142", 
+    "lng": "-3.0503", 
+     "country_id":1,
+     
+    "admin_name": "Fresno", 
+     
+    "population": "139305", 
+    "population_proper": "139305"
+  }, 
+  {
+    "name": "Tucson", 
+    "lat": "53.4240", 
+    "lng": "-2.3220", 
+     "country_id":1,
+     
+    "admin_name": "Tucson", 
+     
+    "population": "134022", 
+    "population_proper": "134022"
+  }, 
+  {
+    "name": "Sacramento", 
+    "lat": "51.5975", 
+    "lng": "-0.0681", 
+     "country_id":1,
+     
+    "admin_name": "Sacramento", 
+     
+    "population": "129237", 
+    "population_proper": "129237"
+  }, 
+  {
+    "name": "Kansas name", 
+    "lat": "52.2053", 
+    "lng": "0.1192", 
+     "country_id":1,
+     
+    "admin_name": "Kansas name", 
+     
+    "population": "123867", 
+    "population_proper": "123867"
+  }, 
+  {
+    "name": "Mesa", 
+    "lat": "51.5768", 
+    "lng": "0.1801", 
+     "country_id":1,
+     
+    "admin_name": "Mesa", 
+     
+    "population": "122854", 
+    "population_proper": "122854"
+  }, 
+  {
+    "name": "Atlanta", 
+    "lat": "51.8917", 
+    "lng": "0.9030", 
+     "country_id":1,
+     
+    "admin_name": "Atlanta", 
+     
+    "population": "121859", 
+    "population_proper": "121859"
+  }, 
+  {
+    "name": "Omaha", 
+    "lat": "51.6287", 
+    "lng": "-0.7482", 
+     "country_id":1,
+     
+    "admin_name": "Omaha", 
+     
+    "population": "120256", 
+    "population_proper": "120256"
+  }, 
+  {
+    "name": "Colorado Springs", 
+    "lat": "54.9500", 
+    "lng": "-1.6000", 
+     "country_id":1,
+     
+    "admin_name": "Colorado Springs", 
+     
+    "population": "120046", 
+    "population_proper": "120046"
+  }, 
+  {
+    "name": "Raleigh", 
+    "lat": "51.5084", 
+    "lng": "-0.5881", 
+     "country_id":1,
+     
+    "admin_name": "Raleigh", 
+     
+    "population": "119070", 
+    "population_proper": "119070"
+  }, 
+  {
+    "name": "Long Beach", 
+    "lat": "53.7480", 
+    "lng": "-2.4820", 
+     "country_id":1,
+     
+    "admin_name": "Long Beach", 
+     
+    "population": "117963", 
+    "population_proper": "117963"
+  }, 
+  {
+    "name": "Virginia Beach", 
+    "lat": "51.7300", 
+    "lng": "0.4800", 
+     "country_id":1,
+     
+    "admin_name": "Virginia Beach", 
+     
+    "population": "115369", 
+    "population_proper": "115369"
+  }, 
+  {
+    "name": "Miami", 
+    "lat": "53.6136", 
+    "lng": "-2.1610", 
+     "country_id":1,
+     
+    "admin_name": "Miami", 
+     
+    "population": "110194", 
+    "population_proper": "110194"
+  }, 
+  {
+    "name": "Oakland", 
+    "lat": "53.4300", 
+    "lng": "-1.3570", 
+     "country_id":1,
+     
+    "admin_name": "Oakland", 
+     
+    "population": "109691", 
+    "population_proper": "109691"
+  }, 
+  {
+    "name": "Minneapolis", 
+    "lat": "51.5840", 
+    "lng": "-0.0210", 
+     "country_id":1,
+     
+    "admin_name": "Minneapolis", 
+     
+    "population": "109424", 
+    "population_proper": "109424"
+  }, 
+  {
+    "name": "Tulsa", 
+    "lat": "51.2720", 
+    "lng": "0.5290", 
+     "country_id":1,
+     
+    "admin_name": "Tulsa", 
+     
+    "population": "107627", 
+    "population_proper": "107627"
+  }, 
+  {
+    "name": "Bakersfield", 
+    "lat": "51.2667", 
+    "lng": "-1.0876", 
+     "country_id":1,
+     
+    "admin_name": "Bakersfield", 
+     
+    "population": "107355", 
+    "population_proper": "107355"
+  }, 
+  {
+    "name": "Wichita", 
+    "lat": "53.4830", 
+    "lng": "-2.2931", 
+     "country_id":1,
+     
+    "admin_name": "Wichita", 
+     
+    "population": "103886", 
+    "population_proper": "103886"
+  }, 
+  {
+    "name": "Arlington", 
+    "lat": "51.4668", 
+    "lng": "-0.3750", 
+     "country_id":1,
+     
+    "admin_name": "Arlington", 
+     
+    "population": "103337", 
+    "population_proper": "103337"
+  }, 
+  {
+    "name": "Aurora", 
+    "lat": "51.5528", 
+    "lng": "-0.2979", 
+     "country_id":1,
+     
+    "admin_name": "Aurora", 
+     
+    "population": "102856", 
+    "population_proper": "102856"
+  }, 
+  {
+    "name": "La Nouvelle-Orléans", 
+    "lat": "52.1911", 
+    "lng": "-2.2206", 
+     "country_id":1,
+     
+    "admin_name": "La Nouvelle-Orléanss", 
+     
+    "population": "101891", 
+    "population_proper": "101891"
+  }, 
+  {
+    "name": "Tampa", 
+    "lat": "51.4928", 
+    "lng": "-0.2229", 
+     "country_id":1,
+     
+    "admin_name": "Tampa", 
+     
+    "population": "95996", 
+    "population_proper": "95996"
+  }, 
+  {
+    "name": "Cleveland", 
+    "lat": "51.5864", 
+    "lng": "0.6049", 
+     "country_id":1,
+     
+    "admin_name": "Cleveland", 
+     
+    "population": "95580", 
+    "population_proper": "95580"
+  }, 
+  {
+    "name": "Honolulu", 
+    "lat": "51.7526", 
+    "lng": "-0.4692", 
+     "country_id":1,
+     
+    "admin_name": "Honolulu", 
+     
+    "population": "94932", 
+    "population_proper": "94932"
+  }, 
+  {
+    "name": "Anaheim", 
+    "lat": "51.3800", 
+    "lng": "-2.3600", 
+     "country_id":1,
+     
+    "admin_name": "Anaheim", 
+     
+    "population": "94782", 
+    "population_proper": "94782"
+  }, 
+  {
+    "name": "San Juan", 
+    "lat": "54.5270", 
+    "lng": "-1.5526", 
+     "country_id":1,
+     
+    "admin_name": "San Juan", 
+     
+    "population": "92363", 
+    "population_proper": "92363"
+  }, 
+  {
+    "name": "Lexington", 
+    "lat": "50.8352", 
+    "lng": "-0.1758", 
+     "country_id":1,
+     
+    "admin_name": "Lexington", 
+     
+    "population": "91900", 
+    "population_proper": "91900"
+  }, 
+  {
+    "name": "Stockton", 
+    "lat": "50.8500", 
+    "lng": "0.5700", 
+     "country_id":1,
+     
+    "admin_name": "Stockton", 
+     
+    "population": "91053", 
+    "population_proper": "91053"
+  }, 
+  {
+    "name": "Corpus Christi", 
+    "lat": "51.6550", 
+    "lng": "-0.3957", 
+     "country_id":1,
+     
+    "admin_name": "Corpus Christi", 
+     
+    "population": "90301", 
+    "population_proper": "90301"
+  }, 
+  {
+    "name": "Henderson", 
+    "lat": "51.9017", 
+    "lng": "-0.2019", 
+     "country_id":1,
+     
+    "admin_name": "Henderson", 
+     
+    "population": "89663", 
+    "population_proper": "89663"
+  }, 
+  {
+    "name": "Riverside", 
+    "lat": "54.6900", 
+    "lng": "-1.2100", 
+     "country_id":1,
+     
+    "admin_name": "Riverside", 
+     
+    "population": "88855", 
+    "population_proper": "88855"
+  }, 
+  {
+    "name": "Saint Paul", 
+    "lat": "53.1900", 
+    "lng": "-2.8900", 
+     "country_id":1,
+     
+    "admin_name": "Saint Paul", 
+     
+    "population": "87507", 
+    "population_proper": "87507"
+  }, 
+  {
+    "name": "Newark", 
+    "lat": "51.4828", 
+    "lng": "-0.1950", 
+     "country_id":1,
+     
+    "admin_name": "Newark", 
+     
+    "population": "87161", 
+    "population_proper": "87161"
+  }, 
+  {
+    "name": "Santa Ana", 
+    "lat": "52.5230", 
+    "lng": "-1.4680", 
+     "country_id":1,
+     
+    "admin_name": "Santa Ana", 
+     
+    "population": "86552", 
+    "population_proper": "86552"
+  }, 
+  {
+    "name": "Cincinnati", 
+    "lat": "51.5175", 
+    "lng": "-0.2988", 
+     "country_id":1,
+     
+    "admin_name": "Cincinnati", 
+     
+    "population": "85014", 
+    "population_proper": "85014"
+  }, 
+  {
+    "name": "Orlando", 
+    "lat": "51.5127", 
+    "lng": "-0.4211", 
+     "country_id":1,
+     
+    "admin_name": "Orlando", 
+     
+    "population": "83564", 
+    "population_proper": "83564"
+  }, 
+  {
+    "name": "Irvine", 
+    "lat": "51.8168", 
+    "lng": "-0.8124", 
+     "country_id":1,
+     
+    "admin_name": "Irvine", 
+     
+    "population": "83407", 
+    "population_proper": "83407"
+  }, 
+  {
+    "name": "Pittsburgh", 
+    "lat": "51.6154", 
+    "lng": "-0.0708", 
+     "country_id":1,
+     
+    "admin_name": "Pittsburgh", 
+     
+    "population": "82472", 
+    "population_proper": "82472"
+  }, 
+  {
+    "name": "Saint-Louis", 
+    "lat": "51.7550", 
+    "lng": "-0.3360", 
+     "country_id":1,
+     
+    "admin_name": "Saint-Louis", 
+     
+    "population": "82146", 
+    "population_proper": "82146"
+  }, 
+  {
+    "name": "Greensboro", 
+    "lat": "53.7890", 
+    "lng": "-2.2480", 
+     "country_id":1,
+     
+    "admin_name": "Greensboro", 
+     
+    "population": "82002", 
+    "population_proper": "82002"
+  }, 
+  {
+    "name": "Jersey name", 
+    "lat": "53.7167", 
+    "lng": "-1.6356", 
+     "country_id":1,
+     
+    "admin_name": "Jersey name", 
+     
+    "population": "80485", 
+    "population_proper": "80485"
+  }, 
+  {
+    "name": "Anchorage", 
+    "lat": "53.5809", 
+    "lng": "-0.6502", 
+     "country_id":1,
+     
+    "admin_name": "Anchorage", 
+     
+    "population": "79977", 
+    "population_proper": "79977"
+  }, 
+  {
+    "name": "Lincoln", 
+    "lat": "52.5080", 
+    "lng": "-2.0890", 
+     "country_id":1,
+     
+    "admin_name": "Lincoln", 
+     
+    "population": "79379", 
+    "population_proper": "79379"
+  }, 
+  {
+    "name": "Plano", 
+    "lat": "51.4575", 
+    "lng": "-0.1175", 
+     "country_id":1,
+     
+    "admin_name": "Plano", 
+     
+    "population": "78536", 
+    "population_proper": "78536"
+  }, 
+  {
+    "name": "Durham", 
+    "lat": "55.8456", 
+    "lng": "-4.4239", 
+     "country_id":1,
+     
+    "admin_name": "Durham", 
+     
+    "population": "77220", 
+    "population_proper": "77220"
+  }, 
+  {
+    "name": "Buffalo", 
+    "lat": "51.3700", 
+    "lng": "0.5200", 
+     "country_id":1,
+     
+    "admin_name": "Buffalo", 
+     
+    "population": "76792", 
+    "population_proper": "76792"
+  }, 
+  {
+    "name": "Chandler", 
+    "lat": "51.6185", 
+    "lng": "-0.2729", 
+     "country_id":1,
+     
+    "admin_name": "Chandler", 
+     
+    "population": "76506", 
+    "population_proper": "76506"
+  }, 
+  {
+    "name": "Chula Vista", 
+    "lat": "51.5323", 
+    "lng": "0.0554", 
+     "country_id":1,
+     
+    "admin_name": "Chula Vista", 
+     
+    "population": "76186", 
+    "population_proper": "76186"
+  }, 
+  {
+    "name": "Toledo", 
+    "lat": "51.3460", 
+    "lng": "-2.9770", 
+     "country_id":1,
+     
+    "admin_name": "Toledo", 
+     
+    "population": "76143", 
+    "population_proper": "76143"
+  }, 
+  {
+    "name": "Madison", 
+    "lat": "54.8910", 
+    "lng": "-2.9440", 
+     "country_id":1,
+     
+    "admin_name": "Madison", 
+     
+    "population": "75399", 
+    "population_proper": "75399"
+  }, 
+  {
+    "name": "Gilbert", 
+    "lat": "54.9950", 
+    "lng": "-1.4300", 
+     "country_id":1,
+     
+    "admin_name": "Gilbert", 
+     
+    "population": "75337", 
+    "population_proper": "75337"
+  }, 
+  {
+    "name": "Fort Wayne", 
+    "lat": "55.7644", 
+    "lng": "-4.1769", 
+     "country_id":1,
+     
+    "admin_name": "Fort Wayne", 
+     
+    "population": "75120", 
+    "population_proper": "75120"
+  }, 
+  {
+    "name": "Reno", 
+    "lat": "52.8019", 
+    "lng": "-1.6367", 
+     "country_id":1,
+     
+    "admin_name": "Reno", 
+     
+    "population": "75074", 
+    "population_proper": "75074"
+  }, 
+  {
+    "name": "North Las Vegas", 
+    "lat": "53.9919", 
+    "lng": "-1.5378", 
+     "country_id":1,
+     
+    "admin_name": "North Las Vegas", 
+     
+    "population": "73576", 
+    "population_proper": "73576"
+  }, 
+  {
+    "name": "St. Petersburg", 
+    "lat": "53.0990", 
+    "lng": "-2.4400", 
+     "country_id":1,
+     
+    "admin_name": "St. Petersburg", 
+     
+    "population": "73241", 
+    "population_proper": "73241"
+  }, 
+  {
+    "name": "Lubbock", 
+    "lat": "52.4800", 
+    "lng": "1.7500", 
+     "country_id":1,
+     
+    "admin_name": "Lubbock", 
+     
+    "population": "70945", 
+    "population_proper": "70945"
+  }, 
+  {
+    "name": "Irving", 
+    "lat": "52.3700", 
+    "lng": "-1.2600", 
+     "country_id":1,
+     
+    "admin_name": "Irving", 
+     
+    "population": "70627", 
+    "population_proper": "70627"
+  }, 
+  {
+    "name": "Laredo", 
+    "lat": "51.6230", 
+    "lng": "0.0090", 
+     "country_id":1,
+     
+    "admin_name": "Laredo", 
+     
+    "population": "70583", 
+    "population_proper": "70583"
+  }, 
+  {
+    "name": "Winston-Salem", 
+    "lat": "51.5404", 
+    "lng": "-0.4778", 
+     "country_id":1,
+     
+    "admin_name": "Winston-Salem", 
+     
+    "population": "70560", 
+    "population_proper": "70560"
+  }, 
+  {
+    "name": "Chesapeake", 
+    "lat": "51.5121", 
+    "lng": "-0.3779", 
+     "country_id":1,
+     
+    "admin_name": "Chesapeake", 
+     
+    "population": "69857", 
+    "population_proper": "69857"
+  }, 
+  {
+    "name": "Glendale", 
+    "lat": "52.5800", 
+    "lng": "-1.9800", 
+     "country_id":1,
+     
+    "admin_name": "Glendale", 
+     
+    "population": "67594", 
+    "population_proper": "67594"
+  }, 
+  {
+    "name": "Garland", 
+    "lat": "51.4750", 
+    "lng": "0.3300", 
+     "country_id":1,
+     
+    "admin_name": "Garland", 
+     
+    "population": "66843", 
+    "population_proper": "66843"
+  }, 
+  {
+    "name": "Scottsdale", 
+    "lat": "51.3868", 
+    "lng": "-0.4133", 
+     "country_id":1,
+     
+    "admin_name": "Scottsdale", 
+     
+    "population": "66566", 
+    "population_proper": "66566"
+  }, 
+  {
+    "name": "Comté d'Arlington", 
+    "lat": "51.4002", 
+    "lng": "-0.1086", 
+     "country_id":1,
+     
+    "admin_name": "Comté d'Arlington", 
+     
+    "population": "65812", 
+    "population_proper": "65812"
+  }, 
+  {
+    "name": "Norfolk", 
+    "lat": "51.5990", 
+    "lng": "-0.1870", 
+     "country_id":1,
+     
+    "admin_name": "Norfolk", 
+     
+    "population": "65812", 
+    "population_proper": "65812"
+  }, 
+  {
+    "name": "Boise", 
+    "lat": "51.5000", 
+    "lng": "-0.1900", 
+     "country_id":1,
+     
+    "admin_name": "Boise ", 
+     
+    "population": "64681", 
+    "population_proper": "64681"
+  }, 
+  {
+    "name": "Fremont", 
+    "lat": "52.9740", 
+    "lng": "-0.0214", 
+     "country_id":1,
+     
+    "admin_name": "Fremont", 
+     
+    "population": "64600", 
+    "population_proper": "64600"
+  }, 
+  {
+    "name": "Santa Clarita", 
+    "lat": "50.4353", 
+    "lng": "-3.5625", 
+     "country_id":1,
+     
+    "admin_name": "Santa Clarita", 
+     
+    "population": "64410", 
+    "population_proper": "64410"
+  }, 
+  {
+    "name": "Spokane", 
+    "lat": "50.8800", 
+    "lng": "-1.0300", 
+     "country_id":1,
+     
+    "admin_name": "Spokane", 
+     
+    "population": "64350", 
+    "population_proper": "64350"
+  }, 
+  {
+    "name": "Richmond", 
+    "lat": "51.5565", 
+    "lng": "0.2128", 
+     "country_id":1,
+     
+    "admin_name": "Richmond", 
+     
+    "population": "63583", 
+    "population_proper": "63583"
+  }, 
+  {
+    "name": "Baton Rouge", 
+    "lat": "51.7430", 
+    "lng": "-3.3780", 
+     "country_id":1,
+     
+    "admin_name": "Baton Rouge", 
+     
+    "population": "63546", 
+    "population_proper": "63546"
+  }, 
+  {
+    "name": "Hialeah", 
+    "lat": "51.4009", 
+    "lng": "-0.1517", 
+     "country_id":1,
+     
+    "admin_name": "Hialeah", 
+     
+    "population": "63393", 
+    "population_proper": "63393"
+  }, 
+  {
+    "name": "San Bernardino", 
+    "lat": "51.4496", 
+    "lng": "-0.4089", 
+     "country_id":1,
+     
+    "admin_name": "San Bernardino", 
+     
+    "population": "63368", 
+    "population_proper": "63368"
+  }, 
+  {
+    "name": "Enterprise", 
+    "lat": "52.4575", 
+    "lng": "-2.1479", 
+     "country_id":1,
+     
+    "admin_name": "Enterprise", 
+     
+    "population": "63298", 
+    "population_proper": "63298"
+  }, 
+  {
+    "name": "Tacoma", 
+    "lat": "52.0560", 
+    "lng": "-2.7160", 
+     "country_id":1,
+     
+    "admin_name": "Tacoma", 
+     
+    "population": "63024", 
+    "population_proper": "63024"
+  }, 
+  {
+    "name": "Modesto", 
+    "lat": "51.3750", 
+    "lng": "0.5000", 
+     "country_id":1,
+     
+    "admin_name": "Modesto", 
+     
+    "population": "62982", 
+    "population_proper": "62982"
+  }, 
+  {
+    "name": "Huntsville", 
+    "lat": "53.6910", 
+    "lng": "-1.6330", 
+     "country_id":1,
+     
+    "admin_name": "Huntsville", 
+     
+    "population": "62945", 
+    "population_proper": "62945"
+  }, 
+  {
+    "name": "Des Moines", 
+    "lat": "51.5135", 
+    "lng": "-0.2707", 
+     "country_id":1,
+     
+    "admin_name": "Des Moines", 
+     
+    "population": "62480", 
+    "population_proper": "62480"
+  }, 
+  {
+    "name": "Yonkers", 
+    "lat": "51.4490", 
+    "lng": "-0.3370", 
+     "country_id":1,
+     
+    "admin_name": "Yonkers", 
+     
+    "population": "62148", 
+    "population_proper": "62148"
+  }, 
+  {
+    "name": "Rochester", 
+    "lat": "54.2773", 
+    "lng": "-0.4017", 
+     "country_id":1,
+     
+    "admin_name": "Rochester", 
+     
+    "population": "61749", 
+    "population_proper": "61749"
+  }, 
+  {
+    "name": "Birmingham", 
+    "lat": "53.0460", 
+    "lng": "-2.9930", 
+     "country_id":1,
+     
+    "admin_name": "Birmingham", 
+     
+    "population": "61603", 
+    "population_proper": "61603"
+  }, 
+  {
+    "name": "Fayetteville", 
+    "lat": "51.4550", 
+    "lng": "-0.1920", 
+     "country_id":1,
+     
+    "admin_name": "Fayetteville", 
+     
+    "population": "61594", 
+    "population_proper": "61594"
+  }, 
+  {
+    "name": "Moreno Valley", 
+    "lat": "53.2790", 
+    "lng": "-2.8970", 
+     "country_id":1,
+     
+    "admin_name": "Moreno Valley", 
+     
+    "population": "61090", 
+    "population_proper": "61090"
+  }, 
+  {
+    "name": "Fontana", 
+    "lat": "54.6600", 
+    "lng": "-5.6700", 
+     "country_id":1,
+     
+    "admin_name": "Fontana", 
+     
+    "population": "61011", 
+    "population_proper": "61011"
+  }, 
+  {
+    "name": "Columbus", 
+    "lat": "51.0190", 
+    "lng": "-3.1000", 
+     "country_id":1,
+     
+    "admin_name": "Columbus", 
+     
+    "population": "60479", 
+    "population_proper": "60479"
+  }, 
+  {
+    "name": "Oxnard", 
+    "lat": "52.7700", 
+    "lng": "-1.2000", 
+     "country_id":1,
+     
+    "admin_name": "Oxnard", 
+     
+    "population": "59932", 
+    "population_proper": "59932"
+  }, 
+  {
+    "name": "Salt Lake name", 
+    "lat": "51.5400", 
+    "lng": "0.0800", 
+     "country_id":1,
+     
+    "admin_name": "Salt Lake name", 
+     
+    "population": "59068", 
+    "population_proper": "59068"
+  }, 
+  {
+    "name": "Grand Rapids", 
+    "lat": "50.8094", 
+    "lng": "-0.5409", 
+     "country_id":1,
+     
+    "admin_name": "Grand Rapids", 
+     
+    "population": "58357", 
+    "population_proper": "58357"
+  }, 
+  {
+    "name": "Amarillo", 
+    "lat": "51.5760", 
+    "lng": "-0.4330", 
+     "country_id":1,
+     
+    "admin_name": "Amarillo", 
+     
+    "population": "58217", 
+    "population_proper": "58217"
+  }
+]

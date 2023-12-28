@@ -1,0 +1,668 @@
+[
+  {
+    "name": "Ouagadougou", 
+    "lat": "12.3572", 
+    "lng": "-1.5353", 
+    "country_id":36 ,
+    "admin_name": "Centre", 
+    "population": "1626950", 
+    "population_proper": "1626950"
+  }, 
+  {
+    "name": "Bobo-Dioulasso", 
+    "lat": "11.1833", 
+    "lng": "-4.2833", 
+        "country_id":36 ,
+    "admin_name": "Hauts-Bassins", 
+    "population": "360106", 
+    "population_proper": "331964"
+  }, 
+  {
+    "name": "Koudougou", 
+    "lat": "12.2500", 
+    "lng": "-2.3667", 
+        "country_id":36 ,
+    "admin_name": "Centre-Ouest", 
+    "population": "87347", 
+    "population_proper": "83331"
+  }, 
+  {
+    "name": "Ouahigouya", 
+    "lat": "13.5833", 
+    "lng": "-2.4167", 
+        "country_id":36 ,
+    "admin_name": "Nord", 
+    "population": "79504", 
+    "population_proper": "61096"
+  }, 
+  {
+    "name": "Banfora", 
+    "lat": "10.6308", 
+    "lng": "-4.7589", 
+        "country_id":36 ,
+    "admin_name": "Cascades", 
+    "population": "60288", 
+    "population_proper": "31519"
+  }, 
+  {
+    "name": "Kaya", 
+    "lat": "13.0833", 
+    "lng": "-1.0833", 
+        "country_id":36 ,
+    "admin_name": "Centre-Nord", 
+    "population": "40017", 
+    "population_proper": "39229"
+  }, 
+  {
+    "name": "Dédougou", 
+    "lat": "12.4667", 
+    "lng": "-3.4667", 
+        "country_id":36 ,
+    "admin_name": "Boucle du Mouhoun", 
+    "population": "38862", 
+    "population_proper": "38862"
+  }, 
+  {
+    "name": "Tenkodogo", 
+    "lat": "11.7833", 
+    "lng": "-0.3667", 
+        "country_id":36 ,
+    "admin_name": "Centre-Est", 
+    "population": "38108", 
+    "population_proper": "37658"
+  }, 
+  {
+    "name": "Dori", 
+    "lat": "14.0500", 
+    "lng": "0.0500", 
+        "country_id":36 ,
+    "admin_name": "Sahel", 
+    "population": "37806", 
+    "population_proper": "37806"
+  }, 
+  {
+    "name": "Réo", 
+    "lat": "12.3167", 
+    "lng": "-2.4667", 
+        "country_id":36 ,
+    "admin_name": "Centre-Ouest", 
+    "population": "37535", 
+    "population_proper": "37535"
+  }, 
+  {
+    "name": "Fada Ngourma", 
+    "lat": "12.0500", 
+    "lng": "0.3667", 
+        "country_id":36 ,
+    "admin_name": "Est", 
+    "population": "33910", 
+    "population_proper": "33910"
+  }, 
+  {
+    "name": "Léo", 
+    "lat": "11.1000", 
+    "lng": "-2.1000", 
+        "country_id":36 ,
+    "admin_name": "Centre-Ouest", 
+    "population": "33717", 
+    "population_proper": "33717"
+  }, 
+  {
+    "name": "Koupéla", 
+    "lat": "12.1794", 
+    "lng": "-0.3517", 
+        "country_id":36 ,
+    "admin_name": "Centre-Est", 
+    "population": "32052", 
+    "population_proper": "32052"
+  }, 
+  {
+    "name": "Kombissiri", 
+    "lat": "12.0667", 
+    "lng": "-1.3333", 
+        "country_id":36 ,
+    "admin_name": "Centre-Sud", 
+    "population": "30137", 
+    "population_proper": "30137"
+  }, 
+  {
+    "name": "Nouna", 
+    "lat": "12.7329", 
+    "lng": "-3.8622", 
+        "country_id":36 ,
+    "admin_name": "Boucle du Mouhoun", 
+    "population": "29048", 
+    "population_proper": "29048"
+  }, 
+  {
+    "name": "Manga", 
+    "lat": "11.6667", 
+    "lng": "-1.0667", 
+        "country_id":36 ,
+    "admin_name": "Centre-Sud", 
+    "population": "28612", 
+    "population_proper": "28612"
+  }, 
+  {
+    "name": "Diapaga", 
+    "lat": "12.0667", 
+    "lng": "1.7833", 
+        "country_id":36 ,
+    "admin_name": "Est", 
+    "population": "26013", 
+    "population_proper": "26013"
+  }, 
+  {
+    "name": "Yako", 
+    "lat": "12.9667", 
+    "lng": "-2.2667", 
+        "country_id":36 ,
+    "admin_name": "Nord", 
+    "population": "22904", 
+    "population_proper": "22904"
+  }, 
+  {
+    "name": "Djibo", 
+    "lat": "14.1012", 
+    "lng": "-1.6279", 
+        "country_id":36 ,
+    "admin_name": "Sahel", 
+    "population": "22223", 
+    "population_proper": "22223"
+  }, 
+  {
+    "name": "Zorgo", 
+    "lat": "12.2500", 
+    "lng": "-0.6167", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "21787", 
+    "population_proper": "21787"
+  }, 
+  {
+    "name": "Orodara", 
+    "lat": "10.9740", 
+    "lng": "-4.9080", 
+        "country_id":36 ,
+    "admin_name": "Hauts-Bassins", 
+    "population": "18632", 
+    "population_proper": "18632"
+  }, 
+  {
+    "name": "Pô", 
+    "lat": "11.1667", 
+    "lng": "-1.1500", 
+        "country_id":36 ,
+    "admin_name": "Centre-Sud", 
+    "population": "17924", 
+    "population_proper": "17924"
+  }, 
+  {
+    "name": "Tougan", 
+    "lat": "13.0667", 
+    "lng": "-3.0667", 
+        "country_id":36 ,
+    "admin_name": "Boucle du Mouhoun", 
+    "population": "17590", 
+    "population_proper": "17590"
+  }, 
+  {
+    "name": "Boulsa", 
+    "lat": "12.6667", 
+    "lng": "-0.5833", 
+        "country_id":36 ,
+    "admin_name": "Centre-Nord", 
+    "population": "17489", 
+    "population_proper": "17489"
+  }, 
+  {
+    "name": "Diébougou", 
+    "lat": "10.9667", 
+    "lng": "-3.2500", 
+        "country_id":36 ,
+    "admin_name": "Sud-Ouest", 
+    "population": "12732", 
+    "population_proper": "12732"
+  }, 
+  {
+    "name": "Ziniaré", 
+    "lat": "12.5833", 
+    "lng": "-1.3000", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "12703", 
+    "population_proper": "12703"
+  }, 
+  {
+    "name": "Salanso", 
+    "lat": "12.1833", 
+    "lng": "-4.0833", 
+        "country_id":36 ,
+    "admin_name": "Boucle du Mouhoun", 
+    "population": "10385", 
+    "population_proper": "10385"
+  }, 
+  {
+    "name": "Bogandé", 
+    "lat": "12.9714", 
+    "lng": "-0.1436", 
+        "country_id":36 ,
+    "admin_name": "Est", 
+    "population": "9854", 
+    "population_proper": "9854"
+  }, 
+  {
+    "name": "Gorom-Gorom", 
+    "lat": "14.4439", 
+    "lng": "-0.2361", 
+        "country_id":36 ,
+    "admin_name": "Sahel", 
+    "population": "6691", 
+    "population_proper": "6691"
+  }, 
+  {
+    "name": "Sapouy", 
+    "lat": "11.5478", 
+    "lng": "-1.7750", 
+        "country_id":36 ,
+    "admin_name": "Centre-Ouest", 
+    "population": "3837", 
+    "population_proper": "3837"
+  }, 
+  {
+    "name": "Sebba", 
+    "lat": "13.4392", 
+    "lng": "0.5289", 
+        "country_id":36 ,
+    "admin_name": "Sahel", 
+    "population": "3273", 
+    "population_proper": "3273"
+  }, 
+  {
+    "name": "Gaoua", 
+    "lat": "10.2992", 
+    "lng": "-3.2508", 
+        "country_id":36 ,
+    "admin_name": "Sud-Ouest", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Komsilga", 
+    "lat": "12.1865", 
+    "lng": "-1.6338", 
+        "country_id":36 ,
+    "admin_name": "Centre", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Loumbila", 
+    "lat": "12.5165", 
+    "lng": "-1.3761", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Saaba", 
+    "lat": "12.3714", 
+    "lng": "-1.4147", 
+        "country_id":36 ,
+    "admin_name": "Centre", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tanghin-Dassouri", 
+    "lat": "12.2748", 
+    "lng": "-1.7163", 
+        "country_id":36 ,
+    "admin_name": "Centre", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kongoussi", 
+    "lat": "13.3333", 
+    "lng": "-1.5333", 
+        "country_id":36 ,
+    "admin_name": "Centre-Nord", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kokologo", 
+    "lat": "12.1833", 
+    "lng": "-1.8833", 
+        "country_id":36 ,
+    "admin_name": "Centre-Ouest", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gourcy", 
+    "lat": "13.2063", 
+    "lng": "-2.3586", 
+        "country_id":36 ,
+    "admin_name": "Nord", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Boussouma", 
+    "lat": "12.9103", 
+    "lng": "-1.0804", 
+        "country_id":36 ,
+    "admin_name": "Centre-Nord", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ouargaye", 
+    "lat": "11.5033", 
+    "lng": "0.0572", 
+        "country_id":36 ,
+    "admin_name": "Centre-Est", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Boussé", 
+    "lat": "12.6667", 
+    "lng": "-1.8975", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Laye", 
+    "lat": "12.5264", 
+    "lng": "-1.7725", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Zitenga", 
+    "lat": "12.7583", 
+    "lng": "-1.2950", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Absouya", 
+    "lat": "12.6417", 
+    "lng": "-1.0517", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Siglé", 
+    "lat": "12.5500", 
+    "lng": "-1.8833", 
+        "country_id":36 ,
+    "admin_name": "Centre-Ouest", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Toéghin", 
+    "lat": "12.8159", 
+    "lng": "-1.7276", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Komki-Ipala", 
+    "lat": "12.1808", 
+    "lng": "-1.8044", 
+        "country_id":36 ,
+    "admin_name": "Centre", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sourgoubila", 
+    "lat": "12.4146", 
+    "lng": "-1.8064", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dapélogo", 
+    "lat": "12.6717", 
+    "lng": "-1.5394", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Korsimoro", 
+    "lat": "12.8233", 
+    "lng": "-1.0700", 
+        "country_id":36 ,
+    "admin_name": "Centre-Nord", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Houndé", 
+    "lat": "11.5000", 
+    "lng": "-3.5167", 
+        "country_id":36 ,
+    "admin_name": "Hauts-Bassins", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dano", 
+    "lat": "11.1438", 
+    "lng": "-3.0620", 
+        "country_id":36 ,
+    "admin_name": "Sud-Ouest", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Niou", 
+    "lat": "12.7698", 
+    "lng": "-1.9338", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Pabré", 
+    "lat": "12.5000", 
+    "lng": "-1.5670", 
+        "country_id":36 ,
+    "admin_name": "Centre", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Koubri", 
+    "lat": "12.1978", 
+    "lng": "-1.4066", 
+        "country_id":36 ,
+    "admin_name": "Centre", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Mané", 
+    "lat": "12.9884", 
+    "lng": "-1.3443", 
+        "country_id":36 ,
+    "admin_name": "Centre-Nord", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Toma", 
+    "lat": "12.7667", 
+    "lng": "-2.8833", 
+        "country_id":36 ,
+    "admin_name": "Boucle du Mouhoun", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bingo", 
+    "lat": "12.3006", 
+    "lng": "-1.8330", 
+        "country_id":36 ,
+    "admin_name": "Centre-Ouest", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Saponé", 
+    "lat": "12.0528", 
+    "lng": "-1.6036", 
+        "country_id":36 ,
+    "admin_name": "Centre-Sud", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Nagréongo", 
+    "lat": "12.4785", 
+    "lng": "-1.2013", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kayao", 
+    "lat": "12.0131", 
+    "lng": "-1.8439", 
+        "country_id":36 ,
+    "admin_name": "Centre-Sud", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sindou", 
+    "lat": "10.6500", 
+    "lng": "-5.1667", 
+        "country_id":36 ,
+    "admin_name": "Cascades", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gaongo", 
+    "lat": "12.0058", 
+    "lng": "-1.1639", 
+        "country_id":36 ,
+    "admin_name": "Centre-Sud", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ourgou-Manéga", 
+    "lat": "12.7835", 
+    "lng": "-1.5102", 
+        "country_id":36 ,
+    "admin_name": "Plateau-Central", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Titao", 
+    "lat": "13.7667", 
+    "lng": "-2.0736", 
+        "country_id":36 ,
+    "admin_name": "Nord", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Aribinda", 
+    "lat": "14.2290", 
+    "lng": "-0.8634", 
+        "country_id":36 ,
+    "admin_name": "Sahel", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Oursi", 
+    "lat": "14.6755", 
+    "lng": "-0.4603", 
+        "country_id":36 ,
+    "admin_name": "Sahel", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Batié", 
+    "lat": "9.8833", 
+    "lng": "-2.9167", 
+        "country_id":36 ,
+    "admin_name": "Sud-Ouest", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Boromo", 
+    "lat": "11.7500", 
+    "lng": "-2.9333", 
+        "country_id":36 ,
+    "admin_name": "Boucle du Mouhoun", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gayéri", 
+    "lat": "12.6500", 
+    "lng": "0.5000", 
+        "country_id":36 ,
+    "admin_name": "Est", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Déou", 
+    "lat": "14.6008", 
+    "lng": "-0.7190", 
+        "country_id":36 ,
+    "admin_name": "Sahel", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Pama", 
+    "lat": "11.2381", 
+    "lng": "0.7161", 
+        "country_id":36 ,
+    "admin_name": "Est", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tin-Akoff", 
+    "lat": "14.9655", 
+    "lng": "-0.1633", 
+        "country_id":36 ,
+    "admin_name": "Sahel", 
+    "population": "", 
+    "population_proper": ""
+  }
+]

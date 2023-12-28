@@ -1,0 +1,1771 @@
+[
+  {
+    "name": "Casablanca", 
+    "lat": "33.5992", 
+    "lng": "-7.6200", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+    "population": "4370000", 
+    "population_proper": "4370000"
+  }, 
+  {
+    "name": "El Kelaa des Srarhna", 
+    "lat": "32.0500", 
+    "lng": "-7.4000", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "1450021", 
+    "population_proper": "1450021"
+  }, 
+  {
+    "name": "Fès", 
+    "lat": "34.0433", 
+    "lng": "-5.0033", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+    "population": "1112072", 
+    "population_proper": "1112072"
+  }, 
+  {
+    "name": "Tangier", 
+    "lat": "35.7767", 
+    "lng": "-5.8039", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+    "population": "947952", 
+    "population_proper": "947952"
+  }, 
+  {
+    "name": "Marrakech", 
+    "lat": "31.6295", 
+    "lng": "-7.9811", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+    "population": "928850", 
+    "population_proper": "928850"
+  }, 
+  {
+    "name": "Sale", 
+    "lat": "34.0500", 
+    "lng": "-6.8167", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "850403", 
+    "population_proper": "850403"
+  }, 
+  {
+    "name": "Rabat", 
+    "lat": "34.0253", 
+    "lng": "-6.8361", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+    "population": "572717", 
+    "population_proper": "572717"
+  }, 
+  {
+    "name": "Meknès", 
+    "lat": "33.8833", 
+    "lng": "-5.5500", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "520428", 
+    "population_proper": "520428"
+  }, 
+  {
+    "name": "Kenitra", 
+    "lat": "34.2500", 
+    "lng": "-6.5833", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "431282", 
+    "population_proper": "431282"
+  }, 
+  {
+    "name": "Agadir", 
+    "lat": "30.4167", 
+    "lng": "-9.5833", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+    "population": "421844", 
+    "population_proper": "421844"
+  }, 
+  {
+    "name": "Oujda-Angad", 
+    "lat": "34.6900", 
+    "lng": "-1.9100", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+    "population": "409391", 
+    "population_proper": "405253"
+  }, 
+  {
+    "name": "Tétouan", 
+    "lat": "35.5667", 
+    "lng": "-5.3667", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "380787", 
+    "population_proper": "380787"
+  }, 
+  {
+    "name": "Taourirt", 
+    "lat": "34.4100", 
+    "lng": "-2.8900", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "321876", 
+    "population_proper": "321876"
+  }, 
+  {
+    "name": "Temara", 
+    "lat": "33.9234", 
+    "lng": "-6.9076", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "313510", 
+    "population_proper": "313510"
+  }, 
+  {
+    "name": "Safi", 
+    "lat": "32.2833", 
+    "lng": "-9.2333", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "308508", 
+    "population_proper": "308508"
+  }, 
+  {
+    "name": "Laâyoune", 
+    "lat": "27.1500", 
+    "lng": "-13.2000", 
+    
+    "country_id":146 ,
+    "admin_name": "", 
+   
+    "population": "217732", 
+    "population_proper": "217732"
+  }, 
+  {
+    "name": "Mohammedia", 
+    "lat": "33.6833", 
+    "lng": "-7.3833", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "208612", 
+    "population_proper": "208612"
+  }, 
+  {
+    "name": "Kouribga", 
+    "lat": "32.8800", 
+    "lng": "-6.9000", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "196196", 
+    "population_proper": "196196"
+  }, 
+  {
+    "name": "Béni Mellal", 
+    "lat": "32.3394", 
+    "lng": "-6.3608", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+    "population": "192676", 
+    "population_proper": "192676"
+  }, 
+  {
+    "name": "El Jadid", 
+    "lat": "33.2566", 
+    "lng": "-8.5025", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "180470", 
+    "population_proper": "147549"
+  }, 
+  {
+    "name": "Ait Melloul", 
+    "lat": "30.3342", 
+    "lng": "-9.4972", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "171847", 
+    "population_proper": "171847"
+  }, 
+  {
+    "name": "Nador", 
+    "lat": "35.1667", 
+    "lng": "-2.9333", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "161726", 
+    "population_proper": "161726"
+  }, 
+  {
+    "name": "Taza", 
+    "lat": "34.2144", 
+    "lng": "-4.0088", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "148456", 
+    "population_proper": "148456"
+  }, 
+  {
+    "name": "Settat", 
+    "lat": "33.0023", 
+    "lng": "-7.6198", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "142250", 
+    "population_proper": "142250"
+  }, 
+  {
+    "name": "Barrechid", 
+    "lat": "33.2700", 
+    "lng": "-7.5872", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "136634", 
+    "population_proper": "136634"
+  }, 
+  {
+    "name": "Al Khmissat", 
+    "lat": "33.8100", 
+    "lng": "-6.0600", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "131542", 
+    "population_proper": "131542"
+  }, 
+  {
+    "name": "Inezgane", 
+    "lat": "30.3658", 
+    "lng": "-9.5381", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "130333", 
+    "population_proper": "130333"
+  }, 
+  {
+    "name": "Ksar El Kebir", 
+    "lat": "35.0000", 
+    "lng": "-5.9000", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "126617", 
+    "population_proper": "126617"
+  }, 
+  {
+    "name": "Larache", 
+    "lat": "35.1833", 
+    "lng": "-6.1500", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "125008", 
+    "population_proper": "125008"
+  }, 
+  {
+    "name": "Guelmim", 
+    "lat": "28.9833", 
+    "lng": "-10.0667", 
+    
+    "country_id":146 ,
+    "admin_name": "Guelmim-Oued Noun", 
+    "population": "118318", 
+    "population_proper": "118318"
+  }, 
+  {
+    "name": "Khénifra", 
+    "lat": "32.9300", 
+    "lng": "-5.6600", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "117510", 
+    "population_proper": "117510"
+  }, 
+  {
+    "name": "Berkane", 
+    "lat": "34.9167", 
+    "lng": "-2.3167", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "109237", 
+    "population_proper": "109237"
+  }, 
+  {
+    "name": "Bouskoura", 
+    "lat": "33.4489", 
+    "lng": "-7.6486", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "103026", 
+    "population_proper": "103026"
+  }, 
+  {
+    "name": "Al Fqih Ben Çalah", 
+    "lat": "32.5000", 
+    "lng": "-6.7000", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "102019", 
+    "population_proper": "102019"
+  }, 
+  {
+    "name": "Oued Zem", 
+    "lat": "32.8600", 
+    "lng": "-6.5600", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "95267", 
+    "population_proper": "95267"
+  }, 
+  {
+    "name": "Sidi Slimane", 
+    "lat": "34.2600", 
+    "lng": "-5.9300", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "92989", 
+    "population_proper": "92989"
+  }, 
+  {
+    "name": "Errachidia", 
+    "lat": "31.9319", 
+    "lng": "-4.4244", 
+    
+    "country_id":146 ,
+    "admin_name": "Drâa-Tafilalet", 
+    "population": "92374", 
+    "population_proper": "92374"
+  }, 
+  {
+    "name": "Guercif", 
+    "lat": "34.2300", 
+    "lng": "-3.3600", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "90880", 
+    "population_proper": "90880"
+  }, 
+  {
+    "name": "Oulad Teïma", 
+    "lat": "30.4000", 
+    "lng": "-9.2100", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "89387", 
+    "population_proper": "89387"
+  }, 
+  {
+    "name": "Ad Dakhla", 
+    "lat": "23.7141", 
+    "lng": "-15.9368", 
+    
+    "country_id":146 ,
+    "admin_name": "", 
+   
+    "population": "89292", 
+    "population_proper": "75000"
+  }, 
+  {
+    "name": "Ben Guerir", 
+    "lat": "32.2300", 
+    "lng": "-7.9500", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "88626", 
+    "population_proper": "88626"
+  }, 
+  {
+    "name": "Wislane", 
+    "lat": "30.2167", 
+    "lng": "-8.3833", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "87910", 
+    "population_proper": "87910"
+  }, 
+  {
+    "name": "Tiflet", 
+    "lat": "33.9000", 
+    "lng": "-6.3300", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "86709", 
+    "population_proper": "86709"
+  }, 
+  {
+    "name": "Lqoliaa", 
+    "lat": "30.2942", 
+    "lng": "-9.4544", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "83235", 
+    "population_proper": "83235"
+  }, 
+  {
+    "name": "Taroudannt", 
+    "lat": "30.4711", 
+    "lng": "-8.8778", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "80149", 
+    "population_proper": "80149"
+  }, 
+  {
+    "name": "Sefrou", 
+    "lat": "33.8300", 
+    "lng": "-4.8300", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "79887", 
+    "population_proper": "79887"
+  }, 
+  {
+    "name": "Essaouira", 
+    "lat": "31.5130", 
+    "lng": "-9.7687", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "77966", 
+    "population_proper": "77966"
+  }, 
+  {
+    "name": "Fnidq", 
+    "lat": "35.8500", 
+    "lng": "-5.3500", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "77436", 
+    "population_proper": "77436"
+  }, 
+  {
+    "name": "Ait Ali", 
+    "lat": "30.1739", 
+    "lng": "-9.4881", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "76646", 
+    "population_proper": "76646"
+  }, 
+  {
+    "name": "Sidi Qacem", 
+    "lat": "34.2100", 
+    "lng": "-5.7000", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "75672", 
+    "population_proper": "75672"
+  }, 
+  {
+    "name": "Tiznit", 
+    "lat": "29.7000", 
+    "lng": "-9.7269", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "74699", 
+    "population_proper": "74699"
+  }, 
+  {
+    "name": "Moulay Abdallah", 
+    "lat": "33.1978", 
+    "lng": "-8.5883", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "74671", 
+    "population_proper": "74671"
+  }, 
+  {
+    "name": "Tan-Tan", 
+    "lat": "28.4333", 
+    "lng": "-11.1000", 
+    
+    "country_id":146 ,
+    "admin_name": "Guelmim-Oued Noun", 
+   
+    "population": "73209", 
+    "population_proper": "73209"
+  }, 
+  {
+    "name": "Warzat", 
+    "lat": "30.9167", 
+    "lng": "-6.9167", 
+    
+    "country_id":146 ,
+    "admin_name": "Drâa-Tafilalet", 
+   
+    "population": "71067", 
+    "population_proper": "71067"
+  }, 
+  {
+    "name": "Youssoufia", 
+    "lat": "32.2500", 
+    "lng": "-8.5300", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "67628", 
+    "population_proper": "67628"
+  }, 
+  {
+    "name": "Sa’ada", 
+    "lat": "31.6258", 
+    "lng": "-8.1028", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "67086", 
+    "population_proper": "67086"
+  }, 
+  {
+    "name": "Martil", 
+    "lat": "35.6100", 
+    "lng": "-5.2700", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "64355", 
+    "population_proper": "64355"
+  }, 
+  {
+    "name": "Aïn Harrouda", 
+    "lat": "33.6372", 
+    "lng": "-7.4483", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "62420", 
+    "population_proper": "62420"
+  }, 
+  {
+    "name": "Skhirate", 
+    "lat": "33.8500", 
+    "lng": "-7.0300", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "59775", 
+    "population_proper": "59775"
+  }, 
+  {
+    "name": "Ouezzane", 
+    "lat": "34.8000", 
+    "lng": "-5.6000", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "59606", 
+    "population_proper": "59606"
+  }, 
+  {
+    "name": "Sidi Yahya Zaer", 
+    "lat": "33.8261", 
+    "lng": "-6.9039", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "57790", 
+    "population_proper": "57790"
+  }, 
+  {
+    "name": "Benslimane", 
+    "lat": "33.6122", 
+    "lng": "-7.1211", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "57101", 
+    "population_proper": "57101"
+  }, 
+  {
+    "name": "Al Hoceïma", 
+    "lat": "35.2472", 
+    "lng": "-3.9322", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "56716", 
+    "population_proper": "56716"
+  }, 
+  {
+    "name": "Beni Enzar", 
+    "lat": "35.2569", 
+    "lng": "-2.9342", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "56582", 
+    "population_proper": "56582"
+  }, 
+  {
+    "name": "M’diq", 
+    "lat": "35.6857", 
+    "lng": "-5.3251", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "56227", 
+    "population_proper": "56227"
+  }, 
+  {
+    "name": "Sidi Bennour", 
+    "lat": "32.6550", 
+    "lng": "-8.4292", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "55815", 
+    "population_proper": "55815"
+  }, 
+  {
+    "name": "Midalt", 
+    "lat": "32.6800", 
+    "lng": "-4.7400", 
+    
+    "country_id":146 ,
+    "admin_name": "Drâa-Tafilalet", 
+   
+    "population": "55304", 
+    "population_proper": "55304"
+  }, 
+  {
+    "name": "Azrou", 
+    "lat": "33.4300", 
+    "lng": "-5.2100", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "54350", 
+    "population_proper": "54350"
+  }, 
+  {
+    "name": "Ain El Aouda", 
+    "lat": "33.8111", 
+    "lng": "-6.7922", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "49816", 
+    "population_proper": "49816"
+  }, 
+  {
+    "name": "Beni Yakhlef", 
+    "lat": "33.6681", 
+    "lng": "-7.2514", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "48338", 
+    "population_proper": "48338"
+  }, 
+  {
+    "name": "Semara", 
+    "lat": "26.7333", 
+    "lng": "-11.6833", 
+    
+    "country_id":146 ,
+    "admin_name": "", 
+   
+    "population": "48149", 
+    "population_proper": "48149"
+  }, 
+  {
+    "name": "Ad Darwa", 
+    "lat": "33.4167", 
+    "lng": "-7.5333", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "47719", 
+    "population_proper": "47719"
+  }, 
+  {
+    "name": "Al Aaroui", 
+    "lat": "35.0104", 
+    "lng": "-3.0073", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "47599", 
+    "population_proper": "47599"
+  }, 
+  {
+    "name": "Qasbat Tadla", 
+    "lat": "32.6000", 
+    "lng": "-6.2600", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "47343", 
+    "population_proper": "47343"
+  }, 
+  {
+    "name": "Boujad", 
+    "lat": "32.7600", 
+    "lng": "-6.4000", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "46893", 
+    "population_proper": "46893"
+  }, 
+  {
+    "name": "Jerada", 
+    "lat": "34.3100", 
+    "lng": "-2.1600", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "43506", 
+    "population_proper": "43506"
+  }, 
+  {
+    "name": "Chefchaouene", 
+    "lat": "35.1714", 
+    "lng": "-5.2697", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "42786", 
+    "population_proper": "42786"
+  }, 
+  {
+    "name": "Mrirt", 
+    "lat": "33.1667", 
+    "lng": "-5.5667", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "42730", 
+    "population_proper": "42730"
+  }, 
+  {
+    "name": "Sidi Mohamed Lahmar", 
+    "lat": "34.7167", 
+    "lng": "-6.2667", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "42637", 
+    "population_proper": "42637"
+  }, 
+  {
+    "name": "Tineghir", 
+    "lat": "31.5147", 
+    "lng": "-5.5328", 
+    
+    "country_id":146 ,
+    "admin_name": "Drâa-Tafilalet", 
+   
+    "population": "42044", 
+    "population_proper": "42044"
+  }, 
+  {
+    "name": "El Aïoun", 
+    "lat": "34.5853", 
+    "lng": "-2.5056", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "41832", 
+    "population_proper": "41832"
+  }, 
+  {
+    "name": "Azemmour", 
+    "lat": "33.2833", 
+    "lng": "-8.3333", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "40920", 
+    "population_proper": "40920"
+  }, 
+  {
+    "name": "Temsia", 
+    "lat": "30.3633", 
+    "lng": "-9.4144", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "40780", 
+    "population_proper": "40780"
+  }, 
+  {
+    "name": "Zoumi", 
+    "lat": "34.8032", 
+    "lng": "-5.3446", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "40661", 
+    "population_proper": "40661"
+  }, 
+  {
+    "name": "Laouamra", 
+    "lat": "35.0656", 
+    "lng": "-6.0939", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "40605", 
+    "population_proper": "40605"
+  }, 
+  {
+    "name": "Zagora", 
+    "lat": "30.3316", 
+    "lng": "-5.8376", 
+    
+    "country_id":146 ,
+    "admin_name": "Drâa-Tafilalet", 
+   
+    "population": "40067", 
+    "population_proper": "40067"
+  }, 
+  {
+    "name": "Ait Ourir", 
+    "lat": "31.5644", 
+    "lng": "-7.6628", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "39108", 
+    "population_proper": "39108"
+  }, 
+  {
+    "name": "Sidi Bibi", 
+    "lat": "30.2333", 
+    "lng": "-9.5333", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "39042", 
+    "population_proper": "39042"
+  }, 
+  {
+    "name": "Aziylal", 
+    "lat": "31.9600", 
+    "lng": "-6.5600", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "38520", 
+    "population_proper": "38520"
+  }, 
+  {
+    "name": "Sidi Yahia El Gharb", 
+    "lat": "34.3058", 
+    "lng": "-6.3058", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "37979", 
+    "population_proper": "37979"
+  }, 
+  {
+    "name": "Biougra", 
+    "lat": "30.2144", 
+    "lng": "-9.3708", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "37933", 
+    "population_proper": "37933"
+  }, 
+  {
+    "name": "Taounate", 
+    "lat": "34.5358", 
+    "lng": "-4.6400", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "37616", 
+    "population_proper": "37616"
+  }, 
+  {
+    "name": "Bouznika", 
+    "lat": "33.7894", 
+    "lng": "-7.1597", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "37238", 
+    "population_proper": "37238"
+  }, 
+  {
+    "name": "Aourir", 
+    "lat": "30.4833", 
+    "lng": "-9.6333", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "36948", 
+    "population_proper": "36948"
+  }, 
+  {
+    "name": "Zaïo", 
+    "lat": "34.9396", 
+    "lng": "-2.7334", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "35806", 
+    "population_proper": "35806"
+  }, 
+  {
+    "name": "Aguelmous", 
+    "lat": "33.1500", 
+    "lng": "-5.8333", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "35626", 
+    "population_proper": "35626"
+  }, 
+  {
+    "name": "El Hajeb", 
+    "lat": "33.6928", 
+    "lng": "-5.3711", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "35282", 
+    "population_proper": "35282"
+  }, 
+  {
+    "name": "Mnasra", 
+    "lat": "34.7667", 
+    "lng": "-5.5167", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "34429", 
+    "population_proper": "34429"
+  }, 
+  {
+    "name": "Mediouna", 
+    "lat": "33.4500", 
+    "lng": "-7.5100", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "34250", 
+    "population_proper": "34250"
+  }, 
+  {
+    "name": "Zeghanghane", 
+    "lat": "35.1575", 
+    "lng": "-3.0017", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "34025", 
+    "population_proper": "34025"
+  }, 
+  {
+    "name": "Imzouren", 
+    "lat": "35.1448", 
+    "lng": "-3.8505", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "33852", 
+    "population_proper": "33852"
+  }, 
+  {
+    "name": "Loudaya", 
+    "lat": "31.6507", 
+    "lng": "-8.3021", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "33767", 
+    "population_proper": "33767"
+  }, 
+  {
+    "name": "Oulad Zemam", 
+    "lat": "32.3500", 
+    "lng": "-6.6333", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "33652", 
+    "population_proper": "33652"
+  }, 
+  {
+    "name": "Bou Ahmed", 
+    "lat": "33.1119", 
+    "lng": "-7.4058", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "33105", 
+    "population_proper": "33105"
+  }, 
+  {
+    "name": "Tit Mellil", 
+    "lat": "33.5581", 
+    "lng": "-7.4858", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "32782", 
+    "population_proper": "32782"
+  }, 
+  {
+    "name": "Arbaoua", 
+    "lat": "34.9000", 
+    "lng": "-5.9167", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "32690", 
+    "population_proper": "32690"
+  }, 
+  {
+    "name": "Douar Oulad Hssine", 
+    "lat": "33.0681", 
+    "lng": "-8.5108", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "32130", 
+    "population_proper": "32130"
+  }, 
+  {
+    "name": "Bahharet Oulad Ayyad", 
+    "lat": "34.7703", 
+    "lng": "-6.3047", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "31860", 
+    "population_proper": "31860"
+  }, 
+  {
+    "name": "Mechraa Bel Ksiri", 
+    "lat": "34.5787", 
+    "lng": "-5.9630", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "31497", 
+    "population_proper": "31497"
+  }, 
+  {
+    "name": "Mograne", 
+    "lat": "34.4167", 
+    "lng": "-6.4333", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "31292", 
+    "population_proper": "31292"
+  }, 
+  {
+    "name": "Dar Ould Zidouh", 
+    "lat": "32.3167", 
+    "lng": "-6.9000", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "31170", 
+    "population_proper": "31170"
+  }, 
+  {
+    "name": "Asilah", 
+    "lat": "35.4667", 
+    "lng": "-6.0333", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "31147", 
+    "population_proper": "31147"
+  }, 
+  {
+    "name": "Demnat", 
+    "lat": "31.7311", 
+    "lng": "-7.0361", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "29504", 
+    "population_proper": "29504"
+  }, 
+  {
+    "name": "Lalla Mimouna", 
+    "lat": "34.8500", 
+    "lng": "-6.0669", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "29479", 
+    "population_proper": "29479"
+  }, 
+  {
+    "name": "Fritissa", 
+    "lat": "33.6167", 
+    "lng": "-3.5500", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "29460", 
+    "population_proper": "29460"
+  }, 
+  {
+    "name": "Arfoud", 
+    "lat": "31.4361", 
+    "lng": "-4.2328", 
+    
+    "country_id":146 ,
+    "admin_name": "Drâa-Tafilalet", 
+   
+    "population": "29279", 
+    "population_proper": "29279"
+  }, 
+  {
+    "name": "Tameslouht", 
+    "lat": "31.5000", 
+    "lng": "-8.1000", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "28978", 
+    "population_proper": "28978"
+  }, 
+  {
+    "name": "Bou Arfa", 
+    "lat": "32.5310", 
+    "lng": "-1.9631", 
+    
+    "country_id":146 ,
+    "admin_name": "Oriental", 
+   
+    "population": "28846", 
+    "population_proper": "28846"
+  }, 
+  {
+    "name": "Sidi Smai’il", 
+    "lat": "32.8167", 
+    "lng": "-8.5000", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "28733", 
+    "population_proper": "28733"
+  }, 
+  {
+    "name": "Taza", 
+    "lat": "35.0639", 
+    "lng": "-5.2025", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "28713", 
+    "population_proper": "28713"
+  }, 
+  {
+    "name": "Souk et Tnine Jorf el Mellah", 
+    "lat": "34.4833", 
+    "lng": "-5.5169", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "28681", 
+    "population_proper": "28681"
+  }, 
+  {
+    "name": "Mehdya", 
+    "lat": "34.2557", 
+    "lng": "-6.6745", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "28636", 
+    "population_proper": "28636"
+  }, 
+  {
+    "name": "Oulad Hammou", 
+    "lat": "33.2500", 
+    "lng": "-8.3347", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "28449", 
+    "population_proper": "28449"
+  }, 
+  {
+    "name": "Douar Oulad Aj-jabri", 
+    "lat": "32.2567", 
+    "lng": "-6.7839", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "28438", 
+    "population_proper": "28438"
+  }, 
+  {
+    "name": "Aïn Taoujdat", 
+    "lat": "33.9333", 
+    "lng": "-5.2167", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "28288", 
+    "population_proper": "28288"
+  }, 
+  {
+    "name": "Dar Bel Hamri", 
+    "lat": "34.1889", 
+    "lng": "-5.9697", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "28156", 
+    "population_proper": "28156"
+  }, 
+  {
+    "name": "Chichaoua", 
+    "lat": "31.5333", 
+    "lng": "-8.7667", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "27869", 
+    "population_proper": "27869"
+  }, 
+  {
+    "name": "Tahla", 
+    "lat": "34.0476", 
+    "lng": "-4.4289", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "27729", 
+    "population_proper": "27729"
+  }, 
+  {
+    "name": "Bellaa", 
+    "lat": "30.0314", 
+    "lng": "-9.5542", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "27699", 
+    "population_proper": "27699"
+  }, 
+  {
+    "name": "Oulad Yaïch", 
+    "lat": "32.4167", 
+    "lng": "-6.3333", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "27476", 
+    "population_proper": "27476"
+  }, 
+  {
+    "name": "Ksebia", 
+    "lat": "34.2933", 
+    "lng": "-6.1594", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "27059", 
+    "population_proper": "27059"
+  }, 
+  {
+    "name": "Tamorot", 
+    "lat": "34.9333", 
+    "lng": "-4.7833", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "26748", 
+    "population_proper": "26748"
+  }, 
+  {
+    "name": "Moulay Bousselham", 
+    "lat": "34.8786", 
+    "lng": "-6.2933", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "26608", 
+    "population_proper": "26608"
+  }, 
+  {
+    "name": "Sabaa Aiyoun", 
+    "lat": "33.8969", 
+    "lng": "-5.3611", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "26277", 
+    "population_proper": "26277"
+  }, 
+  {
+    "name": "Bourdoud", 
+    "lat": "34.5922", 
+    "lng": "-4.5492", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "26236", 
+    "population_proper": "26236"
+  }, 
+  {
+    "name": "Aït Faska", 
+    "lat": "31.5058", 
+    "lng": "-7.7161", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "26210", 
+    "population_proper": "26210"
+  }, 
+  {
+    "name": "Boureït", 
+    "lat": "34.9833", 
+    "lng": "-4.9167", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "25872", 
+    "population_proper": "25872"
+  }, 
+  {
+    "name": "Lamzoudia", 
+    "lat": "31.5833", 
+    "lng": "-8.4833", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "25674", 
+    "population_proper": "25674"
+  }, 
+  {
+    "name": "Oulad Said", 
+    "lat": "32.6320", 
+    "lng": "-8.8456", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "25650", 
+    "population_proper": "25650"
+  }, 
+  {
+    "name": "Missour", 
+    "lat": "33.0500", 
+    "lng": "-3.9908", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "25584", 
+    "population_proper": "25584"
+  }, 
+  {
+    "name": "Ain Aicha", 
+    "lat": "34.4833", 
+    "lng": "-4.7000", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "25417", 
+    "population_proper": "25417"
+  }, 
+  {
+    "name": "Zawyat ech Cheïkh", 
+    "lat": "32.6541", 
+    "lng": "-5.9214", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "25388", 
+    "population_proper": "25388"
+  }, 
+  {
+    "name": "Bouknadel", 
+    "lat": "34.1245", 
+    "lng": "-6.7480", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "25255", 
+    "population_proper": "25255"
+  }, 
+  {
+    "name": "El Ghiate", 
+    "lat": "32.0331", 
+    "lng": "-9.1625", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "25162", 
+    "population_proper": "25162"
+  }, 
+  {
+    "name": "Safsaf", 
+    "lat": "34.5581", 
+    "lng": "-6.0078", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "25075", 
+    "population_proper": "25075"
+  }, 
+  {
+    "name": "Ouaoula", 
+    "lat": "31.8667", 
+    "lng": "-6.7500", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "24790", 
+    "population_proper": "24790"
+  }, 
+  {
+    "name": "Douar Olad. Salem", 
+    "lat": "32.8739", 
+    "lng": "-8.8589", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "24775", 
+    "population_proper": "24775"
+  }, 
+  {
+    "name": "Oulad Tayeb", 
+    "lat": "33.9598", 
+    "lng": "-4.9954", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "24594", 
+    "population_proper": "24594"
+  }, 
+  {
+    "name": "Echemmaia Est", 
+    "lat": "32.0705", 
+    "lng": "-8.6532", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "24303", 
+    "population_proper": "24303"
+  }, 
+  {
+    "name": "Oulad Barhil", 
+    "lat": "30.6388", 
+    "lng": "-8.4732", 
+    
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+   
+    "population": "24288", 
+    "population_proper": "24288"
+  }, 
+  {
+    "name": "Douar ’Ayn Dfali", 
+    "lat": "33.9500", 
+    "lng": "-4.4500", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "24241", 
+    "population_proper": "24241"
+  }, 
+  {
+    "name": "Setti Fatma", 
+    "lat": "31.2256", 
+    "lng": "-7.6758", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "24129", 
+    "population_proper": "24129"
+  }, 
+  {
+    "name": "Skoura", 
+    "lat": "31.0672", 
+    "lng": "-6.5397", 
+    
+    "country_id":146 ,
+    "admin_name": "Drâa-Tafilalet", 
+   
+    "population": "24055", 
+    "population_proper": "24055"
+  }, 
+  {
+    "name": "Douar Ouled Ayad", 
+    "lat": "32.4167", 
+    "lng": "-7.1000", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "23818", 
+    "population_proper": "23818"
+  }, 
+  {
+    "name": "Zawyat an Nwaçer", 
+    "lat": "33.3611", 
+    "lng": "-7.6114", 
+    
+    "country_id":146 ,
+    "admin_name": "Casablanca-Settat", 
+   
+    "population": "23802", 
+    "population_proper": "23802"
+  }, 
+  {
+    "name": "Khenichet-sur Ouerrha", 
+    "lat": "34.4383", 
+    "lng": "-5.6844", 
+    
+    "country_id":146 ,
+    "admin_name": "Rabat-Salé-Kénitra", 
+   
+    "population": "23707", 
+    "population_proper": "23707"
+  }, 
+  {
+    "name": "Ayt Mohamed", 
+    "lat": "32.5667", 
+    "lng": "-6.9833", 
+    
+    "country_id":146 ,
+    "admin_name": "Béni Mellal-Khénifra", 
+   
+    "population": "23696", 
+    "population_proper": "23696"
+  }, 
+  {
+    "name": "Gueznaia", 
+    "lat": "35.7200", 
+    "lng": "-5.8940", 
+    
+    "country_id":146 ,
+    "admin_name": "Tanger-Tétouan-Al Hoceïma", 
+   
+    "population": "23601", 
+    "population_proper": "23601"
+  }, 
+  {
+    "name": "Oulad Hassoune", 
+    "lat": "31.6503", 
+    "lng": "-7.8361", 
+    
+    "country_id":146 ,
+    "admin_name": "Marrakech-Safi", 
+   
+    "population": "23475", 
+    "population_proper": "23475"
+  }, 
+  {
+    "name": "Bni Frassen", 
+    "lat": "34.3819", 
+    "lng": "-4.3761", 
+    
+    "country_id":146 ,
+    "admin_name": "Fès-Meknès", 
+   
+    "population": "23429", 
+    "population_proper": "23429"
+  }, 
+  {
+    "name": "Tifariti", 
+    "lat": "26.0928", 
+    "lng": "-10.6089", 
+    
+    "country_id":146 ,
+    "admin_name": "", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Zawit Al Bour", 
+    "lat": "30.6748", 
+    "lng": "-8.1742", 
+    "country_id":146 ,
+    "admin_name": "Souss-Massa", 
+    "population": "", 
+    "population_proper": ""
+  }
+]

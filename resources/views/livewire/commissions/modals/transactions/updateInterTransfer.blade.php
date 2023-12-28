@@ -1,0 +1,542 @@
+<div wire:ignore.self id="update-interTransfers-modal" class="modal hide overflow-y-auto" data-tw-backdrop="static"
+    style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000; display: block;">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header alert alert-primary ">
+                <h2 class="font-medium text-base mr-auto">Valider demande internationnale</h2>
+            </div>
+            <a wire:click="$emit('modal-hide-inters')"
+                style="position: absolute; right: 0px; top: 0px; margin-top: 0.75rem; margin-right: 0.75rem;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="x" style="color: white;"
+                    data-lucide="x" class="lucide lucide-x w-8 h-8 text-slate-400">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </a>
+
+            {{-- @if (!is_null($choose_type_paiement)) --}}
+
+
+            @if ($choose_type_paiement == 1)
+                {{-- Canal du paiement mooney --}}
+              
+                <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Transfers d'argent
+                </div>
+                <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
+                    <div class="col-span-6">
+                        <label for="provider_phone_credit_inter_edit" class="form-label">Canal transfers d'argent
+                            <span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="provider_phone_credit_inter_edit" disabled
+                            id="number_phone_credit_edit" type="text" class="form-control style_edit_form"
+                            placeholder="Numero de telephone">
+                    </div>
+                    <div class="col-span-6">
+                        <label for="number_phone_credit_inter_edit" class="form-label">Numero<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="number_phone_credit_inter_edit" disabled id="number_phone_credit_edit"
+                            type="text" class="form-control style_edit_form" placeholder="Numero de telephone">
+
+                    </div>
+                </div>
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                    <div class="col-span-6 mt-space-padding">
+                        <label for="amount_virement_inter_edit" class="form-label">Montant<span class="text-danger">
+                                *</span></label>
+                        <div class="flex">
+                            <input wire:model.defer="amount_virement_inter_edit" disabled
+                                id="amount_virement_inter_edit" type="number"
+                                class="form-control text-base font-medium" placeholder="Montant">
+                            <div
+                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
+                                <input wire:model.defer="devise_user" disabled id="devise_user" type="text"
+                                    class="form-control style_edit_form" placeholder="Numero de telephone">
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="col-span-6  mt-space-padding">
+                        <label for="country_inter_robus_inter_edit" class="form-label">Pays<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="country_inter_robus_inter_edit" disabled
+                            id="country_inter_robus_inter_edit" type="text"
+                            class="form-control text-base font-medium" placeholder="Pays">
+
+                    </div>
+                </div>
+            @elseif($choose_type_paiement == 5)
+                {{-- Canal du paiement de facture --}}
+                
+                <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Paiement facture
+                </div>
+                <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-1">
+                    <div class="col-span-12">
+                        <label for="provider_phone_credit_inter_edit" class="form-label">Canal paiement facture
+                            <span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="provider_phone_credit_inter_edit" disabled
+                            id="number_phone_credit_edit" type="text" class="form-control style_edit_form"
+                            placeholder="Numero de telephone">
+                    </div>
+
+
+                </div>
+                @if ($provider_inter_edit == 52)
+                    @if (!is_null($paiementChoix_phone_edit))
+
+                        @if ($paiementChoix_phone_edit == 1)
+                            <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
+                                <div class="col-span-6  mt-space-padding">
+                                    <label for="offer_paiement_edit" class="form-label">Offre<span class="text-danger">
+                                            *</span></label>
+                                    <input wire:model.defer="offer_paiement_edit" disabled id="offer_paiement_edit"
+                                        type="text" class="form-control style_edit_form"
+                                        placeholder="Numero de telephone">
+                                </div>
+                                <div class="col-span-6  mt-space-padding">
+                                    <label for="paiement_phone_canal_edit" class="form-label">Numero du
+                                        telephone(10
+                                        chiffres)<span class="text-danger">
+                                            *</span></label>
+                                    <input wire:model.defer="paiement_phone_canal_edit" disabled
+                                        id="paiement_phone_canal_edit" type="text"
+                                        class="form-control style_edit_form" placeholder="Numero de telephone">
+
+                                </div>
+                            </div>
+                        @elseif ($paiementChoix_phone_edit == 2)
+                            <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
+                                <div class="col-span-6  mt-space-padding">
+                                    <label for="offer_paiement_edit" class="form-label">Offre<span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <input wire:model.defer="offer_paiement_edit" disabled id="offer_paiement_edit"
+                                        type="text" class="form-control style_edit_form"
+                                        placeholder="Numero de telephone">
+                                </div>
+                                <div class="col-span-6  mt-space-padding">
+                                    <label for="paiement_decoder_canal_edit" class="form-label">Numero du
+                                        telephone(10
+                                        chiffres)<span class="text-danger">
+                                            *</span></label>
+                                    <input wire:model.defer="paiement_decoder_canal_edit" disabled
+                                        id="paiement_decoder_canal_edit" type="text"
+                                        class="form-control style_edit_form" placeholder="Numero de telephone">
+
+                                </div>
+
+                            </div>
+                        @endif
+
+                        <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+
+                            <div class="col-span-6 mt-space-padding">
+                                <label for="amount_virement_inter_edit" class="form-label">Montant<span
+                                        class="text-danger">
+                                        *</span></label>
+                                <div class="flex">
+                                    <input wire:model.defer="amount_virement_inter_edit" disabled
+                                        id="amount_virement_inter_edit" type="number"
+                                        class="form-control text-base font-medium" placeholder="Montant">
+                                    <div
+                                        class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
+                                        <input wire:model.defer="devise_user" disabled id="devise_user"
+                                            type="text" class="form-control style_edit_form"
+                                            placeholder="Numero de telephone">
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="col-span-6  mt-space-padding">
+                                <label for="country_inter_robus_inter_edit" class="form-label">Pays<span
+                                        class="text-danger">
+                                        *</span></label>
+                                <input wire:model.defer="country_inter_robus_inter_edit" disabled
+                                    id="country_inter_robus_inter_edit" type="text"
+                                    class="form-control text-base font-medium" placeholder="Pays">
+
+                            </div>
+                        </div>
+
+                    @endif
+
+                @endif
+                @if ($provider_inter_edit == 53)
+
+                    @if (!is_null($facture_choix_type_edit))
+                        @if ($facture_choix_type_edit == 1)
+                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
+                                <div class="col-span-6">
+                                    <label for="paiement_name_cie_edit" class="form-label">Nom de la facture<span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <input wire:model.defer="paiement_name_cie_edit" disabled
+                                        id="paiement_name_cie_edit" type="text"
+                                        class="form-control style_edit_form" placeholder="Nom facture">
+
+                                </div>
+                                <div class="col-span-6">
+                                    <label for="paiement_id_invoice_edit" class="form-label">Identifiant
+                                        facture(11
+                                        chiffres)<span class="text-danger">
+                                            *</span></label>
+                                    <input wire:model.defer="paiement_id_invoice_edit" disabled
+                                        id="paiement_id_invoice_edit" type="text"
+                                        class="form-control style_edit_form" placeholder="Identifiant">
+
+                                </div>
+                            </div>
+                        @elseif ($facture_choix_type_edit == 2)
+                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
+                                <div class="col-span-6 mt-space-padding">
+                                    <label for="paiement_name_cie_edit" class="form-label">Nom de la facture<span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <input wire:model.defer="paiement_name_cie_edit" disabled
+                                        id="paiement_name_cie_edit" type="text"
+                                        class="form-control style_edit_form" placeholder="Nom facture">
+
+                                </div>
+                                <div class="col-span-6 mt-space-padding">
+                                    <label for="paiement_id_invoice_edit" class="form-label">Identifiant
+                                        facture(09
+                                        chiffres)<span class="text-danger">
+                                            *</span></label>
+                                    <input wire:model.defer="paiement_id_invoice_edit" disabled
+                                        id="paiement_id_invoice_edit" type="text"
+                                        class="form-control style_edit_form" placeholder="Identifiant">
+
+                                </div>
+                            </div>
+                        @endif
+
+                        <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                            <div class="col-span-6 mt-space-padding">
+                                <label for="amount_virement_inter_edit" class="form-label">Montant<span
+                                        class="text-danger">
+                                        *</span></label>
+                                <div class="flex">
+                                    <input wire:model.defer="amount_virement_inter_edit" disabled
+                                        id="amount_virement_inter_edit" type="number"
+                                        class="form-control text-base font-medium" placeholder="Montant">
+                                    <div
+                                        class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
+                                        <input wire:model.defer="devise_user" disabled id="devise_user"
+                                            type="text" class="form-control style_edit_form"
+                                            placeholder="Numero de telephone">
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="col-span-6  mt-space-padding">
+                                <label for="country_inter_robus_inter_edit" class="form-label">Pays<span
+                                        class="text-danger">
+                                        *</span></label>
+                                <input wire:model.defer="country_inter_robus_inter_edit" disabled
+                                    id="country_inter_robus_inter_edit" type="text"
+                                    class="form-control text-base font-medium" placeholder="Pays">
+
+                            </div>
+                        </div>
+
+                    @endif
+
+                @endif
+                @if ($provider_inter_edit == 54)
+                    <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
+                        <div class="col-span-6">
+                            <label for="paiement_name_cie_edit" class="form-label">Nom de la facture<span
+                                    class="text-danger">
+                                    *</span></label>
+                            <input wire:model.defer="paiement_name_cie_edit" disabled id="paiement_name_cie_edit"
+                                type="text" class="form-control style_edit_form" placeholder="Nom facture">
+
+                        </div>
+                        <div class="col-span-6">
+                            <label for="paiement_num_contrat_edit" class="form-label">Numero du contrat<span
+                                    class="text-danger">
+                                    *</span></label>
+                            <input wire:model.defer="paiement_num_contrat_edit" disabled
+                                id="paiement_num_contrat_edit" type="text" class="form-control style_edit_form"
+                                placeholder="Identifiant">
+
+                        </div>
+                    </div>
+                    <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                        <div class="col-span-6 mt-space-padding">
+                            <label for="amount_virement_inter_edit" class="form-label">Montant<span
+                                    class="text-danger">
+                                    *</span></label>
+                            <div class="flex">
+                                <input wire:model.defer="amount_virement_inter_edit" disabled
+                                    id="amount_virement_inter_edit" type="number"
+                                    class="form-control text-base font-medium" placeholder="Montant">
+                                <div
+                                    class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
+                                    <input wire:model.defer="devise_user" disabled id="devise_user" type="text"
+                                        class="form-control style_edit_form" placeholder="Numero de telephone">
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <div class="col-span-6  mt-space-padding">
+                            <label for="country_inter_robus_inter_edit" class="form-label">Pays<span
+                                    class="text-danger">
+                                    *</span></label>
+                            <input wire:model.defer="country_inter_robus_inter_edit" disabled
+                                id="country_inter_robus_inter_edit" type="text"
+                                class="form-control text-base font-medium" placeholder="Pays">
+
+                        </div>
+                    </div>
+                @endif
+            @elseif($choose_type_paiement == 6)
+                {{-- Canal du paiement de credit --}}
+              
+                <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Credit telephonique
+                </div>
+                <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
+                    <div class="col-span-6">
+                        <label for="provider_phone_credit_inter_edit" class="form-label">Canal credit
+                            telephonique<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="provider_phone_credit_inter_edit" disabled
+                            id="number_phone_credit_edit" type="text" class="form-control style_edit_form"
+                            placeholder="Numero de telephone">
+                    </div>
+                    <div class="col-span-6">
+                        <label for="number_phone_credit_inter_edit" class="form-label">Numero<span
+                                class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="number_phone_credit_inter_edit" disabled
+                            id="number_phone_credit_edit" type="text" class="form-control style_edit_form"
+                            placeholder="Numero de telephone">
+
+                    </div>
+                </div>
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                    <div class="col-span-6 mt-space-padding">
+                        <label for="amount_phone_credit_inter_edit" class="form-label">Montant<span
+                                class="text-danger">
+                                *</span></label>
+                        <div class="flex">
+                            <input wire:model.defer="amount_phone_credit_inter_edit" disabled
+                                id="amount_phone_credit_inter_edit" type="number"
+                                class="form-control text-base font-medium" placeholder="Montant">
+                            <div
+                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
+                                <input wire:model.defer="devise_user" disabled id="devise_user" type="text"
+                                    class="form-control style_edit_form" placeholder="Numero de telephone">
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="col-span-6  mt-space-padding">
+                        <label for="country_inter_robus_inter_edit" class="form-label">Pays<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="country_inter_robus_inter_edit" disabled
+                            id="country_inter_robus_inter_edit" type="text"
+                            class="form-control text-base font-medium" placeholder="Pays">
+
+                    </div>
+                </div>
+               
+            @elseif($choose_type_paiement == 7)
+                {{-- Canal du versement bancaire --}}
+                <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Versement bancaire
+                </div>
+                <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
+                    <div class="col-span-6">
+                        <label for="provider_phone_credit_inter_edit" class="form-label">Canal credit
+                            telephonique<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="provider_phone_credit_inter_edit" disabled
+                            id="number_phone_credit_edit" type="text" class="form-control style_edit_form"
+                            placeholder="Numero de telephone">
+                    </div>
+                    <div class="col-span-6">
+                        <label for="number_phone_credit_inter_edit" class="form-label">Numero<span
+                                class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="number_phone_credit_inter_edit" disabled
+                            id="number_phone_credit_edit" type="text" class="form-control style_edit_form"
+                            placeholder="Numero de telephone">
+
+                    </div>
+                </div>
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+
+                    <div class="col-span-6 mt-space-padding">
+                        <label for="amount_virement_inter_edit" class="form-label">Montant<span class="text-danger">
+                                *</span></label>
+                        <div class="flex">
+                            <input wire:model.defer="amount_virement_inter_edit" disabled
+                                id="amount_virement_inter_edit" type="number"
+                                class="form-control text-base font-medium" placeholder="Montant">
+                            <div
+                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
+                                <input wire:model.defer="devise_user" disabled id="devise_user" type="text"
+                                    class="form-control style_edit_form" placeholder="Numero de telephone">
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="col-span-6  mt-space-padding">
+                        <label for="country_inter_robus_inter_edit" class="form-label">Pays<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="country_inter_robus_inter_edit" disabled
+                            id="country_inter_robus_inter_edit" type="text"
+                            class="form-control text-base font-medium" placeholder="Pays">
+
+                    </div>
+                </div>
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+
+                    <div class="col-span-6  mt-space-padding">
+                        <label for="firstname_user_inter_edit" class="form-label">Nom et prenom<span
+                                class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="firstname_user_inter_edit" disabled id="firstname_user_inter_edit"
+                            type="text" class="form-control text-base font-medium" placeholder="Pays">
+
+                    </div>
+                    <div class="col-span-6  mt-space-padding">
+                        <label for="account_number_user_bank_inter_edit" class="form-label">Numero compte<span
+                                class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="account_number_user_bank_inter_edit" disabled
+                            id="account_number_user_bank_inter_edit" type="text"
+                            class="form-control text-base font-medium">
+
+                    </div>
+                </div>
+           
+            @elseif($choose_type_paiement == 8)
+                {{-- Canal de rechargement de carte --}}
+            
+                <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Rechargment carte
+                </div>
+                <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
+                    <div class="col-span-6">
+                        <label for="provider_phone_credit_inter_edit" class="form-label">Canal rechargement de carte
+                            <span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="provider_phone_credit_inter_edit" disabled
+                            id="number_phone_credit_edit" type="text" class="form-control style_edit_form"
+                            placeholder="Numero de telephone">
+                    </div>
+                    <div class="col-span-6">
+                        <label for="phone_user_auth_inter_edit" class="form-label">Numero<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="phone_user_auth_inter_edit" disabled id="number_phone_credit_edit"
+                            type="text" class="form-control style_edit_form" placeholder="Numero de telephone">
+
+                    </div>
+                </div>
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+
+                    <div class="col-span-6 mt-space-padding">
+                        <label for="amount_virement_inter_edit" class="form-label">Montant<span class="text-danger">
+                                *</span></label>
+                        <div class="flex">
+                            <input wire:model.defer="amount_virement_inter_edit" disabled
+                                id="amount_virement_inter_edit" type="number"
+                                class="form-control text-base font-medium" placeholder="Montant">
+                            <div
+                                class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
+                                <input wire:model.defer="devise_user" disabled id="devise_user" type="text"
+                                    class="form-control style_edit_form" placeholder="Numero de telephone">
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="col-span-6  mt-space-padding">
+                        <label for="country_inter_robus_inter_edit" class="form-label">Pays<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="country_inter_robus_inter_edit" disabled
+                            id="country_inter_robus_inter_edit" type="text"
+                            class="form-control text-base font-medium" placeholder="Pays">
+
+                    </div>
+                </div>
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+
+                    <div class="col-span-6  mt-space-padding">
+                        <label for="name_relo_user_inter_edit" class="form-label">Nom et prenom<span
+                                class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="name_relo_user_inter_edit" disabled id="name_relo_user_inter_edit"
+                            type="text" class="form-control text-base font-medium" placeholder="Pays">
+
+                    </div>
+                    <div class="col-span-6  mt-space-padding">
+                        <label for="account_number_user_bank_inter_edit" class="form-label">Numero compte<span
+                                class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="account_number_user_bank_inter_edit" disabled
+                            id="account_number_user_bank_inter_edit" type="text"
+                            class="form-control text-base font-medium">
+
+                    </div>
+                </div>
+              
+            @endif
+
+            <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
+                <div class="col-span-12 mt-space">
+                    <label for="inter_description_robus" class="form-label">Commentaire</label>
+                    <textarea wire:model="inter_description_robus" id="inter_description_robus" type="text" class="form-control"
+                        cols="13" rows="3">
+                    </textarea>
+
+                </div>
+            </div>
+            <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
+
+                <div
+                    class=" col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
+                    <input  wire:click="$emit('modal-inter-validted-show' , 'validated-inter-modal')" wire:model="interStatus" id="bordered-radio-50" type="radio"
+                        value="SUCCESS"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label for="bordered-radio-50"
+                        class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Accepté</label>
+                    @error('interStatus')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div
+                    class="col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
+                    <input wire:click="$emit('modal-inter-validted-show' , 'validated-inter-modal')" wire:model="interStatus" id="bordered-radio-51" type="radio"
+                        value="ERROR"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label for="bordered-radio-51"
+                        class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Refusé</label>
+                    @error('interStatus')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
+                    <input wire:click="$emit('modal-inter-validted-show' , 'validated-inter-modal')" wire:model="interStatus" id="bordered-radio-52" type="radio"
+                        value="REFUND"
+                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label for="bordered-radio-52"
+                        class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Remboursé</label>
+                    @error('interStatus')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+@include('livewire.commissions.modals.validated_inter')

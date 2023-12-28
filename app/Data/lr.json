@@ -1,0 +1,211 @@
+[
+  {
+    "name": "Monrovia", 
+    "lat": "6.3133", 
+    "lng": "-10.8014", 
+              "country_id":122,  
+   
+    "admin_name": "Montserrado", 
+    
+    "population": "1021762", 
+    "population_proper": "1021762"
+  }, 
+  {
+    "name": "New Kru Town", 
+    "lat": "6.3733", 
+    "lng": "-10.7928", 
+              "country_id":122,  
+   
+    "admin_name": "Montserrado", 
+    
+    "population": "84399", 
+    "population_proper": "84399"
+  }, 
+  {
+    "name": "Upper Buchanan", 
+    "lat": "5.9161", 
+    "lng": "-10.0525", 
+              "country_id":122,  
+   
+    "admin_name": "Grand Bassa", 
+    
+    "population": "48315", 
+    "population_proper": "48315"
+  }, 
+  {
+    "name": "Gbarnga", 
+    "lat": "6.9980", 
+    "lng": "-9.4730", 
+              "country_id":122,  
+   
+    "admin_name": "Bong", 
+    
+    "population": "45835", 
+    "population_proper": "34046"
+  }, 
+  {
+    "name": "Ganta", 
+    "lat": "7.2375", 
+    "lng": "-8.9814", 
+              "country_id":122,  
+   
+    "admin_name": "Nimba", 
+    
+    "population": "41106", 
+    "population_proper": "41106"
+  }, 
+  {
+    "name": "Buchanan", 
+    "lat": "5.8808", 
+    "lng": "-10.0467", 
+              "country_id":122,  
+   
+    "admin_name": "Grand Bassa", 
+    
+    "population": "34270", 
+    "population_proper": "34270"
+  }, 
+  {
+    "name": "Kakata", 
+    "lat": "6.5300", 
+    "lng": "-10.3517", 
+              "country_id":122,  
+   
+    "admin_name": "Margibi", 
+    
+    "population": "33945", 
+    "population_proper": "33945"
+  }, 
+  {
+    "name": "Harper", 
+    "lat": "4.3667", 
+    "lng": "-7.7167", 
+              "country_id":122,  
+   
+    "admin_name": "Maryland", 
+    
+    "population": "32661", 
+    "population_proper": "17837"
+  }, 
+  {
+    "name": "Voinjama", 
+    "lat": "8.4167", 
+    "lng": "-9.7500", 
+              "country_id":122,  
+   
+    "admin_name": "Lofa", 
+    
+    "population": "26594", 
+    "population_proper": "26594"
+  }, 
+  {
+    "name": "Zwedru", 
+    "lat": "6.0667", 
+    "lng": "-8.1333", 
+              "country_id":122,  
+   
+    "admin_name": "Grand Gedeh", 
+    
+    "population": "25678", 
+    "population_proper": "23903"
+  }, 
+  {
+    "name": "Greenville", 
+    "lat": "5.0167", 
+    "lng": "-9.0333", 
+              "country_id":122,  
+   
+    "admin_name": "Sinoe", 
+    
+    "population": "16434", 
+    "population_proper": "16434"
+  }, 
+  {
+    "name": "Tubmanburg", 
+    "lat": "6.8667", 
+    "lng": "-10.8167", 
+              "country_id":122,  
+   
+    "admin_name": "Bomi", 
+    
+    "population": "13114", 
+    "population_proper": "13114"
+  }, 
+  {
+    "name": "Robertsport", 
+    "lat": "6.7500", 
+    "lng": "-11.3667", 
+              "country_id":122,  
+   
+    "admin_name": "Grand Cape Mount", 
+    
+    "population": "11969", 
+    "population_proper": "3933"
+  }, 
+  {
+    "name": "Sanniquellie", 
+    "lat": "7.3622", 
+    "lng": "-8.7061", 
+              "country_id":122,  
+   
+    "admin_name": "Nimba", 
+    
+    "population": "11415", 
+    "population_proper": "11415"
+  }, 
+  {
+    "name": "Bensonville", 
+    "lat": "6.4456", 
+    "lng": "-10.6097", 
+              "country_id":122,  
+   
+    "admin_name": "Montserrado", 
+    
+    "population": "4089", 
+    "population_proper": "4089"
+  }, 
+  {
+    "name": "Fish Town", 
+    "lat": "5.1964", 
+    "lng": "-7.8756", 
+              "country_id":122,  
+   
+    "admin_name": "River Gee", 
+    
+    "population": "3328", 
+    "population_proper": "3328"
+  }, 
+  {
+    "name": "Bopolu", 
+    "lat": "7.0667", 
+    "lng": "-10.4875", 
+              "country_id":122,  
+   
+    "admin_name": "Gbarpolu", 
+    
+    "population": "2908", 
+    "population_proper": "2908"
+  }, 
+  {
+    "name": "Barclayville", 
+    "lat": "4.6797", 
+    "lng": "-8.2339", 
+              "country_id":122,  
+   
+    "admin_name": "Grand Kru", 
+    
+    "population": "2733", 
+    "population_proper": "2733"
+  }, 
+  {
+    "name": "Cestos name", 
+    "lat": "5.4667", 
+    "lng": "-9.5833", 
+              "country_id":122,  
+   
+    "admin_name": "River Cess", 
+    
+    "population": "2578", 
+    "population_proper": "2578"
+  }
+]

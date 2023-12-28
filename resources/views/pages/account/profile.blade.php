@@ -1,0 +1,181 @@
+    @extends('layouts.master')
+
+    @section('title', 'Compte')
+
+    @section('content')
+
+    <div class="grid grid-cols-12 gap-6 mt-10">
+
+        <div class="intro-y col-span-12 lg:col-span-2">
+            <!-- BEGIN: Form Validation -->
+            <div class="intro-y box">
+
+            </div>
+            <!-- END: Form Validation -->
+        </div>
+
+
+        <div class="intro-y col-span-12 lg:col-span-8">
+            <!-- BEGIN: Form Validation -->
+            <div class="intro-y box">
+                <!-- BEGIN: Profile Info -->
+                <div class="intro-y box px-5 pt-5 mt-5">
+                    <div class="intro-y  items-center mt-3">
+                        <h2 class="text-lg font-medium mr-auto">
+                            Information du profil
+                        </h2>
+                    </div>
+
+            <form class="validate-form pt-50" method="POST" action="{{ route('account.update') }}"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <div class="flex flex-col lg:flex-row border-b border-slate-200/60 dark:border-darkmode-400 pb-5 -mx-5">
+                        <div class="flex flex-1 px-5 items-center justify-center lg:justify-start">
+                            <div class="w-20 h-20 sm:w-24 sm:h-24 flex-none lg:w-32 lg:h-32 image-fit relative">
+                                <img alt="" class="rounded-full"
+                                src="{{Auth::user()->image ?? asset('public/dist/images/profile-6.jpg') }}" alt="image" id="profileImage">
+                                <div class="mx-auto cursor-pointer relative mt-5">
+                                    <input id="imageUpload" type="file" name="image" placeholder="Photo" capture style="display: none" accept="image/png, image/jpeg">
+                                    @error('image')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                                {{-- <img alt="" class="rounded-full"
+                                    src="{{Auth::user()->image ?? asset('public/dist/images/profile-6.jpgg') }}">
+                                <input type="file" id="image" name="image"
+                                    class="w-full h-full top-0 left-0 absolute opacity-0">
+                                @error('image')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                                @enderror --}}
+                            </div>
+                            <div class="ml-5">
+                                <div class="w-24 sm:w-40 truncate sm:whitespace-normal font-medium text-lg">
+                                    {{ Auth::user()->firstname }} {{ Auth::user()->lastname }}
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            class="mt-6 lg:mt-0 flex-1 px-5 border-l border-r border-slate-200/60 dark:border-darkmode-400 border-t lg:border-t-0 pt-5 lg:pt-0">
+                            <div class="font-medium text-center lg:text-left lg:mt-3">Details</div>
+                            <div class="flex flex-col justify-center items-center lg:items-start mt-4">
+                                <div class="truncate sm:whitespace-normal flex items-center"> <i data-feather="mail"
+                                        class="w-4 h-4 mr-2"></i> {{ Auth::user()->email }} </div>
+                                <div class="truncate sm:whitespace-normal flex items-center mt-3"> <i
+                                        data-feather="instagram" class="w-4 h-4 mr-2"></i> {{ Auth::user()->phone }} </div>
+                            </div>
+                        </div>
+                    </div>
+                    @include('components.account-nav')
+                </div>
+                <!-- END: Profile Info -->
+            </div>
+            <!-- END: Form Validation -->
+
+            <div class="tab-content mt-2">
+                <div id="profile" class="tab-pane active" role="tabpanel" aria-labelledby="profile-tab">
+                    <div class="grid grid-cols-12 gap-6">
+                        <!-- BEGIN: Latest Uploads -->
+                        <div class="intro-y box col-span-12">
+                            <div class="p-5">
+
+                                    <div class="crud-form-1 mt-3">
+                                        <label class="form-label" for="firstname">Prénom(s)</label>
+                                        <input type="text" class="form-control @error('firstname') is-invalid @enderror"
+                                            id="firstname" name="firstname" placeholder="" required
+                                            value="{{ Auth::user()->firstname }}" />
+                                        @error('firstname')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="crud-form-1 mt-3">
+                                        <label class="form-label" for="firstname">Nom</label>
+                                        <input type="text" class="form-control @error('lastname') is-invalid @enderror"
+                                            id="lastname" name="lastname" placeholder="" required
+                                            value="{{Auth::user()->lastname }}" />
+                                        @error('lastname')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="crud-form-1 mt-3">
+                                        <label class="form-label" for="phone">Numéro de téléphone <span
+                                                id="valid_phone"></span></label>
+                                        <input type="text" class="form-control @error('phone') is-invalid @enderror"
+                                            id="phone" name="phone" placeholder="" required value="{{ Auth::user()->phone }}" />
+                                        @error('phone')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+                                    <div class="crud-form-1 mt-3">
+                                        <label class="form-label" for="email">Email</label>
+                                        <input type="email" class="form-control @error('email') is-invalid @enderror"
+                                            id="email" name="email" placeholder="" required value="{{ Auth::user()->email }}" />
+                                        @error('email')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                        @enderror
+                                    </div>
+
+                                    <div class="crud-form-1 intro-y mt-3">
+                                        <label class="control-label">Rôle</label>
+                                        <select name="roles[]" class="form-control tagging" multiple="multiple">
+                                            @foreach($roles as $role)
+                                                <option @if($user->get_role()->contains('id', $role->id)) selected="selected" @endif value="{{ $role->id }}">{{ $role->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="crud-form-1 intro-y mt-3">
+                                        <label class="form-label" for="country">Pays </label>
+                                        <select required id="country_id" name="country_id" class="select2 form-select @error('country_id') is-invalid @enderror">
+                                            <option disabled selected>-</option>
+                                            @foreach ($countries as $countrie)
+                                                <option value="{{ $countrie->id }}" @if ($countrie->id === Auth::user()->country_id) selected @endif value="{{ $countrie->id }}">{{ $countrie->name }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('country_id')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-12 mt-3">
+                                        <button type="submit" class="btn btn-primary mt-1 me-1">Mettre à jour</button>
+                                    </div>
+                            </div>
+                            </form>
+                            <!--/ form -->
+                        </div>
+                    </div>
+                    <!-- END: Latest Uploads -->
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="intro-y col-span-12 lg:col-span-2">
+        <!-- BEGIN: Form Validation -->
+        <div class="intro-y box">
+
+        </div>
+        <!-- END: Form Validation -->
+    </div>
+    </div>
+
+    @endsection
+
+    @push('scripts')
+
+    @endpush

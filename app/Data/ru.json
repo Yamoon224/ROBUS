@@ -1,0 +1,2587 @@
+[
+  {
+    "name": "Moscow", 
+    "lat": "55.7558", 
+    "lng": "37.6178", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskva", 
+    
+    "population": "17332000", 
+    "population_proper": "13200000"
+  }, 
+  {
+    "name": "Saint Petersburg", 
+    "lat": "59.9500", 
+    "lng": "30.3167", 
+    "country_id":179 ,
+    
+    "admin_name": "Sankt-Peterburg", 
+    
+    "population": "5384342", 
+    "population_proper": "5384342"
+  }, 
+  {
+    "name": "Novosibirsk", 
+    "lat": "55.0333", 
+    "lng": "82.9167", 
+    "country_id":179 ,
+    
+    "admin_name": "Novosibirskaya Oblast’", 
+    
+    "population": "1625631", 
+    "population_proper": "1625631"
+  }, 
+  {
+    "name": "Yekaterinburg", 
+    "lat": "56.8356", 
+    "lng": "60.6128", 
+    "country_id":179 ,
+    
+    "admin_name": "Sverdlovskaya Oblast’", 
+    
+    "population": "1468833", 
+    "population_proper": "1468833"
+  }, 
+  {
+    "name": "Nizhniy Novgorod", 
+    "lat": "56.3269", 
+    "lng": "44.0075", 
+    "country_id":179 ,
+    
+    "admin_name": "Nizhegorodskaya Oblast’", 
+    
+    "population": "1264075", 
+    "population_proper": "1252236"
+  }, 
+  {
+    "name": "Kazan", 
+    "lat": "55.7964", 
+    "lng": "49.1089", 
+    "country_id":179 ,
+    
+    "admin_name": "Tatarstan", 
+    
+    "population": "1243500", 
+    "population_proper": "1243500"
+  }, 
+  {
+    "name": "Chelyabinsk", 
+    "lat": "55.1500", 
+    "lng": "61.4000", 
+    "country_id":179 ,
+    
+    "admin_name": "Chelyabinskaya Oblast’", 
+    
+    "population": "1202371", 
+    "population_proper": "1196680"
+  }, 
+  {
+    "name": "Omsk", 
+    "lat": "54.9667", 
+    "lng": "73.3833", 
+    "country_id":179 ,
+    
+    "admin_name": "Omskaya Oblast’", 
+    
+    "population": "1178391", 
+    "population_proper": "1172070"
+  }, 
+  {
+    "name": "Samara", 
+    "lat": "53.2028", 
+    "lng": "50.1408", 
+    "country_id":179 ,
+    
+    "admin_name": "Samarskaya Oblast’", 
+    
+    "population": "1169719", 
+    "population_proper": "1169719"
+  }, 
+  {
+    "name": "Rostov", 
+    "lat": "47.2333", 
+    "lng": "39.7000", 
+    "country_id":179 ,
+    
+    "admin_name": "Rostovskaya Oblast’", 
+    
+    "population": "1137704", 
+    "population_proper": "1137704"
+  }, 
+  {
+    "name": "Ufa", 
+    "lat": "54.7261", 
+    "lng": "55.9475", 
+    "country_id":179 ,
+    
+    "admin_name": "Bashkortostan", 
+    
+    "population": "1115560", 
+    "population_proper": "1115560"
+  }, 
+  {
+    "name": "Krasnoyarsk", 
+    "lat": "56.0089", 
+    "lng": "92.8719", 
+    "country_id":179 ,
+    
+    "admin_name": "Krasnoyarskiy Kray", 
+    
+    "population": "1083865", 
+    "population_proper": "1083865"
+  }, 
+  {
+    "name": "Voronezh", 
+    "lat": "51.6717", 
+    "lng": "39.2106", 
+    "country_id":179 ,
+    
+    "admin_name": "Voronezhskaya Oblast’", 
+    
+    "population": "1050602", 
+    "population_proper": "1050602"
+  }, 
+  {
+    "name": "Perm", 
+    "lat": "58.0139", 
+    "lng": "56.2489", 
+    "country_id":179 ,
+    
+    "admin_name": "Permskiy Kray", 
+    
+    "population": "1048005", 
+    "population_proper": "1048005"
+  }, 
+  {
+    "name": "Volgograd", 
+    "lat": "48.7086", 
+    "lng": "44.5147", 
+    "country_id":179 ,
+    
+    "admin_name": "Volgogradskaya Oblast’", 
+    
+    "population": "1015586", 
+    "population_proper": "1004763"
+  }, 
+  {
+    "name": "Krasnodar", 
+    "lat": "45.0333", 
+    "lng": "38.9667", 
+    "country_id":179 ,
+    
+    "admin_name": "Krasnodarskiy Kray", 
+    
+    "population": "948827", 
+    "population_proper": "948827"
+  }, 
+  {
+    "name": "Saratov", 
+    "lat": "51.5333", 
+    "lng": "46.0167", 
+    "country_id":179 ,
+    
+    "admin_name": "Saratovskaya Oblast’", 
+    
+    "population": "845300", 
+    "population_proper": "845300"
+  }, 
+  {
+    "name": "Tyumen", 
+    "lat": "57.1500", 
+    "lng": "65.5333", 
+    "country_id":179 ,
+    
+    "admin_name": "Tyumenskaya Oblast’", 
+    
+    "population": "744554", 
+    "population_proper": "744554"
+  }, 
+  {
+    "name": "Tolyatti", 
+    "lat": "53.5089", 
+    "lng": "49.4222", 
+    "country_id":179 ,
+    
+    "admin_name": "Samarskaya Oblast’", 
+   
+    "population": "693072", 
+    "population_proper": "685619"
+  }, 
+  {
+    "name": "Izhevsk", 
+    "lat": "56.8500", 
+    "lng": "53.2167", 
+    "country_id":179 ,
+    
+    "admin_name": "Udmurtiya", 
+    
+    "population": "646277", 
+    "population_proper": "646277"
+  }, 
+  {
+    "name": "Barnaul", 
+    "lat": "53.3333", 
+    "lng": "83.7500", 
+    "country_id":179 ,
+    
+    "admin_name": "Altayskiy Kray", 
+    
+    "population": "633301", 
+    "population_proper": "631124"
+  }, 
+  {
+    "name": "Ulyanovsk", 
+    "lat": "54.3167", 
+    "lng": "48.3667", 
+    "country_id":179 ,
+    
+    "admin_name": "Ul’yanovskaya Oblast’", 
+    
+    "population": "624518", 
+    "population_proper": "624518"
+  }, 
+  {
+    "name": "Irkutsk", 
+    "lat": "52.2833", 
+    "lng": "104.2833", 
+    "country_id":179 ,
+    
+    "admin_name": "Irkutskaya Oblast’", 
+    
+    "population": "623736", 
+    "population_proper": "623736"
+  }, 
+  {
+    "name": "Khabarovsk", 
+    "lat": "48.4833", 
+    "lng": "135.0667", 
+    "country_id":179 ,
+    
+    "admin_name": "Khabarovskiy Kray", 
+    
+    "population": "616242", 
+    "population_proper": "616242"
+  }, 
+  {
+    "name": "Yaroslavl", 
+    "lat": "57.6167", 
+    "lng": "39.8500", 
+    "country_id":179 ,
+    
+    "admin_name": "Yaroslavskaya Oblast’", 
+    
+    "population": "608079", 
+    "population_proper": "601403"
+  }, 
+  {
+    "name": "Vladivostok", 
+    "lat": "43.1793", 
+    "lng": "131.9000", 
+    "country_id":179 ,
+    
+    "admin_name": "Primorskiy Kray", 
+    
+    "population": "606589", 
+    "population_proper": "606589"
+  }, 
+  {
+    "name": "Makhachkala", 
+    "lat": "42.9833", 
+    "lng": "47.4833", 
+    "country_id":179 ,
+    
+    "admin_name": "Dagestan", 
+    
+    "population": "592976", 
+    "population_proper": "592976"
+  }, 
+  {
+    "name": "Tomsk", 
+    "lat": "56.4886", 
+    "lng": "84.9522", 
+    "country_id":179 ,
+    
+    "admin_name": "Tomskaya Oblast’", 
+    
+    "population": "572740", 
+    "population_proper": "572740"
+  }, 
+  {
+    "name": "Orenburg", 
+    "lat": "51.7667", 
+    "lng": "55.1000", 
+    "country_id":179 ,
+    
+    "admin_name": "Orenburgskaya Oblast’", 
+    
+    "population": "564773", 
+    "population_proper": "564773"
+  }, 
+  {
+    "name": "Kemerovo", 
+    "lat": "55.3667", 
+    "lng": "86.0667", 
+    "country_id":179 ,
+    
+    "admin_name": "Kemerovskaya Oblast’", 
+    
+    "population": "558973", 
+    "population_proper": "558973"
+  }, 
+  {
+    "name": "Novokuznetsk", 
+    "lat": "53.7667", 
+    "lng": "87.1793", 
+    "country_id":179 ,
+    
+    "admin_name": "Kemerovskaya Oblast’", 
+   
+    "population": "552105", 
+    "population_proper": "552105"
+  }, 
+  {
+    "name": "Ryazan", 
+    "lat": "54.6300", 
+    "lng": "39.7425", 
+    "country_id":179 ,
+    
+    "admin_name": "Ryazanskaya Oblast’", 
+    
+    "population": "537622", 
+    "population_proper": "537622"
+  }, 
+  {
+    "name": "Naberezhnyye Chelny", 
+    "lat": "55.7000", 
+    "lng": "52.3333", 
+    "country_id":179 ,
+    
+    "admin_name": "Tatarstan", 
+   
+    "population": "533839", 
+    "population_proper": "533839"
+  }, 
+  {
+    "name": "Astrakhan", 
+    "lat": "46.3500", 
+    "lng": "48.0350", 
+    "country_id":179 ,
+    
+    "admin_name": "Astrakhanskaya Oblast’", 
+    
+    "population": "532504", 
+    "population_proper": "524371"
+  }, 
+  {
+    "name": "Penza", 
+    "lat": "53.2000", 
+    "lng": "45.0000", 
+    "country_id":179 ,
+    
+    "admin_name": "Penzenskaya Oblast’", 
+    
+    "population": "523726", 
+    "population_proper": "523726"
+  }, 
+  {
+    "name": "Lipetsk", 
+    "lat": "52.6167", 
+    "lng": "39.6000", 
+    "country_id":179 ,
+    
+    "admin_name": "Lipetskaya Oblast’", 
+    
+    "population": "510439", 
+    "population_proper": "503216"
+  }, 
+  {
+    "name": "Kirov", 
+    "lat": "58.6000", 
+    "lng": "49.6500", 
+    "country_id":179 ,
+    
+    "admin_name": "Kirovskaya Oblast’", 
+    
+    "population": "501468", 
+    "population_proper": "501468"
+  }, 
+  {
+    "name": "Cheboksary", 
+    "lat": "56.1793", 
+    "lng": "47.2500", 
+    "country_id":179 ,
+    
+    "admin_name": "Chuvashiya", 
+    
+    "population": "489498", 
+    "population_proper": "489498"
+  }, 
+  {
+    "name": "Tula", 
+    "lat": "54.2000", 
+    "lng": "37.6167", 
+    "country_id":179 ,
+    
+    "admin_name": "Tul’skaya Oblast’", 
+    
+    "population": "485221", 
+    "population_proper": "467955"
+  }, 
+  {
+    "name": "Kaliningrad", 
+    "lat": "54.7003", 
+    "lng": "20.4531", 
+    "country_id":179 ,
+    
+    "admin_name": "Kaliningradskaya Oblast’", 
+    
+    "population": "475056", 
+    "population_proper": "475056"
+  }, 
+  {
+    "name": "Balashikha", 
+    "lat": "55.8167", 
+    "lng": "37.9667", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "468221", 
+    "population_proper": "468221"
+  }, 
+  {
+    "name": "Kursk", 
+    "lat": "51.7167", 
+    "lng": "36.1833", 
+    "country_id":179 ,
+    
+    "admin_name": "Kurskaya Oblast’", 
+    
+    "population": "450977", 
+    "population_proper": "450977"
+  }, 
+  {
+    "name": "Stavropol", 
+    "lat": "45.0500", 
+    "lng": "41.9833", 
+    "country_id":179 ,
+    
+    "admin_name": "Stavropol’skiy Kray", 
+    
+    "population": "450680", 
+    "population_proper": "450680"
+  }, 
+  {
+    "name": "Ulan-Ude", 
+    "lat": "51.8272", 
+    "lng": "107.6064", 
+    "country_id":179 ,
+    
+    "admin_name": "Buryatiya", 
+    
+    "population": "439128", 
+    "population_proper": "439128"
+  }, 
+  {
+    "name": "Tver", 
+    "lat": "56.8578", 
+    "lng": "35.9219", 
+    "country_id":179 ,
+    
+    "admin_name": "Tverskaya Oblast’", 
+    
+    "population": "424969", 
+    "population_proper": "424969"
+  }, 
+  {
+    "name": "Magnitogorsk", 
+    "lat": "53.3833", 
+    "lng": "59.0333", 
+    "country_id":179 ,
+    
+    "admin_name": "Chelyabinskaya Oblast’", 
+   
+    "population": "418241", 
+    "population_proper": "418241"
+  }, 
+  {
+    "name": "Sochi", 
+    "lat": "43.5853", 
+    "lng": "39.7203", 
+    "country_id":179 ,
+    
+    "admin_name": "Krasnodarskiy Kray", 
+   
+    "population": "411524", 
+    "population_proper": "411524"
+  }, 
+  {
+    "name": "Ivanovo", 
+    "lat": "57.0000", 
+    "lng": "41.0000", 
+    "country_id":179 ,
+    
+    "admin_name": "Ivanovskaya Oblast’", 
+    
+    "population": "406933", 
+    "population_proper": "401505"
+  }, 
+  {
+    "name": "Bryansk", 
+    "lat": "53.2500", 
+    "lng": "34.3667", 
+    "country_id":179 ,
+    
+    "admin_name": "Bryanskaya Oblast’", 
+    
+    "population": "406553", 
+    "population_proper": "399579"
+  }, 
+  {
+    "name": "Surgut", 
+    "lat": "61.2500", 
+    "lng": "73.4333", 
+    "country_id":179 ,
+    
+    "admin_name": "Khanty-Mansiyskiy Avtonomnyy Okrug-Yugra", 
+   
+    "population": "395900", 
+    "population_proper": "395900"
+  }, 
+  {
+    "name": "Belgorod", 
+    "lat": "50.6000", 
+    "lng": "36.6000", 
+    "country_id":179 ,
+    
+    "admin_name": "Belgorodskaya Oblast’", 
+    
+    "population": "391702", 
+    "population_proper": "391702"
+  }, 
+  {
+    "name": "Vladimir", 
+    "lat": "56.1286", 
+    "lng": "40.4058", 
+    "country_id":179 ,
+    
+    "admin_name": "Vladimirskaya Oblast’", 
+    
+    "population": "356168", 
+    "population_proper": "352347"
+  }, 
+  {
+    "name": "Nizhniy Tagil", 
+    "lat": "57.9167", 
+    "lng": "59.9667", 
+    "country_id":179 ,
+    
+    "admin_name": "Sverdlovskaya Oblast’", 
+   
+    "population": "355693", 
+    "population_proper": "353950"
+  }, 
+  {
+    "name": "Arkhangelsk", 
+    "lat": "64.5500", 
+    "lng": "40.5333", 
+    "country_id":179 ,
+    
+    "admin_name": "Arkhangel’skaya Oblast’", 
+    
+    "population": "351488", 
+    "population_proper": "351488"
+  }, 
+  {
+    "name": "Chita", 
+    "lat": "52.0333", 
+    "lng": "113.5000", 
+    "country_id":179 ,
+    
+    "admin_name": "Zabaykal’skiy Kray", 
+    
+    "population": "347088", 
+    "population_proper": "347088"
+  }, 
+  {
+    "name": "Kaluga", 
+    "lat": "54.5333", 
+    "lng": "36.2667", 
+    "country_id":179 ,
+    
+    "admin_name": "Kaluzhskaya Oblast’", 
+    
+    "population": "341892", 
+    "population_proper": "331842"
+  }, 
+  {
+    "name": "Smolensk", 
+    "lat": "54.7828", 
+    "lng": "32.0453", 
+    "country_id":179 ,
+    
+    "admin_name": "Smolenskaya Oblast’", 
+    
+    "population": "329853", 
+    "population_proper": "320170"
+  }, 
+  {
+    "name": "Volzhskiy", 
+    "lat": "48.8056", 
+    "lng": "44.7417", 
+    "country_id":179 ,
+    
+    "admin_name": "Volgogradskaya Oblast’", 
+   
+    "population": "326055", 
+    "population_proper": "326055"
+  }, 
+  {
+    "name": "Cherepovets", 
+    "lat": "59.1167", 
+    "lng": "37.9000", 
+    "country_id":179 ,
+    
+    "admin_name": "Vologodskaya Oblast’", 
+   
+    "population": "318856", 
+    "population_proper": "317970"
+  }, 
+  {
+    "name": "Saransk", 
+    "lat": "54.1833", 
+    "lng": "45.1833", 
+    "country_id":179 ,
+    
+    "admin_name": "Mordoviya", 
+    
+    "population": "318841", 
+    "population_proper": "318841"
+  }, 
+  {
+    "name": "Vologda", 
+    "lat": "59.2167", 
+    "lng": "39.9000", 
+    "country_id":179 ,
+    
+    "admin_name": "Vologodskaya Oblast’", 
+    
+    "population": "313012", 
+    "population_proper": "312420"
+  }, 
+  {
+    "name": "Yakutsk", 
+    "lat": "62.0272", 
+    "lng": "129.7319", 
+    "country_id":179 ,
+    
+    "admin_name": "Sakha (Yakutiya)", 
+    
+    "population": "311760", 
+    "population_proper": "311760"
+  }, 
+  {
+    "name": "Orël", 
+    "lat": "52.9686", 
+    "lng": "36.0694", 
+    "country_id":179 ,
+    
+    "admin_name": "Orlovskaya Oblast’", 
+    
+    "population": "311625", 
+    "population_proper": "303696"
+  }, 
+  {
+    "name": "Kurgan", 
+    "lat": "55.4408", 
+    "lng": "65.3411", 
+    "country_id":179 ,
+    
+    "admin_name": "Kurganskaya Oblast’", 
+    
+    "population": "309285", 
+    "population_proper": "309285"
+  }, 
+  {
+    "name": "Vladikavkaz", 
+    "lat": "43.0400", 
+    "lng": "44.6775", 
+    "country_id":179 ,
+    
+    "admin_name": "North Ossetia", 
+    
+    "population": "306978", 
+    "population_proper": "306978"
+  }, 
+  {
+    "name": "Podolsk", 
+    "lat": "55.4311", 
+    "lng": "37.5456", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "299660", 
+    "population_proper": "299660"
+  }, 
+  {
+    "name": "Murmansk", 
+    "lat": "68.9706", 
+    "lng": "33.0750", 
+    "country_id":179 ,
+    
+    "admin_name": "Murmanskaya Oblast’", 
+    
+    "population": "298096", 
+    "population_proper": "292465"
+  }, 
+  {
+    "name": "Groznyy", 
+    "lat": "43.3125", 
+    "lng": "45.6986", 
+    "country_id":179 ,
+    
+    "admin_name": "Chechnya", 
+    
+    "population": "291687", 
+    "population_proper": "291687"
+  }, 
+  {
+    "name": "Tambov", 
+    "lat": "52.7167", 
+    "lng": "41.4333", 
+    "country_id":179 ,
+    
+    "admin_name": "Tambovskaya Oblast’", 
+    
+    "population": "290365", 
+    "population_proper": "289701"
+  }, 
+  {
+    "name": "Sterlitamak", 
+    "lat": "53.6333", 
+    "lng": "55.9500", 
+    "country_id":179 ,
+    
+    "admin_name": "Bashkortostan", 
+   
+    "population": "280233", 
+    "population_proper": "280233"
+  }, 
+  {
+    "name": "Nizhnevartovsk", 
+    "lat": "60.9500", 
+    "lng": "76.6000", 
+    "country_id":179 ,
+    
+    "admin_name": "Khanty-Mansiyskiy Avtonomnyy Okrug-Yugra", 
+   
+    "population": "278725", 
+    "population_proper": "278725"
+  }, 
+  {
+    "name": "Petrozavodsk", 
+    "lat": "61.7833", 
+    "lng": "34.3500", 
+    "country_id":179 ,
+    
+    "admin_name": "Kareliya", 
+    
+    "population": "278551", 
+    "population_proper": "278551"
+  }, 
+  {
+    "name": "Kostroma", 
+    "lat": "57.7681", 
+    "lng": "40.9269", 
+    "country_id":179 ,
+    
+    "admin_name": "Kostromskaya Oblast’", 
+    
+    "population": "277648", 
+    "population_proper": "277393"
+  }, 
+  {
+    "name": "Novorossiysk", 
+    "lat": "44.7167", 
+    "lng": "37.7500", 
+    "country_id":179 ,
+    
+    "admin_name": "Krasnodarskiy Kray", 
+   
+    "population": "273278", 
+    "population_proper": "273278"
+  }, 
+  {
+    "name": "Yoshkar-Ola", 
+    "lat": "56.6328", 
+    "lng": "47.8958", 
+    "country_id":179 ,
+    
+    "admin_name": "Mariy-El", 
+    
+    "population": "266675", 
+    "population_proper": "266675"
+  }, 
+  {
+    "name": "Nalchik", 
+    "lat": "43.4833", 
+    "lng": "43.6167", 
+    "country_id":179 ,
+    
+    "admin_name": "Kabardino-Balkariya", 
+    
+    "population": "265162", 
+    "population_proper": "265162"
+  }, 
+  {
+    "name": "Engels", 
+    "lat": "51.5017", 
+    "lng": "46.1222", 
+    "country_id":179 ,
+    
+    "admin_name": "Saratovskaya Oblast’", 
+   
+    "population": "264990", 
+    "population_proper": "264990"
+  }, 
+  {
+    "name": "Khimki", 
+    "lat": "55.8892", 
+    "lng": "37.4450", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskva", 
+   
+    "population": "254171", 
+    "population_proper": "254171"
+  }, 
+  {
+    "name": "Taganrog", 
+    "lat": "47.2167", 
+    "lng": "38.9167", 
+    "country_id":179 ,
+    
+    "admin_name": "Rostovskaya Oblast’", 
+   
+    "population": "250287", 
+    "population_proper": "250287"
+  }, 
+  {
+    "name": "Komsomol’sk-na-Amure", 
+    "lat": "50.5667", 
+    "lng": "137.0000", 
+    "country_id":179 ,
+    
+    "admin_name": "Khabarovskiy Kray", 
+    
+    "population": "249810", 
+    "population_proper": "249810"
+  }, 
+  {
+    "name": "Syktyvkar", 
+    "lat": "61.6667", 
+    "lng": "50.8167", 
+    "country_id":179 ,
+    
+    "admin_name": "Komi", 
+    
+    "population": "245313", 
+    "population_proper": "245313"
+  }, 
+  {
+    "name": "Nizhnekamsk", 
+    "lat": "55.6333", 
+    "lng": "51.8167", 
+    "country_id":179 ,
+    
+    "admin_name": "Tatarstan", 
+   
+    "population": "237250", 
+    "population_proper": "237250"
+  }, 
+  {
+    "name": "Shakhty", 
+    "lat": "47.7000", 
+    "lng": "40.2333", 
+    "country_id":179 ,
+    
+    "admin_name": "Rostovskaya Oblast’", 
+   
+    "population": "235492", 
+    "population_proper": "235492"
+  }, 
+  {
+    "name": "Dzerzhinsk", 
+    "lat": "56.2333", 
+    "lng": "43.4500", 
+    "country_id":179 ,
+    
+    "admin_name": "Nizhegorodskaya Oblast’", 
+   
+    "population": "231797", 
+    "population_proper": "230639"
+  }, 
+  {
+    "name": "Bratsk", 
+    "lat": "56.1167", 
+    "lng": "101.6000", 
+    "country_id":179 ,
+    
+    "admin_name": "Irkutskaya Oblast’", 
+   
+    "population": "231602", 
+    "population_proper": "231602"
+  }, 
+  {
+    "name": "Orsk", 
+    "lat": "51.2000", 
+    "lng": "58.5667", 
+    "country_id":179 ,
+    
+    "admin_name": "Orenburgskaya Oblast’", 
+   
+    "population": "230414", 
+    "population_proper": "229255"
+  }, 
+  {
+    "name": "Noginsk", 
+    "lat": "64.4833", 
+    "lng": "91.2333", 
+    "country_id":179 ,
+    
+    "admin_name": "Krasnoyarskiy Kray", 
+   
+    "population": "229731", 
+    "population_proper": "229731"
+  }, 
+  {
+    "name": "Angarsk", 
+    "lat": "52.5500", 
+    "lng": "103.9000", 
+    "country_id":179 ,
+    
+    "admin_name": "Irkutskaya Oblast’", 
+   
+    "population": "226374", 
+    "population_proper": "222855"
+  }, 
+  {
+    "name": "Kolpino", 
+    "lat": "59.7333", 
+    "lng": "30.6000", 
+    "country_id":179 ,
+    
+    "admin_name": "Sankt-Peterburg", 
+   
+    "population": "225801", 
+    "population_proper": "225801"
+  }, 
+  {
+    "name": "Blagoveshchensk", 
+    "lat": "50.2578", 
+    "lng": "127.5364", 
+    "country_id":179 ,
+    
+    "admin_name": "Amurskaya Oblast’", 
+    
+    "population": "224419", 
+    "population_proper": "224419"
+  }, 
+  {
+    "name": "Staryy Oskol", 
+    "lat": "51.2981", 
+    "lng": "37.8350", 
+    "country_id":179 ,
+    
+    "admin_name": "Belgorodskaya Oblast’", 
+   
+    "population": "223360", 
+    "population_proper": "223360"
+  }, 
+  {
+    "name": "Velikiy Novgorod", 
+    "lat": "58.5210", 
+    "lng": "31.2758", 
+    "country_id":179 ,
+    
+    "admin_name": "Novgorodskaya Oblast’", 
+    
+    "population": "222594", 
+    "population_proper": "222594"
+  }, 
+  {
+    "name": "Korolëv", 
+    "lat": "55.9167", 
+    "lng": "37.8167", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "221797", 
+    "population_proper": "221797"
+  }, 
+  {
+    "name": "Mytishchi", 
+    "lat": "55.9167", 
+    "lng": "37.7667", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "211606", 
+    "population_proper": "211606"
+  }, 
+  {
+    "name": "Pskov", 
+    "lat": "57.8167", 
+    "lng": "28.3333", 
+    "country_id":179 ,
+    
+    "admin_name": "Pskovskaya Oblast’", 
+    
+    "population": "209840", 
+    "population_proper": "209840"
+  }, 
+  {
+    "name": "Lyubertsy", 
+    "lat": "55.6783", 
+    "lng": "37.8944", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "207349", 
+    "population_proper": "207349"
+  }, 
+  {
+    "name": "Biysk", 
+    "lat": "52.5333", 
+    "lng": "85.2167", 
+    "country_id":179 ,
+    
+    "admin_name": "Altayskiy Kray", 
+   
+    "population": "203108", 
+    "population_proper": "200629"
+  }, 
+  {
+    "name": "Prokopyevsk", 
+    "lat": "53.8833", 
+    "lng": "86.7167", 
+    "country_id":179 ,
+    
+    "admin_name": "Kemerovskaya Oblast’", 
+   
+    "population": "196406", 
+    "population_proper": "190334"
+  }, 
+  {
+    "name": "Yuzhno-Sakhalinsk", 
+    "lat": "46.9500", 
+    "lng": "142.7333", 
+    "country_id":179 ,
+    
+    "admin_name": "Sakhalinskaya Oblast’", 
+    
+    "population": "194882", 
+    "population_proper": "194882"
+  }, 
+  {
+    "name": "Balakovo", 
+    "lat": "52.0333", 
+    "lng": "47.7833", 
+    "country_id":179 ,
+    
+    "admin_name": "Saratovskaya Oblast’", 
+   
+    "population": "191260", 
+    "population_proper": "189829"
+  }, 
+  {
+    "name": "Armavir", 
+    "lat": "45.0000", 
+    "lng": "41.1167", 
+    "country_id":179 ,
+    
+    "admin_name": "Krasnodarskiy Kray", 
+   
+    "population": "190709", 
+    "population_proper": "190709"
+  }, 
+  {
+    "name": "Rybinsk", 
+    "lat": "58.0500", 
+    "lng": "38.8333", 
+    "country_id":179 ,
+    
+    "admin_name": "Yaroslavskaya Oblast’", 
+   
+    "population": "190429", 
+    "population_proper": "190429"
+  }, 
+  {
+    "name": "Severodvinsk", 
+    "lat": "64.5667", 
+    "lng": "39.8667", 
+    "country_id":179 ,
+    
+    "admin_name": "Arkhangel’skaya Oblast’", 
+   
+    "population": "183996", 
+    "population_proper": "182291"
+  }, 
+  {
+    "name": "Abakan", 
+    "lat": "53.7167", 
+    "lng": "91.4667", 
+    "country_id":179 ,
+    
+    "admin_name": "Khakasiya", 
+    
+    "population": "181709", 
+    "population_proper": "181709"
+  }, 
+  {
+    "name": "Petropavlovsk-Kamchatskiy", 
+    "lat": "53.0167", 
+    "lng": "158.6500", 
+    "country_id":179 ,
+    
+    "admin_name": "Kamchatskiy Kray", 
+    
+    "population": "181216", 
+    "population_proper": "181216"
+  }, 
+  {
+    "name": "Norilsk", 
+    "lat": "69.3333", 
+    "lng": "88.2167", 
+    "country_id":179 ,
+    
+    "admin_name": "Krasnoyarskiy Kray", 
+   
+    "population": "179554", 
+    "population_proper": "179554"
+  }, 
+  {
+    "name": "Krasnogorsk", 
+    "lat": "55.8217", 
+    "lng": "37.3386", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "175812", 
+    "population_proper": "175812"
+  }, 
+  {
+    "name": "Syzran", 
+    "lat": "53.1667", 
+    "lng": "48.4667", 
+    "country_id":179 ,
+    
+    "admin_name": "Samarskaya Oblast’", 
+   
+    "population": "173260", 
+    "population_proper": "173260"
+  }, 
+  {
+    "name": "Volgodonsk", 
+    "lat": "47.5167", 
+    "lng": "42.1500", 
+    "country_id":179 ,
+    
+    "admin_name": "Rostovskaya Oblast’", 
+   
+    "population": "171471", 
+    "population_proper": "171471"
+  }, 
+  {
+    "name": "Ussuriysk", 
+    "lat": "43.8000", 
+    "lng": "131.9667", 
+    "country_id":179 ,
+    
+    "admin_name": "Primorskiy Kray", 
+   
+    "population": "170660", 
+    "population_proper": "170660"
+  }, 
+  {
+    "name": "Kamensk-Ural’skiy", 
+    "lat": "56.4000", 
+    "lng": "61.9333", 
+    "country_id":179 ,
+    
+    "admin_name": "Sverdlovskaya Oblast’", 
+   
+    "population": "169929", 
+    "population_proper": "168997"
+  }, 
+  {
+    "name": "Novocherkassk", 
+    "lat": "47.4222", 
+    "lng": "40.0939", 
+    "country_id":179 ,
+    
+    "admin_name": "Rostovskaya Oblast’", 
+   
+    "population": "168766", 
+    "population_proper": "168022"
+  }, 
+  {
+    "name": "Zlatoust", 
+    "lat": "55.1667", 
+    "lng": "59.6667", 
+    "country_id":179 ,
+    
+    "admin_name": "Chelyabinskaya Oblast’", 
+   
+    "population": "167978", 
+    "population_proper": "166885"
+  }, 
+  {
+    "name": "Elektrostal", 
+    "lat": "55.7833", 
+    "lng": "38.4667", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "158508", 
+    "population_proper": "158508"
+  }, 
+  {
+    "name": "Almetyevsk", 
+    "lat": "54.9000", 
+    "lng": "52.3000", 
+    "country_id":179 ,
+    
+    "admin_name": "Tatarstan", 
+   
+    "population": "155988", 
+    "population_proper": "155988"
+  }, 
+  {
+    "name": "Salavat", 
+    "lat": "53.3667", 
+    "lng": "55.9333", 
+    "country_id":179 ,
+    
+    "admin_name": "Bashkortostan", 
+   
+    "population": "153181", 
+    "population_proper": "153181"
+  }, 
+  {
+    "name": "Miass", 
+    "lat": "55.0000", 
+    "lng": "60.1000", 
+    "country_id":179 ,
+    
+    "admin_name": "Chelyabinskaya Oblast’", 
+   
+    "population": "151856", 
+    "population_proper": "151275"
+  }, 
+  {
+    "name": "Nakhodka", 
+    "lat": "42.8167", 
+    "lng": "132.8833", 
+    "country_id":179 ,
+    
+    "admin_name": "Primorskiy Kray", 
+   
+    "population": "151420", 
+    "population_proper": "142673"
+  }, 
+  {
+    "name": "Orekhovo-Borisovo Yuzhnoye", 
+    "lat": "55.6031", 
+    "lng": "37.7331", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskva", 
+   
+    "population": "147713", 
+    "population_proper": "147713"
+  }, 
+  {
+    "name": "Kopeysk", 
+    "lat": "55.1000", 
+    "lng": "61.6167", 
+    "country_id":179 ,
+    
+    "admin_name": "Chelyabinskaya Oblast’", 
+   
+    "population": "147573", 
+    "population_proper": "147573"
+  }, 
+  {
+    "name": "Odintsovo", 
+    "lat": "55.6667", 
+    "lng": "37.2667", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "146574", 
+    "population_proper": "146574"
+  }, 
+  {
+    "name": "Pyatigorsk", 
+    "lat": "44.0500", 
+    "lng": "43.0667", 
+    "country_id":179 ,
+    
+    "admin_name": "Stavropol’skiy Kray", 
+   
+    "population": "145836", 
+    "population_proper": "145836"
+  }, 
+  {
+    "name": "Rubtsovsk", 
+    "lat": "51.5167", 
+    "lng": "81.2000", 
+    "country_id":179 ,
+    
+    "admin_name": "Altayskiy Kray", 
+   
+    "population": "145333", 
+    "population_proper": "142551"
+  }, 
+  {
+    "name": "Berezniki", 
+    "lat": "59.4167", 
+    "lng": "56.7833", 
+    "country_id":179 ,
+    
+    "admin_name": "Permskiy Kray", 
+   
+    "population": "145115", 
+    "population_proper": "141276"
+  }, 
+  {
+    "name": "Kolomna", 
+    "lat": "55.0833", 
+    "lng": "38.7833", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "144125", 
+    "population_proper": "144125"
+  }, 
+  {
+    "name": "Maykop", 
+    "lat": "44.6000", 
+    "lng": "40.0833", 
+    "country_id":179 ,
+    
+    "admin_name": "Adygeya", 
+    
+    "population": "141970", 
+    "population_proper": "139084"
+  }, 
+  {
+    "name": "Khasavyurt", 
+    "lat": "43.2500", 
+    "lng": "46.5833", 
+    "country_id":179 ,
+    
+    "admin_name": "Dagestan", 
+    
+    "population": "141259", 
+    "population_proper": "141259"
+  }, 
+  {
+    "name": "Kovrov", 
+    "lat": "56.3683", 
+    "lng": "41.3108", 
+    "country_id":179 ,
+    
+    "admin_name": "Vladimirskaya Oblast’", 
+   
+    "population": "138552", 
+    "population_proper": "137594"
+  }, 
+  {
+    "name": "Kislovodsk", 
+    "lat": "43.9167", 
+    "lng": "42.7167", 
+    "country_id":179 ,
+    
+    "admin_name": "Stavropol’skiy Kray", 
+   
+    "population": "128779", 
+    "population_proper": "128779"
+  }, 
+  {
+    "name": "Nefteyugansk", 
+    "lat": "61.0833", 
+    "lng": "72.7000", 
+    "country_id":179 ,
+    
+    "admin_name": "Khanty-Mansiyskiy Avtonomnyy Okrug-Yugra", 
+   
+    "population": "128159", 
+    "population_proper": "128159"
+  }, 
+  {
+    "name": "Domodedovo", 
+    "lat": "55.4400", 
+    "lng": "37.7619", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "127850", 
+    "population_proper": "127850"
+  }, 
+  {
+    "name": "Neftekamsk", 
+    "lat": "56.1417", 
+    "lng": "54.4667", 
+    "country_id":179 ,
+    
+    "admin_name": "Bashkortostan", 
+   
+    "population": "126805", 
+    "population_proper": "126805"
+  }, 
+  {
+    "name": "Bataysk", 
+    "lat": "47.1667", 
+    "lng": "39.7333", 
+    "country_id":179 ,
+    
+    "admin_name": "Rostovskaya Oblast’", 
+   
+    "population": "126769", 
+    "population_proper": "126769"
+  }, 
+  {
+    "name": "Novocheboksarsk", 
+    "lat": "56.1793", 
+    "lng": "47.5000", 
+    "country_id":179 ,
+    
+    "admin_name": "Chuvashiya", 
+   
+    "population": "126626", 
+    "population_proper": "126626"
+  }, 
+  {
+    "name": "Serpukhov", 
+    "lat": "54.9167", 
+    "lng": "37.4000", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "125817", 
+    "population_proper": "125817"
+  }, 
+  {
+    "name": "Novomoskovsk", 
+    "lat": "54.0833", 
+    "lng": "38.2167", 
+    "country_id":179 ,
+    
+    "admin_name": "Tul’skaya Oblast’", 
+   
+    "population": "125647", 
+    "population_proper": "124787"
+  }, 
+  {
+    "name": "Shchelkovo", 
+    "lat": "55.9167", 
+    "lng": "38.0000", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "125634", 
+    "population_proper": "125634"
+  }, 
+  {
+    "name": "Pervouralsk", 
+    "lat": "56.9167", 
+    "lng": "59.9500", 
+    "country_id":179 ,
+    
+    "admin_name": "Sverdlovskaya Oblast’", 
+   
+    "population": "124447", 
+    "population_proper": "123655"
+  }, 
+  {
+    "name": "Kaspiysk", 
+    "lat": "42.8803", 
+    "lng": "47.6383", 
+    "country_id":179 ,
+    
+    "admin_name": "Dagestan", 
+   
+    "population": "123988", 
+    "population_proper": "123988"
+  }, 
+  {
+    "name": "Derbent", 
+    "lat": "42.0500", 
+    "lng": "48.3000", 
+    "country_id":179 ,
+    
+    "admin_name": "Dagestan", 
+    
+    "population": "123720", 
+    "population_proper": "123720"
+  }, 
+  {
+    "name": "Cherkessk", 
+    "lat": "44.2222", 
+    "lng": "42.0575", 
+    "country_id":179 ,
+    
+    "admin_name": "Karachayevo-Cherkesiya", 
+    
+    "population": "122395", 
+    "population_proper": "122395"
+  }, 
+  {
+    "name": "Orekhovo-Zuyevo", 
+    "lat": "55.8000", 
+    "lng": "38.9667", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "118822", 
+    "population_proper": "118309"
+  }, 
+  {
+    "name": "Nazran", 
+    "lat": "43.2167", 
+    "lng": "44.7667", 
+    "country_id":179 ,
+    
+    "admin_name": "Ingushetiya", 
+   
+    "population": "117936", 
+    "population_proper": "117936"
+  }, 
+  {
+    "name": "Nevinnomyssk", 
+    "lat": "44.6333", 
+    "lng": "41.9333", 
+    "country_id":179 ,
+    
+    "admin_name": "Stavropol’skiy Kray", 
+   
+    "population": "117446", 
+    "population_proper": "116751"
+  }, 
+  {
+    "name": "Ramenskoye", 
+    "lat": "55.5667", 
+    "lng": "38.2167", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "116077", 
+    "population_proper": "116077"
+  }, 
+  {
+    "name": "Dimitrovgrad", 
+    "lat": "54.1833", 
+    "lng": "49.5833", 
+    "country_id":179 ,
+    
+    "admin_name": "Ul’yanovskaya Oblast’", 
+   
+    "population": "116055", 
+    "population_proper": "116055"
+  }, 
+  {
+    "name": "Kyzyl", 
+    "lat": "51.7167", 
+    "lng": "94.4500", 
+    "country_id":179 ,
+    
+    "admin_name": "Tyva", 
+    
+    "population": "116015", 
+    "population_proper": "116015"
+  }, 
+  {
+    "name": "Obninsk", 
+    "lat": "55.0931", 
+    "lng": "36.6106", 
+    "country_id":179 ,
+    
+    "admin_name": "Kaluzhskaya Oblast’", 
+   
+    "population": "115029", 
+    "population_proper": "115029"
+  }, 
+  {
+    "name": "Oktyabr’skiy", 
+    "lat": "54.4667", 
+    "lng": "53.4667", 
+    "country_id":179 ,
+    
+    "admin_name": "Bashkortostan", 
+   
+    "population": "113929", 
+    "population_proper": "113929"
+  }, 
+  {
+    "name": "Novyy Urengoy", 
+    "lat": "66.0833", 
+    "lng": "76.6833", 
+    "country_id":179 ,
+    
+    "admin_name": "Yamalo-Nenetskiy Avtonomnyy Okrug", 
+   
+    "population": "113254", 
+    "population_proper": "113254"
+  }, 
+  {
+    "name": "Yessentuki", 
+    "lat": "44.0333", 
+    "lng": "42.8500", 
+    "country_id":179 ,
+    
+    "admin_name": "Stavropol’skiy Kray", 
+   
+    "population": "113056", 
+    "population_proper": "113056"
+  }, 
+  {
+    "name": "Kamyshin", 
+    "lat": "50.0833", 
+    "lng": "45.4000", 
+    "country_id":179 ,
+    
+    "admin_name": "Volgogradskaya Oblast’", 
+   
+    "population": "111100", 
+    "population_proper": "111100"
+  }, 
+  {
+    "name": "Murom", 
+    "lat": "55.5667", 
+    "lng": "42.0333", 
+    "country_id":179 ,
+    
+    "admin_name": "Vladimirskaya Oblast’", 
+   
+    "population": "109072", 
+    "population_proper": "109072"
+  }, 
+  {
+    "name": "Dolgoprudnyy", 
+    "lat": "55.9333", 
+    "lng": "37.5000", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "108861", 
+    "population_proper": "108861"
+  }, 
+  {
+    "name": "Novoshakhtinsk", 
+    "lat": "47.7667", 
+    "lng": "39.9167", 
+    "country_id":179 ,
+    
+    "admin_name": "Rostovskaya Oblast’", 
+   
+    "population": "108345", 
+    "population_proper": "108345"
+  }, 
+  {
+    "name": "Zhukovskiy", 
+    "lat": "55.5972", 
+    "lng": "38.1203", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "107994", 
+    "population_proper": "107994"
+  }, 
+  {
+    "name": "Seversk", 
+    "lat": "56.6000", 
+    "lng": "84.8500", 
+    "country_id":179 ,
+    
+    "admin_name": "Tomskaya Oblast’", 
+   
+    "population": "107922", 
+    "population_proper": "107922"
+  }, 
+  {
+    "name": "Reutov", 
+    "lat": "55.7622", 
+    "lng": "37.8567", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "106990", 
+    "population_proper": "106990"
+  }, 
+  {
+    "name": "Noyabrsk", 
+    "lat": "63.2017", 
+    "lng": "75.4517", 
+    "country_id":179 ,
+    
+    "admin_name": "Yamalo-Nenetskiy Avtonomnyy Okrug", 
+   
+    "population": "106879", 
+    "population_proper": "106879"
+  }, 
+  {
+    "name": "Artëm", 
+    "lat": "43.3667", 
+    "lng": "132.2000", 
+    "country_id":179 ,
+    
+    "admin_name": "Primorskiy Kray", 
+   
+    "population": "106692", 
+    "population_proper": "106692"
+  }, 
+  {
+    "name": "Khanty-Mansiysk", 
+    "lat": "61.0000", 
+    "lng": "69.0000", 
+    "country_id":179 ,
+    
+    "admin_name": "Khanty-Mansiyskiy Avtonomnyy Okrug-Yugra", 
+    
+    "population": "105995", 
+    "population_proper": "105995"
+  }, 
+  {
+    "name": "Pushkino", 
+    "lat": "56.0167", 
+    "lng": "37.8333", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "105479", 
+    "population_proper": "105479"
+  }, 
+  {
+    "name": "Achinsk", 
+    "lat": "56.2817", 
+    "lng": "90.5039", 
+    "country_id":179 ,
+    
+    "admin_name": "Krasnoyarskiy Kray", 
+   
+    "population": "105264", 
+    "population_proper": "105264"
+  }, 
+  {
+    "name": "Sergiyev Posad", 
+    "lat": "56.3000", 
+    "lng": "38.1793", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "104579", 
+    "population_proper": "104579"
+  }, 
+  {
+    "name": "Arzamas", 
+    "lat": "55.4000", 
+    "lng": "43.8167", 
+    "country_id":179 ,
+    
+    "admin_name": "Nizhegorodskaya Oblast’", 
+   
+    "population": "104547", 
+    "population_proper": "104140"
+  }, 
+  {
+    "name": "Yelets", 
+    "lat": "52.6167", 
+    "lng": "38.4667", 
+    "country_id":179 ,
+    
+    "admin_name": "Lipetskaya Oblast’", 
+   
+    "population": "104349", 
+    "population_proper": "104349"
+  }, 
+  {
+    "name": "Berdsk", 
+    "lat": "54.7500", 
+    "lng": "83.1000", 
+    "country_id":179 ,
+    
+    "admin_name": "Novosibirskaya Oblast’", 
+   
+    "population": "103578", 
+    "population_proper": "103578"
+  }, 
+  {
+    "name": "Elista", 
+    "lat": "46.3167", 
+    "lng": "44.2667", 
+    "country_id":179 ,
+    
+    "admin_name": "Kalmykiya", 
+    
+    "population": "103535", 
+    "population_proper": "103535"
+  }, 
+  {
+    "name": "Noginsk", 
+    "lat": "55.8500", 
+    "lng": "38.4333", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "102592", 
+    "population_proper": "102592"
+  }, 
+  {
+    "name": "Novokuybyshevsk", 
+    "lat": "53.1000", 
+    "lng": "49.9333", 
+    "country_id":179 ,
+    
+    "admin_name": "Samarskaya Oblast’", 
+   
+    "population": "102075", 
+    "population_proper": "102075"
+  }, 
+  {
+    "name": "Zheleznogorsk", 
+    "lat": "52.3333", 
+    "lng": "35.3667", 
+    "country_id":179 ,
+    
+    "admin_name": "Kurskaya Oblast’", 
+   
+    "population": "100740", 
+    "population_proper": "100740"
+  }, 
+  {
+    "name": "Zelënodol’sk", 
+    "lat": "55.8500", 
+    "lng": "48.5167", 
+    "country_id":179 ,
+    
+    "admin_name": "Tatarstan", 
+   
+    "population": "100009", 
+    "population_proper": "100009"
+  }, 
+  {
+    "name": "Magadan", 
+    "lat": "59.5667", 
+    "lng": "150.8000", 
+    "country_id":179 ,
+    
+    "admin_name": "Magadanskaya Oblast’", 
+    
+    "population": "92782", 
+    "population_proper": "92782"
+  }, 
+  {
+    "name": "Velikiye Luki", 
+    "lat": "56.3333", 
+    "lng": "30.5333", 
+    "country_id":179 ,
+    
+    "admin_name": "Pskovskaya Oblast’", 
+   
+    "population": "91435", 
+    "population_proper": "90922"
+  }, 
+  {
+    "name": "Lobnya", 
+    "lat": "56.0167", 
+    "lng": "37.4833", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "88220", 
+    "population_proper": "88220"
+  }, 
+  {
+    "name": "Buzuluk", 
+    "lat": "52.7833", 
+    "lng": "52.2500", 
+    "country_id":179 ,
+    
+    "admin_name": "Orenburgskaya Oblast’", 
+   
+    "population": "86316", 
+    "population_proper": "86316"
+  }, 
+  {
+    "name": "Kineshma", 
+    "lat": "57.4333", 
+    "lng": "42.1793", 
+    "country_id":179 ,
+    
+    "admin_name": "Ivanovskaya Oblast’", 
+   
+    "population": "83871", 
+    "population_proper": "83871"
+  }, 
+  {
+    "name": "Kuznetsk", 
+    "lat": "53.1167", 
+    "lng": "46.6000", 
+    "country_id":179 ,
+    
+    "admin_name": "Penzenskaya Oblast’", 
+   
+    "population": "82276", 
+    "population_proper": "82276"
+  }, 
+  {
+    "name": "Yurga", 
+    "lat": "55.7231", 
+    "lng": "84.8861", 
+    "country_id":179 ,
+    
+    "admin_name": "Kemerovskaya Oblast’", 
+   
+    "population": "81759", 
+    "population_proper": "81759"
+  }, 
+  {
+    "name": "Ivanteyevka", 
+    "lat": "55.9833", 
+    "lng": "37.9333", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "76612", 
+    "population_proper": "76612"
+  }, 
+  {
+    "name": "Chernogorsk", 
+    "lat": "53.8167", 
+    "lng": "91.3000", 
+    "country_id":179 ,
+    
+    "admin_name": "Khakasiya", 
+   
+    "population": "75067", 
+    "population_proper": "75067"
+  }, 
+  {
+    "name": "Birobidzhan", 
+    "lat": "48.8000", 
+    "lng": "132.9333", 
+    "country_id":179 ,
+    
+    "admin_name": "Yevreyskaya Avtonomnaya Oblast’", 
+    
+    "population": "73623", 
+    "population_proper": "73623"
+  }, 
+  {
+    "name": "Kirovo-Chepetsk", 
+    "lat": "58.5500", 
+    "lng": "50.0000", 
+    "country_id":179 ,
+    
+    "admin_name": "Kirovskaya Oblast’", 
+   
+    "population": "72071", 
+    "population_proper": "72071"
+  }, 
+  {
+    "name": "Georgiyevsk", 
+    "lat": "44.1500", 
+    "lng": "43.4667", 
+    "country_id":179 ,
+    
+    "admin_name": "Stavropol’skiy Kray", 
+   
+    "population": "67054", 
+    "population_proper": "66436"
+  }, 
+  {
+    "name": "Ishim", 
+    "lat": "56.1167", 
+    "lng": "69.5000", 
+    "country_id":179 ,
+    
+    "admin_name": "Tyumenskaya Oblast’", 
+   
+    "population": "65142", 
+    "population_proper": "65142"
+  }, 
+  {
+    "name": "Buynaksk", 
+    "lat": "42.8167", 
+    "lng": "47.1167", 
+    "country_id":179 ,
+    
+    "admin_name": "Dagestan", 
+    
+    "population": "65080", 
+    "population_proper": "65080"
+  }, 
+  {
+    "name": "Gukovo", 
+    "lat": "48.0500", 
+    "lng": "39.9167", 
+    "country_id":179 ,
+    
+    "admin_name": "Rostovskaya Oblast’", 
+   
+    "population": "64869", 
+    "population_proper": "64869"
+  }, 
+  {
+    "name": "Gorno-Altaysk", 
+    "lat": "51.9600", 
+    "lng": "85.9600", 
+    "country_id":179 ,
+    
+    "admin_name": "Altay", 
+    
+    "population": "63214", 
+    "population_proper": "63214"
+  }, 
+  {
+    "name": "Fryazino", 
+    "lat": "55.9500", 
+    "lng": "38.0500", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "60437", 
+    "population_proper": "60437"
+  }, 
+  {
+    "name": "Lytkarino", 
+    "lat": "55.5833", 
+    "lng": "37.9000", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "58606", 
+    "population_proper": "58606"
+  }, 
+  {
+    "name": "Shuya", 
+    "lat": "56.8500", 
+    "lng": "41.3667", 
+    "country_id":179 ,
+    
+    "admin_name": "Ivanovskaya Oblast’", 
+   
+    "population": "58114", 
+    "population_proper": "57039"
+  }, 
+  {
+    "name": "Prokhladnyy", 
+    "lat": "43.7500", 
+    "lng": "44.0333", 
+    "country_id":179 ,
+    
+    "admin_name": "Kabardino-Balkariya", 
+    
+    "population": "57883", 
+    "population_proper": "57883"
+  }, 
+  {
+    "name": "Iskitim", 
+    "lat": "54.6400", 
+    "lng": "83.3061", 
+    "country_id":179 ,
+    
+    "admin_name": "Novosibirskaya Oblast’", 
+   
+    "population": "56602", 
+    "population_proper": "56602"
+  }, 
+  {
+    "name": "Klimovsk", 
+    "lat": "55.3667", 
+    "lng": "37.5333", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "56239", 
+    "population_proper": "56239"
+  }, 
+  {
+    "name": "Dzerzhinskiy", 
+    "lat": "55.6333", 
+    "lng": "37.8500", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "55669", 
+    "population_proper": "55669"
+  }, 
+  {
+    "name": "Volzhsk", 
+    "lat": "55.8703", 
+    "lng": "48.3561", 
+    "country_id":179 ,
+    
+    "admin_name": "Mariy-El", 
+   
+    "population": "54519", 
+    "population_proper": "54519"
+  }, 
+  {
+    "name": "Salekhard", 
+    "lat": "66.5333", 
+    "lng": "66.6333", 
+    "country_id":179 ,
+    
+    "admin_name": "Yamalo-Nenetskiy Avtonomnyy Okrug", 
+    
+    "population": "51188", 
+    "population_proper": "51188"
+  }, 
+  {
+    "name": "Moskovskiy", 
+    "lat": "55.6000", 
+    "lng": "37.3500", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "50167", 
+    "population_proper": "50167"
+  }, 
+  {
+    "name": "Novovyatsk", 
+    "lat": "58.5083", 
+    "lng": "49.6994", 
+    "country_id":179 ,
+    
+    "admin_name": "Kirovskaya Oblast’", 
+   
+    "population": "49475", 
+    "population_proper": "49475"
+  }, 
+  {
+    "name": "Mozhga", 
+    "lat": "56.4500", 
+    "lng": "52.2167", 
+    "country_id":179 ,
+    
+    "admin_name": "Udmurtiya", 
+   
+    "population": "49328", 
+    "population_proper": "49328"
+  }, 
+  {
+    "name": "Kizlyar", 
+    "lat": "43.8500", 
+    "lng": "46.7167", 
+    "country_id":179 ,
+    
+    "admin_name": "Dagestan", 
+    
+    "population": "49247", 
+    "population_proper": "49247"
+  }, 
+  {
+    "name": "Kotelniki", 
+    "lat": "55.6617", 
+    "lng": "37.8672", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "46763", 
+    "population_proper": "46763"
+  }, 
+  {
+    "name": "Kanash", 
+    "lat": "55.5069", 
+    "lng": "47.4914", 
+    "country_id":179 ,
+    
+    "admin_name": "Chuvashiya", 
+   
+    "population": "45482", 
+    "population_proper": "45482"
+  }, 
+  {
+    "name": "Krasnoznamensk", 
+    "lat": "55.6008", 
+    "lng": "37.0358", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "41769", 
+    "population_proper": "41769"
+  }, 
+  {
+    "name": "Morshansk", 
+    "lat": "53.4500", 
+    "lng": "41.8167", 
+    "country_id":179 ,
+    
+    "admin_name": "Tambovskaya Oblast’", 
+   
+    "population": "39362", 
+    "population_proper": "39362"
+  }, 
+  {
+    "name": "Pereslavl’-Zalesskiy", 
+    "lat": "56.7381", 
+    "lng": "38.8562", 
+    "country_id":179 ,
+    
+    "admin_name": "Yaroslavskaya Oblast’", 
+   
+    "population": "39105", 
+    "population_proper": "38649"
+  }, 
+  {
+    "name": "Mtsensk", 
+    "lat": "53.2833", 
+    "lng": "36.5667", 
+    "country_id":179 ,
+    
+    "admin_name": "Orlovskaya Oblast’", 
+   
+    "population": "38350", 
+    "population_proper": "38350"
+  }, 
+  {
+    "name": "Baksan", 
+    "lat": "43.6825", 
+    "lng": "43.5339", 
+    "country_id":179 ,
+    
+    "admin_name": "Kabardino-Balkariya", 
+   
+    "population": "38192", 
+    "population_proper": "38192"
+  }, 
+  {
+    "name": "Protvino", 
+    "lat": "54.8833", 
+    "lng": "37.2167", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "35807", 
+    "population_proper": "35807"
+  }, 
+  {
+    "name": "Kasimov", 
+    "lat": "54.9333", 
+    "lng": "41.4000", 
+    "country_id":179 ,
+    
+    "admin_name": "Ryazanskaya Oblast’", 
+   
+    "population": "30243", 
+    "population_proper": "30243"
+  }, 
+  {
+    "name": "Kokhma", 
+    "lat": "56.9311", 
+    "lng": "41.0889", 
+    "country_id":179 ,
+    
+    "admin_name": "Ivanovskaya Oblast’", 
+   
+    "population": "30161", 
+    "population_proper": "30161"
+  }, 
+  {
+    "name": "Kotovsk", 
+    "lat": "52.5833", 
+    "lng": "41.5167", 
+    "country_id":179 ,
+    
+    "admin_name": "Tambovskaya Oblast’", 
+   
+    "population": "29999", 
+    "population_proper": "29999"
+  }, 
+  {
+    "name": "Dagestanskiye Ogni", 
+    "lat": "42.1167", 
+    "lng": "48.1833", 
+    "country_id":179 ,
+    
+    "admin_name": "Dagestan", 
+   
+    "population": "29716", 
+    "population_proper": "29716"
+  }, 
+  {
+    "name": "Shumerlya", 
+    "lat": "55.5333", 
+    "lng": "46.3833", 
+    "country_id":179 ,
+    
+    "admin_name": "Chuvashiya", 
+   
+    "population": "29553", 
+    "population_proper": "29071"
+  }, 
+  {
+    "name": "Udomlya", 
+    "lat": "57.8833", 
+    "lng": "35.0000", 
+    "country_id":179 ,
+    
+    "admin_name": "Tverskaya Oblast’", 
+   
+    "population": "28119", 
+    "population_proper": "28119"
+  }, 
+  {
+    "name": "Desnogorsk", 
+    "lat": "54.1500", 
+    "lng": "33.2833", 
+    "country_id":179 ,
+    
+    "admin_name": "Smolenskaya Oblast’", 
+   
+    "population": "27771", 
+    "population_proper": "27771"
+  }, 
+  {
+    "name": "Losino-Petrovskiy", 
+    "lat": "55.8744", 
+    "lng": "38.2017", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "25424", 
+    "population_proper": "25424"
+  }, 
+  {
+    "name": "Nar’yan-Mar", 
+    "lat": "67.6333", 
+    "lng": "53.0500", 
+    "country_id":179 ,
+    
+    "admin_name": "Nenetskiy Avtonomnyy Okrug", 
+    
+    "population": "24775", 
+    "population_proper": "24775"
+  }, 
+  {
+    "name": "Kraskovo", 
+    "lat": "55.6586", 
+    "lng": "37.9869", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "23910", 
+    "population_proper": "23910"
+  }, 
+  {
+    "name": "Karachayevsk", 
+    "lat": "43.7731", 
+    "lng": "41.9169", 
+    "country_id":179 ,
+    
+    "admin_name": "Karachayevo-Cherkesiya", 
+   
+    "population": "21067", 
+    "population_proper": "21067"
+  }, 
+  {
+    "name": "Kozmodemyansk", 
+    "lat": "56.3367", 
+    "lng": "46.5711", 
+    "country_id":179 ,
+    
+    "admin_name": "Mariy-El", 
+   
+    "population": "20505", 
+    "population_proper": "20505"
+  }, 
+  {
+    "name": "Kirsanov", 
+    "lat": "52.6500", 
+    "lng": "42.7333", 
+    "country_id":179 ,
+    
+    "admin_name": "Tambovskaya Oblast’", 
+   
+    "population": "16409", 
+    "population_proper": "16409"
+  }, 
+  {
+    "name": "Anadyr", 
+    "lat": "64.7333", 
+    "lng": "177.5167", 
+    "country_id":179 ,
+    
+    "admin_name": "Chukotskiy Avtonomnyy Okrug", 
+    
+    "population": "15604", 
+    "population_proper": "15604"
+  }, 
+  {
+    "name": "Udelnaya", 
+    "lat": "55.6333", 
+    "lng": "38.0333", 
+    "country_id":179 ,
+    
+    "admin_name": "Moskovskaya Oblast’", 
+   
+    "population": "14870", 
+    "population_proper": "14870"
+  }, 
+  {
+    "name": "Kudrovo", 
+    "lat": "59.9000", 
+    "lng": "30.5167", 
+    "country_id":179 ,
+    
+    "admin_name": "Leningradskaya Oblast’", 
+   
+    "population": "13501", 
+    "population_proper": "13501"
+  }, 
+  {
+    "name": "Pionerskiy", 
+    "lat": "54.9517", 
+    "lng": "20.2333", 
+    "country_id":179 ,
+    
+    "admin_name": "Kaliningradskaya Oblast’", 
+    
+    "population": "11312", 
+    "population_proper": "11312"
+  }, 
+  {
+    "name": "Khasanya", 
+    "lat": "43.4333", 
+    "lng": "43.5750", 
+    "country_id":179 ,
+    
+    "admin_name": "Kabardino-Balkariya", 
+   
+    "population": "10829", 
+    "population_proper": "10829"
+  }, 
+  {
+    "name": "Magas", 
+    "lat": "43.1667", 
+    "lng": "44.8000", 
+    "country_id":179 ,
+    
+    "admin_name": "Ingushetiya", 
+    
+    "population": "10333", 
+    "population_proper": "10333"
+  }, 
+  {
+    "name": "Kenzhe", 
+    "lat": "43.4911", 
+    "lng": "43.5528", 
+    "country_id":179 ,
+    
+    "admin_name": "Kabardino-Balkariya", 
+   
+    "population": "9669", 
+    "population_proper": "9669"
+  }, 
+  {
+    "name": "Molochnoye", 
+    "lat": "59.2917", 
+    "lng": "39.6786", 
+    "country_id":179 ,
+    
+    "admin_name": "Vologodskaya Oblast’", 
+   
+    "population": "7690", 
+    "population_proper": "7690"
+  }, 
+  {
+    "name": "Solyanka", 
+    "lat": "46.3889", 
+    "lng": "48.0175", 
+    "country_id":179 ,
+    
+    "admin_name": "Astrakhanskaya Oblast’", 
+   
+    "population": "5332", 
+    "population_proper": "5332"
+  }, 
+  {
+    "name": "Timofeyevka", 
+    "lat": "53.5633", 
+    "lng": "49.3893", 
+    "country_id":179 ,
+    
+    "admin_name": "Samarskaya Oblast’", 
+   
+    "population": "3893", 
+    "population_proper": "3893"
+  }, 
+  {
+    "name": "Belaya Rechka", 
+    "lat": "43.4381", 
+    "lng": "43.5350", 
+    "country_id":179 ,
+    
+    "admin_name": "Kabardino-Balkariya", 
+   
+    "population": "3430", 
+    "population_proper": "3430"
+  }, 
+  {
+    "name": "Dzerzhinskoye", 
+    "lat": "56.5183", 
+    "lng": "84.8369", 
+    "country_id":179 ,
+    
+    "admin_name": "Tomskaya Oblast’", 
+   
+    "population": "2914", 
+    "population_proper": "2914"
+  }, 
+  {
+    "name": "Oktyabr’skiy", 
+    "lat": "57.7446", 
+    "lng": "41.0019", 
+    "country_id":179 ,
+    
+    "admin_name": "Kostromskaya Oblast’", 
+    
+    "population": "", 
+    "population_proper": ""
+  }
+]

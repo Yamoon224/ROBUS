@@ -1,0 +1,1179 @@
+[
+  {
+    "name": "Lomé", 
+    "lat": "6.1319", 
+    "lng": "1.2228", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+   
+    "population": "837437", 
+    "population_proper": "837437"
+  }, 
+  {
+    "name": "Sokodé", 
+    "lat": "8.9833", 
+    "lng": "1.1333", 
+       "country_id":214 ,
+
+    "admin_name": "Centrale", 
+ 
+    "population": "113000", 
+    "population_proper": "113000"
+  }, 
+  {
+    "name": "Kpalimé", 
+    "lat": "6.9100", 
+    "lng": "0.6281", 
+       "country_id":214 ,
+
+    "admin_name": "Plateaux", 
+    
+    "population": "100479", 
+    "population_proper": "95974"
+  }, 
+  {
+    "name": "Atakpamé", 
+    "lat": "7.5300", 
+    "lng": "1.1200", 
+       "country_id":214 ,
+
+    "admin_name": "Plateaux", 
+ 
+    "population": "80683", 
+    "population_proper": "68831"
+  }, 
+  {
+    "name": "Sansanné-Mango", 
+    "lat": "10.3556", 
+    "lng": "0.4756", 
+       "country_id":214 ,
+
+    "admin_name": "Savanes", 
+    
+    "population": "42626", 
+    "population_proper": "37748"
+  }, 
+  {
+    "name": "Bassar", 
+    "lat": "9.2500", 
+    "lng": "0.7833", 
+       "country_id":214 ,
+
+    "admin_name": "Kara", 
+    
+    "population": "23181", 
+    "population_proper": "23181"
+  }, 
+  {
+    "name": "Kodjovya", 
+    "lat": "6.1203", 
+    "lng": "1.2064", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Nyenakpoé", 
+    "lat": "6.1292", 
+    "lng": "1.2044", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Aboni Kopé", 
+    "lat": "6.1758", 
+    "lng": "1.1919", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gbolovou", 
+    "lat": "6.1725", 
+    "lng": "1.1950", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sedjro", 
+    "lat": "6.1811", 
+    "lng": "1.1850", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gbadago", 
+    "lat": "6.1442", 
+    "lng": "1.2194", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tokwen", 
+    "lat": "6.1500", 
+    "lng": "1.2167", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Klétigan", 
+    "lat": "6.1531", 
+    "lng": "1.2256", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Soklito", 
+    "lat": "6.1758", 
+    "lng": "1.1872", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dogbéavi", 
+    "lat": "6.1553", 
+    "lng": "1.2175", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Avéméné", 
+    "lat": "6.1808", 
+    "lng": "1.1883", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Avenou", 
+    "lat": "6.1667", 
+    "lng": "1.1833", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Djaka", 
+    "lat": "6.1725", 
+    "lng": "1.1706", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Agbakou", 
+    "lat": "6.1744", 
+    "lng": "1.1742", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ako", 
+    "lat": "6.1567", 
+    "lng": "1.2228", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gadjépé", 
+    "lat": "6.1511", 
+    "lng": "1.2072", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ayivi Adjavon", 
+    "lat": "6.1417", 
+    "lng": "1.2653", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kofiwendjé", 
+    "lat": "6.1389", 
+    "lng": "1.2758", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Baka", 
+    "lat": "6.1647", 
+    "lng": "1.3539", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Lantigban", 
+    "lat": "6.1442", 
+    "lng": "1.2850", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Agbosè", 
+    "lat": "6.1619", 
+    "lng": "1.3456", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ema Kopé", 
+    "lat": "6.1525", 
+    "lng": "1.2861", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Agbétyafan", 
+    "lat": "6.1472", 
+    "lng": "1.2644", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Aményaglo", 
+    "lat": "6.1669", 
+    "lng": "1.3628", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Alagbo", 
+    "lat": "6.1408", 
+    "lng": "1.2586", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sopé", 
+    "lat": "6.1417", 
+    "lng": "1.2817", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kawékondji", 
+    "lat": "6.1456", 
+    "lng": "1.2986", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Avété", 
+    "lat": "6.1428", 
+    "lng": "1.2600", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ablogamé", 
+    "lat": "6.1344", 
+    "lng": "1.2633", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bobolé", 
+    "lat": "6.1694", 
+    "lng": "1.3706", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Akodéséwa", 
+    "lat": "6.1500", 
+    "lng": "1.2678", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gbésogbé", 
+    "lat": "6.1486", 
+    "lng": "1.3056", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Edjé", 
+    "lat": "6.1467", 
+    "lng": "1.2711", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Oundo", 
+    "lat": "6.1517", 
+    "lng": "1.3050", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Doévi", 
+    "lat": "6.1553", 
+    "lng": "1.3275", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Koudakpokomé", 
+    "lat": "6.1633", 
+    "lng": "1.3494", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ladjékpo", 
+    "lat": "6.1461", 
+    "lng": "1.2806", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ayivi", 
+    "lat": "6.1433", 
+    "lng": "1.2925", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Adjatogo", 
+    "lat": "6.1592", 
+    "lng": "1.3386", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tokpokondji", 
+    "lat": "6.1561", 
+    "lng": "1.3092", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Améwawou", 
+    "lat": "6.1597", 
+    "lng": "1.3394", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kpogan", 
+    "lat": "6.1728", 
+    "lng": "1.3825", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Foli Kopé", 
+    "lat": "6.1697", 
+    "lng": "1.3514", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Toudji", 
+    "lat": "6.1828", 
+    "lng": "1.3811", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Yovo Kopé", 
+    "lat": "6.1822", 
+    "lng": "1.3767", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Avéfodzo", 
+    "lat": "6.1683", 
+    "lng": "1.3425", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Houvémé", 
+    "lat": "6.1461", 
+    "lng": "1.2517", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gakli", 
+    "lat": "6.1758", 
+    "lng": "1.2006", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Azyagbang", 
+    "lat": "6.1772", 
+    "lng": "1.2003", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Adjigo", 
+    "lat": "6.1503", 
+    "lng": "1.2819", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tativi", 
+    "lat": "6.1833", 
+    "lng": "1.1833", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Diavon", 
+    "lat": "6.1833", 
+    "lng": "1.1833", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Avédji Anyigbé", 
+    "lat": "6.1803", 
+    "lng": "1.1781", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sovipé", 
+    "lat": "6.1772", 
+    "lng": "1.1808", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Amoutivé", 
+    "lat": "6.1436", 
+    "lng": "1.2425", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Anoukou", 
+    "lat": "6.1492", 
+    "lng": "1.2461", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Rhodan", 
+    "lat": "6.1631", 
+    "lng": "1.3100", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Rhatosé", 
+    "lat": "6.1617", 
+    "lng": "1.3058", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Agodéké", 
+    "lat": "6.1769", 
+    "lng": "1.3628", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dosou", 
+    "lat": "6.1608", 
+    "lng": "1.2078", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Migbodji", 
+    "lat": "6.1647", 
+    "lng": "1.2064", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Anfamé", 
+    "lat": "6.1544", 
+    "lng": "1.2678", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Avédji", 
+    "lat": "6.1817", 
+    "lng": "1.1750", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tiglikpo", 
+    "lat": "6.1758", 
+    "lng": "1.1692", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kanyi", 
+    "lat": "6.1606", 
+    "lng": "1.2972", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Klikamé", 
+    "lat": "6.1725", 
+    "lng": "1.2053", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Noubklo", 
+    "lat": "6.1706", 
+    "lng": "1.2078", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Apéyémé", 
+    "lat": "6.1394", 
+    "lng": "1.2392", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sosou", 
+    "lat": "6.1542", 
+    "lng": "1.2622", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bé", 
+    "lat": "6.1411", 
+    "lng": "1.2475", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Witi", 
+    "lat": "6.1606", 
+    "lng": "1.2333", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kponou", 
+    "lat": "6.1594", 
+    "lng": "1.2861", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Adido Gomé", 
+    "lat": "6.1794", 
+    "lng": "1.1653", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Séou", 
+    "lat": "6.1764", 
+    "lng": "1.2131", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Flagajido", 
+    "lat": "6.1800", 
+    "lng": "1.2156", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tisé", 
+    "lat": "6.1617", 
+    "lng": "1.2175", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Houndanou", 
+    "lat": "6.1656", 
+    "lng": "1.2228", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kpésé", 
+    "lat": "6.1603", 
+    "lng": "1.2172", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Boyi", 
+    "lat": "6.1656", 
+    "lng": "1.2244", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Nyaso", 
+    "lat": "6.1617", 
+    "lng": "1.2242", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kosivi", 
+    "lat": "6.1656", 
+    "lng": "1.2192", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Baguida", 
+    "lat": "6.1675", 
+    "lng": "1.3250", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Hotonou", 
+    "lat": "6.1542", 
+    "lng": "1.2564", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bosou", 
+    "lat": "6.1525", 
+    "lng": "1.2531", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Manasé", 
+    "lat": "6.1511", 
+    "lng": "1.2511", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Totigan", 
+    "lat": "6.1878", 
+    "lng": "1.1883", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gali", 
+    "lat": "6.1656", 
+    "lng": "1.2094", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bétoglo", 
+    "lat": "6.1664", 
+    "lng": "1.2819", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Afanbo", 
+    "lat": "6.1844", 
+    "lng": "1.1969", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Agbalé Pédo", 
+    "lat": "6.1883", 
+    "lng": "1.1961", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Atchavé", 
+    "lat": "6.1608", 
+    "lng": "1.2381", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tamé", 
+    "lat": "6.1833", 
+    "lng": "1.2167", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Atchati", 
+    "lat": "6.1800", 
+    "lng": "1.2331", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kosi Kopé", 
+    "lat": "6.1697", 
+    "lng": "1.2853", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kokou Kopé", 
+    "lat": "6.1817", 
+    "lng": "1.3381", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sékotéli", 
+    "lat": "6.1711", 
+    "lng": "1.2267", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Etamé", 
+    "lat": "6.1667", 
+    "lng": "1.2333", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Adjogblé", 
+    "lat": "6.1850", 
+    "lng": "1.2750", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kouléhoho", 
+    "lat": "6.1831", 
+    "lng": "1.2183", 
+       "country_id":214 ,
+
+    "admin_name": "Maritime", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dapaong", 
+    "lat": "10.8623", 
+    "lng": "0.2076", 
+       "country_id":214 ,
+
+    "admin_name": "Savanes", 
+ 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kara", 
+    "lat": "9.5511", 
+    "lng": "1.1861", 
+       "country_id":214 ,
+
+    "admin_name": "Kara", 
+ 
+    "population": "", 
+    "population_proper": ""
+  }
+]

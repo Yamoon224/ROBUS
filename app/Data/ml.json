@@ -1,0 +1,561 @@
+[
+  {
+    "name": "Bamako", 
+    "lat": "12.6458", 
+    "lng": "-7.9922", 
+    
+    "country_id":133 ,
+    "admin_name": "Bamako", 
+    "population": "2009109", 
+    "population_proper": "2009109"
+  }, 
+  {
+    "name": "Sikasso", 
+    "lat": "11.3167", 
+    "lng": "-5.6667", 
+    
+    "country_id":133 ,
+    "admin_name": "Sikasso", 
+     
+    "population": "213977", 
+    "population_proper": "213977"
+  }, 
+  {
+    "name": "Ségou", 
+    "lat": "13.4500", 
+    "lng": "-6.2667", 
+    
+    "country_id":133 ,
+    "admin_name": "Ségou", 
+     
+    "population": "133501", 
+    "population_proper": "133501"
+  }, 
+  {
+    "name": "Mopti", 
+    "lat": "14.4900", 
+    "lng": "-4.1800", 
+    
+    "country_id":133 ,
+    "admin_name": "Mopti", 
+     
+    "population": "108456", 
+    "population_proper": "78083"
+  }, 
+  {
+    "name": "Koutiala", 
+    "lat": "12.3833", 
+    "lng": "-5.4667", 
+    
+    "country_id":133 ,
+    "admin_name": "Sikasso", 
+    
+    "population": "104927", 
+    "population_proper": "99353"
+  }, 
+  {
+    "name": "Kayes", 
+    "lat": "14.4500", 
+    "lng": "-11.4167", 
+    
+    "country_id":133 ,
+    "admin_name": "Kayes", 
+     
+    "population": "77207", 
+    "population_proper": "77207"
+  }, 
+  {
+    "name": "Kati", 
+    "lat": "12.7504", 
+    "lng": "-8.0800", 
+    
+    "country_id":133 ,
+    "admin_name": "Koulikoro", 
+    
+    "population": "66895", 
+    "population_proper": "42922"
+  }, 
+  {
+    "name": "Markala", 
+    "lat": "13.7021", 
+    "lng": "-6.0659", 
+    
+    "country_id":133 ,
+    "admin_name": "Ségou", 
+    "population": "53738", 
+    "population_proper": "38585"
+  }, 
+  {
+    "name": "Gao", 
+    "lat": "16.2667", 
+    "lng": "-0.0500", 
+    
+    "country_id":133 ,
+    "admin_name": "Gao", 
+     
+    "population": "49483", 
+    "population_proper": "49483"
+  }, 
+  {
+    "name": "Kita", 
+    "lat": "13.0504", 
+    "lng": "-9.4833", 
+    
+    "country_id":133 ,
+    "admin_name": "Kayes", 
+    
+    "population": "46435", 
+    "population_proper": "5769"
+  }, 
+  {
+    "name": "San", 
+    "lat": "13.3004", 
+    "lng": "-4.9000", 
+    
+    "country_id":133 ,
+    "admin_name": "Ségou", 
+    
+    "population": "41386", 
+    "population_proper": "24811"
+  }, 
+  {
+    "name": "Bougouni", 
+    "lat": "11.4167", 
+    "lng": "-7.4833", 
+    
+    "country_id":133 ,
+    "admin_name": "Sikasso", 
+    
+    "population": "35450", 
+    "population_proper": "25644"
+  }, 
+  {
+    "name": "Timbuktu", 
+    "lat": "16.7733", 
+    "lng": "-2.9994", 
+    
+    "country_id":133 ,
+    "admin_name": "Tombouctou", 
+     
+    "population": "35330", 
+    "population_proper": "35330"
+  }, 
+  {
+    "name": "Djenné", 
+    "lat": "13.9000", 
+    "lng": "-4.5500", 
+    
+    "country_id":133 ,
+    "admin_name": "Mopti", 
+    
+    "population": "32944", 
+    "population_proper": "22382"
+  }, 
+  {
+    "name": "Banamba", 
+    "lat": "13.5500", 
+    "lng": "-7.4500", 
+    
+    "country_id":133 ,
+    "admin_name": "Koulikoro", 
+    
+    "population": "30591", 
+    "population_proper": "6033"
+  }, 
+  {
+    "name": "Bafoulabé", 
+    "lat": "13.8064", 
+    "lng": "-10.8322", 
+    
+    "country_id":133 ,
+    "admin_name": "Kayes", 
+    
+    "population": "26823", 
+    "population_proper": "26823"
+  }, 
+  {
+    "name": "Koulikoro", 
+    "lat": "12.8833", 
+    "lng": "-7.5500", 
+    
+    "country_id":133 ,
+    "admin_name": "Koulikoro", 
+     
+    "population": "23919", 
+    "population_proper": "2898"
+  }, 
+  {
+    "name": "Ménaka", 
+    "lat": "15.9183", 
+    "lng": "2.4022", 
+    
+    "country_id":133 ,
+    "admin_name": "Gao", 
+    
+    "population": "20702", 
+    "population_proper": "20702"
+  }, 
+  {
+    "name": "Nara", 
+    "lat": "15.1800", 
+    "lng": "-7.2800", 
+    
+    "country_id":133 ,
+    "admin_name": "Koulikoro", 
+    
+    "population": "18459", 
+    "population_proper": "18459"
+  }, 
+  {
+    "name": "Kangaba", 
+    "lat": "11.9333", 
+    "lng": "-8.4167", 
+    
+    "country_id":133 ,
+    "admin_name": "Koulikoro", 
+    
+    "population": "17232", 
+    "population_proper": "17232"
+  }, 
+  {
+    "name": "Kidal", 
+    "lat": "18.4333", 
+    "lng": "1.4000", 
+    
+    "country_id":133 ,
+    "admin_name": "Kidal", 
+     
+    "population": "15086", 
+    "population_proper": "15086"
+  }, 
+  {
+    "name": "Nioro", 
+    "lat": "15.1833", 
+    "lng": "-9.5500", 
+    
+    "country_id":133 ,
+    "admin_name": "Kayes", 
+    
+    "population": "14421", 
+    "population_proper": "14421"
+  }, 
+  {
+    "name": "Goundam", 
+    "lat": "16.4167", 
+    "lng": "-3.6667", 
+    
+    "country_id":133 ,
+    "admin_name": "Tombouctou", 
+    
+    "population": "8456", 
+    "population_proper": "3979"
+  }, 
+  {
+    "name": "Tessalit", 
+    "lat": "20.2011", 
+    "lng": "1.0125", 
+    
+    "country_id":133 ,
+    "admin_name": "Kidal", 
+    
+    "population": "6000", 
+    "population_proper": "5739"
+  }, 
+  {
+    "name": "Abeïbara", 
+    "lat": "19.1167", 
+    "lng": "1.7500", 
+    
+    "country_id":133 ,
+    "admin_name": "Kidal", 
+    
+    "population": "4585", 
+    "population_proper": "4585"
+  }, 
+  {
+    "name": "Yélimané", 
+    "lat": "15.1337", 
+    "lng": "-10.5666", 
+    
+    "country_id":133 ,
+    "admin_name": "Kayes", 
+    
+    "population": "988", 
+    "population_proper": "988"
+  }, 
+  {
+    "name": "Bandiagara", 
+    "lat": "14.3500", 
+    "lng": "-3.6111", 
+    
+    "country_id":133 ,
+    "admin_name": "Mopti", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ténenkou", 
+    "lat": "14.4572", 
+    "lng": "-4.9169", 
+    
+    "country_id":133 ,
+    "admin_name": "Mopti", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Douentza", 
+    "lat": "14.9950", 
+    "lng": "-2.9667", 
+    
+    "country_id":133 ,
+    "admin_name": "Mopti", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Niono", 
+    "lat": "14.2500", 
+    "lng": "-6.0000", 
+    
+    "country_id":133 ,
+    "admin_name": "Ségou", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bla", 
+    "lat": "12.9500", 
+    "lng": "-5.7603", 
+    
+    "country_id":133 ,
+    "admin_name": "Ségou", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Diré", 
+    "lat": "16.2667", 
+    "lng": "-3.4000", 
+    
+    "country_id":133 ,
+    "admin_name": "Tombouctou", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bankass", 
+    "lat": "14.0775", 
+    "lng": "-3.5158", 
+    
+    "country_id":133 ,
+    "admin_name": "Mopti", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kadiolo", 
+    "lat": "10.5500", 
+    "lng": "-5.7667", 
+    
+    "country_id":133 ,
+    "admin_name": "Sikasso", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ansongo", 
+    "lat": "15.6650", 
+    "lng": "0.5028", 
+    
+    "country_id":133 ,
+    "admin_name": "Gao", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dioila", 
+    "lat": "12.4822", 
+    "lng": "-6.7911", 
+    
+    "country_id":133 ,
+    "admin_name": "Koulikoro", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Barouéli", 
+    "lat": "13.0769", 
+    "lng": "-6.8311", 
+    
+    "country_id":133 ,
+    "admin_name": "Ségou", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Yorosso", 
+    "lat": "12.3556", 
+    "lng": "-4.7778", 
+    
+    "country_id":133 ,
+    "admin_name": "Sikasso", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tominian", 
+    "lat": "13.2875", 
+    "lng": "-4.5933", 
+    
+    "country_id":133 ,
+    "admin_name": "Ségou", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Koro", 
+    "lat": "14.0639", 
+    "lng": "-3.0753", 
+    
+    "country_id":133 ,
+    "admin_name": "Mopti", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kolokani", 
+    "lat": "13.5728", 
+    "lng": "-8.0339", 
+    
+    "country_id":133 ,
+    "admin_name": "Koulikoro", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ké-Macina", 
+    "lat": "13.9641", 
+    "lng": "-5.3579", 
+    
+    "country_id":133 ,
+    "admin_name": "Ségou", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Yanfolila", 
+    "lat": "11.1833", 
+    "lng": "-8.1500", 
+    
+    "country_id":133 ,
+    "admin_name": "Sikasso", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kolondiéba", 
+    "lat": "11.0883", 
+    "lng": "-6.8925", 
+    
+    "country_id":133 ,
+    "admin_name": "Sikasso", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Kéniéba", 
+    "lat": "12.8396", 
+    "lng": "-11.2406", 
+    
+    "country_id":133 ,
+    "admin_name": "Kayes", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Youwarou", 
+    "lat": "15.3683", 
+    "lng": "-4.2628", 
+    
+    "country_id":133 ,
+    "admin_name": "Mopti", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Niafunké", 
+    "lat": "15.9311", 
+    "lng": "-3.9900", 
+    
+    "country_id":133 ,
+    "admin_name": "Tombouctou", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Diéma", 
+    "lat": "14.5333", 
+    "lng": "-9.2000", 
+    
+    "country_id":133 ,
+    "admin_name": "Kayes", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Gourma Rharous", 
+    "lat": "16.8800", 
+    "lng": "-1.9239", 
+    
+    "country_id":133 ,
+    "admin_name": "Tombouctou", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bourem", 
+    "lat": "16.9542", 
+    "lng": "-0.3503", 
+    
+    "country_id":133 ,
+    "admin_name": "Gao", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ti-n-Essako", 
+    "lat": "18.4506", 
+    "lng": "2.4879", 
+    
+    "country_id":133 ,
+    "admin_name": "Kidal", 
+    
+    "population": "", 
+    "population_proper": ""
+  }
+]

@@ -1,0 +1,164 @@
+[
+  {
+    "name": "Bangui", 
+    "lat": "4.3732", 
+    "lng": "18.5628", 
+        "country_id":42 ,
+    "admin_name": "Bangui", 
+    "population": "889231", 
+    "population_proper": "889231"
+  }, 
+  {
+    "name": "Bimbo", 
+    "lat": "4.3313", 
+    "lng": "18.5163", 
+        "country_id":42 ,
+    "admin_name": "Ombella-Mpoko", 
+    "population": "124176", 
+    "population_proper": "124176"
+  }, 
+  {
+    "name": "Berbérati", 
+    "lat": "4.2667", 
+    "lng": "15.7833", 
+        "country_id":42 ,
+    "admin_name": "Mambéré-Kadéï", 
+    "population": "76918", 
+    "population_proper": "76918"
+  }, 
+  {
+    "name": "Carnot", 
+    "lat": "4.9333", 
+    "lng": "15.8667", 
+        "country_id":42 ,
+    "admin_name": "Mambéré-Kadéï", 
+    "population": "45421", 
+    "population_proper": "45421"
+  }, 
+  {
+    "name": "Bambari", 
+    "lat": "5.7667", 
+    "lng": "20.6833", 
+        "country_id":42 ,
+    "admin_name": "Ouaka", 
+    "population": "41356", 
+    "population_proper": "41356"
+  }, 
+  {
+    "name": "Bouar", 
+    "lat": "5.9500", 
+    "lng": "15.6000", 
+        "country_id":42 ,
+    "admin_name": "Nana-Mambéré", 
+    "population": "40353", 
+    "population_proper": "40353"
+  }, 
+  {
+    "name": "Bossangoa", 
+    "lat": "6.4833", 
+    "lng": "17.4500", 
+        "country_id":42 ,
+    "admin_name": "Ouham", 
+    "population": "37780", 
+    "population_proper": "37780"
+  }, 
+  {
+    "name": "Bria", 
+    "lat": "6.5369", 
+    "lng": "21.9919", 
+        "country_id":42 ,
+    "admin_name": "Haute-Kotto", 
+    "population": "35204", 
+    "population_proper": "35204"
+  }, 
+  {
+    "name": "Bangassou", 
+    "lat": "4.7370", 
+    "lng": "22.8190", 
+        "country_id":42 ,
+    "admin_name": "Mbomou", 
+    "population": "31453", 
+    "population_proper": "31453"
+  }, 
+  {
+    "name": "Nola", 
+    "lat": "3.5337", 
+    "lng": "16.0666", 
+        "country_id":42 ,
+    "admin_name": "Sangha-Mbaéré", 
+    "population": "26809", 
+    "population_proper": "23793"
+  }, 
+  {
+    "name": "Kaga Bandoro", 
+    "lat": "7.0006", 
+    "lng": "19.1808", 
+        "country_id":42 ,
+    "admin_name": "Nana-Grébizi", 
+    "population": "24661", 
+    "population_proper": "24661"
+  }, 
+  {
+    "name": "Sibut", 
+    "lat": "5.7378", 
+    "lng": "19.0867", 
+        "country_id":42 ,
+    "admin_name": "Kémo", 
+    "population": "22419", 
+    "population_proper": "22419"
+  }, 
+  {
+    "name": "Mbaïki", 
+    "lat": "3.8833", 
+    "lng": "18.0000", 
+        "country_id":42 ,
+    "admin_name": "Lobaye", 
+    "population": "22166", 
+    "population_proper": "22166"
+  }, 
+  {
+    "name": "Bozoum", 
+    "lat": "6.3172", 
+    "lng": "16.3783", 
+        "country_id":42 ,
+    "admin_name": "Ouham-Pendé", 
+    "population": "20665", 
+    "population_proper": "20665"
+  }, 
+  {
+    "name": "Obo", 
+    "lat": "5.4000", 
+    "lng": "26.5000", 
+        "country_id":42 ,
+    "admin_name": "Haut-Mbomou", 
+    "population": "12887", 
+    "population_proper": "12787"
+  }, 
+  {
+    "name": "Ndélé", 
+    "lat": "8.4091", 
+    "lng": "20.6530", 
+        "country_id":42 ,
+    "admin_name": "Bamingui-Bangoran", 
+    "population": "11764", 
+    "population_proper": "2947"
+  }, 
+  {
+    "name": "Birao", 
+    "lat": "10.2837", 
+    "lng": "22.7833", 
+        "country_id":42 ,
+    "admin_name": "Vakaga", 
+    "population": "10178", 
+    "population_proper": "1104"
+  }, 
+  {
+    "name": "Mobaye", 
+    "lat": "4.3167", 
+    "lng": "21.1833", 
+        "country_id":42 ,
+    "admin_name": "Basse-Kotto", 
+    "population": "7176", 
+    "population_proper": "7176"
+  }
+]

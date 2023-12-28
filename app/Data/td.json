@@ -1,0 +1,365 @@
+[
+  {
+    "name": "N’Djamena", 
+    "lat": "12.1100", 
+    "lng": "15.0500", 
+    "country_id":43 ,
+   
+    "admin_name": "N’Djamena", 
+     
+    "population": "1092066", 
+    "population_proper": "1092066"
+  }, 
+  {
+    "name": "Moundou", 
+    "lat": "8.5667", 
+    "lng": "16.0833", 
+    "country_id":43 ,
+   
+    "admin_name": "Logone Occidental", 
+     
+    "population": "142462", 
+    "population_proper": "142462"
+  }, 
+  {
+    "name": "Sarh", 
+    "lat": "9.1500", 
+    "lng": "18.3833", 
+    "country_id":43 ,
+   
+    "admin_name": "Moyen-Chari", 
+     
+    "population": "108061", 
+    "population_proper": "108061"
+  }, 
+  {
+    "name": "Kelo", 
+    "lat": "9.3100", 
+    "lng": "15.8100", 
+    "country_id":43 ,
+   
+    "admin_name": "Tandjilé", 
+    
+    "population": "96224", 
+    "population_proper": "45224"
+  }, 
+  {
+    "name": "Yao", 
+    "lat": "12.8508", 
+    "lng": "17.5608", 
+    "country_id":43 ,
+   
+    "admin_name": "Batha", 
+    
+    "population": "91507", 
+    "population_proper": "91507"
+  }, 
+  {
+    "name": "Léré", 
+    "lat": "9.7700", 
+    "lng": "14.1500", 
+    "country_id":43 ,
+   
+    "admin_name": "Mayo-Kebbi-Ouest", 
+    
+    "population": "89237", 
+    "population_proper": "89237"
+  }, 
+  {
+    "name": "Abéché", 
+    "lat": "13.8331", 
+    "lng": "20.8347", 
+    "country_id":43 ,
+   
+    "admin_name": "Ouaddaï", 
+     
+    "population": "76492", 
+    "population_proper": "76492"
+  }, 
+  {
+    "name": "Goz-Beida", 
+    "lat": "12.2236", 
+    "lng": "21.4144", 
+    "country_id":43 ,
+   
+    "admin_name": "Sila", 
+     
+    "population": "66107", 
+    "population_proper": "66107"
+  }, 
+  {
+    "name": "Chèddra", 
+    "lat": "13.4428", 
+    "lng": "16.0508", 
+    "country_id":43 ,
+   
+    "admin_name": "Barh-El-Gazel", 
+    
+    "population": "54072", 
+    "population_proper": "54072"
+  }, 
+  {
+    "name": "Déressia", 
+    "lat": "9.7603", 
+    "lng": "16.2697", 
+    "country_id":43 ,
+   
+    "admin_name": "Tandjilé", 
+    
+    "population": "50113", 
+    "population_proper": "50113"
+  }, 
+  {
+    "name": "Faya", 
+    "lat": "17.9169", 
+    "lng": "19.1167", 
+    "country_id":43 ,
+   
+    "admin_name": "Borkou", 
+     
+    "population": "48090", 
+    "population_proper": "48090"
+  }, 
+  {
+    "name": "Fianga", 
+    "lat": "9.9153", 
+    "lng": "15.1375", 
+    "country_id":43 ,
+   
+    "admin_name": "Mayo-Kebbi-Est", 
+    
+    "population": "42606", 
+    "population_proper": "42606"
+  }, 
+  {
+    "name": "Koumra", 
+    "lat": "8.9100", 
+    "lng": "17.5500", 
+    "country_id":43 ,
+   
+    "admin_name": "Mandoul", 
+     
+    "population": "39852", 
+    "population_proper": "39852"
+  }, 
+  {
+    "name": "Pala Oua", 
+    "lat": "9.3500", 
+    "lng": "14.9667", 
+    "country_id":43 ,
+   
+    "admin_name": "Mayo-Kebbi-Ouest", 
+    
+    "population": "38975", 
+    "population_proper": "38975"
+  }, 
+  {
+    "name": "Am-Timan", 
+    "lat": "11.0333", 
+    "lng": "20.2833", 
+    "country_id":43 ,
+   
+    "admin_name": "Salamat", 
+     
+    "population": "38261", 
+    "population_proper": "38261"
+  }, 
+  {
+    "name": "Iriba", 
+    "lat": "15.1167", 
+    "lng": "22.2500", 
+    "country_id":43 ,
+   
+    "admin_name": "Wadi-Fira", 
+    
+    "population": "33572", 
+    "population_proper": "33572"
+  }, 
+  {
+    "name": "Doba", 
+    "lat": "8.6600", 
+    "lng": "16.8500", 
+    "country_id":43 ,
+   
+    "admin_name": "Logone Oriental", 
+     
+    "population": "29597", 
+    "population_proper": "25650"
+  }, 
+  {
+    "name": "Bongor", 
+    "lat": "10.2806", 
+    "lng": "15.3722", 
+    "country_id":43 ,
+   
+    "admin_name": "Mayo-Kebbi-Est", 
+     
+    "population": "27770", 
+    "population_proper": "27770"
+  }, 
+  {
+    "name": "Mongo", 
+    "lat": "12.1837", 
+    "lng": "18.7000", 
+    "country_id":43 ,
+   
+    "admin_name": "Guéra", 
+     
+    "population": "27763", 
+    "population_proper": "27763"
+  }, 
+  {
+    "name": "Oum Hadjer", 
+    "lat": "13.2833", 
+    "lng": "19.6833", 
+    "country_id":43 ,
+   
+    "admin_name": "Batha", 
+    
+    "population": "26136", 
+    "population_proper": "26136"
+  }, 
+  {
+    "name": "Fada", 
+    "lat": "17.1833", 
+    "lng": "21.5833", 
+    "country_id":43 ,
+   
+    "admin_name": "Ennedi-Ouest", 
+     
+    "population": "23786", 
+    "population_proper": "23786"
+  }, 
+  {
+    "name": "Amdjarass", 
+    "lat": "16.0658", 
+    "lng": "22.8431", 
+    "country_id":43 ,
+   
+    "admin_name": "Ennedi-Est", 
+     
+    "population": "20850", 
+    "population_proper": "20850"
+  }, 
+  {
+    "name": "Ati", 
+    "lat": "13.2133", 
+    "lng": "18.3381", 
+    "country_id":43 ,
+   
+    "admin_name": "Batha", 
+     
+    "population": "20695", 
+    "population_proper": "20695"
+  }, 
+  {
+    "name": "Laï", 
+    "lat": "9.4000", 
+    "lng": "16.3000", 
+    "country_id":43 ,
+   
+    "admin_name": "Tandjilé", 
+     
+    "population": "19382", 
+    "population_proper": "14272"
+  }, 
+  {
+    "name": "Mao", 
+    "lat": "14.1194", 
+    "lng": "15.3133", 
+    "country_id":43 ,
+   
+    "admin_name": "Kanem", 
+     
+    "population": "19004", 
+    "population_proper": "19004"
+  }, 
+  {
+    "name": "Massaguet", 
+    "lat": "12.4742", 
+    "lng": "15.4428", 
+    "country_id":43 ,
+   
+    "admin_name": "Hadjer-Lamis", 
+    
+    "population": "18872", 
+    "population_proper": "18872"
+  }, 
+  {
+    "name": "Moussoro", 
+    "lat": "13.6333", 
+    "lng": "16.4833", 
+    "country_id":43 ,
+   
+    "admin_name": "Barh-El-Gazel", 
+     
+    "population": "16349", 
+    "population_proper": "16349"
+  }, 
+  {
+    "name": "Massakory", 
+    "lat": "13.0000", 
+    "lng": "15.7333", 
+    "country_id":43 ,
+   
+    "admin_name": "Hadjer-Lamis", 
+     
+    "population": "16237", 
+    "population_proper": "16237"
+  }, 
+  {
+    "name": "Biltine", 
+    "lat": "14.5275", 
+    "lng": "20.9267", 
+    "country_id":43 ,
+   
+    "admin_name": "Wadi-Fira", 
+     
+    "population": "11840", 
+    "population_proper": "11840"
+  }, 
+  {
+    "name": "Bol", 
+    "lat": "13.4600", 
+    "lng": "14.7400", 
+    "country_id":43 ,
+   
+    "admin_name": "Lac", 
+     
+    "population": "11700", 
+    "population_proper": "11700"
+  }, 
+  {
+    "name": "Massenya", 
+    "lat": "11.4000", 
+    "lng": "16.1667", 
+    "country_id":43 ,
+   
+    "admin_name": "Chari-Baguirmi", 
+     
+    "population": "3680", 
+    "population_proper": "3680"
+  }, 
+  {
+    "name": "Pala", 
+    "lat": "9.3646", 
+    "lng": "14.9073", 
+    "country_id":43 ,
+   
+    "admin_name": "Mayo-Kebbi-Ouest", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Bardaï", 
+    "lat": "21.3533", 
+    "lng": "17.0003", 
+    "country_id":43 ,
+   
+    "admin_name": "Tibesti", 
+     
+    "population": "", 
+    "population_proper": ""
+  }
+]

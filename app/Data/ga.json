@@ -1,0 +1,134 @@
+[
+  {
+    "name": "Libreville", 
+    "lat": "0.3903", 
+    "lng": "9.4542", 
+       "country_id":79,
+    
+    "admin_name": "Estuaire", 
+    
+    "population": "797003", 
+    "population_proper": "797003"
+  }, 
+  {
+    "name": "Port-Gentil", 
+    "lat": "-0.7167", 
+    "lng": "8.7833", 
+       "country_id":79,
+    
+    "admin_name": "Ogooué-Maritime", 
+    
+    "population": "136462", 
+    "population_proper": "136462"
+  }, 
+  {
+    "name": "Franceville", 
+    "lat": "-1.6333", 
+    "lng": "13.5833", 
+       "country_id":79,
+    
+    "admin_name": "Haut-Ogooué", 
+    
+    "population": "110568", 
+    "population_proper": "110568"
+  }, 
+  {
+    "name": "Owendo", 
+    "lat": "0.2833", 
+    "lng": "9.5000", 
+       "country_id":79,
+    
+    "admin_name": "Estuaire", 
+    
+    "population": "79300", 
+    "population_proper": "79300"
+  }, 
+  {
+    "name": "Oyem", 
+    "lat": "1.6000", 
+    "lng": "11.5667", 
+       "country_id":79,
+    
+    "admin_name": "Woleu-Ntem", 
+    
+    "population": "60685", 
+    "population_proper": "60685"
+  }, 
+  {
+    "name": "Ntoum", 
+    "lat": "0.3844", 
+    "lng": "9.7539", 
+       "country_id":79,
+    
+    "admin_name": "Estuaire", 
+    
+    "population": "51954", 
+    "population_proper": "51954"
+  }, 
+  {
+    "name": "Moanda", 
+    "lat": "-1.5667", 
+    "lng": "13.2000", 
+       "country_id":79,
+    
+    "admin_name": "Haut-Ogooué", 
+    
+    "population": "39298", 
+    "population_proper": "39298"
+  }, 
+  {
+    "name": "Lambaréné", 
+    "lat": "-0.6883", 
+    "lng": "10.2319", 
+       "country_id":79,
+    
+    "admin_name": "Moyen-Ogooué", 
+    
+    "population": "38775", 
+    "population_proper": "38775"
+  }, 
+  {
+    "name": "Tchibanga", 
+    "lat": "-2.9333", 
+    "lng": "11.0000", 
+       "country_id":79,
+    
+    "admin_name": "Nyanga", 
+    
+    "population": "24000", 
+    "population_proper": "24000"
+  }, 
+  {
+    "name": "Mouila", 
+    "lat": "-1.8639", 
+    "lng": "11.0575", 
+       "country_id":79,
+    
+    "admin_name": "Ngounié", 
+    
+    "population": "22469", 
+    "population_proper": "22469"
+  }, 
+  {
+    "name": "Makokou", 
+    "lat": "0.5667", 
+    "lng": "12.8667", 
+       "country_id":79,
+    
+    "admin_name": "Ogooué-Ivindo", 
+    
+    "population": "17070", 
+    "population_proper": "13881"
+  }, 
+  {
+    "name": "Koulamoutou", 
+    "lat": "-1.1333", 
+    "lng": "12.4833", 
+       "country_id":79,
+    
+    "admin_name": "Ogooué-Lolo", 
+    
+    "population": "16222", 
+    "population_proper": "16000"
+  }
+]

@@ -1,0 +1,344 @@
+[
+  {
+    "name": "Kinshasa", 
+    "lat": "-4.3250", 
+    "lng": "15.3222", 
+       "country_id":50 ,
+
+     
+    "admin_name": "Kinshasa", 
+   
+    "population": "12836000", 
+    "population_proper": "11462000"
+  }, 
+  {
+    "name": "Mbuji-Mayi", 
+    "lat": "-6.1500", 
+    "lng": "23.6000", 
+       "country_id":50 ,
+     
+    "admin_name": "Kasaï Oriental", 
+     
+    "population": "2643000", 
+    "population_proper": "1559073"
+  }, 
+  {
+    "name": "Kananga", 
+    "lat": "-5.8970", 
+    "lng": "22.4488", 
+       "country_id":50 ,
+     
+    "admin_name": "Kasaï Central", 
+     
+    "population": "1971704", 
+    "population_proper": "1971704"
+  }, 
+  {
+    "name": "Lubumbashi", 
+    "lat": "-11.6647", 
+    "lng": "27.4794", 
+       "country_id":50 ,
+     
+    "admin_name": "Haut-Katanga", 
+     
+    "population": "1786397", 
+    "population_proper": "1786397"
+  }, 
+  {
+    "name": "Mbandaka", 
+    "lat": "0.0478", 
+    "lng": "18.2558", 
+       "country_id":50 ,
+     
+    "admin_name": "Équateur", 
+     
+    "population": "1187837", 
+    "population_proper": "1187837"
+  }, 
+  {
+    "name": "Bukavu", 
+    "lat": "-2.5000", 
+    "lng": "28.8667", 
+       "country_id":50 ,
+     
+    "admin_name": "Sud-Kivu", 
+     
+    "population": "1133000", 
+    "population_proper": "870954"
+  }, 
+  {
+    "name": "Kisangani", 
+    "lat": "0.5153", 
+    "lng": "25.1911", 
+       "country_id":50 ,
+     
+    "admin_name": "Tshopo", 
+     
+    "population": "935977", 
+    "population_proper": "935977"
+  }, 
+  {
+    "name": "Bunia", 
+    "lat": "1.5667", 
+    "lng": "30.2500", 
+       "country_id":50 ,
+     
+    "admin_name": "Ituri", 
+     
+    "population": "900666", 
+    "population_proper": "900666"
+  }, 
+  {
+    "name": "Tshikapa", 
+    "lat": "-6.4167", 
+    "lng": "20.8000", 
+       "country_id":50 ,
+     
+    "admin_name": "Kasaï", 
+     
+    "population": "732000", 
+    "population_proper": "267462"
+  }, 
+  {
+    "name": "Uvira", 
+    "lat": "-3.4000", 
+    "lng": "29.1500", 
+       "country_id":50 ,
+     
+    "admin_name": "Sud-Kivu", 
+     
+    "population": "590000", 
+    "population_proper": "170391"
+  }, 
+  {
+    "name": "Kolwezi", 
+    "lat": "-10.7167", 
+    "lng": "25.4667", 
+       "country_id":50 ,
+     
+    "admin_name": "Lualaba", 
+     
+    "population": "572942", 
+    "population_proper": "572942"
+  }, 
+  {
+    "name": "Likasi", 
+    "lat": "-10.9833", 
+    "lng": "26.7333", 
+       "country_id":50 ,
+     
+    "admin_name": "Haut-Katanga", 
+     
+    "population": "495000", 
+    "population_proper": "422535"
+  }, 
+  {
+    "name": "Kikwit", 
+    "lat": "-5.0386", 
+    "lng": "18.8181", 
+       "country_id":50 ,
+     
+    "admin_name": "Kwilu", 
+     
+    "population": "458000", 
+    "population_proper": "186991"
+  }, 
+  {
+    "name": "Matadi", 
+    "lat": "-5.8167", 
+    "lng": "13.4833", 
+       "country_id":50 ,
+     
+    "admin_name": "Kongo Central", 
+     
+    "population": "337000", 
+    "population_proper": "306053"
+  }, 
+  {
+    "name": "Beni", 
+    "lat": "0.5000", 
+    "lng": "29.4667", 
+       "country_id":50 ,
+     
+    "admin_name": "Nord-Kivu", 
+     
+    "population": "332903", 
+    "population_proper": "231952"
+  }, 
+  {
+    "name": "Goma", 
+    "lat": "-1.6794", 
+    "lng": "29.2336", 
+       "country_id":50 ,
+     
+    "admin_name": "Nord-Kivu", 
+     
+    "population": "249862", 
+    "population_proper": "249862"
+  }, 
+  {
+    "name": "Kabinda", 
+    "lat": "-6.1300", 
+    "lng": "24.4800", 
+       "country_id":50 ,
+     
+    "admin_name": "Lomami", 
+     
+    "population": "244000", 
+    "population_proper": "219154"
+  }, 
+  {
+    "name": "Kalemie", 
+    "lat": "-5.9128", 
+    "lng": "29.1906", 
+       "country_id":50 ,
+     
+    "admin_name": "Tanganyika", 
+     
+    "population": "206257", 
+    "population_proper": "146974"
+  }, 
+  {
+    "name": "Gemena", 
+    "lat": "3.2500", 
+    "lng": "19.7667", 
+       "country_id":50 ,
+     
+    "admin_name": "Sud-Ubangi", 
+     
+    "population": "198056", 
+    "population_proper": "138527"
+  }, 
+  {
+    "name": "Isiro", 
+    "lat": "2.7833", 
+    "lng": "27.6167", 
+       "country_id":50 ,
+     
+    "admin_name": "Haut-Uélé", 
+     
+    "population": "182900", 
+    "population_proper": "182900"
+  }, 
+  {
+    "name": "Kindu", 
+    "lat": "-2.9500", 
+    "lng": "25.9500", 
+       "country_id":50 ,
+     
+    "admin_name": "Maniema", 
+     
+    "population": "172321", 
+    "population_proper": "172321"
+  }, 
+  {
+    "name": "Kamina", 
+    "lat": "-8.7386", 
+    "lng": "24.9906", 
+       "country_id":50 ,
+     
+    "admin_name": "Haut-Lomami", 
+     
+    "population": "156761", 
+    "population_proper": "156761"
+  }, 
+  {
+    "name": "Bandundu", 
+    "lat": "-3.3167", 
+    "lng": "17.3667", 
+       "country_id":50 ,
+     
+    "admin_name": "Kwilu", 
+     
+    "population": "143435", 
+    "population_proper": "143435"
+  }, 
+  {
+    "name": "Lisala", 
+    "lat": "2.1486", 
+    "lng": "21.5136", 
+       "country_id":50 ,
+     
+    "admin_name": "Mongala", 
+     
+    "population": "79235", 
+    "population_proper": "79235"
+  }, 
+  {
+    "name": "Buta", 
+    "lat": "2.8000", 
+    "lng": "24.7333", 
+       "country_id":50 ,
+     
+    "admin_name": "Bas-Uélé", 
+     
+    "population": "55313", 
+    "population_proper": "55313"
+  }, 
+  {
+    "name": "Gbadolite", 
+    "lat": "4.2750", 
+    "lng": "21.0000", 
+       "country_id":50 ,
+     
+    "admin_name": "Nord-Ubangi", 
+     
+    "population": "50493", 
+    "population_proper": "50493"
+  }, 
+  {
+    "name": "Inongo", 
+    "lat": "-1.9500", 
+    "lng": "18.2667", 
+       "country_id":50 ,
+     
+    "admin_name": "Mai-Ndombe", 
+     
+    "population": "45159", 
+    "population_proper": "45159"
+  }, 
+  {
+    "name": "Kenge", 
+    "lat": "-4.8056", 
+    "lng": "17.0417", 
+       "country_id":50 ,
+     
+    "admin_name": "Kwango", 
+     
+    "population": "41612", 
+    "population_proper": "41612"
+  }, 
+  {
+    "name": "Lusambo", 
+    "lat": "-4.9729", 
+    "lng": "23.4368", 
+       "country_id":50 ,
+     
+    "admin_name": "Sankuru", 
+     
+    "population": "41416", 
+    "population_proper": "41416"
+  }, 
+  {
+    "name": "Luebo", 
+    "lat": "-5.3500", 
+    "lng": "21.4167", 
+       "country_id":50 ,
+     
+    "admin_name": "Kasaï", 
+     
+    "population": "40115", 
+    "population_proper": "40115"
+  }, 
+  {
+    "name": "Boende", 
+    "lat": "-0.2810", 
+    "lng": "20.8760", 
+       "country_id":50 ,
+     
+    "admin_name": "Tshuapa", 
+     
+    "population": "36158", 
+    "population_proper": "36158"
+  }
+]

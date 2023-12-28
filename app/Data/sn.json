@@ -1,0 +1,163 @@
+[
+  {
+    "name": "Pikine", 
+    "lat": "14.7500", 
+    "lng": "-17.4000", 
+    "country_id":188 ,
+    "admin_name": "Dakar", 
+    "population": "1170791", 
+    "population_proper": "1170791"
+  }, 
+  {
+    "name": "Dakar", 
+    "lat": "14.7319", 
+    "lng": "-17.4572", 
+    
+    "country_id":188 ,
+    "admin_name": "Dakar", 
+    
+    "population": "1146053", 
+    "population_proper": "1146053"
+  }, 
+  {
+    "name": "Thiès", 
+    "lat": "14.7833", 
+    "lng": "-16.9167", 
+    
+    "country_id":188 ,
+    "admin_name": "Thiès", 
+    "population": "293001", 
+    "population_proper": "293001"
+  }, 
+  {
+    "name": "Rufisque", 
+    "lat": "14.7167", 
+    "lng": "-17.2667", 
+    
+    "country_id":188 ,
+    "admin_name": "Dakar", 
+    
+    "population": "221066", 
+    "population_proper": "221066"
+  }, 
+  {
+    "name": "Ziguinchor", 
+    "lat": "12.5833", 
+    "lng": "-16.2667", 
+    
+    "country_id":188 ,
+    "admin_name": "Ziguinchor", 
+    "population": "205294", 
+    "population_proper": "205294"
+  }, 
+  {
+    "name": "Saint-Louis", 
+    "lat": "16.0333", 
+    "lng": "-16.5000", 
+    
+    "country_id":188 ,
+    "admin_name": "Saint-Louis", 
+    "population": "176000", 
+    "population_proper": "176000"
+  }, 
+  {
+    "name": "Kaolack", 
+    "lat": "14.1520", 
+    "lng": "-16.0726", 
+    
+    "country_id":188 ,
+    "admin_name": "Kaolack", 
+    "population": "172305", 
+    "population_proper": "172305"
+  }, 
+  {
+    "name": "Diourbel", 
+    "lat": "14.6550", 
+    "lng": "-16.2314", 
+    
+    "country_id":188 ,
+    "admin_name": "Diourbel", 
+    "population": "100445", 
+    "population_proper": "100445"
+  }, 
+  {
+    "name": "Louga", 
+    "lat": "15.6167", 
+    "lng": "-16.2167", 
+    
+    "country_id":188 ,
+    "admin_name": "Louga", 
+    "population": "85075", 
+    "population_proper": "85075"
+  }, 
+  {
+    "name": "Tambacounda", 
+    "lat": "13.7689", 
+    "lng": "-13.6672", 
+    
+    "country_id":188 ,
+    "admin_name": "Tambacounda", 
+    "population": "78800", 
+    "population_proper": "78800"
+  }, 
+  {
+    "name": "Kolda", 
+    "lat": "12.8958", 
+    "lng": "-14.9408", 
+    
+    "country_id":188 ,
+    "admin_name": "Kolda", 
+    "population": "62258", 
+    "population_proper": "62258"
+  }, 
+  {
+    "name": "Fatick", 
+    "lat": "14.3167", 
+    "lng": "-16.4167", 
+    
+    "country_id":188 ,
+    "admin_name": "Fatick", 
+    "population": "24243", 
+    "population_proper": "24243"
+  }, 
+  {
+    "name": "Kédougou", 
+    "lat": "12.5556", 
+    "lng": "-12.1807", 
+    
+    "country_id":188 ,
+    "admin_name": "Kédougou", 
+    "population": "18226", 
+    "population_proper": "17922"
+  }, 
+  {
+    "name": "Kaffrine", 
+    "lat": "14.1016", 
+    "lng": "-15.5467", 
+    
+    "country_id":188 ,
+    "admin_name": "Kaffrine", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sédhiou", 
+    "lat": "12.7081", 
+    "lng": "-15.5569", 
+    
+    "country_id":188 ,
+    "admin_name": "Sédhiou", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Matam", 
+    "lat": "15.6167", 
+    "lng": "-13.3333", 
+    
+    "country_id":188 ,
+    "admin_name": "Matam", 
+    "population": "", 
+    "population_proper": ""
+  }
+]

@@ -1,0 +1,189 @@
+[
+  {
+    "name": "Brazzaville", 
+    "lat": "-4.2694", 
+    "lng": "15.2714", 
+     "country_id":57 ,
+     
+    "admin_name": "Brazzaville", 
+     
+    "population": "1827000", 
+    "population_proper": "1827000"
+  }, 
+  {
+    "name": "Pointe-Noire", 
+    "lat": "-4.8000", 
+    "lng": "11.8500", 
+     "country_id":57 ,
+     
+    "admin_name": "Pointe-Noire", 
+    
+    "population": "829134", 
+    "population_proper": "829134"
+  }, 
+  {
+    "name": "Tchibota", 
+    "lat": "-4.1794", 
+    "lng": "11.3731", 
+     "country_id":57 ,
+     
+    "admin_name": "Kouilou", 
+   
+    "population": "262931", 
+    "population_proper": "262931"
+  }, 
+  {
+    "name": "Dolisie", 
+    "lat": "-4.2000", 
+    "lng": "12.6667", 
+     "country_id":57 ,
+     
+    "admin_name": "Niari", 
+    
+    "population": "103894", 
+    "population_proper": "83798"
+  }, 
+  {
+    "name": "Kayes", 
+    "lat": "-4.1681", 
+    "lng": "13.2939", 
+     "country_id":57 ,
+     
+    "admin_name": "Bouenza", 
+   
+    "population": "62521", 
+    "population_proper": "62521"
+  }, 
+  {
+    "name": "Kindamba", 
+    "lat": "-3.7275", 
+    "lng": "14.5211", 
+     "country_id":57 ,
+     
+    "admin_name": "Pool", 
+   
+    "population": "61304", 
+    "population_proper": "61304"
+  }, 
+  {
+    "name": "Impfondo", 
+    "lat": "1.6333", 
+    "lng": "18.0667", 
+     "country_id":57 ,
+     
+    "admin_name": "Likouala", 
+    
+    "population": "40654", 
+    "population_proper": "40654"
+  }, 
+  {
+    "name": "Hinda", 
+    "lat": "-4.6133", 
+    "lng": "12.0408", 
+     "country_id":57 ,
+     
+    "admin_name": "Kouilou", 
+   
+    "population": "32995", 
+    "population_proper": "32995"
+  }, 
+  {
+    "name": "Mossendjo", 
+    "lat": "-2.9500", 
+    "lng": "12.7333", 
+     "country_id":57 ,
+     
+    "admin_name": "Niari", 
+   
+    "population": "30936", 
+    "population_proper": "13238"
+  }, 
+  {
+    "name": "Ouésso", 
+    "lat": "1.6136", 
+    "lng": "16.0517", 
+     "country_id":57 ,
+     
+    "admin_name": "Sangha", 
+    
+    "population": "28179", 
+    "population_proper": "28179"
+  }, 
+  {
+    "name": "Madingou", 
+    "lat": "-4.1536", 
+    "lng": "13.5500", 
+     "country_id":57 ,
+     
+    "admin_name": "Bouenza", 
+    
+    "population": "27462", 
+    "population_proper": "27462"
+  }, 
+  {
+    "name": "Owando", 
+    "lat": "-0.4833", 
+    "lng": "15.9000", 
+     "country_id":57 ,
+     
+    "admin_name": "Cuvette", 
+    
+    "population": "23952", 
+    "population_proper": "23952"
+  }, 
+  {
+    "name": "Sibiti", 
+    "lat": "-3.6858", 
+    "lng": "13.3458", 
+     "country_id":57 ,
+     
+    "admin_name": "Lékoumou", 
+    
+    "population": "23752", 
+    "population_proper": "23752"
+  }, 
+  {
+    "name": "Djambala", 
+    "lat": "-2.5500", 
+    "lng": "14.7500", 
+     "country_id":57 ,
+     
+    "admin_name": "Plateaux", 
+    
+    "population": "17265", 
+    "population_proper": "17265"
+  }, 
+  {
+    "name": "Kinkala", 
+    "lat": "-4.3614", 
+    "lng": "14.7644", 
+     "country_id":57 ,
+     
+    "admin_name": "Pool", 
+    
+    "population": "16132", 
+    "population_proper": "16132"
+  }, 
+  {
+    "name": "Ewo", 
+    "lat": "-0.8667", 
+    "lng": "14.8167", 
+     "country_id":57 ,
+     
+    "admin_name": "Cuvette-Ouest", 
+    
+    "population": "9062", 
+    "population_proper": "9062"
+  }, 
+  {
+    "name": "Loango", 
+    "lat": "-4.6307", 
+    "lng": "11.8357", 
+     "country_id":57 ,
+     
+    "admin_name": "Kouilou", 
+    
+    "population": "", 
+    "population_proper": ""
+  }
+]

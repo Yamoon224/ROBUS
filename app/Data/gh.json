@@ -1,0 +1,219 @@
+[
+  {
+    "name": "Accra", 
+    "lat": "5.6037", 
+    "lng": "-0.1870", 
+     "country_id":83 ,
+    "admin_name": "Greater Accra", 
+    "capital": "primary", 
+    "population": "2291352", 
+    "population_proper": "2291352"
+  }, 
+  {
+    "name": "Kumasi", 
+    "lat": "6.6833", 
+    "lng": "-1.6167", 
+     "country_id":83 ,
+    "admin_name": "Ashanti", 
+    "population": "2069350", 
+    "population_proper": "2069350"
+  }, 
+  {
+    "name": "Tamale", 
+    "lat": "9.4075", 
+    "lng": "-0.8533", 
+     "country_id":83 ,
+    "admin_name": "Northern", 
+    "population": "466723", 
+    "population_proper": "466723"
+  }, 
+  {
+    "name": "Sekondi", 
+    "lat": "4.9433", 
+    "lng": "-1.7040", 
+     "country_id":83 ,
+    "admin_name": "Western", 
+    "population": "286248", 
+    "population_proper": "138872"
+  }, 
+  {
+    "name": "Obuase", 
+    "lat": "6.2000", 
+    "lng": "-1.6833", 
+     "country_id":83 ,
+    "admin_name": "Ashanti", 
+    "population": "180460", 
+    "population_proper": "180460"
+  }, 
+  {
+    "name": "Tema", 
+    "lat": "5.6667", 
+    "lng": "-0.0167", 
+     "country_id":83 ,
+    "admin_name": "Greater Accra", 
+    "population": "161612", 
+    "population_proper": "161612"
+  }, 
+  {
+    "name": "Cape Coast", 
+    "lat": "5.1000", 
+    "lng": "-1.2500", 
+     "country_id":83 ,
+    "admin_name": "Central", 
+    "population": "143015", 
+    "population_proper": "135516"
+  }, 
+  {
+    "name": "Koforidua", 
+    "lat": "6.1000", 
+    "lng": "-0.2667", 
+     "country_id":83 ,
+    "admin_name": "Eastern", 
+    "population": "127334", 
+    "population_proper": "127334"
+  }, 
+  {
+    "name": "Ho", 
+    "lat": "6.6114", 
+    "lng": "0.4703", 
+     "country_id":83 ,
+    "admin_name": "Volta", 
+    "population": "83715", 
+    "population_proper": "83715"
+  }, 
+  {
+    "name": "Wa", 
+    "lat": "10.0667", 
+    "lng": "-2.5000", 
+     "country_id":83 ,
+    "admin_name": "Upper West", 
+    "population": "78107", 
+    "population_proper": "75676"
+  }, 
+  {
+    "name": "Bawku", 
+    "lat": "11.0600", 
+    "lng": "-0.2422", 
+     "country_id":83 ,
+    "admin_name": "Upper East", 
+    "population": "73594", 
+    "population_proper": "56830"
+  }, 
+  {
+    "name": "Sunyani", 
+    "lat": "7.3360", 
+    "lng": "-2.3360", 
+     "country_id":83 ,
+    "admin_name": "Brong-Ahafo", 
+    "population": "70299", 
+    "population_proper": "70299"
+  }, 
+  {
+    "name": "Bolgatanga", 
+    "lat": "10.7856", 
+    "lng": "-0.8514", 
+     "country_id":83 ,
+    "admin_name": "Upper East", 
+    "population": "66685", 
+    "population_proper": "66685"
+  }, 
+  {
+    "name": "Aflao", 
+    "lat": "6.1188", 
+    "lng": "1.1946", 
+     "country_id":83 ,
+    "admin_name": "Volta", 
+    "population": "66546", 
+    "population_proper": "66546"
+  }, 
+  {
+    "name": "Nkawkaw", 
+    "lat": "6.5505", 
+    "lng": "-0.7800", 
+     "country_id":83 ,
+    "admin_name": "Eastern", 
+    "population": "62667", 
+    "population_proper": "47162"
+  }, 
+  {
+    "name": "Hohoe", 
+    "lat": "7.1490", 
+    "lng": "0.4746", 
+     "country_id":83 ,
+    "admin_name": "Volta", 
+    "population": "56202", 
+    "population_proper": "56202"
+  }, 
+  {
+    "name": "Winneba", 
+    "lat": "5.3500", 
+    "lng": "-0.6333", 
+     "country_id":83 ,
+    "admin_name": "Central", 
+    "population": "55331", 
+    "population_proper": "55331"
+  }, 
+  {
+    "name": "Berekum", 
+    "lat": "7.4504", 
+    "lng": "-2.5900", 
+     "country_id":83 ,
+    "admin_name": "Brong-Ahafo", 
+    "population": "46287", 
+    "population_proper": "26682"
+  }, 
+  {
+    "name": "Techiman", 
+    "lat": "7.5905", 
+    "lng": "-1.9395", 
+     "country_id":83 ,
+    "admin_name": "Brong-Ahafo", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sefwi Wiawso", 
+    "lat": "6.2058", 
+    "lng": "-2.4894", 
+     "country_id":83 ,
+    "admin_name": "Western", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Goaso", 
+    "lat": "6.8036", 
+    "lng": "-2.5172", 
+     "country_id":83 ,
+    "admin_name": "Brong-Ahafo", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dambai", 
+    "lat": "8.0662", 
+    "lng": "0.1795", 
+     "country_id":83 ,
+    "admin_name": "Volta", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Nalerigu", 
+    "lat": "10.5273", 
+    "lng": "-0.3698", 
+     "country_id":83 ,
+    "admin_name": "Northern", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Damongo", 
+    "lat": "9.0830", 
+    "lng": "-1.8188", 
+     "country_id":83 ,
+    "admin_name": "Northern", 
+    "population": "", 
+    "population_proper": ""
+  }
+]

@@ -1,0 +1,317 @@
+[
+  {
+    "name": "Conakry", 
+    "lat": "9.5092", 
+    "lng": "-13.7122", 
+    "country_id":91 ,
+    "admin_name": "Conakry", 
+    "population": "1667864", 
+    "population_proper": "1667864"
+  }, 
+  {
+    "name": "Guéckédou", 
+    "lat": "8.5667", 
+    "lng": "-10.1333", 
+    "country_id":91 ,
+    "admin_name": "N’Zérékoré", 
+    "population": "221715", 
+    "population_proper": "221715"
+  }, 
+  {
+    "name": "Siguiri", 
+    "lat": "11.4189", 
+    "lng": "-9.1644", 
+    "country_id":91 ,
+    "admin_name": "Kankan", 
+    "population": "183875", 
+    "population_proper": "183875"
+  }, 
+  {
+    "name": "N’Zérékoré", 
+    "lat": "7.7600", 
+    "lng": "-8.8300", 
+    "country_id":91 ,
+    "admin_name": "N’Zérékoré", 
+    "population": "168121", 
+    "population_proper": "132728"
+  }, 
+  {
+    "name": "Kindia", 
+    "lat": "10.0600", 
+    "lng": "-12.8700", 
+    "country_id":91 ,
+    "admin_name": "Kindia", 
+    "population": "117062", 
+    "population_proper": "69960"
+  }, 
+  {
+    "name": "Boké", 
+    "lat": "10.9400", 
+    "lng": "-14.3000", 
+    "country_id":91 ,
+    "admin_name": "Boké", 
+    "population": "116270", 
+    "population_proper": "116270"
+  }, 
+  {
+    "name": "Kankan", 
+    "lat": "10.3900", 
+    "lng": "-9.3100", 
+    "country_id":91 ,
+    "admin_name": "Kankan", 
+    "population": "114009", 
+    "population_proper": "106906"
+  }, 
+  {
+    "name": "Labé", 
+    "lat": "11.3167", 
+    "lng": "-12.2833", 
+    "country_id":91 ,
+    "admin_name": "Labé", 
+    "population": "107695", 
+    "population_proper": "107695"
+  }, 
+  {
+    "name": "Mamou", 
+    "lat": "10.3736", 
+    "lng": "-12.0847", 
+    "country_id":91 ,
+    "admin_name": "Mamou", 
+    "population": "71153", 
+    "population_proper": "41619"
+  }, 
+  {
+    "name": "Kamsar", 
+    "lat": "10.6500", 
+    "lng": "-14.6167", 
+    "country_id":91 ,
+    "admin_name": "Boké", 
+    "population": "68999", 
+    "population_proper": "68999"
+  }, 
+  {
+    "name": "Kissidougou", 
+    "lat": "9.1905", 
+    "lng": "-10.1200", 
+    "country_id":91 ,
+    "admin_name": "Faranah", 
+    "population": "66815", 
+    "population_proper": "47099"
+  }, 
+  {
+    "name": "Macenta", 
+    "lat": "8.5504", 
+    "lng": "-9.4800", 
+    "country_id":91 ,
+    "admin_name": "N’Zérékoré", 
+    "population": "43102", 
+    "population_proper": "41233"
+  }, 
+  {
+    "name": "Dabola", 
+    "lat": "10.7500", 
+    "lng": "-11.1167", 
+    "country_id":91 ,
+    "admin_name": "Faranah", 
+    "population": "38617", 
+    "population_proper": "38617"
+  }, 
+  {
+    "name": "Télimélé", 
+    "lat": "10.9050", 
+    "lng": "-13.0430", 
+    "country_id":91 ,
+    "admin_name": "Kindia", 
+    "population": "30311", 
+    "population_proper": "30311"
+  }, 
+  {
+    "name": "Tougué", 
+    "lat": "11.4400", 
+    "lng": "-11.6700", 
+    "country_id":91 ,
+    "admin_name": "Labé", 
+    "population": "25531", 
+    "population_proper": "25531"
+  }, 
+  {
+    "name": "Fria", 
+    "lat": "10.3804", 
+    "lng": "-13.5500", 
+    "country_id":91 ,
+    "admin_name": "Boké", 
+    "population": "23729", 
+    "population_proper": "23729"
+  }, 
+  {
+    "name": "Pita", 
+    "lat": "11.0800", 
+    "lng": "-12.4010", 
+    "country_id":91 ,
+    "admin_name": "Mamou", 
+    "population": "20052", 
+    "population_proper": "20052"
+  }, 
+  {
+    "name": "Faranah", 
+    "lat": "10.0404", 
+    "lng": "-10.7500", 
+    "country_id":91 ,
+    "admin_name": "Faranah", 
+    "population": "19469", 
+    "population_proper": "9350"
+  }, 
+  {
+    "name": "Kérouané", 
+    "lat": "9.2704", 
+    "lng": "-9.0200", 
+    "country_id":91 ,
+    "admin_name": "Kankan", 
+    "population": "15406", 
+    "population_proper": "7228"
+  }, 
+  {
+    "name": "Kouroussa", 
+    "lat": "10.6530", 
+    "lng": "-9.8920", 
+    "country_id":91 ,
+    "admin_name": "Kankan", 
+    "population": "14223", 
+    "population_proper": "14223"
+  }, 
+  {
+    "name": "Koundara", 
+    "lat": "12.4800", 
+    "lng": "-13.2960", 
+    "country_id":91 ,
+    "admin_name": "Boké", 
+    "population": "13990", 
+    "population_proper": "13990"
+  }, 
+  {
+    "name": "Beyla", 
+    "lat": "8.6870", 
+    "lng": "-8.6570", 
+    "country_id":91 ,
+    "admin_name": "N’Zérékoré", 
+    "population": "13204", 
+    "population_proper": "13204"
+  }, 
+  {
+    "name": "Forécariah", 
+    "lat": "9.4300", 
+    "lng": "-13.0980", 
+    "country_id":91 ,
+    "admin_name": "Kindia", 
+    "population": "12358", 
+    "population_proper": "12358"
+  }, 
+  {
+    "name": "Gaoual", 
+    "lat": "11.7540", 
+    "lng": "-13.2130", 
+    "country_id":91 ,
+    "admin_name": "Boké", 
+    "population": "7461", 
+    "population_proper": "7461"
+  }, 
+  {
+    "name": "Dalaba", 
+    "lat": "10.6560", 
+    "lng": "-12.2720", 
+    "country_id":91 ,
+    "admin_name": "Mamou", 
+    "population": "6349", 
+    "population_proper": "6349"
+  }, 
+  {
+    "name": "Dinguiraye", 
+    "lat": "11.2990", 
+    "lng": "-10.7260", 
+    "country_id":91 ,
+    "admin_name": "Faranah", 
+    "population": "6062", 
+    "population_proper": "6062"
+  }, 
+  {
+    "name": "Mali", 
+    "lat": "12.0840", 
+    "lng": "-12.3010", 
+    "country_id":91 ,
+    "admin_name": "Labé", 
+    "population": "5479", 
+    "population_proper": "5479"
+  }, 
+  {
+    "name": "Yomou", 
+    "lat": "7.5660", 
+    "lng": "-9.2533", 
+    "country_id":91 ,
+    "admin_name": "N’Zérékoré", 
+    "population": "3614", 
+    "population_proper": "1601"
+  }, 
+  {
+    "name": "Boffa", 
+    "lat": "10.1850", 
+    "lng": "-14.0430", 
+    "country_id":91 ,
+    "admin_name": "Boké", 
+    "population": "2332", 
+    "population_proper": "2332"
+  }, 
+  {
+    "name": "Coyah", 
+    "lat": "9.7056", 
+    "lng": "-13.3769", 
+    "country_id":91 ,
+    "admin_name": "Kindia", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dubréka", 
+    "lat": "9.7911", 
+    "lng": "-13.5233", 
+    "country_id":91 ,
+    "admin_name": "Kindia", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Lola", 
+    "lat": "7.8000", 
+    "lng": "-8.5333", 
+    "country_id":91 ,
+    "admin_name": "N’Zérékoré", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Koubia", 
+    "lat": "11.5833", 
+    "lng": "-11.9000", 
+    "country_id":91 ,
+    "admin_name": "Labé", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Mandiana", 
+    "lat": "10.6333", 
+    "lng": "-8.6833", 
+    "country_id":91 ,
+    "admin_name": "Kankan", 
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Lélouma", 
+    "lat": "11.1833", 
+    "lng": "-12.9333", 
+    "country_id":91 ,
+    "admin_name": "Labé", 
+    "population": "", 
+    "population_proper": ""
+  }
+]
