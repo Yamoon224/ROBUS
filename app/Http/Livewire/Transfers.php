@@ -15825,7 +15825,7 @@ class Transfers extends Component
         )
             ->where(
                 'wallets.country_id',
-                Auth::guard('web')->user()->country->id
+                Auth::guard('web')->user()->country->idferd
             )
             ->select('wallet_phone_credits.*')
             ->where('wallet_phone_credits.status', 'ERROR')
