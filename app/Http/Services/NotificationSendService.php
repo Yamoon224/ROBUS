@@ -350,7 +350,7 @@ class NotificationSendService
 
                 $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
                     . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
+                    . $walletTransaction->created_at . ' Votre transfert effectué avec success ' . 'Robus vous remercie';
 
                 $encode = substr(robus()->phone,  -10);
 

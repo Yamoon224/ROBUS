@@ -69,7 +69,7 @@ class CreateRobusWalletWithDrawalService
             'created_by' => robus()->id,
             'provider_id'  => $provider,
             // 'costs_amount' => $percent_robus->percent * $request->amount,
-            'num_wallet'  => $compte_number_robus,
+            'num_wallet' => strtoupper($compte_number_robus),
             'choose_type_transaction' => 1,
             'type_transaction' => 'Retrait',
             'choose_type_transaction' => 2,
