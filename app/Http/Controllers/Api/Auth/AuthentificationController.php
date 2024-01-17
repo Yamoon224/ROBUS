@@ -184,16 +184,18 @@ class AuthentificationController extends Controller
                     $message = 'Code activation ' . $user->activation_code;
 
                     Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$user->phone&from=ROBUS&sms=$message");
-                }
 
-                $notify = new MailController;
-                $notify->newOtp($user);
+                } 
 
-                return response()->json([
-                    'success' => true,
-                    'message' => "Le numero est cree avec success.",
-                    'data'  => $user->status ?? null,
-                ], 200);
+            $notify = new MailController;
+            $notify->newOtp($user);
+
+            return response()->json([
+                'success' => true,
+                'message' => "Le numero est cree avec success.",
+                'data'  => $user->status ?? null,
+            ], 200);
+                
             } else {
 
                 //User already exist
@@ -365,14 +367,17 @@ class AuthentificationController extends Controller
                         'success' => false,
                         'message' => 'Le code ne correspond pas.'
                     ], 333);
+
                 } else {
 
+                 
                     $user->update([
                         'status' => true,
                         'is_custumers' => true,
                         'silver_ceiling' =>  $user->country->silver_ceiling,
                     ]);
-
+              
+                    
                     if ($user->country->code == "CI") {
 
                         if ($user->status == true) {
@@ -423,6 +428,7 @@ class AuthentificationController extends Controller
                                         'wallet_id'  => $wallet_user->wallet_id,
                                         'phone'  =>   $user->country->indecative . $user->phone,
                                         'created_by' => $user->id,
+                                        'activation_code' => null,
                                         'is_active' => false,
                                     ]);
 
@@ -492,6 +498,7 @@ class AuthentificationController extends Controller
                                         'phone'  =>   $user->country->indecative . $user->phone ?? null,
                                         'created_by' => $user->id,
                                         'is_active' => false,
+                                        'activation_code' => null,
                                     ]);
 
 
@@ -984,11 +991,8 @@ class AuthentificationController extends Controller
 
         try {
             if ($country) {
-
                 if ($country->code == "CI") {
-
                     $user = SidUser::wherePhone('+225' . $request->phone)->first();
-
                     if (!empty($user)) {
                         $user->update(['forget_password' => $activation_code]);
                         $message = 'Utilisez ce mot de passe temporaire pour vous connectez ' .  $activation_code;

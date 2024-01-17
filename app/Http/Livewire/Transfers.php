@@ -10136,7 +10136,8 @@ class Transfers extends Component
                             }
 
                             if (
-                                $check->provider->id == 48 || $check->provider->id == 71
+                                $check->provider->id == 48
+                                || $check->provider->id == 71
                                 || $check->provider->id == 72
                                 || $check->provider->id == 73
                                 || $check->provider->id == 74
@@ -10145,7 +10146,8 @@ class Transfers extends Component
                                 || $check->provider->id == 77
                                 || $check->provider->id == 78
                                 || $check->provider->id == 49
-                                || $check->provider->id == 50 || $check->provider->id == 55
+                                || $check->provider->id == 50
+                                || $check->provider->id == 55
                             ) {
 
                                 $commission_transaction = $valeur_amount_receveid;
@@ -10335,10 +10337,27 @@ class Transfers extends Component
                             if ($check->wallet->sidUser->is_under_distributer == 1) {
 
                                 if (
-                                    $check->provider->id == 61 || $check->provider->id == 62 || $check->provider->id == 63
-                                    || $check->provider->id == 64 || $check->provider->id == 65 || $check->provider->id == 59 || $check->provider->id == 60
-                                    || $check->provider->id == 48 || $check->provider->id == 49 || $check->provider->id == 50 || $check->provider->id == 55
-                                ) {
+                                    $check->provider->id == 61
+                                    || $check->provider->id == 62
+                                    || $check->provider->id == 63
+                                    || $check->provider->id == 64
+                                    || $check->provider->id == 65
+                                    || $check->provider->id == 59
+                                    || $check->provider->id == 60
+                                    || $check->provider->id == 48
+                                    || $check->provider->id == 49
+                                    || $check->provider->id == 50
+                                    || $check->provider->id == 55
+                                    || $check->provider->id == 71
+                                    || $check->provider->id == 72
+                                    || $check->provider->id == 73
+                                    || $check->provider->id == 74
+                                    || $check->provider->id == 75
+                                    || $check->provider->id == 76
+                                    || $check->provider->id == 77
+                                    || $check->provider->id == 78
+                                ) 
+                                {
 
                                     $commission =  $check->amount;
 
@@ -10383,7 +10402,8 @@ class Transfers extends Component
                             } else {
 
                                 if (
-                                    $check->provider->id == 48 || $check->provider->id == 71
+                                    $check->provider->id == 48
+                                    || $check->provider->id == 71
                                     || $check->provider->id == 72
                                     || $check->provider->id == 73
                                     || $check->provider->id == 74
@@ -10392,7 +10412,8 @@ class Transfers extends Component
                                     || $check->provider->id == 77
                                     || $check->provider->id == 78
                                     || $check->provider->id == 49
-                                    || $check->provider->id == 50 || $check->provider->id == 55
+                                    || $check->provider->id == 50
+                                    || $check->provider->id == 55
                                 ) {
 
                                     $commission =  $check->amount;
@@ -10549,9 +10570,25 @@ class Transfers extends Component
                             if ($check->wallet->sidUser->is_under_distributer == 1) {
 
                                 if (
-                                    $check->provider->id == 61 || $check->provider->id == 62 || $check->provider->id == 63
-                                    || $check->provider->id == 64 || $check->provider->id == 65 || $check->provider->id == 59 || $check->provider->id == 60
-                                    || $check->provider->id == 48 || $check->provider->id == 49 || $check->provider->id == 50 || $check->provider->id == 55
+                                    $check->provider->id == 61
+                                    || $check->provider->id == 62
+                                    || $check->provider->id == 63
+                                    || $check->provider->id == 64
+                                    || $check->provider->id == 65
+                                    || $check->provider->id == 59
+                                    || $check->provider->id == 60
+                                    || $check->provider->id == 48
+                                    || $check->provider->id == 49
+                                    || $check->provider->id == 50
+                                    || $check->provider->id == 55
+                                    || $check->provider->id == 71
+                                    || $check->provider->id == 72
+                                    || $check->provider->id == 73
+                                    || $check->provider->id == 74
+                                    || $check->provider->id == 75
+                                    || $check->provider->id == 76
+                                    || $check->provider->id == 77
+                                    || $check->provider->id == 78
                                 ) {
 
                                     $commission =  $check->amount;
@@ -12363,8 +12400,7 @@ class Transfers extends Component
                 'user_send' => Auth::guard('web')->user(),
                 'user_auth' => $walletUser,
             ]);
-        } else
-        {
+        } else {
             //Admin info
 
             if ($this->statusFilterTransaction != '') {
@@ -15825,7 +15861,7 @@ class Transfers extends Component
         )
             ->where(
                 'wallets.country_id',
-                Auth::guard('web')->user()->country->idferd
+                Auth::guard('web')->user()->country->id
             )
             ->select('wallet_phone_credits.*')
             ->where('wallet_phone_credits.status', 'ERROR')
