@@ -348,7 +348,7 @@ class NotificationSendService
         if (robus()->is_custumers) {
             if (robus()->country->code == "CI") {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   ' par '
                     . $walletTransaction->provider->name  .  ' le '
                     . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
