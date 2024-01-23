@@ -26,7 +26,7 @@
 
                     </div>
                     <div class="font-medium text-historique mt-6">Transfert total </div>
-                    <div class="text-slate-500 mt-3"> {{ $user->wallet->walletTransactions->sum('amount') ?? null }}
+                    <div class="text-slate-500 mt-3"> {{ $user ?? null }}
                         {{ $usersCountry }}
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                         <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                         <line x1="1" y1="10" x2="23" y2="10"></line>
                     </svg>
-                    <div class="font-medium text-historique mt-6">Gains</div>
+                    <div class="font-medium text-historique mt-6">Commissions</div>
                     <div class="text-slate-500 mt-3"> {{ $sum_commissions }} {{ $usersCountry }}</div>
                 </div>
             </div>

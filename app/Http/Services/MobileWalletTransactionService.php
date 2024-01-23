@@ -97,7 +97,7 @@ class MobileWalletTransactionService
             // 20%
 
 
-            if ($country_civ->currencie->value > robus()->country->currencie->value) {
+            if ($country_civ->currencie->value >robus()->country->currencie->value) {
 
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;

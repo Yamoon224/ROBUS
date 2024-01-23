@@ -21,9 +21,17 @@ class CommissionUnderDistributer extends Component
 
         if ($this->startDate && $this->endDate) {
 
-            $drawers->whereBetween('created_at', [$this->startDate, $this->endDate]);
-        }
+            // $drawers->whereBetween('created_at', [$this->startDate, $this->endDate]);
 
+            return view(
+                'livewire.historical.commission-under-distributer',
+                [
+                    'payment_drawers' =>   $drawers->whereBetween('created_at', [$this->startDate, $this->endDate])->orderBy('created_at', 'desc')->paginate(20),
+                    'sum_commissions' => $this->DrawerPaymentDays,
+                ]
+            );
+        }
+        
         if ($this->searchDrawersHistorical != "") {
 
             $this->resetPage();
@@ -54,6 +62,20 @@ class CommissionUnderDistributer extends Component
         foreach ((WithMerchant::join('sid_users', 'with_merchants.sid_user_id', 'sid_users.id')
         ->where(
             'sid_users.country_id',107) ->whereDate('date_removed', Carbon::now()))->get() as $item) {
+            $data[] = $item->amount_with_draw;
+        }
+
+        return array_sum($data);
+    }
+
+
+    public function getDrawerPaymentDaysProperty()
+    {
+
+        $data = [];
+        foreach ((WithMerchant::join('sid_users', 'with_merchants.sid_user_id', 'sid_users.id')
+        ->where(
+            'sid_users.country_id',107)->whereBetween('with_merchants.created_at', [$this->startDate, $this->endDate]))->get() as $item) {
             $data[] = $item->amount_with_draw;
         }
 

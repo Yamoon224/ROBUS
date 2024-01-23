@@ -26,7 +26,7 @@
                         </svg>
                     </div>
                     <div class="font-medium text-historique mt-6">Total Internationnal</div>
-                    <div class="text-slate-500 mt-3"> {{ $user->wallet->walletPayments->sum('amount') ?? null }}
+                    <div class="text-slate-500 mt-3"> {{ $user ?? null }}
                         {{ $usersCountry }}
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                         <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                         <line x1="1" y1="10" x2="23" y2="10"></line>
                     </svg>
-                    <div class="font-medium text-historique mt-6">Gains</div>
+                    <div class="font-medium text-historique mt-6">Commissions </div>
                     <div class="text-slate-500 mt-3"> {{ $sum_commissions }} {{ $usersCountry }}</div>
                 </div>
             </div>
@@ -116,9 +116,9 @@
                     class="form-select py-3 px-4 box w-full
                     dark-border-dark-3 mt-lg-0 ms-auto mt-3"
                     aria-placeholder="Rechercher par status">
-                    <option selected disabled>Status</option>
+                    <option selected value=" != null">Status</option>
                     <option value="SUCCESS">Success</option>
-                    <option value="ERROR">Erreur</option>
+                      <option value="ERROR">Erreur</option>
                     <option value="PENDING">En attente</option>
                 </select>
             </div>

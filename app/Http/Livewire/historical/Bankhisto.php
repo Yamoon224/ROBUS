@@ -385,7 +385,22 @@ class Bankhisto extends Component
 
             if ($this->startDate && $this->endDate) {
 
-                $banks->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate]);
+                // $banks->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate]);
+            
+                return view(
+                    'livewire.historical.bankhisto',
+                    [
+                        'user' => $this->VirementsDays,
+                        'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+                            ->where('wallets.country_id', $walletUser->country->id)->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate])->where('wallet_banks.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
+                        'usersCountry' =>   $walletUser->country->currencie->name,
+                        'sum_commissions' => $this->WalletBankDays,
+                        'provider_virements' =>  $this->VirementTransaction,
+                        'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
+    
+                    ]
+                );
+            
             }
 
             if ($this->searchBankHistorical != "") {
@@ -410,7 +425,23 @@ class Bankhisto extends Component
 
 
             if ($this->statusFilter != "") {
-                $banks->where("wallet_banks.status", $this->statusFilter);
+
+                // $banks->where("wallet_banks.status", $this->statusFilter);
+
+
+                return view(
+                    'livewire.historical.bankhisto',
+                    [
+                        'user' => $this->VirementsAllDaysStatus,
+                        'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')->where("wallet_banks.status", $this->statusFilter)
+                            ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
+                        'usersCountry' =>   $walletUser->country->currencie->name,
+                        'sum_commissions' => $this->WalletBanksStatus,
+                        'provider_virements' =>  $this->VirementTransaction,
+                        'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
+    
+                    ]
+                );
             }
 
             return view(
@@ -431,7 +462,22 @@ class Bankhisto extends Component
 
             if ($this->startDate && $this->endDate) {
 
-                $banks->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate]);
+                // $banks->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate]);
+            
+                return view(
+                    'livewire.historical.bankhisto',
+                    [
+                        'user' => $this->VirementsDays,
+                        'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+                            ->where('wallets.country_id', $walletUser->country->id)->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate])->where('wallet_banks.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
+                        'usersCountry' =>   $walletUser->country->currencie->name,
+                        'sum_commissions' => $this->WalletBankDays,
+                        'provider_virements' =>  $this->VirementTransaction,
+                        'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
+    
+                    ]
+                );
+            
             }
 
             if ($this->searchBankHistorical != "") {
@@ -456,13 +502,29 @@ class Bankhisto extends Component
 
 
             if ($this->statusFilter != "") {
-                $banks->where("wallet_banks.status", $this->statusFilter);
+
+                // $banks->where("wallet_banks.status", $this->statusFilter);
+
+
+                return view(
+                    'livewire.historical.bankhisto',
+                    [
+                        'user' => $this->VirementsAllDaysStatus,
+                        'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')->where("wallet_banks.status", $this->statusFilter)
+                            ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
+                        'usersCountry' =>   $walletUser->country->currencie->name,
+                        'sum_commissions' => $this->WalletBanksStatus,
+                        'provider_virements' =>  $this->VirementTransaction,
+                        'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
+    
+                    ]
+                );
             }
 
             return view(
                 'livewire.historical.bankhisto',
                 [
-                    'user' => $walletUser,
+                    'user' => $this->VirementsAllDays,
                     'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
@@ -473,6 +535,57 @@ class Bankhisto extends Component
                 ]
             );
         }
+    }
+
+
+    public function getVirementsAllDaysStatusProperty()
+    {
+
+
+        $data = [];
+
+        $wallets = WalletBank::where("wallet_banks.status", $this->statusFilter)->get();
+
+        foreach ($wallets as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+
+        return array_sum($data);
+    }
+    public function getVirementsAllDaysProperty()
+    {
+
+
+        $data = [];
+
+        $wallets = WalletBank::get();
+
+        foreach ($wallets as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+
+        return array_sum($data);
+    }
+
+    public function getVirementsDaysProperty()
+    {
+
+
+        $data = [];
+
+        $wallets = WalletBank::whereBetween('created_at', [$this->startDate, $this->endDate])->get();
+
+        foreach ($wallets as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+
+        return array_sum($data);
     }
 
 
@@ -497,11 +610,43 @@ class Bankhisto extends Component
         $data = [];
         foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_banks.status', 'SUCCESS')->select('wallet_banks.*')->get() as $bank) {
-            $data[] = $bank->commissions_admin;
+            $data[] = $bank->commissions;
         }
 
         return array_sum($data);
     }
+
+    public function getWalletBanksStatusProperty()
+    {
+
+        $data = [];
+        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')->where("wallet_banks.status", $this->statusFilter)
+            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_banks.status', 'SUCCESS')->select('wallet_banks.*')->get() as $bank) {
+            $data[] = $bank->commissions;
+        }
+
+        return array_sum($data);
+    }
+
+     // Admin 
+     public function getWalletBankDaysProperty()
+     {
+ 
+        $data = [];
+
+        // Exécutez la requête pour obtenir une collection d'objets
+        $walletvirements = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+        ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate])->where('wallet_banks.status', 'SUCCESS')->select('wallet_banks.*')->get() ;
+        
+
+        foreach ($walletvirements as $wallet) {
+            $data[] = $wallet->costs_amount;
+        }
+
+
+ 
+         return array_sum($data);
+     }
 
     // User 
     public function getWalletBanksUserProperty()
