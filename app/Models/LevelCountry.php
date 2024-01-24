@@ -104,6 +104,12 @@ class LevelCountry extends Model
         $this->attributes['percent_with_drawal_under_distributer'] =( $value / 100 ) ? json_encode($value / 100) : null;
     }
 
+    public function setPercentBanqueAttribute($value)
+    {
+        $this->attributes['percent_banque'] =( $value / 100 ) ? json_encode($value / 100) : null;
+    }
+
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->useLogName('Robus');

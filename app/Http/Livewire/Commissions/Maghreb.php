@@ -18,6 +18,7 @@ class Maghreb extends Component
     public $transaction_name;
     public $percent_transaction;
     public $percent_transaction_under_distributer;
+    public $percent_banque;
 
     public $percent_admin;
     public $percent_deposit;
@@ -53,6 +54,7 @@ class Maghreb extends Component
                     'name' => $this->transaction_name,
                     'percent_transaction'  => $this->percent_transaction,
                     'percent_admin'  => $this->percent_admin,
+                    'percent_banque'  => $this->percent_banque,
                     'percent_deposit'  => $this->percent_deposit,
                     'percent_with_drawal'  => $this->percent_with_drawal,
                     'created_by' => Auth::guard('web')->user()->id,
@@ -76,15 +78,16 @@ class Maghreb extends Component
         $this->transaction_name = $check->name;
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
+        $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
         // $this->distributer_custumer = $check->distributer_custumer;
 
-         // Under distributeurs
-         $this->percent_transaction_under_distributer = $check->percent_under_distributer * 100;
-         $this->percent_admin_distibuter = $check->percent_admin_under_distributer * 100;
-         $this->percent_deposit_distibuter = $check->percent_deposit_under_distributer     * 100;
-         $this->percent_with_drawal_distibuter = $check->percent_with_drawal_under_distributer * 100;
+        // Under distributeurs
+        $this->percent_transaction_under_distributer = $check->percent_under_distributer * 100;
+        $this->percent_admin_distibuter = $check->percent_admin_under_distributer * 100;
+        $this->percent_deposit_distibuter = $check->percent_deposit_under_distributer     * 100;
+        $this->percent_with_drawal_distibuter = $check->percent_with_drawal_under_distributer * 100;
         $this->emit($state);
     }
 
@@ -101,7 +104,7 @@ class Maghreb extends Component
                 'percent_admin_distibuter' => 'required',
                 // 'percent_deposit_distibuter' => 'required',
                 // 'percent_with_drawal_distibuter' => 'required',
-                
+
             ],
             [
                 'transaction_name.required' => 'Ce champ est requis',
@@ -118,6 +121,7 @@ class Maghreb extends Component
             'percent_admin' => $this->percent_admin,
             'percent_deposit' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
+            'percent_banque'  => $this->percent_banque,
             // Under distributeur
             'percent_under_distributer'  => $this->percent_transaction_under_distributer,
             'percent_admin_under_distributer'  => $this->percent_admin_distibuter,
@@ -158,6 +162,7 @@ class Maghreb extends Component
                     'percent_transaction'  => $this->percent_transaction,
                     'percent_admin'  => $this->percent_admin,
                     'percent_deposit'  => $this->percent_deposit,
+                    'percent_banque'  => $this->percent_banque,
                     'percent_with_drawal'  => $this->percent_with_drawal,
                     'created_by' => Auth::guard('web')->user()->id,
                     'status'  => 1
@@ -179,6 +184,7 @@ class Maghreb extends Component
         $this->transaction_id = $check->id;
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
+        $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
         $this->distributer_custumer = $check->distributer_custumer;
@@ -205,6 +211,7 @@ class Maghreb extends Component
             'percent' => $this->percent_transaction,
             'percent_admin' => $this->percent_admin,
             'percent_deposit' => $this->percent_deposit,
+            'percent_banque'  => $this->percent_banque,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
@@ -222,6 +229,7 @@ class Maghreb extends Component
         $this->percent_deposit = '';
         $this->percent_with_drawal = '';
         $this->percent_transaction = '';
+        $this->percent_banque = '';
         $this->emit('modal-hide', 'hide');
     }
 

@@ -146,7 +146,8 @@ class BankCardController extends Controller
                 );
             }
 
-            $percent_robus =  $this->percentRobus->getRobusPercentageCardOrder($request->provider);;
+            $percent_robus =  $this->percentRobus->getRobusPercentageCardOrder($request->provider);
+            
             if ($percent_robus != null) {
 
                 if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {

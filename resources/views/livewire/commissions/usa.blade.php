@@ -30,6 +30,7 @@
                         <th class="whitespace-nowrap w-20">Pourcentage S-agent depot <br />client/S-Distibuteur</th>
                         <th class="whitespace-nowrap w-20">Pourcentage S-agent retrait<br /> client/S-Distibuteur
                         </th>
+                        <th class="whitespace-nowrap w-20">Pourcentage <br /> banque</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -38,6 +39,7 @@
                     @if ($centres_africa->count() > 0)
                         @foreach ($centres_africa->where('is_usa', true) as $item)
                             <tr class="intro-x">
+                                
                                 <td class="w-65">
                                     {{ $item->name ?? null }}
                                 </td>
@@ -74,6 +76,11 @@
                                         {{ $item->percent_with_drawal * 100 ?? null }} %</p>
                                     <p class="font-medium whitespace-nowrap mt-1">
                                         {{ $item->percent_with_drawal_under_distributer * 100 ?? null }} %</p>
+                                </td>
+                                <td class="w-40">
+                                    <p class="font-medium whitespace-nowrap">
+                                        {{ floatval($item->percent_banque) * 100 ?? null }} %</p>
+                                    <p class="font-medium whitespace-nowrap mt-1">
                                 </td>
 
                                 <td class="w-56">

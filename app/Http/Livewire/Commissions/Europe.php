@@ -22,6 +22,7 @@ class Europe extends Component
     public $percent_deposit;
     public $percent_with_drawal;
     public $distributer_custumer;
+    public $percent_banque;
 
     //Distributers
     public $percent_admin_distibuter;
@@ -53,6 +54,7 @@ class Europe extends Component
                     'percent_transaction'  => $this->percent_transaction,
                     'percent_admin'  => $this->percent_admin,
                     'percent_deposit'  => $this->percent_deposit,
+                    'percent_banque'  => $this->percent_banque,
                     'percent_with_drawal'  => $this->percent_with_drawal,
                     'created_by' => Auth::guard('web')->user()->id,
                     'status'  => 1
@@ -74,6 +76,7 @@ class Europe extends Component
         $this->transaction_name = $check->name;
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
+        $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
 
@@ -117,6 +120,7 @@ class Europe extends Component
             'percent_admin' => $this->percent_admin,
             'percent_deposit' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
+            'percent_banque'  => $this->percent_banque,
             // Under distributeur
             'percent_under_distributer'  => $this->percent_transaction_under_distributer,
             'percent_admin_under_distributer'  => $this->percent_admin_distibuter,
@@ -155,6 +159,7 @@ class Europe extends Component
                     'percent_transaction'  => $this->percent_transaction,
                     'percent_admin'  => $this->percent_admin,
                     'percent_deposit'  => $this->percent_deposit,
+                    'percent_banque'  => $this->percent_banque,
                     'percent_with_drawal'  => $this->percent_with_drawal,
                     'created_by' => Auth::guard('web')->user()->id,
                     'status'  => 1
@@ -164,6 +169,7 @@ class Europe extends Component
             $this->percent_admin = '';
             $this->percent_deposit = '';
             $this->percent_with_drawal = '';
+            $this->percent_banque = '';
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Commission  ajouté !');
         } else $this->emit('error', 'Commission  existante !');
@@ -175,6 +181,7 @@ class Europe extends Component
         $this->transaction_name = $check->name;
         $this->transaction_id = $check->id;
         $this->percent_transaction = $check->percent * 100;
+        $this->percent_banque = $check->percent_banque * 100;
         $this->percent_admin = $check->percent_admin * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
@@ -202,6 +209,7 @@ class Europe extends Component
             'percent' => $this->percent_transaction,
             'percent_admin' => $this->percent_admin,
             'percent_deposit' => $this->percent_deposit,
+            'percent_banque'  => $this->percent_banque,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
@@ -219,6 +227,7 @@ class Europe extends Component
         $this->percent_deposit = '';
         $this->percent_with_drawal = '';
         $this->percent_transaction = '';
+        $this->percent_banque = '';
         $this->emit('modal-hide', 'hide');
     }
 

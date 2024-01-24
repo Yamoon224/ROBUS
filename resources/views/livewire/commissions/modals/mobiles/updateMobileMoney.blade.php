@@ -1,4 +1,4 @@
-<div wire:ignore.self id="update-trans-level_money-modal" class="modal hide" data-tw-backdrop="static"
+<div wire:ignore.self id="update-trans-level_money-modal" class="modal hide overflow-y-auto" data-tw-backdrop="static"
     style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000; display: block;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
@@ -100,7 +100,21 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+                <div class="col-span-12">
+                    <div class="modal-header">
+                        <h2 class="font-medium text-base mr-auto">Modifier la commission banque </h2>
+                    </div>
+                </div>
 
+                <div class="col-span-12">
+                    <label for="modal-form-1" class="form-label">Pourcentage banque<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.defer="percent_banque" id="modal-form-1" type="number"
+                        class="form-control" placeholder="Pourcentage banque">
+                    @error('percent_banque')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
             </div>
             <div class="modal-footer">
                 <button wire:click="resetField" type="button"

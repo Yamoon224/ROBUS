@@ -19,11 +19,12 @@ class Usa extends Component
     public $percent_transaction;
     public $percent_admin;
     public $percent_deposit;
+    public $percent_banque;
     public $percent_with_drawal;
     public $distributer_custumer;
     public $percent_transaction_under_distributer;
 
-    
+
     //Distributers
     public $percent_admin_distibuter;
     public $percent_deposit_distibuter;
@@ -54,6 +55,7 @@ class Usa extends Component
                     'percent_transaction'  => $this->percent_transaction,
                     'percent_admin'  => $this->percent_admin,
                     'percent_deposit'  => $this->percent_deposit,
+                    'percent_banque'  => $this->percent_banque,
                     'percent_with_drawal'  => $this->percent_with_drawal,
                     'created_by' => Auth::guard('web')->user()->id,
                     'status'  => 1
@@ -63,6 +65,7 @@ class Usa extends Component
             $this->percent_admin = '';
             $this->percent_deposit = '';
             $this->percent_with_drawal = '';
+            $this->percent_banque = '';
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Commission  ajouté !');
         } else $this->emit('error', 'Commission  existante !');
@@ -76,6 +79,7 @@ class Usa extends Component
         $this->transaction_name = $check->name;
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
+        $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
 
@@ -119,6 +123,7 @@ class Usa extends Component
             'percent' => $this->percent_transaction,
             'percent_admin' => $this->percent_admin,
             'percent_deposit' => $this->percent_deposit,
+            'percent_banque' => $this->percent_banque,
             'percent_with_drawal'  => $this->percent_with_drawal,
             // Under distributeur
             'percent_under_distributer'  => $this->percent_transaction_under_distributer,
@@ -159,6 +164,7 @@ class Usa extends Component
                     'percent_transaction'  => $this->percent_transaction,
                     'percent_admin'  => $this->percent_admin,
                     'percent_deposit'  => $this->percent_deposit,
+                    'percent_banque' => $this->percent_banque,
                     'percent_with_drawal'  => $this->percent_with_drawal,
                     'created_by' => Auth::guard('web')->user()->id,
                     'status'  => 1
@@ -179,7 +185,8 @@ class Usa extends Component
         $this->transaction_name = $check->name;
         $this->transaction_id = $check->id;
         $this->percent_transaction = $check->percent * 100;
-        $this->percent_admin = $check->percent_admin * 100;
+        $this->percent_transaction = $check->percent * 100;
+        $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
         $this->distributer_custumer = $check->distributer_custumer;
@@ -207,6 +214,7 @@ class Usa extends Component
             'percent' => $this->percent_transaction,
             'percent_admin' => $this->percent_admin,
             'percent_deposit' => $this->percent_deposit,
+            'percent_banque' => $this->percent_banque,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
@@ -238,7 +246,7 @@ class Usa extends Component
         }
     }
 
-    
+
     public function render()
     {
         $inter_cost = LevelCountry::query();
@@ -251,8 +259,7 @@ class Usa extends Component
         }
         return view('livewire.commissions.usa', [
             "centres_africa" => $inter_cost->orderBy('name', 'desc')->latest()->get(),
-            "countrie_africa" => Country::where('name_groupe' , 'USA')->orderBy('name', 'desc')->get(),
+            "countrie_africa" => Country::where('name_groupe', 'USA')->orderBy('name', 'desc')->get(),
         ]);
     }
- 
 }

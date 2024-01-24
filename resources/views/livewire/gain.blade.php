@@ -1,9 +1,16 @@
 <div>
 
-    <h2 class="intro-y text-lg font-medium mt-10">
-        Liste des gains de l'adminmistrateur
-    </h2>
+    <div class="intro-y block sm:flex items-center h-10 mt-3">
+        <h2 class="text-lg font-medium truncate mr-5">   Liste des gains de l'adminmistrateur</h2>
+        <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
+
+            <a class="btn btn-primary shadow-md" href="{{ route('admin.browse_gain_distributer') }}">Validation
+                distributeur </a>
+           
+        </div>
+    </div>
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
+        
         <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_3">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
@@ -43,12 +50,18 @@
                 {{ number_format($sum_gains, 2, ',', ' ') ?? null }} FCFA
             </div>
         </div>
-        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
 
-            <div class="font-medium text-historique mt-6">Voir validations distributeur</div>
+        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
+            
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                  </svg>
+                  
+            </div>
+            <div class="font-medium text-historique mt-6">Montant Banque journalier</div>
             <div class="text-slate-500 mt-3">
-                <a class="btn btn-primary shadow-md" href="{{ route('admin.browse_gain_distributer') }}">Validation
-                    distributeur </a>
+                {{ $sum_gain_banques  ?? null }} FCFA
             </div>
         </div>
     </div>
@@ -72,7 +85,17 @@
             </div>
 
         </div>
-
+        <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
+            <label for="countriesFilter">Filtrer par status</label>
+            <select id="statusTransferFilter" wire:model="statusTransferFilter"
+                class="form-select py-3 px-4 box w-full
+                dark-border-dark-3 mt-lg-0 ms-auto mt-3"
+                aria-placeholder="Rechercher par pays">
+                <option selected value="!= null">Status</option>
+                <option value="SUCCESS">Success</option>
+                <option value="PENDING">En attente</option>
+            </select>
+        </div>
 
         <div class="col-span-12 sm:col-span-3 2xl:col-span-3 " style="margin-top: 13px;width: 250px;">
             <div class="w-56 relative text-slate-500 mt-3">
