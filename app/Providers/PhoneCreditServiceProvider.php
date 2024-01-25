@@ -15,7 +15,7 @@ class PhoneCreditServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('phone-credit-service', function () {
-            return new PhoneCreditService();
+            // return new PhoneCreditService();
         });
     }
 

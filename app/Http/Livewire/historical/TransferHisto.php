@@ -24,6 +24,7 @@ use App\Models\Invoices\InvoiceTransaction;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Admin\MailController;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class TransferHisto extends Component
@@ -35,6 +36,8 @@ class TransferHisto extends Component
     public $statusTransferFilter = "";
     public  $startDate = "";
     public  $endDate =  "";
+    public  $beginDate = "";
+    public  $endDateT =  "";
 
     // Edit
     public $transactionId;
@@ -63,6 +66,16 @@ class TransferHisto extends Component
         $this->emit($state);
     }
 
+
+    protected function getTransactionsDays()
+    {
+        return WalletTransaction::whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
+    }
+
+    protected function getTransactionCount($status)
+    {
+        return WalletTransaction::whereBetween('created_at', [$this->beginDate, $this->endDateT])->where('status', $status)->count();
+    }
 
     public function updateTransactionHisto()
     {
@@ -384,7 +397,7 @@ class TransferHisto extends Component
                                     $amount_soldeSend = (float)$walletAmountSend->total_amount -  (float)$commission_receiveid;
 
                                     // Create Trance Use send error transaction
-                                    $wallettransaction = $this->createMobileWalletTransactionRobus($commission_receiveid, $check->provider->id, $amount_solde, $wallet_user, $user, $wallet_info , $amount_soldeSend);
+                                    $wallettransaction = $this->createMobileWalletTransactionRobus($commission_receiveid, $check->provider->id, $amount_solde, $wallet_user, $user, $wallet_info, $amount_soldeSend);
 
 
                                     if ($wallettransaction != null) {
@@ -413,7 +426,6 @@ class TransferHisto extends Component
                                         $this->emit('error', 'Error de createtion transferts !');
                                     }
                                 }
-
                             } else {
                                 $this->resetTransactionField();
                                 $this->emit('modal-hide-transfers-histo');
@@ -426,7 +438,6 @@ class TransferHisto extends Component
                         }
 
                         $this->transactionStatus = "";
-
                     } else {
                         $this->resetTransactionField();
                         $this->emit('modal-hide-transfers-histo');
@@ -461,11 +472,11 @@ class TransferHisto extends Component
 
         if ($walletUser->wallet->sidUser->is_under_distributer == true) {
 
-    
+
             if ($this->startDate && $this->endDate) {
 
                 // $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15);
-           
+
                 return view(
                     'livewire.historical.transfer-histo',
                     [
@@ -474,10 +485,9 @@ class TransferHisto extends Component
                         'usersCountry' =>  $walletUser->country->currencie->name,
                         'sum_commissions' => $this->WalletRelaodDistributeDays,
                         'providers' =>  $this->NationTransaction,
-    
+
                     ]
                 );
-           
             }
 
             if ($this->searchTransferHistorical != "") {
@@ -511,13 +521,12 @@ class TransferHisto extends Component
                     'providers' =>  $this->NationTransaction,
                 ]
             );
-        } else 
-        {
+        } else {
 
             if ($this->startDate && $this->endDate) {
 
                 // $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15);
-           
+
                 return view(
                     'livewire.historical.transfer-histo',
                     [
@@ -526,14 +535,13 @@ class TransferHisto extends Component
                         'usersCountry' =>  $walletUser->country->currencie->name,
                         'sum_commissions' => $this->WalletRelaodDistributeDays,
                         'providers' =>  $this->NationTransaction,
-    
+
                     ]
                 );
-           
             }
 
             if ($this->searchTransferHistorical != "") {
-                
+
                 $this->resetPage();
 
                 $transfers->orwhereHas(
@@ -561,7 +569,7 @@ class TransferHisto extends Component
                         'usersCountry' =>  $walletUser->country->currencie->name,
                         'sum_commissions' => $this->WalletRelaodDistributerStatus,
                         'providers' =>  $this->NationTransaction,
-    
+
                     ]
                 );
             }
@@ -620,7 +628,7 @@ class TransferHisto extends Component
 
         $data = [];
 
-        $wallets = WalletTransaction::whereBetween('created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletTransaction::whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -630,6 +638,16 @@ class TransferHisto extends Component
 
         return array_sum($data);
     }
+
+    public function getTransactionsAllsProperty()
+    {
+
+
+        $wallets = WalletTransaction::whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
+
+        return $wallets;
+    }
+
 
     private function convertAdminCommission($amount, $wallet)
     {
@@ -663,7 +681,7 @@ class TransferHisto extends Component
             return false;
         }
     }
-    private function createMobileWalletTransactionRobus($amount, $provider, $amount_solde, $wallet_user, $user, $wallet_info , $amount_drawal)
+    private function createMobileWalletTransactionRobus($amount, $provider, $amount_solde, $wallet_user, $user, $wallet_info, $amount_drawal)
     {
 
         $rt = rand(40, 5000) * time();
@@ -717,10 +735,9 @@ class TransferHisto extends Component
             'created_by' => sabdy()->id,
         ]);
 
-        return $walletTransaction ;
-
+        return $walletTransaction;
     }
-    private function createMobileWalletTransactionDistributer($amount, $provider, $amount_solde, $wallet_user, $user, $phone )
+    private function createMobileWalletTransactionDistributer($amount, $provider, $amount_solde, $wallet_user, $user, $phone)
     {
 
         $rt = rand(40, 5000) * time();
@@ -773,7 +790,7 @@ class TransferHisto extends Component
             'created_by' => sabdy()->id,
         ]);
 
-        return $walletTransaction ;
+        return $walletTransaction;
     }
 
     private function sendNotificationMobile($walletTransaction)

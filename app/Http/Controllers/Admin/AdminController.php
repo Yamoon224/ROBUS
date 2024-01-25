@@ -40,12 +40,14 @@ use App\Http\Controllers\Admin\MailController;
 class AdminController extends Controller
 {
 
+    
     // Company Infos
 
     public function home_company()
     {
         return view('home_company');
     }
+
     public function check(Request $request)
     {
         $validator = Validator::make($request->all(), [

@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<!--
+Template Name: Rubick - HTML Admin Dashboard Template
+-->
+<html lang="en" class="light">
+<!-- BEGIN: Head -->
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description"
+        content="Rubick admin is super flexible, powerful, clean & modern responsive tailwind admin template with unlimited possibilities.">
+    <meta name="keywords"
+        content="admin template, Rubick Admin Template, dashboard template, flat admin template, responsive admin template, web app">
+    <meta name="author" content="LEFT4CODE">
+    <title>
+        Transferts Internationaux
+    </title>
+    <!-- BEGIN: CSS Assets-->
+    <style media="all">
+        @page {
+            padding: 0;
+            margin: 20px;
+        }
+
+        #emp {
+            font-display: Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+            widows: 100%;
+        }
+
+        #emp,
+        td,
+        #emp,
+        th {
+            border: 0.5px solid #ddd;
+            padding: 0.5px;
+        }
+
+        #emp tr:nth-child(even) {
+            background-color: #0dfdfd;
+        }
+
+        #emp,
+        th {
+            padding-top: 2px;
+            padding-bottom: 2px;
+            text-align: left;
+            background-color: blue;
+            color: white
+        }
+
+
+        body {
+            font-size: 1rem;
+            font-weight: normal;
+            padding: 0;
+            margin: 0;
+            color: #232323;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table th {
+            font-weight: normal;
+        }
+
+        table.padding th {
+            padding: 0 .8rem;
+        }
+
+        table.padding td {
+            padding: .8rem;
+        }
+
+        table.sm-padding td {
+            padding: .5rem .7rem;
+        }
+
+        table.lg-padding td {
+            padding: 1rem 1.2rem;
+        }
+
+        .border-bottom td,
+        .border-bottom th {
+            border-bottom: 1px solid #eceff4;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .bold {
+            font-weight: bold
+        }
+    </style>
+    <!-- END: CSS Assets-->
+</head>
+<!-- END: Head -->
+
+<body class="py-5">
+
+    <div class="flex">
+        <div class="intro-y grid grid-cols-12 gap-5 mt-5">
+            <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_3">
+                <div>
+                    <img src="{{ asset('public/dist/images/login.jpg') }}" height="30"
+                        style="display:inline-block;margin-bottom:10px">
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_3">
+
+                <div class="font-medium text-historique mt-6">Email :
+                    {{ env('EMAIL_USER') }}</div>
+            </div>
+            <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
+
+                <div class="font-medium text-historique mt-6">Telephone : {{ env('PHONE_USE') }}</div>
+
+            </div>
+        </div>
+
+        <!-- BEGIN: Content -->
+        <div class="content">
+
+            <div class="intro-y grid grid-cols-12 gap-5 mt-5">
+                <div class="intro-y col-span-12 lg:col-span-12">
+                    <div class="intro-y block sm:flex items-center h-10">
+                        <h2 class="text-lg font-medium truncate mr-5">
+                            Les transferts inter de la date du {{ $searchDateBegin  }}  au  {{ $searchDateEnd }}
+                        </h2>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="grid grid-cols-12 gap-6 mt-5">
+                <div class="intro-y box px-3 pt-1 mt-6 col-span-12 overflow-auto lg:overflow-visible">
+                    <div class="grid grid-cols-12 gap-6  mt-6">
+                        <div class="intro-y box col-span-12">
+                            <div class=" items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                                <h2 class="font-medium text-base mr-auto">
+                                    Informations
+                                </h2>
+                            </div>
+                            <div class="tiny-slider py-5">
+                                <div class="px-5">
+                                    <div class="overflow-x-auto" id="#emp">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+
+                                                    <th>
+                                                        Nombre d'attentes
+                                                    </th>
+                                                    <th>
+                                                        Nombre de succès
+
+                                                    </th>
+                                                    <th>
+                                                        Nombre d'échecs
+                                                    </th>
+                                                   
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+
+                                                        <td>
+                                                            <p href="" class="font-medium whitespace-nowrap">
+                                                                {{ $account_penddings ?? null }}</p>
+                                                        </td>
+                                                        <td>
+                                                            <p href="" class="font-medium whitespace-nowrap">
+                                                                {{ $account_success ?? null }} </p>
+                                                        </td>
+                                                        <td>
+                                                            <p href="" class="font-medium whitespace-nowrap">
+                                                                {{ $account_errors ?? null }}</p>
+                                                        </td>
+                                                       
+                                                    </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="intro-y box col-span-12">
+                            <div class=" items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                                <h2 class="font-medium text-base mr-auto">
+                                    Informations banque
+                                </h2>
+                            </div>
+                            <div class="tiny-slider py-5">
+                                <div class="px-5">
+                                    <div class="overflow-x-auto" id="#emp">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+
+                                                    <th>
+                                                        Montant total
+                                                    </th>
+
+                                                    <th>
+                                                        Montant banque
+                                                    </th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <p href="" class="font-medium whitespace-nowrap">
+                                                                {{ $amount_total ?? null }}</p>
+                                                        </td>
+                                                        <td>
+                                                            <p href="" class="font-medium whitespace-nowrap">
+                                                                {{ $amount_total_banque ?? null }}</p>
+                                                        </td>
+
+                                                        
+                                                    </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- BEGIN: Pagination -->
+
+                        <!-- END: Pagination -->
+
+                    </div>
+
+
+                </div>
+                <div class="intro-y box px-3 pt-1 mt-6 col-span-12 overflow-auto lg:overflow-visible">
+                    <div class="grid grid-cols-12 gap-6  mt-6">
+                        <div class="intro-y box col-span-12">
+                            <div class=" items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                                <h2 class="font-medium text-base mr-auto">
+                                    Liste des transferts inter d'aujourd'hui
+                                </h2>
+                            </div>
+                            <div class="tiny-slider py-5">
+                                <div class="px-5">
+                                    <div class="overflow-x-auto" id="#emp">
+                                        <table class="table table-bordered">
+                                            <thead>
+                                                <tr>
+
+                                                    <th>
+                                                        Opérateur
+                                                    </th>
+                                                    <th>
+                                                        Expéditeur
+                                                    </th>
+                                                    <th>
+                                                        Montant demandé
+                                                    </th>
+                                                    <th>
+                                                        Envoyer le
+                                                    </th>
+                                                    <th>
+                                                        Numero
+                                                    </th>
+                                                    <th>
+                                                        Traité le
+                                                    </th>
+
+                                                    <th>
+                                                        Statut </th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {{-- @if ($bank_historicals->count() > 0) --}}
+                                                @foreach ($walletInters as $key => $item)
+                                                    <tr>
+                                                        <td>
+                                                            @if ($item->provider_type == 1)
+                                                                <span
+                                                                    class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
+                                                     text-indigo-100 bg-indigo-700 rounded"
+                                                                    style="color: white;">
+                                                                    Paiement Mooney
+                                                                </span>
+                                                            @elseif ($item->provider_type == 5)
+                                                                <span
+                                                                    class="alert alert-success  inline-flex items-center justify-center px-2 py-1
+                                                 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                    style="color: white;">
+                                                                    Paiement Facture
+                                                                </span>
+                                                            @elseif ($item->provider_type == 6)
+                                                                <span
+                                                                    class="alert alert-success  inline-flex items-center justify-center px-2 py-1 
+                                                mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                    style="color: white;">
+                                                                    Credit telephonique
+                                                                </span>
+                                                            @elseif ($item->provider_type == 7)
+                                                                <span
+                                                                    class="alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                    style="color: white;">
+                                                                    Versement bancaire
+                                                                </span>
+                                                            @elseif($item->provider_type == 8)
+                                                                <span
+                                                                    class="alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                    style="color: white;">
+                                                                    Rechargement carte
+                                                                </span>
+                                                            @endif
+                                                            <p href="" class="font-medium whitespace-nowrap">
+                                                                {{ $item->provider->name ?? null }}
+                                                            </p>
+
+                                                        </td>
+                                                        <td class="w-50">
+                                                            <div class="mt-0.5 mb-2">
+                                                                <div class="mt-0.5">
+                                                                    @if ($item->wallet->sidUser->is_under_distributer == 1)
+                                                                        <div
+                                                                            class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                            <div class="fc-event-title-container">
+                                                                                <div class="fc-event-title fc-sticky">
+                                                                                    Sous-distributeur</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @elseif($item->wallet->sidUser->is_custumers == 1)
+                                                                        <div
+                                                                            class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                            <div class="fc-event-title-container">
+                                                                                <div class="fc-event-title fc-sticky">
+                                                                                    Client</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @else
+                                                                        <div
+                                                                            class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                            <div class="fc-event-title-container">
+                                                                                <div class="fc-event-title fc-sticky">
+                                                                                    Admin</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @endif
+                                                                    {{ $item->wallet->sidUser->firstname ?? null }}
+                                                                    {{ $item->wallet->sidUser->lastname ?? null }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="mt-0.5">
+                                                                <span
+                                                                    class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                                    {{ $item->wallet->sidUser->country->name ?? null }}
+                                                                    ville :
+                                                                    {{ $item->wallet->sidUser->city->name ?? null }}
+                                                                </span>
+                                                            </div>
+
+                                                        </td>
+
+                                                        @php
+                                                            if ($item->provider_type == 1) {
+                                                                //  Convertion of amount valeur
+                                                                if ($item->wallet->currencie->code == 'EUR' || $item->wallet->currencie->code == 'DH' || $item->wallet->currencie->code == 'Dt' || $item->wallet->currencie->code == 'CEDI' || $item->wallet->currencie->code == 'USD') {
+                                                                    $valeur_amount_receveid = $item->amount_received * $item->wallet->currencie->value;
+                                                                } elseif ($item->wallet->currencie->code == 'GN') {
+                                                                    // Montant Update  if Diff country or Auth is <  a send client
+                                                                    $valeur_amount_receveid = $item->amount_received / $item->wallet->currencie->value;
+                                                                } elseif ($item->wallet->currencie->code == 'CFA') {
+                                                                    $valeur_amount_receveid = $item->amount_received ?? null;
+                                                                }
+                                                            } else {
+                                                                //  Convertion of amount valeur
+                                                                if ($item->wallet->currencie->code == 'EUR' || $item->wallet->currencie->code == 'DH' || $item->wallet->currencie->code == 'Dt' || $item->wallet->currencie->code == 'CEDI' || $item->wallet->currencie->code == 'USD') {
+                                                                    $valeur_amount = $item->amount * $item->wallet->currencie->value;
+                                                                } elseif ($item->wallet->currencie->code == 'GN') {
+                                                                    // Montant Update  if Diff country or Auth is <  a send client
+                                                                    $valeur_amount = $item->amount / $item->wallet->currencie->value;
+                                                                } elseif ($item->wallet->currencie->code == 'CFA') {
+                                                                    $valeur_amount = $item->amount ?? null;
+                                                                }
+                                                            }
+                                                            
+                                                        @endphp
+                                                        <td>
+                                                            @if ($item->provider_type == 1)
+                                                                <p class="mb-3">
+                                                                    Montant envoyé :
+                                                                </p>
+                                                                <div class="mt-0.5 mb-2">
+                                                                    <div class="mt-0.5">
+                                                                        {{ number_format($item->amount, 2, ',', ' ') ?? null }}
+                                                                        {{ $item->wallet->currencie->code ?? null }}
+                                                                    </div>
+                                                                </div>
+                                                                <p>
+                                                                    Montant reçu
+                                                                </p>
+                                                                <div class="mt-0.5 mb-2">
+                                                                    <div class="mt-0.5">
+                                                                        {{ number_format($item->amount_received, 2, ',', ' ') ?? null }}
+                                                                        {{ $item->wallet->currencie->code ?? null }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="mt-0.5">
+                                                                    <span class="font-bold ">
+                                                                        Montant en {{ $users_countrie ?? null }} : <br>
+                                                                        {{ number_format($valeur_amount_receveid, 2, ',', ' ') ?? null }}
+                                                                        {{ $users_countrie ?? null }}
+                                                                    </span>
+                                                                </div>
+                                                            @else
+                                                                <div class="mt-0.5 mb-2">
+                                                                    <div class="mt-0.5">
+                                                                        {{ number_format($item->amount, 2, ',', ' ') ?? null }}
+                                                                        {{ $item->wallet->currencie->code ?? null }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="mt-0.5">
+                                                                    <span class="font-bold ">
+                                                                        Montant en {{ $users_countrie ?? null }} : <br>
+                                                                        {{ number_format($valeur_amount, 2, ',', ' ') ?? null }}
+                                                                        {{ $users_countrie ?? null }}
+                                                                    </span>
+                                                                </div>
+                                                            @endif
+
+                                                        </td>
+                                                        <td>
+                                                            <p href="" class="font-medium whitespace-nowrap">
+                                                                {{ $item->created_at ?? null }}</p>
+                                                        </td>
+                                                        <td>
+                                                            @if ($item->provider_type == 8)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Rechargement carte</div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ $item->number_card ?? null }}
+                                                            @elseif($item->provider_type == 5)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Paiement Facture</div>
+
+                                                                    </div>
+                                                                </div>
+                                                                @if ($item->factureChoix_type == 1)
+                                                                    <div class="alert alert-dark show mb-2"
+                                                                        role="alert">
+                                                                        Facture
+                                                                        prépayée</div>
+                                                                    {{ $item->id_invoice ?? null }}
+                                                                @elseif($item->factureChoix_type == 2)
+                                                                    <div class="alert alert-dark show mb-2"
+                                                                        role="alert">
+                                                                        Facture
+                                                                        Normale</div>
+                                                                    {{ $item->id_invoice ?? null }}
+                                                                @elseif($item->paiementChoix_phone == 1)
+                                                                    <div class="alert alert-dark show mb-2"
+                                                                        role="alert">
+                                                                        Numero de telephone</div>
+                                                                    {{ $item->number_phone ?? null }}
+                                                                @elseif ($item->paiementChoix_phone == 2)
+                                                                    <div class="alert alert-dark show mb-2"
+                                                                        role="alert">
+                                                                        Numero du decodeur</div>
+                                                                    {{ $item->number_decoder ?? null }}
+                                                                @elseif($item->paiementChoix_phone == null && $item->factureChoix_type == null)
+                                                                    <div class="alert alert-dark show mb-2"
+                                                                        role="alert">
+                                                                        Numero du contrat</div>
+                                                                    {{ $item->number_contract ?? null }}
+                                                                @endif
+                                                            @elseif ($item->provider_type == 1)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Paiement Mooney</div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ $item->phone ?? null }}
+                                                            @elseif ($item->provider_type == 6)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Credit telephonique</div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ $item->phone ?? null }}
+                                                            @elseif ($item->provider_type == 7)
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Versement bancaire</div>
+                                                                    </div>
+                                                                </div>
+                                                                {{ $item->number_compte ?? null }}
+                                                            @endif
+                                                        </td>
+                                                        <td>
+                                                            <p href="" class="font-medium whitespace-nowrap">
+                                                                {{ $item->transactionInter->created_at ?? null }}</p>
+                                                        </td>
+
+                                                        <td>
+                                                            @if ($item->status == 'PENDING')
+                                                                <div class="flex items-center justify-center">
+                                                                    {{-- <span
+                                                                        class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"> --}}
+                                                                    En-attente
+                                                                    {{-- </span> --}}
+
+                                                                </div>
+                                                            @elseif ($item->status == 'ERROR')
+                                                                <div class="flex items-center justify-center">
+                                                                    <div class="flex items-center justify-center">
+                                                                        {{-- <span
+                                                                            class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"> --}}
+                                                                        Refusé
+                                                                        {{-- </span> --}}
+
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="flex items-center justify-center">
+                                                                    {{-- <span
+                                                                        class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                        > --}}
+                                                                    Traiter
+                                                                    {{-- </span> --}}
+
+                                                                </div>
+                                                            @else
+                                                                <div class="flex items-center justify-center">
+                                                                    <div class="flex items-center justify-center">
+                                                                        {{-- <span
+                                                                            class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                            style="color: white;"> --}}
+                                                                        Accepté
+                                                                        {{-- </span> --}}
+
+
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="flex items-center justify-center">
+                                                                    {{-- <span
+                                                                        class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                        style="color: white;"> --}}
+                                                                    Traiter
+                                                                    {{-- </span> --}}
+
+                                                                </div>
+                                                            @endif
+                                                        </td>
+
+                                                    </tr>
+                                                @endforeach
+                                                {{-- @else
+                                            <tr>
+                                                <td colspan="7" class="text-center">Aucune donnée pour le
+                                                    moment</td>
+                                            </tr>
+                                        @endif --}}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- BEGIN: Pagination -->
+
+                        <!-- END: Pagination -->
+
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+        <!-- END: Content -->
+    </div>
+
+    <!-- BEGIN: JS Assets-->
+
+
+</body>
+
+</html>

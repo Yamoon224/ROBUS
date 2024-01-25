@@ -2,7 +2,7 @@
 
 
     <div class="intro-y block sm:flex items-center h-10">
-        <h2 class="text-lg font-medium truncate mr-5"> Liste des gains de l'adminmistrateur</h2>
+        <h2 class="text-lg font-medium truncate mr-5"> Liste des gains des sous distributeurs</h2>
         <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
 
             <a class="ml-3  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary mr-1 mb-2"

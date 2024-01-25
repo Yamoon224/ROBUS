@@ -21,6 +21,8 @@ class Historique extends Component
 {
 
     protected $historiqueService;
+    public  $startDate = "";
+    public  $endDate =  "";
 
     public function mount(HistoriqueService $historiqueService)
     {

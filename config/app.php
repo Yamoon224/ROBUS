@@ -201,8 +201,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
-
-
+        // Maatwebsite\Excel\ExcelServiceProvider::class
 
     ],
 
@@ -221,6 +220,7 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
         // Façade DomPDF
         'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class
     ])->toArray(),
 
 ];

@@ -352,6 +352,13 @@ Route::group(['prefix' => ''], function () {
             Route::get('reloads/reporting_reload_historical_received/{id}', [AdminHistoriqueController::class, 'reporting_reload_received_historical'])->name('reloads.historical.reporting_reload_historical.admins');
             Route::get('cards/reporting_card_historical/{id}', [AdminHistoriqueController::class, 'reporting_card_historical'])->name('cards.historical.reporting_card_historical.admins');
             Route::get('inters/reporting_inter_historical/{id}', [AdminHistoriqueController::class, 'reporting_inter_historical'])->name('inters.historical.reporting_inter_historical.admins');
+            // Reporting in date transactions
+            Route::get('inter_days/reporting_inter_days_historical', [AdminHistoriqueController::class, 'searchByIntersDate'])->name('inters.historical.reporting_inter_days_historical.admins');
+            Route::get('transactions_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByTransactionsDate'])->name('inters.historical.reporting_transaction_days_historical.admins');
+            Route::get('payment_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByPaymentsDate'])->name('inters.historical.reporting_payment_days_historical.admins');
+            Route::get('banks_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByBanksDate'])->name('inters.historical.reporting_bank_days_historical.admins');
+            Route::get('cartes_days/reporting_cartes_days_historical', [AdminHistoriqueController::class, 'searchByCartesDate'])->name('inters.historical.reporting_cartes_days_historical.admins');
+
             Route::get('payments/reporting_payment_historical/{id}', [AdminHistoriqueController::class, 'reporting_payment_historical'])->name('payments.historical.reporting_payment_historical.admins');
             Route::get('phones/reporting_phone_hisnOTItorical/{id}', [AdminHistoriqueController::class, 'reporting_phone_historical'])->name('phones.historical.reporting_phone_historical.admins');
             Route::get('transfers/reporting_transfer_historical/{id}', [AdminHistoriqueController::class, 'reporting_transfer_historical'])->name('transfers.historical.reporting_transfer_historical.admins');
@@ -362,6 +369,8 @@ Route::group(['prefix' => ''], function () {
            
         });
     });
+
+
 });
 
 // Registers 

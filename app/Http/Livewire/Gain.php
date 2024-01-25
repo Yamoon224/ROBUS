@@ -12,6 +12,7 @@ use App\Models\Costs\PaymentCost;
 use App\Models\Costs\DepositCost;
 use App\Models\Costs\BankCost;
 use App\Models\LevelCountry;
+use App\Models\Custumers\Country;
 
 class Gain extends Component
 {
@@ -60,11 +61,10 @@ class Gain extends Component
 
             $banqueSum_percent =  $this->WalletIntersStatuts;
 
-
             return view('livewire.gain', [
                 "gains" => $gains->where('description', '!=', 'Validation distributeur')->where("status", $this->statusTransferFilter)->orderBy('created_at', 'desc')->paginate(30),
                 "sum_gains" => $this->GainAdminsDays,
-                "sum_gain_days" => $this->GainAdminDate,
+                "sum_gain_days" => $this->GainAdminStatut,
                 "sum_gain_drawal_days" =>  $this->GainAdminTransactionsDays,
                 "sum_gain_banques" =>  $banqueSum_percent,
 
@@ -75,6 +75,7 @@ class Gain extends Component
         if ($this->typeFilter != "") {
             $gains->where("country_id", $this->typeFilter);
         }
+
 
         $banqueSum_percent = $this->WalletInters;
 
@@ -575,17 +576,31 @@ class Gain extends Component
 
     public function getWalletIntersProperty()
     {
+
+
+        $todays = Carbon::now();
+        $convertions = $todays->toDateString();
+
         $walletBanks = AdminsCom::join('wallet_inters', 'admins_coms.wallet_inter_id', '=', 'wallet_inters.id')
+            ->whereDate('admins_coms.created_at', $convertions)
             ->where('admins_coms.status', 'SUCCESS')
             ->select('admins_coms.*')
             ->get();
 
+
         $percent_amount = $walletBanks->map(function ($wallet) {
+
+            $amount_send = $wallet->walletInter->amount;
+
+            $country_user = $wallet->walletInter->wallet;
+
             $percent_robus = $this->getRobusPercentageForWalletInter($wallet);
-    
-            return optional($percent_robus)->percent_banque * $wallet->amount;
+
+            $amount_banque = $this->getConvertAdminCommission($amount_send, $country_user);
+
+            return optional($percent_robus)->percent_banque * $amount_banque;
         });
-    
+
         return $percent_amount->sum();
     }
 
@@ -597,17 +612,21 @@ class Gain extends Component
             ->select('admins_coms.*')
             ->get();
 
-        $percent_amount = [];
 
-        foreach ($walletBanks as $wallet) {
+        $percent_amount = $walletBanks->map(function ($wallet) {
+
+            $amount_send = $wallet->walletInter->amount;
+
+            $country_user = $wallet->walletInter->wallet;
+
             $percent_robus = $this->getRobusPercentageForWalletInter($wallet);
 
-            if ($percent_robus !== null) {
-                $percent_amount[] = $percent_robus->percent_banque * $wallet->amount;
-            }
-        }
+            $amount_banque = $this->getConvertAdminCommission($amount_send, $country_user);
 
-        return array_sum($percent_amount);
+            return optional($percent_robus)->percent_banque * $amount_banque;
+        });
+
+        return $percent_amount->sum();
     }
 
 
@@ -618,17 +637,21 @@ class Gain extends Component
             ->select('admins_coms.*')
             ->get();
 
-        $percent_amount = [];
 
-        foreach ($walletBanks as $wallet) {
+        $percent_amount = $walletBanks->map(function ($wallet) {
+
+            $amount_send = $wallet->walletInter->amount;
+
+            $country_user = $wallet->walletInter->wallet;
+
             $percent_robus = $this->getRobusPercentageForWalletInter($wallet);
 
-            if ($percent_robus !== null) {
-                $percent_amount[] = $percent_robus->percent_banque * $wallet->amount;
-            }
-        }
+            $amount_banque = $this->getConvertAdminCommission($amount_send, $country_user);
 
-        return array_sum($percent_amount);
+            return optional($percent_robus)->percent_banque * $amount_banque;
+        });
+
+        return $percent_amount->sum();
     }
 
     protected function getRobusPercentageForWalletInter($wallet)
@@ -643,9 +666,25 @@ class Gain extends Component
         if ($typeProviderSendUser == 1 && $providerSendUser != 51) {
             return $this->getRobusPercentageInter($countrieGroupe, $countrieUserId, $providerSendUser, $countrieUserSend);
         }
-    
+
         return null;
     }
+
+    // amount inters
+    public function getConvertAdminCommission($amount, $countrie_send)
+    {
+        $country_civ = Country::find(107);
+
+        $robus_currency = $countrie_send->country->currencie->value;
+        if ($country_civ->currencie->value > $countrie_send->country->currencie->value) {
+            return $amount * $robus_currency;
+        } elseif ($country_civ->currencie->value == $countrie_send->country->currencie->value) {
+            return $amount;
+        } else {
+            return $amount * $robus_currency;
+        }
+    }
+
 
     // Percent valeurs Transactions
     public function getRobusPercentageInter($groupe_name, $countrie, $provider_valeur, $countryId)
@@ -1572,6 +1611,22 @@ class Gain extends Component
         return array_sum($data);
     }
 
+
+    public function getGainAdminStatutProperty()
+    {
+
+        $data = [];
+
+
+        $admins = AdminsCom::where("status", $this->statusTransferFilter)->where('description', 'Commission administrateur')->get();
+
+        foreach ($admins as $bank) {
+            // Accédez à la propriété amount sur chaque objet
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
+    }
 
     public function getGainAdminDrawalTodaysProperty()
     {

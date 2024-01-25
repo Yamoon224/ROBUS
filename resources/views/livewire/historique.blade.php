@@ -1,11 +1,11 @@
     <div>
 
         <div class="intro-y grid grid-cols-12 gap-5 mt-5">
-            <!-- BEGIN: Ticket -->
+        
             <div class="col-span-12 lg:col-span-4">
                 <div class="intro-y block sm:flex items-center h-10">
                     <h2 class="text-lg font-medium truncate mr-5">
-                        Activites d'aujourd'hui
+                        Activites d'aujourd'hui 
                     </h2>
                 </div>
                 <div class="intro-y box p-5 mt-12 sm:mt-5">
@@ -28,6 +28,7 @@
                         Les Activites des transactions d'aujourd'hui
                     </h2>
                 </div>
+                
                 <div class=" intro-y grid grid-cols-12 gap-5 mt-5">
                     <div
                         class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
@@ -72,6 +73,7 @@
                     </div>
                 </div>
             </div>
+            
             <div class="col-span-12 md:col-span-6 lg:col-span-4 " style="background-color: #ff0000; color:white;">
 
                 <div class="intro-y box p-5 mt-12 sm:mt-5" style="background-color: #ff0000; color:white;">
