@@ -433,7 +433,7 @@
                                                             </p>
                                                             <p class="font-medium whitespace-nowrap">
                                                                 Date validité :
-                                                                {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
+                                                                {{ $item->validated_date ?? null }}
                                                             </p>
                                                         @endif
                                                     </td>

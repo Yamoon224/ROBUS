@@ -220,7 +220,7 @@ return [
         // 'ExampleClass' => App\Example\ExampleClass::class,
         // Façade DomPDF
         'PDF' => Barryvdh\DomPDF\Facade\Pdf::class,
-        'Excel' => Maatwebsite\Excel\Facades\Excel::class
+        // 'Excel' => Maatwebsite\Excel\Facades\Excel::class
     ])->toArray(),
 
 ];

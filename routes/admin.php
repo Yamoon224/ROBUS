@@ -27,7 +27,7 @@ Route::group(['middleware' => ['auth:web']], function () {
     //     Route::get('/read', [NotifyController::class, 'read'])->name('notify.read');
     // });
     Route::group(['prefix' => 'tools'], function () {
-        Route::get('/browse', [ToolController::class , 'activity'])->name('tools.activity');
+        Route::get('/browse', [ToolController::class, 'activity'])->name('tools.activity');
 
         Route::group(['prefix' => 'impersonate'], function () {
             Route::get('/enable/{id}', [ToolController::class, 'enableImpersonate'])->name('tools.enableImpersonate');
@@ -40,14 +40,16 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::get('/browse',  [AdminController::class, 'browse'])->name('admin.browse');
         Route::get('/add',  [AdminController::class, 'add'])->name('admin.add');
         Route::get('/add_company',  [AdminController::class, 'add_company'])->name('admin.add_company');
+        Route::get('/add_master_com',  [AdminController::class, 'add_master_zone'])->name('admin.add_master_com');
         Route::post('/store', [AdminController::class, 'store'])->name('admin.store');
         Route::post('/store_company', [AdminController::class, 'store_company'])->name('admin.store_company');
+        Route::post('/store_master', [AdminController::class, 'store_master_com'])->name('admin.store_master_com');
         Route::get('/showForUpdate', [AdminController::class, 'showForUpdate'])->name('admin.showForUpdate');
         Route::get('/showProfil/{id}', [AdminController::class, 'ShowProfil'])->name('admin.ShowProfil');
         Route::get('/read/{id}/update', [AdminController::class, 'showUpdate'])->name('admin.showUpdate');
-        Route::post('/update_password/{id}',  [AdminController::class, 'update_password'])->name('admin.update_password');       
-        Route::post('/update_phone/{id}',  [AdminController::class, 'update_phone'])->name('admin.update_phone');       
-       Route::post('/update/{id}',  [AdminController::class, 'update'])->name('admin.update');
+        Route::post('/update_password/{id}',  [AdminController::class, 'update_password'])->name('admin.update_password');
+        Route::post('/update_phone/{id}',  [AdminController::class, 'update_phone'])->name('admin.update_phone');
+        Route::post('/update/{id}',  [AdminController::class, 'update'])->name('admin.update');
         Route::get('/read/{id}/delete', [AdminController::class, 'delete'])->name('admin.delete');
         Route::get('/user/{id}/activate', [AdminController::class, 'activate'])->name('admin.activate');
     });

@@ -14,6 +14,16 @@ function sabdy()
     return Auth::guard('web')->user();
 }
 
+function master()
+{
+    return Auth::guard('master')->user();
+}
+
+function comzone()
+{
+    return Auth::guard('comzone')->user();
+}
+
 function robus()
 {
     return Auth::guard('api')->user();

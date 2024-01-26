@@ -30,29 +30,27 @@ class Login extends Component
         $msg = 'Bienvenu chez ROBUS';
         $color = 'success';
 
-        if (Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password])) 
-        {
-                   
+        if (Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password])) {
+
             $this->validate();
-    
-            $user_sid = SidUser::whereEmail($this->email)->whereIsAdmin(true)->orWhere('is_supervisor' , true)->first();
-    
-            if (!$user_sid)
-            {
+
+            $user_sid = SidUser::whereEmail($this->email)->whereStatus(true)->first();
+
+            if (!$user_sid) {
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');
-    
-            } elseif($user_sid)
-            {
+            } elseif ($user_sid->is_admin || $user_sid->is_supervisor || $user_sid->is_distributer) {
                 Auth::login(Auth::guard('web')->user());
                 Auth::guard('web')->user()->last_login  = Carbon::now()->toDateTimeString();
                 Auth::guard('web')->user()->last_logout  = null;
                 Auth::guard('web')->user()->save();
                 $this->emit('success', 'Authentificaion reussie redirection en cours !');
                 return redirect()->route('/');
-            }
+            } else {
 
-        }else{
-            
+                $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');
+            }
+        } else {
+
             $this->emit('error', 'Vous n\'etes pas identifiable !');
         }
     }

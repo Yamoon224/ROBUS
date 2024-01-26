@@ -52,6 +52,16 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+
+        'master' => [
+            'driver' => 'session',
+            'provider' => 'masters',
+        ],
+
+        'comzone' => [
+            'driver' => 'session',
+            'provider' => 'masters',
+        ],
     ],
 
     /*
@@ -78,11 +88,16 @@ return [
             'model' => App\Models\Sid\SidUser::class,
         ],
 
+        'masters' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\Sid\SidUser::class,
+        ],
+
         'custumers' => [
             'driver' => 'eloquent',
             'model' =>  App\Models\Sid\SidUser::class,
         ],
-        
+
     ],
 
     /*
@@ -111,6 +126,13 @@ return [
 
         'custumers' => [
             'provider' => 'custumers',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'masters' => [
+            'provider' => 'masters',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

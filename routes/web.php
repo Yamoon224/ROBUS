@@ -1,34 +1,22 @@
 <?php
 
 use App\Http\Livewire\Login;
-use App\Events\UpdateBankEvent;
-use App\Http\Livewire\ShowPoste;
 use Illuminate\Support\Facades\Auth;
-use App\Events\CreateWalletBankEvent;
-use App\Http\Livewire\Auth\LoginComp;
-use App\Http\Livewire\Detailcontacts;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FaqController;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\CardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LevelController;
-use App\Http\Controllers\CompanyController;
-use App\Http\Controllers\ContactController;
 use App\Http\Controllers\PaimentController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\CountrieController;
-use App\Http\Controllers\ProviderController;
-use App\Http\Livewire\Historical\Reloadhisto;
 use App\Http\Controllers\CommissionController;
-use App\Http\Controllers\ComplianceController;
 use App\Http\Controllers\HistoricalController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\ContactListController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Livewire\Transactions\AddModalRealod;
-use App\Http\Controllers\AdminHistoriqueController;
 use App\Http\Controllers\Invoices\InvoiceController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Livewire\Historical\UnderHistorical\PaymentHisto;
@@ -59,6 +47,14 @@ Route::group(['prefix' => 'privacy'], function () {
 //User Admin
 Route::group(['prefix' => 'compagnie'], function () {
     Route::view('/robus', 'auth.login_companie')->name('admin.login_companie');
+});
+
+Route::group(['prefix' => 'masters'], function () {
+    Route::view('/robus', 'auth.login_master')->name('admin.login_master');
+});
+
+Route::group(['prefix' => 'comzones'], function () {
+    Route::view('/robus', 'auth.login_com_zone')->name('admin.login_com_zone');
 });
 
 Route::group(['prefix' => 'robus'], function () {

@@ -36,17 +36,30 @@ use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTransaction;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Admin\MailController;
+use App\Models\Master;
 
 class AdminController extends Controller
 {
 
-    
+
     // Company Infos
 
     public function home_company()
     {
         return view('home_company');
     }
+
+
+    public function home_masters()
+    {
+        return view('home_masters');
+    }
+
+    public function home_com_zones()
+    {
+        return view('home_company');
+    }
+
 
     public function check(Request $request)
     {
@@ -187,24 +200,21 @@ class AdminController extends Controller
 
             $verify_phone =  SidUser::wherePhone($user_info->country->indecative . $request->new_phone)->first();
 
-            if($verify_phone)
-            {
+            if ($verify_phone) {
                 return back()
-                ->withErrors($validator)
-                ->with('color', 'danger')
-                ->with('status', 'Utilisateur existe déja ')
-                ->withInput();
-            }else {
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Utilisateur existe déja ')
+                    ->withInput();
+            } else {
 
-                SidUser::find($id)->update(['phone' => $user_info->country->indecative. $request->new_phone]);
-    
+                SidUser::find($id)->update(['phone' => $user_info->country->indecative . $request->new_phone]);
+
                 Mail::to($user_info->email)->send(new NewAdmin('Vote numero de telephone a été modifier par' . env('APP_NAME') .
                     ' Votre email : '  . $user_info->email . ' Votre nouveau numero : ' . $request->new_phone));
-    
+
                 return redirect(route('admin.browse'))->with('status', 'Mise a jour effectuée avec succès');
-
             }
-
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)
@@ -263,6 +273,19 @@ class AdminController extends Controller
         $countries = Country::whereRobus(true)
             ->where('indecative', '!=', null)->get();
         return view('pages.admin.add_company', compact('roles', 'countries'));
+    }
+
+
+    public function add_master_zone()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur')) {
+            abort(403);
+        }
+        $roleIds = [7, 8];
+        $roles = Role::whereIn('id', $roleIds)->orderBy('created_at', 'desc')->get();
+        $countries = Country::whereRobus(true)
+            ->where('indecative', '!=', null)->get();
+        return view('pages.admin.add_master_zone', compact('roles', 'countries'));
     }
 
     public function add_under_distributer()
@@ -798,6 +821,7 @@ class AdminController extends Controller
             $user->is_admin  = $request->is_admin ? true : false;
             $user->is_custumers  = $request->is_custumers ? true : false;
             $user->is_supervisor  = $request->is_supervisor ? true : false;
+
             $user->is_company  = false;
 
             $user->assignRole($request['roles']);
@@ -1033,6 +1057,167 @@ class AdminController extends Controller
             return redirect(route('admin.browse'))->with('color', $color)->with('status', $msg);
         } catch (\Throwable $th) {
             return redirect('application/admin/add_company')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de création')
+                ->withInput();
+        }
+    }
+
+    public function store_master_com(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'firstname' => ['required', 'string', 'max:255'],
+            'country_id' => 'required',
+            'zone' => 'required',
+            'roles' => ['required'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:sid_users'],
+            'phone' => ['required', 'unique:sid_users'],
+            'password' => ['required', 'confirmed'],
+            'image' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_recto' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_verso' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('application/admin/add_master_com')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Champ requise')
+                ->withInput();
+        }
+
+
+        $user = DB::table('sid_users')->where('email', $request->email)->first();
+
+        $tool = new Image;
+
+        try {
+
+            $rt = rand(40, 5000) * time();
+            $tr = str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            $walletCode = sprintf("%0.6s", str_shuffle($rt . $tr));
+
+            $user = new SidUser();
+            $user->firstname  = $request->firstname;
+            $user->company_id  = 1;
+            $user->lastname  = $request->lastname;
+            $user->country_id  = $request->country_id ?? null;
+            $user->city_id  = $request->city ?? null;
+            $user->zone_id  = $request->zone_id ?? null;
+            $user->zone  = $request->zone ?? null;
+            $user->email =  $request->email;
+            $user->phone  = $request->phone;
+            $user->created_by = Auth::guard('web')->user()->id;
+            $file_image = $request->file('image');
+            $file_image_recto = $request->file('image_recto');
+            $file_image_verso = $request->file('image_verso');
+            if ($file_image) {
+                $destination_path = public_path('profil/' . $user->id . '/');
+                $front_file = date('YmdHis') . "." . $file_image->getClientOriginalExtension();
+                $file_image->move($destination_path, $front_file);
+                $user->image =  env('APP_URL') . "/public/profil/" . $user->id . "/$front_file";
+            }
+
+
+            $user->password  = Hash::make($request->password);
+            $user->is_under_distributer  = false;
+            $user->is_distributer  = false;
+            $user->is_accounting  = false;
+            $user->is_admin  =  false;
+            $user->is_custumers  = false;
+            $user->is_supervisor  =  false;
+            $user->is_company  = false;
+            $user->is_master   = $request->is_master ? true : false;
+            $user->is_com_zone = $request->is_com ? true : false;
+
+            $user->assignRole($request['roles']);
+
+            if (!$user->country->currencie) {
+
+                return redirect('application/admin/add_master_com')
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Pas de devise dans se pays\n \nveillez activer la devise')
+                    ->withInput();
+            }
+
+
+
+            $user->save();
+
+            if (isset($file_image_recto) && !empty($file_image_recto) && isset($file_image_verso) && !empty($file_image_verso)) {
+
+                $destination_path = public_path('kyc_master/' . $user->id . '/');
+                $front_file =  'face_' .  date('YmdHis') . "." . $file_image_recto->getClientOriginalExtension();
+                $back_file = 'arriere_' . date('YmdHis') . "." . $file_image_verso->getClientOriginalExtension();
+                $file_image_recto->move($destination_path, $front_file);
+                $file_image_verso->move($destination_path, $back_file);
+                Kyc::updateOrCreate(
+                    [
+                        'sid_user_id' => $user->id,
+                        'company_id'  =>  $user->company->id
+                    ],
+                    [
+                        'motif' => 'Validation de compte',
+                        'screen' => env('APP_URL') . "/public/kyc_master/" . $user->id . "/$front_file",
+                        'screen_back' => env('APP_URL') . "/public/kyc_master/" . $user->id . "/$back_file",
+                        'sid_user_id' => $user->id,
+                        'status' => true,
+                        'company_id'  =>  $user->company->id
+                    ]
+                );
+            }
+
+
+            Master::create([
+                'city_id' =>  $user->city_id,
+                'lastname' =>  $user->lastname,
+                'firstname' =>  $user->firstname,
+                'country_id' =>  $request->country_id,
+                'email' =>  $user->email,
+                'phone' =>  $user->country->indecative .  $user->phone,
+                'zone' =>  $user->zone,
+                'is_master' => $user->is_master == true ? true : false,
+                'currency_id' =>  $user->country->currencie->id,
+                'status' => true
+            ]);
+
+            $wallet_user = Wallet::create([
+                'company_id' =>   1,
+                'wallet_id' =>   $user->country->code . $walletCode,
+                'country_id' =>  $user->country->id,
+                'created_by' => Auth::guard('web')->user()->id,
+                'sid_user_id' =>  $user->id,
+                'currencie_id' =>  $user->country->currencie->id,
+                'amount' => 0.0,
+                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                'status' => true
+            ]);
+
+            $user->update([
+                'company_id'  => 1,
+                'wallet_id'  => $wallet_user->wallet_id,
+                'master_id'  => $user->id,
+                'is_accepted' => false,
+                'phone'  =>   $user->country->indecative . $user->phone,
+                'silver_ceiling'  =>   $user->country->silver_ceiling
+            ]);
+
+
+            $valeur_message = $user->is_master == true ?  ' Un MASTER' : ' un COM ZONE ' ;
+            Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
+                ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+
+            $msg = "Utilisateur crée avec succès";
+            $color = 'success';
+
+            return redirect(route('admin.browse'))->with('color', $color)->with('status', $msg);
+
+        } catch (\Throwable $th) {
+            return redirect('application/admin/add_master_com')
                 ->withErrors($validator)
                 ->with('color', 'danger')
                 ->with('status', 'Erreur de création')

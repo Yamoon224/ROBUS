@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('invoice_payments', function (Blueprint $table) {
-            $table->unsignedBigInteger('payment_id')->nullable();
+        $table->unsignedBigInteger('payment_id')->nullable();
          $table->foreign('payment_id')->references('id')->on('payments')->onDelete('cascade');
         });
     }

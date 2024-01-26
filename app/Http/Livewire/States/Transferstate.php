@@ -22,7 +22,7 @@ class Transferstate extends Component
         $realod = WalletTransaction::query();
 
 
-        if ($walletUser->wallet->sidUser->is_distributer == true || $walletUser->wallet->sidUser->is_under_distributer == true || $walletUser->wallet->sidUser->is_custumers == true) {
+        if ($walletUser->wallet->sidUser->is_under_distributer == true) {
 
             if ($this->startDate && $this->endDate) {
 
@@ -49,7 +49,7 @@ class Transferstate extends Component
 
                 ]
             );
-        } else if ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false && $walletUser->wallet->sidUser->is_custumers == false) {
+        } else {
 
 
 
@@ -59,8 +59,7 @@ class Transferstate extends Component
             }
 
             $data = [];
-            foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
+            foreach (WalletTransaction::where('status', 'SUCCESS')->get() as $bank) {
                 $data[] = $bank->amount;
             }
 
@@ -74,7 +73,7 @@ class Transferstate extends Component
                     'usersCountry' =>  $walletUser->country->currencie->name,
                     'sum_commissions' => $this->WalletReloadSumGain,
                     'realods' => $this->RealodsAdmin,
-                    'reloads_gain'  =>  $this->RealodsAdminGain,
+                    '   '  =>  $this->RealodsAdminGain,
                 ]
             );
         }

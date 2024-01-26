@@ -286,7 +286,40 @@
                             <div class="alert alert-secondary show mb-2 mt-3" role="alert">Activer  societé
                             </div>
                         </div>
-                        
+                        <div class="crud-form-1 intro-y col-span-12 lg:col-span-3" id="switch_master">
+
+                            <label class="form-label" for="switch">Masters</label>
+                            <div class="form-switch mt-2">
+                                <input type="checkbox" class="form-check-input" name="is_master">
+
+                                @error('is_master')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                                <label class="input-switch-label" for="switch"></label>
+                            </div>
+                            <div class="alert alert-secondary show mb-2 mt-3" role="alert">Activer  masters
+                            </div>
+                        </div>
+
+                        <div class="crud-form-1 intro-y col-span-12 lg:col-span-3" id="switch_com">
+
+                            <label class="form-label" for="switch">Com zone</label>
+                            <div class="form-switch mt-2">
+                                <input type="checkbox" class="form-check-input" name="is_com">
+
+                                @error('is_com')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                                <label class="input-switch-label" for="switch"></label>
+                            </div>
+                            <div class="alert alert-secondary show mb-2 mt-3" role="alert">Activer  com zone
+                            </div>
+                        </div>
+
 
 
                     </div>
@@ -320,12 +353,16 @@
                     $("#switch_under_admin").hide();
                     $("#switch_supervisor").hide();
                     $("#switch_company").hide();
+                    $("#switch_master").hide();
+                    $("#switch_com").hide();
                 } else {
                     $("#switch_under_distributer").show();
                     $("#switch_distributer").show();
                     $("#switch_under_admin").show();
                     $("#switch_supervisor").show();
                     $("#switch_company").show();
+                    $("#switch_master").show();
+                    $("#switch_com").show();
                 }
 
             });
@@ -336,6 +373,8 @@
                     $("#switch_under_admin").hide();
                     $("#switch_supervisor").hide();
                     $("#switch_company").hide();
+                    $("#switch_master").hide();
+                    $("#switch_com").hide();
 
                 } else {
                     $("#switch_under_distributer").show();
@@ -343,6 +382,8 @@
                     $("#switch_under_admin").show();
                     $("#switch_supervisor").show();
                     $("#switch_company").show();
+                    $("#switch_master").show();
+                    $("#switch_com").show();
                 }
 
             });
@@ -353,12 +394,16 @@
                     $("#switch_under_distributer").hide();
                     $("#switch_supervisor").hide();
                     $("#switch_company").hide();
+                    $("#switch_master").hide();
+                    $("#switch_com").hide();
                 } else {
                     $("#switch_under_distributer").show();
                     $("#switch_distributer").show();
                     $("#switch_under_admin").show();
                     $("#switch_supervisor").show();
                     $("#switch_company").show();
+                    $("#switch_master").show();
+                    $("#switch_com").show();
                 }
 
             });
@@ -369,12 +414,16 @@
                     $("#switch_under_distributer").hide();
                     $("#switch_under_admin").hide();
                     $("#switch_company").hide();
+                    $("#switch_master").hide();
+                    $("#switch_com").hide();
                 } else {
                     $("#switch_under_distributer").show();
                     $("#switch_distributer").show();
                     $("#switch_under_admin").show();
                     $("#switch_supervisor").show();
                     $("#switch_company").show();
+                    $("#switch_master").show();
+                    $("#switch_com").show();
                 }
 
             });
@@ -385,8 +434,50 @@
                     $("#switch_under_distributer").hide();
                     $("#switch_under_admin").hide();
                     $("#switch_supervisor").hide();
+                    $("#switch_master").hide();
+                    $("#switch_com").hide();
                 } else {
+                    $("#switch_company").show();
+                    $("#switch_under_distributer").show();
+                    $("#switch_distributer").show();
+                    $("#switch_under_admin").show();
+                    $("#switch_supervisor").show();
+                    $("#switch_master").show();
+                    $("#switch_com").show();
+                }
+
+            });
+
+            $('input[name="is_master"]').click(function() {
+                if ($(this).is(":checked")) {
+                    $("#switch_distributer").hide();
+                    $("#switch_under_distributer").hide();
+                    $("#switch_under_admin").hide();
+                    $("#switch_supervisor").hide();
+                    $("#switch_com").hide();
                     $("#switch_company").hide();
+                } else {
+                    $("#switch_company").show();
+                    $("#switch_under_distributer").show();
+                    $("#switch_distributer").show();
+                    $("#switch_under_admin").show();
+                    $("#switch_supervisor").show();
+                    $("#switch_com").show();
+                }
+
+            });
+
+            $('input[name="is_com"]').click(function() {
+                if ($(this).is(":checked")) {
+                    $("#switch_distributer").hide();
+                    $("#switch_under_distributer").hide();
+                    $("#switch_under_admin").hide();
+                    $("#switch_supervisor").hide();
+                    $("#switch_master").hide();
+                    $("#switch_company").hide();
+                } else {
+                    $("#switch_company").show();
+                    $("#switch_master").show();
                     $("#switch_under_distributer").show();
                     $("#switch_distributer").show();
                     $("#switch_under_admin").show();

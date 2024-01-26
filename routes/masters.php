@@ -2,11 +2,11 @@
 
 use App\Http\Livewire\LoginCompany;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FirmController;
 use App\Http\Controllers\HistoricalController;
 use App\Http\Controllers\Admin\MasterController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\Invoices\InvoiceController;
+use App\Http\Controllers\Admin\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,57 +23,58 @@ Route::group(['middleware' => ['auth:master']], function () {
 
 
     Route::group(['prefix' => 'robus'], function () {
-        Route::get('/browse', [MasterController::class, 'home_company'])->name('companies.home');
+        Route::get('/browse', [AdminController::class, 'home_masters'])->name('masters.home');
         Route::get('/logout', [LoginCompany::class, 'logout'])->name('companies.logout');
     });
 
     //   Users
-    Route::prefix('employes')->group(function () {
-        Route::get('/browse', [FirmController::class, 'browse_employes'])->name('employers.browse');
-        Route::get('/add', [FirmController::class, 'add_employes'])->name('employers.add');
-        Route::get('/show/{id}', [FirmController::class, 'show__employes'])->name('employes.show');
+    Route::prefix('underdistributors')->group(function () {
+        Route::get('/browse', [MasterController::class, 'browse_underdistributors'])->name('underdistributors.browse');
+        Route::get('/add', [MasterController::class, 'add_underdistributors'])->name('underdistributors.add');
+        Route::get('/show/{id}', [MasterController::class, 'show__underdistributors'])->name('underdistributors.show');
     });
 
-     //   Users
-     Route::prefix('categories')->group(function () {
-        Route::get('/browse', [FirmController::class, 'browse_categories'])->name('categories.employers.browse');
+    Route::prefix('custumers')->group(function () {
+        Route::get('/browse', [MasterController::class, 'browse_custumers'])->name('custumers.browse');
+        Route::get('/add', [MasterController::class, 'add_custumers'])->name('custumers.add');
+        Route::get('/show/{id}', [MasterController::class, 'show__custumers'])->name('custumers.show');
     });
 
 
     //Statisques
     Route::prefix('statistics')->group(function () {
-        Route::get('/browse', [StatistiqueController::class, 'browse_state_employes'])->name('employes.transactions.historiques.states');
+        Route::get('/browse_unders', [StatistiqueController::class, 'browse_state_underdistributors'])->name('underdistributors.transactions.historiques.states');
+        Route::get('/browse_custumers', [StatistiqueController::class, 'browse_state_custumers'])->name('custumers.transactions.historiques.states');
     });
 
-      //Historical
+    //Historical
     Route::prefix('historicals')->group(function () {
-        Route::get('/transfers_historicals', [HistoricalController::class, 'browse_transfer'])->name('employes.transfers.historical');   
+        Route::get('/transfers_historicals', [HistoricalController::class, 'browse_transfer'])->name('employes.transfers.historical');
         Route::get('transfers/reporting_transfer_historical', [HistoricalController::class, 'reporting_transfer_historical_company'])->name('employers.transfers.historical.reporting_transfer_historical');
-
     });
 
-      //Invoices
-      Route::prefix('invoices')->group(function () {
+    //Invoices
+    Route::prefix('invoices')->group(function () {
         Route::get('/transfers/{transfers_id}', [InvoiceController::class, 'transfers_uv_company'])->name('companies.transfers.invoice.print');
     });
 
-        //Account managment
-        Route::prefix('account')->group(function () {
+    //Account managment
+    Route::prefix('account')->group(function () {
 
-            Route::get('/', [MasterController::class, 'show_profile'])->name('employes.account.profile');
-            Route::get('/showProfil/{id}', [MasterController::class, 'ShowProfil_employes'])->name('employes.ShowProfil');
-            Route::get('/security/update', [MasterController::class, 'security_employers'])->name('employes.account.security');
-            Route::post('/read/{id}/update', [MasterController::class, 'showUpdate_companies'])->name('employes.showUpdate');
-            Route::post('update-password', [MasterController::class, 'UpdatePassword_companie'])->name('employes.account.security.update');
+        Route::get('/', [MasterController::class, 'show_profile'])->name('employes.account.profile');
+        Route::get('/showProfil/{id}', [MasterController::class, 'ShowProfil_employes'])->name('employes.ShowProfil');
+        Route::get('/security/update', [MasterController::class, 'security_employers'])->name('employes.account.security');
+        Route::post('/read/{id}/update', [MasterController::class, 'showUpdate_companies'])->name('employes.showUpdate');
+        Route::post('update-password', [MasterController::class, 'UpdatePassword_companie'])->name('employes.account.security.update');
 
-            Route::post('/updateProfil',  [MasterController::class, 'updateProfil_company'])->name('employers.account.update');
+        Route::post('/updateProfil',  [MasterController::class, 'updateProfil_company'])->name('employers.account.update');
 
-            // NOTIFY  
-            Route::get('/liste_notifications', [MasterController::class, 'get_notification'])->name('admin.show.get_notification');
-            Route::get('/notifications', [MasterController::class, 'get_notifications'])->name('admin.show.notifications');
-            Route::get('/get-notifications', [MasterController::class, 'get_unread_notifications'])->name('admin.get.unread.notifications');
-            Route::get('/make-notifications-as-read', [MasterController::class, 'make_notifications_as_read'])->name('admin.make.notifications.as.read');
-            Route::get('/make_read_all', [MasterController::class, 'make_read_all'])->name('admin.make.make_read_all');
-            Route::get('/make_read_single/{id}', [MasterController::class, 'make_read_single'])->name('admin.make.make_read_single');
-        });
+        // NOTIFY  
+        Route::get('/liste_notifications', [MasterController::class, 'get_notification'])->name('admin.show.get_notification');
+        Route::get('/notifications', [MasterController::class, 'get_notifications'])->name('admin.show.notifications');
+        Route::get('/get-notifications', [MasterController::class, 'get_unread_notifications'])->name('admin.get.unread.notifications');
+        Route::get('/make-notifications-as-read', [MasterController::class, 'make_notifications_as_read'])->name('admin.make.notifications.as.read');
+        Route::get('/make_read_all', [MasterController::class, 'make_read_all'])->name('admin.make.make_read_all');
+        Route::get('/make_read_single/{id}', [MasterController::class, 'make_read_single'])->name('admin.make.make_read_single');
+    });
 });

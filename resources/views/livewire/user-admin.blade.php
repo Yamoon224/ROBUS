@@ -8,29 +8,19 @@
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
                 <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add') }}">Ajouter</a>
             @endif
-            <div class="dropdown">
-                @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
-                    <a class="dropdown-toggle btn px-2 box" href="{{ route('admin.add') }}" aria-expanded="false"
-                        data-tw-toggle="dropdown">
-                        <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4"
-                                data-feather="plus"></i> </span>
-                    </a>
-                @endif
-            </div>
+          
             <div class="hidden md:block mx-auto text-slate-500"></div>
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
                 <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add_company') }}">Ajouter une
                     sociéte</a>
             @endif
-            <div class="dropdown">
-                @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
-                    <a class="dropdown-toggle btn px-2 box" href="{{ route('admin.add_company') }}"
-                        aria-expanded="false" data-tw-toggle="dropdown">
-                        <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4"
-                                data-feather="plus"></i> </span>
-                    </a>
-                @endif
-            </div>
+           
+            <div class="hidden md:block mx-auto text-slate-500"></div>
+            @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
+                <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add_master_com') }}">Ajouter une
+                    Master et Com Zone</a>
+            @endif
+            
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
