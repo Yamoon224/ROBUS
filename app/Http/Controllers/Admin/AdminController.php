@@ -1200,7 +1200,7 @@ class AdminController extends Controller
             $user->update([
                 'company_id'  => 1,
                 'wallet_id'  => $wallet_user->wallet_id,
-                'master_id'  => $user->id,
+                // 'master_id'  => $user->id,
                 'is_accepted' => false,
                 'phone'  =>   $user->country->indecative . $user->phone,
                 'silver_ceiling'  =>   $user->country->silver_ceiling

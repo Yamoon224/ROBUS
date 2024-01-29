@@ -41,8 +41,8 @@
 
         <li>
 
-            <a href="{{ route('custumers.browse') }}"
-                class="side-menu {{ $route == 'custumers.browse' || $route == 'custumers.show' || $route == 'custumers.edit' || $route == 'custumers.add'  ? 'side-menu--active' : '' }}">
+            <a href="{{ route('custumers.masters.browse') }}"
+                class="side-menu {{ $route == 'custumers.masters.browse' || $route == 'custumers.masters.show' || $route == 'custumers.masters.edit' || $route == 'custumers.masters.add'  ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                     stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -55,8 +55,8 @@
         </li>
         <li class="side-nav__devider my-4"></li>
         <li>
-            <a href="{{ route('employes.transfers.historical') }}"
-                class="side-menu {{ $route == 'employes.transfers.historical' ? 'side-menu--active' : '' }}">
+            <a href="{{ route('masters.transfers.historical') }}"
+                class="side-menu {{ $route == 'masters.transfers.historical' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
                 </div>
                 <div class="side-menu__title"> Historique </div>
@@ -65,8 +65,8 @@
         <li class="side-nav__devider my-4"></li>
         <li>
 
-            <a href="{{ route('employes.transactions.historiques.states') }}"
-                class="side-menu {{ $route == 'employes.transactions.historiques.states'  ? 'side-menu--active' : '' }}">
+            <a href="{{ route('masters.transactions.historiques.states') }}"
+                class="side-menu {{ $route == 'masters.transactions.historiques.states'  ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i></div>
                 <div class="side-menu__title"> Statistiques </div>
             </a>
@@ -74,8 +74,8 @@
         <li class="side-nav__devider my-4"></li>
         <li>
 
-            <a href="{{ route('employes.account.profile') }}"
-                class="side-menu {{ $route == 'employes.account.profile' || $route == 'employes.account.security' ? 'side-menu--active' : '' }}">
+            <a href="{{ route('masters.account.profile') }}"
+                class="side-menu {{ $route == 'masters.account.profile' || $route == 'masters.account.security' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="user" class="block mx-auto"></i></div>
                 <div class="side-menu__title"> Mon profil </div>
             </a>

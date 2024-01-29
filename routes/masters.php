@@ -30,27 +30,26 @@ Route::group(['middleware' => ['auth:master']], function () {
     //   Users
     Route::prefix('underdistributors')->group(function () {
         Route::get('/browse', [MasterController::class, 'browse_underdistributors'])->name('underdistributors.browse');
-        Route::get('/add', [MasterController::class, 'add_underdistributors'])->name('underdistributors.add');
         Route::get('/show/{id}', [MasterController::class, 'show__underdistributors'])->name('underdistributors.show');
     });
 
     Route::prefix('custumers')->group(function () {
-        Route::get('/browse', [MasterController::class, 'browse_custumers'])->name('custumers.browse');
-        Route::get('/add', [MasterController::class, 'add_custumers'])->name('custumers.add');
-        Route::get('/show/{id}', [MasterController::class, 'show__custumers'])->name('custumers.show');
+        Route::get('/browse', [MasterController::class, 'browse_custumers'])->name('custumers.masters.browse');
+        Route::get('/add', [MasterController::class, 'add_custumers'])->name('custumers.masters.add');
+        Route::get('/show/{id}', [MasterController::class, 'show__custumers'])->name('custumers.masters.show');
     });
 
 
     //Statisques
     Route::prefix('statistics')->group(function () {
         Route::get('/browse_unders', [StatistiqueController::class, 'browse_state_underdistributors'])->name('underdistributors.transactions.historiques.states');
-        Route::get('/browse_custumers', [StatistiqueController::class, 'browse_state_custumers'])->name('custumers.transactions.historiques.states');
+        Route::get('/browse_custumers', [StatistiqueController::class, 'browse_state_custumers'])->name('masters.transactions.historiques.states');
     });
 
     //Historical
     Route::prefix('historicals')->group(function () {
-        Route::get('/transfers_historicals', [HistoricalController::class, 'browse_transfer'])->name('employes.transfers.historical');
-        Route::get('transfers/reporting_transfer_historical', [HistoricalController::class, 'reporting_transfer_historical_company'])->name('employers.transfers.historical.reporting_transfer_historical');
+        Route::get('/transfers_historicals', [HistoricalController::class, 'browse_transfer'])->name('masters.transfers.historical');
+        Route::get('transfers/reporting_transfer_historical', [HistoricalController::class, 'reporting_transfer_historical_company'])->name('masters.transfers.historical.reporting_transfer_historical');
     });
 
     //Invoices
@@ -61,13 +60,13 @@ Route::group(['middleware' => ['auth:master']], function () {
     //Account managment
     Route::prefix('account')->group(function () {
 
-        Route::get('/', [MasterController::class, 'show_profile'])->name('employes.account.profile');
-        Route::get('/showProfil/{id}', [MasterController::class, 'ShowProfil_employes'])->name('employes.ShowProfil');
-        Route::get('/security/update', [MasterController::class, 'security_employers'])->name('employes.account.security');
-        Route::post('/read/{id}/update', [MasterController::class, 'showUpdate_companies'])->name('employes.showUpdate');
-        Route::post('update-password', [MasterController::class, 'UpdatePassword_companie'])->name('employes.account.security.update');
+        Route::get('/', [MasterController::class, 'show_profile'])->name('masters.account.profile');
+        Route::get('/showProfil/{id}', [MasterController::class, 'ShowProfil_masters'])->name('masters.ShowProfil');
+        Route::get('/security/update', [MasterController::class, 'security_employers'])->name('masters.account.security');
+        Route::post('/read/{id}/update', [MasterController::class, 'showUpdate_companies'])->name('masters.showUpdate');
+        Route::post('update-password', [MasterController::class, 'UpdatePassword_companie'])->name('masters.account.security.update');
 
-        Route::post('/updateProfil',  [MasterController::class, 'updateProfil_company'])->name('employers.account.update');
+        Route::post('/updateProfil',  [MasterController::class, 'updateProfil_company'])->name('masters.account.update');
 
         // NOTIFY  
         Route::get('/liste_notifications', [MasterController::class, 'get_notification'])->name('admin.show.get_notification');
