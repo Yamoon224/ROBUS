@@ -79,18 +79,6 @@ class Reloaduv extends Component
     ];
 
 
-    // public function getListeners()
-    // {
-    //     if ($this->account_reload_uv != null) {
-
-    //         dd($this->account_reload_uv);
-    //     }
-    //     // $user_id = auth()->user()->id;
-
-    //     return [
-    //         // "echo-notification:App.Models.User.{$user_id}, notification" => 'gotNotification'
-    //     ];
-    // }
 
     public function notifyNewReload()
     {

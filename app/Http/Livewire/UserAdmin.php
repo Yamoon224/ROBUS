@@ -92,7 +92,7 @@ class UserAdmin extends Component
         }
 
         return view('livewire.user-admin', [
-            "users" => $users->where('is_custumers' ,'!=', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
+            "users" => $users->where('is_custumers', '!=', true)->where('is_master', '!=', true)->where('is_com_zone', '!=', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get()
         ]);
     }

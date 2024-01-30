@@ -14,9 +14,9 @@
             </div>
             <div class="font-medium text-historique mt-6">Montant total reçu des rechargements</div>
             <div class="text-slate-500 mt-3">
-{{-- 
-                {{ number_format($reaload_uv, 2, ',', ' ') ?? null }}
-                {{ $user->wallet->currencie->code ?? null }} --}}
+
+                {{ number_format($reloadAmounts, 2, ',', ' ') ?? null }}
+                {{ $user->wallet->currencie->code ?? null }}
 
             </div>
         </div>
@@ -151,6 +151,20 @@
             <div class="text-slate-500 mt-3">
                 {{ number_format($walletOrderCarte_com, 2, ',', ' ') ?? null }}
                 {{ $user->wallet->currencie->code ?? null }}
+            </div>
+        </div>  
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Montant total commissions </div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($sum_wallet_transaction, 2, ',', ' ') ?? null }} {{ $user->wallet->currencie->code ?? null }}
             </div>
         </div>  
 

@@ -165,10 +165,38 @@
             $('#delete-master-modal').removeClass('show');
             $('#delete-master-modal').addClass('hide');
 
+            // realod Wallet
+            $('#create-reloadMaster-modal').removeClass('show');
+            $('#create-reloadMaster-modal').addClass('hide');
 
         });
 
-    
+
+        Livewire.on('modal-hide-reload', () => {
+
+            // realod Wallet
+            $('#create-reloadMaster-modal').removeClass('show');
+            $('#create-reloadMaster-modal').addClass('hide');
+
+            $('#update-reloadMaster-modal').removeClass('show');
+            $('#update-reloadMaster-modal').addClass('hide');
+
+            $('#reload-nav').addClass('active');
+            $('reload-nav').attr('aria-selected', true);
+            $('#reload').addClass('active');
+            // $('body').css('overflow', 'auto');
+        });
+
+
+        Livewire.on('modal-reloadMaster-show', () => {
+            $('#create-reloadMaster-modal').removeClass('hide');
+            $('#create-reloadMaster-modal').addClass('show');
+            $('#reload-nav').addClass('active');
+            $('reload-nav').attr('aria-selected', true);
+            $('#reload').addClass('active');
+
+        });
+
         // Under distributors
 
         Livewire.on('modal-show', () => {

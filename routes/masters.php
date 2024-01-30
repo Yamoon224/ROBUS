@@ -30,8 +30,15 @@ Route::group(['middleware' => ['auth:master']], function () {
     //   Users
     Route::prefix('underdistributors')->group(function () {
         Route::get('/browse', [MasterController::class, 'browse_underdistributors'])->name('underdistributors.browse');
+        Route::get('/add', [MasterController::class, 'add_underdistributors'])->name('underdistributors.add');
+        Route::post('/store', [MasterController::class, 'store_under_distributors'])->name('masters.underdistributors.store');
         Route::get('/show/{id}', [MasterController::class, 'show__underdistributors'])->name('underdistributors.show');
     });
+
+    Route::prefix('reloads')->group(function () {
+        Route::get('/browse', [MasterController::class, 'browse_reloads'])->name('underdistributors.browse_reloads');
+    });
+
 
     Route::prefix('custumers')->group(function () {
         Route::get('/browse', [MasterController::class, 'browse_custumers'])->name('custumers.masters.browse');

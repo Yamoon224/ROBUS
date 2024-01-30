@@ -109,7 +109,7 @@
         <li class="side-nav__devider my-4"></li>
         @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
             <li>
-                <a href="javascript:;" class="side-menu {{ request()->is('users*') ? 'side-menu--active' : '' }}">
+                <a href="javascript:;" class="side-menu {{ request()->is('users*') || request()->is('masters*')  ? 'side-menu--active' : '' }}">
                     <div class="side-menu__icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="w-6 h-6">
@@ -122,7 +122,7 @@
                         <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
                     </div>
                 </a>
-                <ul class="{{ request()->is('users*') ? 'side-menu__sub-open' : '' }}">
+                <ul class="{{ request()->is('users*') || request()->is('masters*') ? 'side-menu__sub-open' : '' }}">
 
 
                     @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
@@ -140,13 +140,37 @@
                         <li>
 
                             <a href="{{ route('company.browse') }}"
-                                class="side-menu {{ $route == 'company.browse' || $route == 'company.show_company' || $route == 'custumers  .edit' || $route == 'admin.add_company' ? 'side-menu--active' : '' }}">
+                                class="side-menu {{ $route == 'company.browse' || $route == 'company.show_company'  || $route == 'admin.add_company' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
                                 </div>
                                 <div class="side-menu__title"> Societés </div>
                             </a>
                         </li>
                     @endif
+                    @if (Auth::guard('web')->user()->hasPermissionTo('masters'))
+                        <li>
+
+                            <a href="{{ route('masters.admins.browse') }}"
+                                class="side-menu {{ $route == 'masters.admins.browse' || $route == 'masters.admins.show' || $route='admin.add_master_com' || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title"> MASTERS </div>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (Auth::guard('web')->user()->hasPermissionTo('com-zone'))
+                        <li>
+
+                            <a href="{{ route('company.browse') }}"
+                                class="side-menu {{ $route == 'company.browse' || $route == 'masters.admins.show'  || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title"> COM ZONE </div>
+                            </a>
+                        </li>
+                    @endif
+
 
                 </ul>
             </li>

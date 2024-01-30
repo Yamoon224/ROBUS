@@ -15,11 +15,6 @@
                     sociéte</a>
             @endif
            
-            <div class="hidden md:block mx-auto text-slate-500"></div>
-            @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
-                <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add_master_com') }}">Ajouter une
-                    Master et Com Zone</a>
-            @endif
             
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">

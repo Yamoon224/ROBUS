@@ -20,9 +20,6 @@
                             </svg>
                         </a>
                     </h2>
-                    {{-- <div class="form-check form-switch w-full sm:w-auto sm:ml-auto mt-3 sm:mt-0">
-                <label class="form-check-label ml-0" for="show-example-5"> Nouveau administrateur</label>
-            </div> --}}
                 </div>
 
                 <div class="p-5">
@@ -95,6 +92,18 @@
                             @enderror
                         </div>
                         <div class="crud-form-1 mt-3">
+                            <label class="form-label">Prénom<span class="text-danger"> *</span></label>
+                            <input type="text" name="lastname"
+                                class="form-control @error('lastname') is-invalid @enderror" value="{{ old('lastname') }}"
+                                required>
+                            @error('lastname')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+
+                        </div>
+                        <div class="crud-form-1 mt-3">
                             <label class="form-label" for="phone">Téléphone <span class="text-danger"> *</span></label>
                             <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
                                 maxlength="10" name="phone" placeholder="" required />
@@ -137,32 +146,27 @@
                 <div class="p-5">
                     <div class="crud-form-1 intro-y mt-3">
                         <label class="form-label" for="country">Pays <span class="text-danger"> * </span></label>
-                        <select required id="country_id" name="country_id"
-                            class="select2 form-select @error('country_id') is-invalid @enderror">
+                        <h2 class="intro-y text-lg font-medium">
+                            <span
+                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                {{ $countrie->name ?? null }} </span>
+                        </h2>
+                    </div>
+                    <div class="crud-form-1 intro-y mt-3">
+                        <label class="form-label" for="city">Ville <span class="text-danger"> * </span></label>
+                        <select required id="city_id" name="city_id"
+                            class="select2 form-select @error('city_id') is-invalid @enderror">
                             <option disabled selected>-</option>
-                            @foreach ($countries as $countrie)
-                                <option value="{{ $countrie->id }}" @if ($countrie->id === $countrie->country_id) selected @endif>
-                                    {{ $countrie->name }}</option>
+                            @foreach ($cities as $citie)
+                                <option value="{{ $citie->id }}" @if ($citie->id === $citie->country_id) selected @endif>
+                                    {{ $citie->name }}</option>
                             @endforeach
                         </select>
-                        @error('country_id')
+                        @error('city_id')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
-                    </div>
-                    <div class="crud-form-1 mt-3">
-                        <label class="form-label">Ville </label>
-                        <select id="city" name="city"
-                            class="select2 form-select @error('city') is-invalid @enderror">
-
-                        </select>
-                        @error('city')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-
                     </div>
                     <div class="crud-form-1 mt-3">
                         <label class="form-label">Zone </label>
@@ -175,20 +179,13 @@
                         @enderror
 
                     </div>
-                    <div class="crud-form-1 mt-3">
-                        <label class="form-label">Rôle<span class="text-danger"> *</span></label>
-                        <select name="roles[]" data-placeholder="Selectionne les roles"
-                            class="tom-select w-full @error('roles') is-invalid @enderror">
-                            @foreach ($roles as $role)
-                                <option value="{{ $role->id }}">{{ $role->name }}</option>
-                            @endforeach
-                        </select>
-                        @error('roles')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
-
+                    <div class="crud-form-1 intro-y mt-3">
+                        <label class="form-label" for="country">Role <span class="text-danger"> * </span></label>
+                        <h2 class="intro-y text-lg font-medium">
+                            <span
+                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                {{ $role->name ?? null }} </span>
+                        </h2>
                     </div>
                     <div class="crud-form-1 mt-3">
                         <label class="form-label">Mot de passe <span class="text-danger"> *</label>
@@ -205,47 +202,6 @@
                         <label class="form-label">Confirmer Mot de passe <span class="text-danger">*</span></label>
                         <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
                             name="password_confirmation" id="password_confirmation" required maxlength="4">
-                    </div>
-
-
-                    <div class="grid grid-cols-12 gap-6 mt-6 items-center">
-
-                        <div class="crud-form-1 intro-y col-span-12 lg:col-span-3" id="switch_master">
-
-                            <label class="form-label" for="switch">Masters</label>
-                            <div class="form-switch mt-2">
-                                <input type="checkbox" class="form-check-input" name="is_master">
-
-                                @error('is_master')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                                <label class="input-switch-label" for="switch"></label>
-                            </div>
-                            <div class="alert alert-secondary show mb-2 mt-3" role="alert">Activer  masters
-                            </div>
-                        </div>
-
-                        <div class="crud-form-1 intro-y col-span-12 lg:col-span-3" id="switch_com">
-
-                            <label class="form-label" for="switch">Com zone</label>
-                            <div class="form-switch mt-2">
-                                <input type="checkbox" class="form-check-input" name="is_com">
-
-                                @error('is_com')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
-                                <label class="input-switch-label" for="switch"></label>
-                            </div>
-                            <div class="alert alert-secondary show mb-2 mt-3" role="alert">Activer  com zone
-                            </div>
-                        </div>
-
-
-
                     </div>
                 </div>
                 <div class="text-left">
@@ -266,57 +222,3 @@
 
 @endsection
 
-@push('scripts')
-    {{-- Choise actor --}}
-    <script type="text/javascript">
-        $(document).ready(function() {
-
-            $('input[name="is_master"]').click(function() {
-                if ($(this).is(":checked")) {
-                    $("#switch_com").hide();
-                } else {
-                    $("#switch_com").show();
-                }
-
-            });
-
-            $('input[name="is_com"]').click(function() {
-                if ($(this).is(":checked")) {
-                    $("#switch_master").hide();
-                } else {
-                    $("#switch_master").show();
-                }
-
-            });
-
-        });
-    </script>
-    {{-- Changes country --}}
-    <script type="text/javascript">
-        $(document).ready(function() {
-            $('#country_id').on('change', function() {
-                var country_id = $('#country_id').val();
-                city_id = false;
-                cityUpdate(country_id);
-            });
-
-            // Requête Ajax pour les villes
-            function cityUpdate(countryId) {
-                $.get('{{ url('countries/cities') }}/' + countryId + "'", function(data) {
-                    $('#city').empty();
-                    $.each(data, function(index, cities) {
-                        $('#city').append($('<option>', {
-                            value: cities.id,
-                            text: cities.name
-                        }));
-                    });
-                    if (city_id) {
-                        $('#city').val(city_id).prop('selected', true);
-                    }
-                });
-            }
-
-
-        });
-    </script>
-@endpush

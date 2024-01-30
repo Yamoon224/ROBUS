@@ -1,25 +1,31 @@
 <?php
 
-use App\Http\Livewire\Login;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\FaqController;
-use Illuminate\Support\Facades\Artisan;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\MasterController;
+use App\Http\Controllers\AdminHistoriqueController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\CardController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\CommissionController;
+use App\Http\Controllers\ContactListController;
+use App\Http\Controllers\CountrieController;
+use App\Http\Controllers\FaqController;
+use App\Http\Controllers\HistoricalController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Invoices\InvoiceController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PaimentController;
 use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\CountrieController;
-use App\Http\Controllers\CommissionController;
-use App\Http\Controllers\HistoricalController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\ContactListController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\Invoices\InvoiceController;
-use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\UserController;
 use App\Http\Livewire\Historical\UnderHistorical\PaymentHisto;
+use App\Http\Livewire\Login;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -94,6 +100,16 @@ Route::group(['prefix' => ''], function () {
             Route::get('/make_read_single/{id}', [AdminController::class, 'notif_read_single'])->name('admin.make.makeReadSingle');
         });
 
+        //masters
+        Route::prefix('masters')->group(function () {
+            Route::get('/browse', [MasterController::class, 'browse_masters'])->name('masters.admins.browse');
+            Route::get('/add', [MasterController::class, 'add_masters'])->name('masters.admins.add');
+            Route::post('/store', [MasterController::class, 'store_masters'])->name('masters.admins.store');
+            Route::get('/add_master_com',  [AdminController::class, 'add_master_zone'])->name('admin.add_master_com');
+            Route::get('/show/{id}', [MasterController::class, 'show_masters'])->name('masters.admins.show');
+            Route::post('/update/{id}', [MasterController::class, 'update_masters'])->name('masters.admins.update');
+            Route::get('/showprofil/{id}', [AdminController::class, 'Showprofil'])->name('masters.admin.Showprofil');
+        });
 
         // Valuer Versement
         Route::prefix('levels')->group(function () {
@@ -361,12 +377,8 @@ Route::group(['prefix' => ''], function () {
             Route::get('transfers/reporting_transfer_historical_received/{id}', [AdminHistoriqueController::class, 'reporting_transfer_received_historical'])->name('transfers.historical.received.reporting_transfer_historical.admins');
             Route::get('echecs/reporting_echecs_historical_echecs/{id}', [AdminHistoriqueController::class, 'reporting_transfer_echecs_historical'])->name('echecs.historical.reporting_transfer_historical.admins');
             Route::get('drawer_under_distributer/reporting_drawer_historical/{id}', [AdminHistoriqueController::class, 'reporting_drawer_historical'])->name('transfers.historical.reporting_drawer_historical.admins');
-           
-           
         });
     });
-
-
 });
 
 // Registers 

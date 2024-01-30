@@ -144,7 +144,6 @@ class EnderDistributors extends Component
 
         $check =  Wallet::where('wallet_id', $this->wallet_id_add)->first();
 
-
         $this->cancelUndersField();
         $this->emit('modal-hide', 'hide');
         $this->emit('success', 'Sous distributeur modifié !');
@@ -154,7 +153,7 @@ class EnderDistributors extends Component
     {
         $check = SidUser::find($this->user_id);
         if (!empty($check)) {
-            if ($check->master_id  == master()->id) $check->update(['master_id ' => null]);
+            if ($check->master_id  == master()->id) $check->update(['master_id' => null]);
             else $check->update(['master_id' => master()->id]);
             $this->emit('modal-hide', 'hide');
             $this->cancelUndersField();
@@ -191,7 +190,7 @@ class EnderDistributors extends Component
 
             $this->resetPage();
 
-            $users->where('is_company', master()->id)->where("firstname", "LIKE",  "%" . $this->search . "%")
+            $users->where('master_id', master()->id)->where("firstname", "LIKE",  "%" . $this->search . "%")
                 ->orWhere("lastname", "LIKE",  "%" . $this->search . "%")
                 ->orWhere("email", "LIKE",  "%" . $this->search . "%")
                 ->orWhere("phone", "LIKE",  "%" . $this->search . "%");

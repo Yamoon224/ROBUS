@@ -2,6 +2,7 @@
 
 namespace App\Http\Services;
 
+use App\Models\Custumers\Zone;
 
 class TransactionsAccountService
 {
@@ -13,6 +14,25 @@ class TransactionsAccountService
         $wallet_counts = $wallets::where('wallet_id', $id)->where('status', $status)->count();
 
         return $wallet_counts;
+    }
+
+    public function getTransactionsAll($wallets, $wallet_solde , $page = 20)
+    {
+
+        $wallet_all =   $wallets::where('wallet_id', $wallet_solde->id)->orderBy('created_at', 'desc')->paginate($page);
+
+        return $wallet_all;
+    }
+
+
+    public function getTransactionsTypeAll($wallets, $number_compte, $wallet_solde , $page = 20)
+    {
+
+        $wallet_all =   $wallets::where('wallet_id', $wallet_solde->id)
+            ->orWhere($number_compte,  $wallet_solde->wallet_id)
+            ->orderBy('created_at', 'desc')->paginate($page);
+
+        return $wallet_all;
     }
 
     public function getTransactionAmount($wallets, $id)
@@ -45,5 +65,11 @@ class TransactionsAccountService
     public function getWalletTransactions($wallets, $id)
     {
         return $wallets::where('wallet_id', $id)->orderBy('created_at', 'desc')->paginate(20);
+    }
+
+    public function getAllUsers()
+    {
+        // Logique pour récupérer tous les utilisateurs
+        return Zone::all();
     }
 }

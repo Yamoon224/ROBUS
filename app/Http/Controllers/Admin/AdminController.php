@@ -281,8 +281,8 @@ class AdminController extends Controller
         if (!Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur')) {
             abort(403);
         }
-        $roleIds = [7, 8];
-        $roles = Role::whereIn('id', $roleIds)->orderBy('created_at', 'desc')->get();
+        
+        $roles = Role::whereId(7)->orderBy('created_at', 'desc')->first();
         $countries = Country::whereRobus(true)
             ->where('indecative', '!=', null)->get();
         return view('pages.admin.add_master_zone', compact('roles', 'countries'));
@@ -759,6 +759,7 @@ class AdminController extends Controller
     public function store(Request $request)
     {
 
+
         $validator = Validator::make($request->all(), [
             'firstname' => ['required', 'string', 'max:255'],
             'lastname' => ['required', 'string', 'max:255'],
@@ -1069,6 +1070,7 @@ class AdminController extends Controller
 
         $validator = Validator::make($request->all(), [
             'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
             'country_id' => 'required',
             'zone' => 'required',
             'roles' => ['required'],

@@ -1,13 +1,15 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ZoneController;
+use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\FeatureController;
+use App\Http\Controllers\Admin\MasterController;
+use App\Http\Controllers\Admin\NotifyController;
+use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\ToolController;
-use App\Http\Controllers\Admin\AdminController;
-use App\Http\Controllers\Admin\NotifyController;
-use App\Http\Controllers\Admin\FeatureController;
-use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\ZoneController;
+use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -40,7 +42,6 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::get('/browse',  [AdminController::class, 'browse'])->name('admin.browse');
         Route::get('/add',  [AdminController::class, 'add'])->name('admin.add');
         Route::get('/add_company',  [AdminController::class, 'add_company'])->name('admin.add_company');
-        Route::get('/add_master_com',  [AdminController::class, 'add_master_zone'])->name('admin.add_master_com');
         Route::post('/store', [AdminController::class, 'store'])->name('admin.store');
         Route::post('/store_company', [AdminController::class, 'store_company'])->name('admin.store_company');
         Route::post('/store_master', [AdminController::class, 'store_master_com'])->name('admin.store_master_com');
@@ -87,16 +88,5 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::post('/roles/{id}/sync', [RoleController::class, 'rolePermissionsSync'])->name('roles.permissions-sync');
     });
 
-    // //Zones
-    // Route::prefix('zones')->group(function () {
-    //     Route::get('/browse', [ZoneController::class, 'browse'])->name('zones.browse');
-    //     Route::get('/brand/{id}/activate', [ZoneController::class, 'active'])->name('zones.activate');
-    //     Route::post('/', [ZoneController::class, 'search'])->name('zones.search');
-    //     Route::get('/add', [ZoneController::class, 'add'])->name('zones.add');
-    //     Route::post('/store', [ZoneController::class, 'store'])->name('zones.store');
-    //     Route::get('/show/{id}', [ZoneController::class, 'show_detail'])->name('zones.show_detail');
-    //     Route::get('/read/{id}', [ZoneController::class, 'show'])->name('zones.show');
-    //     Route::post('/update/{id}', [ZoneController::class, 'update'])->name('zones.update');
-    //     Route::get('/read/{id}/delete', [ZoneController::class, 'delete'])->name('zones.delete');
-    // });
+ 
 });

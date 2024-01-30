@@ -20,9 +20,6 @@
                             </svg>
                         </a>
                     </h2>
-                    {{-- <div class="form-check form-switch w-full sm:w-auto sm:ml-auto mt-3 sm:mt-0">
-                <label class="form-check-label ml-0" for="show-example-5"> Nouveau administrateur</label>
-            </div> --}}
                 </div>
 
                 <div class="p-5">
