@@ -104,11 +104,10 @@ Route::group(['prefix' => ''], function () {
         Route::prefix('masters')->group(function () {
             Route::get('/browse', [MasterController::class, 'browse_masters'])->name('masters.admins.browse');
             Route::get('/add', [MasterController::class, 'add_masters'])->name('masters.admins.add');
-            Route::post('/store', [MasterController::class, 'store_masters'])->name('masters.admins.store');
-            Route::get('/add_master_com',  [AdminController::class, 'add_master_zone'])->name('admin.add_master_com');
+            Route::get('/add_master',  [AdminController::class, 'add_master_zone'])->name('masters.admin.add_master_com');
+            Route::post('/store', [MasterController::class, 'store_masters'])->name('masters.admin.store');
             Route::get('/show/{id}', [MasterController::class, 'show_masters'])->name('masters.admins.show');
             Route::post('/update/{id}', [MasterController::class, 'update_masters'])->name('masters.admins.update');
-            Route::get('/showprofil/{id}', [AdminController::class, 'Showprofil'])->name('masters.admin.Showprofil');
         });
 
         // Valuer Versement

@@ -44,7 +44,6 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::get('/add_company',  [AdminController::class, 'add_company'])->name('admin.add_company');
         Route::post('/store', [AdminController::class, 'store'])->name('admin.store');
         Route::post('/store_company', [AdminController::class, 'store_company'])->name('admin.store_company');
-        Route::post('/store_master', [AdminController::class, 'store_master_com'])->name('admin.store_master_com');
         Route::get('/showForUpdate', [AdminController::class, 'showForUpdate'])->name('admin.showForUpdate');
         Route::get('/showProfil/{id}', [AdminController::class, 'ShowProfil'])->name('admin.ShowProfil');
         Route::get('/read/{id}/update', [AdminController::class, 'showUpdate'])->name('admin.showUpdate');

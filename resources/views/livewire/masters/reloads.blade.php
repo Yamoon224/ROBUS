@@ -204,7 +204,7 @@
                                                             </div>
                                                         </td>
                                                         <td class="w-40">
-                                                            @if ($item->wallet->wallet_id != $item->num_wallet)
+                                                            @if ($item->wallet->wallet_id != $item->account_wallet)
                                                                 <span
                                                                     class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                                                              text-indigo-100 bg-indigo-700 rounded"
@@ -231,9 +231,16 @@
                                                         </td>
 
                                                         <td class="w-40">
+
+                                                            @php
+                                                                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id' , $item->account_wallet)->first();
+                                                            @endphp
+                                                           
                                                             <p class="font-medium whitespace-nowrap">
-                                                                {{ $item->account_wallet ?? ($item->phone ?? null) }}
+                                                                    {{ $wallet_info->sidUser->firstname ?? null }}  {{ $wallet_info->sidUser->lastname ?? null }}
                                                             </p>
+                                                            <p class="font-medium whitespace-nowrap mt-3">
+                                                                {{ $item->account_wallet ?? null }}</p>
                                                         </td>
 
                                                         <td class="w-40">
@@ -372,7 +379,6 @@
             });
         </script>
     </div>
-    @include('livewire.commissions.modals.transactions.masters.addReload')
     @include('livewire.commissions.modals.transactions.masters.addReload')
     {{-- Modal update virement --}}
 

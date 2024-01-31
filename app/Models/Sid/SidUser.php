@@ -14,6 +14,7 @@ use App\Models\Custumers\City;
 use App\Models\Wallets\Wallet;
 use Illuminate\Support\Carbon;
 use App\Models\Custumers\Country;
+use App\Models\Master;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
@@ -64,6 +65,12 @@ class SidUser extends Authenticatable
     public function categorie()
     {
         return $this->belongsTo(Categorie::class, 'categorie_id', 'id');
+    }
+
+
+    public function master()
+    {
+        return $this->belongsTo(SidUser::class, 'master_id', 'id');
     }
 
 

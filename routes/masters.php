@@ -39,6 +39,12 @@ Route::group(['middleware' => ['auth:master']], function () {
         Route::get('/browse', [MasterController::class, 'browse_reloads'])->name('underdistributors.browse_reloads');
     });
 
+    Route::prefix('unloads')->group(function () {
+        Route::get('/browse', [MasterController::class, 'browse_dumps'])->name('underdistributors.browse_dumps');
+    });
+
+
+
 
     Route::prefix('custumers')->group(function () {
         Route::get('/browse', [MasterController::class, 'browse_custumers'])->name('custumers.masters.browse');

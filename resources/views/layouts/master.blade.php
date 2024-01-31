@@ -177,6 +177,14 @@
         Livewire.on('modal-hide', () => {
 
 
+            $('#connected-master-modal').removeClass('show');
+            $('#connected-master-modal').addClass('hide');
+            
+            // desabled master
+            $('#disabled-master-admin-modal').removeClass('show');
+            $('#disabled-master-admin-modal').addClass('hide');
+
+
             $('#disabled-user_admin-modal').removeClass('show');
             $('#disabled-user_admin-modal').addClass('hide');
 
@@ -490,7 +498,18 @@
             // $('body').css('overflow', 'auto');
         });
 
+        Livewire.on('show-connected-master-modal', () => {
+            $('#connected-master-modal').removeClass('hide');
+            $('#connected-master-modal').addClass('show');
+        });
+
+        Livewire.on('show-disabled-modal', () => {
+            $('#disabled-master-admin-modal').removeClass('hide');
+            $('#disabled-master-admin-modal').addClass('show');
+        });
+
         Livewire.on('modal-hide-inters', () => {
+
 
             // Inters transfers
             $('#create-interTransfers-modal').removeClass('show');

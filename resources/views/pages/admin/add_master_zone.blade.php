@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Creer un master et com zone')
+@section('title', 'Creer un master')
 
 @section('content')
 
@@ -23,7 +23,7 @@
                 </div>
 
                 <div class="p-5">
-                    <form class="form-vertical row" action="{{ route('admin.store_master_com') }}" method="post"
+                    <form class="form-vertical row" action="{{ route('masters.admin.store') }}" method="post"
                         enctype="multipart/form-data">
                         @csrf
                         <div class="mx-auto xl:mr-0 xl:ml-6">

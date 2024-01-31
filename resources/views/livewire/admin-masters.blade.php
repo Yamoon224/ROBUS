@@ -7,10 +7,10 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-master'))
-                <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add_master_com') }}">Ajouter une
+                <a class="btn btn-primary shadow-md mr-2" href="{{ route('masters.admin.add_master_com') }}">Ajouter une
                     Master</a>
             @endif
-            
+
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
@@ -30,8 +30,8 @@
             <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;">
                 <div class="w-56 relative text-slate-500">
 
-                    <input type="text" name="table_search" wire:model="search"
-                        class="form-control  w-56 box pr-10" style="height: 3rem;" placeholder="Rechercher">
+                    <input type="text" name="table_search" wire:model="search" class="form-control  w-56 box pr-10"
+                        style="height: 3rem;" placeholder="Rechercher">
                     <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
                         data-feather="search"></i>
                 </div>
@@ -77,46 +77,31 @@
                                 </div>
                             </td>
                             <td>
-                                @if ($item->is_custumers == '1')
+                                @if ($item->is_custumers)
                                     <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5 mb-2">
                                         <p class="font-medium whitespace-nowrap">Client</p>
                                     </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_distributer == true)
+                                @elseif($item->is_distributer)
                                     <div class="font-medium whitespace-nowrap">
                                         <p class="font-medium whitespace-nowrap">Distributeur </p>
                                     </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_under_distributer == true)
+                                @elseif($item->is_under_distributer)
                                     <div class="font-medium whitespace-nowrap">
                                         <p class="font-medium whitespace-nowrap"> Sous-distributeur</p>
                                     </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
+                                @elseif($item->is_master)
+                                    <div class="font-medium whitespace-nowrap">MASTER</div>
+                                @elseif ($item->is_com_zone)
+                                    <div class="font-medium whitespace-nowrap">COM ZONE</div>
                                 @else
                                     <div class="font-medium whitespace-nowrap">Admin</div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
                                 @endif
-
+                                <div class="text-slate-500  mt-0.5">
+                                    <span
+                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        {{ $item->wallet->wallet_id ?? null }}
+                                    </span>
+                                </div>
                             </td>
 
                             <td class="text-center">
@@ -154,10 +139,9 @@
 
                             <td class="table-report__action w-30">
                                 <div class="flex justify-center items-center">
-
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-master'))
                                         <a class="btn btn-primary mr-1 mb-2 btn-sm"
-                                            href="{{ route('admin.ShowProfil', ['id' => $item->id]) }}">
+                                            href="{{ route('masters.admins.show', ['id' => $item->id]) }}">
                                             <i data-feather="eye" class="h-15 mr-1"></i>
                                             Voir
                                         </a>
