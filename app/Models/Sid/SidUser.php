@@ -5,25 +5,27 @@ namespace App\Models\Sid;
 // use Spatie\Activitylog\Traits\LogsActivity;
 
 use App\Models\Categorie;
-use App\Models\Kyc;
 use App\Models\Comment;
 use App\Models\Company;
-use App\Models\WalletDrawal;
-use App\Models\WithMerchant;
 use App\Models\Custumers\City;
-use App\Models\Wallets\Wallet;
-use Illuminate\Support\Carbon;
 use App\Models\Custumers\Country;
+use App\Models\Kyc;
 use App\Models\Master;
+use App\Models\Operator;
+use App\Models\OperatorService;
+use App\Models\WalletDrawal;
+use App\Models\Wallets\Wallet;
+use App\Models\WithMerchant;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Activitylog\LogOptions;
-use Spatie\Permission\Traits\HasRoles;
-use Illuminate\Notifications\Notifiable;
 use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Spatie\Permission\Traits\HasRoles;
 
 class SidUser extends Authenticatable
 {
@@ -95,6 +97,16 @@ class SidUser extends Authenticatable
         return $this->hasOne(Kyc::class);
     }
 
+
+    public function operator_services()
+    {
+        return $this->hasMany(OperatorService::class, 'sid_user', 'id', 'operator_id');
+    }
+
+    public function operators()
+    {
+        return $this->belongsToMany(Operator::class, 'operator_services', 'sid_user', 'operator_id');
+    }
 
     public function dateFormatedCreated()
     {

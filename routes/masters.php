@@ -24,7 +24,7 @@ Route::group(['middleware' => ['auth:master']], function () {
 
     Route::group(['prefix' => 'robus'], function () {
         Route::get('/browse', [AdminController::class, 'home_masters'])->name('masters.home');
-        Route::get('/logout', [LoginCompany::class, 'logout'])->name('companies.logout');
+        Route::get('/logout', [LoginCompany::class, 'logout_masters'])->name('masters.logout');
     });
 
     //   Users
@@ -55,7 +55,7 @@ Route::group(['middleware' => ['auth:master']], function () {
 
     //Statisques
     Route::prefix('statistics')->group(function () {
-        Route::get('/browse_unders', [StatistiqueController::class, 'browse_state_underdistributors'])->name('underdistributors.transactions.historiques.states');
+        Route::get('/browse_unders', [StatistiqueController::class, 'browse_state_masters'])->name('underdistributors.transactions.historiques.states');
         Route::get('/browse_custumers', [StatistiqueController::class, 'browse_state_custumers'])->name('masters.transactions.historiques.states');
     });
 
@@ -78,6 +78,7 @@ Route::group(['middleware' => ['auth:master']], function () {
         Route::get('/security/update', [MasterController::class, 'security'])->name('masters.account.security');
         Route::post('/read/{id}/update', [MasterController::class, 'updateProfil'])->name('masters.account.showUpdate');
         Route::post('update-password', [MasterController::class, 'updatePassword'])->name('masters.account.security.update');
+        Route::post('/updateProfil',  [MasterController::class, 'updateprofil'])->name('masters.account.update');
 
         // NOTIFY  
         Route::get('/liste_notifications', [MasterController::class, 'get_notification'])->name('admin.show.get_notification');

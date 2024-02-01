@@ -98,7 +98,7 @@ class Reloads extends Component
 
         if ($provider->id == 9) {
 
-            $this->validate([       
+            $this->validate([
                 'relaod_uv_amout_robus' => 'required',
                 'account_reload_uv' => 'required',
             ], [
@@ -108,8 +108,8 @@ class Reloads extends Component
 
 
             $wallet_search = Wallet::where('wallet_id',  $this->account_reload_uv)
-                // ->where('country_id',  $walletUser->country->id)
-                ->whereStatus(true)
+                ->where('country_id',  $walletUser->country->id)
+                // ->whereStatus(true)
                 ->first();
 
             $account_active = $wallet_search->sidUser->master_id;
@@ -122,14 +122,13 @@ class Reloads extends Component
 
             $account_is_master = $wallet_search->sidUser->is_master;
 
-            if ($wallet_search == null ) {
+            if ($wallet_search == null) {
 
                 $this->cancelReload();
                 return  $this->errorWalletAccount();
-
             } else if ($account_active == master()->id && $account_accepted) { {
 
-                    if ($account_is_under) {
+                    if ($account_is_under || $account_is_master) {
 
                         if ($som_transfers >= $valeur_ceiling) {
                             $this->emit('modal-hide', 'hide');
@@ -144,7 +143,6 @@ class Reloads extends Component
                                 $this->cancelReload();
                                 $this->emit('modal-hide', 'hide');
                                 $this->emit('success', 'Verifier votre montant ! !');
-
                             } else {
 
                                 $valeur_receive =  $this->convertAdminCommission($this->relaod_uv_amout_robus, $wallet_search);
@@ -159,174 +157,29 @@ class Reloads extends Component
 
                                 $amount_solde = (float)sabdy()->wallet->amount - (float)$this->relaod_uv_amout_robus;
 
-                                $walletReloads =  $this->createWAlletReloadRobus($walletUser, $this->relaod_uv_amout_robus, $provider, $this->account_reload_uv, $valeur_receive ,  $this->number_reload_uv , $amount_solde , $amount_drawal);
+                                $walletReloads =  $this->createWAlletReloadRobus($walletUser, $this->relaod_uv_amout_robus, $provider, $this->account_reload_uv, $valeur_receive,  $this->number_reload_uv, $amount_solde, $amount_drawal);
 
-                                if($walletReloads != null)
-                                {
-                                    if ($this->updateAmountRobusReceived($walletReloads, $walletUser , $wallet_search , $valeur_receive)) {
-                                        $this->sendNotification($wallet_search , $walletUser , $walletReloads, $admins);
-                                    }else {
+                                if ($walletReloads != null) {
+                                    if ($this->updateAmountRobusReceived($walletReloads, $walletUser, $wallet_search, $valeur_receive)) {
+                                        $this->sendNotification($wallet_search, $walletUser, $walletReloads, $admins);
+                                    } else {
                                         $this->cancelReload();
                                         $this->emit('modal-hide', 'hide');
                                         $this->emit('error', 'Error de transferts du montant !');
-                                    }
-                                }else {
-
-                                    $this->cancelReload();
-                                    $this->emit('modal-hide', 'hide');
-                                    $this->emit('error', 'Error de transferts !');
-                                }
-                               
-                            }
-                        }
-                    } elseif ($account_is_custumers) {
-                    } elseif ($account_is_master) {
-                        if ($som_transfers >= $valeur_ceiling) {
-                            $this->emit('modal-hide', 'hide');
-                            $this->cancelReload();
-                            $this->emit('warning', 'Votre montant journier est atteint !');
-                        } {
-
-                            $val_amount = $this->relaod_uv_amout_robus;
-
-                            if ($val_amount > $walletUser->wallet->amount) {
-
-                                $this->cancelReload();
-                                $this->emit('modal-hide', 'hide');
-                                $this->emit('success', 'Verifier votre montant ! !');
-                            } else {
-
-                                $valeur_receive =  $this->convertAdminCommission($this->relaod_uv_amout_robus, $wallet_search);
-
-                                // $amount_solde = $check->wallet->amount +  $commission;
-                                $walletAmountSend = Wallet::where('wallet_id',  $this->account_reload_uv)->first();
-
-                                $amount_solde_drawal = (float)$walletAmountSend->amount +  (float)$valeur_receive;
-
-                                $amount_drawal =      $amount_solde_drawal;
-
-                                // Send in compte Client
-                                $wallet_search->update([
-                                    'reload_by' => master()->firstname . ' ' . master()->lastname,
-                                    'sid_user_relod' => master()->id,
-                                    'amount' => DB::raw('amount+'  . $valeur_receive),
-                                ]);
-
-
-                                $amount_solde = (float)sabdy()->wallet->amount - (float)$this->relaod_uv_amout_robus;
-
-
-                                $reload_unders =  WalletReload::create([
-                                    'wallet_id' =>   $walletUser->wallet->id,
-                                    'amount' => $this->relaod_uv_amout_robus,
-                                    'description'  => 'Rechargement de compte UV',
-                                    'reload_cost_id' => 1,
-                                    'created_by' => master()->id,
-                                    'provider_id'  =>  $provider->id,
-                                    'account_wallet'  => $this->account_reload_uv,
-                                    'amount_received'  => $valeur_receive,
-                                    'type_transaction' => 'Réequilibrage',
-                                    'type_received' => 'Transfert',
-                                    'phone'  => $this->number_reload_uv ?? null,
-                                    'status'  => "SUCCESS",
-                                    'amount_solde'  => $amount_solde ?? null,
-                                    'amount_solde_drawal' => $amount_drawal ?? null
-                                ]);
-
-
-
-                                $commission =  ($reload_unders->amount);
-
-                                $walletUser->wallet->update([
-                                    'reload_by' => master()->firstname . ' ' . master()->lastname,
-                                    'sid_user_relod' => master()->id,
-                                    'amount' => DB::raw('amount-'  .  $commission),
-                                ]);
-
-
-                                $paymentRealod = PaymentReload::create([
-                                    'wallet_reload_id' => $reload_unders->id,
-                                    'sid_user_id' => master()->id,
-                                    'transaction_id' => 'RB_' . $reload_unders->provider->name . '_' . $transactionCode,
-                                    'operator_transaction_name' =>  $reload_unders->provider->name,
-                                    'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                    'pay_amount' =>  $reload_unders->amount,
-                                    'fee_amount' =>  $reload_unders->amount,
-                                    'received_amount' => ($reload_unders->amount),
-                                    'status'  =>    $reload_unders->status,
-                                ]);
-
-                                InvoiceReload::create([
-                                    'title' => "Rechargement de compte",
-                                    'wallet_reload_id' => $reload_unders->id,
-                                    'payment_reload_id' =>  $paymentRealod->id,
-                                    'company_id' => master()->company->id,
-                                    'description' => $reload_unders->description,
-                                    'status'  =>    $reload_unders->status,
-                                    'created_by'  =>   master()->id,
-                                ]);
-
-                                // if ($walletUser->country->code == "CI") {
-
-                                //     $message = 'Vous avez effectué un transafers de ' . $reload_unders->amount .  $walletUser->wallet->currencie->code .  'par '
-                                //         . $reload_unders->provider->name  .  ' a '
-                                //         . $reload_unders->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
-
-                                //     $encode = substr(master()->phone,  -10);
-
-                                //     Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                                // }
-
-                                $msg_title = 'Achat d\'UV';
-                                $msg = 'Votre demande de rechargement d\'UV ';
-                                $wallet_search->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                                $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                                $notifs = $walletUser->unreadNotifications;
-                                $notifs = $wallet_search->sidUser->unreadNotifications;
-                                event(new CreateReloadEvent($reload_unders));
-                                Notification::send($admins, new AdminNotification('Demande de rechargement UV de ' . ' ' . $reload_unders->wallet->sidUser->firstname));
-                                if ($admins->count() > 0) {
-
-
-                                    foreach ($admins  as $user) {
-
-                                        $admin_single = SidUser::find($user->id);
-
-                                        $notifs = $admin_single->unreadNotifications;
-                                        event(new AdminNotifEvent($notifs));
-                                    }
-
-                                    $this->cancelReload();
-                                    $this->emit('modal-hide', 'hide');
-                                    $this->emit('success', 'Rechargement effectué !');
-                                    if ($walletUser->email != null) {
-
-                                        $notify = new MailController;
-                                        $notify->newReloadUV($reload_unders);
-                                    }
-
-                                    if ($wallet_search->sidUser->email != null) {
-
-                                        Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes'));
                                     }
                                 } else {
 
                                     $this->cancelReload();
                                     $this->emit('modal-hide', 'hide');
-                                    $this->emit('success', 'Rechargement effectué !');
-                                    if ($walletUser->email != null) {
-
-                                        $notify = new MailController;
-                                        $notify->newReloadUV($reload_unders);
-                                    }
-
-                                    if ($wallet_search->sidUser->email != null) {
-
-                                        Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes'));
-                                    }
+                                    $this->emit('error', 'Error de transferts !');
                                 }
                             }
                         }
+                    } else {
+
+                        $this->cancelReload();
+                        $this->emit('modal-hide', 'hide');
+                        $this->emit('error', 'Le type utilisateur est necessaire dans la transaction !');
                     }
                 }
             } else  return  $this->errorWalletAccountDist();
@@ -361,7 +214,7 @@ class Reloads extends Component
         return $reload_unders;
     }
 
-    private function updateAmountRobusReceived($reload_unders , $walletUser , $wallet_search , $valeur_receive)
+    private function updateAmountRobusReceived($reload_unders, $walletUser, $wallet_search, $valeur_receive)
     {
 
         $rt = rand(40, 5000) * time();
@@ -377,8 +230,8 @@ class Reloads extends Component
             'amount' => DB::raw('amount-'  .  $commission),
         ]);
 
-          // Send in compte Client
-          $wallet_search->update([
+        // Send in compte Client
+        $wallet_search->update([
             'reload_by' => master()->firstname . ' ' . master()->lastname,
             'sid_user_relod' => master()->id,
             'amount' => DB::raw('amount+'  . $valeur_receive),
@@ -408,11 +261,10 @@ class Reloads extends Component
         ]);
 
         return true;
-
     }
 
 
-    private function sendNotification($wallet_search , $walletUser , $reload_unders , $admins)
+    private function sendNotification($wallet_search, $walletUser, $reload_unders, $admins)
     {
 
         $msg_title = 'Achat d\'UV';
@@ -623,6 +475,7 @@ class Reloads extends Component
         $wallet_user_phone = null;
         $wallet_user_country = null;
         $wallet_user_city = null;
+        $wallet_user_type = null;
 
 
         if ($this->statusFilter != "") {
@@ -645,6 +498,7 @@ class Reloads extends Component
                     $wallet_user_phone = optional(optional($wallet_search_user)->sidUser)->phone;
                     $wallet_user_country = optional(optional($wallet_search_user)->sidUser)->country->name;
                     $wallet_user_city = optional(optional($wallet_search_user)->sidUser)->city->name;
+                    $wallet_user_type = optional(optional($wallet_search_user)->sidUser)->is_master ? "MASTER" : " Sous distributeur";
                 } else {
                     $wallet_info_user = "Vous n'êtes pas encore lié à ce numéro de wallet ROBUS";
                 }
@@ -674,7 +528,8 @@ class Reloads extends Component
                 'wallet_phone' =>  $wallet_user_phone,
                 'wallet_country' => $wallet_user_country,
                 'wallet_city' => $wallet_user_city,
-                'usersCountry' => $walletUser->country->currencie->name
+                'usersCountry' => $walletUser->country->currencie->name,
+                'type_users' => $wallet_user_type
             ]
         );
     }

@@ -85,8 +85,10 @@ class Custumers extends Component
                     }
                 }
 
+                $type_user = $check->sidUser->is_custumers ? "a un Client " : "a un sous distributeur "  ;
+
                 if (master()->email != null) {
-                    Mail::to(master()->email)->send(new NewAdmin("Vous avez fais une demande de liaison du sous distributeur "  . $check->sidUser->firstname  . ' ' .  $check->sidUser->firstname . env('APP_NAME')));
+                    Mail::to(master()->email)->send(new NewAdmin("Vous avez fais une demande de liaison  " .  $type_user . $check->sidUser->firstname  . ' ' .  $check->sidUser->firstname . env('APP_NAME')));
                 }
                 $this->emit('modal-hide', 'hide');
                 $this->cancelUndersField();

@@ -12,7 +12,7 @@
                     @php
                         $masters = App\Models\Sid\SidUser::whereIsMaster(true)
                             ->where('country_id', $this->user_country)
-                            ->where('city_id', $this->user_city)
+                            // ->where('city_id', $this->user_xcity)
                             ->get();
                     @endphp
 

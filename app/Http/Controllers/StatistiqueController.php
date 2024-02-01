@@ -17,6 +17,16 @@ class StatistiqueController extends Controller
         return view('pages.states.browse_state');
     }
 
+    public function browse_state_masters()
+    {
+
+        if (master()) {
+            return view('pages.states.browse_state_masters');
+        } else {
+            abort(403);
+        }
+    }
+
 
     public function index()
     {

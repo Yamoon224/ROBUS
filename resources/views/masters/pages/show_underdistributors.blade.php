@@ -54,7 +54,7 @@
                 {{ number_format($InternationalAmounts, 2, ',', ' ') ?? null }} {{ $user->wallet->currencie->code ?? null }}
             </div>
             <div class="font-medium text-historique mt-3">Commissions</div>
-            <div class="text-slate-500 mt-3"> 
+            <div class="text-slate-500 mt-3">
                 {{ number_format($International_com, 2, ',', ' ') ?? null }}
                 {{ $user->wallet->currencie->code ?? null }}
             </div>
@@ -73,16 +73,16 @@
                 {{ number_format($paiementAmounts, 2, ',', ' ') ?? null }} {{ $user->wallet->currencie->code ?? null }}
             </div>
             <div class="font-medium text-historique mt-3">Commissions</div>
-            <div class="text-slate-500 mt-3"> 
+            <div class="text-slate-500 mt-3">
                 {{ number_format($paiement_com, 2, ',', ' ') ?? null }}
                 {{ $user->wallet->currencie->code ?? null }}
             </div>
         </div>
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in ">
-            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-trending-down font-medium-5">
                     <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
                     <polyline points="17 18 23 18 23 12"></polyline>
                 </svg>
@@ -99,9 +99,9 @@
         </div>
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in ">
-            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                    class="feather feather-trending-down font-medium-5">
                     <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
                     <polyline points="17 18 23 18 23 12"></polyline>
                 </svg>
@@ -145,14 +145,15 @@
             </div>
             <div class="font-medium text-historique mt-6">Montant total commande de carte </div>
             <div class="text-slate-500 mt-3">
-                {{ number_format($walletOrderCarteAmounts, 2, ',', ' ') ?? null }} {{ $user->wallet->currencie->code ?? null }}
+                {{ number_format($walletOrderCarteAmounts, 2, ',', ' ') ?? null }}
+                {{ $user->wallet->currencie->code ?? null }}
             </div>
             <div class="font-medium text-historique mt-3">Commissions</div>
             <div class="text-slate-500 mt-3">
                 {{ number_format($walletOrderCarte_com, 2, ',', ' ') ?? null }}
                 {{ $user->wallet->currencie->code ?? null }}
             </div>
-        </div>  
+        </div>
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -164,9 +165,10 @@
             </div>
             <div class="font-medium text-historique mt-6">Montant total commissions </div>
             <div class="text-slate-500 mt-3">
-                {{ number_format($sum_wallet_transaction, 2, ',', ' ') ?? null }} {{ $user->wallet->currencie->code ?? null }}
+                {{ number_format($sum_wallet_transaction, 2, ',', ' ') ?? null }}
+                {{ $user->wallet->currencie->code ?? null }}
             </div>
-        </div>  
+        </div>
 
         {{-- <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-pendd">
             <div>
@@ -328,7 +330,7 @@
 
     <div class="tab-content mt-6">
 
-    
+
         <div id="order" class="tab-pane" role="tabpanel" aria-labelledby="order-tab">
 
             <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
@@ -844,22 +846,18 @@
                                                     <td class="w-56">
                                                         <div class="flex justify-center items-center">
                                                             @if ($item->status == 'PENDING')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                    <a wire:click="editReloadCard({{ $item->id }}, 'update-reloadCards-modal')"
-                                                                        class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                        href="javascript:;" title="Modifier">
-                                                                        Modifier
-                                                                    </a>
-                                                                @endif
+                                                                <a wire:click="editReloadCard({{ $item->id }}, 'update-reloadCards-modal')"
+                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                                    href="javascript:;" title="Modifier">
+                                                                    Modifier
+                                                                </a>
                                                             @elseif ($item->status == 'SUCCESS')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                    <a target="_bank"
-                                                                        href="{{ route('reload_card.invoice.print', $item->id) }}"
-                                                                        class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                        title="Facture">
-                                                                        Facture
-                                                                    </a>
-                                                                @endif
+                                                                <a target="_bank"
+                                                                    href="{{ route('reload_card.invoice.print', $item->id) }}"
+                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                                    title="Facture">
+                                                                    Facture
+                                                                </a>
                                                             @else
                                                                 <div class="flex items-center justify-center text-dark">
                                                                     <div
@@ -1050,22 +1048,20 @@
                                                     <td class="w-56">
                                                         <div class="flex justify-center items-center">
                                                             @if ($item->status == 'PENDING')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                     <a wire:click="editPhoneCredit({{ $item->id }}, 'update-phoneCredit-modal')"
                                                                         class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                         href="javascript:;" title="Modifier">
                                                                         Modifier
                                                                     </a>
-                                                                @endif
+                                                                
                                                             @elseif ($item->status == 'SUCCESS')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                     <a target="_bank"
                                                                         href="{{ route('phone.invoice.print', $item->id) }}"
                                                                         class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                         title="Facture">
                                                                         Facture
                                                                     </a>
-                                                                @endif
+                                                                
                                                             @else
                                                                 <div class="flex items-center justify-center text-dark">
                                                                     <div
@@ -1295,22 +1291,20 @@
                                                     <td class="w-56">
                                                         <div class="flex justify-center items-center">
                                                             @if ($item->status == 'PENDING')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                     <a wire:click="editInter({{ $item->id }}, 'update-interTransfers-modal')"
                                                                         class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                         href="javascript:;" title="Modifier">
                                                                         Modifier
                                                                     </a>
-                                                                @endif
+                                                                
                                                             @elseif ($item->status == 'SUCCESS')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                     <a target="_bank"
                                                                         href="{{ route('inters.invoice.print', $item->id) }}"
                                                                         class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                         title="Facture">
                                                                         Facture
                                                                     </a>
-                                                                @endif
+                                                                
                                                             @else
                                                                 <div class="flex items-center justify-center text-dark">
                                                                     <div
@@ -1499,22 +1493,19 @@
                                                     <td class="w-56">
                                                         <div class="flex justify-center items-center">
                                                             @if ($item->status == 'PENDING')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                     <a wire:click="editPaiement({{ $item->id }}, 'update-paiementInvoice-modal')"
                                                                         class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                         href="javascript:;" title="Modifier">
                                                                         Modifier
                                                                     </a>
-                                                                @endif
+                                                              
                                                             @elseif ($item->status == 'SUCCESS')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                     <a target="_bank"
                                                                         href="{{ route('paiements.invoice.print', $item->id) }}"
                                                                         class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                         title="Facture">
                                                                         Facture
                                                                     </a>
-                                                                @endif
                                                             @else
                                                                 <div class="flex items-center justify-center text-dark">
                                                                     <div
@@ -1682,8 +1673,7 @@
                                                             </div>
                                                         @elseif ($item->status == 'ERROR')
                                                             <div class="flex items-center justify-center text-danger">
-                                                                <div
-                                                                    class="flex items-center justify-center text-pending">
+                                                                <div class="flex items-center justify-center text-pending">
                                                                     <span
                                                                         class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                                         Refusé
@@ -1702,8 +1692,7 @@
                                                             </div>
                                                         @else
                                                             <div class="flex items-center justify-center text-success">
-                                                                <div
-                                                                    class="flex items-center justify-center text-pending">
+                                                                <div class="flex items-center justify-center text-pending">
                                                                     <span
                                                                         class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
                                                                   text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
@@ -1729,13 +1718,12 @@
                                                     <td class="w-56">
                                                         <div class="flex justify-center items-center">
                                                             @if ($item->status == 'PENDING')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                     <a wire:click="editTransaction({{ $item->id }}, 'update-transfersUV-modal')"
                                                                         class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                         href="javascript:;" title="Modifier">
                                                                         Modifier
                                                                     </a>
-                                                                @endif
+                                                                
                                                             @elseif ($item->status == 'SUCCESS')
                                                                 <a target="_bank"
                                                                     href="{{ route('transfers.invoice.print', $item->id) }}"
@@ -1887,8 +1875,7 @@
                                                             </div>
                                                         @elseif ($item->status == 'ERROR')
                                                             <div class="flex items-center justify-center text-danger">
-                                                                <div
-                                                                    class="flex items-center justify-center text-pending">
+                                                                <div class="flex items-center justify-center text-pending">
                                                                     <span
                                                                         class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                                         Refusé
@@ -1907,8 +1894,7 @@
                                                             </div>
                                                         @else
                                                             <div class="flex items-center justify-center text-success">
-                                                                <div
-                                                                    class="flex items-center justify-center text-pending">
+                                                                <div class="flex items-center justify-center text-pending">
                                                                     <span
                                                                         class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
                                                                   text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
@@ -1933,22 +1919,22 @@
                                                     <td class="w-56">
                                                         <div class="flex justify-center items-center">
                                                             @if ($item->status == 'PENDING')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                       
                                                                     <a wire:click="editVirement({{ $item->id }}, 'update-virementBank-modal')"
                                                                         class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                         href="javascript:;" title="Modifier">
                                                                         Modifier
                                                                     </a>
-                                                                @endif
+                                                              
                                                             @elseif ($item->status == 'SUCCESS')
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                       
                                                                     <a target="_bank"
                                                                         href="{{ route('virements.invoice.print', $item->id) }}"
                                                                         class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                         title="Facture">
                                                                         Facture
                                                                     </a>
-                                                                @endif
+                                                              
                                                             @else
                                                                 <div class="flex items-center justify-center text-dark">
                                                                     <div

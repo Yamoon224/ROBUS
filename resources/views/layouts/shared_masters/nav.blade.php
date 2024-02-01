@@ -4,15 +4,15 @@
 @endphp
 <!-- BEGIN: Side Menu -->
 <nav class="side-nav">
-    <a href="{{ route('/') }}" class="intro-x flex items-center pl-5 pt-4">
+    <a href="{{ route('masters.home') }}" class="intro-x flex items-center pl-5 pt-4">
         <img alt="" class="w-6" src="{{ asset('public/dist/images/login.jpg') }}">
         <span class="hidden xl:block text-white text-lg ml-3"> ROBUS </span>
     </a>
     <div class="side-nav__devider my-4"></div>
     <ul>
         <li>
-            <a href="{{ route('companies.home') }}"
-                class="side-menu {{ request()->is('companies.home') ? 'side-menu--active' : '' }}">
+            <a href="{{ route('masters.home') }}"
+                class="side-menu {{ request()->is('masters.home') ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="home"></i> </div>
                 <div class="side-menu__title">
                     Tableau de bord
@@ -79,8 +79,8 @@
         <li class="side-nav__devider my-4"></li>
         <li>
 
-            <a href="{{ route('masters.transactions.historiques.states') }}"
-                class="side-menu {{ $route == 'masters.transactions.historiques.states' ? 'side-menu--active' : '' }}">
+            <a href="{{ route('underdistributors.transactions.historiques.states') }}"
+                class="side-menu {{ $route == 'underdistributors.transactions.historiques.states' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i></div>
                 <div class="side-menu__title"> Statistiques </div>
             </a>

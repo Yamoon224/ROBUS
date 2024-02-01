@@ -69,6 +69,15 @@
                             </div>
                         @endif
 
+                        <div class="intro-x relative mr-3 sm:mr-6 text-center  mt-6">
+
+                            <span
+                                class="alert alert-primary inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                {{ $type_users ?? null }}
+                            </span>
+
+                        </div>
+
                         <div class="text-lg text-gray-900 text-bold text-secondary mt-6 text-center">
                             <span
                                 class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">

@@ -1,0 +1,30 @@
+<?php
+
+namespace App\Models;
+
+use App\Models\Operator;
+use App\Models\Sid\SidUser;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+class OperatorService extends Model
+{
+    use HasFactory;
+    use SoftDeletes;
+
+    protected $table = 'operator_services';
+
+    protected $fillable = ['operator_id', 'sid_user_id'];
+
+
+    public function operator()
+    {
+        return $this->belongsTo(Operator::class, 'operator_id', 'id')->withTrashed();
+    }
+
+    public function sidUser()
+    {
+        return $this->belongsTo(SidUser::class, 'sid_user_id', 'id');
+    }
+}

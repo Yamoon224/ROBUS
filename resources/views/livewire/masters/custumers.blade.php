@@ -67,7 +67,7 @@
                             @endif
 
                             <a class="btn btn-primary  mr-1 mb-2 btn-sm"
-                                href="{{ route('underdistributors.show', ['id' => $item->id]) }}">
+                                href="{{ route('custumers.masters.show', ['id' => $item->id]) }}">
                                 Details
                             </a>
 

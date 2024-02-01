@@ -87,7 +87,6 @@ class MasterController extends Controller
         } else {
             abort(403);
         }
-      
     }
 
 
@@ -101,7 +100,6 @@ class MasterController extends Controller
         } else {
             abort(403);
         }
-   
     }
 
     public function updatePassword(Request $request)
@@ -325,7 +323,7 @@ class MasterController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect('application/admin/read/' . (auth('web')->user()->id) . '/update')
+            return redirect('master/account')
                 ->withErrors($validator)
                 ->with('color', 'danger')
                 ->with('status', 'Erreur de modification')
@@ -334,19 +332,22 @@ class MasterController extends Controller
 
 
         try {
+
             DB::beginTransaction();
-            $user = SidUser::find(auth('web')->user()->id);
+            $user = SidUser::find(master()->id);
             $user->firstname = $request->firstname;
             $user->lastname = $request->lastname;
-            $user->phone = $request->phone;
-            $user->created_by = Auth::user()->id;
+            // $user->phone = $request->phone;
+            $user->created_by = master()->id;
             $file_image = $request->file('image');
+
             if ($file_image) {
                 $destination_path = public_path('profil/' . $user->firstname . '/');
                 $front_file = date('YmdHis') . "." . $file_image->getClientOriginalExtension();
                 $file_image->move($destination_path, $front_file);
                 $user->image =  env('APP_URL') . "/public/profil/" . $user->firstname . "/$front_file";
             }
+
             $user->save();
 
             $color = 'success';
@@ -354,7 +355,7 @@ class MasterController extends Controller
             return redirect()->back()->with('color', $color)->with('status', 'Mise a jour effectuée avec succès');
             // return redirect(route('admin.browse'))->with('status', 'Mise a jour effectuée avec succès');
         } catch (\Exception $exception) {
-            return redirect('application/admin/read/' . (auth('web')->user()->id) . '/update')
+            return redirect('master/account')
                 ->withErrors($validator)
                 ->with('color', 'danger')
                 ->with('status', 'Erreur de modification')
@@ -400,9 +401,9 @@ class MasterController extends Controller
         $usersCountry = Auth::guard('web')->user()->country->currencie->name;
 
         $kycs = $user->kyc()->get() ?? null;
-        
+
         $users =   $this->transactionAccountService->getUsersMasters($id);
-         
+
         return view('pages.admin.masters.show_master', compact(
             'user',
             'users',
@@ -594,6 +595,165 @@ class MasterController extends Controller
         }
     }
 
+    public function show__custumers(Request $request, int $id)
+    {
+
+        if (master()) {
+
+
+            $user = SidUser::whereId($id)->first();
+
+            $user_wallet =  $user->wallet->id;
+
+            $master_wallet =  master()->wallet->id;
+
+            // commissions transactions
+            $transaction_com = $this->transactionAccountService->walletSumCommission(WalletTransaction::class, $user_wallet);
+
+            $paiement_com = $this->transactionAccountService->walletSumCommission(WalletPayment::class, $user_wallet);
+
+            $virement_com = $this->transactionAccountService->walletSumCommission(WalletBank::class, $user_wallet);
+
+            $phoneCredit_com = $this->transactionAccountService->walletSumCommission(WalletPhoneCredit::class, $user_wallet);
+
+            $reloadCard_com = $this->transactionAccountService->walletSumCommission(WalletDeposit::class, $user_wallet);
+
+            $International_com = $this->transactionAccountService->walletSumCommission(WalletInter::class, $user_wallet);
+
+            $walletOrderCarte_com = $this->transactionAccountService->walletSumCommission(BankCard::class, $user_wallet);
+
+            // amounts valeurs transactions
+            $transactionAmounts = $this->transactionAccountService->getTransactionAmount(WalletTransaction::class, $user_wallet);
+
+            $paiementAmounts = $this->transactionAccountService->getTransactionAmount(WalletPayment::class, $user_wallet);
+
+            $virementAmounts = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $user_wallet);
+
+            $phoneCreditAmounts = $this->transactionAccountService->getTransactionAmount(WalletPhoneCredit::class, $user_wallet);
+
+            $reloadCardAmounts = $this->transactionAccountService->getTransactionAmount(WalletDeposit::class, $user_wallet);
+
+            $reloadAmounts = $this->transactionAccountService->getTransactionAmount(WalletReload::class, $master_wallet);
+
+            $InternationalAmounts = $this->transactionAccountService->getTransactionAmount(WalletInter::class, $user_wallet);
+
+            $walletOrderCarteAmounts = $this->transactionAccountService->getTransactionAmount(BankCard::class, $user_wallet);
+
+            // sum commissions masters
+
+            $sum_wallet_transaction = $transaction_com + $paiement_com + $virement_com  + $phoneCredit_com + $reloadCard_com + $International_com + $walletOrderCarte_com;
+
+            // All types transactions listes
+            $transactions = $this->transactionAccountService->getWalletTransactions(WalletTransaction::class, $user_wallet);
+
+            $paiements = $this->transactionAccountService->getWalletTransactions(WalletPayment::class, $user_wallet);
+
+            $virements = $this->transactionAccountService->getWalletTransactions(WalletBank::class, $user_wallet);
+
+            $phoneCredits = $this->transactionAccountService->getWalletTransactions(WalletPhoneCredit::class, $user_wallet);
+
+            $realoadUvs = $this->transactionAccountService->getWalletTransactions(WalletReload::class, $master_wallet);
+
+            $reloadCards = $this->transactionAccountService->getWalletTransactions(WalletDeposit::class, $user_wallet);
+
+            $internationals = $this->transactionAccountService->getWalletTransactions(WalletInter::class, $user_wallet);
+
+            $walletOrderCarte = $this->transactionAccountService->getWalletTransactions(BankCard::class, $user_wallet);
+
+            // Utilisation de la fonction pour les transactions de compte
+            $accountTransactionCounts = $this->getTransactionCounts(WalletTransaction::class, $user_wallet);
+            // Utilisation de la fonction pour les virements de compte bancaire
+            $accountVirementCounts = $this->getTransactionCounts(WalletBank::class, $user_wallet);
+            $accountPaymentCounts = $this->getTransactionCounts(WalletPayment::class, $user_wallet);
+            $accountBankCounts = $this->getTransactionCounts(BankCard::class, $user_wallet);
+            $accountInterCounts = $this->getTransactionCounts(WalletInter::class, $user_wallet);
+            $accountDepositCounts = $this->getTransactionCounts(WalletDeposit::class, $user_wallet);
+            $accountPhoneCreditCounts = $this->getTransactionCounts(WalletPhoneCredit::class, $user_wallet);
+
+            // Accéder aux compteurs spécifiques
+            $accountTransactionPendings = $accountTransactionCounts['PENDING'];
+            $accountTransactionSuccess = $accountTransactionCounts['SUCCESS'];
+            $accountTransactionErrors = $accountTransactionCounts['ERROR'];
+
+            $accountVirementPendings = $accountVirementCounts['PENDING'];
+            $accountVirementSuccess = $accountVirementCounts['SUCCESS'];
+            $accountVirementErrors = $accountVirementCounts['ERROR'];
+
+            $accountPaymentPendings = $accountPaymentCounts['PENDING'];
+            $accountPaymentSuccess = $accountPaymentCounts['SUCCESS'];
+            $accountPaymentErrors = $accountPaymentCounts['ERROR'];
+
+            $accountBankPendings = $accountBankCounts['PENDING'];
+            $accountBankSuccess = $accountBankCounts['SUCCESS'];
+            $accountBankErrors = $accountBankCounts['ERROR'];
+
+            $accountInterPendings = $accountInterCounts['PENDING'];
+            $accountInterSuccess = $accountInterCounts['SUCCESS'];
+            $accountInterErrors = $accountInterCounts['ERROR'];
+
+            $accountDepositPendings = $accountDepositCounts['PENDING'];
+            $accountDepositSuccess = $accountDepositCounts['SUCCESS'];
+            $accountDepositErrors = $accountDepositCounts['ERROR'];
+
+            $accountPhonePendings = $accountPhoneCreditCounts['PENDING'];
+            $accountPhoneSuccess = $accountPhoneCreditCounts['SUCCESS'];
+            $accountPhoneErrors = $accountPhoneCreditCounts['ERROR'];
+
+
+            return view('masters.pages.show_custumers', compact(
+                'user',
+                'transaction_com',
+                'paiement_com',
+                'virement_com',
+                'phoneCredit_com',
+                'reloadCard_com',
+                'International_com',
+                'walletOrderCarte_com',
+                'transactionAmounts',
+                'paiementAmounts',
+                'virementAmounts',
+                'phoneCreditAmounts',
+                'reloadCardAmounts',
+                'InternationalAmounts',
+                'walletOrderCarteAmounts',
+                'sum_wallet_transaction',
+                'transactions',
+                'paiements',
+                'virements',
+                'phoneCredits',
+                'realoadUvs',
+                'reloadCards',
+                'internationals',
+                'walletOrderCarte',
+                'accountTransactionPendings',
+                'accountTransactionSuccess',
+                'accountTransactionErrors',
+                'accountVirementPendings',
+                'accountVirementSuccess',
+                'accountVirementErrors',
+                'accountPaymentPendings',
+                'accountPaymentSuccess',
+                'accountPaymentErrors',
+                'accountBankPendings',
+                'accountBankSuccess',
+                'accountBankErrors',
+                'accountInterPendings',
+                'accountInterSuccess',
+                'accountInterErrors',
+                'accountDepositPendings',
+                'accountDepositSuccess',
+                'accountDepositErrors',
+                'accountPhonePendings',
+                'accountPhoneSuccess',
+                'accountPhoneErrors',
+                'reloadAmounts'
+            ));
+        } else {
+            abort(403);
+        }
+    }
+
+
 
     private function getTransactionCounts($modelClass, $userWallet)
     {
@@ -651,6 +811,4 @@ class MasterController extends Controller
                 ->withInput();
         }
     }
-
-
 }

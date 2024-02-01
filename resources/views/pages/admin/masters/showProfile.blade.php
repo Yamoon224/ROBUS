@@ -109,31 +109,7 @@
                                         </span>
                                     @enderror
                                 </div>
-
-                                <div class="crud-form-1 mt-3">
-                                    <label class="form-label" for="phone">Numéro de téléphone <span
-                                            id="valid_phone"></span></label>
-                                    <input type="text" class="form-control @error('phone') is-invalid @enderror"
-                                        id="phone" name="phone" placeholder="" required
-                                        value="{{ Auth::user()->phone }}" />
-                                    @error('phone')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="crud-form-1 mt-3">
-                                    <label class="form-label" for="email">Email</label>
-                                    <input type="email" class="form-control @error('email') is-invalid @enderror"
-                                        id="email" name="email" placeholder="" required
-                                        value="{{ Auth::user()->email }}" />
-                                    @error('email')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-
+                               
                                 <div class="col-12 mt-3">
                                     <button type="submit" class="btn btn-primary mt-1 me-1">Mettre à jour</button>
                                 </div>
