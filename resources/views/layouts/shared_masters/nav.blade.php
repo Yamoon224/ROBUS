@@ -57,57 +57,23 @@
         </li>
 
         <li class="side-nav__devider my-4"></li>
-
         <li>
-            <a href="javascript:;" class="side-menu {{ request()->is('master/reloads*') ? 'side-menu--active' : '' }}">
-                <div class="side-menu__icon">
-                    <svg class="w-6 h-6 text-red-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="16 3 21 3 21 8" />
-                        <line x1="4" y1="20" x2="21" y2="3" />
-                        <polyline points="21 16 21 21 16 21" />
-                        <line x1="15" y1="15" x2="21" y2="21" />
-                        <line x1="4" y1="4" x2="9" y2="9" />
-                    </svg>
-                </div>
-                <div class="side-menu__title">
-                    Transferts
-                    <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
-                </div>
-            </a>
-            <ul class="{{ request()->is('master/reloads*') ? 'side-menu__sub-open' : '' }}">
 
-
-                <li>
-
-                    <a href="{{ route('underdistributors.browse_reloads') }}"
-                        class="side-menu {{ $route == 'underdistributors.browse_reloads' ? 'side-menu--active' : '' }}">
-                        <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                        </div>
-                        <div class="side-menu__title"> Réchargements </div>
-                    </a>
-                </li>
-                <li>
-
-                    <a href="{{ route('underdistributors.browse_dumps') }}"
-                        class="side-menu {{ $route == 'underdistributors.browse_dumps' ? 'side-menu--active' : '' }}">
-                        <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                        </div>
-                        <div class="side-menu__title"> Déchargements </div>
-                    </a>
-                </li>
-
-            </ul>
+            <a href="{{ route('underdistributors.browse_reloads') }}"
+            class="side-menu {{ $route == 'underdistributors.browse_reloads' ? 'side-menu--active' : '' }}">
+            <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+            </div>
+            <div class="side-menu__title"> Réchargements </div>
+        </a>
         </li>
-
         <li class="side-nav__devider my-4"></li>
-
         <li>
-            <a href="{{ route('masters.transfers.historical') }}"
-                class="side-menu {{ $route == 'masters.transfers.historical' ? 'side-menu--active' : '' }}">
+
+            <a href="{{ route('underdistributors.browse_dumps') }}"
+                class="side-menu {{ $route == 'underdistributors.browse_dumps' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
                 </div>
-                <div class="side-menu__title"> Historique </div>
+                <div class="side-menu__title"> Déchargements </div>
             </a>
         </li>
         <li class="side-nav__devider my-4"></li>

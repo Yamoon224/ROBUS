@@ -73,13 +73,11 @@ Route::group(['middleware' => ['auth:master']], function () {
     //Account managment
     Route::prefix('account')->group(function () {
 
-        Route::get('/', [MasterController::class, 'show_profile'])->name('masters.account.profile');
-        Route::get('/showProfil/{id}', [MasterController::class, 'ShowProfil_masters'])->name('masters.ShowProfil');
-        Route::get('/security/update', [MasterController::class, 'security_employers'])->name('masters.account.security');
-        Route::post('/read/{id}/update', [MasterController::class, 'showUpdate_companies'])->name('masters.showUpdate');
-        Route::post('update-password', [MasterController::class, 'UpdatePassword_companie'])->name('masters.account.security.update');
-
-        Route::post('/updateProfil',  [MasterController::class, 'updateProfil_company'])->name('masters.account.update');
+        Route::get('/', [MasterController::class, 'showprofile'])->name('masters.account.profile');
+        Route::get('/showprofil/{id}', [MasterController::class, 'ShowProfil_masters'])->name('masters.ShowProfil');
+        Route::get('/security/update', [MasterController::class, 'security'])->name('masters.account.security');
+        Route::post('/read/{id}/update', [MasterController::class, 'updateProfil'])->name('masters.account.showUpdate');
+        Route::post('update-password', [MasterController::class, 'updatePassword'])->name('masters.account.security.update');
 
         // NOTIFY  
         Route::get('/liste_notifications', [MasterController::class, 'get_notification'])->name('admin.show.get_notification');

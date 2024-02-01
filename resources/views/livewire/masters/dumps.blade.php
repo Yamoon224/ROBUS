@@ -6,33 +6,7 @@
             <div class="col-span-12 sm:col-span-6 lg:col-span-6 intro-y info-paiement-show" id="info-paie-show-1">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success
-                                    {{ $reload_success }}
-
-                                </div>
-                            </div>
-                            <div class="ml-auto">
-
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente
-                                    {{ $reload_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec
-                                    {{ $reload_error }}
-
-                                </div>
-
-                            </div>
-
-                        </div>
+                       
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
@@ -51,33 +25,7 @@
             <div class="col-span-12 sm:col-span-6 xl:col-span-6 intro-y info-paiement-show" id="info-paie-show-2">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table_factures">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success
-                                    {{ $reload_success }}
-
-                                </div>
-                            </div>
-                            <div class="ml-auto">
-
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente
-                                    {{ $reload_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec
-                                    {{ $reload_error }}
-
-                                </div>
-
-                            </div>
-
-                        </div>
+                        
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                             stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
@@ -88,7 +36,7 @@
                         <div class="text-3xl font-medium leading-8 mt-transactions">
                             {{ $WalletReloads ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Rechargements {{ $usersCountry }} </div>
+                        <div class="text-base text-slate-500 mt-1">Déchargements {{ $usersCountry }} </div>
                     </div>
                 </div>
             </div>
@@ -107,7 +55,7 @@
         <div class="mt-5">
 
             <button class="btn btn-primary w-22 mr-1 mb-1"
-                wire:click="$emit('modal-reloadMaster-show' , 'create-reloadMaster-modal')">Rechargement</button>
+                wire:click="$emit('modal-unlock-show' , 'create-unlock-modal')">Déchargement</button>
         </div>
 
         <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center" role="tablist">
@@ -178,8 +126,8 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @if ($reaload_uv->count() > 0)
-                                                @foreach ($reaload_uv as $item)
+                                            @if ($unlocks->count() > 0)
+                                                @foreach ($unlocks as $item)
                                                     <tr class="intro-x">
                                                         <td>
                                                             <p class="font-medium whitespace-nowrap">
@@ -204,7 +152,7 @@
                                                             </div>
                                                         </td>
                                                         <td class="w-40">
-                                                            @if ($item->wallet->wallet_id != $item->account_wallet)
+                                                            @if ($item->wallet->wallet_id != $item->num_wallet)
                                                                 <span
                                                                     class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                                                              text-indigo-100 bg-indigo-700 rounded"
@@ -233,14 +181,14 @@
                                                         <td class="w-40">
 
                                                             @php
-                                                                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id' , $item->account_wallet)->first();
+                                                                $wallet_info = \App\Models\Wallets\Wallet::where('wallet_id' , $item->num_wallet)->first();
                                                             @endphp
                                                            
                                                             <p class="font-medium whitespace-nowrap">
                                                                     {{ $wallet_info->sidUser->firstname ?? null }}  {{ $wallet_info->sidUser->lastname ?? null }}
                                                             </p>
                                                             <p class="font-medium whitespace-nowrap mt-3">
-                                                                {{ $item->account_wallet ?? null }}</p>
+                                                                {{ $item->num_wallet ?? null }}</p>
                                                         </td>
 
                                                         <td class="w-40">
@@ -358,7 +306,7 @@
                     <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-6">
                         <nav class="w-full sm:w-auto sm:mr-auto">
                             <ul class="pagination">
-                                {{ $reaload_uv->links('vendor.livewire.tailwind-reload_compte') }}
+                                {{ $unlocks->links('vendor.livewire.tailwind-reload_compte') }}
 
                             </ul>
                         </nav>
@@ -379,7 +327,7 @@
             });
         </script>
     </div>
-    @include('livewire.commissions.modals.transactions.masters.addReload')
+    @include('livewire.commissions.modals.transactions.masters.adddumps')
     {{-- Modal update virement --}}
 
 </div>

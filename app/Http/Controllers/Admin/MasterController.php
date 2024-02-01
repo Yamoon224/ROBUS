@@ -79,6 +79,60 @@ class MasterController extends Controller
         }
     }
 
+    public function showProfile()
+    {
+        if (master()) {
+            $user = SidUser::where('id', Auth::user()->id)->first();
+            return view('pages.admin.masters.showProfile', compact('user'));
+        } else {
+            abort(403);
+        }
+      
+    }
+
+
+    public function security()
+    {
+
+        if (master()) {
+            $roles = Role::orderBy('created_at', 'DESC')->get();
+            $user = SidUser::where('id', Auth::user()->id)->first();
+            return view('pages.admin.masters.security', compact('user', 'roles'));
+        } else {
+            abort(403);
+        }
+   
+    }
+
+    public function updatePassword(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'current_password' => ['required', new MatchOldPassword],
+            'new_password' => ['required'],
+            'new_confirm_password' => ['same:new_password'],
+        ]);
+
+
+        if ($validator->fails()) {
+            return redirect('master/account/security/update')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+
+
+        SidUser::find(master()->id)->update(['password' => Hash::make($request->new_password)]);
+
+        $notify = new MailController;
+        $notify->modifyPassword($request);
+
+
+        return redirect('master/account/security/update')->with('status', 'Mise a jour effectuée avec succès');
+    }
+
+
 
     public function browse_dumps()
     {
@@ -262,6 +316,51 @@ class MasterController extends Controller
         }
     }
 
+    public function updateProfil(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('application/admin/read/' . (auth('web')->user()->id) . '/update')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+
+
+        try {
+            DB::beginTransaction();
+            $user = SidUser::find(auth('web')->user()->id);
+            $user->firstname = $request->firstname;
+            $user->lastname = $request->lastname;
+            $user->phone = $request->phone;
+            $user->created_by = Auth::user()->id;
+            $file_image = $request->file('image');
+            if ($file_image) {
+                $destination_path = public_path('profil/' . $user->firstname . '/');
+                $front_file = date('YmdHis') . "." . $file_image->getClientOriginalExtension();
+                $file_image->move($destination_path, $front_file);
+                $user->image =  env('APP_URL') . "/public/profil/" . $user->firstname . "/$front_file";
+            }
+            $user->save();
+
+            $color = 'success';
+
+            return redirect()->back()->with('color', $color)->with('status', 'Mise a jour effectuée avec succès');
+            // return redirect(route('admin.browse'))->with('status', 'Mise a jour effectuée avec succès');
+        } catch (\Exception $exception) {
+            return redirect('application/admin/read/' . (auth('web')->user()->id) . '/update')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+    }
 
     public function show_masters(int $id, Request $request)
     {
@@ -554,29 +653,4 @@ class MasterController extends Controller
     }
 
 
-    public function updatePassword(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'current_password' => ['required', new MatchOldPassword],
-            'new_password' => ['required'],
-            'new_confirm_password' => ['same:new_password'],
-        ]);
-
-        if ($validator->fails()) {
-            return redirect('account/security')
-                ->withErrors($validator)
-                ->with('color', 'danger')
-                ->with('status', 'Erreur de modification')
-                ->withInput();
-        }
-
-        SidUser::find(auth()->user()->id)->update(['password' => Hash::make($request->new_password)]);
-
-
-        // $notify = new MailController;
-        // $notify->modifyPassword($request);
-
-        return redirect('account/security')
-            ->with('status', 'Mise a jour effectuée avec succès');
-    }
 }

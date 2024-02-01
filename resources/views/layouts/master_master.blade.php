@@ -169,6 +169,9 @@
             $('#create-reloadMaster-modal').removeClass('show');
             $('#create-reloadMaster-modal').addClass('hide');
 
+            $('#create-unlock-modal').removeClass('show');
+            $('#create-unlock-modal').addClass('hide');
+
         });
 
 
@@ -191,6 +194,17 @@
         Livewire.on('modal-reloadMaster-show', () => {
             $('#create-reloadMaster-modal').removeClass('hide');
             $('#create-reloadMaster-modal').addClass('show');
+            $('#reload-nav').addClass('active');
+            $('reload-nav').attr('aria-selected', true);
+            $('#reload').addClass('active');
+
+        });
+
+
+
+        Livewire.on('modal-unlock-show', () => {
+            $('#create-unlock-modal').removeClass('hide');
+            $('#create-unlock-modal').addClass('show');
             $('#reload-nav').addClass('active');
             $('reload-nav').attr('aria-selected', true);
             $('#reload').addClass('active');
