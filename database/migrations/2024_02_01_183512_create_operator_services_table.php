@@ -16,8 +16,13 @@ return new class extends Migration
         Schema::create('operator_services', function (Blueprint $table) {
             $table->bigIncrements('id');
 
-            $table->unsignedBigInteger('sid_user_id');
-            $table->foreign('sid_user_id')->references('id')->on('sid_users')->onDelete('cascade');
+            $table->unsignedBigInteger('provider_id');
+            $table->foreign('provider_id')->references('id')->on('providers')->onDelete('cascade');
+            
+            $table->integer('sid_user_id')->unsigned()->nullable();
+            $table->foreign('sid_user_id')->references('id')
+                ->on('sid_users')->onDelete('cascade');
+
             $table->softDeletes();
 
             $table->timestamps();

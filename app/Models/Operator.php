@@ -19,11 +19,11 @@ class Operator extends Model
 
     public function operator_services()
     {
-        return $this->hasMany(OperatorService::class, 'operator_id', 'id', 'sid_user');
+        return $this->hasMany(OperatorService::class, 'operator_id', 'id', 'sid_user_id');
     }
 
     public function sidUsers()
     {
-        return $this->belongsToMany(SidUser::class, 'operator_services', 'operator_id', 'sid_user');
+        return $this->belongsToMany(SidUser::class, 'operator_services', 'operator_id', 'sid_user_id');
     }
 }

@@ -5267,6 +5267,17 @@ select {
   font-weight: 500;
 }
 
+.font-assign {
+  font-weight: 400;
+  font-size: 15px;
+}
+
+.font-assign-list {
+  font-weight: 400;
+  font-size: 14px;
+  color : white;
+}
+
 .font-normal {
   font-weight: 400;
 }

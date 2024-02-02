@@ -20,7 +20,7 @@ class OperatorService extends Model
 
     public function operator()
     {
-        return $this->belongsTo(Operator::class, 'operator_id', 'id')->withTrashed();
+        return $this->belongsTo(Operator::class, 'operator_id', 'id');
     }
 
     public function sidUser()

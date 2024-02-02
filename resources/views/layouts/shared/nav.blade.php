@@ -109,7 +109,8 @@
         <li class="side-nav__devider my-4"></li>
         @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
             <li>
-                <a href="javascript:;" class="side-menu {{ request()->is('users*') || request()->is('masters*')  ? 'side-menu--active' : '' }}">
+                <a href="javascript:;"
+                    class="side-menu {{ request()->is('users*') || request()->is('masters*') ? 'side-menu--active' : '' }}">
                     <div class="side-menu__icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="w-6 h-6">
@@ -140,7 +141,7 @@
                         <li>
 
                             <a href="{{ route('company.browse') }}"
-                                class="side-menu {{ $route == 'company.browse' || $route == 'company.show_company'  || $route == 'admin.add_company' ? 'side-menu--active' : '' }}">
+                                class="side-menu {{ $route == 'company.browse' || $route == 'company.show_company' || $route == 'admin.add_company' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
                                 </div>
                                 <div class="side-menu__title"> Societés </div>
@@ -151,7 +152,7 @@
                         <li>
 
                             <a href="{{ route('masters.admins.browse') }}"
-                                class="side-menu {{ $route == 'masters.admins.browse' || $route == 'masters.admins.show' || $route='admin.add_master_com' || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
+                                class="side-menu {{ $route == 'masters.admins.browse' || $route == 'masters.admins.show' || ($route = 'admin.add_master_com' || $route == 'masters.admins.add' ? 'side-menu--active' : '') }}">
                                 <div class="side-menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
                                 </div>
                                 <div class="side-menu__title"> MASTERS </div>
@@ -163,7 +164,7 @@
                         <li>
 
                             <a href="{{ route('company.browse') }}"
-                                class="side-menu {{ $route == 'company.browse' || $route == 'masters.admins.show'  || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
+                                class="side-menu {{ $route == 'company.browse' || $route == 'masters.admins.show' || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
                                 </div>
                                 <div class="side-menu__title"> COM ZONE </div>
@@ -348,7 +349,7 @@
 
             <li>
                 <a href="javascript:;"
-                    class="side-menu {{ request()->is('application*') || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*') ? 'side-menu--active' : '' }}">
+                    class="side-menu {{ request()->is('application*') || request()->is('operators*')  || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*') ? 'side-menu--active' : '' }}">
                     <div class="side-menu__icon"> <i data-feather="users" class="block mx-auto"></i> </div>
                     <div class="side-menu__title">
                         Administrateur
@@ -362,7 +363,7 @@
                         Auth::guard('web')->user()->hasPermissionTo('Faqs'))
 
                     <ul
-                        class="{{ request()->is('application*') || request()->is('admin*') || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') ? 'side-menu__sub-open' : '' }}">
+                        class="{{ request()->is('application*') || request()->is('admin*') || request()->is('operators*')  || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') ? 'side-menu__sub-open' : '' }}">
 
 
                         <li>
@@ -373,7 +374,15 @@
                             </a>
                         </li>
 
-
+                        @if (Auth::guard('web')->user()->hasPermissionTo('Faqs'))
+                            <li>
+                                <a href="{{ route('operators.browse') }}"
+                                    class="side-menu {{ $route == 'operators.browse'  ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i class="fas fa-user-tag"></i> </div>
+                                    <div class="side-menu__title"> Assignations </div>
+                                </a>
+                            </li>
+                        @endif
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('roles'))
                             <li>

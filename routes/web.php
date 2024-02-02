@@ -246,6 +246,15 @@ Route::group(['prefix' => ''], function () {
             Route::get('/brawse', [FaqController::class, 'browse'])->name('faqs.browse');
         });
 
+        //Operators
+        Route::group(['prefix' => 'operators'], function () {
+            // Route::get('/add',  [ServiceController::class, 'add_operators'])->name('operators.add');
+            // Route::post('/store',  [ServiceController::class, 'store_operators'])->name('operators.store');
+            Route::get('/browse',  [ServiceController::class, 'browse_operators'])->name('operators.browse');
+            // Route::get('/show/{id}',  [ServiceController::class, 'edit_operators'])->name('operators.edit');
+            // Route::post('/update/{id}',  [ServiceController::class, 'update_operators'])->name('operators.update');
+        });
+
 
         //Invoices
         Route::prefix('invoices')->group(function () {

@@ -100,12 +100,12 @@ class SidUser extends Authenticatable
 
     public function operator_services()
     {
-        return $this->hasMany(OperatorService::class, 'sid_user', 'id', 'operator_id');
+        return $this->hasMany(OperatorService::class, 'sid_user_id', 'id', 'operator_id');
     }
 
     public function operators()
     {
-        return $this->belongsToMany(Operator::class, 'operator_services', 'sid_user', 'operator_id');
+        return $this->belongsToMany(Operator::class, 'operator_services', 'sid_user_id', 'operator_id');
     }
 
     public function dateFormatedCreated()

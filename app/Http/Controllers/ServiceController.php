@@ -28,6 +28,16 @@ class ServiceController extends Controller
         return view('pages.services.browse');
     }
 
+    public function browse_operators()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-operateurs')) {
+            abort(403);
+        }
+
+        return view('pages.services.browse_operators');
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -59,6 +69,7 @@ class ServiceController extends Controller
 
         return view('pages.services.add', compact('countries', 'providerTypes'));
     }
+    
 
     /**
      * Show the form for creating a new resource.

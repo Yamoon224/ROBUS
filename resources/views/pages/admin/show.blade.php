@@ -57,7 +57,7 @@
                     <polyline points="17 18 23 18 23 12"></polyline>
                 </svg>
             </div>
-            <div class="font-medium text-historique mt-6">Montant total transactions recu </div>
+            <div class="font-medium text-historique mt-6">Montant total transactions recus </div>
             <div class="text-slate-500 mt-3">
                 {{ number_format($sum_wallet_transaction_received, 2, ',', ' ') ?? null }}
                 {{ $user->wallet->currencie->code ?? null }}
@@ -419,6 +419,13 @@
             <!-- END: Form Validation -->
         </div>
     </div>
+    <h2 class="text-lg font-medium truncate mr-5 mt-6">Liste des operateurs :</h2>
+    @foreach ($user->operator_services as $opera)
+        <span
+            class="alert alert-success font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+            {{ $opera->operator->name ?? null }}
+        </span>
+    @endforeach
     <!-- BEGIN: Profile Info -->
     <div class="intro-y box px-5 pt-5 mt-5">
         @if ($user->email_agent != null)
