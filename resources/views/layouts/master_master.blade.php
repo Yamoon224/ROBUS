@@ -153,11 +153,18 @@
             $('#create-master-modal').removeClass('show');
             $('#create-master-modal').addClass('hide');
 
+            $('#create-custumer-modal').removeClass('show');
+            $('#create-custumer-modal').addClass('hide');
+
             $('#payment-master-modal').removeClass('show');
             $('#payment-master-modal').addClass('hide');
 
             $('#disabled-master-modal').removeClass('show');
             $('#disabled-master-modal').addClass('hide');
+
+
+            $('#disabled-custumer-modal').removeClass('show');
+            $('#disabled-custumer-modal').addClass('hide');
 
             $('#update-master-modal').removeClass('show');
             $('#update-master-modal').addClass('hide');
@@ -217,10 +224,17 @@
             $('#create-master-modal').removeClass('hide');
             $('#create-master-modal').addClass('show');
         });
+        
 
         Livewire.on('modal-show-master', () => {
             $('#payment-master-modal').removeClass('hide');
             $('#payment-master-modal').addClass('show');
+        });
+
+
+        Livewire.on('modal-show-custumer', () => {
+            $('#create-custumer-modal').removeClass('hide');
+            $('#create-custumer-modal').addClass('show');
         });
 
 
@@ -237,6 +251,12 @@
         Livewire.on('delete-master-modal', () => {
             $('#delete-master-modal').removeClass('hide');
             $('#delete-master-modal').addClass('show');
+        });
+
+
+        Livewire.on('delete-custumer-modal', () => {
+            $('#delete-custumer-modal').removeClass('hide');
+            $('#delete-custumer-modal').addClass('show');
         });
     </script>
 

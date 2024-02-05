@@ -19,6 +19,7 @@
                         <th class="text-center whitespace-nowrap text-center">Termine</th>
                         <th class="text-center whitespace-nowrap text-center">Montant</th>
                         <th class="text-center whitespace-nowrap text-center">Montant distributeur</th>
+                        <th class="text-center whitespace-nowrap text-center">Montant MASTER</th>
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>
                 </thead>
@@ -42,6 +43,12 @@
                                 <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">
                                         {{ $item->comission_distributer ?? null }} Frcfa
+                                    </div>
+
+                                </td>
+                                <td class="w-35 text-center">
+                                    <div class="text-slate-500 text-xs  mt-0.5">
+                                        {{ $item->percent_masters ?? null }} Frcfa
                                     </div>
 
                                 </td>

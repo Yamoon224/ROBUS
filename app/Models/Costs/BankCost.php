@@ -26,7 +26,7 @@ class BankCost extends Model
         'created_at',
         'updated_at',
     ];
-    
+
     protected $guarded = [];
 
 
@@ -36,7 +36,7 @@ class BankCost extends Model
         'created_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
-        ];
+    ];
 
     public function country_costs()
     {
@@ -47,18 +47,18 @@ class BankCost extends Model
     {
         return $this->belongsToMany(Country::class, 'country_costs', 'country_id', 'bank_id');
     }
-         
+
     public function scopeBankCost($query)
     {
-       return $query->where('status' , true)->get();  
+        return $query->where('status', true)->get();
     }
-    
+
     public function getNameAttribute($value)
     {
         $val = isset($value) ? json_decode($value, true) : null;
         return $val;
     }
-    
+
     public function setNameAttribute($value)
     {
         $this->attributes['name'] = isset($value) ? json_encode($value) : null;
@@ -69,10 +69,10 @@ class BankCost extends Model
         $val = isset($value) ? json_decode($value, true) : null;
         return $val;
     }
-    
+
     public function setPercentAttribute($value)
     {
-        $this->attributes['percent'] =( $value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent'] = ($value / 100) ? json_encode($value / 100) : null;
     }
 
     public function getPercentMerchandsAttribute($value)
@@ -83,17 +83,22 @@ class BankCost extends Model
 
     public function setPercentMerchandsAttribute($value)
     {
-        $this->attributes['percent_merchands'] = ($value / 100 )? json_encode($value / 100) : null;
+        $this->attributes['percent_merchands'] = ($value / 100) ? json_encode($value / 100) : null;
     }
 
-    
+    public function setPercentMastersAttribute($value)
+    {
+        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
+    }
+
     public function walletBank()
     {
         return $this->hasOne(WalletBank::class);
     }
 
-    public function levelBanks() {
-        
+    public function levelBanks()
+    {
+
         return $this->hasMany(LevelBank::class);
     }
 

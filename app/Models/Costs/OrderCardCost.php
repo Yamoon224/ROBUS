@@ -3,14 +3,15 @@
 namespace App\Models\Costs;
 
 use App\Models\CountryCost;
-use Illuminate\Support\Carbon;
 use App\Models\Custumers\Country;
 use App\Models\Providers\Provider;
-use Spatie\Activitylog\LogOptions;
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Wallets\WalletInter;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class OrderCardCost extends Model
 {
@@ -69,6 +70,11 @@ class OrderCardCost extends Model
     public function WalletInter()
     {
         return $this->hasOne(WalletInter::class)->withTrashed();
+    }
+
+    public function setPercentMastersAttribute($value)
+    {
+        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
     }
 
     public function getActivitylogOptions(): LogOptions

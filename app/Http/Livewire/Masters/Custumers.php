@@ -211,7 +211,7 @@ class Custumers extends Component
                 if ($wallet_search_user == null) {
 
                     $wallet_info_firstname = "N'existe pas chez nous";
-                } else {
+                } elseif($$wallet_search_user) {
 
                     $wallet_info_firstname = $wallet_search_user->sidUser->firstname ?? null;
 

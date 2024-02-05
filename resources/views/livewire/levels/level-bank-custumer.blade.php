@@ -18,6 +18,7 @@
                         <th class="whitespace-nowrap text-center">Commence</th>
                         <th class="text-center whitespace-nowrap text-center">Termine</th>
                         <th class="text-center whitespace-nowrap text-center">Montant</th>
+                        <th class="text-center whitespace-nowrap text-center">Montant MASTER</th>
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>
                 </thead>
@@ -38,12 +39,12 @@
                                     </div>
 
                                 </td>
-                                {{-- <td class="w-35 text-center">
+                                <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">
-                                        {{ $item->comission_distributer ?? null }} Frcfa
+                                        {{ $item->percent_masters ?? null }} Frcfa
                                     </div>
 
-                                </td> --}}
+                                </td>
                                 <td class="w-56">
                                     <div class="flex justify-center items-center">
                                         @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))

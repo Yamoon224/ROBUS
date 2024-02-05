@@ -104,6 +104,13 @@ class TransactionCost extends Model
     {
         $this->attributes['percent_with_drawal'] = $value / 100 ? json_encode($value / 100) : null;
     }
+
+    public function setPercentMastersAttribute($value)
+    {
+        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
+    }
+
+    
     public function WalletTransaction()
     {
         return $this->hasOne(WalletTransaction::class)->withTrashed();

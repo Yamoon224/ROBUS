@@ -18,11 +18,11 @@
             
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                 <div class="col-span-12">
-                    <label for="wallet_under" class="form-label">Numero wallet<span
+                    <label for="wallet_id_add" class="form-label">Numero wallet<span
                             class="text-danger">*</span></label>
-                    <input wire:model.debounce.500ms="wallet_under" id="wallet_under" type="text"
+                    <input wire:model.debounce.500ms="wallet_id_add" id="wallet_id_add" type="text"
                         class="form-control" placeholder="Numero wallet">
-                    @error('wallet_under')
+                    @error('wallet_id_add')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                     <div wire:loading>Recherche numero...</div>

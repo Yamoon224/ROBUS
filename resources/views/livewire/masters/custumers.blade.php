@@ -5,7 +5,7 @@
     </h2>
     <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
         @if (master())
-            <button wire:click="$emit('modal-show')" class="btn btn-primary shadow-md mr-2"> <svg
+            <button wire:click="$emit('modal-show-custumer')" class="btn btn-primary shadow-md mr-2"> <svg
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-6 h-6 mr-3">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -94,7 +94,7 @@
         <!-- END: Pagination -->
     </div>
 
-    @include('livewire.modals.masters.addmaster')
-    @include('livewire.modals.masters.disabledmaster')
+    @include('livewire.modals.masters.addCustumer')
+    @include('livewire.modals.masters.disabledcustumer')
 
 </div>

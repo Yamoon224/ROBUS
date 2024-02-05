@@ -15,17 +15,20 @@ class Bank extends Component
     public $bankName;
     public $bankPercent;
     public $orderCardMerchant;
+    public $percentMaster;
 
     protected $rules = [
         'bankName' => 'required',
         'bankPercent' => 'required',
         'orderCardMerchant' => 'required',
+        'percentMaster' => 'required',
     ];
 
     protected $messages = [
         'bankName.required' => 'Ce champ est requis',
         'bankPercent.required' => 'Ce champ est requis',
         'orderCardMerchant.required' => 'Ce champ est requis',
+        'percentMaster.required' => 'Ce champ est requis',
     ];
 
 
@@ -39,6 +42,7 @@ class Bank extends Component
                     'name' => $this->bankName,
                     'percent'  => $this->bankPercent,
                     'percent_merchands'  => $this->orderCardMerchant,
+                    'percentMaster'  => $this->percent_masters,
                     'created_by' => Auth::guard('web')->user()->id,
                     'status'  => 1
                 ]
@@ -57,6 +61,7 @@ class Bank extends Component
         $this->bankId = $id;
         $this->bankName = $check->name;
         $this->bankPercent = $check->percent * 100;
+        $this->percentMaster = $check->percent_masters * 100;
         $this->orderCardMerchant = $check->percent_merchands * 100;
         $this->bankStatus = $check->status;
         $this->emit($state);
@@ -77,6 +82,7 @@ class Bank extends Component
                 'name' => $this->bankName,
                 'percent' => $this->bankPercent,
                 'percent_merchands'  => $this->orderCardMerchant,
+                'percentMaster'  => $this->percent_masters,
                 'status' => 1,
                 'created_by' => Auth::guard('web')->user()->id,
             ]);

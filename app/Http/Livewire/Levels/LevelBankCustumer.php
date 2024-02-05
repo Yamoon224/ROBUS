@@ -17,6 +17,7 @@ class LevelBankCustumer extends Component
     public $amount_end;
     public $amount;
     public $comission_distributer;
+    public $comission_master;
 
 
     protected $rules = [
@@ -24,6 +25,7 @@ class LevelBankCustumer extends Component
         'amount_end' => 'required',
         'amount' => 'required',
         'comission_distributer' => 'required',
+        'comission_master' => 'required',
     ];
 
     protected $messages = [
@@ -31,6 +33,7 @@ class LevelBankCustumer extends Component
         'amount_end.required' => 'Le montant est requis',
         'amount.required' => 'Le montant est requis',
         'comission_distributer.required' => 'Le montant est requis',
+        'comission_master.required' => 'Le montant est requis',
     ];
 
 
@@ -45,6 +48,7 @@ class LevelBankCustumer extends Component
                     'amount_end'  => $this->amount_end,
                     'amount'  => $this->amount,
                     'comission_distributer'  => $this->comission_distributer,
+                    'percent_masters'  => $this->comission_master,
                 ]
             );
             $this->resetField();
@@ -60,6 +64,7 @@ class LevelBankCustumer extends Component
         $this->amount_begin = $check->amount_begin;
         $this->amount_end = $check->amount_end;
         $this->amount = $check->amount;
+        $this->comission_master = $check->percent_masters;
         $this->comission_distributer = $check->comission_distributer;
         $this->emit($state);
     }
@@ -73,6 +78,7 @@ class LevelBankCustumer extends Component
             'amount_end'  => $this->amount_end,
             'amount'  => $this->amount,
             'comission_distributer'  => $this->comission_distributer,
+            'percent_masters'  => $this->comission_master,
         ]);
 
         $this->resetField();
@@ -86,6 +92,7 @@ class LevelBankCustumer extends Component
         $this->amount_end = '';
         $this->amount = '';
         $this->comission_distributer = '';
+        $this->comission_master = '';
         $this->emit('modal-hide', 'hide');
     }
 

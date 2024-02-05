@@ -43,6 +43,17 @@
                     @enderror
                 </div>
             </div>
+            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                <div class="col-span-12">
+                    <label for="modal-form-1" class="form-label">Pourcentage Master</label>
+                    <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage">
+                    @error('comission_master')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+               
+            </div>
 
             <div class="modal-footer">
                 <button wire:click="resetField" type="button"
