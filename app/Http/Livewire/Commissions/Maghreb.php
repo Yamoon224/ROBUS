@@ -24,6 +24,7 @@ class Maghreb extends Component
     public $percent_deposit;
     public $percent_with_drawal;
     public $distributer_custumer;
+    public $comission_master;
 
     //Distributers
     public $percent_admin_distibuter;
@@ -81,6 +82,7 @@ class Maghreb extends Component
         $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
+        $this->comission_master = $check->percent_masters * 100;
         // $this->distributer_custumer = $check->distributer_custumer;
 
         // Under distributeurs
@@ -102,6 +104,7 @@ class Maghreb extends Component
                 'percent_deposit' => 'required',
                 'percent_transaction_under_distributer' => 'required',
                 'percent_admin_distibuter' => 'required',
+                'comission_master' => 'required',
                 // 'percent_deposit_distibuter' => 'required',
                 // 'percent_with_drawal_distibuter' => 'required',
 
@@ -111,6 +114,7 @@ class Maghreb extends Component
                 'percent_admin.required' => 'Ce champ est requis',
                 'percent_transaction.required' => 'Ce champ est requis',
                 'percent_deposit.required' => 'Ce champ est requis',
+                'comission_master.required' => 'Ce champ est requis',
             ]
         );
         $check = LevelCountry::whereId($this->transaction_id)->first();
@@ -129,6 +133,7 @@ class Maghreb extends Component
             'percent_with_drawal_under_distributer'  => $this->percent_with_drawal_distibuter,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
+            'percent_masters'  => $this->comission_master,
         ]);
 
         $this->resetField();
@@ -136,46 +141,6 @@ class Maghreb extends Component
         $this->emit('success', 'Commission banque modifié !');
     }
 
-
-    public function add_caf_caf()
-    {
-
-        $this->validate(
-            [
-                'transaction_name' => 'required',
-                'percent_admin' => 'required',
-                'percent_transaction' => 'required',
-                'percent_deposit' => 'required',
-            ],
-            [
-                'transaction_name.required' => 'Ce champ est requis',
-                'percent_admin.required' => 'Ce champ est requis',
-                'percent_transaction.required' => 'Ce champ est requis',
-                'percent_deposit.required' => 'Ce champ est requis',
-            ]
-        );
-        $check = LevelCountry::whereName($this->transaction_name)->first();
-        if (!$check) {
-            LevelCountry::create(
-                [
-                    'name' => $this->transaction_name,
-                    'percent_transaction'  => $this->percent_transaction,
-                    'percent_admin'  => $this->percent_admin,
-                    'percent_deposit'  => $this->percent_deposit,
-                    'percent_banque'  => $this->percent_banque,
-                    'percent_with_drawal'  => $this->percent_with_drawal,
-                    'created_by' => Auth::guard('web')->user()->id,
-                    'status'  => 1
-                ]
-            );
-            $this->transaction_name = '';
-            $this->percent_admin = '';
-            $this->percent_deposit = '';
-            $this->percent_with_drawal = '';
-            $this->emit('modal-hide', 'hide');
-            $this->emit('success', 'Commission  ajouté !');
-        } else $this->emit('error', 'Commission  existante !');
-    }
 
     public function edit_caf_caf($id, $state)
     {

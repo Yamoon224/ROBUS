@@ -16,6 +16,7 @@ class LevelDepositIvoires extends Component
     public $amount_end;
     public $percent;
     public $amount;
+    public $comission_master;
 
     protected $rules = [
         'amount_begin' => 'required',
@@ -41,6 +42,7 @@ class LevelDepositIvoires extends Component
                     'amount_end'  => $this->amount_end,
                     'amount'  => $this->amount,
                     'percent'  => $this->percent,
+                    'percent_masters'  => $this->comission_master,
                 ]
             );
             $this->resetField();
@@ -59,6 +61,7 @@ class LevelDepositIvoires extends Component
             $this->amount_end = $check->amount_end;
             $this->amount = $check->amount;
             $this->percent = $check->percent;
+            $this->comission_master = $check->percent_masters ;
             $this->emit($state);
         } else {
             $this->resetField();
@@ -77,6 +80,7 @@ class LevelDepositIvoires extends Component
                 'amount_end'  => $this->amount_end,
                 'amount'  => $this->amount,
                 'percent'  => $this->percent,
+                'percent_masters'  => $this->comission_master,
             ]);
 
             $this->resetField();
@@ -95,6 +99,7 @@ class LevelDepositIvoires extends Component
         $this->amount_end = '';
         $this->amount = '';
         $this->percent = '';
+        $this->comission_master = '';
         $this->emit('modal-hide', 'hide');
     }
 

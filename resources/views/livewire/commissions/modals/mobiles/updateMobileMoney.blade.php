@@ -102,16 +102,25 @@
                 </div>
                 <div class="col-span-12">
                     <div class="modal-header">
-                        <h2 class="font-medium text-base mr-auto">Modifier la commission banque </h2>
+                        <h2 class="font-medium text-base mr-auto">Modifier la commission banque && MASTERS </h2>
                     </div>
                 </div>
 
-                <div class="col-span-12">
+                <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Pourcentage banque<span class="text-danger">
                             *</span></label>
                     <input wire:model.defer="percent_banque" id="modal-form-1" type="number"
                         class="form-control" placeholder="Pourcentage banque">
                     @error('percent_banque')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="col-span-6">
+                    <label for="modal-form-1" class="form-label">Pourcentage MASTERS<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.defer="comission_master" id="modal-form-1" type="number"
+                        class="form-control" placeholder="Pourcentage marchant">
+                    @error('comission_master')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

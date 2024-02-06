@@ -110,6 +110,12 @@ class LevelCountry extends Model
     }
 
 
+    public function setPercentMastersAttribute($value)
+    {
+        $this->attributes['percent_masters'] =( $value / 100 ) ? json_encode($value / 100) : null;
+    }
+
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()->useLogName('Robus');

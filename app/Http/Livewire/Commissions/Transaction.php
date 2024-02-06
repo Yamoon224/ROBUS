@@ -19,6 +19,7 @@ class Transaction extends Component
     public $percent_deposit;
     public $percent_with_drawal;
     public $distributer_custumer;
+    public $comission_master;
 
 
     public function add()
@@ -30,6 +31,7 @@ class Transaction extends Component
                 'percent_admin' => 'required',
                 'percent_transaction' => 'required',
                 'percent_deposit' => 'required',
+        'comission_canal' => 'required',
             ],
             [
                 'transaction_name.required' => 'Ce champ est requis',
@@ -48,7 +50,9 @@ class Transaction extends Component
                     'percent_deposit'  => $this->percent_deposit,
                     'percent_with_drawal'  => $this->percent_with_drawal,
                     'created_by' => Auth::guard('web')->user()->id,
-                    'status'  => 1
+                    'percent_masters'  => $this->comission_master,
+                    'status'  => 1,
+                                        
                 ]
             );
             $this->transaction_name = '';
@@ -70,6 +74,7 @@ class Transaction extends Component
         $this->percent_admin = $check->percent_admin * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
+        $this->comission_master = $check->percent_masters * 100;
         $this->distributer_custumer = $check->distributer_custumer;
         $this->emit($state);
     }
@@ -99,6 +104,7 @@ class Transaction extends Component
             'percent_admin' => $this->percent_admin,
             'percent_deposit' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
+            'percent_masters'  => $this->comission_master,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
@@ -157,6 +163,7 @@ class Transaction extends Component
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
         $this->distributer_custumer = $check->distributer_custumer;
+        $this->comission_master = $check->percent_masters  * 100;
         $this->emit($state);
     }
     public function update_caf_caf()
@@ -179,7 +186,8 @@ class Transaction extends Component
             'name' => $this->transaction_name,
             'percent' => $this->percent_transaction,
             'percent_admin' => $this->percent_admin,
-            'percent_deposit' => $this->percent_deposit,
+            'percent_deposit' => $this->comission_master,
+            'percent_masters' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
@@ -196,7 +204,9 @@ class Transaction extends Component
         $this->percent_admin = '';
         $this->percent_deposit = '';
         $this->percent_with_drawal = '';
+        $this->percent_with_drawal = '';
         $this->percent_transaction = '';
+        $this->comission_master = '';
         $this->emit('modal-hide', 'hide');
     }
 

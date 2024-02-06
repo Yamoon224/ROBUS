@@ -46,6 +46,14 @@
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="col-span-12">
+                        <label for="modal-form-1" class="form-label">Commissions % MASTERS</label>
+                        <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                            placeholder="Frais">
+                        @error('comission_master')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
                 </div>
             @else
                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
@@ -63,6 +71,14 @@
                         <input wire:model.defer="percent_under_dist" id="modal-form-1" type="number" class="form-control"
                             placeholder="Pourcentage">
                         @error('percent_under_dist')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-span-12">
+                        <label for="modal-form-1" class="form-label">Commissions cfa MASTERS</label>
+                        <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                            placeholder="Frais">
+                        @error('comission_master')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

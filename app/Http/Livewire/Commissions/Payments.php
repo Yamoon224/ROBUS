@@ -17,6 +17,7 @@ class Payments extends Component
     public $payment_amount_auther;
     public $comission_auther;
     public $comission_canal;
+    public $comission_master;
 
 
     protected $rules = [
@@ -48,6 +49,7 @@ class Payments extends Component
                     'comission_auther'  => $this->comission_auther,
                     'comission_canal'  => $this->comission_canal,
                     'created_by' => Auth::guard('web')->user()->id,
+                    'percent_masters'  => $this->comission_master,
                     'status'  => 1
                 ]
             );
@@ -70,6 +72,7 @@ class Payments extends Component
         $this->payment_amount_auther = $check->amount_auther;
         $this->comission_auther = $check->comission_auther;
         $this->comission_canal = $check->comission_canal;
+        $this->comission_master = $check->percent_masters;
         $this->paymentStatus = $check->status;
         $this->emit($state);
     }
@@ -79,16 +82,17 @@ class Payments extends Component
     {
         $this->validate();
         $check = PaymentCost::whereId($this->paymentId)->first();
-     
+
         $check->update([
             'name' => $this->payment_name,
             'amount_canal' => $this->payment_amount,
             'amount_auther'  => $this->payment_amount_auther,
             'comission_auther'  => $this->comission_auther,
             'comission_canal'  => $this->comission_canal,
+            'percent_masters'  => $this->comission_master,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
-        ]); 
+        ]);
 
         $this->resetField();
         $this->emit('modal-hide', 'hide');
@@ -102,6 +106,7 @@ class Payments extends Component
         $this->payment_amount_auther = '';
         $this->comission_auther = '';
         $this->comission_canal = '';
+        $this->comission_master = '';
         $this->emit('modal-hide', 'hide');
     }
 

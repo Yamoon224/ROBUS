@@ -19,7 +19,8 @@
                         <th class="text-center whitespace-nowrap text-center">Termine</th>
                         <th class="text-center whitespace-nowrap text-center">Pourcentage/Montant</th>
                         {{-- <th class="text-center whitespace-nowrap text-center">Admin/Montant</th> --}}
-                        <th class="text-center whitespace-nowrap text-center">Commissions sous-distributeur(% ou Montant)</th>
+                        <th class="text-center whitespace-nowrap text-center">Commissions sous-distributeur <br> (% ou Montant)</th>
+                        <th class="text-center whitespace-nowrap text-center">Commissions MASTERS <br> (% ou Montant)</th>
                         <th class="text-center whitespace-nowrap text-center">Description</th>
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>
@@ -63,6 +64,18 @@
                                     @else
                                         <div class="text-slate-500 text-xs  mt-0.5">
                                             {{ $item->comission_distributer ?? null }} Frcfa
+                                        </div>
+                                    @endif
+
+                                </td>
+                                <td class="w-35 text-center">
+                                    @if ($item->amount == null)
+                                        <div class="text-slate-500 text-xs  mt-0.5">
+                                            {{ $item->percent_masters  * 100}} %
+                                        </div>
+                                    @else
+                                        <div class="text-slate-500 text-xs  mt-0.5">
+                                            {{ $item->percent_masters ?? null }} Frcfa
                                         </div>
                                     @endif
 

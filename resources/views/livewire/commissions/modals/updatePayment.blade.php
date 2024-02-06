@@ -44,9 +44,18 @@
                 <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Commission CIE/SODECI<span class="text-danger">
                             *</span></label>
-                    <input wire:model="comission_auther" id="modal-form-1" type="number" class="form-control"
+                    <input wire:model.defer="comission_auther" id="modal-form-1" type="number" class="form-control"
                         placeholder="Comission autres">
                     @error('comission_auther')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="col-span-12">
+                    <label for="modal-form-1" class="form-label">Commission MASTERS<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Comission autres">
+                    @error('comission_master')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\UserController;
@@ -46,6 +45,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
         Route::post('signUp', [AuthentificationController::class, 'signUp']);
         Route::post('login', [AuthentificationController::class, 'login']);
+        Route::post('masters/login', [AuthentificationController::class, 'loginMaster']);
         Route::post('merchants/login', [AuthentificationController::class, 'loginAdmin']);
         Route::post('verify', [AuthentificationController::class, 'verify']);
         Route::post('resendCode', [AuthentificationController::class, 'resendCode']);
@@ -62,6 +62,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
  
     Route::middleware(['auth:api'])->group(function () {
 
+        // User and Under distributors APIS
         Route::prefix('user')->group(function () {
 
             Route::get('dashboard', [UserController::class, 'dashboard']);
@@ -175,24 +176,23 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
                 Route::get('info_converters/{amount}/{currencency_name}', [ConverterController::class, 'converter_browse']);
             });
         });
+
+        // Masters APIS
+        Route::prefix('masters')->group(function(){
+            Route::get('dashboard', [UserController::class, 'dashboard_masters']);
+            Route::get('info', [UserController::class, 'info_masters']);
+            Route::get('info/kyc', [UserController::class, 'kyc_masters']);
+            Route::post('info/update', [UserController::class, 'update_masters']);
+            Route::post('info/active_compte', [UserController::class, 'updload_identity_masters']);
+            
+        });
     });
 
 
-
     Route::get('/faqs', [FaqController::class, 'index']);
-    // Providersdasc
-    // Route::get('transaction_providers', [TransactionProviderController::class, 'index']);
-    // Route::get('inter_providers', [InterProviderController::class, 'index']);
-    // Route::get('phone_providers', [PhoneProviderController::class, 'index']);
-    // Route::get('payments_providers', [PaymentProviderController::class, 'index']);
-    // Route::get('reload_card_providers', [ReloadCardProvideController::class, 'index']);
-    // Route::get('reload_providers', [ReloadProviderController::class, 'index']);
-    // Route::get('virement_providers', [VirementProviderController::class, 'index']);
-
     // Cities and Country
     Route::get('/countries', [CountrieController::class, 'index']);
     Route::get('/countrie/{id}', [CountrieController::class, 'index_search_country']);
-    //Route::get('/countries/civ', [CountrieController::class, 'index_civ']);
     Route::get('/currencies', [CurrencieController::class, 'index']);
     
     // Cities and Country

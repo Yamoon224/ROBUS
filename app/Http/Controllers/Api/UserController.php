@@ -2,47 +2,59 @@
 
 namespace App\Http\Controllers\Api;
 
-use Carbon\Carbon;
-use App\Models\Kyc;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\InterTransactionSingleCollection;
+use App\Http\Resources\KycSingleCollection;
+use App\Http\Resources\PaymentSingleCollection;
+use App\Http\Resources\PhoneCreditSingleCollection;
+use App\Http\Resources\ReloadCardSingle;
+use App\Http\Resources\ReloadCartCollection;
+use App\Http\Resources\ReloadSingleCollection;
+use App\Http\Resources\RemonteSingleCollection;
+use App\Http\Resources\TransactionSingleCollection;
+use App\Http\Resources\UserSingleCollection;
+use App\Http\Resources\VirementSingleCollection;
+use App\Http\Resources\WalletSingleCollection;
+use App\Http\Services\TransactionsAccountService;
 use App\Mail\UvSend;
-use App\Tools\Image;
-use App\Models\Sid\SidUser;
-use App\Models\WithMerchant;
-use Illuminate\Http\Request;
 use App\Models\Banks\BankCard;
 use App\Models\Custumers\City;
-use App\Models\Wallets\Wallet;
 use App\Models\Custumers\Country;
+use App\Models\Kyc;
+use App\Models\Payments\Deposit;
+use App\Models\Sid\SidUser;
+use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
-use Illuminate\Support\Facades\DB;
+use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletInter;
-use App\Http\Controllers\Controller;
+use App\Models\Wallets\WalletPayment;
+use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
+use App\Models\Wallets\WalletTransaction;
+use App\Models\WithMerchant;
+use App\Notifications\UserNotification;
+use App\Tools\Image;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use App\Models\Wallets\WalletDeposit;
-use App\Models\Wallets\WalletPayment;
-use App\Notifications\UserNotification;
-use App\Http\Resources\ReloadCardSingle;
-use App\Models\Wallets\WalletPhoneCredit;
-use App\Models\Wallets\WalletTransaction;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Resources\KycSingleCollection;
-use App\Http\Resources\ReloadCartCollection;
-use App\Http\Resources\UserSingleCollection;
-use App\Http\Resources\ReloadSingleCollection;
-use App\Http\Resources\WalletSingleCollection;
-use App\Http\Resources\PaymentSingleCollection;
-use App\Http\Resources\RemonteSingleCollection;
-use App\Http\Resources\VirementSingleCollection;
-use App\Http\Resources\PhoneCreditSingleCollection;
-use App\Http\Resources\TransactionSingleCollection;
-use App\Http\Resources\InterTransactionSingleCollection;
 
 class UserController extends Controller
 {
+
+
+    /** @var  TransactionRepository */
+    protected $transactionAccount;
+
+    public function __construct(
+        TransactionsAccountService $transactionAccount
+    ) {
+        $this->transactionAccount = $transactionAccount;
+    }
 
     /**
      * @OA\GET(
@@ -80,57 +92,33 @@ class UserController extends Controller
     public function dashboard()
     {
 
-        $wallet_user = Auth::guard('api')->user();
-        $wallet_solde = Wallet::where('sid_user_id', $wallet_user->id)->first();
+        $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
 
-        $walletTransaction = WalletTransaction::where('wallet_id', $wallet_solde->id)
-            ->orWhere('num_wallet', $wallet_solde->wallet_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $walletTransaction = $this->transactionAccount->getUserTransactions(WalletTransaction::class, $wallet_solde, 'num_wallet');
 
-        $walletPayment = WalletPayment::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $walletPayment = $this->transactionAccount->getUserAllTransactions(WalletPayment::class, $wallet_solde);
 
-        $walletBank = WalletBank::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $walletBank = $this->transactionAccount->getUserAllTransactions(WalletBank::class, $wallet_solde);
 
-        $walletPhone = WalletPhoneCredit::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $walletPhone = $this->transactionAccount->getUserAllTransactions(WalletPhoneCredit::class, $wallet_solde);
 
-        $walletReload = WalletReload::where('wallet_id', $wallet_solde->id)
-            ->orWhere('account_wallet', $wallet_solde->wallet_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $walletReload = $this->transactionAccount->getUserTransactions(WalletReload::class, $wallet_solde, 'account_wallet');
 
-        $walletReloadCard = WalletDeposit::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $walletReloadCard = $this->transactionAccount->getUserAllTransactions(WalletDeposit::class, $wallet_solde);
 
-        $walletInter = WalletInter::where('wallet_id', $wallet_solde->id)
-            ->orWhere('number_compte', $wallet_solde->wallet_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $walletInter = $this->transactionAccount->getUserTransactions(WalletInter::class, $wallet_solde, 'number_compte');
 
-        $walletOrderCarte = BankCard::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $walletOrderCarte = $this->transactionAccount->getUserAllTransactions(BankCard::class, $wallet_solde);
 
+        $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, $wallet_solde);
 
-        $walletRemonte = WithMerchant::where('sid_user_id', $wallet_user->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
+        $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
+            + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) + $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletInter::class);
 
-        $som_commissions = $this->getWalletBankSumGainUserProperty() + $this->getWalletDepositSumGainUserProperty() + $this->getWalletPaymentSumGainUserProperty()
-            + $this->getWalletTransactionSumGainUserProperty() + $this->getWalletInterSumGainUserProperty() + $this->getWalletPhoneCreditSumGainUserProperty()
-            + $this->getWalletReloadSumGainUserProperty() + $this->getWalletOrderBankSumGainUserProperty();
-
-            
         $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
-
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
         $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
         $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);
@@ -140,33 +128,40 @@ class UserController extends Controller
         $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
 
-        // if ($wallet_user->is_under_distributer) {
-        //     $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
-        // } else {
-        // }
-        // if (robus()->country->name_groupe == 'CIV') {
-        //     $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
-        //     $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);
-        //     $dashboard_data['Credit telephoniques'] = PhoneCreditSingleCollection::collection($walletPhone);
-        //     $dashboard_data['Rechargement de carte'] = ReloadCardSingle::collection($walletReloadCard);
-        //     $dashboard_data['Rechargement d\'UV'] = ReloadSingleCollection::collection($walletReload);
-        //     $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
-        //     if ($wallet_user->is_under_distributer) {
-        //         $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
-        //     } else {
-        //         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
-        //     }
-        // } else {
-        //     $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
-        // }
+        return response()->json([
+            'success' => true,
+            'historicals' =>  $dashboard_data,
+            'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
+        ], 200);
+    }
+
+    public function dashboard_masters()
+    {
+
+        $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
+        $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
+
+        $walletTransaction = $this->transactionAccount->getUserTransactions(WalletTransaction::class, $wallet_solde, 'num_wallet');
+
+        $walletReload = $this->transactionAccount->getUserTransactions(WalletReload::class, $wallet_solde, 'account_wallet');
+
+        $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, $wallet_solde);
+
+        $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
+            + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) + $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletInter::class);
+
+        $dashboard_data['Réchargements'] = ReloadSingleCollection::collection($walletReload);
+        $dashboard_data['Déchargements'] = TransactionSingleCollection::collection($walletTransaction);
+        $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
 
         return response()->json([
             'success' => true,
             'historicals' =>  $dashboard_data,
-            'som_commission' =>  $som_commissions . ' ' . Auth::guard('api')->user()->wallet->currencie->code,
+            'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
         ], 200);
     }
-
     /**
      * @OA\GET(
      *      path="/user/info",
@@ -234,7 +229,17 @@ class UserController extends Controller
      */
     public function info()
     {
-        $user = SidUser::find(Auth::guard('api')->user()->id);
+        $user = SidUser::find(robus()->id);
+
+        return response()->json([
+            'success' => true,
+            'user' => new UserSingleCollection($user)
+        ]);
+    }
+
+    public function info_masters()
+    {
+        $user = SidUser::find(robus()->id);
 
         return response()->json([
             'success' => true,
@@ -312,7 +317,62 @@ class UserController extends Controller
     public function updateInfo(Request $request)
     {
 
-        $user = SidUser::find(Auth::guard('api')->user()->id);
+        $user = SidUser::find(robus()->id);
+
+        $file_front = $request->file('image');
+
+        if ($file_front) {
+
+            $destination_path = public_path('profil_images/' . Auth::user()->firstname . '/');
+            $front_file = date('YmdHis') . "." . $file_front->getClientOriginalExtension();
+            $file_front->move($destination_path, $front_file);
+
+            $user->update([
+                'image' => env('APP_URL') . "/public/profil_images/" . Auth::user()->firstname . "/$front_file",
+            ]);
+        }
+
+
+        // ancient countries    
+
+        $user->update([
+            'firstname' => $request->firstname,
+            'lastname' => $request->lastname,
+            'email' => $request->email,
+        ]);
+
+        if (!empty($user->forget_password)) {
+            $ancient_password = $request->currency_password;
+
+            if ($ancient_password == $user->forget_password) {
+                $user->update([
+                    'forget_password' => null,
+                    'password' => Hash::make($request->password),
+                ]);
+            }
+        } else {
+            $ancient_password = $request->currency_password;
+
+            if ($ancient_password == $user->password) {
+                $user->update([
+                    'password' => Hash::make($request->password),
+                ]);
+            }
+        }
+
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Les informations de profil ont été mises à jour avec succès',
+            'user' => new UserSingleCollection($user)
+        ], 200);
+    }
+
+    public function update_masters(Request $request)
+    {
+
+        $user = SidUser::find(robus()->id);
 
         $file_front = $request->file('image');
 
@@ -419,27 +479,7 @@ class UserController extends Controller
      */
     public function updload_identity(Request $request)
     {
-        $user = SidUser::find(Auth::guard('api')->user()->id);
-
-        // $validator = Validator::make(
-
-        //     $request->all(),
-        //     [
-        //         'front' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        //         'back' => 'required|image|mimes:jpeg,png,jpg|max:2048',
-        //     ]
-        // );
-
-        // if ($validator->fails()) {
-        //     return response()->json(
-        //         [
-        //             'status' => false,
-        //             'message' => 'Validated champ',
-        //             'data' => $validator->errors()
-        //         ],
-        //         333
-        //     );
-        // }
+        $user = SidUser::find(robus()->id);
 
         //  Image docs
         $file_image = $request->file('selfie');
@@ -511,19 +551,86 @@ class UserController extends Controller
             );
         }
 
-        // if ($file_back) {
+        return response()->json([
+            'success' => true,
+            'message' => 'Les informations de profil ont été mises à jour avec succès',
+            'user' => new UserSingleCollection($user)
+        ], 200);
+    }
 
-        //     $destination_path_back = public_path('validated_accounts/' . Auth::user()->firstname . '/');
-        //     $back_file = 'arriere_' . date('YmdHis') . "." . $file_back->getClientOriginalExtension();
-        //     $file_back->move($destination_path_back, $back_file);
-        //     $user->kyc->update([
-        //         'motif' => 'Validation de compte',
-        //         'sid_user_id' => $user->id,
-        //         'screen_back' => env('APP_URL') . "/public/validated_accounts/" . Auth::user()->firstname . "/$back_file",
-        //         'status' => false,
-        //         'company_id'  =>  $user->company->id
-        //     ]);
-        // }
+    public function updload_identity_masters(Request $request)
+    {
+        $user = SidUser::find(robus()->id);
+
+        //  Image docs
+        $file_image = $request->file('selfie');
+        //  Front docs
+        $file_front = $request->file('front');
+        // Back Image
+        $file_back = $request->file('back');
+
+        if (isset($file_image) && !empty($file_image) && isset($file_front) && !empty($file_front) && isset($file_back) && !empty($file_back)) {
+
+            $destination_path = public_path('validated_accounts/' . Auth::user()->firstname . '/');
+            $front_file = 'selfie_' . date('YmdHis') . "." . $file_image->getClientOriginalExtension();
+            $front_front = 'face_' . date('YmdHis') . "." . $file_front->getClientOriginalExtension();
+            $back_file = 'arriere_' . date('YmdHis') . "." . $file_back->getClientOriginalExtension();
+            $file_back->move($destination_path, $back_file);
+            $file_front->move($destination_path, $front_front);
+            $file_image->move($destination_path, $front_file);
+            Kyc::updateOrCreate(
+                [
+                    'sid_user_id' => $user->id,
+                    'company_id'  =>  $user->company->id
+                ],
+                [
+                    'motif' => 'Validation de compte',
+                    'image' => env('APP_URL') . "/public/validated_accounts/" . Auth::user()->firstname . "/$front_file",
+                    'screen' => env('APP_URL') . "/public/validated_accounts/" . Auth::user()->firstname . "/$front_front",
+                    'screen_back' => env('APP_URL') . "/public/validated_accounts/" . Auth::user()->firstname . "/$back_file",
+                    'sid_user_id' => $user->id,
+                    'status' => false,
+                    'company_id'  =>  $user->company->id
+                ]
+            );
+        } else if (isset($file_front) && !empty($file_front) && isset($file_back) && !empty($file_back) && empty($file_image)) {
+            $destination_path = public_path('validated_accounts/' . Auth::user()->firstname . '/');
+            $front_file = 'face_' . date('YmdHis') . "." . $file_front->getClientOriginalExtension();
+            $back_file = 'arriere_' . date('YmdHis') . "." . $file_back->getClientOriginalExtension();
+            $file_back->move($destination_path, $back_file);
+            $file_front->move($destination_path, $front_file);
+            Kyc::updateOrCreate(
+                [
+                    'sid_user_id' => $user->id,
+                    'company_id'  =>  $user->company->id
+                ],
+                [
+                    'motif' => 'Validation de compte',
+                    'screen' => env('APP_URL') . "/public/validated_accounts/" . Auth::user()->firstname . "/$front_file",
+                    'screen_back' => env('APP_URL') . "/public/validated_accounts/" . Auth::user()->firstname . "/$back_file",
+                    'sid_user_id' => $user->id,
+                    'status' => false,
+                    'company_id'  =>  $user->company->id
+                ]
+            );
+        } else {
+            $destination_path = public_path('validated_accounts/' . Auth::user()->firstname . '/');
+            $front_file = 'selfie_' . date('YmdHis') . "." . $file_image->getClientOriginalExtension();
+            $file_image->move($destination_path, $front_file);
+            Kyc::updateOrCreate(
+                [
+                    'sid_user_id' => $user->id,
+                    'company_id'  =>  $user->company->id
+                ],
+                [
+                    'motif' => 'Validation de compte',
+                    'image' => env('APP_URL') . "/public/validated_accounts/" . Auth::user()->firstname . "/$front_file",
+                    'sid_user_id' => $user->id,
+                    'status' => false,
+                    'company_id'  =>  $user->company->id
+                ]
+            );
+        }
 
         return response()->json([
             'success' => true,
@@ -535,7 +642,19 @@ class UserController extends Controller
     // View liste of commission User
     public function kyc()
     {
-        $user = SidUser::find(Auth::guard('api')->user()->id);
+        $user = SidUser::find(robus()->id);
+
+        $kyc = Kyc::where('sid_user_id', $user->id)->first();
+
+        return response()->json([
+            'success' => true,
+            'user' => $kyc
+        ]);
+    }
+
+    public function kyc_masters()
+    {
+        $user = SidUser::find(robus()->id);
 
         $kyc = Kyc::where('sid_user_id', $user->id)->first();
 
@@ -550,13 +669,18 @@ class UserController extends Controller
     {
         return response()->json([
             'success' => true,
-            'sum_transaction_days' =>   $this->getWalletBankAccountGainUserProperty() +  $this->getWalletDepositAccountGainUserProperty()
-                + $this->getWalletPaymentAccountGainUserProperty()
-                + $this->getWalletReloadAccountGainUserProperty() +  $this->getWalletTransactionAccountGainUserProperty()
-                + $this->getWalletInterAccountGainUserProperty() +  $this->getWalletPhoneCreditAccountGainUserProperty()
-                + $this->getWalletOrderBankAccountSumGainUserProperty(),
+            'sum_transaction_days' =>
+            $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletBank::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletDeposit::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletPayment::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(BankCard::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletPhoneCredit::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletTransaction::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletReload::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletInter::class),
         ], 200);
     }
+
 
     public function historical_distributer_evolution()
     {
@@ -564,15 +688,33 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'success_transaction_days' =>   $this->getTransactionSuccessUserProperty() +  $this->getPaymentSuccessUserProperty()
-                +  $this->getReloadSuccessUserProperty() +  $this->getVirementSuccessUserProperty() +  $this->getInterSuccessUserProperty()
-                +  $this->getPhoneCreditSuccessUserProperty()  +  $this->getDepositSuccessUserProperty(),
-            'error_transaction_days' => $this->getTransactionErrorUserProperty() +  $this->getPaymentErrorUserProperty()
-                +  $this->getReloadErrorUserProperty() +  $this->getVirementErrorUserProperty() +  $this->getInterErrorUserProperty()
-                +  $this->getPhoneCreditErrorUserProperty()  +  $this->getDepositErrorUserProperty(),
-            'pendding_transaction_days' =>   $this->getTransactionPenddingUserProperty() +  $this->getPaymentPenddingUserProperty()
-                +  $this->getReloadPenddingUserProperty() +  $this->getVirementPenddingUserProperty() +  $this->getInterPenddingUserProperty()
-                +  $this->getPhoneCreditPenddingUserProperty()  +  $this->getDepositPenddingUserProperty(),
+
+            'success_transaction_days' =>   $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletBank::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletDeposit::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPayment::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(BankCard::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPhoneCredit::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletTransaction::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletReload::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletInter::class, 'SUCCESS'),
+
+            'error_transaction_days' =>   $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletBank::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletDeposit::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPayment::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(BankCard::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPhoneCredit::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletTransaction::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletReload::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletInter::class, 'ERROR'),
+
+            'pendding_transaction_days' =>   $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletBank::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletDeposit::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPayment::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(BankCard::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPhoneCredit::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletTransaction::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletReload::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletInter::class, 'PENDING'),
 
         ], 200);
     }
@@ -580,50 +722,56 @@ class UserController extends Controller
     public function historical_month_distributer()
     {
 
-        $som_commission_month = $this->getWalletBankMonthSumGainUserProperty() + $this->getWalletDepositMonthSumGainUserProperty() + $this->getWalletPaymentMonthSumGainUserProperty()
-            + $this->getWalletTransactionMonthSumGainUserProperty() + $this->getWalletInterMonthSumGainUserProperty() + $this->getWalletPhoneCreditMonthSumGainUserProperty()
-            + $this->getWalletReloadMonthSumGainUserProperty() + $this->getWalletOrderBankSumGainUserProperty();
+        $som_commission_month =
+            $this->transactionAccount->getMonthTransactionGainUser(WalletBank::class) +
+            $this->transactionAccount->getMonthTransactionGainUser(WalletDeposit::class) +
+            $this->transactionAccount->getMonthTransactionGainUser(WalletPayment::class) +
+            $this->transactionAccount->getMonthTransactionGainUser(BankCard::class) +
+            $this->transactionAccount->getMonthTransactionGainUser(WalletPhoneCredit::class) +
+            $this->transactionAccount->getMonthTransactionGainUser(WalletTransaction::class) +
+            $this->transactionAccount->getMonthTransactionGainUser(WalletReload::class) +
+            $this->transactionAccount->getMonthTransactionGainUser(WalletInter::class);
 
         return response()->json([
             'success' => true,
-            'sum_transaction_month' =>   $this->getWalletBankMonthUserProperty() +  $this->getWalletDepositMonthUserProperty() +
-                $this->getWalletPaymentMonthUserProperty() + $this->getWalletReloadMonthUserProperty()
-                +  $this->getWalletTransactionMonthUserProperty() + $this->getWalletInterMonthUserProperty() + 
-                $this->getWalletPhoneCreditMonthUserProperty() + $this->getWalletOrderBankSumGainUserProperty(),
-            'som_commission' =>  $som_commission_month . ' ' . Auth::guard('api')->user()->wallet->currencie->code,
+            'sum_transaction_month' =>
+            $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletBank::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletDeposit::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletPayment::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(BankCard::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletPhoneCredit::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletTransaction::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletReload::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletInter::class),
+            'som_commission' =>  $som_commission_month . ' ' . robus()->wallet->currencie->code,
         ], 200);
     }
 
     public function historical_year_distributer()
     {
-        $wallet_user = Auth::guard('api')->user();
 
-        $som_commission_year = $this->getWalletBankYearSumGainUserProperty() + $this->getWalletDepositYearSumGainUserProperty() + $this->getWalletPaymentYearSumGainUserProperty()
-            + $this->getWalletTransactionYearSumGainUserProperty() + $this->getWalletInterYearSumGainUserProperty() + $this->getWalletPhoneCreditYearSumGainUserProperty()
-            + $this->getWalletReloadYearSumGainUserProperty();
+
+        $som_commission_year =
+            $this->transactionAccount->getYearTransactionGainUser(WalletBank::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletDeposit::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletPayment::class) +
+            $this->transactionAccount->getYearTransactionGainUser(BankCard::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletPhoneCredit::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletTransaction::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletReload::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletInter::class);
 
         return response()->json([
             'success' => true,
-            'bank_transaction_month' =>   $this->getWalletBankYearUserProperty(),
-            'deposit_transaction_month' =>  $this->getWalletDepositYearUserProperty(),
-            'payment_transaction_month' =>  $this->getWalletPaymentYearUserProperty(),
-            'reload_transaction_month' =>  $this->getWalletReloadYearUserProperty(),
-            'transaction_transaction_month' =>  $this->getWalletTransactionYearUserProperty(),
-            'inter_transaction_month' =>  $this->getWalletInterYearUserProperty(),
-            'phonecredit_transaction_month' =>   $this->getWalletPhoneCreditYearUserProperty(),
-            'som_commission' =>  $som_commission_year . ' ' . Auth::guard('api')->user()->wallet->currencie->code,
+            'bank_transaction_month' =>    $this->transactionAccount->getYearTransactionSingleGainUser(WalletBank::class),
+            'deposit_transaction_month' => $this->transactionAccount->getYearTransactionSingleGainUser(WalletDeposit::class),
+            'payment_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainUser(WalletPayment::class),
+            'reload_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainUser(WalletReload::class),
+            'transaction_transaction_month' => $this->transactionAccount->getYearTransactionSingleGainUser(WalletTransaction::class),
+            'inter_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainUser(WalletInter::class),
+            'phonecredit_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletPhoneCredit::class),
+            'som_commission' =>  $som_commission_year . ' ' . robus()->wallet->currencie->code,
         ], 200);
-        // if ($wallet_user->country->code == 'CI') {
-
-        // } else {
-
-        //     return response()->json([
-        //         'success' => true,
-        //         'transaction_transaction_month' =>  $this->getWalletTransactionYearUserProperty(),
-        //         'inter_transaction_month' =>  $this->getWalletInterYearUserProperty(),
-        //         'som_commission' =>  $som_commission_year . ' ' . Auth::guard('api')->user()->wallet->currencie->code,
-        //     ], 200);
-        // }
     }
 
     public function drawal_commissions()
@@ -631,185 +779,53 @@ class UserController extends Controller
 
         try {
 
-            $data1 = [];
-            $data2 = [];
-            $data3 = [];
-            $data4 = [];
-            $data5 = [];
-            $data6 = [];
-            $data7 = [];
-            $data8 = [];
+            $data = [];
 
-            $wallet_user = Auth::guard('api')->user();
-// 
-            $wallet_banks =  WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-                // ->whereDate('wallet_banks.created_at', Carbon::now())
-                ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-                ->where('wallet_banks.status', 'SUCCESS')
-                ->select('wallet_banks.*')
-                ->get();
-// 
-            $wallet_deposits = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-                // ->whereDate('wallet_deposits.created_at', Carbon::now())
-                ->where('wallet_deposits.created_by', Auth::guard('api')->user()->id)
-                ->where('wallet_deposits.status', 'SUCCESS')
-                ->select('wallet_deposits.*')
-                ->get();
-// 
-            $wallet_payments = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-                // ->whereDate('wallet_payments.created_at', Carbon::now())
-                ->where('wallet_payments.created_by', Auth::guard('api')->user()->id)
-                ->where('wallet_payments.status', 'SUCCESS')
-                ->select('wallet_payments.*')
-                ->get();
-//
-            $wallet_transactions = WalletTransaction::join(
-                'wallets',
-                'wallet_transactions.wallet_id',
-                'wallets.id'
-            )
-                ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-                // ->whereDate('wallet_transactions.created_at', Carbon::now())
-                ->where('wallet_transactions.created_by', Auth::guard('api')->user()->id)
-                ->where('wallet_transactions.status', 'SUCCESS')
-                ->select('wallet_transactions.*')
-                ->get();
-// 
-            $wallet_inters = WalletInter::join(
-                'wallets',
-                'wallet_inters.wallet_id',
-                'wallets.id'
-            )
-                // ->where('wallet_inters.country_id', Auth::guard('api')->user()->country->id)
-                // ->whereDate('wallet_inters.created_at', Carbon::now())
-                ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-                ->where('wallet_inters.status', 'SUCCESS')
-                ->select('wallet_inters.*')
-                ->get();
-                // 
-            $wallet_phone_credits = WalletPhoneCredit::join(
-                'wallets',
-                'wallet_phone_credits.wallet_id',
-                'wallets.id'
-            )
-                ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-                // ->whereDate('wallet_phone_credits.created_at', Carbon::now())
-                ->where('wallet_phone_credits.created_by', Auth::guard('api')->user()->id)
-                ->where('wallet_phone_credits.status', 'SUCCESS')
-                ->select('wallet_phone_credits.*')
-                ->get();
-// 
-            $wallet_reloads = WalletReload::join(
-                'wallets',
-                'wallet_reloads.wallet_id',
-                'wallets.id'
-            )
-                ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-                // ->whereDate('wallet_reloads.created_at', Carbon::now())
-                ->where('wallet_reloads.created_by', Auth::guard('api')->user()->id)
-                ->where('wallet_reloads.status', 'SUCCESS')
-                ->select('wallet_reloads.*')
-                ->get();
+            $wallet_user = robus();
 
-            $order_banks =  BankCard::join('wallets', 'bank_cards.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-                // ->whereDate('bank_cards.created_at', Carbon::now())
-                ->where('bank_cards.created_by', Auth::guard('api')->user()->id)
-                ->where('bank_cards.status', 1)
-                ->select('bank_cards.*')
-                ->get();
+            // $wallet_banks =  $this->transactionAccount->getUserAllCumulTransactions(WalletBank::class);
+
+            // $wallet_deposits =  $this->transactionAccount->getUserAllCumulTransactions(WalletDeposit::class);
+
+            // $wallet_payments =  $this->transactionAccount->getUserAllCumulTransactions(WalletPayment::class);
+
+            // $wallet_transactions =  $this->transactionAccount->getUserAllCumulTransactions(WalletTransaction::class);
+
+            // $wallet_inters =  $this->transactionAccount->getUserAllCumulTransactions(WalletInter::class);
+
+            // $wallet_phone_credits =  $this->transactionAccount->getUserAllCumulTransactions(WalletPhoneCredit::class);
+
+            // $wallet_reloads =  $this->transactionAccount->getUserAllCumulTransactions(WalletReload::class);
+
+            // $order_banks =  $this->transactionAccount->getUserAllCumulOrderTransactions(BankCard::class);
 
 
-            foreach ($wallet_banks as $bank) {
+            $transactionTypes = [
+                WalletBank::class,
+                WalletDeposit::class,
+                WalletPayment::class,
+                WalletTransaction::class,
+                WalletInter::class,
+                WalletPhoneCredit::class,
+                WalletReload::class,
+                BankCard::class
+            ];
 
 
-                $data1[] = $bank->commissions;
+            foreach ($transactionTypes as $transactionType) {
+                $transactions = $this->transactionAccount->getUserAllCumulTransactions($transactionType);
+                $totalCommission = $transactions->sum('commissions');
+                $data[] = $totalCommission;
 
-                $bank->update([
+                $transactions->update([
                     'commissions' => 0,
                     'commissions_admin' => 0,
                 ]);
             }
 
+            $totalCommissionSum = array_sum($data);
 
-            foreach ($wallet_deposits as $deposit) {
-
-                $data2[] = $deposit->commissions;
-
-                $deposit->update([
-                    'commissions' => 0,
-                    'commissions_admin' => 0,
-                ]);
-            }
-
-            foreach ($wallet_payments as $paiement) {
-
-                $data3[] = $paiement->commissions;
-
-                $paiement->update([
-                    'commissions' => 0,
-                    'commissions_admin' => 0,
-                ]);
-            }
-
-            foreach ($wallet_transactions as $transaction) {
-
-                $data4[] = $transaction->commissions;
-
-                $transaction->update([
-                    'commissions' => 0,
-                    'commissions_admin' => 0,
-                ]);
-            }
-
-            foreach ($wallet_inters as $inter) {
-
-                $data5[] = $inter->commissions;
-
-                $inter->update([
-                    'commissions' => 0,
-                    'commissions_admin' => 0,
-                ]);
-            }
-
-            foreach ($wallet_phone_credits as $phone) {
-
-                $data6[] = $phone->commissions;
-
-
-                $phone->update([
-                    'commissions' => 0,
-                    'commissions_admin' => 0,
-                ]);
-            }
-
-            foreach ($wallet_reloads as $reload) {
-
-                $data7[] = $reload->commissions;
-
-                $reload->update([
-                    'commissions' => 0,
-                    'commissions_admin' => 0,
-                ]);
-            }
-
-            foreach ($order_banks as $order) {
-
-                $data8[] = $order->commissions;
-
-                $order->update([
-                    'commissions' => 0,
-                    'commissions_admin' => 0,
-                ]);
-            }
-
-            $valeur_sum = array_sum($data1) + array_sum($data2) + array_sum($data3) + array_sum($data4)
-                + array_sum($data5) + array_sum($data6) + array_sum($data7) + array_sum($data8);
-
-            if ($valeur_sum == 0) {
+            if ($totalCommissionSum == 0) {
                 return response()->json([
                     'success' => false,
                     'message' => ('Votre somme de commission est nul .')
@@ -818,22 +834,21 @@ class UserController extends Controller
 
                 // Update Info valeurs
 
-                $amount_solde = (float)robus()->wallet->amount + (float)$valeur_sum;
+                $amountSolde = (float) $wallet_user->wallet->amount + (float) $totalCommissionSum;
 
-                $valeur_received = WithMerchant::create([
-                    'amount_with_draw' =>    $valeur_sum,
-                    'sid_user_id' =>   $wallet_user->id,
-                    'amount_solde' =>   $amount_solde,
-                    'type_transaction' =>  "COMMISSION",
-                    'status' =>  "SUCCESS",
+                $valeurReceived = WithMerchant::create([
+                    'amount_with_draw' => $totalCommissionSum,
+                    'sid_user_id' => $wallet_user->id,
+                    'amount_solde' => $amountSolde,
+                    'type_transaction' => "COMMISSION",
+                    'status' => "SUCCESS",
                     'date_removed' => Carbon::now(),
                 ]);
 
                 $wallet_user->wallet->update([
-                    'reload_by' => Auth::guard('api')->user()->firstname . ' ' . Auth::guard('api')->user()->lastname,
-                    'sid_user_relod' => Auth::guard('api')->user()->id,
-                    'amount' => DB::raw('amount+'  .  $valeur_received->amount_with_draw),
-
+                    'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+                    'sid_user_relod' => robus()->id,
+                    'amount' => DB::raw('amount+'  .  $valeurReceived->amount_with_draw),
                 ]);
 
                 $msg = 'Vous avez transferé vos commission sur votre compte';
@@ -846,19 +861,17 @@ class UserController extends Controller
 
                 if ($wallet_user->country->code == "CI") {
 
-                    $message = 'Vous avez transferé une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                        . $valeur_received->created_at  . ' Robus vous remercie';
+                    $message = 'Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        . $valeurReceived->created_at  . ' Robus vous remercie';
 
-                    $encode = substr(Auth::guard('api')->user()->phone,  -10);
-
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                    $encode = substr(robus()->phone,  -10);
                 } else {
 
 
                     if ($wallet_user->email != null) {
 
-                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                            . $valeur_received->created_at  . ' Robus vous remercie'));
+                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                            . $valeurReceived->created_at  . ' Robus vous remercie'));
                     }
                 }
 
@@ -869,1259 +882,7 @@ class UserController extends Controller
             }
         } catch (\Exception $exception) {
             $message = __('message.is not providers transactions');
-            return json_message_response($message, 333);
+            return json_message_response(false, $message, 333);
         }
-    }
-    // Transaction amount User
-    // Show User Month
-    public function getWalletBankMonthUserProperty()
-    {
-
-
-        $result = WalletBank::join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-            ->whereMonth('wallet_banks.created_at', now()->subMonth()->month)
-            // ->select(DB::raw('sum(wallet_banks.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_banks.created_at')
-            ->count();
-
-        return $result;
-    }
-
-    public function getWalletDepositMonthUserProperty()
-    {
-        $data = [];
-
-        $result = walletDeposit::join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_deposits.created_by', Auth::guard('api')->user()->id)
-            ->whereMonth('wallet_deposits.created_at', now()->subMonth()->month)
-            // ->select(DB::raw('sum(wallet_deposits.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_deposits.created_at')
-            ->count();
-
-        return $result;
-    }
-    public function getWalletPaymentMonthUserProperty()
-    {
-
-        $result = WalletPayment::join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_payments.created_by', Auth::guard('api')->user()->id)
-            ->whereMonth('wallet_payments.created_at', now()->subMonth()->month)
-            // ->select(DB::raw('sum(wallet_payments.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_payments.created_at')
-            ->count();
-
-        return $result;
-    }
-
-    public function getWalletTransactionMonthUserProperty()
-    {
-
-        $result = WalletTransaction::join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_transactions.created_by', Auth::guard('api')->user()->id)
-            ->whereMonth('wallet_transactions.created_at', now()->subMonth()->month)
-            // ->select(DB::raw('sum(wallet_transactions.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_transactions.created_at')
-            ->count();
-
-        return $result;
-    }
-
-    public function getWalletInterMonthUserProperty()
-    {
-
-        $result = WalletInter::join('wallets', 'wallets.id', 'wallet_inters.wallet_id')
-            // ->where('wallet_inters.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-            ->whereMonth('wallet_inters.created_at', '>=', Carbon::now()->subDays(30))
-            // ->select(DB::raw('sum(wallet_inters.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_inters.created_at')
-            ->count();
-
-        return $result;
-    }
-
-    public function getWalletPhoneCreditMonthUserProperty()
-    {
-
-        $result = WalletPhoneCredit::join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_phone_credits.created_by', Auth::guard('api')->user()->id)
-            ->whereMonth('wallet_phone_credits.created_at',now()->subMonth()->month)
-            // ->select(DB::raw('sum(wallet_phone_credits.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_phone_credits.created_at')
-            ->count();
-
-        return $result;
-    }
-
-    public function getWalletReloadMonthUserProperty()
-    {
-
-        $result = WalletReload::join(
-            'wallets',
-            'wallets.id',
-            '=',
-            'wallet_reloads.wallet_id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->where('wallet_reloads.created_by', Auth::guard('api')->user()->id)
-            ->whereMonth(
-                'wallet_reloads.created_at', now()->subMonth()->month
-            )
-            // ->select(
-            //     DB::raw('sum(wallet_reloads.amount) as cumul_amount_chiffre')
-            // )
-            ->groupBy('wallet_reloads.created_at')
-            ->count();
-
-        return $result;
-    }
-    // Transaction Year
-    public function getWalletBankYearUserProperty()
-    {
-        $data = [];
-        // dd(Carbon::now()->year);
-        $result = WalletBank::join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_banks.created_at', Carbon::now()->year)
-            ->select(DB::raw('sum(wallet_banks.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_banks.created_at')
-            ->get();
-
-        foreach ($result as $sumBank) {
-            $data[] = $sumBank->cumul_amount_chiffre;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletDepositYearUserProperty()
-    {
-        $data = [];
-
-        $result = walletDeposit::join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_deposits.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_deposits.created_at', Carbon::now()->year)
-            ->select(DB::raw('sum(wallet_deposits.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_deposits.created_at')
-            ->get();
-
-        foreach ($result as $sumDepos) {
-            $data[] = $sumDepos->cumul_amount_chiffre;
-        }
-
-        return array_sum($data);
-    }
-    public function getWalletPaymentYearUserProperty()
-    {
-        $data = [];
-
-        $result = WalletPayment::join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_payments.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_payments.created_at', Carbon::now()->year)
-            ->select(DB::raw('sum(wallet_payments.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_payments.created_at')
-            ->get();
-
-        foreach ($result as $sumPay) {
-            $data[] = $sumPay->cumul_amount_chiffre;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionYearUserProperty()
-    {
-        $data = [];
-
-        $result = WalletTransaction::join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_transactions.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_transactions.created_at', Carbon::now()->year)
-            ->select(DB::raw('sum(wallet_transactions.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_transactions.created_at')
-            ->get();
-
-        foreach ($result as $sumTrans) {
-            $data[] = $sumTrans->cumul_amount_chiffre;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletInterYearUserProperty()
-    {
-        $data = [];
-
-        $result = WalletInter::join('wallets', 'wallets.id', 'wallet_inters.wallet_id')
-            // ->where('wallet_inters.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_inters.created_at', Carbon::now()->year)
-            ->select(DB::raw('sum(wallet_inters.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_inters.created_at')
-            ->get();
-
-        foreach ($result as $sumInter) {
-            $data[] = $sumInter->cumul_amount_chiffre;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPhoneCreditYearUserProperty()
-    {
-        $data = [];
-
-        $result = WalletPhoneCredit::join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_phone_credits.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_phone_credits.created_at', Carbon::now()->year)
-            ->select(DB::raw('sum(wallet_phone_credits.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_phone_credits.created_at')
-            ->get();
-
-        foreach ($result as $sumPhone) {
-            $data[] = $sumPhone->cumul_amount_chiffre;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletReloadYearUserProperty()
-    {
-        $data = [];
-
-        $result = WalletReload::join('wallets', 'wallets.id', '=', 'wallet_reloads.wallet_id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->where('wallet_reloads.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_reloads.created_at', Carbon::now()->year)
-            ->select(DB::raw('sum(wallet_reloads.amount) as cumul_amount_chiffre'))
-            ->groupBy('wallet_reloads.created_at')
-            ->get();
-
-        foreach ($result as $sumReload) {
-            $data[] = $sumReload->cumul_amount_chiffre;
-        }
-        return array_sum($data);
-    }
-    // Transactions Days User
-    public function getWalletBankAccountGainUserProperty()
-    {
-
-        $account_valeur = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('wallet_banks.created_at', Carbon::now())
-            ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->select('wallet_banks.*')
-            ->count();
-
-        return $account_valeur;
-    }
-
-    public function getWalletDepositAccountGainUserProperty()
-    {
-        $account_valeur  =  WalletDeposit::join(
-            'wallets',
-            'wallet_deposits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->whereDate('wallet_deposits.created_at', Carbon::now())
-            ->where(
-                'wallet_deposits.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->select('wallet_deposits.*')
-            ->count();
-
-
-        return $account_valeur;
-    }
-
-    public function getWalletPaymentAccountGainUserProperty()
-    {
-        $account_valeur =   WalletPayment::join(
-            'wallets',
-            'wallet_payments.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->whereDate('wallet_payments.created_at', Carbon::now())
-            ->where(
-                'wallet_payments.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->select('wallet_payments.*')
-            ->count();
-
-
-        return $account_valeur;
-    }
-
-    public function getWalletTransactionAccountGainUserProperty()
-    {
-        $account_valeur =    WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->whereDate('wallet_transactions.created_at', Carbon::now())
-            ->where(
-                'wallet_transactions.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->select('wallet_transactions.*')
-            ->count();
-
-
-        return $account_valeur;
-    }
-
-    public function getWalletInterAccountGainUserProperty()
-    {
-        $account_valeur =    WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-            // ->where('wallet_inters.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('wallet_inters.created_at', Carbon::now())
-            ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_inters.status', 'SUCCESS')
-            ->select('wallet_inters.*')
-            ->count();
-
-        return $account_valeur;
-    }
-    public function getWalletPhoneCreditAccountGainUserProperty()
-    {
-        $account_valeur =     WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->whereDate('wallet_phone_credits.created_at', Carbon::now())
-            ->where(
-                'wallet_phone_credits.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->select('wallet_phone_credits.*')
-            ->count();
-
-        return $account_valeur;
-    }
-
-    public function getWalletReloadAccountGainUserProperty()
-    {
-        $account_valeur =   WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->whereDate('wallet_reloads.created_at', Carbon::now())
-            ->where(
-                'wallet_reloads.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->select('wallet_reloads.*')
-            ->count();
-
-        return $account_valeur;
-    }
-
-    public function getWalletOrderBankAccountSumGainUserProperty()
-    {
-        $data = BankCard::join('wallets', 'bank_cards.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('bank_cards.created_at', Carbon::now())
-            ->where('bank_cards.created_by', Auth::guard('api')->user()->id)
-            ->where('bank_cards.status', 1)
-            ->select('bank_cards.*')
-            ->count();
-        return $data;
-    }
-
-    // Details Transaction User
-    public function getTransactionErrorUserProperty()
-    {
-        $transactionError = WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where(
-                'wallet_transactions.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_transactions.status', 'ERROR')
-            ->whereDate('wallet_transactions.created_at', Carbon::now())
-            ->count();
-        return $transactionError;
-    }
-
-    public function getTransactionSuccessUserProperty()
-    {
-        $transactionSuccess = WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where(
-                'wallet_transactions.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->whereDate('wallet_transactions.created_at', Carbon::now())
-            ->count();
-        return $transactionSuccess;
-    }
-
-    public function getTransactionPenddingUserProperty()
-    {
-        $transactionPendding = WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where(
-                'wallet_transactions.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_transactions.status', 'PENDING')
-            ->whereDate('wallet_transactions.created_at', Carbon::now())
-            ->count();
-        return $transactionPendding;
-    }
-
-    public function getPaymentErrorUserProperty()
-    {
-        $paimentError = WalletPayment::join(
-            'wallets',
-            'wallet_payments.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'ERROR')
-            ->where(
-                'wallet_payments.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->whereDate('wallet_payments.created_at', Carbon::now())
-            ->count();
-        return $paimentError;
-    }
-
-    public function getPaymentSuccessUserProperty()
-    {
-        $paimentSuccess = WalletPayment::join(
-            'wallets',
-            'wallet_payments.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->where(
-                'wallet_payments.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->whereDate('wallet_payments.created_at', Carbon::now())
-            ->count();
-        return $paimentSuccess;
-    }
-
-    public function getPaymentPenddingUserProperty()
-    {
-        $paimentPendding = WalletPayment::join(
-            'wallets',
-            'wallet_payments.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'PENDING')
-            ->where(
-                'wallet_payments.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->whereDate('wallet_payments.created_at', Carbon::now())
-            ->count();
-        return $paimentPendding;
-    }
-
-    public function getReloadErrorUserProperty()
-    {
-        $reloadError = WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'ERROR')
-            ->where('wallet_reloads.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_reloads.created_at', Carbon::now())
-            ->count();
-        return $reloadError;
-    }
-
-    public function getReloadSuccessUserProperty()
-    {
-        $reloadSuccess = WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->where('wallet_reloads.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_reloads.created_at', Carbon::now())
-            ->count();
-        return $reloadSuccess;
-    }
-
-    public function getReloadPenddingUserProperty()
-    {
-        $reloadPendding = WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'PENDING')
-            ->where('wallet_reloads.created_by', Auth::guard('api')->user()->id)
-            ->whereDate('wallet_reloads.created_at', Carbon::now())
-            ->count();
-        return $reloadPendding;
-    }
-
-    public function getVirementSuccessUserProperty()
-    {
-        $virementSuccess = WalletBank::join(
-            'wallets',
-            'wallet_banks.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_banks.*')
-            ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->whereDate('wallet_banks.created_at', Carbon::now())
-            ->count();
-        return $virementSuccess;
-    }
-
-    public function getVirementPenddingUserProperty()
-    {
-        $virementPendding = WalletBank::join(
-            'wallets',
-            'wallet_banks.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_banks.*')
-            ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_banks.status', 'PENDING')
-            ->whereDate('wallet_banks.created_at', Carbon::now())
-            ->count();
-        return $virementPendding;
-    }
-
-    public function getVirementErrorUserProperty()
-    {
-        $virementError = WalletBank::join(
-            'wallets',
-            'wallet_banks.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_banks.*')
-            ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_banks.status', 'ERROR')
-            ->whereDate('wallet_banks.created_at', Carbon::now())
-            ->count();
-        return $virementError;
-    }
-
-    public function getInterErrorUserProperty()
-    {
-        $interError = WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            // ->where(
-            //     'wallet_inters.country_id',
-            //     Auth::guard('api')->user()->country->id
-            // )
-            ->select('wallet_inters.*')
-            ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_inters.status', 'ERROR')
-            ->whereDate('wallet_inters.created_at', Carbon::now())
-            ->count();
-        return $interError;
-    }
-
-    public function getInterSuccessUserProperty()
-    {
-        $interSuccess = WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            // ->where(
-            //     'wallet_inters.country_id',
-            //     Auth::guard('api')->user()->country->id
-            // )
-            ->select('wallet_inters.*')
-            ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_inters.status', 'SUCCESS')
-            ->whereDate('wallet_inters.created_at', Carbon::now())
-            ->count();
-        return $interSuccess;
-    }
-
-    public function getInterPenddingUserProperty()
-    {
-        $interPendding = WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            // ->where(
-            //     'wallet_inters.country_id',
-            //     Auth::guard('api')->user()->country->id
-            // )
-            ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-            ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'PENDING')
-            ->whereDate('wallet_inters.created_at', Carbon::now())
-            ->count();
-        return $interPendding;
-    }
-
-    public function getPhoneCreditErrorUserProperty()
-    {
-        $phoneCreditError = WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_phone_credits.*')
-            ->where(
-                'wallet_phone_credits.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_phone_credits.status', 'ERROR')
-            ->whereDate('wallet_phone_credits.created_at', Carbon::now())
-            ->count();
-        return $phoneCreditError;
-    }
-
-    public function getPhoneCreditSuccessUserProperty()
-    {
-        $phoneCreditSuccess = WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_phone_credits.*')
-            ->where(
-                'wallet_phone_credits.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->whereDate('wallet_phone_credits.created_at', Carbon::now())
-            ->count();
-        return $phoneCreditSuccess;
-    }
-
-    public function getPhoneCreditPenddingUserProperty()
-    {
-        $phoneCreditPendding = WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->where(
-                'wallet_phone_credits.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.status', 'PENDING')
-            ->whereDate('wallet_phone_credits.created_at', Carbon::now())
-            ->count();
-        return $phoneCreditPendding;
-    }
-
-    public function getDepositErrorUserProperty()
-    {
-        $depositError = WalletDeposit::join(
-            'wallets',
-            'wallet_deposits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_deposits.*')
-            ->where(
-                'wallet_deposits.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_deposits.status', 'ERROR')
-            ->whereDate('wallet_deposits.created_at', Carbon::now())
-            ->count();
-        return $depositError;
-    }
-
-    public function getDepositSuccessUserProperty()
-    {
-        $depositSuccess = WalletDeposit::join(
-            'wallets',
-            'wallet_deposits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->select('wallet_deposits.*')
-            ->where(
-                'wallet_deposits.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->whereDate('wallet_deposits.created_at', Carbon::now())
-            ->count();
-        return $depositSuccess;
-    }
-
-    public function getDepositPenddingUserProperty()
-    {
-        $depositPendding = WalletDeposit::join(
-            'wallets',
-            'wallet_deposits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('api')->user()->country->id
-            )
-            ->where(
-                'wallet_deposits.created_by',
-                Auth::guard('api')->user()->id
-            )
-            ->select('wallet_deposits.*')
-            ->where('wallet_deposits.status', 'PENDING')
-            ->whereDate('wallet_deposits.created_at', Carbon::now())
-            ->count();
-        return $depositPendding;
-    }
-
-    //   State gains User
-
-    public function getWalletOrderBankSumGainUserProperty()
-    {
-        $data = [];
-        foreach (BankCard::join('wallets', 'bank_cards.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('bank_cards.created_at', Carbon::now())
-            ->where('bank_cards.created_by', Auth::guard('api')->user()->id)
-            ->where('bank_cards.status', 1)
-            ->select('bank_cards.*')
-            ->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletBankSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_banks.created_at', Carbon::now())
-            ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->select('wallet_banks.*')
-            ->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletDepositSumGainUserProperty()
-    {
-        $data = [];
-
-        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_deposits.created_at', Carbon::now())
-            ->where('wallet_deposits.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->select('wallet_deposits.*')
-            ->get() as $bank) {
-
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPaymentSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_payments.created_at', Carbon::now())
-            ->where('wallet_payments.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->select('wallet_payments.*')
-            ->get()  as $bank) {
-
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_transactions.created_at', Carbon::now())
-            ->where('wallet_transactions.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->select('wallet_transactions.*')
-            ->get()  as $bank) {
-
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletInterSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            // ->where('wallet_inters.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_inters.created_at', Carbon::now())
-            ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_inters.status', 'SUCCESS')
-            ->select('wallet_inters.*')
-            ->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-    public function getWalletPhoneCreditSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_phone_credits.created_at', Carbon::now())
-            ->where('wallet_phone_credits.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->select('wallet_phone_credits.*')
-            ->get()
-            as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletReloadSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_reloads.created_at', Carbon::now())
-            ->where('wallet_reloads.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->select('wallet_reloads.*')
-            ->get()
-            as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-    //  State gains user Year
-    public function getWalletBankYearSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('wallet_banks.created_at', Carbon::now()->year)
-            ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->select('wallet_banks.*')
-            ->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletDepositYearSumGainUserProperty()
-    {
-        $data = [];
-
-        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('wallet_deposits.created_at', Carbon::now()->year)
-            ->where('wallet_deposits.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->select('wallet_deposits.*')
-            ->get() as $bank) {
-
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPaymentYearSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('wallet_payments.created_at', Carbon::now()->year)
-            ->where('wallet_payments.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->select('wallet_payments.*')
-            ->get()  as $bank) {
-
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionYearSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('wallet_transactions.created_at', Carbon::now()->year)
-            ->where('wallet_transactions.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->select('wallet_transactions.*')
-            ->get()  as $bank) {
-
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletInterYearSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            // ->where('wallet_inters.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('wallet_inters.created_at', Carbon::now()->year)
-            ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_inters.status', 'SUCCESS')
-            ->select('wallet_inters.*')
-            ->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-    public function getWalletPhoneCreditYearSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('wallet_phone_credits.created_at', Carbon::now()->year)
-            ->where('wallet_phone_credits.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->select('wallet_phone_credits.*')
-            ->get()
-            as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletReloadYearSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            ->whereDate('wallet_reloads.created_at', Carbon::now()->year)
-            ->where('wallet_reloads.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->select('wallet_reloads.*')
-            ->get()
-            as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-    //   State gains User 30 days later
-    public function getWalletBankMonthSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_banks.created_at', '>=', Carbon::now()->subDays(30))
-            ->where('wallet_banks.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->select('wallet_banks.*')
-            ->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletDepositMonthSumGainUserProperty()
-    {
-        $data = [];
-
-        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_deposits.created_at', '>=', Carbon::now()->subDays(30))
-            ->where('wallet_deposits.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->select('wallet_deposits.*')
-            ->get() as $bank) {
-
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPaymentMonthSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_payments.created_at', '>=', Carbon::now()->subDays(30))
-            ->where('wallet_payments.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->select('wallet_payments.*')
-            ->get()  as $bank) {
-
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionMonthSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_transactions.created_at', '>=', Carbon::now()->subDays(30))
-            ->where('wallet_transactions.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->select('wallet_transactions.*')
-            ->get()  as $bank) {
-
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletInterMonthSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            // ->where('wallet_inters.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_inters.created_at', '>=', Carbon::now()->subDays(30))
-            ->where('wallet_inters.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_inters.status', 'SUCCESS')
-            ->select('wallet_inters.*')
-            ->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-    public function getWalletPhoneCreditMonthSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_phone_credits.created_at', '>=', Carbon::now()->subDays(30))
-            ->where('wallet_phone_credits.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->select('wallet_phone_credits.*')
-            ->get()
-            as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletReloadMonthSumGainUserProperty()
-    {
-        $data = [];
-        foreach (WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where('wallets.country_id', Auth::guard('api')->user()->country->id)
-            // ->whereDate('wallet_reloads.created_at', '>=', Carbon::now()->subDays(30))
-            ->where('wallet_reloads.created_by', Auth::guard('api')->user()->id)
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->select('wallet_reloads.*')
-            ->get()
-            as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
     }
 }

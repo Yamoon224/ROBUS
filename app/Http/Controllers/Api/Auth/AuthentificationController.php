@@ -184,18 +184,16 @@ class AuthentificationController extends Controller
                     $message = 'Code activation ' . $user->activation_code;
 
                     Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$user->phone&from=ROBUS&sms=$message");
+                }
 
-                } 
+                $notify = new MailController;
+                $notify->newOtp($user);
 
-            $notify = new MailController;
-            $notify->newOtp($user);
-
-            return response()->json([
-                'success' => true,
-                'message' => "Le numero est cree avec success.",
-                'data'  => $user->status ?? null,
-            ], 200);
-                
+                return response()->json([
+                    'success' => true,
+                    'message' => "Le numero est cree avec success.",
+                    'data'  => $user->status ?? null,
+                ], 200);
             } else {
 
                 //User already exist
@@ -367,17 +365,16 @@ class AuthentificationController extends Controller
                         'success' => false,
                         'message' => 'Le code ne correspond pas.'
                     ], 333);
-
                 } else {
 
-                 
+
                     $user->update([
                         'status' => true,
                         'is_custumers' => true,
                         'silver_ceiling' =>  $user->country->silver_ceiling,
                     ]);
-              
-                    
+
+
                     if ($user->country->code == "CI") {
 
                         if ($user->status == true) {
@@ -601,78 +598,63 @@ class AuthentificationController extends Controller
 
             if (!empty($user->forget_password)) {
 
-                if (SidUser::wherePhone($request->phone)->whereForgetPassword($request->password)->first()) {
+                $credentials = $request->only(['phone', 'password']);
 
-                    $data = $request->all();
+                if ($sidUser = SidUser::where($credentials)->first()) {
+                  
+                    $user = $sidUser;
+                    $user->fcm_token = $request->input('fcm_token'); // Utilisation de la fonction input() avec une valeur par défaut
+                    $user->last_login = Carbon::now(); // Mise à jour de la dernière connexion
+                    $user->last_logout = null; // Réinitialisation de la dernière déconnexion
+                    $user->save();
 
-                    $user_data = $this->registerRepository->whereStatus(true)->where('is_custumers', true)->wherePhone($data['phone'])->first();
-
-                    if (request('fcm_token') != null) {
-                        $user->fcm_token = request('fcm_token');
-                    }
-
-
-                    if (!$user_data) {
-
-                        return response()->json(
-                            [
-                                'success' => false,
-                                'message' => 'Mauvais identifiants ! Authentification échouée',
-                                'data' => 'ne pas couper:' . $request->phone
-                            ],
-                            301
-                        );
-                    } else {
-
-
-                        $tokenResult = $user_data->createToken('auth_token');
-
-                        if ($user->country->code == "CI") {
-                            // $user = Auth::user();
-                            $message = 'Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil';
-                            $encode = substr($user->phone,  -10);
-                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                            $user->last_login  = Carbon::now()->toDateTimeString();
-                            $user->last_logout  = null;
-                            $user->save();
-                            return $this->loginSuccess($tokenResult, $user_data);
-                        } else {
-                            // $user = Auth::user();
-                            Mail::to($user->email)->send(new UpdatePassword('Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil'));
-                            $user->last_login  = Carbon::now()->toDateTimeString();
-                            $user->last_logout  = null;
-                            $user->save();
-                            return $this->loginSuccess($tokenResult, $user_data);
-                        }
-                    }
-                } else {
-
-                    return response()->json(
-                        [
+                    if (!$user_data = $this->registerRepository->whereStatus(true)->where('is_custumers', true)->wherePhone($credentials['phone'])->first()) {
+                        return response()->json([
                             'success' => false,
-                            'message' => 'Numéro de téléphone ou mot de passe incorrect.',
-                            'data' => 'ne pas couper'
-                        ],
-                        301
-                    );
+                            'message' => 'Mauvais identifiants ! Authentification échouée',
+                            'data' => 'ne pas couper:' . $credentials['phone']
+                        ], 301);
+                    }
+
+                    $tokenResult = $user_data->createToken('auth_token');
+                    $message = 'Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil';
+                    $recipient = $user->country->code == 'CI' ? '225' . substr($user->phone, -10) : $user->email;
+
+                    if ($user->country->code == 'CI') {
+                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=$recipient&from=ROBUS&sms=$message");
+                    } else {
+                        Mail::to($recipient)->send(new UpdatePassword($message));
+                    }
+
+                    return $this->loginSuccess($tokenResult, $user_data);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Numéro de téléphone ou mot de passe incorrect.',
+                        'data' => 'ne pas couper'
+                    ], 301);
                 }
+
             } else {
 
-                if (Auth::attempt(['phone' => request('phone'), 'password' => request('password')])) {
+
+                $credentials = request(['phone', 'password']);
+
+                if (Auth::attempt($credentials)) {
 
 
                     $user = Auth::user();
 
                     $data = $request->all();
 
-                    $user_data = $this->registerRepository->whereStatus(true)->where('is_custumers', true)->wherePhone($data['phone'])->first();
+                    $user_data = $this->registerRepository->whereStatus(true)->wherePhone($data['phone'])->first();
 
                     if (request('fcm_token') != null) {
                         $user->fcm_token = request('fcm_token');
                     }
 
 
-                    if (!$user_data) {
+                    if (!$user_data || !$user_data->is_custumers || !Hash::check($credentials['password'], $user_data->password)) {
 
                         return response()->json(
                             [
@@ -682,13 +664,13 @@ class AuthentificationController extends Controller
                             ],
                             301
                         );
-                    } else {
-
+                    } elseif($user_data->is_custumers) {
+                        $tokenResult = $user_data->createToken('auth_token');
+                        dd('ici');
                         if (Hash::check($data['password'], $user_data->password)) {
                             Auth::user()->last_login  = Carbon::now()->toDateTimeString();
                             Auth::user()->last_logout  = null;
                             Auth::user()->save();
-                            $tokenResult = $user_data->createToken('auth_token');
                             return $this->loginSuccess($tokenResult, $user_data);
                         } else {
                             return response()->json(
@@ -700,6 +682,15 @@ class AuthentificationController extends Controller
                                 301
                             );
                         }
+                    }else {
+                        return response()->json(
+                            [
+                                'success' => false,
+                                'message' => 'Mauvais identifiants ! Authentification Clients ',
+                                'data' => 'phone do not exist:' . $request->phone
+                            ],
+                            301
+                        );
                     }
                 } else {
                     // $message = "Numéro de téléphone ou mot de passe incorrect.";
@@ -726,6 +717,8 @@ class AuthentificationController extends Controller
         }
     }
 
+ 
+
     public function loginAdmin(Request $request)
     {
 
@@ -735,7 +728,7 @@ class AuthentificationController extends Controller
 
                 $data = $request->all();
 
-                $user_data = SidUser::whereStatus(true)->where('is_under_distributer', true)->whereEmail($data['email'])->first();
+                $user_data = SidUser::whereStatus(true)->whereEmail($data['email'])->first();
 
                 if (!$user_data) {
 
@@ -747,7 +740,82 @@ class AuthentificationController extends Controller
                         ],
                         301
                     );
+                } elseif ($user_data->is_under_distributer) {
+
+                    if (Hash::check($data['password'], $user_data->password)) {
+                        $user_data->last_login = Carbon::now()->toDateTimeString();
+                        $user_data->last_logout = null;
+                        $user_data->save();
+                        $tokenResult = $user_data->createToken('auth_token');
+                        return $this->loginSuccess($tokenResult, $user_data);
+                    } else {
+                        return response()->json(
+                            [
+                                'success' => false,
+                                'message' => 'Mauvais identifiants ! Authentification échouée',
+                                'data' => 'Email do not exist:' . $request->email
+                            ],
+                            301
+                        );
+                    }
                 } else {
+
+
+                    return response()->json(
+                        [
+                            'success' => false,
+                            'message' => 'Mauvais identifiants ! Authentification Sous distributeur',
+                            'data' => 'Email do not exist:' . $request->email
+                        ],
+                        301
+                    );
+                }
+            } catch (\Throwable $th) {
+
+                return response()->json(
+                    [
+                        'success' => false,
+                        'message' => 'Mauvais identifiants ! Authentification échouée',
+                        'data' => 'Verifier vos identifiants :' . $request->email
+                    ],
+                    301
+                );
+            }
+        } else {
+
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Email ou mot de passe incorrect.',
+                    'data' => 'ne pas couper'
+                ],
+                301
+            );
+        }
+    }
+
+    public function loginMaster(Request $request)
+    {
+
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+
+            try {
+
+                $data = $request->all();
+
+                $user_data = SidUser::whereStatus(true)->whereEmail($data['email'])->first();
+
+                if (!$user_data) {
+
+                    return response()->json(
+                        [
+                            'success' => false,
+                            'message' => 'Mauvais identifiants ! Authentification échouée',
+                            'data' => 'Verifier vos identifiants :' . $request->email
+                        ],
+                        301
+                    );
+                } elseif ($user_data->is_under_distributer) {
 
                     if (Hash::check($data['password'], $user_data->password)) {
                         Auth::user()->last_login  = Carbon::now()->toDateTimeString();
@@ -765,6 +833,15 @@ class AuthentificationController extends Controller
                             301
                         );
                     }
+                } else {
+                    return response()->json(
+                        [
+                            'success' => false,
+                            'message' => 'Mauvais identifiants ! Authentification échouée',
+                            'data' => 'Verifier vos identifiants :' . $request->email
+                        ],
+                        301
+                    );
                 }
             } catch (\Throwable $th) {
 

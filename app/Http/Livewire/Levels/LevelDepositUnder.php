@@ -20,6 +20,7 @@ class LevelDepositUnder extends Component
     public $percent_distributer;
     public $amount_admin;
     public $amount_distributer;
+    public $comission_master;
 
     protected $rules = [
         'amount_begin' => 'required',
@@ -47,6 +48,7 @@ class LevelDepositUnder extends Component
                     'percent'  => $this->percent,
                     'admin_percent'  => $this->percent_admin ?? null,
                     'comission_distributer	'  => $this->percent_distributer ?? null,
+                    'percent_masters'  => $this->comission_master,
                 ]
             );
             $this->resetField();
@@ -65,6 +67,7 @@ class LevelDepositUnder extends Component
             $this->amount_end = $check->amount_end;
             $this->amount = $check->amount;
             // $this->percent = $check->percent;
+            $this->comission_master = $check->amount != null ? $check->percent_masters : $check->percent_masters * 100;
             $this->percent = $check->percent == null ? $check->amount  : $check->percent * 100;
             $this->percent_distributer =  $check->amount != null ? $check->comission_distributer : $check->comission_distributer * 100;
             $this->percent_admin = $check->admin_percent;
@@ -91,6 +94,7 @@ class LevelDepositUnder extends Component
                     'amount_end'  => $this->amount_end,
                     'amount'  => $this->percent,
                     // 'percent'  => $this->percent,
+                    'percent_masters'  => $this->comission_master,
                     'comission_distributer'  =>  $this->percent_distributer,
                     // 'comission_percent_distributer'  =>  $this->percent_under_dist_percent,
                     // 'percent_admin'  => $this->percent_admin,
@@ -103,6 +107,7 @@ class LevelDepositUnder extends Component
                     // 'amount'  => $this->amount,
                     'percent'  => $this->percent / 100,
                     // 'percent_admin'  => $this->percent_admin,
+                    'percent_masters'  => $this->comission_master /100 ,
                     'comission_distributer'  =>  $this->percent_distributer / 100,
                     // 'comission_distributer'  =>  $this->percent_under_dist_amount ?? null,
                 ]);
@@ -134,6 +139,7 @@ class LevelDepositUnder extends Component
         $this->amount_end = '';
         $this->amount = '';
         $this->percent = '';
+        $this->comission_master = '';
         $this->emit('modal-hide', 'hide');
     }
 

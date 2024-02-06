@@ -33,6 +33,7 @@ class PaymentCost extends Model
         'comission_canal',
         'status',
         'created_by',
+        'percent_masters',
     ];
 
     protected $casts = [
@@ -89,11 +90,12 @@ class PaymentCost extends Model
         $this->attributes['percent_merchands'] = $value / 100 ? json_encode($value / 100) : null;
     }
     
-    public function setPercentMastersAttribute($value)
+
+    public function setPercentPaymentMastersAttribute($value)
     {
-        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent_masters'] = $value / 100 ? json_encode($value / 100) : null;
     }
-    
+   
     public function WalletPayment()
     {
         return $this->hasOne(WalletPayment::class)->withTrashed();

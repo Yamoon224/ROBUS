@@ -1,6 +1,6 @@
 <div>
     <h2 class="intro-y text-lg font-medium mt-10">
-        Commissions pour les depots
+        Commissions pour les depots 
     </h2>
     <div class="flex items-center text-slate-600 dark:text-slate-500 sm:ml-auto mt-6 sm:mt-0">
 

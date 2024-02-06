@@ -17,8 +17,8 @@
                     <tr>
                         <th class="whitespace-nowrap text-center">Commence</th>
                         <th class="text-center whitespace-nowrap text-center">Termine</th>
-                        {{-- <th class="text-center whitespace-nowrap text-center">Montant(Admin)</th> --}}
                         <th class="text-center whitespace-nowrap text-center">Montant(S-distributeur)</th>
+                        <th class="text-center whitespace-nowrap text-center">Montant MASTERS</th>
                         <th class="text-center whitespace-nowrap text-center">Descriptions</th>
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>
@@ -35,22 +35,7 @@
                                     <div class="text-slate-500 text-xs  mt-0.5">{{ $item->amount_end ?? null }}</div>
 
                                 </td>
-                                {{-- @if ($item->percent != null)
-                                    <td class="w-35 text-center">
-                                        <div class="text-slate-500 text-xs  mt-0.5">
-                                            {{ $item->percent * 100 ?? null }} %
-                                        </div>
-
-                                    </td>
-                                @else
-                                    <td class="w-35 text-center">
-                                        <div class="text-slate-500 text-xs  mt-0.5">
-                                            {{ $item->amount ?? null }} Frcfa
-                                        </div>
-
-                                    </td>
-                                @endif --}}
-
+                               
                                 @if ($item->percent != null)
                                     <td class="w-35 text-center">
                                         <div class="text-slate-500 text-xs  mt-0.5">
@@ -66,6 +51,21 @@
 
                                     </td>
                                 @endif
+                                @if ($item->percent != null)
+                                <td class="w-35 text-center">
+                                    <div class="text-slate-500 text-xs  mt-0.5">
+                                        {{ $item->percent_masters  * 100 ?? null }} %
+                                    </div>
+
+                                </td>
+                            @else
+                                <td class="w-35 text-center">
+                                    <div class="text-slate-500 text-xs  mt-0.5">
+                                        {{ $item->percent_masters ?? null }} Frcfa
+                                    </div>
+
+                                </td>
+                            @endif
                                 <td class="w-35 text-center">
                                     @if ($item->is_inter_bank)
                                         <div class="text-slate-500 text-xs  mt-0.5">

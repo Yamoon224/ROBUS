@@ -17,6 +17,7 @@
                         <th class="whitespace-nowrap text-center">Montant CIE/SODECI</th>
                         <th class="whitespace-nowrap text-center">Comission S-D Canal</th>
                         <th class="whitespace-nowrap text-center">Comission S-D CIE/SODECI</th>
+                        <th class="whitespace-nowrap text-center">Comission MASTERS</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -55,6 +56,13 @@
 
 
                                 </td>
+
+                                <td class="text-center">
+
+                                    {{ $item->percent_masters ?? null }} Frcfa
+
+                                </td>
+
 
                                 <td class="w-56">
                                     <div class="flex justify-center items-center">

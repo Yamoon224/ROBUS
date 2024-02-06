@@ -4,9 +4,7 @@
     </h2>
 
     <div class="grid grid-cols-12 gap-6 mt-5">
-        {{-- @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-caution'))
-            <button wire:click="$emit('modal-show')" class="btn btn-primary shadow-md mr-2">Ajouter</button>
-        @endif --}}
+       
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
         </div>
@@ -18,6 +16,7 @@
                         <th class="whitespace-nowrap">Nom</th>
                         <th class="whitespace-nowrap text-center">Pourcentage</th>
                         <th class="whitespace-nowrap text-center">Pourcentage marchants</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage MASTERS</th>
                         <th class="text-center whitespace-nowrap">Status</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -46,6 +45,12 @@
                                 <td class="text-center">
                                     <p href="" class="font-medium whitespace-nowrap">
                                         {{ $item->percent_merchands * 100 ?? null }} %
+                                    </p>
+
+                                </td>
+                                <td class="text-center">
+                                    <p href="" class="font-medium whitespace-nowrap">
+                                        {{ $item->percent_masters * 100 ?? null }} %
                                     </p>
 
                                 </td>
