@@ -95,6 +95,91 @@ class ProvidersService
             ->get();
     }
 
+    public function getProvidersMasterForCountry()
+    {
+        $countryId = robus()->country->id;
+
+        $countryNameGroup = robus()->country->name_groupe;
+        $isUnderDistributer = robus()->is_under_distributer;
+
+        // Tableau de fournisseurs par défaut
+        $defaultProviders = [
+            'AFL' => [
+                25 => [9],
+                36 => [9],
+                133 => [9],
+                214 => [9],
+                188 => [9],
+                83 => [9],
+                157 => [9],
+                91 => [9]
+            ],
+            'CIV' => [107 => [9]],
+            'AFC' => [
+                39 => [9],
+                79 => [9],
+                50 => [9],
+                57 => [9],
+                122 => [9],
+                43 => [9],
+                42 => [9]
+            ],
+            'USA' => [1 => [9]],
+            'URP' => [
+                74 => [9],
+                82 => [9],
+                199 => [9],
+                226 => [9]
+            ],
+            'MAG' => [
+                82 => [9],
+                146 => [9],
+                216 => [9]
+            ],
+        ];
+
+
+        // Tableau des fournisseurs lorsque $isUnderDistributer est vrai
+        $underDistributerProviders = [
+            'AFL' => [
+                25 => [9],
+                36 => [9],
+                133 => [9],
+                214 => [9],
+                188 => [9],
+                83 => [9],
+                157 => [9],
+                91 => [9]
+            ],
+            'CIV' => [107 => [9]],
+            'AFC' => [39 => [9], 79 => [9], 50 => [9], 57 => [9], 122 => [9], 43 => [9], 42 => [9]],
+            'USA' => [1 => [9]],
+            'URP' => [
+                74 => [9],
+                82 => [9],
+                199 => [9],
+                226 => [9]
+            ],
+            'MAG' => [
+                82 => [9],
+                146 => [9],
+                216 => [9]
+            ],
+        ];
+
+        $providerMap = $isUnderDistributer ? $underDistributerProviders : $defaultProviders;
+
+        if (array_key_exists($countryNameGroup, $providerMap) && array_key_exists($countryId, $providerMap[$countryNameGroup])) {
+            $providerIds = $providerMap[$countryNameGroup][$countryId];
+        } else {
+            $providerIds = [9];
+        }
+
+        return Provider::whereIn('id', $providerIds)
+            ->orderBy('name', 'asc')
+            ->get();
+    }
+
     public function getProvidersForCountryInters()
     {
         $countryNameGroup = robus()->country->name_groupe;

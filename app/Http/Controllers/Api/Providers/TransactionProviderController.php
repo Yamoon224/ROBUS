@@ -57,4 +57,12 @@ class TransactionProviderController extends Controller
         return new ProviderCollection($providerOptions);
     }
 
+
+    public function index_masters()
+    {
+        $providerOptions =  $this->providersService->getProvidersMasterForCountry();
+
+        return new ProviderCollection($providerOptions);
+    }
+
 }

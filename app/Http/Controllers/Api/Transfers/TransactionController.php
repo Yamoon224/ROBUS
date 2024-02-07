@@ -3,23 +3,28 @@
 namespace App\Http\Controllers\Api\Transfers;
 
 
-use Illuminate\Http\Request;
-use App\Models\Wallets\Wallet;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Services\DeletedService;
-use App\Models\Costs\TransactionCost;
-use App\Models\Wallets\WalletTransaction;
-use Illuminate\Support\Facades\Validator;
-use App\Repositories\TransactionRepository;
 use App\Http\Controllers\Admin\MailController;
+use App\Http\Controllers\Controller;
+use App\Http\Services\ConvertionService;
+use App\Http\Services\CreateRobusWalletWithDrawalService;
+use App\Http\Services\DeletedService;
+use App\Http\Services\MasterService;
+use App\Http\Services\MobileWalletTransactionService;
 use App\Http\Services\NotificationSendService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\RobusTransactionService;
 use App\Http\Services\SearchTransactionService;
+use App\Http\Services\ReloadService;
 use App\Http\Services\ValidateDailyLimitService;
-use App\Http\Services\MobileWalletTransactionService;
-use App\Http\Services\CreateRobusWalletWithDrawalService;
+use App\Models\Costs\TransactionCost;
+use App\Models\Providers\Provider;
+use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletTransaction;
+use App\Repositories\TransactionRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -34,6 +39,9 @@ class TransactionController extends Controller
     protected $deletedService;
     protected $percentRobus;
     protected $searchTransaction;
+    protected $SearchConvertionService;
+    protected $robusMasterTransaction;
+    protected $robusReloadMasterTransaction;
 
     public function __construct(
         TransactionRepository $transactionReposi,
@@ -44,7 +52,10 @@ class TransactionController extends Controller
         CreateRobusWalletWithDrawalService $transactionWalletDrawal,
         DeletedService $deletedService,
         PercentRobusAuthService $percentRobus,
-        SearchTransactionService $searchTransaction
+        SearchTransactionService $searchTransaction,
+        ConvertionService $SearchConvertionService,
+        MasterService $robusMasterTransaction,
+        ReloadService $robusReloadMasterTransaction
     ) {
         $this->transctionRepository = $transactionReposi;
         $this->mobileWalletTransactionService = $mobileWalletTransactionService;
@@ -55,6 +66,9 @@ class TransactionController extends Controller
         $this->deletedService = $deletedService;
         $this->percentRobus = $percentRobus;
         $this->searchTransaction = $searchTransaction;
+        $this->SearchConvertionService = $SearchConvertionService;
+        $this->robusMasterTransaction = $robusMasterTransaction;
+        $this->robusReloadMasterTransaction = $robusReloadMasterTransaction;
     }
     /**
      * @OA\POST(
@@ -505,6 +519,251 @@ class TransactionController extends Controller
                 } else {
                     return json_message_response(false, "Niveau de pourcentage introuvable", 333);
                 }
+            };
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+            ], 333);
+        }
+    }
+
+    public function create_reload_master(Request $request)
+    {
+
+        $wallet_user = robus();
+        $amount_days = $this->validatedamountDays->getCeilingProperty();
+        $admin_civ = $this->validatedamountDays->adminCiv();
+        $valeur_ceiling  =  $wallet_user->silver_ceiling;
+        $provider = Provider::whereId(9)->first();
+
+        try {
+
+            if ($request->provider == 9) {
+
+                $validator = Validator::make(
+                    $request->all(),
+                    [
+                        "num_wallet" => 'required',
+                        "amount" => 'required'
+                    ],
+                    [
+
+                        'num_wallet.required' => 'Votre numero est obligatoire',
+                        'amount.required' => 'Votre montant est obligatoire',
+
+                    ]
+                );
+
+                if ($validator->fails()) {
+                    return response()->json(
+                        [
+                            'success' => false,
+                            'message' => 'Champ is required ',
+                            'data' => $validator->errors()
+                        ],
+                        333
+                    );
+                }
+
+                $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
+
+
+                $account_active = $wallet_search->sidUser->master_id;
+
+                $account_accepted = $wallet_search->sidUser->is_accepted;
+
+                $account_is_under = $wallet_search->sidUser->is_under_distributer;
+
+                $account_is_custumers = $wallet_search->sidUser->is_custumers;
+
+                $account_is_master = $wallet_search->sidUser->is_master;
+
+
+                if ($account_active == robus()->id && $account_accepted) {
+
+
+                    if ($wallet_search == null &&  $request->num_wallet == robus()->wallet->wallet_id) {
+
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Ce numéro n\'est pas ROBUS ou est votre numéro',
+                        ], 333);
+                    }
+
+                    if ($account_is_under || $account_is_master) {
+
+                        if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+
+
+    
+
+                            if ($this->validatedamountDays->validateAmount($request->amount)) {
+
+
+                                $valeur_receive = $this->SearchConvertionService->convertAdminCommission($request->amount, $wallet_search);
+
+                                // $amount_solde = $check->wallet->amount +  $commission;
+                                $walletAmountSend = Wallet::where('wallet_id',  $request->account_reload_uv)->first();
+
+                                $amount_solde_drawal = (float)$walletAmountSend->amount +  (float)$valeur_receive;
+
+                                $amount_drawal =      $amount_solde_drawal;
+
+                                $amount_solde = (float)sabdy()->wallet->amount - (float)$request->amount;
+
+                                $walletReloads =  $this->robusReloadMasterTransaction->createWAlletReloadRobus(robus(), $request->amount, $provider, $request->account_reload_uv , $valeur_receive , $amount_solde, $amount_drawal);
+
+
+                                if ($walletReloads != null) {
+                                    if ($this->robusReloadMasterTransaction->updateAmountRobusReceived($walletReloads , robus(), $wallet_search, $request->amount)) {
+                                        return  $this->robusReloadMasterTransaction->sendNotification($wallet_search, robus(), $walletReloads, $admin_civ);
+                                    } else {
+
+                                        return  json_message_response(false, "Error de transferts du montant!", 333);
+                                    }
+                                } else {
+
+                                    return  json_message_response(false, "Error de creation de transfert du montant!", 333);
+                                }
+                            } else {
+
+                                return json_message_response(false, "Verifié le solde de la personne  !!", 333);
+                            }
+                        } else {
+                            return json_message_response(false, "Votre montant journalier est atteint !!", 333);
+                        }
+                    } else {
+
+                        return json_message_response(false, "Le compte doit etre un Sous distributeur", 333);
+                    }
+                } else {
+                    return json_message_response(false, "Le compte doit etre un Sous distributeur", 333);
+                }
+            } else {
+                return json_message_response(false, "Provider introuvable ", 333);
+            };
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+            ], 333);
+        }
+    }
+    public function create_transaction_master(Request $request)
+    {
+
+        $wallet_user = robus();
+        $amount_days = $this->validatedamountDays->getCeilingProperty();
+        $admin_civ = $this->validatedamountDays->adminCiv();
+        $valeur_ceiling  =  $wallet_user->silver_ceiling;
+        $valeur_max_send  =  robus()->country->amount_max_send;
+        $provider = Provider::whereId(9)->first();
+
+        try {
+
+            if ($request->provider == 9) {
+
+                $validator = Validator::make(
+                    $request->all(),
+                    [
+                        "num_wallet" => 'required',
+                        "amount" => 'required'
+                    ],
+                    [
+
+                        'num_wallet.required' => 'Votre numero est obligatoire',
+                        'amount.required' => 'Votre montant est obligatoire',
+
+                    ]
+                );
+
+                if ($validator->fails()) {
+                    return response()->json(
+                        [
+                            'success' => false,
+                            'message' => 'Champ is required ',
+                            'data' => $validator->errors()
+                        ],
+                        333
+                    );
+                }
+
+                $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
+
+
+                $account_active = $wallet_search->sidUser->master_id;
+
+                $account_accepted = $wallet_search->sidUser->is_accepted;
+
+                $account_is_under = $wallet_search->sidUser->is_under_distributer;
+
+
+                if ($account_active == robus()->id && $account_accepted) {
+
+
+                    if ($wallet_search == null &&  $request->num_wallet == robus()->wallet->wallet_id) {
+
+                        return response()->json([
+                            'success' => false,
+                            'message' => 'Ce numéro n\'est pas ROBUS ou est votre numéro',
+                        ], 333);
+                    }
+
+                    if ($account_is_under) {
+
+                        if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+
+
+                            $wallet_send = $wallet_search;
+
+                            $commission_receiveid =  $request->amount;
+
+                            $wallet_receveid =  robus()->wallet;
+
+                            $commission_send =   $this->SearchConvertionService->convertAdminCommissionInter($commission_receiveid, $wallet_send, $wallet_receveid);
+
+                            if ($commission_send > $wallet_search->amount) {
+
+                                return json_message_response(false, "Verifié le solde de la personne  !!", 333);
+                            } else {
+
+
+                                $walletAmountSend = DB::table('wallets')->select(DB::raw('SUM(amount) as total_amount'))->where('wallet_id',  $request->num_wallev)->first();
+
+                                $amount_solde_drawal = (float)$walletAmountSend->total_amount -  (float)$commission_send;
+
+                                $amount_drawal =    $amount_solde_drawal;
+
+                                $amount_solde = (float)robus()->wallet->amount +  (float) $request->amount;
+
+                                $walletUnlock =   $this->robusMasterTransaction->createRobusUnlocked(robus(), $request->amount, $provider, $request->num_wallev, $amount_solde, $amount_drawal, $commission_send);
+
+                                if ($walletUnlock != null) {
+                                    if ($this->robusMasterTransaction->updateAmountRobusReceived($commission_send, robus(), $wallet_search, $walletUnlock, $request->amount)) {
+                                        return  $this->robusMasterTransaction->sendNotification($wallet_search, robus(), $walletUnlock, $admin_civ);
+                                    } else {
+
+                                        return  json_message_response(false, "Error de transferts du montant!", 333);
+                                    }
+                                } else {
+
+                                    return  json_message_response(false, "Error de creation de transfert du montant!", 333);
+                                }
+                            }
+                        } else {
+                            return json_message_response(false, "Votre montant journalier est atteint !!", 333);
+                        }
+                    } else {
+
+                        return json_message_response(false, "Le compte doit etre un Sous distributeur", 333);
+                    }
+                } else {
+
+                    return json_message_response(false, "Le compte doit etre un Sous distributeur", 333);
+                }
+            } else {
+                return json_message_response(false, "Provider introuvcable ", 333);
             };
         } catch (\Exception $exception) {
             return response()->json([

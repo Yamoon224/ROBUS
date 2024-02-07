@@ -47,4 +47,12 @@ class ReloadProviderController extends Controller
             ->where('provider_type_id',  1)
             ->orderBy('name', 'asc')->get());
     }
+
+
+    public function index_masters()
+    {
+        return new ProviderCollection(Provider::whereStatus(true)
+            ->whereName('ROBUS')
+            ->where('provider_type_id',  1)->get());
+    }
 }

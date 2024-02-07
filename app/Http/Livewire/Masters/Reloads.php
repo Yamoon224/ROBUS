@@ -154,10 +154,9 @@ class Reloads extends Component
 
                                 $amount_drawal =      $amount_solde_drawal;
 
-
                                 $amount_solde = (float)sabdy()->wallet->amount - (float)$this->relaod_uv_amout_robus;
 
-                                $walletReloads =  $this->createWAlletReloadRobus($walletUser, $this->relaod_uv_amout_robus, $provider, $this->account_reload_uv, $valeur_receive,  $this->number_reload_uv, $amount_solde, $amount_drawal);
+                                $walletReloads =  $this->createWAlletReloadRobus($walletUser, $this->relaod_uv_amout_robus, $provider, $this->account_reload_uv, $valeur_receive , $amount_solde, $amount_drawal);
 
                                 if ($walletReloads != null) {
                                     if ($this->updateAmountRobusReceived($walletReloads, $walletUser, $wallet_search, $valeur_receive)) {
@@ -190,7 +189,7 @@ class Reloads extends Component
         }
     }
 
-    private function createWAlletReloadRobus($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive, $number_reload_uv, $amount_solde, $amount_drawal)
+    private function createWAlletReloadRobus($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive , $amount_solde, $amount_drawal)
     {
 
         $reload_unders =  WalletReload::create([
@@ -204,7 +203,7 @@ class Reloads extends Component
             'amount_received'  => $valeur_receive,
             'type_transaction' => 'Réequilibrage',
             'type_received' => 'Transfert',
-            'phone'  => $number_reload_uv ?? null,
+            'phone'  =>  null,
             'status'  => "SUCCESS",
             'amount_solde'  => $amount_solde ?? null,
             'amount_solde_drawal' => $amount_drawal ?? null

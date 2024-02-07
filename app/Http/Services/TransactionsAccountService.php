@@ -143,7 +143,7 @@ class TransactionsAccountService
     public function getWalletSumGainUser($wallet)
     {
         // Récupérer toutes les commissions des banques avec le statut 'SUCCESS'
-        $commissions = $wallet::whereStatus('SUCCESS')->pluck('commissions');
+        $commissions = $wallet::whereStatus('SUCCESS')->pluck('commission_masters');
 
         // Calculer la somme des commissions
         $totalCommissions = $commissions->sum();
@@ -236,5 +236,14 @@ class TransactionsAccountService
             ->sum('amount');
 
         return $totalAmount;
+    }
+
+
+    public function getUnderDistributorsUser()
+    {
+
+        $under_distributors = SidUser::where('master_id', robus()->id)->get();
+
+        return $under_distributors;  
     }
 }

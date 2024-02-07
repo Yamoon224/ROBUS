@@ -717,7 +717,6 @@ class AuthentificationController extends Controller
         }
     }
 
- 
 
     public function loginAdmin(Request $request)
     {
@@ -815,7 +814,7 @@ class AuthentificationController extends Controller
                         ],
                         301
                     );
-                } elseif ($user_data->is_under_distributer) {
+                } elseif ($user_data->is_master) {
 
                     if (Hash::check($data['password'], $user_data->password)) {
                         Auth::user()->last_login  = Carbon::now()->toDateTimeString();
@@ -827,7 +826,7 @@ class AuthentificationController extends Controller
                         return response()->json(
                             [
                                 'success' => false,
-                                'message' => 'Mauvais identifiants ! Authentification échouée',
+                                'message' => 'Mauvais identifiants  ! Authentification échouée',
                                 'data' => 'Email do not exist:' . $request->email
                             ],
                             301

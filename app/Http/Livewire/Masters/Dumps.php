@@ -3,19 +3,13 @@
 namespace App\Http\Livewire\Masters;
 
 use App\Events\AdminNotifEvent;
-use App\Events\CreateReloadEvent;
 use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Mail\CodeValidated;
-use App\Mail\UvSend;
-use App\Models\AdminsCom;
 use App\Models\Banks\BankCard;
-use App\Models\Costs\ReloadCost;
 use App\Models\Costs\TransactionCost;
 use App\Models\Custumers\Country;
-use App\Models\Invoices\InvoiceReload;
 use App\Models\Invoices\InvoiceTransaction;
-use App\Models\Payments\PaymentReload;
 use App\Models\Payments\Transaction;
 use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
@@ -30,7 +24,6 @@ use App\Models\Wallets\WalletTransaction;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
@@ -100,7 +93,7 @@ class Dumps extends Component
             $percent_robus_distri =  TransactionCost::whereId(36)->first();
         }
 
-        // try {
+        try {
 
             if ($provider->id == 9) {
 
@@ -165,11 +158,6 @@ class Dumps extends Component
                                 $this->emit('success', 'Verifier votre montant ! !');
                             } else {
 
-
-                                //  commission valeurs
-                                // $commission_valeur = $percent_robus_distri->percent * $this->relaod_unlock_amout_robus;
-                                // $valeur_amount_com = $percent_robus_distri->percent_with_drawal * $commission_valeur;
-
                                 $walletAmountSend = DB::table('wallets')->select(DB::raw('SUM(amount) as total_amount'))->where('wallet_id',  $this->account_unlock_uv)->first();
 
                                 $amount_solde_drawal = (float)$walletAmountSend->total_amount -  (float)$commission_send;
@@ -214,11 +202,11 @@ class Dumps extends Component
                 $this->emit('modal-hide', 'hide');
                 $this->emit('error', 'Pas de selection de providers !');
             }
-        // } catch (\Exception $exception) {
-        //     $this->cancelReload();
-        //     $this->emit('modal-hide', 'hide');
-        //     $this->emit('error', 'Error de message demande a l\'admin !');
-        // }
+        } catch (\Exception $exception) {
+            $this->cancelReload();
+            $this->emit('modal-hide', 'hide');
+            $this->emit('error', 'Error de message demande a l\'admin !');
+        }
     }
 
     private function convertAdminCommissionInter($amount, $walletSend, $walletReceveid)

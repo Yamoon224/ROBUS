@@ -184,6 +184,17 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('info/kyc', [UserController::class, 'kyc_masters']);
             Route::post('info/update', [UserController::class, 'update_masters']);
             Route::post('info/active_compte', [UserController::class, 'updload_identity_masters']);
+            Route::get('under_distributors', [UserController::class, 'masters_under_distributors']);
+
+            // Providers transactions
+            Route::prefix('providers')->group(function () {
+                Route::get('transaction_providers', [TransactionProviderController::class, 'index_masters']);
+                Route::get('reload_providers', [ReloadProviderController::class, 'index_masters']);
+            });
+
+            Route::post('unloadings/store', [TransactionController::class, 'create_transaction_master']);
+            Route::post('reloads/store', [TransactionController::class, 'create_reload_master']);
+            Route::post('add_under_distributors/store', [UserController::class, 'add_under_distributor']);
             
         });
     });

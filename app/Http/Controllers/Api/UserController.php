@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\AdminNotifEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InterTransactionSingleCollection;
 use App\Http\Resources\KycSingleCollection;
@@ -12,10 +13,13 @@ use App\Http\Resources\ReloadCartCollection;
 use App\Http\Resources\ReloadSingleCollection;
 use App\Http\Resources\RemonteSingleCollection;
 use App\Http\Resources\TransactionSingleCollection;
+use App\Http\Resources\UnderCollection;
 use App\Http\Resources\UserSingleCollection;
 use App\Http\Resources\VirementSingleCollection;
 use App\Http\Resources\WalletSingleCollection;
 use App\Http\Services\TransactionsAccountService;
+use App\Http\Services\ValidateDailyLimitService;
+use App\Mail\NewAdmin;
 use App\Mail\UvSend;
 use App\Models\Banks\BankCard;
 use App\Models\Custumers\City;
@@ -32,6 +36,7 @@ use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\WithMerchant;
+use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
 use App\Tools\Image;
 use Carbon\Carbon;
@@ -41,6 +46,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
@@ -49,11 +55,15 @@ class UserController extends Controller
 
     /** @var  TransactionRepository */
     protected $transactionAccount;
+    protected $validatedamountDays;
 
     public function __construct(
-        TransactionsAccountService $transactionAccount
+        TransactionsAccountService $transactionAccount,
+        ValidateDailyLimitService $validatedamountDays,
+
     ) {
         $this->transactionAccount = $transactionAccount;
+        $this->validatedamountDays = $validatedamountDays;
     }
 
     /**
@@ -139,6 +149,7 @@ class UserController extends Controller
     {
 
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
+
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
 
         $walletTransaction = $this->transactionAccount->getUserTransactions(WalletTransaction::class, $wallet_solde, 'num_wallet');
@@ -162,6 +173,7 @@ class UserController extends Controller
             'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
         ], 200);
     }
+
     /**
      * @OA\GET(
      *      path="/user/info",
@@ -883,6 +895,101 @@ class UserController extends Controller
         } catch (\Exception $exception) {
             $message = __('message.is not providers transactions');
             return json_message_response(false, $message, 333);
+        }
+    }
+
+
+    public function masters_under_distributors()
+    {
+        $under_distributors =    $this->transactionAccount->getUnderDistributorsUser();
+
+        return response()->json([
+            'success' => true,
+            'under_distributors' => new UnderCollection($under_distributors)
+        ]);
+    }
+
+    public function add_under_distributor(Request $request)
+    {
+
+        $admins = $this->validatedamountDays->adminCiv();
+
+        $validator = Validator::make(
+            $request->all(),
+            [
+                "wallet_id_add" => 'required',
+            ],
+            [
+
+                'wallet_id_add.required' => 'Votre numero est obligatoire',
+
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Champ is required ',
+                    'data' => $validator->errors()
+                ],
+                333
+            );
+        }
+
+        $check = Wallet::where('wallet_id', $request->wallet_id_add)->first();
+
+
+        try {
+
+
+            if ($check) {
+
+
+                if ($check->sidUser->id == robus()->id || $check->sidUser->is_company || $check->sidUser->is_master || $check->sidUser->is_admin  || $check->sidUser->is_supervisor || $check->sidUser->is_distributer) {
+
+                    return  json_message_response(false, "Desolé Ce wallet n'es pas un sous distributeur vous !!!", 333);
+                } else {
+
+
+                    // Update Users
+                    $check->sidUser->update(
+                        [
+                            'master_id' => robus()->id,
+                            'is_accepted'  => false,
+                        ]
+                    );
+
+                    // Message admin
+                    Notification::send($admins, new AdminNotification('Demande de liaison sous distributeur'));
+
+                    if ($admins->count() > 0) {
+
+                        foreach ($admins  as $user) {
+
+                            $admin_single = SidUser::find($user->id);
+
+                            $notifs = $admin_single->unreadNotifications;
+                            event(new AdminNotifEvent($notifs));
+                        }
+                    }
+
+                    if (master()->email != null) {
+                        Mail::to(master()->email)->send(new NewAdmin("Vous avez fais une demande de liaison du sous distributeur "  . $check->sidUser->firstname  . ' ' .  $check->sidUser->firstname . env('APP_NAME')));
+                    }
+
+                    return  json_message_response(true, "Sous distributeur ajouté a votre reseau ", 333);
+                }
+            } else {
+
+                return  json_message_response(false, "Numero Inconnu chez ROBUS", 333);
+            }
+
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+            ], 333);
         }
     }
 }
