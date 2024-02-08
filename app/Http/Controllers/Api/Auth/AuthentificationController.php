@@ -599,151 +599,154 @@ class AuthentificationController extends Controller
 
             $days_open_robus = CloseApp::whereStatus(true)->get();
             $currentDayOfWeek = Carbon::now()->dayOfWeek;
-
-            // Définir une variable pour stocker les jours correspondant à la semaine actuelle
-            $robus_days = null;
+            
+            // Définir des variables pour stocker les heures d'ouverture et de fermeture
             $robus_hour_begin = null;
             $robus_hour_end = null;
-
+            $robus_hour_description = null;
+            
             // Boucle à travers les jours d'ouverture récupérés
             foreach ($days_open_robus as $robus_app) {
                 // Vérifier si le jour actuel correspond au jour de la semaine du jour d'ouverture
                 if ($currentDayOfWeek == $robus_app->id) {
-                    // Si oui, attribuer le jour d'ouverture à la variable $robus_days
-                    $robus_days = $robus_app;
+                    // Si oui, attribuer les heures d'ouverture et de fermeture
                     $robus_hour_begin = $robus_app->time_start;
                     $robus_hour_end = $robus_app->time_end;
+                    $robus_hour_description = $robus_app->description;
                     // Pas besoin de continuer la boucle, puisque nous avons trouvé le jour correspondant
                     break;
                 }
             }
-            $date = Carbon::now();
-            if ($robus_days) {
-                // Traitez le jour d'ouverture trouvé ici
-                // Par exemple, vous pouvez vérifier les heures d'ouverture
-                // Convertir les heures d'ouverture et de fermeture en objets Carbon
-                $heure_days = $date->format('H:i:s');
-                
-                if($robus_hour_begin >=  $heure_days <=  $robus_hour_end)
-                {
+            
+            if ($robus_hour_begin !== null && $robus_hour_end !== null) {
+                // Traitez les heures d'ouverture et de fermeture trouvées ici
+                $currentHour = Carbon::now()->format('H:i:s');
+            
+                // Vérifiez si l'heure actuelle est entre l'heure d'ouverture et l'heure de fermeture
+                if ($currentHour >= $robus_hour_begin && $currentHour <= $robus_hour_end) {
+                    // L'application is Open
+                    if (!empty($user->forget_password)) {
 
-                }else {
-
+                        $credentials = $request->only(['phone', 'password']);
+        
+                        if ($sidUser = SidUser::where($credentials)->first()) {
+        
+                            $user = $sidUser;
+                            $user->fcm_token = $request->input('fcm_token'); // Utilisation de la fonction input() avec une valeur par défaut
+                            $user->last_login = Carbon::now(); // Mise à jour de la dernière connexion
+                            $user->last_logout = null; // Réinitialisation de la dernière déconnexion
+                            $user->save();
+        
+                            if (!$user_data = $this->registerRepository->whereStatus(true)->where('is_custumers', true)->wherePhone($credentials['phone'])->first()) {
+                                return response()->json([
+                                    'success' => false,
+                                    'message' => 'Mauvais identifiants ! Authentification échouée',
+                                    'data' => 'ne pas couper:' . $credentials['phone']
+                                ], 301);
+                            }
+        
+                            $tokenResult = $user_data->createToken('auth_token');
+                            $message = 'Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil';
+                            $recipient = $user->country->code == 'CI' ? '225' . substr($user->phone, -10) : $user->email;
+        
+                            if ($user->country->code == 'CI') {
+                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=$recipient&from=ROBUS&sms=$message");
+                            } else {
+                                Mail::to($recipient)->send(new UpdatePassword($message));
+                            }
+        
+                            return $this->loginSuccess($tokenResult, $user_data);
+                        } else {
+                            return response()->json([
+                                'success' => false,
+                                'message' => 'Numéro de téléphone ou mot de passe incorrect.',
+                                'data' => 'ne pas couper'
+                            ], 301);
+                        }
+                    } else {
+        
+        
+                        $credentials = request(['phone', 'password']);
+        
+                        if (Auth::attempt($credentials)) {
+        
+        
+                            $user = Auth::user();
+        
+                            $data = $request->all();
+        
+                            $user_data = $this->registerRepository->whereStatus(true)->wherePhone($data['phone'])->first();
+        
+                            if (request('fcm_token') != null) {
+                                $user->fcm_token = request('fcm_token');
+                            }
+        
+        
+                            if (!$user_data || !$user_data->is_custumers || !Hash::check($credentials['password'], $user_data->password)) {
+        
+                                return response()->json(
+                                    [
+                                        'success' => false,
+                                        'message' => 'Mauvais identifiants ! Authentification échouée',
+                                        'data' => 'ne pas couper:' . $request->phone
+                                    ],
+                                    301
+                                );
+                            } elseif ($user_data->is_custumers) {
+                                $tokenResult = $user_data->createToken('auth_token');
+                                dd('ici');
+                                if (Hash::check($data['password'], $user_data->password)) {
+                                    Auth::user()->last_login  = Carbon::now()->toDateTimeString();
+                                    Auth::user()->last_logout  = null;
+                                    Auth::user()->save();
+                                    return $this->loginSuccess($tokenResult, $user_data);
+                                } else {
+                                    return response()->json(
+                                        [
+                                            'success' => false,
+                                            'message' => 'Mauvais identifiants ! Authentification échouée',
+                                            'data' => 'phone do not exist:' . $request->phone
+                                        ],
+                                        301
+                                    );
+                                }
+                            } else {
+                                return response()->json(
+                                    [
+                                        'success' => false,
+                                        'message' => 'Mauvais identifiants ! Authentification Clients ',
+                                        'data' => 'phone do not exist:' . $request->phone
+                                    ],
+                                    301
+                                );
+                            }
+                        } else {
+                            // $message = "Numéro de téléphone ou mot de passe incorrect.";
+                            // return json_message_response($message, 200);
+                            return response()->json(
+                                [
+                                    'success' => false,
+                                    'message' => 'Numéro de téléphone ou mot de passe incorrect.',
+                                    'data' => 'ne pas couper'
+                                ],
+                                301
+                            );
+                        }
+                    }
+                } else {
+                    // L'application is close
+                    return response()->json([
+                        'success' => false,
+                        'message' => "L'application ROBUS etait ouvert  aujourd'hui  de " . $robus_hour_begin . " a " . $robus_hour_end .  " et est fermée pour cause de " . $robus_hour_description ,
+                    ], 301);
                 }
             } else {
                 // Si aucun jour d'ouverture n'est trouvé, cela signifie que l'application est fermée pour la journée actuelle
                 // Vous pouvez gérer cela en conséquence
             }
-
+            
             // dd($robus_days);
-            if (!empty($user->forget_password)) {
-
-                $credentials = $request->only(['phone', 'password']);
-
-                if ($sidUser = SidUser::where($credentials)->first()) {
-
-                    $user = $sidUser;
-                    $user->fcm_token = $request->input('fcm_token'); // Utilisation de la fonction input() avec une valeur par défaut
-                    $user->last_login = Carbon::now(); // Mise à jour de la dernière connexion
-                    $user->last_logout = null; // Réinitialisation de la dernière déconnexion
-                    $user->save();
-
-                    if (!$user_data = $this->registerRepository->whereStatus(true)->where('is_custumers', true)->wherePhone($credentials['phone'])->first()) {
-                        return response()->json([
-                            'success' => false,
-                            'message' => 'Mauvais identifiants ! Authentification échouée',
-                            'data' => 'ne pas couper:' . $credentials['phone']
-                        ], 301);
-                    }
-
-                    $tokenResult = $user_data->createToken('auth_token');
-                    $message = 'Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil';
-                    $recipient = $user->country->code == 'CI' ? '225' . substr($user->phone, -10) : $user->email;
-
-                    if ($user->country->code == 'CI') {
-                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=$recipient&from=ROBUS&sms=$message");
-                    } else {
-                        Mail::to($recipient)->send(new UpdatePassword($message));
-                    }
-
-                    return $this->loginSuccess($tokenResult, $user_data);
-                } else {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Numéro de téléphone ou mot de passe incorrect.',
-                        'data' => 'ne pas couper'
-                    ], 301);
-                }
-            } else {
-
-
-                $credentials = request(['phone', 'password']);
-
-                if (Auth::attempt($credentials)) {
-
-
-                    $user = Auth::user();
-
-                    $data = $request->all();
-
-                    $user_data = $this->registerRepository->whereStatus(true)->wherePhone($data['phone'])->first();
-
-                    if (request('fcm_token') != null) {
-                        $user->fcm_token = request('fcm_token');
-                    }
-
-
-                    if (!$user_data || !$user_data->is_custumers || !Hash::check($credentials['password'], $user_data->password)) {
-
-                        return response()->json(
-                            [
-                                'success' => false,
-                                'message' => 'Mauvais identifiants ! Authentification échouée',
-                                'data' => 'ne pas couper:' . $request->phone
-                            ],
-                            301
-                        );
-                    } elseif ($user_data->is_custumers) {
-                        $tokenResult = $user_data->createToken('auth_token');
-                        dd('ici');
-                        if (Hash::check($data['password'], $user_data->password)) {
-                            Auth::user()->last_login  = Carbon::now()->toDateTimeString();
-                            Auth::user()->last_logout  = null;
-                            Auth::user()->save();
-                            return $this->loginSuccess($tokenResult, $user_data);
-                        } else {
-                            return response()->json(
-                                [
-                                    'success' => false,
-                                    'message' => 'Mauvais identifiants ! Authentification échouée',
-                                    'data' => 'phone do not exist:' . $request->phone
-                                ],
-                                301
-                            );
-                        }
-                    } else {
-                        return response()->json(
-                            [
-                                'success' => false,
-                                'message' => 'Mauvais identifiants ! Authentification Clients ',
-                                'data' => 'phone do not exist:' . $request->phone
-                            ],
-                            301
-                        );
-                    }
-                } else {
-                    // $message = "Numéro de téléphone ou mot de passe incorrect.";
-                    // return json_message_response($message, 200);
-                    return response()->json(
-                        [
-                            'success' => false,
-                            'message' => 'Numéro de téléphone ou mot de passe incorrect.',
-                            'data' => 'ne pas couper'
-                        ],
-                        301
-                    );
-                }
-            }
+          
         } catch (\Throwable $th) {
 
             return response()->json(
