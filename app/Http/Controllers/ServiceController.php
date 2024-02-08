@@ -28,6 +28,14 @@ class ServiceController extends Controller
         return view('pages.services.browse');
     }
 
+    public function browse_close_app()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('close-robus')) {
+            abort(403);
+        }
+
+        return view('pages.services.browse_close_app');
+    }
     public function browse_operators()
     {
 

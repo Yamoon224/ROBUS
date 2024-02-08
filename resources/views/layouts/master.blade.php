@@ -59,7 +59,6 @@
     @livewireScripts
 
     <script>
-      
         Livewire.on('success', msg => {
             Swal.fire({
                 icon: 'success',
@@ -174,15 +173,23 @@
         Livewire.on('display-noney-modal', () => {
             $('#transactions').css('display', 'none');
         })
+
         Livewire.on('modal-hide', () => {
 
 
             $('#connected-master-modal').removeClass('show');
             $('#connected-master-modal').addClass('hide');
-            
+
             // desabled master
             $('#disabled-master-admin-modal').removeClass('show');
             $('#disabled-master-admin-modal').addClass('hide');
+
+            // desabled application
+            $('#disabled-appRobus-modal').removeClass('show');
+            $('#disabled-appRobus-modal').addClass('hide');
+
+            $('#update-appRobus-modal').removeClass('show');
+            $('#update-appRobus-modal').addClass('hide');
 
 
             $('#disabled-user_admin-modal').removeClass('show');
@@ -506,6 +513,11 @@
         Livewire.on('show-disabled-modal', () => {
             $('#disabled-master-admin-modal').removeClass('hide');
             $('#disabled-master-admin-modal').addClass('show');
+        });
+
+        Livewire.on('show-disabled-App-modal', () => {
+            $('#disabled-appRobus-modal').removeClass('hide');
+            $('#disabled-appRobus-modal').addClass('show');
         });
 
         Livewire.on('modal-hide-inters', () => {
@@ -2270,6 +2282,11 @@
         Livewire.on('update-virementHisto-modal', () => {
             $('#update-virementHisto-modal').removeClass('hide');
             $('#update-virementHisto-modal').addClass('show');
+        });
+
+        Livewire.on('update-AppRobus-modal', () => {
+            $('#update-appRobus-modal').removeClass('hide');
+            $('#update-appRobus-modal').addClass('show');
         });
 
         // Provider Wallet

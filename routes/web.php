@@ -255,6 +255,9 @@ Route::group(['prefix' => ''], function () {
             // Route::post('/update/{id}',  [ServiceController::class, 'update_operators'])->name('operators.update');
         });
 
+        Route::group(['prefix' => 'close_app'], function () {
+            Route::get('/browse',  [ServiceController::class, 'browse_close_app'])->name('close_app.browse');
+        });
 
         //Invoices
         Route::prefix('invoices')->group(function () {

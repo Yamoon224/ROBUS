@@ -90,6 +90,22 @@ class ConvertionService
     //     }
     // }
 
+
+    public function convertAdminCommissionReload($amount, $wallet)
+    {
+        $country_civ = Country::find(107);
+
+        $robus_currency = robus()->country->currencie->value;
+
+        if ($country_civ->currencie->value >  $wallet->country->currencie->value) {
+            return $amount / $wallet->country->currencie->value;
+        } elseif ($country_civ->currencie->value ==  $wallet->country->currencie->value) {
+            return $amount;
+        } else {
+            return $amount / $wallet->country->currencie->value;
+        }
+    }
+
     public function convertAdminCommissionPayment($amount)
     {
         $country_civ = Country::find(107);

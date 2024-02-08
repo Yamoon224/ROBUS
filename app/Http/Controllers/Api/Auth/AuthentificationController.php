@@ -4,27 +4,28 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use Carbon\Carbon;
-use App\Models\Sid\SidUser;
-use App\Mail\UpdatePassword;
-use Illuminate\Http\Request;
 use App\Events\CustumersEvent;
-use App\Models\Custumers\City;
-use App\Models\Wallets\Wallet;
-use App\Models\Custumers\Country;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Controller;
+use App\Mail\UpdatePassword;
+use App\Models\CloseApp;
+use App\Models\Custumers\City;
+use App\Models\Custumers\Country;
+use App\Models\Sid\SidUser;
+use App\Models\Wallets\Wallet;
+use App\Notifications\EmailVerificationNotification;
+use App\Notifications\UserNotification;
+use App\Repositories\RegisterRepository;
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use App\Notifications\UserNotification;
-use App\Repositories\RegisterRepository;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Admin\MailController;
-use App\Notifications\EmailVerificationNotification;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class AuthentificationController extends Controller
 {
@@ -596,12 +597,51 @@ class AuthentificationController extends Controller
 
         try {
 
+            $days_open_robus = CloseApp::whereStatus(true)->get();
+            $currentDayOfWeek = Carbon::now()->dayOfWeek;
+
+            // Définir une variable pour stocker les jours correspondant à la semaine actuelle
+            $robus_days = null;
+            $robus_hour_begin = null;
+            $robus_hour_end = null;
+
+            // Boucle à travers les jours d'ouverture récupérés
+            foreach ($days_open_robus as $robus_app) {
+                // Vérifier si le jour actuel correspond au jour de la semaine du jour d'ouverture
+                if ($currentDayOfWeek == $robus_app->id) {
+                    // Si oui, attribuer le jour d'ouverture à la variable $robus_days
+                    $robus_days = $robus_app;
+                    $robus_hour_begin = $robus_app->time_start;
+                    $robus_hour_end = $robus_app->time_end;
+                    // Pas besoin de continuer la boucle, puisque nous avons trouvé le jour correspondant
+                    break;
+                }
+            }
+            $date = Carbon::now();
+            if ($robus_days) {
+                // Traitez le jour d'ouverture trouvé ici
+                // Par exemple, vous pouvez vérifier les heures d'ouverture
+                // Convertir les heures d'ouverture et de fermeture en objets Carbon
+                $heure_days = $date->format('H:i:s');
+                
+                if($robus_hour_begin >=  $heure_days <=  $robus_hour_end)
+                {
+
+                }else {
+
+                }
+            } else {
+                // Si aucun jour d'ouverture n'est trouvé, cela signifie que l'application est fermée pour la journée actuelle
+                // Vous pouvez gérer cela en conséquence
+            }
+
+            // dd($robus_days);
             if (!empty($user->forget_password)) {
 
                 $credentials = $request->only(['phone', 'password']);
 
                 if ($sidUser = SidUser::where($credentials)->first()) {
-                  
+
                     $user = $sidUser;
                     $user->fcm_token = $request->input('fcm_token'); // Utilisation de la fonction input() avec une valeur par défaut
                     $user->last_login = Carbon::now(); // Mise à jour de la dernière connexion
@@ -634,7 +674,6 @@ class AuthentificationController extends Controller
                         'data' => 'ne pas couper'
                     ], 301);
                 }
-
             } else {
 
 
@@ -664,7 +703,7 @@ class AuthentificationController extends Controller
                             ],
                             301
                         );
-                    } elseif($user_data->is_custumers) {
+                    } elseif ($user_data->is_custumers) {
                         $tokenResult = $user_data->createToken('auth_token');
                         dd('ici');
                         if (Hash::check($data['password'], $user_data->password)) {
@@ -682,7 +721,7 @@ class AuthentificationController extends Controller
                                 301
                             );
                         }
-                    }else {
+                    } else {
                         return response()->json(
                             [
                                 'success' => false,

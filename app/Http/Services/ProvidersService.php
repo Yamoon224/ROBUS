@@ -4,12 +4,19 @@ namespace App\Http\Services;
 
 
 use App\Models\Custumers\Country;
+use App\Models\OperatorService;
 use App\Models\Providers\Provider;
 
 class ProvidersService
 {
 
 
+
+    public function OperatorServices()
+    {
+        return OperatorService::where('sid_user_id' , robus()->id)->get();
+    }
+    
     public function getProvidersForCountry()
     {
         $countryId = robus()->country->id;
@@ -198,7 +205,7 @@ class ProvidersService
                 "CIV" => ['AFL', 'AFC', 'USA', 'MAG' , 'URP'],
                 "USA" => ['AFL', 'AFC', 'URP', 'MAG' , 'CIV'],
                 "AFL" => ['AFL', 'AFC', 'URP', 'CIV', 'USA', 'MAG'],
-                "AFC" => ['CIV', 'AFC', 'URP', 'USA', 'MAG'],
+                "AFC" => ['CIV', 'AFC', 'URP', 'USA', 'MAG' ,'AFL'],
                 "URP" => ['CIV', 'AFC', 'AFL', 'USA', 'MAG'],
                 "MAG" => ['CIV', 'AFC', 'URP', 'AFL', 'USA', 'MAG'],
             ];
@@ -224,6 +231,56 @@ class ProvidersService
             ->where('country_services.country_id', $countryId)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+        
+    }
+
+    public static function getProvidersByTypeOrderCard($query, $countryId, $providerType)
+    {
+        return $query
+            ->join('country_services', function ($join) use ($countryId) {
+                $join->on('country_services.provider_id', '=', 'providers.id')
+                    ->where('country_services.country_id', '=', $countryId);
+            })
+            ->where('providers.status', true)
+            ->whereNotNull('providers.amount')
+            ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+    }
+    
+
+    public static function getProvidersByWithdrawal($query, $countryId, $providerType)
+    {
+
+
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', $providerType)
+            ->where('providers.name', 'ROBUS')
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+        
+    }
+
+    public static function getProvidersByReloadType($query, $countryId, $providerType)
+    {
+
+
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', $providerType)
+            ->where('providers.name', '!=', 'Wave')
+            ->where('providers.name', '!=', 'ORANGE')
+            ->where('providers.name', '!=', 'MTN')
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
             ->get();

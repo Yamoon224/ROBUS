@@ -7,7 +7,6 @@ use App\Events\AdminNotifEvent;
 use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Mail\CodeValidated;
-use App\Models\AdminsCom;
 use App\Models\Invoices\InvoiceTransaction;
 use App\Models\Payments\Transaction;
 use App\Models\Sid\SidUser;
@@ -40,7 +39,7 @@ class MasterService
                         'transaction_cost_id' => 26,
                         'phone' =>  null,
                         'num_wallet' =>  $account_unlock_uv,
-                        'created_by' => master()->id,
+                        'created_by' => robus()->id,
                         'provider_id' => $provider->id,
                         'code_validated' => null,
                         'amount_received'  => $commission_send,
@@ -64,22 +63,22 @@ class MasterService
 
                 // Update decrement in compte Client
                 $wallet_search->update([
-                        'reload_by' => master()->firstname . ' ' . master()->lastname,
-                        'sid_user_relod' => master()->id,
+                        'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+                        'sid_user_relod' => robus()->id,
                         'amount' => DB::raw('amount-' . $commission_send),
                 ]);
 
                 // Send in compte Client
                 $walletUser->wallet->update([
-                        'reload_by' => master()->firstname . ' ' . master()->lastname,
-                        'sid_user_relod' => master()->id,
+                        'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+                        'sid_user_relod' => robus()->id,
                         'amount' => DB::raw('amount+'  .  $amount_transaction),
                 ]);
 
 
                 $transaction = Transaction::create([
                         'wallet_transaction_id' => $walletTransaction->id,
-                        'sid_user_id' => master()->id,
+                        'sid_user_id' => robus()->id,
                         'transaction_id' => 'RB_' . $walletTransaction->provider->name . '_' . $transactionCode,
                         'operator_transaction_name' => $walletTransaction->provider->name,
                         'trans_comp_id' => 'RB_' . $transactionCompiCode,
@@ -93,10 +92,10 @@ class MasterService
                         'title' => "Transfers d'argent",
                         'wallet_transaction_id' => $walletTransaction->id,
                         'transactions_id' => $transaction->id,
-                        'company_id' => master()->company->id,
+                        'company_id' => robus()->company->id,
                         'description' => $walletTransaction->description,
                         'status' => $walletTransaction->status,
-                        'created_by' => master()->id,
+                        'created_by' => robus()->id,
                 ]);
 
                 return true;

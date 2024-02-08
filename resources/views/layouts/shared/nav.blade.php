@@ -360,6 +360,7 @@
                         Auth::guard('web')->user()->hasPermissionTo('fonctionnalites') ||
                         Auth::guard('web')->user()->hasPermissionTo('permissions') ||
                         Auth::guard('web')->user()->hasPermissionTo('active-pays') ||
+                        Auth::guard('web')->user()->hasPermissionTo('close-robus') ||
                         Auth::guard('web')->user()->hasPermissionTo('Faqs'))
 
                     <ul
@@ -373,6 +374,16 @@
                                 <div class="side-menu__title"> Equipes </div>
                             </a>
                         </li>
+
+                        @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                        <li>
+                            <a href="{{ route('close_app.browse') }}"
+                                class="side-menu {{ $route == 'close_app.browse'  ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="package" class="block mx-auto"></i></div>
+                                <div class="side-menu__title"> Applications </div>
+                            </a>
+                        </li>
+                    @endif
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('Faqs'))
                             <li>

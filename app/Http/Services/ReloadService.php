@@ -39,7 +39,7 @@ class ReloadService
                         'amount' => $relaod_uv_amout_robus,
                         'description'  => 'Rechargement de compte UV',
                         'reload_cost_id' => 1,
-                        'created_by' => master()->id,
+                        'created_by' => robus()->id,
                         'provider_id'  =>  $provider->id,
                         'account_wallet'  => $account_reload_uv,
                         'amount_received'  => $valeur_receive,
@@ -64,22 +64,22 @@ class ReloadService
                 $commission =  ($reload_unders->amount);
 
                 $walletUser->wallet->update([
-                        'reload_by' => master()->firstname . ' ' . master()->lastname,
-                        'sid_user_relod' => master()->id,
+                        'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+                        'sid_user_relod' => robus()->id,
                         'amount' => DB::raw('amount-'  .  $commission),
                 ]);
 
                 // Send in compte Client
                 $wallet_search->update([
-                        'reload_by' => master()->firstname . ' ' . master()->lastname,
-                        'sid_user_relod' => master()->id,
+                        'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+                        'sid_user_relod' => robus()->id,
                         'amount' => DB::raw('amount+'  . $valeur_receive),
                 ]);
 
 
                 $paymentRealod = PaymentReload::create([
                         'wallet_reload_id' => $reload_unders->id,
-                        'sid_user_id' => master()->id,
+                        'sid_user_id' => robus()->id,
                         'transaction_id' => 'RB_' . $reload_unders->provider->name . '_' . $transactionCode,
                         'operator_transaction_name' =>  $reload_unders->provider->name,
                         'trans_comp_id' => 'RB_' . $transactionCompiCode,
@@ -93,10 +93,10 @@ class ReloadService
                         'title' => "Rechargement de compte",
                         'wallet_reload_id' => $reload_unders->id,
                         'payment_reload_id' =>  $paymentRealod->id,
-                        'company_id' => master()->company->id,
+                        'company_id' => robus()->company->id,
                         'description' => $reload_unders->description,
                         'status'  =>    $reload_unders->status,
-                        'created_by'  =>   master()->id,
+                        'created_by'  =>   robus()->id,
                 ]);
 
                 return true;

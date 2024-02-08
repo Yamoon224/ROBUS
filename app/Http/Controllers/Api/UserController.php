@@ -19,6 +19,7 @@ use App\Http\Resources\VirementSingleCollection;
 use App\Http\Resources\WalletSingleCollection;
 use App\Http\Services\TransactionsAccountService;
 use App\Http\Services\ValidateDailyLimitService;
+use App\Http\Services\RobusTransactionService;
 use App\Mail\NewAdmin;
 use App\Mail\UvSend;
 use App\Models\Banks\BankCard;
@@ -56,14 +57,17 @@ class UserController extends Controller
     /** @var  TransactionRepository */
     protected $transactionAccount;
     protected $validatedamountDays;
+    protected $robusTransactionService;
 
     public function __construct(
         TransactionsAccountService $transactionAccount,
         ValidateDailyLimitService $validatedamountDays,
+        RobusTransactionService $robusTransactionService,
 
     ) {
         $this->transactionAccount = $transactionAccount;
         $this->validatedamountDays = $validatedamountDays;
+        $this->robusTransactionService = $robusTransactionService;
     }
 
     /**
@@ -138,11 +142,20 @@ class UserController extends Controller
         $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
 
-        return response()->json([
-            'success' => true,
-            'historicals' =>  $dashboard_data,
-            'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
-        ], 200);
+        if (robus()->is_master) {
+
+            return response()->json([
+                'success' => true,
+                'historicals' =>  $dashboard_data,
+                'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
+            ], 200);
+            
+        } else {
+            return response()->json([
+                'success' => true,
+                'message' => "Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
+            ], 200);
+        }
     }
 
     public function dashboard_masters()
@@ -167,11 +180,20 @@ class UserController extends Controller
         $dashboard_data['Déchargements'] = TransactionSingleCollection::collection($walletTransaction);
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
 
-        return response()->json([
-            'success' => true,
-            'historicals' =>  $dashboard_data,
-            'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
-        ], 200);
+        if (robus()->is_master) {
+
+            return response()->json([
+                'success' => true,
+                'historicals' =>  $dashboard_data,
+                'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
+            ], 200);
+        } else {
+
+            return response()->json([
+                'success' => false,
+                'message' => "Vous devez etre un MASTER pour avoir accees a son dashboard ",
+            ], 200);
+        }
     }
 
     /**
@@ -915,13 +937,14 @@ class UserController extends Controller
         $admins = $this->validatedamountDays->adminCiv();
 
         $validator = Validator::make(
+
             $request->all(),
             [
-                "wallet_id_add" => 'required',
+                "num_wallet" => 'required',
             ],
             [
 
-                'wallet_id_add.required' => 'Votre numero est obligatoire',
+                'num_wallet.required' => 'Votre numero est obligatoire',
 
             ]
         );
@@ -937,54 +960,64 @@ class UserController extends Controller
             );
         }
 
-        $check = Wallet::where('wallet_id', $request->wallet_id_add)->first();
 
 
         try {
 
 
-            if ($check) {
+            $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
 
+            if (!$wallet_search || $request->num_wallet == robus()->wallet->wallet_id) {
 
-                if ($check->sidUser->id == robus()->id || $check->sidUser->is_company || $check->sidUser->is_master || $check->sidUser->is_admin  || $check->sidUser->is_supervisor || $check->sidUser->is_distributer) {
-
-                    return  json_message_response(false, "Desolé Ce wallet n'es pas un sous distributeur vous !!!", 333);
-                } else {
-
-
-                    // Update Users
-                    $check->sidUser->update(
-                        [
-                            'master_id' => robus()->id,
-                            'is_accepted'  => false,
-                        ]
-                    );
-
-                    // Message admin
-                    Notification::send($admins, new AdminNotification('Demande de liaison sous distributeur'));
-
-                    if ($admins->count() > 0) {
-
-                        foreach ($admins  as $user) {
-
-                            $admin_single = SidUser::find($user->id);
-
-                            $notifs = $admin_single->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                        }
-                    }
-
-                    if (master()->email != null) {
-                        Mail::to(master()->email)->send(new NewAdmin("Vous avez fais une demande de liaison du sous distributeur "  . $check->sidUser->firstname  . ' ' .  $check->sidUser->firstname . env('APP_NAME')));
-                    }
-
-                    return  json_message_response(true, "Sous distributeur ajouté a votre reseau ", 333);
-                }
-            } else {
-
-                return  json_message_response(false, "Numero Inconnu chez ROBUS", 333);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ce numéro n\'est pas ROBUS ou est votre numéro',
+                ], 333);
             }
 
+            // verify id under distributor existe
+            if ($wallet_search->sidUser->master_id == robus()->id) {
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Désolé ce numero existe deja dans votre reseau !!!',
+                ], 333);
+            }
+
+            if ($wallet_search->sidUser->id == robus()->id || $wallet_search->sidUser->is_company || $wallet_search->sidUser->is_master || $wallet_search->sidUser->is_admin  || $wallet_search->sidUser->is_supervisor || $wallet_search->sidUser->is_distributer) {
+
+                return  json_message_response(false, "Desolé Ce wallet n'es pas pour un sous distributeur  !!!", 333);
+            } else {
+
+
+                // Update Users
+                $wallet_search->sidUser->update(
+                    [
+                        'master_id' => robus()->id,
+                        'is_accepted'  => false,
+                    ]
+                );
+
+                // Message admin
+                Notification::send($admins, new AdminNotification('Demande de liaison sous distributeur'));
+
+                if ($admins->count() > 0) {
+
+                    foreach ($admins  as $user) {
+
+                        $admin_single = SidUser::find($user->id);
+
+                        $notifs = $admin_single->unreadNotifications;
+                        event(new AdminNotifEvent($notifs));
+                    }
+                }
+
+                if (robus()->email != null) {
+                    Mail::to(robus()->email)->send(new NewAdmin("Vous avez fais une demande de liaison du sous distributeur "  . $wallet_search->sidUser->firstname  . ' ' .  $wallet_search->sidUser->firstname . env('APP_NAME')));
+                }
+
+                return  json_message_response(true, "Sous distributeur " . $wallet_search->sidUser->firstname . ' ' . $wallet_search->sidUser->lastname .  " ajouté a votre reseau ", 333);
+            }
         } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,

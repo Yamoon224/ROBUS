@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Offer;
-use Illuminate\Http\Request;
-use App\Models\Providers\Provider;
-use App\Models\Costs\OrderCardCost;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Services\ProvidersService;
 use App\Http\Resources\AllOfferCollection;
 use App\Http\Resources\ProviderCollection;
 use App\Http\Resources\ProviderSingleCollection;
+use App\Http\Services\ProvidersService;
+use App\Models\Costs\OrderCardCost;
+use App\Models\Offer;
+use App\Models\OperatorService;
+use App\Models\Providers\Provider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Get(
@@ -67,32 +68,61 @@ class ProviderController extends Controller
         $walletBank =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 4);
         $walletPhone =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 6);
         $walletReloadCard =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 5);
-        // $walletOrderCard =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 5);
         $walletInter =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 8);
-        $walletReload =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 1);
+        $walletReload =  $this->percentRobus->getProvidersByReloadType(new Provider, robus()->country->id, 1);
         $walletPhoneInter =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 9);
         $walletVirementBank =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 10);
+        $walletWithdrawal =  $this->percentRobus->getProvidersByWithdrawal(new Provider, robus()->country->id, 1);
         $walletReloadCardInter =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 11);
-        $walletOrderCard = OrderCardCost::where('provider_type_id',  5)
-            ->orderBy('name', 'asc')
-            ->get();
-
-
+        $walletOrderCard =  $this->percentRobus->getProvidersByTypeOrderCard(new Provider, robus()->country->id, 5);
+        
+        
         try {
-
+            
+            $operators = $this->percentRobus->OperatorServices();
+            
             if ($walletUser->country->code == 'CI') {
-
+                
                 if ($walletUser->is_under_distributer == true) {
+                    
 
-                    $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
-                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
-                    $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
-                    $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
-                    $dashboard_data['Rechargement & commande de carte'] =  ProviderSingleCollection::collection($walletReloadCard);
-                    $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);
-                    $dashboard_data['Transfert international'] = [
-                        "Transfert" => ProviderSingleCollection::collection($walletInter),
-                    ];
+                    $dashboard_data = [];
+                    
+                    foreach ($operators as $operator) {
+
+                        switch ($operator->operator->id) {
+                            case 1:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                                break;
+                            case 2:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletWithdrawal);
+                                break;
+                            case 3:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletPayment);
+                                break;
+                            case 4:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletBank);
+                                break;
+                            case 5:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletReloadCard);
+                                break;
+                            case 6:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletOrderCard);
+                                break;
+                            case 7:
+                                $dashboard_data[$operator->operator->name] = [
+                                    "Transfert" => ProviderSingleCollection::collection($walletInter),
+                                ];                                
+                                break;
+                            case 8:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletBank);
+                                break;
+                            default:
+                                // Ne rien faire ou ajouter une logique de gestion d'erreur
+                                break;
+                        }
+                    }
+                  
                 } else {
 
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
@@ -109,15 +139,28 @@ class ProviderController extends Controller
 
                 if ($walletUser->is_under_distributer == true) {
 
-                    $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
-                    // $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);
-                    $dashboard_data['Transfert international'] = [
-                        // "Factures" => ProviderSingleCollection::collection($walletPaymentInter),
-                        "Transfert" => ProviderSingleCollection::collection($walletInter),
-                        // "Crédit téléphonique" => ProviderSingleCollection::collection($walletPhoneInter),
-                        // "Versement bancaire" => ProviderSingleCollection::collection($walletVirementBank),
-                        // "Rechargement de carte" => ProviderSingleCollection::collection($walletReloadCardInter),
-                    ];
+                    $dashboard_data = [];
+                    
+                    foreach ($operators as $operator) {
+
+                        switch ($operator->operator->id) {
+                            case 1:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                                break;
+                            case 7:
+                                $dashboard_data[$operator->operator->name] = [
+                                    "Transfert" => ProviderSingleCollection::collection($walletInter),
+                                ];                                
+                                break;
+                            case 8:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletBank);
+                                break;
+                            default:
+                                // Ne rien faire ou ajouter une logique de gestion d'erreur
+                                break;
+                        }
+                    }
+
                 } else {
 
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
@@ -135,6 +178,7 @@ class ProviderController extends Controller
                 'success' => true,
                 'Wallets' =>  $dashboard_data,
             ], 200);
+            
         } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
@@ -142,169 +186,6 @@ class ProviderController extends Controller
             ], 333);
         }
     }
-
-    // public function index()
-    // {
-    //     $walletUser  =  Auth::guard('api')->user();
-
-    //     $walletTransaction = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  1)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')->get();
-
-
-    //     $walletPayment = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  2)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')->get();
-
-    //     $walletPaymentInter = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  7)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')->get();
-
-
-    //     $walletBank = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  4)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')
-    //         ->get();
-
-
-    //     $walletPhone = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  6)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')
-    //         ->get();
-
-    //     $walletReloadCard = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  5)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')
-    //         ->get();
-
-    //     $walletInter = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  8)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')
-    //         ->get();
-
-    //     $walletInter_under_distri = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  8)
-    //         ->where('providers.id', 51)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')
-    //         ->get();
-
-    //     $walletReload = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.name', '!=', 'Wave')
-    //         ->where('providers.provider_type_id',  1)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')->get();
-
-
-    //     $walletPhoneInter = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  9)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')
-    //         ->get();
-
-
-    //     $walletVirementBank = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  10)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')
-    //         ->get();
-
-
-    //     $walletReloadCardInter = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-    //         ->where('country_services.country_id', $walletUser->country->id)
-    //         ->where('providers.status', true)
-    //         ->where('providers.provider_type_id',  11)
-    //         ->select('providers.*')
-    //         ->orderBy('providers.name', 'asc')
-    //         ->get();
-
-    //     if ($walletUser->country->code == 'CI') {
-
-    //         if ($walletUser->is_under_distributer == true) {
-
-    //             $dashboard_data['Transfert national'] = ProviderCollection::collection($walletTransaction);
-    //             $dashboard_data['Factures'] = ProviderCollection::collection($walletPayment);
-    //             $dashboard_data['Versement bancaire'] = ProviderCollection::collection($walletBank);
-    //             $dashboard_data['Crédit téléphonique'] = ProviderCollection::collection($walletPhone);
-    //             $dashboard_data['Rechargement & commande de carte'] = ProviderCollection::collection($walletReloadCard);
-    //             $dashboard_data['Achat d\'UV'] = ProviderCollection::collection($walletReload);
-    //         } else {
-
-    //             $dashboard_data['Transfert national'] = ProviderCollection::collection($walletTransaction);
-    //             $dashboard_data['Factures'] = ProviderCollection::collection($walletPayment);
-    //             $dashboard_data['Versement bancaire'] = ProviderCollection::collection($walletBank);
-    //             $dashboard_data['Crédit téléphonique'] = ProviderCollection::collection($walletPhone);
-    //             $dashboard_data['Rechargement & commande de carte'] = ProviderCollection::collection($walletReloadCard);
-    //             $dashboard_data['Achat d\'UV'] = ProviderCollection::collection($walletReload);
-    //             $dashboard_data['Transfert international'] = [
-    //                 // "facture" => ProviderCollection::collection($walletPaymentInter),
-    //                 "Transfert" => ProviderCollection::collection($walletInter),
-    //                 // "phone_credit" => ProviderCollection::collection($walletPhoneInter),
-    //                 // "virement_bank" => ProviderCollection::collection($walletVirementBank),
-    //                 // "reload_card" => ProviderCollection::collection($walletReloadCardInter),
-    //             ];
-    //         }
-    //     } else {
-
-    //         if ($walletUser->is_under_distributer == true) {
-
-    //             $dashboard_data['Transfert national'] = ProviderCollection::collection($walletTransaction);
-    //             $dashboard_data['Achat d\'UV'] = ProviderCollection::collection($walletReload);
-    //             // $dashboard_data['Transfert international'] = [
-    //             //     "Factures" => ProviderCollection::collection($walletPaymentInter),
-    //             //     // "Transfert" => ProviderCollection::collection($walletInter_under_distri),
-    //             //     "Crédit téléphonique" => ProviderCollection::collection($walletPhoneInter),
-    //             //     "Versement bancaire" => ProviderCollection::collection($walletVirementBank),
-    //             //     "Rechargement de carte" => ProviderCollection::collection($walletReloadCardInter),
-    //             // ];
-    //         } else {
-
-    //             $dashboard_data['Transfert national'] = ProviderCollection::collection($walletTransaction);
-    //             $dashboard_data['Transfert international'] = [
-    //                 "Factures" => ProviderCollection::collection($walletPaymentInter),
-    //                 "Transfert" => ProviderCollection::collection($walletInter),
-    //                 "Crédit téléphonique" => ProviderCollection::collection($walletPhoneInter),
-    //                 "Versement bancaire" => ProviderCollection::collection($walletVirementBank),
-    //                 "Rechargement de carte" => ProviderCollection::collection($walletReloadCardInter),
-    //             ];
-    //             // $dashboard_data['Achat d\'UV'] = ProviderCollection::collection($walletReload);
-    //         }
-    //     }
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'Wallets' =>  $dashboard_data,
-    //     ], 200);
-    // }
 
 
     public function offers()

@@ -568,6 +568,13 @@ class TransactionController extends Controller
 
                 $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
 
+                if (!$wallet_search || $request->num_wallet == $wallet_user->wallet->wallet_id) {
+
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Ce numéro n\'est pas ROBUS ou est votre numéro',
+                    ], 333);
+                }
 
                 $account_active = $wallet_search->sidUser->master_id;
 
@@ -595,28 +602,24 @@ class TransactionController extends Controller
 
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-
-    
-
                             if ($this->validatedamountDays->validateAmount($request->amount)) {
 
 
-                                $valeur_receive = $this->SearchConvertionService->convertAdminCommission($request->amount, $wallet_search);
+                                $valeur_receive = $this->SearchConvertionService->convertAdminCommissionReload($request->amount, $wallet_search);
 
                                 // $amount_solde = $check->wallet->amount +  $commission;
-                                $walletAmountSend = Wallet::where('wallet_id',  $request->account_reload_uv)->first();
+                                $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
 
                                 $amount_solde_drawal = (float)$walletAmountSend->amount +  (float)$valeur_receive;
 
-                                $amount_drawal =      $amount_solde_drawal;
+                                $amount_drawal =    $amount_solde_drawal;
 
-                                $amount_solde = (float)sabdy()->wallet->amount - (float)$request->amount;
+                                $amount_solde = (float)robus()->wallet->amount - (float)$request->amount;
 
-                                $walletReloads =  $this->robusReloadMasterTransaction->createWAlletReloadRobus(robus(), $request->amount, $provider, $request->account_reload_uv , $valeur_receive , $amount_solde, $amount_drawal);
-
+                                $walletReloads =  $this->robusReloadMasterTransaction->createWAlletReloadRobus(robus(), $request->amount, $provider, $request->account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal);
 
                                 if ($walletReloads != null) {
-                                    if ($this->robusReloadMasterTransaction->updateAmountRobusReceived($walletReloads , robus(), $wallet_search, $request->amount)) {
+                                    if ($this->robusReloadMasterTransaction->updateAmountRobusReceived($walletReloads, robus(), $wallet_search, $request->amount)) {
                                         return  $this->robusReloadMasterTransaction->sendNotification($wallet_search, robus(), $walletReloads, $admin_civ);
                                     } else {
 
@@ -635,7 +638,7 @@ class TransactionController extends Controller
                         }
                     } else {
 
-                        return json_message_response(false, "Le compte doit etre un Sous distributeur", 333);
+                        return json_message_response(false, "Le compte doit etre pour un Sous distributeur", 333);
                     }
                 } else {
                     return json_message_response(false, "Le compte doit etre un Sous distributeur", 333);
@@ -657,7 +660,6 @@ class TransactionController extends Controller
         $amount_days = $this->validatedamountDays->getCeilingProperty();
         $admin_civ = $this->validatedamountDays->adminCiv();
         $valeur_ceiling  =  $wallet_user->silver_ceiling;
-        $valeur_max_send  =  robus()->country->amount_max_send;
         $provider = Provider::whereId(9)->first();
 
         try {
@@ -691,6 +693,13 @@ class TransactionController extends Controller
 
                 $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
 
+                if (!$wallet_search || $request->num_wallet == $wallet_user->wallet->wallet_id) {
+
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Ce numéro n\'est pas ROBUS ou est votre numéro',
+                    ], 333);
+                }
 
                 $account_active = $wallet_search->sidUser->master_id;
 
