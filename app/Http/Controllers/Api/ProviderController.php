@@ -7,11 +7,13 @@ use App\Http\Resources\AllOfferCollection;
 use App\Http\Resources\ProviderCollection;
 use App\Http\Resources\ProviderSingleCollection;
 use App\Http\Services\ProvidersService;
+use App\Models\AppStatus;
 use App\Models\Costs\OrderCardCost;
 use App\Models\Offer;
 use App\Models\OperatorService;
 use App\Models\Providers\Provider;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -78,6 +80,25 @@ class ProviderController extends Controller
         
         
         try {
+
+            Artisan::call('app:close-status');
+
+            // Récupérer le statut de l'application
+            $appStatus = AppStatus::latest()->first();
+    
+    
+            // Vérifier si l'application est fermée
+            if ($appStatus && $appStatus->status_app === 'closed') {
+    
+                $robus_hour_begin = $appStatus->time_start;
+                $robus_hour_end = $appStatus->time_end;
+                $robus_hour_description = $appStatus->description;
+    
+                return response()->json([
+                    'success' => false,
+                    'message' => "L'application ROBUS etait ouverte aujourd'hui de  " . $robus_hour_begin . " a " . $robus_hour_end .  " et est fermée pour cause de " . $robus_hour_description,
+                ], 301);
+            }
             
             $operators = $this->percentRobus->OperatorServices();
             

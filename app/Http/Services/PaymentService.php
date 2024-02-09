@@ -14,10 +14,14 @@ class PaymentService
 
     /** @var  PaymentRepository */
     public $paiementRepository;
+    private $robusMasterTransaction;
 
-    public function __construct(PaymentRepository $paiementReposi)
-    {
+    public function __construct(
+        PaymentRepository $paiementReposi,
+        MasterService $robusMasterTransaction
+    ) {
         $this->paiementRepository = $paiementReposi;
+        $this->robusMasterTransaction = $robusMasterTransaction;
     }
 
 
@@ -102,23 +106,35 @@ class PaymentService
 
         $amount_solde = robus()->wallet->amount - $amount;
 
+        $master_id = $this->robusMasterTransaction->mastersId();
+
+
         if (robus()->is_under_distributer) {
 
             $valuer_deposit =  $percent_robus->comission_auther;
 
             $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
 
+            $valuer_master =  $master_id ? $percent_robus->percent_masters  : 0;
+
+            $amount_rec_under = (float)  $valuer_deposit - (float) $valuer_master;
+
             $walletPayment->update([
-                'commissions' => $valuer_deposit,
+                'commissions' => $amount_rec_under,
             ]);
 
-           
+            $walletPayment->increment('commission_masters', $valuer_master);
         } else {
 
-            $admin_valeur =  $percent_robus->amount_auther;
+            $valuer_master =  $master_id ? $percent_robus->percent_masters : 0;
 
+            $amount_rec_admin =  $percent_robus->amount_auther;
+
+            $admin_valeur =  (float) $amount_rec_admin - (float) $valuer_master;
+
+            $walletPayment->increment('commission_masters', $valuer_master);
         }
-        
+
         $walletPayment->update([
             'amount_solde' => $amount_solde,
         ]);
@@ -137,7 +153,7 @@ class PaymentService
                     'sid_user_id' =>   $admin_single->id,
                     'wallet_payment_id' => $walletPayment->id,
                     'description' => 'Commission administrateur',
-                    'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
+                    'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
                     'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ]);
 
@@ -167,20 +183,32 @@ class PaymentService
 
         $amount_solde = robus()->wallet->amount - $amount;
 
+        $master_id = $this->robusMasterTransaction->mastersId();
+
         if (robus()->is_under_distributer) {
 
             $valuer_deposit =  $percent_robus->comission_canal;
 
             $admin_valeur =  $percent_robus->amount_canal -  $percent_robus->comission_canal;
 
+            $valuer_master =  $master_id ? $percent_robus->percent_masters  : 0;
+
+            $amount_rec_under = (float)  $valuer_deposit - (float) $valuer_master;
+
             $walletPayment->update([
-                'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
+                'commissions' => DB::raw('commissions+'  .  $amount_rec_under),
             ]);
 
-           
+            $walletPayment->increment('commission_masters', $valuer_master);
         } else {
 
-            $admin_valeur =  $percent_robus->amount_canal;
+            $valuer_master =  $master_id ? $percent_robus->percent_masters : 0;
+
+            $amount_rec_admin =  $percent_robus->amount_canal;
+
+            $admin_valeur =  (float) $amount_rec_admin - (float) $valuer_master;
+
+            $walletPayment->increment('commission_masters', $valuer_master);
         }
 
         $walletPayment->update([
@@ -209,7 +237,7 @@ class PaymentService
                     'sid_user_id' =>   $admin_single->id,
                     'wallet_payment_id' => $walletPayment->id,
                     'description' => 'Commission administrateur',
-                    'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
+                    'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
                     'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ]);
 

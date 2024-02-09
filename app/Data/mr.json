@@ -1,0 +1,200 @@
+[
+  {
+    "city": "Nouakchott", 
+    "lat": "18.0858", 
+    "lng": "-15.9785", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Nouakchott Ouest", 
+    "capital": "primary", 
+    "population": "1077169", 
+    "population_proper": "1077169"
+  }, 
+  {
+    "city": "Néma", 
+    "lat": "16.6167", 
+    "lng": "-7.2500", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Hodh ech Chargui", 
+    "capital": "admin", 
+    "population": "200000", 
+    "population_proper": "21979"
+  }, 
+  {
+    "city": "Nouadhibou", 
+    "lat": "20.9333", 
+    "lng": "-17.0333", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Dakhlet Nouadhibou", 
+    "capital": "admin", 
+    "population": "118000", 
+    "population_proper": "118000"
+  }, 
+  {
+    "city": "Kiffa", 
+    "lat": "16.6300", 
+    "lng": "-11.4000", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Assaba", 
+    "capital": "admin", 
+    "population": "110714", 
+    "population_proper": "110714"
+  }, 
+  {
+    "city": "Arafat", 
+    "lat": "18.0464", 
+    "lng": "-15.9719", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Nouakchott Sud", 
+    "capital": "admin", 
+    "population": "102169", 
+    "population_proper": "102169"
+  }, 
+  {
+    "city": "Dar Naim", 
+    "lat": "18.0333", 
+    "lng": "-15.9667", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Nouakchott Nord", 
+    "capital": "admin", 
+    "population": "61089", 
+    "population_proper": "61089"
+  }, 
+  {
+    "city": "Zouerate", 
+    "lat": "22.7333", 
+    "lng": "-12.4667", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Tiris Zemmour", 
+    "capital": "admin", 
+    "population": "56345", 
+    "population_proper": "44649"
+  }, 
+  {
+    "city": "Rosso", 
+    "lat": "16.5128", 
+    "lng": "-15.8050", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Trarza", 
+    "capital": "admin", 
+    "population": "51026", 
+    "population_proper": "51026"
+  }, 
+  {
+    "city": "Kaédi", 
+    "lat": "16.1506", 
+    "lng": "-13.5056", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Gorgol", 
+    "capital": "admin", 
+    "population": "49152", 
+    "population_proper": "49152"
+  }, 
+  {
+    "city": "Ksar", 
+    "lat": "18.1022", 
+    "lng": "-15.9550", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Nouakchott Ouest", 
+    "capital": "", 
+    "population": "43531", 
+    "population_proper": "43531"
+  }, 
+  {
+    "city": "Sélibaby", 
+    "lat": "15.1592", 
+    "lng": "-12.1833", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Guidimaka", 
+    "capital": "admin", 
+    "population": "26420", 
+    "population_proper": "26420"
+  }, 
+  {
+    "city": "Atar", 
+    "lat": "20.5167", 
+    "lng": "-13.0500", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Adrar", 
+    "capital": "admin", 
+    "population": "24021", 
+    "population_proper": "24021"
+  }, 
+  {
+    "city": "Guérou", 
+    "lat": "16.8167", 
+    "lng": "-11.8333", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Assaba", 
+    "capital": "", 
+    "population": "22323", 
+    "population_proper": "22323"
+  }, 
+  {
+    "city": "Tidjikja", 
+    "lat": "18.5500", 
+    "lng": "-11.4333", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Tagant", 
+    "capital": "admin", 
+    "population": "19981", 
+    "population_proper": "15532"
+  }, 
+  {
+    "city": "Aleg", 
+    "lat": "17.0500", 
+    "lng": "-13.9167", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Brakna", 
+    "capital": "admin", 
+    "population": "15521", 
+    "population_proper": "15521"
+  }, 
+  {
+    "city": "Aioun", 
+    "lat": "16.6667", 
+    "lng": "-9.6167", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Hodh el Gharbi", 
+    "capital": "admin", 
+    "population": "11867", 
+    "population_proper": "11867"
+  }, 
+  {
+    "city": "Akjoujt", 
+    "lat": "19.7500", 
+    "lng": "-14.3833", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Inchiri", 
+    "capital": "admin", 
+    "population": "11235", 
+    "population_proper": "11235"
+  }, 
+  {
+    "city": "Tevragh Zeina", 
+    "lat": "18.0994", 
+    "lng": "-15.9761", 
+    "country": "Mauritania", 
+    "iso2": "MR", 
+    "admin_name": "Nouakchott Ouest", 
+    "capital": "admin", 
+    "population": "", 
+    "population_proper": ""
+  }
+]

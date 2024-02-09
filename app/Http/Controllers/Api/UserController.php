@@ -17,12 +17,14 @@ use App\Http\Resources\UnderCollection;
 use App\Http\Resources\UserSingleCollection;
 use App\Http\Resources\VirementSingleCollection;
 use App\Http\Resources\WalletSingleCollection;
+use App\Http\Services\RobusTransactionService;
 use App\Http\Services\TransactionsAccountService;
 use App\Http\Services\ValidateDailyLimitService;
-use App\Http\Services\RobusTransactionService;
 use App\Mail\NewAdmin;
 use App\Mail\UvSend;
+use App\Models\AppStatus;
 use App\Models\Banks\BankCard;
+use App\Models\CloseApp;
 use App\Models\Custumers\City;
 use App\Models\Custumers\Country;
 use App\Models\Kyc;
@@ -42,6 +44,7 @@ use App\Notifications\UserNotification;
 use App\Tools\Image;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -106,6 +109,26 @@ class UserController extends Controller
     public function dashboard()
     {
 
+        Artisan::call('app:close-status');
+
+        // Récupérer le statut de l'application
+        $appStatus = AppStatus::latest()->first();
+
+        
+        // Vérifier si l'application est fermée
+        if ($appStatus && $appStatus->status_app === 'closed') {
+
+            $robus_hour_begin = $appStatus->time_start;
+            $robus_hour_end = $appStatus->time_end;
+            $robus_hour_description = $appStatus->description;
+
+            return response()->json([
+                'success' => false,
+                'message' => "L'application ROBUS etait ouverte aujourd'hui de  " . $robus_hour_begin . " a " . $robus_hour_end .  " et est fermée pour cause de " . $robus_hour_description,
+            ], 301);
+        }
+
+
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
 
@@ -142,14 +165,13 @@ class UserController extends Controller
         $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
 
-        if (robus()->is_master) {
+        if (robus()->is_under_distributer) {
 
             return response()->json([
                 'success' => true,
                 'historicals' =>  $dashboard_data,
                 'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
             ], 200);
-            
         } else {
             return response()->json([
                 'success' => true,
@@ -160,6 +182,24 @@ class UserController extends Controller
 
     public function dashboard_masters()
     {
+
+        Artisan::call('app:close-status');
+
+        // Récupérer le statut de l'application
+        $appStatus = AppStatus::latest()->first();
+
+        // Vérifier si l'application est fermée
+        if ($appStatus && $appStatus->status_app === 'closed') {
+
+            $robus_hour_begin = $appStatus->time_start;
+            $robus_hour_end = $appStatus->time_end;
+            $robus_hour_description = $appStatus->description;
+
+            return response()->json([
+                'success' => false,
+                'message' => "L'application ROBUS etait ouverte aujourd'hui de  " . $robus_hour_begin . " a " . $robus_hour_end .  " et est fermée pour cause de " . $robus_hour_description,
+            ], 301);
+        }
 
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
 

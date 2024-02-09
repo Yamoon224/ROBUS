@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Services\DeletedService;
 use App\Models\Wallets\WalletDeposit;
 use App\Http\Services\ReloadCardService;
+use App\Http\Services\MasterService;
 use Illuminate\Support\Facades\Validator;
 use App\Repositories\ReloadCardRepository;
 use App\Http\Services\NotificationSendService;
@@ -26,13 +27,17 @@ class ReloadCardController extends Controller
     protected $validatedamountDays;
     protected $notificationOrderCard;
     protected $reloadCardService;
+    private $robusMasterTransaction;
+
     public function __construct(
         ReloadCardRepository $reload_cardReposi,
         DeletedService $deletedService,
         PercentRobusAuthService $percentRobus,
         ValidateDailyLimitService $validatedamountDays,
         NotificationSendService $notificationOrderCard,
-        ReloadCardService $reloadCardService
+        ReloadCardService $reloadCardService,
+        MasterService $robusMasterTransaction
+
     ) {
         $this->reloadCardRepository = $reload_cardReposi;
         $this->deletedService = $deletedService;
@@ -40,6 +45,7 @@ class ReloadCardController extends Controller
         $this->validatedamountDays = $validatedamountDays;
         $this->notificationOrderCard = $notificationOrderCard;
         $this->reloadCardService = $reloadCardService;
+        $this->robusMasterTransaction = $robusMasterTransaction;
     }
 
     /**
@@ -212,6 +218,9 @@ class ReloadCardController extends Controller
                                 341
                             );
                         } else {
+
+                            $master_id = $this->robusMasterTransaction->mastersId();
+
                             foreach ($all_valeurs as $amount_user) {
 
                                 if ($request->amount >= $amount_user->amount_begin && $request->amount <= $amount_user->amount_end) {
@@ -227,20 +236,22 @@ class ReloadCardController extends Controller
 
                                             if (robus()->is_under_distributer) {
                                                 $amount_verify = $request->amount;
-                                                $valuer_deposit_com = $amount_user->comission_distributer * $request->amount;
-                                                $valuer_admin_com = $percent_valeur - $valuer_deposit_com;
+                                                $valuer_under_com = $amount_user->comission_distributer * $request->amount;
+                                                $valuer_master_com =  $master_id ?  $amount_user->percent_masters * $valuer_under_com : 0;
+                                                $valuer_deposit_com = (float) $valuer_under_com - (float)$valuer_master_com;
+
+                                                $valuer_admin_com = (float) $percent_valeur -  (float) $valuer_under_com;
                                                 $amount_cost = $amount_user->comission_distributer * $request->amount;
                                                 $amountReceved = (float)$request->amount;
-
                                             } else {
-                                                $amount_verify = $request->amount ;
-                                                $valuer_admin_com =  $amount_user->percent * $request->amount;
+                                                $amount_verify = $request->amount;
+                                                $amount_admin_com =  $amount_user->percent * $request->amount;
+                                                $valuer_master_com =  $master_id ?  $amount_user->percent_masters * $amount_admin_com : 0;
+                                                $valuer_admin_com = (float)$amount_admin_com - (float) $valuer_master_com ;
                                                 $amount_cost = $amount_user->percent * $percent_valeur;
                                                 $valuer_deposit_com = 0;
                                                 $amountReceved = (float)$request->amount - (float)$percent_valeur;
                                             }
-
-
                                         } else {
 
                                             $percent_valeur = (float)$amount_user->amount + (float)$request->amount;
@@ -248,19 +259,20 @@ class ReloadCardController extends Controller
                                             if (robus()->is_under_distributer) {
 
                                                 $amount_verify =  (float)$request->amount;
-                                                $valuer_deposit_com = $amount_user->comission_distributer;
-                                                $valuer_admin_com = $request->amount - $valuer_deposit_com;
+                                                $valuer_under_com = $amount_user->comission_distributer ;
+                                                $valuer_master_com =  $master_id ?  $amount_user->percent_masters : 0;
+                                                $valuer_deposit_com = (float)  $amount_user->comission_distributer - (float) $valuer_master_com;
+                                                $valuer_admin_com = $amount_user->amount - $valuer_under_com;
                                                 $amount_cost = $amount_user->comission_distributer;
                                                 $amountReceved = (float)$request->amount;
-
                                             } else {
                                                 $amount_verify = (float)$request->amount;
                                                 $amount_cost = $amount_user->amount;
+                                                $valuer_master_com =  $master_id ?  $amount_user->percent_masters : 0;
                                                 $valuer_deposit_com = 0;
-                                                $valuer_admin_com = (float)$amount_user->amount;
+                                                $valuer_admin_com = (float)$amount_user->amount - (float) $valuer_master_com;
                                                 $amountReceved = (float)$request->amount - (float)$amount_user->amount;
                                             }
-
                                         }
 
 
@@ -275,7 +287,7 @@ class ReloadCardController extends Controller
 
                                                 if ($walletReloadCard != null) {
 
-                                                    if ($this->reloadCardService->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $amount_verify)) {
+                                                    if ($this->reloadCardService->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $amount_verify , $valuer_master_com)) {
                                                         $this->notificationOrderCard->sendNotificationReloadCard($walletReloadCard);
                                                         return $this->messageAfterValidated($walletReloadCard);
                                                     }

@@ -28,6 +28,11 @@ class MasterService
                 $this->transctionRepository = $transactionReposi;
         }
 
+        public function mastersId()
+        {
+          return robus()->master_id;
+        }
+
         public function createRobusUnlocked($walletUser, $relaod_unlock_amout_robus, $provider, $account_unlock_uv, $amount_solde, $amount_drawal, $commission_send)
         {
 
@@ -52,7 +57,7 @@ class MasterService
                 ]);
         }
 
-        public function updateAmountRobusReceived($commission_send, $walletUser, $wallet_search, $walletTransaction , $amount_transaction)
+        public function updateAmountRobusReceived($commission_send, $walletUser, $wallet_search, $walletTransaction, $amount_transaction)
         {
 
 
@@ -103,40 +108,39 @@ class MasterService
 
         public function sendNotification($wallet_search, $walletUser, $walletTransaction, $admins)
         {
-    
-            if ($wallet_search->sidUser->email != null) {
-    
-                Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
-            }
-    
-            if ($walletUser->email != null) {
-                $notify = new MailController();
-                $notify->newTransaction($walletTransaction);
-            }
-    
-            // Notify And User an Admins
-            $msg_title = 'Transactions';
-            $msg = 'Demande de transfert est en cours de validation ';
-            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-            $notifs = $walletUser->unreadNotifications;
-            $wallet_search->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-            $notifs = $wallet_search->sidUser->unreadNotifications;
-            event(new CreateWalletTransfersEvent($walletTransaction));
-            Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $walletTransaction->wallet->sidUser->firstname));
-            $admin = SidUser::where('status', true)
-                ->where('is_admin', true)
-                ->first();
-            $notifs = $admin->unreadNotifications;
-            event(new AdminNotifEvent($notifs));
 
-            return response()->json([
-                'success' => true,
-                'data' => [
-                    'id'      => $walletTransaction->id,
-                    'status' => $walletTransaction->status,
-                ],
-                'message' => ('Votre demande de déchargement a bien été prise en compte.')
-            ], 200);
+                if ($wallet_search->sidUser->email != null) {
+
+                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
+                }
+
+                if ($walletUser->email != null) {
+                        $notify = new MailController();
+                        $notify->newTransaction($walletTransaction);
+                }
+
+                // Notify And User an Admins
+                $msg_title = 'Transactions';
+                $msg = 'Demande de transfert est en cours de validation ';
+                $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
+                $notifs = $walletUser->unreadNotifications;
+                $wallet_search->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
+                $notifs = $wallet_search->sidUser->unreadNotifications;
+                event(new CreateWalletTransfersEvent($walletTransaction));
+                Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $walletTransaction->wallet->sidUser->firstname));
+                $admin = SidUser::where('status', true)
+                        ->where('is_admin', true)
+                        ->first();
+                $notifs = $admin->unreadNotifications;
+                event(new AdminNotifEvent($notifs));
+
+                return response()->json([
+                        'success' => true,
+                        'data' => [
+                                'id'      => $walletTransaction->id,
+                                'status' => $walletTransaction->status,
+                        ],
+                        'message' => ('Votre demande de déchargement a bien été prise en compte.')
+                ], 200);
         }
-    
 }

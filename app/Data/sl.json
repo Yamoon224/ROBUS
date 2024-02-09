@@ -1,0 +1,167 @@
+[
+  {
+    "city": "Freetown", 
+    "lat": "8.4844", 
+    "lng": "-13.2344", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Western Area", 
+    "capital": "primary", 
+    "population": "951000", 
+    "population_proper": "951000"
+  }, 
+  {
+    "city": "Bo", 
+    "lat": "7.9564", 
+    "lng": "-11.7400", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Southern", 
+    "capital": "admin", 
+    "population": "233684", 
+    "population_proper": "233684"
+  }, 
+  {
+    "city": "Kenema", 
+    "lat": "7.8758", 
+    "lng": "-11.1908", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Eastern", 
+    "capital": "admin", 
+    "population": "188463", 
+    "population_proper": "188463"
+  }, 
+  {
+    "city": "Koidu", 
+    "lat": "8.6439", 
+    "lng": "-10.9717", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Eastern", 
+    "capital": "", 
+    "population": "124662", 
+    "population_proper": "124662"
+  }, 
+  {
+    "city": "Makeni", 
+    "lat": "8.8817", 
+    "lng": "-12.0442", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Northern", 
+    "capital": "admin", 
+    "population": "87679", 
+    "population_proper": "12304"
+  }, 
+  {
+    "city": "Koidu-Bulma", 
+    "lat": "8.4405", 
+    "lng": "-10.8500", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Eastern", 
+    "capital": "", 
+    "population": "87539", 
+    "population_proper": "87539"
+  }, 
+  {
+    "city": "Port Loko", 
+    "lat": "8.7667", 
+    "lng": "-12.7875", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "North Western", 
+    "capital": "admin", 
+    "population": "44900", 
+    "population_proper": "44900"
+  }, 
+  {
+    "city": "Tongoma", 
+    "lat": "8.6500", 
+    "lng": "-11.0667", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Eastern", 
+    "capital": "", 
+    "population": "44376", 
+    "population_proper": "44376"
+  }, 
+  {
+    "city": "Magburaka", 
+    "lat": "8.7169", 
+    "lng": "-11.9433", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Northern", 
+    "capital": "", 
+    "population": "40313", 
+    "population_proper": "40313"
+  }, 
+  {
+    "city": "Kambia", 
+    "lat": "9.1167", 
+    "lng": "-12.9167", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Northern", 
+    "capital": "", 
+    "population": "40000", 
+    "population_proper": "40000"
+  }, 
+  {
+    "city": "Lunsar", 
+    "lat": "8.6833", 
+    "lng": "-12.5333", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Northern", 
+    "capital": "", 
+    "population": "36108", 
+    "population_proper": "36108"
+  }, 
+  {
+    "city": "Newton", 
+    "lat": "8.3333", 
+    "lng": "-13.0667", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Western Area", 
+    "capital": "", 
+    "population": "35300", 
+    "population_proper": "35300"
+  }, 
+  {
+    "city": "Motema", 
+    "lat": "8.6167", 
+    "lng": "-11.1667", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Eastern", 
+    "capital": "", 
+    "population": "30452", 
+    "population_proper": "30452"
+  }, 
+  {
+    "city": "Kailahun", 
+    "lat": "8.2772", 
+    "lng": "-10.5739", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Eastern", 
+    "capital": "", 
+    "population": "30411", 
+    "population_proper": "30411"
+  }, 
+  {
+    "city": "Benguema", 
+    "lat": "8.3333", 
+    "lng": "-13.0667", 
+    "country": "Sierra Leone", 
+    "iso2": "SL", 
+    "admin_name": "Western Area", 
+    "capital": "", 
+    "population": "30268", 
+    "population_proper": "30268"
+  }
+]

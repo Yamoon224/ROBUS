@@ -1,0 +1,233 @@
+[
+  {
+    "city": "Bata", 
+    "lat": "1.8650", 
+    "lng": "9.7700", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Litoral", 
+    "capital": "admin", 
+    "population": "250770", 
+    "population_proper": "250770"
+  }, 
+  {
+    "city": "Malabo", 
+    "lat": "3.7500", 
+    "lng": "8.7833", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Bioko Norte", 
+    "capital": "primary", 
+    "population": "187302", 
+    "population_proper": "31650"
+  }, 
+  {
+    "city": "Ebebiyín", 
+    "lat": "2.1500", 
+    "lng": "11.3167", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Kié-Ntem", 
+    "capital": "admin", 
+    "population": "36565", 
+    "population_proper": "36565"
+  }, 
+  {
+    "city": "Santiago de Baney", 
+    "lat": "3.7000", 
+    "lng": "8.9167", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Bioko Norte", 
+    "capital": "", 
+    "population": "29366", 
+    "population_proper": "29366"
+  }, 
+  {
+    "city": "Añisoc", 
+    "lat": "1.8500", 
+    "lng": "10.7667", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Wele-Nzas", 
+    "capital": "", 
+    "population": "16626", 
+    "population_proper": "16626"
+  }, 
+  {
+    "city": "Bengonbeyene", 
+    "lat": "1.6931", 
+    "lng": "11.0342", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Wele-Nzas", 
+    "capital": "", 
+    "population": "15644", 
+    "population_proper": "15644"
+  }, 
+  {
+    "city": "Mbini", 
+    "lat": "1.5833", 
+    "lng": "9.6167", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Litoral", 
+    "capital": "", 
+    "population": "14034", 
+    "population_proper": "14034"
+  }, 
+  {
+    "city": "Aconibe", 
+    "lat": "1.3000", 
+    "lng": "10.9333", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Wele-Nzas", 
+    "capital": "", 
+    "population": "13382", 
+    "population_proper": "13382"
+  }, 
+  {
+    "city": "Rebola", 
+    "lat": "3.7192", 
+    "lng": "8.8531", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Bioko Norte", 
+    "capital": "", 
+    "population": "10000", 
+    "population_proper": "10000"
+  }, 
+  {
+    "city": "Evinayong", 
+    "lat": "1.4500", 
+    "lng": "10.5667", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Centro Sur", 
+    "capital": "admin", 
+    "population": "9155", 
+    "population_proper": "9155"
+  }, 
+  {
+    "city": "Luba", 
+    "lat": "3.4500", 
+    "lng": "8.5500", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Bioko Sur", 
+    "capital": "admin", 
+    "population": "7739", 
+    "population_proper": "7739"
+  }, 
+  {
+    "city": "Mongomo", 
+    "lat": "1.6287", 
+    "lng": "11.3168", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Wele-Nzas", 
+    "capital": "admin", 
+    "population": "7251", 
+    "population_proper": "7251"
+  }, 
+  {
+    "city": "Mikomeseng", 
+    "lat": "2.1333", 
+    "lng": "10.6167", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Kié-Ntem", 
+    "capital": "", 
+    "population": "5813", 
+    "population_proper": "5813"
+  }, 
+  {
+    "city": "Palé", 
+    "lat": "-1.4069", 
+    "lng": "5.6322", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Annobón", 
+    "capital": "admin", 
+    "population": "5008", 
+    "population_proper": "5008"
+  }, 
+  {
+    "city": "Sevilla de Niefang", 
+    "lat": "1.8500", 
+    "lng": "10.2500", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Centro Sur", 
+    "capital": "", 
+    "population": "4858", 
+    "population_proper": "4858"
+  }, 
+  {
+    "city": "Nsok", 
+    "lat": "1.1333", 
+    "lng": "11.2667", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Wele-Nzas", 
+    "capital": "", 
+    "population": "4620", 
+    "population_proper": "4620"
+  }, 
+  {
+    "city": "Cogo", 
+    "lat": "1.0833", 
+    "lng": "9.7000", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Litoral", 
+    "capital": "", 
+    "population": "4607", 
+    "population_proper": "4607"
+  }, 
+  {
+    "city": "Nkimi", 
+    "lat": "1.9333", 
+    "lng": "10.3500", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Centro Sur", 
+    "capital": "", 
+    "population": "3313", 
+    "population_proper": "3313"
+  }, 
+  {
+    "city": "Machinda", 
+    "lat": "1.8833", 
+    "lng": "9.9667", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Litoral", 
+    "capital": "", 
+    "population": "2897", 
+    "population_proper": "2897"
+  }, 
+  {
+    "city": "Acurenam", 
+    "lat": "1.0333", 
+    "lng": "10.6833", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Centro Sur", 
+    "capital": "", 
+    "population": "2714", 
+    "population_proper": "2714"
+  }, 
+  {
+    "city": "Djibloho", 
+    "lat": "1.5889", 
+    "lng": "10.8225", 
+    "country": "Equatorial Guinea", 
+    "iso2": "GQ", 
+    "admin_name": "Djibloho", 
+    "capital": "admin", 
+    "population": "2000", 
+    "population_proper": "2000"
+  }
+]

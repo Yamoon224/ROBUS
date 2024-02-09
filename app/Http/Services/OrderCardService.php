@@ -8,20 +8,25 @@ use App\Models\Sid\SidUser;
 use App\Models\Custumers\Country;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\OrderCardRepository;
+use App\Http\Services\MasterService;
 
 class OrderCardService
 {
 
     /** @var  OrderCardRepository */
     public $orderCardRepository;
+    private $robusMasterTransaction;
 
-    public function __construct(OrderCardRepository $orderCardReposi)
-    {
+    public function __construct(
+        OrderCardRepository $orderCardReposi,
+        MasterService $robusMasterTransaction
+    ) {
         $this->orderCardRepository = $orderCardReposi;
+        $this->robusMasterTransaction = $robusMasterTransaction;
     }
 
 
-    public function createRobusWalletOrderCard($amount_valeur, $provider, $percent_robus, $address , $email)
+    public function createRobusWalletOrderCard($amount_valeur, $provider, $percent_robus, $address, $email)
     {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;
@@ -47,12 +52,12 @@ class OrderCardService
         ]);
     }
 
-    public function createRobusWalletOrderCardOther($amount_valeur, $provider, $percent_robus, $address , $email , $phone ,$number_card , $file_identity_doc ,$file_identity_form)
+    public function createRobusWalletOrderCardOther($amount_valeur, $provider, $percent_robus, $address, $email, $phone, $number_card, $file_identity_doc, $file_identity_form)
     {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;
 
-       
+
         $cardBank = $this->orderCardRepository->create([
             'amount_solde'  => $amount_solde ?? null,
             'company_id'   => robus()->company_id,
@@ -73,55 +78,63 @@ class OrderCardService
             'created_by'  => robus()->id,
         ]);
 
-          // Upload Images        
-          if (isset($file_identity_doc)) {
-            $destination_path = public_path('bank_cards/' .robus()->id . '/');
-            $front_file = 'recto_' .date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
+        // Upload Images        
+        if (isset($file_identity_doc)) {
+            $destination_path = public_path('bank_cards/' . robus()->id . '/');
+            $front_file = 'recto_' . date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
             $file_identity_doc->move($destination_path, $front_file);
             $cardBank->update([
-                'identity_doc' =>  env('APP_URL') . "/public/bank_cards/" .robus()->id . "/$front_file",
+                'identity_doc' =>  env('APP_URL') . "/public/bank_cards/" . robus()->id . "/$front_file",
             ]);
         }
 
         if (isset($file_identity_form)) {
-            $destination_path = public_path('bank_cards/' .robus()->id  . '/');
-            $back_file = 'verso_' .date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
+            $destination_path = public_path('bank_cards/' . robus()->id  . '/');
+            $back_file = 'verso_' . date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
             $file_identity_form->move($destination_path, $back_file);
             $cardBank->update([
-                'identity_form' =>  env('APP_URL') . "/public/bank_cards/" .robus()->id . "/$back_file",
+                'identity_form' =>  env('APP_URL') . "/public/bank_cards/" . robus()->id . "/$back_file",
             ]);
         }
 
         return $cardBank;
-
     }
 
     public function updateamountOrderCardReceveid($admin_civ, $percent_robus, $walletOrderCard, $amount_commission)
     {
 
+        $master_id = $this->robusMasterTransaction->mastersId();
+
+
         if (robus()->is_under_distributer) {
 
-            $valuer_deposit =  $percent_robus->percent_merchands;
+
+            $valuer_master =  $master_id ? $percent_robus->percent_masters  : 0;
+
+            $valuer_deposit = (float) $percent_robus->percent_merchands - (float) $valuer_master;
 
             // Convertion in devise Use send
             $convertion_commission = $this->convertAdminCommission($valuer_deposit);
+
+            $convertion_commission_master = $this->convertAdminCommission($valuer_master);
 
             $admin_valeur =  $amount_commission -  $percent_robus->percent_merchands;
 
             $walletOrderCard->update([
                 'commissions' => DB::raw('commissions+'  .  $convertion_commission),
+                'commission_masters' => DB::raw('commission_masters+'  .  $convertion_commission_master),
             ]);
 
-            
+
             if ($admin_civ->count() > 0) {
 
                 $nmbre_admin = $admin_civ->count();
-    
+
                 $valeur_single = $admin_valeur / $nmbre_admin;
-    
+
                 foreach ($admin_civ as $user) {
                     $admin_single = SidUser::find($user->id);
-    
+
                     AdminsCom::create([
                         'amount' =>   $admin_valeur,
                         'sid_user_id' =>   $admin_single->id,
@@ -132,15 +145,24 @@ class OrderCardService
                     ]);
                 }
             }
-
         } else {
 
-            $admin_valeur =  $amount_commission;
+            $valuer_master =  $master_id ? $percent_robus->percent_masters  : 0;
 
+            $admin_valeur = (float) $amount_commission - (float) $valuer_master;
+
+
+            $convertion_commission_master = $this->convertAdminCommission($valuer_master);
+
+
+            $walletOrderCard->update([
+                'commission_masters' => DB::raw('commission_masters+'  .  $convertion_commission_master),
+            ]);
         }
 
 
         $admin_valeur_convertion = $this->convertAdminCommission($admin_valeur);
+
 
         robus()->wallet->update([
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,
@@ -164,12 +186,6 @@ class OrderCardService
                     'bank_card_id' =>  $walletOrderCard->id,
                     'description' => 'Commission administrateur',
                 ]);
-
-                // $admin_single->wallet->update([
-                //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-                //     'sid_user_relod' => robus()->id,
-                //     'amount' => DB::raw('amount+' . $valeur_single),
-                // ]);
             }
         }
 

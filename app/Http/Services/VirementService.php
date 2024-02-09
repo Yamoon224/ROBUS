@@ -6,6 +6,7 @@ namespace App\Http\Services;
 use App\Models\AdminsCom;
 use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\DB;
+use App\Http\Services\MasterService;
 use App\Repositories\VirementRepository;
 
 class VirementService
@@ -13,14 +14,18 @@ class VirementService
 
     /** @var  VirementRepository */
     public $virementRepository;
+    private $robusMasterTransaction;
 
-    public function __construct(VirementRepository $virementReposi)
-    {
+    public function __construct(
+        VirementRepository $virementReposi,
+        MasterService $robusMasterTransaction
+    ) {
         $this->virementRepository = $virementReposi;
+        $this->robusMasterTransaction = $robusMasterTransaction;
     }
 
 
-    public function createRobusVirement($amount_valeur , $amount_send, $provider, $description, $percent_robus, $number_compte, $firstname, $lastname, $comission_distributer, $phone , $amountReceved)
+    public function createRobusVirement($amount_valeur, $amount_send, $provider, $description, $percent_robus, $number_compte, $firstname, $lastname, $comission_distributer, $phone, $amountReceved)
     {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;
@@ -44,23 +49,33 @@ class VirementService
         ]);
     }
 
-    public function updateamountVirementReceveid($admin_civ, $amount_user, $walletBank , $amount_valeur)
+    public function updateamountVirementReceveid($admin_civ, $amount_user, $walletBank, $amount_valeur)
     {
+
+        $master_id = $this->robusMasterTransaction->mastersId();
 
         if (robus()->is_under_distributer) {
 
-            $valuer_deposit = $amount_user->comission_distributer;
+            $valuer_master =  $master_id ? $amount_user->percent_masters  : 0;
+            $valuer_deposit =  $amount_user->comission_distributer;
+            $amount_deposit_under = (float) $valuer_deposit -  (float) $valuer_master;
 
             $walletBank->update([
-                'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
+                'commissions' => DB::raw('commissions+'  .  $amount_deposit_under),
+                'commission_masters' => DB::raw('commission_masters+'  .  $valuer_master),
             ]);
-
         } else {
 
-            $valuer_deposit = $amount_user->amount;
+            $valuer_master =  $master_id ? $amount_user->percent_masters  : 0;
+
+            $valuer_deposit = (float) $amount_user->amount - (float) $valuer_master;
+
+            $walletBank->update([
+                'commission_masters' => DB::raw('commission_masters+'  .  $valuer_master),
+            ]);
         }
 
-        
+
         $amount_commission = $amount_valeur;
 
         robus()->wallet->update([
@@ -90,12 +105,6 @@ class VirementService
                     'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ]);
 
-                // $reloadAmount = robus()->is_under_distributer ? 'amount-' : 'amount+';
-                // $admin_single->wallet->update([
-                //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-                //     'sid_user_relod' => robus()->id,
-                //     'amount' => DB::raw($reloadAmount . $valeur_single),
-                // ]);
             }
         }
 

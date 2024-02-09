@@ -56,7 +56,7 @@ class TransactionController extends Controller
         ConvertionService $SearchConvertionService,
         MasterService $robusMasterTransaction,
         ReloadService $robusReloadMasterTransaction
-    ) {
+   ) {
         $this->transctionRepository = $transactionReposi;
         $this->mobileWalletTransactionService = $mobileWalletTransactionService;
         $this->robusTransactionService = $robusTransactionService;
@@ -213,7 +213,7 @@ class TransactionController extends Controller
                 if (robus()->is_under_distributer) {
 
                     $percent_robus = $this->percentRobus->getRobusPercentageSDistributers();
-
+                                             
                     // Vérifier si l'utilisateur est un client et non un distributeur, un administrateur, ou un distributeur
                     $isCustomer = $wallet_search->sidUser->is_custumers;
                     $isNotDistributor = !$wallet_search->sidUser->is_under_distributer;

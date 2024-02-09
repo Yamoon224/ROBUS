@@ -9,16 +9,21 @@ use App\Models\Custumers\Country;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\ReloadRepository;
 use App\Repositories\ReloadCardRepository;
+use App\Http\Services\MasterService;
 
 class ReloadCardService
 {
 
     /** @var  ReloadCardRepository */
     public $reloadCardRepository;
+    private $robusMasterTransaction;
 
-    public function __construct(ReloadCardRepository $reloadCardReposi)
+    public function __construct(ReloadCardRepository $reloadCardReposi ,
+    MasterService $robusMasterTransaction
+    )
     {
         $this->reloadCardRepository = $reloadCardReposi;
+        $this->robusMasterTransaction = $robusMasterTransaction;
     }
 
 
@@ -44,10 +49,13 @@ class ReloadCardService
     }
 
 
-    public function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $amount_verify)
+    public function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $amount_verify , $amount_master)
     {
 
         $amount_solde = robus()->wallet->amount - $amount_verify;
+
+        $master_id = $this->robusMasterTransaction->mastersId();
+
 
         if (robus()->is_under_distributer) {
 
@@ -58,9 +66,18 @@ class ReloadCardService
             $walletOrderCard->update([
                 'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
             ]);
+
+            $walletOrderCard->update([
+                'commission_masters' => DB::raw('commission_masters+'  .  $amount_master),
+            ]);
+
         } else {
 
             $admin_valeur =  $amount_commission;
+
+            $walletOrderCard->update([
+                'commission_masters' => DB::raw('commission_masters+'  .  $amount_master),
+            ]);
         }
 
 
