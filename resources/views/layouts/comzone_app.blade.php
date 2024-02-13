@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="ROBUS">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>@yield('title') - ROBUS</title>
+
+    @include('layouts.shared_com.styles')
+    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+    <script type="module" src="{{ asset('build/assets/app.c57777cd.js') }}"></script>
+  
+    {{-- @vite('ressource/js/app.js') --}}
+
+
+    @stack('styles')
+
+    @livewireStyles
+
+</head>
+
+
+<body class="dark:bg-transparent">
+
+    <!-- BEGIN: Content-->
+    <div class="mobile-menu md:hidden">
+        @include('layouts.shared_com.navMobile')
+    </div>
+    <div class="flex">
+        @include('layouts.shared_com.nav')
+        <div class="content">
+            <div class="top-bar">
+                @include('layouts.shared_com.side')
+            </div>
+            @yield('content')
+        </div>
+    </div>
+    @include('layouts.shared.scripts')
+
+    @stack('scripts')
+    @livewireScripts
+
+    <script>
+        Livewire.on('success', msg => {
+            Swal.fire({
+                icon: 'success',
+                width: 600,
+                hight: 600,
+                timer: 2000,
+                color: '#1f2a3c',
+                title: msg,
+                showConfirmButton: false,
+                padding: '3em',
+                timerProgressBar: true,
+                background: '#eff3f7 url("https://robus.home.ci/robus/public/dist/images/transaction.gif")',
+                backdrop: `
+                 rgba(23,204,43,0.5)
+                        right top
+                        no-repeat
+                       `
+            });
+        });
+
+        Livewire.on('warning', msg => {
+            Swal.fire({
+                icon: 'warning',
+                color: '#1f2a3c',
+                width: 600,
+                timer: 2000,
+                title: msg,
+                padding: '3em',
+                showConfirmButton: false,
+                timerProgressBar: true,
+                background: '#eff3f7 url("https://robus.home.ci/robus/public/dist/images/payment-error.gif")',
+                backdrop: `
+                 rgba(220,39,39,0.4)
+                        right top
+                        no-repeat
+                       `
+            });
+        });
+
+        Livewire.on('error', msg => {
+            Swal.fire({
+                width: 600,
+                icon: 'error',
+                timer: 2000,
+                color: '#1f2a3c',
+                title: msg,
+                padding: '3em',
+                timerProgressBar: true,
+                showConfirmButton: false,
+                background: '#eff3f7 url("https://robus.home.ci/robus/public/dist/images/payment-error.gif")',
+                backdrop: `
+                 rgba(220,39,39,0.4)
+                        right top
+                        no-repeat
+                       `
+            });
+
+        });
+
+
+        Livewire.on('info', msg => {
+            Swal.fire({
+                icon: 'info',
+                width: 600,
+                timer: 2000,
+                title: msg,
+                color: '#1f2a3c',
+                padding: '3em',
+                showConfirmButton: false,
+                timerProgressBar: true,
+                background: '#eff3f7',
+                backdrop: `
+                 rgba(51,65,85,0.4)
+                        left top
+                        no-repeat
+                       `
+            });
+        });
+
+        Livewire.on('question', msg => {
+            Swal.fire({
+                icon: 'question',
+                width: 600,
+                timer: 2000,
+                title: msg,
+                color: '#1f2a3c',
+                padding: '3em',
+                showConfirmButton: false,
+                timerProgressBar: true,
+                background: '#eff3f7',
+                backdrop: `
+                 rgba(51,65,85,0.1)
+                        left top
+                        no-repeat
+                       `
+            });
+        });
+
+
+
+        Livewire.on('modal-hide', () => {
+
+
+            //Categories
+            $('#create-categorie-modal').removeClass('show');
+            $('#create-categorie-modal').addClass('hide');
+
+            $('#disabled-categorie-modal').removeClass('show');
+            $('#disabled-categorie-modal').addClass('hide');
+
+            $('#update-categorie-modal').removeClass('show');
+            $('#update-categorie-modal').addClass('hide');
+
+            $('#delete-categorie-modal').removeClass('show');
+            $('#delete-categorie-modal').addClass('hide');
+
+            //employers
+            $('#create-employers-modal').removeClass('show');
+            $('#create-employers-modal').addClass('hide');
+
+            $('#payment-employers-modal').removeClass('show');
+            $('#payment-employers-modal').addClass('hide');
+
+            $('#disabled-employers-modal').removeClass('show');
+            $('#disabled-employers-modal').addClass('hide');
+
+            $('#update-employers-modal').removeClass('show');
+            $('#update-employers-modal').addClass('hide');
+
+            $('#delete-employers-modal').removeClass('show');
+            $('#delete-employers-modal').addClass('hide');
+
+
+        });
+
+        // Categories
+
+        Livewire.on('modal-show', () => {
+            $('#create-categorie-modal').removeClass('hide');
+            $('#create-categorie-modal').addClass('show');
+        });
+
+        Livewire.on('show-disabled-modal', () => {
+            $('#disabled-categorie-modal').removeClass('hide');
+            $('#disabled-categorie-modal').addClass('show');
+        });
+
+        Livewire.on('update-categorie-modal', () => {
+            $('#update-categorie-modal').removeClass('hide');
+            $('#update-categorie-modal').addClass('show');
+        });
+
+        Livewire.on('delete-categorie-modal', () => {
+            $('#delete-categorie-modal').removeClass('hide');
+            $('#delete-categorie-modal').addClass('show');
+        });
+
+        // Employers
+
+        Livewire.on('modal-show', () => {
+            $('#create-employers-modal').removeClass('hide');
+            $('#create-employers-modal').addClass('show');
+        });
+
+        Livewire.on('modal-show-employers', () => {
+            $('#payment-employers-modal').removeClass('hide');
+            $('#payment-employers-modal').addClass('show');
+        });
+
+
+        Livewire.on('show-disabled-modal', () => {
+            $('#disabled-employers-modal').removeClass('hide');
+            $('#disabled-employers-modal').addClass('show');
+        });
+
+        Livewire.on('update-employers-modal', () => {
+            $('#update-employers-modal').removeClass('hide');
+            $('#update-employers-modal').addClass('show');
+        });
+
+        Livewire.on('delete-employers-modal', () => {
+            $('#delete-employers-modal').removeClass('hide');
+            $('#delete-employers-modal').addClass('show');
+        });
+    </script>
+
+</body>
+
+</html>

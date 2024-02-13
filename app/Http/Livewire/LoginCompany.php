@@ -77,5 +77,16 @@ class LoginCompany extends Component
         $this->emit('success', 'Déconnexion réussi !');
         return redirect()->route('admin.login_master');
     }
+
+    public function logout_comzones()
+    {
+        Auth::user()->last_logout  = Carbon::now()->toDateTimeString();
+        Auth::guard('comzone')->user()->save();
+        Auth::logout(Auth::guard('comzone')->user());
+        Auth::logout(Auth::guard('web')->user());
+        $this->emit('success', 'Déconnexion réussi !');
+        return redirect()->route('admin.login_comzone');
+    }
+    
     
 }

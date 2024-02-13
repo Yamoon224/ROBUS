@@ -47,6 +47,10 @@ class RouteServiceProvider extends ServiceProvider
             Route::middleware('master')
                 ->prefix('master')
                ->group(base_path('routes/masters.php'));
+
+            Route::middleware('comzone')
+               ->prefix('comzone')
+              ->group(base_path('routes/com.php'));
         });
     }
 

@@ -19,6 +19,7 @@ function master()
     return Auth::guard('master')->user();
 }
 
+
 function comzone()
 {
     return Auth::guard('comzone')->user();

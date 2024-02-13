@@ -60,7 +60,7 @@ return [
 
         'comzone' => [
             'driver' => 'session',
-            'provider' => 'masters',
+            'provider' => 'comzones',
         ],
     ],
 
@@ -94,6 +94,11 @@ return [
         ],
 
         'custumers' => [
+            'driver' => 'eloquent',
+            'model' =>  App\Models\Sid\SidUser::class,
+        ],
+
+        'comzones' => [
             'driver' => 'eloquent',
             'model' =>  App\Models\Sid\SidUser::class,
         ],
@@ -133,6 +138,13 @@ return [
 
         'masters' => [
             'provider' => 'masters',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'comzones' => [
+            'provider' => 'comzones',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

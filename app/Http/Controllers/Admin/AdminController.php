@@ -55,9 +55,11 @@ class AdminController extends Controller
         return view('home_masters');
     }
 
+    
+
     public function home_com_zones()
     {
-        return view('home_company');
+        return view('home_comzone');
     }
 
 

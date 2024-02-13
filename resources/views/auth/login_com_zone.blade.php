@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app_com_zone')
 
 @section('title', 'Connectez-vous')
 
