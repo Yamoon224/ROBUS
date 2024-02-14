@@ -19,7 +19,7 @@ use App\Http\Controllers\Admin\AdminController;
 |
 */
 
-Route::group(['middleware' => ['auth:comzone']], function () {
+Route::group(['middleware' => ['auth:web']], function () {
 
 
     Route::group(['prefix' => 'robus'], function () {
@@ -40,6 +40,16 @@ Route::group(['middleware' => ['auth:comzone']], function () {
         Route::get('/browse', [ComController::class, 'browse_custumers'])->name('custumers.comzones.browse');
         Route::get('/add', [ComController::class, 'add_custumers'])->name('custumers.comzones.add');
         Route::get('/show/{id}', [ComController::class, 'show__custumers'])->name('custumers.comzones.show');
+        Route::post('/store', [ComController::class, 'store_under_custumers'])->name('comzones.custumers.store');
+    });
+
+
+
+    Route::prefix('masters')->group(function () {
+        Route::get('/browse', [ComController::class, 'browse_com_masters'])->name('masters.comzones.browse');
+        Route::get('/add', [ComController::class, 'add_masters_com'])->name('masters.comzones.add');
+        Route::post('/store', [ComController::class, 'store_under_masters'])->name('comzones.masters.store');
+        Route::get('/show/{id}', [ComController::class, 'show__custumers'])->name('masters.comzones.show');
     });
 
 
@@ -67,6 +77,18 @@ Route::group(['middleware' => ['auth:comzone']], function () {
     //Invoices
     Route::prefix('invoices')->group(function () {
         Route::get('/transfers/{transfers_id}', [InvoiceController::class, 'transfers_uv_company'])->name('companies.transfers.invoice.print');
+    });
+
+    //Statisques
+    Route::prefix('statistics')->group(function () {
+        Route::get('/browse', [StatistiqueController::class, 'browse_states'])->name('comzones.browse.states');
+        Route::get('/reloads_state', [StatistiqueController::class, 'browse_reload'])->name('relaods.states');
+        Route::get('/transfers_state', [StatistiqueController::class, 'browse_transfer'])->name('transfers.states');
+        Route::get('/paiements_state', [StatistiqueController::class, 'browse_paiement'])->name('paiements.states');
+        Route::get('/virements_state', [StatistiqueController::class, 'browse_virement'])->name('virements.states');
+        Route::get('/inters_state', [StatistiqueController::class, 'browse_inter'])->name('inters.states');
+        Route::get('/cartes_state', [StatistiqueController::class, 'browse_carte'])->name('cartes.states');
+        Route::get('/phone_state', [StatistiqueController::class, 'browse_phone'])->name('phones.states');
     });
 
     //Account managment

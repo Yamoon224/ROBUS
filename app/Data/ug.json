@@ -1,1640 +1,1640 @@
 [
   {
-    "city": "Kampala", 
+    "name": "Kampala", 
     "lat": "0.3136", 
     "lng": "32.5811", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kampala", 
     "capital": "primary", 
     "population": "1680600", 
     "population_proper": "1680600"
   }, 
   {
-    "city": "Mbale", 
+    "name": "Mbale", 
     "lat": "1.0806", 
     "lng": "34.1750", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Mbale", 
-    "capital": "admin", 
+    
     "population": "586300", 
     "population_proper": "586300"
   }, 
   {
-    "city": "Nansana", 
+    "name": "Nansana", 
     "lat": "0.3639", 
     "lng": "32.5286", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "532800", 
     "population_proper": "532800"
   }, 
   {
-    "city": "Arua", 
+    "name": "Arua", 
     "lat": "3.0353", 
     "lng": "30.9108", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Arua", 
-    "capital": "admin", 
+    
     "population": "250000", 
     "population_proper": "61962"
   }, 
   {
-    "city": "Kasangati", 
+    "name": "Kasangati", 
     "lat": "0.4378", 
     "lng": "32.6025", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "207800", 
     "population_proper": "207800"
   }, 
   {
-    "city": "Mbarara", 
+    "name": "Mbarara", 
     "lat": "-0.6133", 
     "lng": "30.6583", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Mbarara", 
-    "capital": "admin", 
+    
     "population": "195013", 
     "population_proper": "195013"
   }, 
   {
-    "city": "Njeru", 
+    "name": "Njeru", 
     "lat": "0.4311", 
     "lng": "33.1478", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Buikwe", 
     "capital": "", 
     "population": "178800", 
     "population_proper": "178800"
   }, 
   {
-    "city": "Mukono", 
+    "name": "Mukono", 
     "lat": "0.3533", 
     "lng": "32.7553", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Mukono", 
-    "capital": "admin", 
+    
     "population": "161996", 
     "population_proper": "161996"
   }, 
   {
-    "city": "Gulu", 
+    "name": "Gulu", 
     "lat": "2.7817", 
     "lng": "32.2992", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Gulu", 
-    "capital": "admin", 
+    
     "population": "152276", 
     "population_proper": "152276"
   }, 
   {
-    "city": "Tororo", 
+    "name": "Tororo", 
     "lat": "0.6928", 
     "lng": "34.1811", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Tororo", 
-    "capital": "admin", 
+    
     "population": "150000", 
     "population_proper": "41906"
   }, 
   {
-    "city": "Lira", 
+    "name": "Lira", 
     "lat": "2.2472", 
     "lng": "32.9000", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Lira", 
-    "capital": "admin", 
+    
     "population": "135445", 
     "population_proper": "116500"
   }, 
   {
-    "city": "Hoima", 
+    "name": "Hoima", 
     "lat": "1.4319", 
     "lng": "31.3525", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Hoima", 
-    "capital": "admin", 
+    
     "population": "122700", 
     "population_proper": "122700"
   }, 
   {
-    "city": "Kasese", 
+    "name": "Kasese", 
     "lat": "0.1867", 
     "lng": "30.0881", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kasese", 
-    "capital": "admin", 
+    
     "population": "115400", 
     "population_proper": "115400"
   }, 
   {
-    "city": "Lugazi", 
+    "name": "Lugazi", 
     "lat": "0.3833", 
     "lng": "32.9242", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Buikwe", 
     "capital": "", 
     "population": "114163", 
     "population_proper": "114163"
   }, 
   {
-    "city": "Masindi", 
+    "name": "Masindi", 
     "lat": "1.6836", 
     "lng": "31.7222", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Masindi", 
-    "capital": "admin", 
+    
     "population": "110500", 
     "population_proper": "110500"
   }, 
   {
-    "city": "Mityana", 
+    "name": "Mityana", 
     "lat": "0.4006", 
     "lng": "32.0422", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Mityana", 
-    "capital": "admin", 
+    
     "population": "105200", 
     "population_proper": "105200"
   }, 
   {
-    "city": "Masaka", 
+    "name": "Masaka", 
     "lat": "-0.3411", 
     "lng": "31.7361", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Masaka", 
-    "capital": "admin", 
+    
     "population": "103829", 
     "population_proper": "103829"
   }, 
   {
-    "city": "Mubende", 
+    "name": "Mubende", 
     "lat": "0.5575", 
     "lng": "31.3950", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Mubende", 
-    "capital": "admin", 
+    
     "population": "103473", 
     "population_proper": "103473"
   }, 
   {
-    "city": "Wakiso", 
+    "name": "Wakiso", 
     "lat": "0.3981", 
     "lng": "32.4781", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
-    "capital": "admin", 
+    
     "population": "87900", 
     "population_proper": "87900"
   }, 
   {
-    "city": "Jinja", 
+    "name": "Jinja", 
     "lat": "0.4233", 
     "lng": "33.2039", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Jinja", 
-    "capital": "admin", 
+    
     "population": "72931", 
     "population_proper": "72931"
   }, 
   {
-    "city": "Entebbe", 
+    "name": "Entebbe", 
     "lat": "0.0500", 
     "lng": "32.4600", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "69958", 
     "population_proper": "69958"
   }, 
   {
-    "city": "Kireka", 
+    "name": "Kireka", 
     "lat": "0.3467", 
     "lng": "32.5000", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "69000", 
     "population_proper": "69000"
   }, 
   {
-    "city": "Kamuli", 
+    "name": "Kamuli", 
     "lat": "0.9450", 
     "lng": "33.1250", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kamuli", 
-    "capital": "admin", 
+    
     "population": "67800", 
     "population_proper": "67800"
   }, 
   {
-    "city": "Apac", 
+    "name": "Apac", 
     "lat": "1.9850", 
     "lng": "32.5350", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Apac", 
-    "capital": "admin", 
+    
     "population": "67700", 
     "population_proper": "67700"
   }, 
   {
-    "city": "Busia", 
+    "name": "Busia", 
     "lat": "0.4669", 
     "lng": "34.0900", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Busia", 
-    "capital": "admin", 
+    
     "population": "64900", 
     "population_proper": "64900"
   }, 
   {
-    "city": "Soroti", 
+    "name": "Soroti", 
     "lat": "1.7150", 
     "lng": "33.6111", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Soroti", 
-    "capital": "admin", 
+    
     "population": "60900", 
     "population_proper": "60900"
   }, 
   {
-    "city": "Fort Portal", 
+    "name": "Fort Portal", 
     "lat": "0.6544", 
     "lng": "30.2744", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kabarole", 
-    "capital": "admin", 
+    
     "population": "60800", 
     "population_proper": "60800"
   }, 
   {
-    "city": "Kitgum", 
+    "name": "Kitgum", 
     "lat": "3.2889", 
     "lng": "32.8778", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kitgum", 
-    "capital": "admin", 
+    
     "population": "56891", 
     "population_proper": "44604"
   }, 
   {
-    "city": "Iganga", 
+    "name": "Iganga", 
     "lat": "0.6150", 
     "lng": "33.4850", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Iganga", 
-    "capital": "admin", 
+    
     "population": "53870", 
     "population_proper": "53870"
   }, 
   {
-    "city": "Kabale", 
+    "name": "Kabale", 
     "lat": "-1.2500", 
     "lng": "29.9900", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kabale", 
-    "capital": "admin", 
+    
     "population": "53200", 
     "population_proper": "53200"
   }, 
   {
-    "city": "Kyaliwajjala", 
+    "name": "Kyaliwajjala", 
     "lat": "0.3800", 
     "lng": "32.6467", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "50000", 
     "population_proper": "50000"
   }, 
   {
-    "city": "Mpigi", 
+    "name": "Mpigi", 
     "lat": "0.2300", 
     "lng": "32.3300", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Mpigi", 
-    "capital": "admin", 
+    
     "population": "49500", 
     "population_proper": "49500"
   }, 
   {
-    "city": "Luwero", 
+    "name": "Luwero", 
     "lat": "0.8331", 
     "lng": "32.4994", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Luwero", 
-    "capital": "admin", 
+    
     "population": "49100", 
     "population_proper": "49100"
   }, 
   {
-    "city": "Yumbe", 
+    "name": "Yumbe", 
     "lat": "3.4650", 
     "lng": "31.2450", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Yumbe", 
-    "capital": "admin", 
+    
     "population": "47600", 
     "population_proper": "47600"
   }, 
   {
-    "city": "Bushenyi", 
+    "name": "Bushenyi", 
     "lat": "-0.5417", 
     "lng": "30.1878", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Buhweju", 
-    "capital": "admin", 
+    
     "population": "43700", 
     "population_proper": "43700"
   }, 
   {
-    "city": "Pallisa", 
+    "name": "Pallisa", 
     "lat": "1.1675", 
     "lng": "33.7100", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Pallisa", 
-    "capital": "admin", 
+    
     "population": "42300", 
     "population_proper": "42300"
   }, 
   {
-    "city": "Nebbi", 
+    "name": "Nebbi", 
     "lat": "2.4792", 
     "lng": "31.0900", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Nebbi", 
-    "capital": "admin", 
+    
     "population": "41400", 
     "population_proper": "41400"
   }, 
   {
-    "city": "Koboko", 
+    "name": "Koboko", 
     "lat": "3.4100", 
     "lng": "30.9600", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Koboko", 
-    "capital": "admin", 
+    
     "population": "37825", 
     "population_proper": "37825"
   }, 
   {
-    "city": "Rukungiri", 
+    "name": "Rukungiri", 
     "lat": "-0.7900", 
     "lng": "29.9250", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Rukungiri", 
-    "capital": "admin", 
+    
     "population": "37200", 
     "population_proper": "37200"
   }, 
   {
-    "city": "Adjumani", 
+    "name": "Adjumani", 
     "lat": "3.3772", 
     "lng": "31.7906", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Adjumani", 
-    "capital": "admin", 
+    
     "population": "37100", 
     "population_proper": "37100"
   }, 
   {
-    "city": "Bugiri", 
+    "name": "Bugiri", 
     "lat": "0.5694", 
     "lng": "33.7486", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bugiri", 
-    "capital": "admin", 
+    
     "population": "36000", 
     "population_proper": "36000"
   }, 
   {
-    "city": "Isingiro", 
+    "name": "Isingiro", 
     "lat": "-0.7950", 
     "lng": "30.8153", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Isingiro", 
-    "capital": "admin", 
+    
     "population": "34300", 
     "population_proper": "34300"
   }, 
   {
-    "city": "Paidha", 
+    "name": "Paidha", 
     "lat": "2.4167", 
     "lng": "30.9875", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Zombo", 
     "capital": "", 
     "population": "33426", 
     "population_proper": "33426"
   }, 
   {
-    "city": "Bugembe", 
+    "name": "Bugembe", 
     "lat": "0.4675", 
     "lng": "33.2414", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Jinja", 
     "capital": "", 
     "population": "33100", 
     "population_proper": "33100"
   }, 
   {
-    "city": "Kiryandongo", 
+    "name": "Kiryandongo", 
     "lat": "1.9525", 
     "lng": "32.1389", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kiryandongo", 
-    "capital": "admin", 
+    
     "population": "31610", 
     "population_proper": "31610"
   }, 
   {
-    "city": "Kalisizo", 
+    "name": "Kalisizo", 
     "lat": "-0.5350", 
     "lng": "31.6225", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Rakai", 
     "capital": "", 
     "population": "31439", 
     "population_proper": "31439"
   }, 
   {
-    "city": "Ibanda", 
+    "name": "Ibanda", 
     "lat": "-0.1347", 
     "lng": "30.4950", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Ibanda", 
-    "capital": "admin", 
+    
     "population": "31316", 
     "population_proper": "31316"
   }, 
   {
-    "city": "Wobulenzi", 
+    "name": "Wobulenzi", 
     "lat": "0.7200", 
     "lng": "32.5300", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Luwero", 
     "capital": "", 
     "population": "31000", 
     "population_proper": "31000"
   }, 
   {
-    "city": "Kayunga", 
+    "name": "Kayunga", 
     "lat": "0.7033", 
     "lng": "32.9036", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kayunga", 
-    "capital": "admin", 
+    
     "population": "30000", 
     "population_proper": "30000"
   }, 
   {
-    "city": "Kyegegwa", 
+    "name": "Kyegegwa", 
     "lat": "0.4803", 
     "lng": "31.0547", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kyegegwa", 
-    "capital": "admin", 
+    
     "population": "29400", 
     "population_proper": "29400"
   }, 
   {
-    "city": "Pakwach", 
+    "name": "Pakwach", 
     "lat": "2.4619", 
     "lng": "31.4983", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Pakwach", 
-    "capital": "admin", 
+    
     "population": "28700", 
     "population_proper": "28700"
   }, 
   {
-    "city": "Kakiri", 
+    "name": "Kakiri", 
     "lat": "0.4200", 
     "lng": "32.3900", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "28100", 
     "population_proper": "28100"
   }, 
   {
-    "city": "Kibuku", 
+    "name": "Kibuku", 
     "lat": "1.0375", 
     "lng": "33.8400", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kibuku", 
-    "capital": "admin", 
+    
     "population": "25000", 
     "population_proper": "25000"
   }, 
   {
-    "city": "Abim", 
+    "name": "Abim", 
     "lat": "2.7019", 
     "lng": "33.6600", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Abim", 
-    "capital": "admin", 
+    
     "population": "24400", 
     "population_proper": "24400"
   }, 
   {
-    "city": "Buwenge", 
+    "name": "Buwenge", 
     "lat": "0.6503", 
     "lng": "33.1703", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Jinja", 
     "capital": "", 
     "population": "24200", 
     "population_proper": "24200"
   }, 
   {
-    "city": "Butaleja", 
+    "name": "Butaleja", 
     "lat": "0.9250", 
     "lng": "33.9450", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Butaleja", 
-    "capital": "admin", 
+    
     "population": "24000", 
     "population_proper": "24000"
   }, 
   {
-    "city": "Kyenjojo", 
+    "name": "Kyenjojo", 
     "lat": "0.6100", 
     "lng": "30.6442", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kyenjojo", 
-    "capital": "admin", 
+    
     "population": "23467", 
     "population_proper": "23467"
   }, 
   {
-    "city": "Buyende", 
+    "name": "Buyende", 
     "lat": "1.1475", 
     "lng": "33.1611", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Buyende", 
-    "capital": "admin", 
+    
     "population": "23039", 
     "population_proper": "23039"
   }, 
   {
-    "city": "Kotido", 
+    "name": "Kotido", 
     "lat": "3.0061", 
     "lng": "34.1125", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kotido", 
-    "capital": "admin", 
+    
     "population": "22900", 
     "population_proper": "22900"
   }, 
   {
-    "city": "Kagadi", 
+    "name": "Kagadi", 
     "lat": "0.9411", 
     "lng": "30.8108", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kagadi", 
-    "capital": "admin", 
+    
     "population": "22813", 
     "population_proper": "22813"
   }, 
   {
-    "city": "Moyo", 
+    "name": "Moyo", 
     "lat": "3.6504", 
     "lng": "31.7200", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Moyo", 
-    "capital": "admin", 
+    
     "population": "22434", 
     "population_proper": "22434"
   }, 
   {
-    "city": "Kiboga", 
+    "name": "Kiboga", 
     "lat": "0.9200", 
     "lng": "31.7600", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kiboga", 
-    "capital": "admin", 
+    
     "population": "22400", 
     "population_proper": "22400"
   }, 
   {
-    "city": "Bundibugyo", 
+    "name": "Bundibugyo", 
     "lat": "0.7125", 
     "lng": "30.0600", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bundibugyo", 
-    "capital": "admin", 
+    
     "population": "22300", 
     "population_proper": "22300"
   }, 
   {
-    "city": "Malaba", 
+    "name": "Malaba", 
     "lat": "0.6444", 
     "lng": "34.2606", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Tororo", 
     "capital": "", 
     "population": "20800", 
     "population_proper": "20800"
   }, 
   {
-    "city": "Dokolo", 
+    "name": "Dokolo", 
     "lat": "1.9186", 
     "lng": "33.1700", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Dokolo", 
-    "capital": "admin", 
+    
     "population": "19810", 
     "population_proper": "19810"
   }, 
   {
-    "city": "Kamwenge", 
+    "name": "Kamwenge", 
     "lat": "0.1861", 
     "lng": "30.4539", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kamwenge", 
-    "capital": "admin", 
+    
     "population": "19240", 
     "population_proper": "19240"
   }, 
   {
-    "city": "Sironko", 
+    "name": "Sironko", 
     "lat": "1.2306", 
     "lng": "34.2481", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Sironko", 
-    "capital": "admin", 
+    
     "population": "18900", 
     "population_proper": "18900"
   }, 
   {
-    "city": "Buikwe", 
+    "name": "Buikwe", 
     "lat": "0.3442", 
     "lng": "33.0300", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Buikwe", 
-    "capital": "admin", 
+    
     "population": "18500", 
     "population_proper": "18500"
   }, 
   {
-    "city": "Ngora", 
+    "name": "Ngora", 
     "lat": "1.4575", 
     "lng": "33.7764", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Ngora", 
-    "capital": "admin", 
+    
     "population": "17700", 
     "population_proper": "17700"
   }, 
   {
-    "city": "Kisoro", 
+    "name": "Kisoro", 
     "lat": "-1.2850", 
     "lng": "29.6850", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kisoro", 
-    "capital": "admin", 
+    
     "population": "17561", 
     "population_proper": "17561"
   }, 
   {
-    "city": "Mayuge", 
+    "name": "Mayuge", 
     "lat": "0.4578", 
     "lng": "33.4800", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Mayuge", 
-    "capital": "admin", 
+    
     "population": "17151", 
     "population_proper": "17151"
   }, 
   {
-    "city": "Busolwe", 
+    "name": "Busolwe", 
     "lat": "0.8492", 
     "lng": "33.9269", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Butaleja", 
     "capital": "", 
     "population": "16800", 
     "population_proper": "16800"
   }, 
   {
-    "city": "Kaliro", 
+    "name": "Kaliro", 
     "lat": "0.8944", 
     "lng": "33.4994", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kaliro", 
-    "capital": "admin", 
+    
     "population": "16796", 
     "population_proper": "16796"
   }, 
   {
-    "city": "Ntungamo", 
+    "name": "Ntungamo", 
     "lat": "-0.8819", 
     "lng": "30.2653", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Ntungamo", 
-    "capital": "admin", 
+    
     "population": "16400", 
     "population_proper": "16400"
   }, 
   {
-    "city": "Moroto", 
+    "name": "Moroto", 
     "lat": "2.5300", 
     "lng": "34.6700", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Moroto", 
-    "capital": "admin", 
+    
     "population": "16300", 
     "population_proper": "16300"
   }, 
   {
-    "city": "Lyantonde", 
+    "name": "Lyantonde", 
     "lat": "-0.4069", 
     "lng": "31.1575", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Lyantonde", 
-    "capital": "admin", 
+    
     "population": "16300", 
     "population_proper": "16300"
   }, 
   {
-    "city": "Manafwa", 
+    "name": "Manafwa", 
     "lat": "0.9564", 
     "lng": "34.2844", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Manafwa", 
-    "capital": "admin", 
+    
     "population": "16000", 
     "population_proper": "16000"
   }, 
   {
-    "city": "Kimwanyi", 
+    "name": "Kimwanyi", 
     "lat": "0.4533", 
     "lng": "32.6347", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "15700", 
     "population_proper": "15700"
   }, 
   {
-    "city": "Lwengo", 
+    "name": "Lwengo", 
     "lat": "-0.3911", 
     "lng": "31.4606", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Lwengo", 
-    "capital": "admin", 
+    
     "population": "15527", 
     "population_proper": "15527"
   }, 
   {
-    "city": "Gombe", 
+    "name": "Gombe", 
     "lat": "0.1811", 
     "lng": "32.1142", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Butambala", 
-    "capital": "admin", 
+    
     "population": "15196", 
     "population_proper": "15196"
   }, 
   {
-    "city": "Kanungu", 
+    "name": "Kanungu", 
     "lat": "-0.8969", 
     "lng": "29.7756", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kanungu", 
-    "capital": "admin", 
+    
     "population": "15056", 
     "population_proper": "15056"
   }, 
   {
-    "city": "Zombo", 
+    "name": "Zombo", 
     "lat": "2.5131", 
     "lng": "30.9081", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Zombo", 
-    "capital": "admin", 
+    
     "population": "15000", 
     "population_proper": "15000"
   }, 
   {
-    "city": "Oyam", 
+    "name": "Oyam", 
     "lat": "2.2350", 
     "lng": "32.3850", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Oyam", 
-    "capital": "admin", 
+    
     "population": "14500", 
     "population_proper": "14500"
   }, 
   {
-    "city": "Busembatia", 
+    "name": "Busembatia", 
     "lat": "0.7750", 
     "lng": "33.6250", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bugweri", 
     "capital": "", 
     "population": "14431", 
     "population_proper": "14431"
   }, 
   {
-    "city": "Bukedea", 
+    "name": "Bukedea", 
     "lat": "1.3475", 
     "lng": "34.0444", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bukedea", 
-    "capital": "admin", 
+    
     "population": "13900", 
     "population_proper": "13900"
   }, 
   {
-    "city": "Kaabong", 
+    "name": "Kaabong", 
     "lat": "3.5200", 
     "lng": "34.1200", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kaabong", 
-    "capital": "admin", 
+    
     "population": "13400", 
     "population_proper": "13400"
   }, 
   {
-    "city": "Kumi", 
+    "name": "Kumi", 
     "lat": "1.4608", 
     "lng": "33.9361", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kumi", 
-    "capital": "admin", 
+    
     "population": "13000", 
     "population_proper": "13000"
   }, 
   {
-    "city": "Kibiito", 
+    "name": "Kibiito", 
     "lat": "0.4775", 
     "lng": "30.1925", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bunyangabu", 
-    "capital": "admin", 
+    
     "population": "12984", 
     "population_proper": "12984"
   }, 
   {
-    "city": "Kapchorwa", 
+    "name": "Kapchorwa", 
     "lat": "1.4000", 
     "lng": "34.4500", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kapchorwa", 
-    "capital": "admin", 
+    
     "population": "12900", 
     "population_proper": "12900"
   }, 
   {
-    "city": "Amolatar", 
+    "name": "Amolatar", 
     "lat": "1.6350", 
     "lng": "32.8250", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Amolatar", 
-    "capital": "admin", 
+    
     "population": "12900", 
     "population_proper": "12900"
   }, 
   {
-    "city": "Serere", 
+    "name": "Serere", 
     "lat": "1.5000", 
     "lng": "33.5500", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Serere", 
-    "capital": "admin", 
+    
     "population": "12700", 
     "population_proper": "12700"
   }, 
   {
-    "city": "Kanoni", 
+    "name": "Kanoni", 
     "lat": "0.1728", 
     "lng": "31.9058", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Gomba", 
-    "capital": "admin", 
+    
     "population": "12439", 
     "population_proper": "12439"
   }, 
   {
-    "city": "Nakasongola", 
+    "name": "Nakasongola", 
     "lat": "1.3150", 
     "lng": "32.4650", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Nakasongola", 
-    "capital": "admin", 
+    
     "population": "11700", 
     "population_proper": "11700"
   }, 
   {
-    "city": "Majanji", 
+    "name": "Majanji", 
     "lat": "0.2408", 
     "lng": "33.9914", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Busia", 
     "capital": "", 
     "population": "11274", 
     "population_proper": "11274"
   }, 
   {
-    "city": "Amuru", 
+    "name": "Amuru", 
     "lat": "2.8186", 
     "lng": "31.8642", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Amuru", 
-    "capital": "admin", 
+    
     "population": "10800", 
     "population_proper": "10800"
   }, 
   {
-    "city": "Lwakhakha", 
+    "name": "Lwakhakha", 
     "lat": "0.7967", 
     "lng": "34.3781", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Manafwa", 
     "capital": "", 
     "population": "10700", 
     "population_proper": "10700"
   }, 
   {
-    "city": "Bukomansimbi", 
+    "name": "Bukomansimbi", 
     "lat": "-0.1667", 
     "lng": "31.6186", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bukomansimbi", 
-    "capital": "admin", 
+    
     "population": "10000", 
     "population_proper": "10000"
   }, 
   {
-    "city": "Bulisa", 
+    "name": "Bulisa", 
     "lat": "2.1217", 
     "lng": "31.4156", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Buliisa", 
-    "capital": "admin", 
+    
     "population": "9500", 
     "population_proper": "9500"
   }, 
   {
-    "city": "Katakwi", 
+    "name": "Katakwi", 
     "lat": "1.9150", 
     "lng": "33.9550", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Katakwi", 
-    "capital": "admin", 
+    
     "population": "9100", 
     "population_proper": "9100"
   }, 
   {
-    "city": "Amuria", 
+    "name": "Amuria", 
     "lat": "2.0300", 
     "lng": "33.6431", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Amuria", 
-    "capital": "admin", 
+    
     "population": "8900", 
     "population_proper": "8900"
   }, 
   {
-    "city": "Bududa", 
+    "name": "Bududa", 
     "lat": "1.0100", 
     "lng": "34.3317", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bududa", 
-    "capital": "admin", 
+    
     "population": "8700", 
     "population_proper": "8700"
   }, 
   {
-    "city": "Rakai", 
+    "name": "Rakai", 
     "lat": "-0.7100", 
     "lng": "31.4050", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Rakai", 
-    "capital": "admin", 
+    
     "population": "8500", 
     "population_proper": "8500"
   }, 
   {
-    "city": "Rubirizi", 
+    "name": "Rubirizi", 
     "lat": "-0.2661", 
     "lng": "30.1069", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Rubirizi", 
-    "capital": "admin", 
+    
     "population": "8204", 
     "population_proper": "8204"
   }, 
   {
-    "city": "Alebtong", 
+    "name": "Alebtong", 
     "lat": "2.2500", 
     "lng": "33.3150", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Alebtong", 
-    "capital": "admin", 
+    
     "population": "7900", 
     "population_proper": "7900"
   }, 
   {
-    "city": "Sembabule", 
+    "name": "Sembabule", 
     "lat": "-0.0800", 
     "lng": "31.4600", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Sembabule", 
-    "capital": "admin", 
+    
     "population": "7800", 
     "population_proper": "7800"
   }, 
   {
-    "city": "Kajansi", 
+    "name": "Kajansi", 
     "lat": "0.2150", 
     "lng": "32.5500", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "7530", 
     "population_proper": "7530"
   }, 
   {
-    "city": "Kiruhura", 
+    "name": "Kiruhura", 
     "lat": "-0.2100", 
     "lng": "30.8300", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kiruhura", 
-    "capital": "admin", 
+    
     "population": "6900", 
     "population_proper": "6900"
   }, 
   {
-    "city": "Mitoma", 
+    "name": "Mitoma", 
     "lat": "-0.6150", 
     "lng": "30.0450", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Mitooma", 
-    "capital": "admin", 
+    
     "population": "6000", 
     "population_proper": "6000"
   }, 
   {
-    "city": "Kigorobya", 
+    "name": "Kigorobya", 
     "lat": "1.6181", 
     "lng": "31.3089", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Hoima", 
     "capital": "", 
     "population": "5420", 
     "population_proper": "5420"
   }, 
   {
-    "city": "Napak", 
+    "name": "Napak", 
     "lat": "2.1156", 
     "lng": "34.2267", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Napak", 
-    "capital": "admin", 
+    
     "population": "5278", 
     "population_proper": "5278"
   }, 
   {
-    "city": "Kalangala", 
+    "name": "Kalangala", 
     "lat": "-0.3214", 
     "lng": "32.2919", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kalangala", 
-    "capital": "admin", 
+    
     "population": "5200", 
     "population_proper": "5200"
   }, 
   {
-    "city": "Nwoya", 
+    "name": "Nwoya", 
     "lat": "2.6350", 
     "lng": "32.0000", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Nwoya", 
-    "capital": "admin", 
+    
     "population": "4295", 
     "population_proper": "4295"
   }, 
   {
-    "city": "Butalangu", 
+    "name": "Butalangu", 
     "lat": "0.8228", 
     "lng": "32.2428", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Nakaseke", 
-    "capital": "admin", 
+    
     "population": "3873", 
     "population_proper": "3873"
   }, 
   {
-    "city": "Nsangi", 
+    "name": "Nsangi", 
     "lat": "0.2842", 
     "lng": "32.4550", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "3522", 
     "population_proper": "3522"
   }, 
   {
-    "city": "Kaberamaido", 
+    "name": "Kaberamaido", 
     "lat": "1.7667", 
     "lng": "33.1522", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kaberamaido", 
-    "capital": "admin", 
+    
     "population": "3400", 
     "population_proper": "3400"
   }, 
   {
-    "city": "Maya", 
+    "name": "Maya", 
     "lat": "0.2664", 
     "lng": "32.4358", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Wakiso", 
     "capital": "", 
     "population": "3100", 
     "population_proper": "3100"
   }, 
   {
-    "city": "Amudat", 
+    "name": "Amudat", 
     "lat": "1.9522", 
     "lng": "34.9444", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Amudat", 
-    "capital": "admin", 
+    
     "population": "1900", 
     "population_proper": "1900"
   }, 
   {
-    "city": "Namutumba", 
+    "name": "Namutumba", 
     "lat": "0.8363", 
     "lng": "33.6858", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Namutumba", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Bukwo", 
+    "name": "Bukwo", 
     "lat": "1.2928", 
     "lng": "34.7531", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bukwo", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Maracha", 
+    "name": "Maracha", 
     "lat": "3.2883", 
     "lng": "30.9408", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Maracha", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Binyin", 
+    "name": "Binyin", 
     "lat": "1.4175", 
     "lng": "34.5344", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kween", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Bulambuli", 
+    "name": "Bulambuli", 
     "lat": "1.1600", 
     "lng": "34.3967", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bulambuli", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Namayingo", 
+    "name": "Namayingo", 
     "lat": "0.2398", 
     "lng": "33.8849", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Namayingo", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Butebo", 
+    "name": "Butebo", 
     "lat": "1.1944", 
     "lng": "33.9222", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Butebo", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Busesa", 
+    "name": "Busesa", 
     "lat": "0.6263", 
     "lng": "33.6003", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Bugweri", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Luuka Town", 
+    "name": "Luuka Town", 
     "lat": "0.7642", 
     "lng": "33.3319", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Luuka", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Nsiika", 
+    "name": "Nsiika", 
     "lat": "-0.2958", 
     "lng": "30.3433", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Buhweju", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Rubanda", 
+    "name": "Rubanda", 
     "lat": "-1.1864", 
     "lng": "29.8433", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Rubanda", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Ntara", 
+    "name": "Ntara", 
     "lat": "0.0047", 
     "lng": "30.3661", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kitagwenda", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kalungu", 
+    "name": "Kalungu", 
     "lat": "-0.1681", 
     "lng": "31.7600", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kalungu", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Bupoto", 
+    "name": "Bupoto", 
     "lat": "0.9061", 
     "lng": "34.3578", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Namisindwa", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kole", 
+    "name": "Kole", 
     "lat": "2.4286", 
     "lng": "32.8011", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kole", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Mparo", 
+    "name": "Mparo", 
     "lat": "-1.1844", 
     "lng": "30.0544", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Rukiga", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kasanda", 
+    "name": "Kasanda", 
     "lat": "0.5467", 
     "lng": "31.8197", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kasanda", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kasaali", 
+    "name": "Kasaali", 
     "lat": "-0.6167", 
     "lng": "31.5500", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kyotera", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kakumiro", 
+    "name": "Kakumiro", 
     "lat": "0.7811", 
     "lng": "31.3231", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kakumiro", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kinoni", 
+    "name": "Kinoni", 
     "lat": "-0.6583", 
     "lng": "30.4581", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Rwampara", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kibingo", 
+    "name": "Kibingo", 
     "lat": "-0.5700", 
     "lng": "30.4150", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Sheema", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kalaki", 
+    "name": "Kalaki", 
     "lat": "1.8160", 
     "lng": "33.3370", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kalaki", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Palenga", 
+    "name": "Palenga", 
     "lat": "2.5764", 
     "lng": "32.3544", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Omoro", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Lamwo", 
+    "name": "Lamwo", 
     "lat": "3.5300", 
     "lng": "32.8000", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Lamwo", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Agago", 
+    "name": "Agago", 
     "lat": "2.9847", 
     "lng": "33.3306", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Agago", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Nabilatuk", 
+    "name": "Nabilatuk", 
     "lat": "2.0525", 
     "lng": "34.5734", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Nabilatuk", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Pader", 
+    "name": "Pader", 
     "lat": "3.0500", 
     "lng": "33.2167", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Pader", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Otuke", 
+    "name": "Otuke", 
     "lat": "2.4442", 
     "lng": "33.5028", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Otuke", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Nakapiripirit", 
+    "name": "Nakapiripirit", 
     "lat": "1.9167", 
     "lng": "34.7833", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Nakapiripirit", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kyankwanzi", 
+    "name": "Kyankwanzi", 
     "lat": "1.2000", 
     "lng": "31.8000", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Kyankwanzi", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Ntoroko", 
+    "name": "Ntoroko", 
     "lat": "1.0500", 
     "lng": "30.5350", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Ntoroko", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Kitamilo", 
+    "name": "Kitamilo", 
     "lat": "0.2367", 
     "lng": "33.2700", 
-    "country": "Uganda", 
-    "iso2": "UG", 
+    "country_id":223, 
+    
     "admin_name": "Buvuma", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }

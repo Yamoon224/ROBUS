@@ -1,463 +1,463 @@
 [
   {
-    "city": "Dar es Salaam", 
+    "name": "Dar es Salaam", 
     "lat": "-6.8161", 
     "lng": "39.2803", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Dar es Salaam", 
-    "capital": "primary", 
+     
     "population": "7962000", 
     "population_proper": "4364541"
   }, 
   {
-    "city": "Mwanza", 
+    "name": "Mwanza", 
     "lat": "-2.5167", 
     "lng": "32.9000", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Mwanza", 
-    "capital": "admin", 
+     
     "population": "706453", 
     "population_proper": "385810"
   }, 
   {
-    "city": "Mbeya", 
+    "name": "Mbeya", 
     "lat": "-8.9000", 
     "lng": "33.4500", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Mbeya", 
-    "capital": "admin", 
+     
     "population": "467000", 
     "population_proper": "291649"
   }, 
   {
-    "city": "Arusha", 
+    "name": "Arusha", 
     "lat": "-3.3667", 
     "lng": "36.6833", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Arusha", 
-    "capital": "admin", 
+     
     "population": "416442", 
     "population_proper": "416442"
   }, 
   {
-    "city": "Tanga", 
+    "name": "Tanga", 
     "lat": "-5.0667", 
     "lng": "39.1000", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Tanga", 
-    "capital": "admin", 
+     
     "population": "243580", 
     "population_proper": "243580"
   }, 
   {
-    "city": "Kasulu", 
+    "name": "Kasulu", 
     "lat": "-4.5800", 
     "lng": "30.1000", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Kigoma", 
-    "capital": "", 
+    
     "population": "234452", 
     "population_proper": "234452"
   }, 
   {
-    "city": "Dodoma", 
+    "name": "Dodoma", 
     "lat": "-6.1731", 
     "lng": "35.7419", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Dodoma", 
-    "capital": "primary", 
+     
     "population": "213636", 
     "population_proper": "45807"
   }, 
   {
-    "city": "Morogoro", 
+    "name": "Morogoro", 
     "lat": "-6.8242", 
     "lng": "37.6633", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Morogoro", 
-    "capital": "admin", 
+     
     "population": "207000", 
     "population_proper": "207000"
   }, 
   {
-    "city": "Zanzibar", 
+    "name": "Zanzibar", 
     "lat": "-6.1650", 
     "lng": "39.1990", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Zanzibar Urban/West", 
-    "capital": "admin", 
+     
     "population": "205870", 
     "population_proper": "205870"
   }, 
   {
-    "city": "Tabora", 
+    "name": "Tabora", 
     "lat": "-5.0167", 
     "lng": "32.8000", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Tabora", 
-    "capital": "admin", 
+     
     "population": "160608", 
     "population_proper": "127880"
   }, 
   {
-    "city": "Bariadi", 
+    "name": "Bariadi", 
     "lat": "-2.7919", 
     "lng": "33.9894", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Simiyu", 
-    "capital": "admin", 
+     
     "population": "155620", 
     "population_proper": "155620"
   }, 
   {
-    "city": "Iringa", 
+    "name": "Iringa", 
     "lat": "-7.7700", 
     "lng": "35.6900", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Iringa", 
-    "capital": "admin", 
+     
     "population": "151345", 
     "population_proper": "151345"
   }, 
   {
-    "city": "Singida", 
+    "name": "Singida", 
     "lat": "-4.8167", 
     "lng": "34.7500", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Singida", 
-    "capital": "admin", 
+     
     "population": "150379", 
     "population_proper": "150379"
   }, 
   {
-    "city": "Sumbawanga", 
+    "name": "Sumbawanga", 
     "lat": "-7.9667", 
     "lng": "31.6167", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Rukwa", 
-    "capital": "admin", 
+     
     "population": "147483", 
     "population_proper": "147483"
   }, 
   {
-    "city": "Moshi", 
+    "name": "Moshi", 
     "lat": "-3.3349", 
     "lng": "37.3404", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Kilimanjaro", 
-    "capital": "admin", 
+     
     "population": "144739", 
     "population_proper": "144739"
   }, 
   {
-    "city": "Kigoma", 
+    "name": "Kigoma", 
     "lat": "-4.8833", 
     "lng": "29.6333", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Kigoma", 
-    "capital": "admin", 
+     
     "population": "135234", 
     "population_proper": "135234"
   }, 
   {
-    "city": "Bukoba", 
+    "name": "Bukoba", 
     "lat": "-1.3333", 
     "lng": "31.8167", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Kagera", 
-    "capital": "admin", 
+     
     "population": "128796", 
     "population_proper": "100504"
   }, 
   {
-    "city": "Kibaha", 
+    "name": "Kibaha", 
     "lat": "-6.7667", 
     "lng": "38.9167", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Coast", 
-    "capital": "admin", 
+     
     "population": "128488", 
     "population_proper": "23050"
   }, 
   {
-    "city": "Tukuyu", 
+    "name": "Tukuyu", 
     "lat": "-9.2500", 
     "lng": "33.6500", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Mbeya", 
-    "capital": "", 
+    
     "population": "127570", 
     "population_proper": "41676"
   }, 
   {
-    "city": "Shinyanga", 
+    "name": "Shinyanga", 
     "lat": "-3.6619", 
     "lng": "33.4231", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Shinyanga", 
-    "capital": "admin", 
+     
     "population": "107362", 
     "population_proper": "107362"
   }, 
   {
-    "city": "Musoma", 
+    "name": "Musoma", 
     "lat": "-1.5000", 
     "lng": "33.8000", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Mara", 
-    "capital": "admin", 
+     
     "population": "103497", 
     "population_proper": "103497"
   }, 
   {
-    "city": "Songea", 
+    "name": "Songea", 
     "lat": "-10.6833", 
     "lng": "35.6500", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Ruvuma", 
-    "capital": "admin", 
+     
     "population": "99961", 
     "population_proper": "99961"
   }, 
   {
-    "city": "Geita", 
+    "name": "Geita", 
     "lat": "-2.8714", 
     "lng": "32.2294", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Geita", 
-    "capital": "admin", 
+     
     "population": "99795", 
     "population_proper": "99795"
   }, 
   {
-    "city": "Mtwara", 
+    "name": "Mtwara", 
     "lat": "-10.2736", 
     "lng": "40.1828", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Mtwara", 
-    "capital": "admin", 
+     
     "population": "92602", 
     "population_proper": "92602"
   }, 
   {
-    "city": "Kilosa", 
+    "name": "Kilosa", 
     "lat": "-6.8300", 
     "lng": "36.9875", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Morogoro", 
-    "capital": "", 
+    
     "population": "91889", 
     "population_proper": "26060"
   }, 
   {
-    "city": "Mpanda", 
+    "name": "Mpanda", 
     "lat": "-6.3500", 
     "lng": "31.0667", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Katavi", 
-    "capital": "admin", 
+     
     "population": "81540", 
     "population_proper": "81540"
   }, 
   {
-    "city": "Handeni", 
+    "name": "Handeni", 
     "lat": "-5.4242", 
     "lng": "38.0194", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Tanga", 
-    "capital": "", 
+    
     "population": "79056", 
     "population_proper": "79056"
   }, 
   {
-    "city": "Chake Chake", 
+    "name": "Chake Chake", 
     "lat": "-5.2395", 
     "lng": "39.7700", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Pemba South", 
-    "capital": "admin", 
+     
     "population": "49959", 
     "population_proper": "49959"
   }, 
   {
-    "city": "Njombe", 
+    "name": "Njombe", 
     "lat": "-9.3333", 
     "lng": "34.7667", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Njombe", 
-    "capital": "admin", 
+     
     "population": "46724", 
     "population_proper": "40607"
   }, 
   {
-    "city": "Lindi", 
+    "name": "Lindi", 
     "lat": "-9.9969", 
     "lng": "39.7144", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Lindi", 
-    "capital": "admin", 
+     
     "population": "41549", 
     "population_proper": "41549"
   }, 
   {
-    "city": "Tunduma", 
+    "name": "Tunduma", 
     "lat": "-9.3000", 
     "lng": "32.7667", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Mbeya", 
-    "capital": "", 
+    
     "population": "36556", 
     "population_proper": "36556"
   }, 
   {
-    "city": "Masasi", 
+    "name": "Masasi", 
     "lat": "-10.7296", 
     "lng": "38.7999", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Mtwara", 
-    "capital": "", 
+    
     "population": "36032", 
     "population_proper": "36032"
   }, 
   {
-    "city": "Kahama", 
+    "name": "Kahama", 
     "lat": "-3.8375", 
     "lng": "32.6000", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Shinyanga", 
-    "capital": "", 
+    
     "population": "36014", 
     "population_proper": "36014"
   }, 
   {
-    "city": "Nzega", 
+    "name": "Nzega", 
     "lat": "-4.2169", 
     "lng": "33.1864", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Tabora", 
-    "capital": "", 
+    
     "population": "34744", 
     "population_proper": "34744"
   }, 
   {
-    "city": "Biharamulo", 
+    "name": "Biharamulo", 
     "lat": "-2.6333", 
     "lng": "31.3167", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Kagera", 
-    "capital": "", 
+    
     "population": "34038", 
     "population_proper": "24573"
   }, 
   {
-    "city": "Babati", 
+    "name": "Babati", 
     "lat": "-4.2167", 
     "lng": "35.7500", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Manyara", 
-    "capital": "admin", 
+     
     "population": "30975", 
     "population_proper": "30975"
   }, 
   {
-    "city": "Chato", 
+    "name": "Chato", 
     "lat": "-2.6378", 
     "lng": "31.7669", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Geita", 
-    "capital": "", 
+    
     "population": "27776", 
     "population_proper": "27776"
   }, 
   {
-    "city": "Wete", 
+    "name": "Wete", 
     "lat": "-5.0567", 
     "lng": "39.7281", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Pemba North", 
-    "capital": "admin", 
+     
     "population": "26450", 
     "population_proper": "26450"
   }, 
   {
-    "city": "Mkokotoni", 
+    "name": "Mkokotoni", 
     "lat": "-5.8800", 
     "lng": "39.2731", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Zanzibar North", 
-    "capital": "minor", 
+   
     "population": "2572", 
     "population_proper": "2572"
   }, 
   {
-    "city": "Mahonda", 
+    "name": "Mahonda", 
     "lat": "-5.9897", 
     "lng": "39.2519", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Zanzibar North", 
-    "capital": "admin", 
+     
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Vwawa", 
+    "name": "Vwawa", 
     "lat": "-9.1081", 
     "lng": "32.9347", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Songwe", 
-    "capital": "admin", 
+     
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Koani", 
+    "name": "Koani", 
     "lat": "-6.1333", 
     "lng": "39.2833", 
-    "country": "Tanzania", 
-    "iso2": "TZ", 
+    "country_id":212, 
+    
     "admin_name": "Zanzibar Central/South", 
-    "capital": "admin", 
+     
     "population": "", 
     "population_proper": ""
   }

@@ -1,56 +1,46 @@
 [
   {
-    "city": "Kigali", 
+    "name": "Kigali", 
     "lat": "-1.9536", 
     "lng": "30.0606", 
-    "country": "Rwanda", 
-    "iso2": "RW", 
+    "country_id":180, 
     "admin_name": "Kigali", 
-    "capital": "primary", 
     "population": "1156663", 
     "population_proper": "1156663"
   }, 
   {
-    "city": "Nyanza", 
+    "name": "Nyanza", 
     "lat": "-2.3500", 
     "lng": "29.7333", 
-    "country": "Rwanda", 
-    "iso2": "RW", 
+    "country_id":180, 
     "admin_name": "Southern Province", 
-    "capital": "admin", 
     "population": "225209", 
     "population_proper": "225209"
   }, 
   {
-    "city": "Byumba", 
+    "name": "Byumba", 
     "lat": "-1.5761", 
     "lng": "30.0675", 
-    "country": "Rwanda", 
-    "iso2": "RW", 
+    "country_id":180, 
     "admin_name": "Northern Province", 
-    "capital": "admin", 
     "population": "34544", 
     "population_proper": "34544"
   }, 
   {
-    "city": "Rwamagana", 
+    "name": "Rwamagana", 
     "lat": "-1.9500", 
     "lng": "30.4333", 
-    "country": "Rwanda", 
-    "iso2": "RW", 
+    "country_id":180, 
     "admin_name": "Eastern Province", 
-    "capital": "admin", 
     "population": "18009", 
     "population_proper": "18009"
   }, 
   {
-    "city": "Kibuye", 
+    "name": "Kibuye", 
     "lat": "-2.0617", 
     "lng": "29.3483", 
-    "country": "Rwanda", 
-    "iso2": "RW", 
+    "country_id":180, 
     "admin_name": "Western Province", 
-    "capital": "admin", 
     "population": "12325", 
     "population_proper": "12325"
   }

@@ -1,9 +1,9 @@
-@extends('layouts.master_master')
+@extends('layouts.master_comzone')
 
 @section('title', 'Liste des clients')
 
 @section('content')
     <div>
-        <livewire:masters.custumers>
+        <livewire:com-zones.custumers>
     </div>
 @endsection

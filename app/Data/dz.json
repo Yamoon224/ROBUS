@@ -1,639 +1,581 @@
 [
   {
-    "city": "Algiers", 
+    "name": "Algiers", 
     "lat": "36.7539", 
     "lng": "3.0589", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Alger", 
-    "capital": "primary", 
+   "country_id":5, 
+       "admin_name": "Alger", 
+     
     "population": "3415811", 
     "population_proper": "3415811"
   }, 
   {
-    "city": "Oran", 
+    "name": "Oran", 
     "lat": "35.6969", 
     "lng": "-0.6331", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Oran", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Oran", 
+     
     "population": "852000", 
     "population_proper": "852000"
   }, 
   {
-    "city": "Constantine", 
+    "name": "Constantine", 
     "lat": "36.3650", 
     "lng": "6.6147", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Constantine", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Constantine", 
+     
     "population": "448374", 
     "population_proper": "448374"
   }, 
   {
-    "city": "Blida", 
+    "name": "Blida", 
     "lat": "36.4722", 
     "lng": "2.8333", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Blida", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Blida", 
+     
     "population": "331779", 
     "population_proper": "163586"
   }, 
   {
-    "city": "Batna", 
+    "name": "Batna", 
     "lat": "35.5500", 
     "lng": "6.1667", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Batna", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Batna", 
+     
     "population": "290645", 
     "population_proper": "290645"
   }, 
   {
-    "city": "Sétif", 
+    "name": "Sétif", 
     "lat": "36.1900", 
     "lng": "5.4100", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Sétif", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Sétif", 
+     
     "population": "288461", 
     "population_proper": "288461"
   }, 
   {
-    "city": "Djelfa", 
+    "name": "Djelfa", 
     "lat": "34.6667", 
     "lng": "3.2500", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Djelfa", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Djelfa", 
+     
     "population": "265833", 
     "population_proper": "265833"
   }, 
   {
-    "city": "Annaba", 
+    "name": "Annaba", 
     "lat": "36.9000", 
     "lng": "7.7667", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Annaba", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Annaba", 
+     
     "population": "257359", 
     "population_proper": "257359"
   }, 
   {
-    "city": "Sidi Bel Abbès", 
+    "name": "Sidi Bel Abbès", 
     "lat": "35.2000", 
     "lng": "-0.6333", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Sidi Bel Abbès", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Sidi Bel Abbès", 
+     
     "population": "212935", 
     "population_proper": "212935"
   }, 
   {
-    "city": "Biskra", 
+    "name": "Biskra", 
     "lat": "34.8500", 
     "lng": "5.7333", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Biskra", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Biskra", 
+     
     "population": "204661", 
     "population_proper": "204661"
   }, 
   {
-    "city": "Tébessa", 
+    "name": "Tébessa", 
     "lat": "35.4000", 
     "lng": "8.1167", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Tébessa", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Tébessa", 
+     
     "population": "194461", 
     "population_proper": "194461"
   }, 
   {
-    "city": "Tiaret", 
+    "name": "Tiaret", 
     "lat": "35.3667", 
     "lng": "1.3167", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Tiaret", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Tiaret", 
+     
     "population": "178915", 
     "population_proper": "178915"
   }, 
   {
-    "city": "Bejaïa", 
+    "name": "Bejaïa", 
     "lat": "36.7511", 
     "lng": "5.0642", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Bejaïa", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Bejaïa", 
+     
     "population": "176139", 
     "population_proper": "176139"
   }, 
   {
-    "city": "Tlemcen", 
+    "name": "Tlemcen", 
     "lat": "34.8828", 
     "lng": "-1.3167", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Tlemcen", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Tlemcen", 
+     
     "population": "173531", 
     "population_proper": "173531"
   }, 
   {
-    "city": "Bordj Bou Arreridj", 
+    "name": "Bordj Bou Arreridj", 
     "lat": "36.0667", 
     "lng": "4.7667", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Bordj Bou Arréridj", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Bordj Bou Arréridj", 
+     
     "population": "168346", 
     "population_proper": "168346"
   }, 
   {
-    "city": "Béchar", 
+    "name": "Béchar", 
     "lat": "31.6333", 
     "lng": "-2.2000", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Béchar", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Béchar", 
+     
     "population": "165627", 
     "population_proper": "165627"
   }, 
   {
-    "city": "Skikda", 
+    "name": "Skikda", 
     "lat": "36.8667", 
     "lng": "6.9000", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Skikda", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Skikda", 
+     
     "population": "163318", 
     "population_proper": "163318"
   }, 
   {
-    "city": "Souk Ahras", 
+    "name": "Souk Ahras", 
     "lat": "36.2864", 
     "lng": "7.9511", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Souk Ahras", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Souk Ahras", 
+     
     "population": "155259", 
     "population_proper": "155259"
   }, 
   {
-    "city": "Chlef", 
+    "name": "Chlef", 
     "lat": "36.1647", 
     "lng": "1.3317", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Chlef", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Chlef", 
+     
     "population": "155134", 
     "population_proper": "155134"
   }, 
   {
-    "city": "M’Sila", 
+    "name": "M’Sila", 
     "lat": "35.7058", 
     "lng": "4.5419", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "M’sila", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "M’sila", 
+     
     "population": "150000", 
     "population_proper": "150000"
   }, 
   {
-    "city": "Mostaganem", 
+    "name": "Mostaganem", 
     "lat": "35.9333", 
     "lng": "0.0833", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Mostaganem", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Mostaganem", 
+     
     "population": "145696", 
     "population_proper": "145696"
   }, 
   {
-    "city": "Médéa", 
+    "name": "Médéa", 
     "lat": "36.2675", 
     "lng": "2.7500", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Médéa", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Médéa", 
+     
     "population": "138355", 
     "population_proper": "138355"
   }, 
   {
-    "city": "Tizi Ouzou", 
+    "name": "Tizi Ouzou", 
     "lat": "36.7169", 
     "lng": "4.0497", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Tizi Ouzou", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Tizi Ouzou", 
+     
     "population": "135088", 
     "population_proper": "135088"
   }, 
   {
-    "city": "El Oued", 
+    "name": "El Oued", 
     "lat": "33.3683", 
     "lng": "6.8675", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "El Oued", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "El Oued", 
+     
     "population": "134699", 
     "population_proper": "134699"
   }, 
   {
-    "city": "Laghouat", 
+    "name": "Laghouat", 
     "lat": "33.8000", 
     "lng": "2.8650", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Laghouat", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Laghouat", 
+     
     "population": "134372", 
     "population_proper": "134372"
   }, 
   {
-    "city": "Ouargla", 
+    "name": "Ouargla", 
     "lat": "31.9500", 
     "lng": "5.3167", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Ouargla", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Ouargla", 
+     
     "population": "133024", 
     "population_proper": "133024"
   }, 
   {
-    "city": "Jijel", 
+    "name": "Jijel", 
     "lat": "36.8206", 
     "lng": "5.7667", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Jijel", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Jijel", 
+     
     "population": "131513", 
     "population_proper": "131513"
   }, 
   {
-    "city": "Relizane", 
+    "name": "Relizane", 
     "lat": "35.7372", 
     "lng": "0.5558", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Relizane", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Relizane", 
+     
     "population": "130094", 
     "population_proper": "130094"
   }, 
   {
-    "city": "Saïda", 
+    "name": "Saïda", 
     "lat": "34.8303", 
     "lng": "0.1517", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Saïda", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Saïda", 
+     
     "population": "128413", 
     "population_proper": "128413"
   }, 
   {
-    "city": "Guelma", 
+    "name": "Guelma", 
     "lat": "36.4619", 
     "lng": "7.4258", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Guelma", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Guelma", 
+     
     "population": "120004", 
     "population_proper": "120004"
   }, 
   {
-    "city": "Ghardaïa", 
+    "name": "Ghardaïa", 
     "lat": "32.4833", 
     "lng": "3.6667", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Ghardaïa", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Ghardaïa", 
+     
     "population": "120000", 
     "population_proper": "120000"
   }, 
   {
-    "city": "Mascara", 
+    "name": "Mascara", 
     "lat": "35.4000", 
     "lng": "0.1333", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Mascara", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Mascara", 
+     
     "population": "108587", 
     "population_proper": "108587"
   }, 
   {
-    "city": "Khenchela", 
+    "name": "Khenchela", 
     "lat": "35.4167", 
     "lng": "7.1333", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Khenchela", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Khenchela", 
+     
     "population": "108580", 
     "population_proper": "108580"
   }, 
   {
-    "city": "Oum el Bouaghi", 
+    "name": "Oum el Bouaghi", 
     "lat": "35.8706", 
     "lng": "7.1150", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Oum el Bouaghi", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Oum el Bouaghi", 
+     
     "population": "100821", 
     "population_proper": "100821"
   }, 
   {
-    "city": "El Bayadh", 
+    "name": "El Bayadh", 
     "lat": "33.6831", 
     "lng": "1.0192", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "El Bayadh", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "El Bayadh", 
+     
     "population": "85577", 
     "population_proper": "85577"
   }, 
   {
-    "city": "Tamanrasset", 
+    "name": "Tamanrasset", 
     "lat": "22.7850", 
     "lng": "5.5228", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Tamanrasset", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Tamanrasset", 
+     
     "population": "76000", 
     "population_proper": "76000"
   }, 
   {
-    "city": "Aïn Temouchent", 
+    "name": "Aïn Temouchent", 
     "lat": "35.3044", 
     "lng": "-1.1400", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Aïn Temouchent", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Aïn Temouchent", 
+     
     "population": "75558", 
     "population_proper": "75558"
   }, 
   {
-    "city": "Tissemsilt", 
+    "name": "Tissemsilt", 
     "lat": "35.6072", 
     "lng": "1.8106", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Tissemsilt", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Tissemsilt", 
+     
     "population": "75197", 
     "population_proper": "75197"
   }, 
   {
-    "city": "Bouira", 
+    "name": "Bouira", 
     "lat": "36.3800", 
     "lng": "3.9014", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Bouira", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Bouira", 
+     
     "population": "68545", 
     "population_proper": "68545"
   }, 
   {
-    "city": "Adrar", 
+    "name": "Adrar", 
     "lat": "27.8742", 
     "lng": "-0.2939", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Adrar", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Adrar", 
+     
     "population": "68276", 
     "population_proper": "68276"
   }, 
   {
-    "city": "Tindouf", 
+    "name": "Tindouf", 
     "lat": "27.6753", 
     "lng": "-8.1286", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Tindouf", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Tindouf", 
+     
     "population": "45610", 
     "population_proper": "45610"
   }, 
   {
-    "city": "Boumerdes", 
+    "name": "Boumerdes", 
     "lat": "36.7603", 
     "lng": "3.4724", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Boumerdes", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Boumerdes", 
+     
     "population": "41685", 
     "population_proper": "41685"
   }, 
   {
-    "city": "El Golea", 
+    "name": "El Golea", 
     "lat": "30.6000", 
     "lng": "2.9000", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "El Meniaa", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "El Meniaa", 
+     
     "population": "40195", 
     "population_proper": "40195"
   }, 
   {
-    "city": "Touggourt", 
+    "name": "Touggourt", 
     "lat": "33.1000", 
     "lng": "6.0667", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Touggourt", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Touggourt", 
+     
     "population": "39409", 
     "population_proper": "39409"
   }, 
   {
-    "city": "Timimoun", 
+    "name": "Timimoun", 
     "lat": "29.2500", 
     "lng": "0.2333", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Timimoun", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Timimoun", 
+     
     "population": "33060", 
     "population_proper": "33060"
   }, 
   {
-    "city": "I-n-Salah", 
+    "name": "I-n-Salah", 
     "lat": "27.1936", 
     "lng": "2.4606", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "In Salah", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "In Salah", 
+     
     "population": "32518", 
     "population_proper": "32518"
   }, 
   {
-    "city": "El Tarf", 
+    "name": "El Tarf", 
     "lat": "36.7669", 
     "lng": "8.3136", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "El Tarf", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "El Tarf", 
+     
     "population": "25594", 
     "population_proper": "25594"
   }, 
   {
-    "city": "Tipasa", 
+    "name": "Tipasa", 
     "lat": "36.5942", 
     "lng": "2.4430", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Tipaza", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Tipaza", 
+     
     "population": "25225", 
     "population_proper": "25225"
   }, 
   {
-    "city": "Illizi", 
+    "name": "Illizi", 
     "lat": "26.5080", 
     "lng": "8.4829", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Illizi", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Illizi", 
+     
     "population": "17252", 
     "population_proper": "17252"
   }, 
   {
-    "city": "Bordj Mokhtar", 
+    "name": "Bordj Mokhtar", 
     "lat": "21.3289", 
     "lng": "0.9542", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Bordj Badji Mokhtar", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Bordj Badji Mokhtar", 
+     
     "population": "16437", 
     "population_proper": "16437"
   }, 
   {
-    "city": "Naama", 
+    "name": "Naama", 
     "lat": "33.2678", 
     "lng": "-0.3111", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Naama", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Naama", 
+     
     "population": "16251", 
     "population_proper": "16251"
   }, 
   {
-    "city": "Djanet", 
+    "name": "Djanet", 
     "lat": "24.5550", 
     "lng": "9.4853", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Djanet", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Djanet", 
+     
     "population": "14655", 
     "population_proper": "14655"
   }, 
   {
-    "city": "Beni Abbès", 
+    "name": "Beni Abbès", 
     "lat": "30.0800", 
     "lng": "-2.1000", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Béni Abbès", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Béni Abbès", 
+     
     "population": "10885", 
     "population_proper": "10885"
   }, 
   {
-    "city": "In Guezzam", 
+    "name": "In Guezzam", 
     "lat": "19.5686", 
     "lng": "5.7722", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "In Guezzam", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "In Guezzam", 
+     
     "population": "7045", 
     "population_proper": "7045"
   }, 
   {
-    "city": "Aïn Defla", 
+    "name": "Aïn Defla", 
     "lat": "36.2583", 
     "lng": "1.9583", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Aïn Defla", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Aïn Defla", 
+     
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Mila", 
+    "name": "Mila", 
     "lat": "36.4481", 
     "lng": "6.2622", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Mila", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Mila", 
+     
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "Ouled Djellal", 
+    "name": "Ouled Djellal", 
     "lat": "34.4167", 
     "lng": "5.0667", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "Ouled Djellal", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "Ouled Djellal", 
+     
     "population": "", 
     "population_proper": ""
   }, 
   {
-    "city": "El Meghaïer", 
+    "name": "El Meghaïer", 
     "lat": "33.9506", 
     "lng": "5.9242", 
-    "country": "Algeria", 
-    "iso2": "DZ", 
-    "admin_name": "El Meghaier", 
-    "capital": "admin", 
+   "country_id":5, 
+       "admin_name": "El Meghaier", 
+     
     "population": "", 
     "population_proper": ""
   }

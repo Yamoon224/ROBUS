@@ -152,16 +152,54 @@
                                                     {{ $item->city->name ?? null }}
                                                 </span>
                                             </div>
-                                        @else
-                                            <div class="flex items-center justify-center text-primary ">
+                                            <div
+                                                class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
 
-                                                <span
-                                                    class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                    Pas encore lié
-                                                </span>
+                                                @if ($item->is_accepted)
+                                                    @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                        <div class="flex items-center justify-center text-success">
+
+                                                            <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                                class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
+                                                                href="javascript:;" wire:loading.attr="disabled"
+                                                                title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
+                                                                <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i>
+                                                                Deja Lié
+
+                                                            </a>
+
+                                                        </div>
+                                                    @endif
+                                                @else
+                                                    @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                        <div class="flex items-center justify-center text-danger">
+                                                            <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                                class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
+                                                                href="javascript:;"
+                                                                title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
+                                                                En-attente de liaison
+
+                                                            </a>
+
+                                                        </div>
+                                                    @endif
+                                                @endif
 
 
                                             </div>
+                                        @else
+                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                <div class="flex items-center justify-center text-primary ">
+
+                                                    <a wire:click="addConnected({{ $item->id }}, 'show-connected-master-modal'); $emit('show-connected-master-modal')"
+                                                        class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
+                                                        href="javascript:;" wire:loading.attr="disabled"
+                                                        title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
+                                                        Lié a un MASTER
+                                                    </a>
+
+                                                </div>
+                                            @endif
                                         @endif
                                     @endif
                                     <span class="m-1 badge badge-info mt-2"> {{ $role->name }} </span>
@@ -184,76 +222,138 @@
                                     <div class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
 
                                         @if ($item->is_accepted)
-                                            <div class="flex items-center justify-center text-success">
+                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                <div class="flex items-center justify-center text-success">
 
-                                                <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                    <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i>
-                                                    Deja Lié
+                                                    <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                        class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
+                                                        href="javascript:;" wire:loading.attr="disabled"
+                                                        title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
+                                                        <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i>
+                                                        Deja Lié
 
-                                                </span>
+                                                    </a>
 
-                                            </div>
+                                                </div>
+                                            @endif
                                         @else
-                                            <div class="flex items-center justify-center text-danger">
-                                                <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                    En-attente de liaison
+                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                <div class="flex items-center justify-center text-danger">
+                                                    <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                        class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
+                                                        href="javascript:;"
+                                                        title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
+                                                        En-attente de liaison
 
-                                                </span>
+                                                    </a>
 
-
-                                            </div>
+                                                </div>
+                                            @endif
                                         @endif
 
 
                                     </div>
                                 @else
-                                    <div class="flex items-center justify-center text-primary ">
+                                    @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                        <div class="flex items-center justify-center text-primary ">
 
-                                        <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            Lié a un MASTER
-                                        </span>
+                                            <a wire:click="addConnected({{ $item->id }}, 'show-connected-master-modal'); $emit('show-connected-master-modal')"
+                                                class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
+                                                href="javascript:;" wire:loading.attr="disabled"
+                                                title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
+                                                Lié a un MASTER
+                                            </a>
 
-
-                                    </div>
+                                        </div>
+                                    @endif
                                 @endif
+
                             @endif
 
                         </td>
                         <td class="table-report__action w-35">
                             @if ($item->status == '1')
-                                <div class="flex items-center justify-center text-success">
+                                @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
+                                    <div class="flex items-center justify-center text-success">
 
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
-                                    </span>
+                                        <a wire:click="edit({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                            class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
+                                            href="javascript:;"
+                                            title="@if ($item->status == 1) Désactiver @else Activer @endif">
+                                            <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
+                                        </a>
 
-
-                                </div>
+                                    </div>
+                                @endif
                             @else
-                                <div class="flex items-center justify-center text-danger">
-                                    <span
-                                    class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
-                                    </span>
+                                @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
+                                    <div class="flex items-center justify-center text-danger">
+                                        <a wire:click="edit({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                            class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
+                                            href="javascript:;"
+                                            title="@if ($item->status == 1) Désactiver @else Activer @endif">
+                                            <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
+                                        </a>
 
-
-                                </div>
+                                    </div>
+                                @endif
                             @endif
                         </td>
                         <td class="table-report__action w-30">
                             <div class="flex mt-4 lg:mt-0">
+                                @if ($item->is_under_distributer)
+                                    <div class="flex items-start ">
 
+                                        <div class="absolute right-0 top-0 mr-5 mt-3 dropdown">
+                                            <h2 class="intro-y text-lg font-medium ">
+                                                Assigner
+                                            </h2>
+                                            <a class="dropdown-toggle w-5 h-5 block" href="javascript:;"
+                                                aria-expanded="false" data-tw-toggle="dropdown"> <svg
+                                                    xmlns="http://www.w3.org/2000/svg" width="24"
+                                                    height="24" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                    stroke-linejoin="round" icon-name="more-horizontal"
+                                                    data-lucide="more-horizontal"
+                                                    class="lucide lucide-more-horizontal w-5 h-5 text-slate-500">
+                                                    <circle cx="12" cy="12" r="1"></circle>
+                                                    <circle cx="19" cy="12" r="1"></circle>
+                                                    <circle cx="5" cy="12" r="1"></circle>
+                                                </svg>
+
+                                            </a>
+
+
+                                            <div class="dropdown-menu w-50" id="_8vqni2v1b"
+                                                data-popper-placement="bottom-end"
+                                                style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
+                                                <div class="dropdown-content">
+                                                    @foreach ($operators as $operator)
+                                                        <input
+                                                            wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                            value="{{ $operator->id }}" type="checkbox"
+                                                            class="sid-switch"
+                                                            @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
+
+
+                                                        <p class="font-assign ">
+                                                            {{ $operator->name ?? null }}
+
+                                                        </p>
+                                                    @endforeach
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endif
                                 <div class="flex justify-center items-center">
 
-                                    <a class="btn btn-primary mr-1 mb-2 btn-sm"
-                                        href="{{ route('admin.ShowProfil', ['id' => $item->id]) }}">
-                                        Voir
-                                    </a>
-
+                                    @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
+                                        <a class="btn btn-primary mr-1 mb-2 btn-sm"
+                                            href="{{ route('admin.ShowProfil', ['id' => $item->id]) }}">
+                                            Voir
+                                        </a>
+                                    @endif
 
                                 </div>
                             </div>
@@ -274,8 +374,8 @@
         </div>
         <!-- END: Pagination -->
     </div>
-
-    @include('livewire.modals.comzones.addmaster')
-    @include('livewire.modals.comzones.disabledmaster')
+    @include('livewire.modals.disabledUsers')
+    @include('livewire.modals.connectedUnders')
+    @include('livewire.modals.connectedOneUnderDistributors')
 
 </div>

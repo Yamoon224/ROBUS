@@ -1,100 +1,100 @@
 [
   {
-    "city": "Bissau", 
+    "name": "Bissau", 
     "lat": "11.8500", 
     "lng": "-15.5667", 
-    "country": "Guinea-Bissau", 
-    "iso2": "GW", 
+     "country_id":92 ,
+    
     "admin_name": "Bissau", 
-    "capital": "primary", 
+    
     "population": "492004", 
     "population_proper": "492004"
   }, 
   {
-    "city": "Farim", 
+    "name": "Farim", 
     "lat": "12.4833", 
     "lng": "-15.2167", 
-    "country": "Guinea-Bissau", 
-    "iso2": "GW", 
+     "country_id":92 ,
+    
     "admin_name": "Oio", 
-    "capital": "admin", 
+   
     "population": "46268", 
     "population_proper": "46268"
   }, 
   {
-    "city": "Quinhámel", 
+    "name": "Quinhámel", 
     "lat": "11.8833", 
     "lng": "-15.8500", 
-    "country": "Guinea-Bissau", 
-    "iso2": "GW", 
+     "country_id":92 ,
+    
     "admin_name": "Biombo", 
-    "capital": "admin", 
+   
     "population": "42659", 
     "population_proper": "42659"
   }, 
   {
-    "city": "Gabú", 
+    "name": "Gabú", 
     "lat": "12.2833", 
     "lng": "-14.2167", 
-    "country": "Guinea-Bissau", 
-    "iso2": "GW", 
+     "country_id":92 ,
+    
     "admin_name": "Gabú", 
-    "capital": "admin", 
+   
     "population": "37525", 
     "population_proper": "37525"
   }, 
   {
-    "city": "Catió", 
+    "name": "Catió", 
     "lat": "11.2833", 
     "lng": "-15.2500", 
-    "country": "Guinea-Bissau", 
-    "iso2": "GW", 
+     "country_id":92 ,
+    
     "admin_name": "Tombali", 
-    "capital": "admin", 
+   
     "population": "26999", 
     "population_proper": "26999"
   }, 
   {
-    "city": "Bafatá", 
+    "name": "Bafatá", 
     "lat": "12.1719", 
     "lng": "-14.6575", 
-    "country": "Guinea-Bissau", 
-    "iso2": "GW", 
+     "country_id":92 ,
+    
     "admin_name": "Bafatá", 
-    "capital": "admin", 
+   
     "population": "22501", 
     "population_proper": "22501"
   }, 
   {
-    "city": "Buba", 
+    "name": "Buba", 
     "lat": "11.5833", 
     "lng": "-15.0000", 
-    "country": "Guinea-Bissau", 
-    "iso2": "GW", 
+     "country_id":92 ,
+    
     "admin_name": "Quinara", 
-    "capital": "admin", 
+   
     "population": "8556", 
     "population_proper": "8556"
   }, 
   {
-    "city": "Cacheu", 
+    "name": "Cacheu", 
     "lat": "12.2667", 
     "lng": "-16.1667", 
-    "country": "Guinea-Bissau", 
-    "iso2": "GW", 
+     "country_id":92 ,
+    
     "admin_name": "Cacheu", 
-    "capital": "admin", 
+   
     "population": "5674", 
     "population_proper": "5674"
   }, 
   {
-    "city": "Bolama", 
+    "name": "Bolama", 
     "lat": "11.5767", 
     "lng": "-15.4828", 
-    "country": "Guinea-Bissau", 
-    "iso2": "GW", 
+     "country_id":92 ,
+    
     "admin_name": "Bolama/Bijagós", 
-    "capital": "admin", 
+   
     "population": "4819", 
     "population_proper": "4819"
   }

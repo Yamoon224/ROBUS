@@ -435,23 +435,23 @@ class MasterController extends Controller
             $user->update([
                 'company_id'  => 1,
                 'wallet_id'  => $wallet_user->wallet_id,
-                'master_id'  => $user->id,
+                'master_id'  => master()->id,
                 'is_accepted' => false,
                 'phone'  =>   $user->country->indecative . $user->phone,
                 'silver_ceiling'  =>   $user->country->silver_ceiling
             ]);
 
 
-            $valeur_message = $user->is_master == true ?  ' Un MASTER' : ' un COM ZONE ';
+            $valeur_message = $user->is_under_distributer == true ?  ' Un Sous distributeur ' : ' un masters ';
             Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
                 ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
 
             $msg = "Utilisateur crée avec succès";
             $color = 'success';
 
-            return redirect(route('masters.admins.browse'))->with('color', $color)->with('status', $msg);
+            return redirect(route('underdistributors.browse'))->with('color', $color)->with('status', $msg);
         } catch (\Throwable $th) {
-            return redirect('masters/add_master')
+            return redirect('master/underdistributors/add')
                 ->withErrors($validator)
                 ->with('color', 'danger')
                 ->with('status', 'Erreur de création')

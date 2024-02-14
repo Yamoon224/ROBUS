@@ -1,408 +1,408 @@
 [
   {
-    "city": "Banjul", 
+    "name": "Banjul", 
     "lat": "13.4531", 
     "lng": "-16.5775", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Banjul", 
-    "capital": "primary", 
+    
     "population": "413397", 
     "population_proper": "27809"
   }, 
   {
-    "city": "Serekunda", 
+    "name": "Serekunda", 
     "lat": "13.4333", 
     "lng": "-16.6667", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Kanifing", 
-    "capital": "", 
+    
     "population": "340000", 
     "population_proper": "340000"
   }, 
   {
-    "city": "Brikama", 
+    "name": "Brikama", 
     "lat": "13.2667", 
     "lng": "-16.6500", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "admin", 
+    
     "population": "195136", 
     "population_proper": "77700"
   }, 
   {
-    "city": "Bakau", 
+    "name": "Bakau", 
     "lat": "13.4833", 
     "lng": "-16.6833", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Kanifing", 
-    "capital": "", 
+    
     "population": "43098", 
     "population_proper": "43098"
   }, 
   {
-    "city": "Sukuta", 
+    "name": "Sukuta", 
     "lat": "13.4167", 
     "lng": "-16.7000", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "40675", 
     "population_proper": "40675"
   }, 
   {
-    "city": "Sareh Mowndeh", 
+    "name": "Sareh Mowndeh", 
     "lat": "13.4000", 
     "lng": "-16.6833", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "36134", 
     "population_proper": "36134"
   }, 
   {
-    "city": "Farafenni", 
+    "name": "Farafenni", 
     "lat": "13.5667", 
     "lng": "-15.6000", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "North Bank", 
-    "capital": "", 
+    
     "population": "36000", 
     "population_proper": "36000"
   }, 
   {
-    "city": "Mansa Konko", 
+    "name": "Mansa Konko", 
     "lat": "13.4667", 
     "lng": "-15.5500", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Lower River", 
-    "capital": "admin", 
+    
     "population": "18672", 
     "population_proper": "18672"
   }, 
   {
-    "city": "Basse Santa Su", 
+    "name": "Basse Santa Su", 
     "lat": "13.3167", 
     "lng": "-14.2167", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "admin", 
+    
     "population": "18414", 
     "population_proper": "18414"
   }, 
   {
-    "city": "Gunjur", 
+    "name": "Gunjur", 
     "lat": "13.1833", 
     "lng": "-16.7667", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "17520", 
     "population_proper": "17520"
   }, 
   {
-    "city": "Essau", 
+    "name": "Essau", 
     "lat": "13.4833", 
     "lng": "-16.5333", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "North Bank", 
-    "capital": "", 
+    
     "population": "14560", 
     "population_proper": "14560"
   }, 
   {
-    "city": "Busumbala", 
+    "name": "Busumbala", 
     "lat": "13.3333", 
     "lng": "-16.6667", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "11189", 
     "population_proper": "11189"
   }, 
   {
-    "city": "Brikama Ba", 
+    "name": "Brikama Ba", 
     "lat": "13.5333", 
     "lng": "-14.9333", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Central River", 
-    "capital": "", 
+    
     "population": "10343", 
     "population_proper": "10343"
   }, 
   {
-    "city": "Gambissara", 
+    "name": "Gambissara", 
     "lat": "13.2333", 
     "lng": "-14.3167", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "", 
+    
     "population": "10102", 
     "population_proper": "10102"
   }, 
   {
-    "city": "Bansang", 
+    "name": "Bansang", 
     "lat": "13.4333", 
     "lng": "-14.6500", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Central River", 
-    "capital": "", 
+    
     "population": "8843", 
     "population_proper": "8843"
   }, 
   {
-    "city": "Garawol", 
+    "name": "Garawol", 
     "lat": "13.4167", 
     "lng": "-13.9333", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "", 
+    
     "population": "8124", 
     "population_proper": "8124"
   }, 
   {
-    "city": "Banjul NDing", 
+    "name": "Banjul NDing", 
     "lat": "13.3756", 
     "lng": "-16.6569", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "8029", 
     "population_proper": "8029"
   }, 
   {
-    "city": "Abuko", 
+    "name": "Abuko", 
     "lat": "13.4042", 
     "lng": "-16.6558", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Kanifing", 
-    "capital": "", 
+    
     "population": "6572", 
     "population_proper": "6572"
   }, 
   {
-    "city": "Kulari", 
+    "name": "Kulari", 
     "lat": "13.4000", 
     "lng": "-14.0800", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "", 
+    
     "population": "6021", 
     "population_proper": "6021"
   }, 
   {
-    "city": "Alohungari", 
+    "name": "Alohungari", 
     "lat": "13.3167", 
     "lng": "-14.2500", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "", 
+    
     "population": "5573", 
     "population_proper": "5573"
   }, 
   {
-    "city": "Demba Kunda", 
+    "name": "Demba Kunda", 
     "lat": "13.2500", 
     "lng": "-14.2667", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "", 
+    
     "population": "5283", 
     "population_proper": "5283"
   }, 
   {
-    "city": "Kartung", 
+    "name": "Kartung", 
     "lat": "13.1000", 
     "lng": "-16.7667", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "5213", 
     "population_proper": "5213"
   }, 
   {
-    "city": "Bwiam", 
+    "name": "Bwiam", 
     "lat": "13.2333", 
     "lng": "-16.0833", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "3834", 
     "population_proper": "3834"
   }, 
   {
-    "city": "Faraba Banta", 
+    "name": "Faraba Banta", 
     "lat": "13.2667", 
     "lng": "-16.5167", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "3626", 
     "population_proper": "3626"
   }, 
   {
-    "city": "Janjanbureh", 
+    "name": "Janjanbureh", 
     "lat": "13.5341", 
     "lng": "-14.7662", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Central River", 
-    "capital": "admin", 
+    
     "population": "3584", 
     "population_proper": "3584"
   }, 
   {
-    "city": "Kerewan", 
+    "name": "Kerewan", 
     "lat": "13.5000", 
     "lng": "-16.0833", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "North Bank", 
-    "capital": "admin", 
+    
     "population": "2751", 
     "population_proper": "2751"
   }, 
   {
-    "city": "Bulok", 
+    "name": "Bulok", 
     "lat": "13.1767", 
     "lng": "-16.4158", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "2312", 
     "population_proper": "2312"
   }, 
   {
-    "city": "Bakadagy", 
+    "name": "Bakadagy", 
     "lat": "13.3024", 
     "lng": "-14.3876", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "", 
+    
     "population": "2226", 
     "population_proper": "2226"
   }, 
   {
-    "city": "Batukunku", 
+    "name": "Batukunku", 
     "lat": "13.3233", 
     "lng": "-16.8008", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "2000", 
     "population_proper": "2000"
   }, 
   {
-    "city": "Fatoto", 
+    "name": "Fatoto", 
     "lat": "13.4000", 
     "lng": "-13.8833", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "", 
+    
     "population": "1685", 
     "population_proper": "1685"
   }, 
   {
-    "city": "Ghana Town", 
+    "name": "Ghana Town", 
     "lat": "13.3833", 
     "lng": "-16.7667", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "1397", 
     "population_proper": "1397"
   }, 
   {
-    "city": "Bambali", 
+    "name": "Bambali", 
     "lat": "13.4833", 
     "lng": "-15.3333", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "North Bank", 
-    "capital": "", 
+    
     "population": "1264", 
     "population_proper": "1264"
   }, 
   {
-    "city": "Amdalai", 
+    "name": "Amdalai", 
     "lat": "13.4319", 
     "lng": "-16.7225", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "1245", 
     "population_proper": "1245"
   }, 
   {
-    "city": "Bani", 
+    "name": "Bani", 
     "lat": "13.3667", 
     "lng": "-13.8667", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "", 
+    
     "population": "1177", 
     "population_proper": "1177"
   }, 
   {
-    "city": "Baniakang", 
+    "name": "Baniakang", 
     "lat": "13.3239", 
     "lng": "-16.7457", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "West Coast", 
-    "capital": "", 
+    
     "population": "1134", 
     "population_proper": "1134"
   }, 
   {
-    "city": "Badari", 
+    "name": "Badari", 
     "lat": "13.3300", 
     "lng": "-14.1000", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Upper River", 
-    "capital": "", 
+    
     "population": "658", 
     "population_proper": "658"
   }, 
   {
-    "city": "Kanifing", 
+    "name": "Kanifing", 
     "lat": "13.4500", 
     "lng": "-16.6667", 
-    "country": "The Gambia", 
-    "iso2": "GM", 
+    "country_id": 80, 
+     
     "admin_name": "Kanifing", 
-    "capital": "admin", 
+    
     "population": "", 
     "population_proper": ""
   }

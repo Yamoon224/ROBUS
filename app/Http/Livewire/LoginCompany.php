@@ -81,11 +81,11 @@ class LoginCompany extends Component
     public function logout_comzones()
     {
         Auth::user()->last_logout  = Carbon::now()->toDateTimeString();
-        Auth::guard('comzone')->user()->save();
-        Auth::logout(Auth::guard('comzone')->user());
+        Auth::guard('web')->user()->save();
+        Auth::logout(Auth::guard('web')->user());
         Auth::logout(Auth::guard('web')->user());
         $this->emit('success', 'Déconnexion réussi !');
-        return redirect()->route('admin.login_comzone');
+        return redirect()->route('admin.login_com_zone');
     }
     
     

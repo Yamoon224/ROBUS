@@ -18,7 +18,7 @@ class Sync2Seeder extends Seeder
     {
         //DB::table('users')->delete();
 
-        $datas = file_get_contents(base_path('app/Data/gb.json'));
+        $datas = file_get_contents(base_path('app/Data/tz.json'));
         $datas = json_decode($datas, true);
         
         foreach ($datas as $key => $value) {

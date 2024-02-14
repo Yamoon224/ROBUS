@@ -1,4 +1,4 @@
-@extends('layouts.master_master')
+@extends('layouts.master_comzone')
 
 @section('title', 'Details du equipes')
 

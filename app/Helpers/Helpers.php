@@ -22,7 +22,7 @@ function master()
 
 function comzone()
 {
-    return Auth::guard('comzone')->user();
+    return Auth::guard('web')->user();
 }
 
 function robus()

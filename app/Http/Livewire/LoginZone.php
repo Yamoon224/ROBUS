@@ -28,7 +28,7 @@ class LoginZone extends Component
     {
 
 
-        if (Auth::guard('comzone')->attempt(['email' => $this->email, 'password' => $this->password])) {
+        if (Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password])) {
 
             $this->validate();
 
@@ -38,10 +38,10 @@ class LoginZone extends Component
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');
             } elseif ($user_sid->is_com_zone) {
 
-                Auth::login(Auth::guard('comzone')->user());
-                Auth::guard('comzone')->user()->last_login  = Carbon::now()->toDateTimeString();
-                Auth::guard('comzone')->user()->last_logout  = null;
-                Auth::guard('comzone')->user()->save();
+                Auth::login(Auth::guard('web')->user());
+                Auth::guard('web')->user()->last_login  = Carbon::now()->toDateTimeString();
+                Auth::guard('web')->user()->last_logout  = null;
+                Auth::guard('web')->user()->save();
                 $this->emit('success', 'Authentificaion reussie redirection en cours !');
                 return redirect()->route('comzones.home');
             } else {
@@ -56,9 +56,9 @@ class LoginZone extends Component
     public function logout()
     {
         Auth::user()->last_logout  = Carbon::now()->toDateTimeString();
-        Auth::guard('comzone')->user()->save();
-        Auth::logout(Auth::guard('comzone')->user());
-        Auth::logout(Auth::guard('comzone')->user());
+        Auth::guard('web')->user()->save();
+        Auth::logout(Auth::guard('web')->user());
+        Auth::logout(Auth::guard('web')->user());
         $this->emit('success', 'Déconnexion réussi !');
         return redirect()->route('admin.login_companie');
     }
