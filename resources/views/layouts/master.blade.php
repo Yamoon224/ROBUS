@@ -191,6 +191,10 @@
             $('#update-appRobus-modal').removeClass('show');
             $('#update-appRobus-modal').addClass('hide');
 
+            // OnXbet Transaction
+            $('#update-1xbet-transaction-modal').removeClass('show');
+            $('#update-1xbet-transaction-modal').addClass('hide');
+
 
             $('#disabled-user_admin-modal').removeClass('show');
             $('#disabled-user_admin-modal').addClass('hide');
@@ -509,6 +513,13 @@
             $('#connected-master-modal').removeClass('hide');
             $('#connected-master-modal').addClass('show');
         });
+
+        Livewire.on('show-onexbetrans-modal', () => {
+            $('#update-1xbet-transaction-modal').removeClass('hide');
+            $('#update-1xbet-transaction-modal').addClass('show');
+            
+        });
+
 
         Livewire.on('show-disabled-modal', () => {
             $('#disabled-master-admin-modal').removeClass('hide');

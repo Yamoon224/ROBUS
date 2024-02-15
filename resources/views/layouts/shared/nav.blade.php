@@ -283,6 +283,14 @@
                             <div class="side-menu__title"> Commande carte</div>
                         </a>
                     </li>
+                    <li>
+                        <a href="{{ route('commissions.browse_onexbets') }}"
+                            class="side-menu {{ $route == 'commissions.browse_onexbets' ? 'side-menu--active' : '' }}">
+                            <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                            </div>
+                            <div class="side-menu__title">Service 1xbets</div>
+                        </a>
+                    </li>
 
                 </ul>
             </li>

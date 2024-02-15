@@ -1,32 +1,34 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\FaqController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\Auth\AuthentificationController;
+use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\CitieController;
 use App\Http\Controllers\Api\CommentController;
-use App\Http\Controllers\Api\CountrieController;
-use App\Http\Controllers\Api\ProviderController;
 use App\Http\Controllers\Api\ConverterController;
+use App\Http\Controllers\Api\CountrieController;
 use App\Http\Controllers\Api\CurrencieController;
+use App\Http\Controllers\Api\FaqController;
 use App\Http\Controllers\Api\NotificationController;
-use App\Http\Controllers\Api\Transfers\ReloadController;
-use App\Http\Controllers\Api\Transfers\PaymentController;
-use App\Http\Controllers\Api\Auth\PasswordResetController;
-use App\Http\Controllers\Api\Transfers\BankCardController;
-use App\Http\Controllers\Api\Transfers\VirementController;
-use App\Http\Controllers\Api\Transfers\ReloadCardController;
-use App\Http\Controllers\Api\Auth\AuthentificationController;
-use App\Http\Controllers\Api\Transfers\PhoneCreditController;
-use App\Http\Controllers\Api\Transfers\TransactionController;
+use App\Http\Controllers\Api\ProviderController;
 use App\Http\Controllers\Api\Providers\InterProviderController;
-use App\Http\Controllers\Api\Providers\PhoneProviderController;
-use App\Http\Controllers\Api\Transfers\IntersPaymentController;
-use App\Http\Controllers\Api\Providers\ReloadProviderController;
 use App\Http\Controllers\Api\Providers\PaymentProviderController;
-use App\Http\Controllers\Api\Providers\VirementProviderController;
+use App\Http\Controllers\Api\Providers\PhoneProviderController;
 use App\Http\Controllers\Api\Providers\ReloadCardProvideController;
+use App\Http\Controllers\Api\Providers\ReloadProviderController;
 use App\Http\Controllers\Api\Providers\TransactionProviderController;
+use App\Http\Controllers\Api\Providers\VirementProviderController;
+use App\Http\Controllers\Api\Transfers\BankCardController;
+use App\Http\Controllers\Api\Transfers\IntersPaymentController;
+use App\Http\Controllers\Api\Transfers\OnexbetTransactionController;
+use App\Http\Controllers\Api\Transfers\PaymentController;
+use App\Http\Controllers\Api\Transfers\PhoneCreditController;
+use App\Http\Controllers\Api\Transfers\ReloadCardController;
+use App\Http\Controllers\Api\Transfers\ReloadController;
+use App\Http\Controllers\Api\Transfers\TransactionController;
+use App\Http\Controllers\Api\Transfers\VirementController;
+use App\Http\Controllers\Api\UserController;
+use Illuminate\Support\Facades\Route;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -59,7 +61,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('logout', [AuthentificationController::class, 'logout']);
         });
     });
- 
+
     Route::middleware(['auth:api'])->group(function () {
 
         // User and Under distributors APIS
@@ -76,6 +78,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('virement/show/{id}', [VirementController::class, 'virement_show']);
             Route::post('virement/delete/{id}', [VirementController::class, 'delete_virement']);
             Route::get('search_virement/{amount_virment}', [VirementController::class, 'search_virement']);
+
+            // 1Xbets
+            Route::post('oneXbet/store', [OnexbetTransactionController::class, 'create_OnexbetTranaction']);
+            Route::post('oneXbet/delete/{id}', [OnexbetTransactionController::class, 'delete_wallet_xbet']);
 
             // Reload
             Route::post('reloads/store', [ReloadController::class, 'create_reload']);
@@ -169,8 +175,8 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
                 Route::get('orders_providers', [ReloadCardProvideController::class, 'indexOrders']);
             });
 
-             Route::get('/countries/inter', [CountrieController::class, 'index_inter_auth']);
-             Route::get('/countries/inter/{id}', [CountrieController::class, 'index_selected_search']);
+            Route::get('/countries/inter', [CountrieController::class, 'index_inter_auth']);
+            Route::get('/countries/inter/{id}', [CountrieController::class, 'index_selected_search']);
 
             Route::prefix('converters')->group(function () {
                 Route::get('info_converters/{amount}/{currencency_name}', [ConverterController::class, 'converter_browse']);
@@ -178,14 +184,14 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         });
 
         // Masters APIS
-        Route::prefix('masters')->group(function(){
+        Route::prefix('masters')->group(function () {
             Route::get('dashboard', [UserController::class, 'dashboard_masters']);
             Route::get('info', [UserController::class, 'info_masters']);
             Route::get('info/kyc', [UserController::class, 'kyc_masters']);
             Route::post('info/update', [UserController::class, 'update_masters']);
             Route::post('info/active_compte', [UserController::class, 'updload_identity_masters']);
             Route::get('under_distributors', [UserController::class, 'masters_under_distributors']);
- 
+
             // Providers transactions
             Route::prefix('providers')->group(function () {
                 Route::get('transaction_providers', [TransactionProviderController::class, 'index_masters']);
@@ -195,8 +201,27 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('unloadings/store', [TransactionController::class, 'create_transaction_master']);
             Route::post('reloads/store', [TransactionController::class, 'create_reload_master']);
             Route::post('add_under_distributors/store', [UserController::class, 'add_under_distributor']);
-            
         });
+
+        // COM ZONE APIS
+        Route::prefix('comzones')->group(function () {
+        Route::get('dashboard', [UserController::class, 'dashboard_comzones']);
+        Route::get('info', [UserController::class, 'info_masters']);
+        Route::get('info/kyc', [UserController::class, 'kyc_masters']);
+        Route::post('info/update', [UserController::class, 'update_masters']);
+        Route::post('info/active_compte', [UserController::class, 'updload_identity_masters']);
+        Route::get('under_distributors', [UserController::class, 'masters_under_distributors']);
+
+        // Providers transactions
+        Route::prefix('providers')->group(function () {
+            Route::get('transaction_providers', [TransactionProviderController::class, 'index_masters']);
+            Route::get('reload_providers', [ReloadProviderController::class, 'index_masters']);
+        });
+
+        Route::post('add_masters/store', [TransactionController::class, 'create_transaction_master']);
+        Route::post('add_custumers/store', [TransactionController::class, 'create_reload_master']);
+        Route::post('add_under_distributors/store', [UserController::class, 'add_under_distributor']);
+    });
     });
 
 
@@ -205,7 +230,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     Route::get('/countries', [CountrieController::class, 'index']);
     Route::get('/countrie/{id}', [CountrieController::class, 'index_search_country']);
     Route::get('/currencies', [CurrencieController::class, 'index']);
-    
+
     // Cities and Country
     Route::post('/user/forget_password', [AuthentificationController::class, 'forgotPassword']);
     Route::get('/cities', [CitieController::class, 'index']);

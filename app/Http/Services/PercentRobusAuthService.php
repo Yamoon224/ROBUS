@@ -5,13 +5,12 @@ namespace App\Http\Services;
 
 use App\Models\Costs\BankCost;
 use App\Models\Costs\DepositCost;
-use App\Models\Costs\OrderCardCost;
 use App\Models\Costs\PaymentCost;
 use App\Models\Costs\PhoneCreditCost;
 use App\Models\Costs\TransactionCost;
 use App\Models\LevelCountry;
 use App\Models\Moneys\LevelMoney;
-use App\Models\OperatorService;
+use App\Models\Onexbet;
 use App\Models\Providers\Provider;
 use App\Repositories\TransactionRepository;
 
@@ -26,7 +25,6 @@ class PercentRobusAuthService
         $this->transctionRepository = $transactionReposi;
     }
 
- 
 
     public function getRobusPercentageSDistributers()
     {
@@ -108,6 +106,20 @@ class PercentRobusAuthService
         }
     }
 
+
+
+    public function getRobusPercentageOnexbet()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return Onexbet::whereId(1)->first();
+            default:
+                return null;
+        }
+    }
+
     public function getRobusPercentageVirement()
     {
 
@@ -175,6 +187,7 @@ class PercentRobusAuthService
     {
         return DepositCost::whereId(1)->first();
     }
+
     public function getRobusPercentageInter($countrie, $provider_valeur)
     {
 

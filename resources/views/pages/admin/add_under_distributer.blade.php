@@ -1,4 +1,4 @@
-@extends('layouts.registers')
+    @extends('layouts.registers')
 
 @section('title', 'Creer un sous distributeur')
 

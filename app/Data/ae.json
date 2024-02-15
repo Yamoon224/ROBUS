@@ -1,0 +1,1102 @@
+[
+  {
+    "name": "Dubai", 
+    "lat": "25.2631", 
+    "lng": "55.2972", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "3331420", 
+    "population_proper": "3331420"
+  }, 
+  {
+    "name": "Abu Dhabi", 
+    "lat": "24.4667", 
+    "lng": "54.3667", 
+    "country_id":187, 
+     
+    "admin_name": "Abū Z̧aby", 
+     
+    "population": "1483000", 
+    "population_proper": "1483000"
+  }, 
+  {
+    "name": "Sharjah", 
+    "lat": "25.3575", 
+    "lng": "55.3908", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "1247749", 
+    "population_proper": "1247749"
+  }, 
+  {
+    "name": "Al ‘Ayn", 
+    "lat": "24.2075", 
+    "lng": "55.7447", 
+    "country_id":187, 
+     
+    "admin_name": "Abū Z̧aby", 
+    
+    "population": "766936", 
+    "population_proper": "766936"
+  }, 
+  {
+    "name": "‘Ajmān", 
+    "lat": "25.4136", 
+    "lng": "55.4456", 
+    "country_id":187, 
+     
+    "admin_name": "‘Ajmān", 
+    
+    "population": "490035", 
+    "population_proper": "490035"
+  }, 
+  {
+    "name": "Ra’s al Khaymah", 
+    "lat": "25.7667", 
+    "lng": "55.9500", 
+    "country_id":187, 
+     
+    "admin_name": "Ra’s al Khaymah", 
+    
+    "population": "115949", 
+    "population_proper": "115949"
+  }, 
+  {
+    "name": "Al Fujayrah", 
+    "lat": "25.1223", 
+    "lng": "56.3342", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "93673", 
+    "population_proper": "93673"
+  }, 
+  {
+    "name": "Umm al Qaywayn", 
+    "lat": "25.5533", 
+    "lng": "55.5475", 
+    "country_id":187, 
+     
+    "admin_name": "Umm al Qaywayn", 
+    
+    "population": "44411", 
+    "population_proper": "44411"
+  }, 
+  {
+    "name": "Khawr Fakkān", 
+    "lat": "25.3333", 
+    "lng": "56.3500", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "39515", 
+    "population_proper": "39515"
+  }, 
+  {
+    "name": "Kalbā", 
+    "lat": "25.0742", 
+    "lng": "56.3553", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "37545", 
+    "population_proper": "37545"
+  }, 
+  {
+    "name": "Madīnat Zāyid", 
+    "lat": "23.6522", 
+    "lng": "53.6536", 
+    "country_id":187, 
+     
+    "admin_name": "Abū Z̧aby", 
+    
+    "population": "29095", 
+    "population_proper": "29095"
+  }, 
+  {
+    "name": "Al Jazīrah al Ḩamrā’", 
+    "lat": "25.7089", 
+    "lng": "55.7972", 
+    "country_id":187, 
+     
+    "admin_name": "Ra’s al Khaymah", 
+    
+    "population": "10190", 
+    "population_proper": "10190"
+  }, 
+  {
+    "name": "Zubārah", 
+    "lat": "25.4025", 
+    "lng": "56.3614", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "3779", 
+    "population_proper": "3779"
+  }, 
+  {
+    "name": "Naḩwah", 
+    "lat": "25.2683", 
+    "lng": "56.2803", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "302", 
+    "population_proper": "302"
+  }, 
+  {
+    "name": "Sharīyah", 
+    "lat": "24.8151", 
+    "lng": "56.0986", 
+    "country_id":187, 
+     
+    "admin_name": "‘Ajmān", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḩaşat al Bidīyah", 
+    "lat": "25.3273", 
+    "lng": "55.9799", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Maşfūţ", 
+    "lat": "24.8109", 
+    "lng": "56.1066", 
+    "country_id":187, 
+     
+    "admin_name": "‘Ajmān", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Qarayţaysah", 
+    "lat": "24.8708", 
+    "lng": "55.5491", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Margham", 
+    "lat": "24.8987", 
+    "lng": "55.6240", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Qimah", 
+    "lat": "24.7867", 
+    "lng": "56.1414", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "‘Ūd al Bayḑā’", 
+    "lat": "25.0162", 
+    "lng": "55.4553", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ferij al Muhadham", 
+    "lat": "25.2875", 
+    "lng": "55.3175", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Hunaywah", 
+    "lat": "25.1947", 
+    "lng": "55.5945", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Şufayrī", 
+    "lat": "24.8117", 
+    "lng": "56.1265", 
+    "country_id":187, 
+     
+    "admin_name": "‘Ajmān", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al Faq‘", 
+    "lat": "24.7133", 
+    "lng": "55.6231", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "‘Urqūb Juwayza", 
+    "lat": "24.9333", 
+    "lng": "55.4667", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḩayl", 
+    "lat": "24.7892", 
+    "lng": "56.1146", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḩattā", 
+    "lat": "24.8007", 
+    "lng": "56.1273", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al Lusaylī", 
+    "lat": "24.9314", 
+    "lng": "55.4753", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Warīsān", 
+    "lat": "25.1674", 
+    "lng": "55.4071", 
+    "country_id":187, 
+     
+    "admin_name": "Dubayy", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Muḑayfī", 
+    "lat": "25.3617", 
+    "lng": "56.3447", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Rafā‘", 
+    "lat": "25.3470", 
+    "lng": "56.3501", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Lūlayyah", 
+    "lat": "25.3926", 
+    "lng": "56.3546", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Wādī Shī", 
+    "lat": "25.3500", 
+    "lng": "56.3167", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ash Shu‘ayb", 
+    "lat": "24.7471", 
+    "lng": "55.8163", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḩiyāwah", 
+    "lat": "25.3604", 
+    "lng": "56.3477", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ar Rufayşah", 
+    "lat": "25.3452", 
+    "lng": "56.3225", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Shīs", 
+    "lat": "25.2914", 
+    "lng": "56.2455", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al Jazīrah", 
+    "lat": "25.3500", 
+    "lng": "55.3667", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al Ḩamrīyah", 
+    "lat": "25.4782", 
+    "lng": "55.5338", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Adh Dhayd", 
+    "lat": "25.2881", 
+    "lng": "55.8816", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al ‘Awdah", 
+    "lat": "25.3807", 
+    "lng": "56.3092", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Qidfa‘", 
+    "lat": "25.3000", 
+    "lng": "56.3583", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ţayyibah", 
+    "lat": "25.4038", 
+    "lng": "56.1678", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Biţnah", 
+    "lat": "25.1889", 
+    "lng": "56.2328", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Mu‘tariḑah", 
+    "lat": "25.5000", 
+    "lng": "56.1000", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Theeb", 
+    "lat": "25.2450", 
+    "lng": "56.3421", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Wa‘bayn", 
+    "lat": "25.5705", 
+    "lng": "56.1354", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al Qurayyah", 
+    "lat": "25.2394", 
+    "lng": "56.3606", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al Manāmah", 
+    "lat": "25.3299", 
+    "lng": "56.0219", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "‘Abādilah", 
+    "lat": "25.4535", 
+    "lng": "56.1899", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al Ḩalāh", 
+    "lat": "25.4774", 
+    "lng": "56.1824", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ghurfah", 
+    "lat": "25.5977", 
+    "lng": "56.2767", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḩayl", 
+    "lat": "25.1036", 
+    "lng": "56.2872", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ghayl", 
+    "lat": "25.0068", 
+    "lng": "56.3329", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sā’if", 
+    "lat": "25.1842", 
+    "lng": "56.2421", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Badīyah", 
+    "lat": "25.4314", 
+    "lng": "56.3483", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Far‘ah", 
+    "lat": "25.1368", 
+    "lng": "56.2373", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Mukhtaraqah", 
+    "lat": "25.5409", 
+    "lng": "56.1307", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Yalah", 
+    "lat": "25.4152", 
+    "lng": "56.1550", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Rughaylāt", 
+    "lat": "25.1055", 
+    "lng": "56.3563", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḩafarah", 
+    "lat": "25.0411", 
+    "lng": "56.3149", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḩārat Zuţūţ", 
+    "lat": "25.6071", 
+    "lng": "56.2957", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Khawr Kalbā", 
+    "lat": "25.0384", 
+    "lng": "56.3626", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al ‘Uyaynah", 
+    "lat": "25.4528", 
+    "lng": "56.1688", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Rūl Ḑadnā", 
+    "lat": "25.5548", 
+    "lng": "56.3455", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "‘Uqayr", 
+    "lat": "25.2830", 
+    "lng": "56.3644", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Tawian", 
+    "lat": "25.5568", 
+    "lng": "56.0765", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Shawīyah", 
+    "lat": "25.2679", 
+    "lng": "56.0815", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḩarrah", 
+    "lat": "24.9904", 
+    "lng": "56.2167", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dibā", 
+    "lat": "25.6167", 
+    "lng": "56.2667", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sinnah", 
+    "lat": "25.5087", 
+    "lng": "56.1677", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Dūb", 
+    "lat": "25.6130", 
+    "lng": "56.2772", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sram", 
+    "lat": "25.4982", 
+    "lng": "56.0572", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "‘Asamah", 
+    "lat": "25.3983", 
+    "lng": "56.1507", 
+    "country_id":187, 
+     
+    "admin_name": "Ra’s al Khaymah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al ‘Ayn al Ghumūr", 
+    "lat": "24.9595", 
+    "lng": "56.3159", 
+    "country_id":187, 
+     
+    "admin_name": "Ra’s al Khaymah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Şūr", 
+    "lat": "25.0941", 
+    "lng": "56.3483", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Waḩlah", 
+    "lat": "24.9090", 
+    "lng": "56.3032", 
+    "country_id":187, 
+     
+    "admin_name": "Ra’s al Khaymah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Thoban", 
+    "lat": "25.3033", 
+    "lng": "56.0279", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al Gissemari", 
+    "lat": "25.1434", 
+    "lng": "56.2484", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Murbaḩ", 
+    "lat": "25.2762", 
+    "lng": "56.3626", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḩayāt", 
+    "lat": "25.0581", 
+    "lng": "56.3457", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Khulaybīyah", 
+    "lat": "25.3812", 
+    "lng": "56.1736", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Z̧anḩah", 
+    "lat": "25.5659", 
+    "lng": "56.2022", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Saqamqam", 
+    "lat": "25.1731", 
+    "lng": "56.3349", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḑāhir", 
+    "lat": "25.5334", 
+    "lng": "56.1550", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Jareef", 
+    "lat": "25.5142", 
+    "lng": "56.0719", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Girath", 
+    "lat": "25.2609", 
+    "lng": "56.3543", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Riyāmah", 
+    "lat": "25.5456", 
+    "lng": "56.0584", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Al Kubūs", 
+    "lat": "25.6015", 
+    "lng": "56.3047", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "‘Ashashah", 
+    "lat": "25.4593", 
+    "lng": "56.1640", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḑadnā", 
+    "lat": "25.5225", 
+    "lng": "56.3556", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "‘Aqqah", 
+    "lat": "25.4987", 
+    "lng": "56.3583", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ras Dibba", 
+    "lat": "25.6055", 
+    "lng": "56.3050", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Nuhayy", 
+    "lat": "25.2707", 
+    "lng": "56.3624", 
+    "country_id":187, 
+     
+    "admin_name": "Ash Shāriqah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ḑab‘ah", 
+    "lat": "25.4825", 
+    "lng": "56.1387", 
+    "country_id":187, 
+     
+    "admin_name": "Ra’s al Khaymah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Murbaḑ", 
+    "lat": "25.3254", 
+    "lng": "56.1331", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Şafad", 
+    "lat": "25.2231", 
+    "lng": "56.2994", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Ţarīqat Ja‘d", 
+    "lat": "25.5285", 
+    "lng": "56.1514", 
+    "country_id":187, 
+     
+    "admin_name": "Al Fujayrah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Mawrid", 
+    "lat": "25.4287", 
+    "lng": "56.1146", 
+    "country_id":187, 
+     
+    "admin_name": "Ra’s al Khaymah", 
+    
+    "population": "", 
+    "population_proper": ""
+  }
+]

@@ -219,6 +219,14 @@ class Transaction extends Component
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Internationnal supprimée !');
         }
+    }  public function delete()
+    {
+        $check = TransactionCost::find($this->transaction_id);
+        if (!empty($check)) {
+            $check->destroy($this->transaction_id);
+            $this->emit('modal-hide', 'hide');
+            $this->emit('success', 'Internationnal supprimée !');
+        }
     }
 
     public function render()

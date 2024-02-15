@@ -77,38 +77,38 @@ class ProviderController extends Controller
         $walletWithdrawal =  $this->percentRobus->getProvidersByWithdrawal(new Provider, robus()->country->id, 1);
         $walletReloadCardInter =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 11);
         $walletOrderCard =  $this->percentRobus->getProvidersByTypeOrderCard(new Provider, robus()->country->id, 5);
-        
-        
+        $wallet1xbet =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 13);
+
         try {
 
             Artisan::call('app:close-status');
 
             // Récupérer le statut de l'application
             $appStatus = AppStatus::latest()->first();
-    
-    
+
+
             // Vérifier si l'application est fermée
             if ($appStatus && $appStatus->status_app === 'closed') {
-    
+
                 $robus_hour_begin = $appStatus->time_start;
                 $robus_hour_end = $appStatus->time_end;
                 $robus_hour_description = $appStatus->description;
-    
+
                 return response()->json([
                     'success' => false,
                     'message' => "L'application ROBUS etait ouverte aujourd'hui de  " . $robus_hour_begin . " a " . $robus_hour_end .  " et est fermée pour cause de " . $robus_hour_description,
                 ], 301);
             }
-            
+
             $operators = $this->percentRobus->OperatorServices();
-            
+
             if ($walletUser->country->code == 'CI') {
-                
+
                 if ($walletUser->is_under_distributer == true) {
-                    
+
 
                     $dashboard_data = [];
-                    
+
                     foreach ($operators as $operator) {
 
                         switch ($operator->operator->id) {
@@ -133,23 +133,26 @@ class ProviderController extends Controller
                             case 7:
                                 $dashboard_data[$operator->operator->name] = [
                                     "Transfert" => ProviderSingleCollection::collection($walletInter),
-                                ];                                
+                                ];
                                 break;
                             case 8:
                                 $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletBank);
+                                break;
+                            case 9:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($wallet1xbet);
                                 break;
                             default:
                                 // Ne rien faire ou ajouter une logique de gestion d'erreur
                                 break;
                         }
                     }
-                  
                 } else {
 
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
                     $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
+                    $dashboard_data['SERVICE  1XBET'] = ProviderSingleCollection::collection($wallet1xbet);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
                     $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);
                     $dashboard_data['Transfert international'] = [
@@ -161,7 +164,7 @@ class ProviderController extends Controller
                 if ($walletUser->is_under_distributer == true) {
 
                     $dashboard_data = [];
-                    
+
                     foreach ($operators as $operator) {
 
                         switch ($operator->operator->id) {
@@ -171,7 +174,7 @@ class ProviderController extends Controller
                             case 7:
                                 $dashboard_data[$operator->operator->name] = [
                                     "Transfert" => ProviderSingleCollection::collection($walletInter),
-                                ];                                
+                                ];
                                 break;
                             case 8:
                                 $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletBank);
@@ -181,7 +184,6 @@ class ProviderController extends Controller
                                 break;
                         }
                     }
-
                 } else {
 
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
@@ -199,7 +201,6 @@ class ProviderController extends Controller
                 'success' => true,
                 'Wallets' =>  $dashboard_data,
             ], 200);
-            
         } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,

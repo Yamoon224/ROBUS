@@ -1,0 +1,464 @@
+[
+  {
+    "name": "Tripoli", 
+    "lat": "34.4367", 
+    "lng": "35.8344", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Nord", 
+   
+    "population": "530000", 
+    "population_proper": "227857"
+  }, 
+  {
+    "name": "Beirut", 
+    "lat": "33.8869", 
+    "lng": "35.5131", 
+    "country_id":120,
+    
+    "admin_name": "Beyrouth", 
+    
+    "population": "361366", 
+    "population_proper": "361366"
+  }, 
+  {
+    "name": "Sidon", 
+    "lat": "33.5606", 
+    "lng": "35.3758", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+   
+    "population": "200000", 
+    "population_proper": "200000"
+  }, 
+  {
+    "name": "Tyre", 
+    "lat": "33.2708", 
+    "lng": "35.1961", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+    
+    "population": "160000", 
+    "population_proper": "160000"
+  }, 
+  {
+    "name": "Borj Hammoud", 
+    "lat": "33.8936", 
+    "lng": "35.5403", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "150000", 
+    "population_proper": "150000"
+  }, 
+  {
+    "name": "El Minié", 
+    "lat": "34.4470", 
+    "lng": "35.8178", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Nord", 
+     
+    "population": "150000", 
+    "population_proper": "150000"
+  }, 
+  {
+    "name": "Aaley", 
+    "lat": "33.8000", 
+    "lng": "35.6000", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+    
+    "population": "130000", 
+    "population_proper": "130000"
+  }, 
+  {
+    "name": "Joünié", 
+    "lat": "33.9697", 
+    "lng": "35.6156", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+    
+    "population": "102221", 
+    "population_proper": "102221"
+  }, 
+  {
+    "name": "Zahlé", 
+    "lat": "33.8333", 
+    "lng": "35.9167", 
+    "country_id":120,
+    
+    "admin_name": "Béqaa", 
+   
+    "population": "100000", 
+    "population_proper": "100000"
+  }, 
+  {
+    "name": "Nabatîyé", 
+    "lat": "33.3833", 
+    "lng": "35.4500", 
+    "country_id":120,
+    
+    "admin_name": "Nabatîyé", 
+   
+    "population": "80000", 
+    "population_proper": "80000"
+  }, 
+  {
+    "name": "Borj el Qoblé", 
+    "lat": "33.2631", 
+    "lng": "35.2389", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+     
+    "population": "61973", 
+    "population_proper": "61973"
+  }, 
+  {
+    "name": "El Ghâzîyé", 
+    "lat": "33.5186", 
+    "lng": "35.3661", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+     
+    "population": "50000", 
+    "population_proper": "50000"
+  }, 
+  {
+    "name": "Qabb Eliâs", 
+    "lat": "33.7986", 
+    "lng": "35.8250", 
+    "country_id":120,
+    
+    "admin_name": "Béqaa", 
+     
+    "population": "50000", 
+    "population_proper": "50000"
+  }, 
+  {
+    "name": "Batroûn", 
+    "lat": "34.2500", 
+    "lng": "35.6500", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Nord", 
+    
+    "population": "45000", 
+    "population_proper": "45000"
+  }, 
+  {
+    "name": "Jbaïl", 
+    "lat": "34.1236", 
+    "lng": "35.6511", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+    
+    "population": "40000", 
+    "population_proper": "40000"
+  }, 
+  {
+    "name": "Barr Eliâs", 
+    "lat": "33.7750", 
+    "lng": "35.9000", 
+    "country_id":120,
+    
+    "admin_name": "Béqaa", 
+     
+    "population": "40000", 
+    "population_proper": "40000"
+  }, 
+  {
+    "name": "Zghartā", 
+    "lat": "34.4000", 
+    "lng": "35.9000", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Nord", 
+    
+    "population": "30000", 
+    "population_proper": "30000"
+  }, 
+  {
+    "name": "Bent Jbaïl", 
+    "lat": "33.1258", 
+    "lng": "35.4428", 
+    "country_id":120,
+    
+    "admin_name": "Nabatîyé", 
+    
+    "population": "30000", 
+    "population_proper": "30000"
+  }, 
+  {
+    "name": "Chmistâr", 
+    "lat": "33.9667", 
+    "lng": "36.0167", 
+    "country_id":120,
+    
+    "admin_name": "Baalbek-Hermel", 
+     
+    "population": "30000", 
+    "population_proper": "30000"
+  }, 
+  {
+    "name": "Qornet Chahouâne", 
+    "lat": "33.9200", 
+    "lng": "35.6700", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "28000", 
+    "population_proper": "28000"
+  }, 
+  {
+    "name": "Baalbek", 
+    "lat": "34.0063", 
+    "lng": "36.2073", 
+    "country_id":120,
+    
+    "admin_name": "Baalbek-Hermel", 
+   
+    "population": "24000", 
+    "population_proper": "24000"
+  }, 
+  {
+    "name": "El Bâzoûrîyé", 
+    "lat": "33.2539", 
+    "lng": "35.2717", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+     
+    "population": "20000", 
+    "population_proper": "20000"
+  }, 
+  {
+    "name": "Baaqlîne", 
+    "lat": "33.6797", 
+    "lng": "35.5583", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "17000", 
+    "population_proper": "17000"
+  }, 
+  {
+    "name": "Kahhalé", 
+    "lat": "33.8219", 
+    "lng": "35.5875", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "13000", 
+    "population_proper": "13000"
+  }, 
+  {
+    "name": "Barja", 
+    "lat": "33.6497", 
+    "lng": "35.4433", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "12888", 
+    "population_proper": "12888"
+  }, 
+  {
+    "name": "Bteghrîne", 
+    "lat": "33.9300", 
+    "lng": "35.7450", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "12000", 
+    "population_proper": "12000"
+  }, 
+  {
+    "name": "Sarafand", 
+    "lat": "33.4517", 
+    "lng": "35.2908", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+     
+    "population": "10965", 
+    "population_proper": "10965"
+  }, 
+  {
+    "name": "Srîfa", 
+    "lat": "33.2814", 
+    "lng": "35.3964", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+     
+    "population": "10000", 
+    "population_proper": "10000"
+  }, 
+  {
+    "name": "Qâna", 
+    "lat": "33.2092", 
+    "lng": "35.2992", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+     
+    "population": "10000", 
+    "population_proper": "10000"
+  }, 
+  {
+    "name": "Ed Dâmoûr", 
+    "lat": "33.7333", 
+    "lng": "35.4500", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "10000", 
+    "population_proper": "10000"
+  }, 
+  {
+    "name": "Kfar Aabîda", 
+    "lat": "34.2264", 
+    "lng": "35.6600", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Nord", 
+     
+    "population": "9613", 
+    "population_proper": "9613"
+  }, 
+  {
+    "name": "Baabda", 
+    "lat": "33.8333", 
+    "lng": "35.5333", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+   
+    "population": "9000", 
+    "population_proper": "9000"
+  }, 
+  {
+    "name": "El Qalamoûn", 
+    "lat": "34.3833", 
+    "lng": "35.7833", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Nord", 
+     
+    "population": "7000", 
+    "population_proper": "7000"
+  }, 
+  {
+    "name": "Ej Jmaïlîyé", 
+    "lat": "33.6661", 
+    "lng": "35.5183", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "5500", 
+    "population_proper": "5500"
+  }, 
+  {
+    "name": "Nahr Ibrâhîm", 
+    "lat": "34.0661", 
+    "lng": "35.6450", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "4786", 
+    "population_proper": "4786"
+  }, 
+  {
+    "name": "Halba", 
+    "lat": "34.5506", 
+    "lng": "36.0781", 
+    "country_id":120,
+    
+    "admin_name": "Aakkâr", 
+   
+    "population": "4730", 
+    "population_proper": "4730"
+  }, 
+  {
+    "name": "Zakrît", 
+    "lat": "33.9300", 
+    "lng": "35.5800", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "4500", 
+    "population_proper": "4500"
+  }, 
+  {
+    "name": "Saoufar", 
+    "lat": "33.8028", 
+    "lng": "35.7006", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+     
+    "population": "3000", 
+    "population_proper": "3000"
+  }, 
+  {
+    "name": "Borj Rahhâl", 
+    "lat": "33.3097", 
+    "lng": "35.2825", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+     
+    "population": "2625", 
+    "population_proper": "2625"
+  }, 
+  {
+    "name": "Jdaidet el Matn", 
+    "lat": "33.8833", 
+    "lng": "35.5667", 
+    "country_id":120,
+    
+    "admin_name": "Mont-Liban", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Sîr ed Danniyé", 
+    "lat": "34.3853", 
+    "lng": "36.0311", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Nord", 
+    
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "name": "Jezzîne", 
+    "lat": "33.5400", 
+    "lng": "35.5836", 
+    "country_id":120,
+    
+    "admin_name": "Liban-Sud", 
+    
+    "population": "", 
+    "population_proper": ""
+  }
+]

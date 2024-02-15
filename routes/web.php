@@ -216,6 +216,8 @@ Route::group(['prefix' => ''], function () {
             Route::get('/transactions/centre-afrique/mooney_civ', [CommissionController::class, 'browse_transactions_mooney_caf_civ'])->name('commissions.browse_transactions_mooney_caf_civ');
             Route::get('/transactions/centre-afrique/civ', [CommissionController::class, 'browse_transactions_civ_caf'])->name('commissions.browse_transactions_civ_caf');
             Route::get('/transactions/centre-afrique/inter_civ', [CommissionController::class, 'browse_transactions_inter_caf_civ'])->name('commissions.browse_transactions_inter_caf_civ');
+            //1xbet Transactions
+            Route::get('/onexbets', [CommissionController::class, 'browse_onexbets'])->name('commissions.browse_onexbets');
             // France
             Route::get('/transactions/france/mooney_civ', [CommissionController::class, 'browse_transactions_mooney_fr_civ'])->name('commissions.browse_transactions_mooney_fr_civ');
             Route::get('/transactions/france/civ', [CommissionController::class, 'browse_transactions_civ_fr'])->name('commissions.browse_transactions_civ_fr');

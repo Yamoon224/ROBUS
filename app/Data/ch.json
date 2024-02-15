@@ -1,0 +1,2037 @@
+[
+  {
+    "name": "Zürich", 
+    "lat": "47.3744", 
+    "lng": "8.5411", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+     
+    "population": "436332", 
+    "population_proper": "436332"
+  }, 
+  {
+    "name": "Geneva", 
+    "lat": "46.2017", 
+    "lng": "6.1469", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+     
+    "population": "201818", 
+    "population_proper": "201818"
+  }, 
+  {
+    "name": "Basel", 
+    "lat": "47.5547", 
+    "lng": "7.5906", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Stadt", 
+     
+    "population": "177827", 
+    "population_proper": "177827"
+  }, 
+  {
+    "name": "Lausanne", 
+    "lat": "46.5198", 
+    "lng": "6.6335", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+     
+    "population": "139111", 
+    "population_proper": "139111"
+  }, 
+  {
+    "name": "Bern", 
+    "lat": "46.9481", 
+    "lng": "7.4475", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+     
+    "population": "133883", 
+    "population_proper": "133883"
+  }, 
+  {
+    "name": "Winterthur", 
+    "lat": "47.4989", 
+    "lng": "8.7286", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "109775", 
+    "population_proper": "109775"
+  }, 
+  {
+    "name": "Lucerne", 
+    "lat": "47.0500", 
+    "lng": "8.3000", 
+    "country_id":208, 
+    
+    "admin_name": "Luzern", 
+     
+    "population": "81691", 
+    "population_proper": "81691"
+  }, 
+  {
+    "name": "Sankt Gallen", 
+    "lat": "47.4242", 
+    "lng": "9.3708", 
+    "country_id":208, 
+    
+    "admin_name": "Sankt Gallen", 
+     
+    "population": "75833", 
+    "population_proper": "75833"
+  }, 
+  {
+    "name": "Biel/Bienne", 
+    "lat": "47.1333", 
+    "lng": "7.2500", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "55159", 
+    "population_proper": "55159"
+  }, 
+  {
+    "name": "Thun", 
+    "lat": "46.7667", 
+    "lng": "7.6333", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "43743", 
+    "population_proper": "43734"
+  }, 
+  {
+    "name": "Bellinzona", 
+    "lat": "46.1954", 
+    "lng": "9.0297", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "43220", 
+    "population_proper": "43220"
+  }, 
+  {
+    "name": "Fribourg", 
+    "lat": "46.8000", 
+    "lng": "7.1500", 
+    "country_id":208, 
+    
+    "admin_name": "Fribourg", 
+     
+    "population": "38365", 
+    "population_proper": "38365"
+  }, 
+  {
+    "name": "Uster", 
+    "lat": "47.3500", 
+    "lng": "8.7167", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "36791", 
+    "population_proper": "36791"
+  }, 
+  {
+    "name": "Schaffhausen", 
+    "lat": "47.7000", 
+    "lng": "8.6333", 
+    "country_id":208, 
+    
+    "admin_name": "Schaffhausen", 
+     
+    "population": "36587", 
+    "population_proper": "36587"
+  }, 
+  {
+    "name": "Vernier", 
+    "lat": "46.2000", 
+    "lng": "6.1000", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "35132", 
+    "population_proper": "34774"
+  }, 
+  {
+    "name": "Chur", 
+    "lat": "46.8500", 
+    "lng": "9.5333", 
+    "country_id":208, 
+    
+    "admin_name": "Graubünden", 
+     
+    "population": "35038", 
+    "population_proper": "35038"
+  }, 
+  {
+    "name": "Sion", 
+    "lat": "46.2333", 
+    "lng": "7.3667", 
+    "country_id":208, 
+    
+    "admin_name": "Valais", 
+   
+    "population": "34708", 
+    "population_proper": "34708"
+  }, 
+  {
+    "name": "Neuchâtel", 
+    "lat": "47.0000", 
+    "lng": "6.9333", 
+    "country_id":208, 
+    
+    "admin_name": "Neuchâtel", 
+     
+    "population": "33475", 
+    "population_proper": "33475"
+  }, 
+  {
+    "name": "Zug", 
+    "lat": "47.1681", 
+    "lng": "8.5169", 
+    "country_id":208, 
+    
+    "admin_name": "Zug", 
+     
+    "population": "30542", 
+    "population_proper": "30542"
+  }, 
+  {
+    "name": "Yverdon-les-Bains", 
+    "lat": "46.7785", 
+    "lng": "6.6408", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "30157", 
+    "population_proper": "30157"
+  }, 
+  {
+    "name": "Emmen", 
+    "lat": "47.0833", 
+    "lng": "8.3000", 
+    "country_id":208, 
+    
+    "admin_name": "Luzern", 
+   
+    "population": "29292", 
+    "population_proper": "29292"
+  }, 
+  {
+    "name": "Dübendorf", 
+    "lat": "47.4167", 
+    "lng": "8.6167", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "28002", 
+    "population_proper": "28002"
+  }, 
+  {
+    "name": "Rapperswil-Jona", 
+    "lat": "47.2167", 
+    "lng": "8.8167", 
+    "country_id":208, 
+    
+    "admin_name": "Sankt Gallen", 
+   
+    "population": "26995", 
+    "population_proper": "26995"
+  }, 
+  {
+    "name": "Dietikon", 
+    "lat": "47.4000", 
+    "lng": "8.4000", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "26936", 
+    "population_proper": "26936"
+  }, 
+  {
+    "name": "Wetzikon", 
+    "lat": "47.3167", 
+    "lng": "8.8000", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "24452", 
+    "population_proper": "24452"
+  }, 
+  {
+    "name": "Meyrin", 
+    "lat": "46.2167", 
+    "lng": "6.0667", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "24144", 
+    "population_proper": "24144"
+  }, 
+  {
+    "name": "Carouge", 
+    "lat": "46.1833", 
+    "lng": "6.1333", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "22336", 
+    "population_proper": "22336"
+  }, 
+  {
+    "name": "Kreuzlingen", 
+    "lat": "47.6333", 
+    "lng": "9.1667", 
+    "country_id":208, 
+    
+    "admin_name": "Thurgau", 
+   
+    "population": "21801", 
+    "population_proper": "21801"
+  }, 
+  {
+    "name": "Wädenswil", 
+    "lat": "47.2333", 
+    "lng": "8.6667", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "21716", 
+    "population_proper": "21716"
+  }, 
+  {
+    "name": "Aarau", 
+    "lat": "47.4000", 
+    "lng": "8.0500", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+     
+    "population": "21503", 
+    "population_proper": "21503"
+  }, 
+  {
+    "name": "Riehen", 
+    "lat": "47.5833", 
+    "lng": "7.6333", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Stadt", 
+   
+    "population": "21448", 
+    "population_proper": "21448"
+  }, 
+  {
+    "name": "Allschwil", 
+    "lat": "47.5500", 
+    "lng": "7.5333", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "21150", 
+    "population_proper": "21150"
+  }, 
+  {
+    "name": "Renens", 
+    "lat": "46.5333", 
+    "lng": "6.5833", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "20927", 
+    "population_proper": "20927"
+  }, 
+  {
+    "name": "Wettingen", 
+    "lat": "47.4659", 
+    "lng": "8.3267", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "20843", 
+    "population_proper": "20843"
+  }, 
+  {
+    "name": "Nyon", 
+    "lat": "46.3833", 
+    "lng": "6.2333", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "20272", 
+    "population_proper": "20272"
+  }, 
+  {
+    "name": "Bülach", 
+    "lat": "47.5167", 
+    "lng": "8.5333", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "20046", 
+    "population_proper": "20046"
+  }, 
+  {
+    "name": "Vevey", 
+    "lat": "46.4667", 
+    "lng": "6.8500", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "19891", 
+    "population_proper": "19891"
+  }, 
+  {
+    "name": "Opfikon", 
+    "lat": "47.4333", 
+    "lng": "8.5667", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "19864", 
+    "population_proper": "19864"
+  }, 
+  {
+    "name": "Reinach", 
+    "lat": "47.4833", 
+    "lng": "7.5833", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "19144", 
+    "population_proper": "19144"
+  }, 
+  {
+    "name": "Baden", 
+    "lat": "47.4667", 
+    "lng": "8.3000", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "19122", 
+    "population_proper": "19122"
+  }, 
+  {
+    "name": "Onex", 
+    "lat": "46.1833", 
+    "lng": "6.1000", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "18977", 
+    "population_proper": "18977"
+  }, 
+  {
+    "name": "Schlieren", 
+    "lat": "47.4000", 
+    "lng": "8.4500", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "18731", 
+    "population_proper": "18731"
+  }, 
+  {
+    "name": "Adliswil", 
+    "lat": "47.3167", 
+    "lng": "8.5333", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "18731", 
+    "population_proper": "18731"
+  }, 
+  {
+    "name": "Volketswil", 
+    "lat": "47.3906", 
+    "lng": "8.6953", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "18615", 
+    "population_proper": "18615"
+  }, 
+  {
+    "name": "Thalwil", 
+    "lat": "47.2833", 
+    "lng": "8.5667", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "18525", 
+    "population_proper": "18525"
+  }, 
+  {
+    "name": "Olten", 
+    "lat": "47.3500", 
+    "lng": "7.9000", 
+    "country_id":208, 
+    
+    "admin_name": "Solothurn", 
+   
+    "population": "18362", 
+    "population_proper": "18362"
+  }, 
+  {
+    "name": "Pully", 
+    "lat": "46.5167", 
+    "lng": "6.6667", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "18313", 
+    "population_proper": "18313"
+  }, 
+  {
+    "name": "Regensdorf", 
+    "lat": "47.4333", 
+    "lng": "8.4667", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "18253", 
+    "population_proper": "18253"
+  }, 
+  {
+    "name": "Ostermundigen", 
+    "lat": "46.9550", 
+    "lng": "7.4894", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "17751", 
+    "population_proper": "17751"
+  }, 
+  {
+    "name": "Littau", 
+    "lat": "47.0494", 
+    "lng": "8.2639", 
+    "country_id":208, 
+    
+    "admin_name": "Luzern", 
+   
+    "population": "17224", 
+    "population_proper": "17224"
+  }, 
+  {
+    "name": "Solothurn", 
+    "lat": "47.2167", 
+    "lng": "7.5333", 
+    "country_id":208, 
+    
+    "admin_name": "Solothurn", 
+     
+    "population": "16777", 
+    "population_proper": "16777"
+  }, 
+  {
+    "name": "Pratteln", 
+    "lat": "47.5167", 
+    "lng": "7.7000", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "16621", 
+    "population_proper": "16621"
+  }, 
+  {
+    "name": "Freienbach", 
+    "lat": "47.2000", 
+    "lng": "8.7500", 
+    "country_id":208, 
+    
+    "admin_name": "Schwyz", 
+   
+    "population": "16391", 
+    "population_proper": "16391"
+  }, 
+  {
+    "name": "Wallisellen", 
+    "lat": "47.4150", 
+    "lng": "8.5967", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "16315", 
+    "population_proper": "16315"
+  }, 
+  {
+    "name": "Wohlen", 
+    "lat": "47.3506", 
+    "lng": "8.2778", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "16078", 
+    "population_proper": "16078"
+  }, 
+  {
+    "name": "Morges", 
+    "lat": "46.5167", 
+    "lng": "6.5000", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "15838", 
+    "population_proper": "15705"
+  }, 
+  {
+    "name": "Steffisburg", 
+    "lat": "46.7667", 
+    "lng": "7.6333", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "15816", 
+    "population_proper": "15709"
+  }, 
+  {
+    "name": "Binningen", 
+    "lat": "47.5333", 
+    "lng": "7.5667", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "15675", 
+    "population_proper": "15675"
+  }, 
+  {
+    "name": "Schwyz", 
+    "lat": "47.0167", 
+    "lng": "8.6500", 
+    "country_id":208, 
+    
+    "admin_name": "Schwyz", 
+     
+    "population": "15181", 
+    "population_proper": "15181"
+  }, 
+  {
+    "name": "Arbon", 
+    "lat": "47.5167", 
+    "lng": "9.4333", 
+    "country_id":208, 
+    
+    "admin_name": "Thurgau", 
+   
+    "population": "14537", 
+    "population_proper": "14537"
+  }, 
+  {
+    "name": "Liestal", 
+    "lat": "47.4667", 
+    "lng": "7.7333", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+     
+    "population": "14390", 
+    "population_proper": "14390"
+  }, 
+  {
+    "name": "Stäfa", 
+    "lat": "47.2400", 
+    "lng": "8.7300", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "14389", 
+    "population_proper": "14389"
+  }, 
+  {
+    "name": "Küsnacht", 
+    "lat": "47.3167", 
+    "lng": "8.5833", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "14387", 
+    "population_proper": "14387"
+  }, 
+  {
+    "name": "Thônex", 
+    "lat": "46.1833", 
+    "lng": "6.1833", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "14122", 
+    "population_proper": "14122"
+  }, 
+  {
+    "name": "Meilen", 
+    "lat": "47.2667", 
+    "lng": "8.6333", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "13999", 
+    "population_proper": "13999"
+  }, 
+  {
+    "name": "Versoix", 
+    "lat": "46.2833", 
+    "lng": "6.1667", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "13422", 
+    "population_proper": "13422"
+  }, 
+  {
+    "name": "Richterswil", 
+    "lat": "47.2167", 
+    "lng": "8.7000", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "13407", 
+    "population_proper": "13407"
+  }, 
+  {
+    "name": "Zollikon", 
+    "lat": "47.3422", 
+    "lng": "8.5783", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "13367", 
+    "population_proper": "13367"
+  }, 
+  {
+    "name": "Gland", 
+    "lat": "46.4200", 
+    "lng": "6.2700", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "13106", 
+    "population_proper": "13106"
+  }, 
+  {
+    "name": "Muri", 
+    "lat": "46.9333", 
+    "lng": "7.4833", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "13054", 
+    "population_proper": "13054"
+  }, 
+  {
+    "name": "Ecublens", 
+    "lat": "46.5276", 
+    "lng": "6.5605", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "12854", 
+    "population_proper": "12854"
+  }, 
+  {
+    "name": "Delémont", 
+    "lat": "47.3667", 
+    "lng": "7.3500", 
+    "country_id":208, 
+    
+    "admin_name": "Jura", 
+     
+    "population": "12682", 
+    "population_proper": "12682"
+  }, 
+  {
+    "name": "Prilly", 
+    "lat": "46.5333", 
+    "lng": "6.6000", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "12399", 
+    "population_proper": "12399"
+  }, 
+  {
+    "name": "Chêne-Bougeries", 
+    "lat": "46.1833", 
+    "lng": "6.1833", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "12215", 
+    "population_proper": "12215"
+  }, 
+  {
+    "name": "Rüti", 
+    "lat": "47.2667", 
+    "lng": "8.8500", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "12170", 
+    "population_proper": "12170"
+  }, 
+  {
+    "name": "Le Grand-Saconnex", 
+    "lat": "46.2333", 
+    "lng": "6.1167", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "12162", 
+    "population_proper": "12162"
+  }, 
+  {
+    "name": "Münchenstein", 
+    "lat": "47.5167", 
+    "lng": "7.6167", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "12096", 
+    "population_proper": "12096"
+  }, 
+  {
+    "name": "Villars-sur-Glâne", 
+    "lat": "46.7833", 
+    "lng": "7.1167", 
+    "country_id":208, 
+    
+    "admin_name": "Fribourg", 
+   
+    "population": "12092", 
+    "population_proper": "12092"
+  }, 
+  {
+    "name": "La Tour-de-Peilz", 
+    "lat": "46.4500", 
+    "lng": "6.8667", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "11829", 
+    "population_proper": "11829"
+  }, 
+  {
+    "name": "Spreitenbach", 
+    "lat": "47.4167", 
+    "lng": "8.3667", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "11788", 
+    "population_proper": "11788"
+  }, 
+  {
+    "name": "Veyrier", 
+    "lat": "46.1667", 
+    "lng": "6.1833", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "11609", 
+    "population_proper": "11609"
+  }, 
+  {
+    "name": "Bassersdorf", 
+    "lat": "47.4431", 
+    "lng": "8.6283", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "11593", 
+    "population_proper": "11593"
+  }, 
+  {
+    "name": "Männedorf", 
+    "lat": "47.2553", 
+    "lng": "8.6917", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "11242", 
+    "population_proper": "11242"
+  }, 
+  {
+    "name": "Romanshorn", 
+    "lat": "47.5635", 
+    "lng": "9.3564", 
+    "country_id":208, 
+    
+    "admin_name": "Thurgau", 
+   
+    "population": "11167", 
+    "population_proper": "11167"
+  }, 
+  {
+    "name": "Oberwil", 
+    "lat": "47.5135", 
+    "lng": "7.5546", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "11136", 
+    "population_proper": "11136"
+  }, 
+  {
+    "name": "Brugg", 
+    "lat": "47.4864", 
+    "lng": "8.2067", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "11129", 
+    "population_proper": "11129"
+  }, 
+  {
+    "name": "Plan-les-Ouates", 
+    "lat": "46.1667", 
+    "lng": "6.1167", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "10656", 
+    "population_proper": "10656"
+  }, 
+  {
+    "name": "Neuhausen am Rheinfall", 
+    "lat": "47.6833", 
+    "lng": "8.6167", 
+    "country_id":208, 
+    
+    "admin_name": "Schaffhausen", 
+   
+    "population": "10510", 
+    "population_proper": "10510"
+  }, 
+  {
+    "name": "Sarnen", 
+    "lat": "46.8961", 
+    "lng": "8.2456", 
+    "country_id":208, 
+    
+    "admin_name": "Obwalden", 
+     
+    "population": "10368", 
+    "population_proper": "10368"
+  }, 
+  {
+    "name": "Aesch", 
+    "lat": "47.4694", 
+    "lng": "7.5942", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "10352", 
+    "population_proper": "10352"
+  }, 
+  {
+    "name": "Birsfelden", 
+    "lat": "47.5533", 
+    "lng": "7.6233", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "10299", 
+    "population_proper": "10299"
+  }, 
+  {
+    "name": "Lutry", 
+    "lat": "46.5000", 
+    "lng": "6.6833", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "10289", 
+    "population_proper": "10289"
+  }, 
+  {
+    "name": "Therwil", 
+    "lat": "47.4997", 
+    "lng": "7.5500", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "9947", 
+    "population_proper": "9867"
+  }, 
+  {
+    "name": "Sursee", 
+    "lat": "47.1667", 
+    "lng": "8.1167", 
+    "country_id":208, 
+    
+    "admin_name": "Luzern", 
+   
+    "population": "9900", 
+    "population_proper": "9900"
+  }, 
+  {
+    "name": "Urdorf", 
+    "lat": "47.3867", 
+    "lng": "8.4278", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "9768", 
+    "population_proper": "9768"
+  }, 
+  {
+    "name": "Widnau", 
+    "lat": "47.3997", 
+    "lng": "9.6333", 
+    "country_id":208, 
+    
+    "admin_name": "Sankt Gallen", 
+   
+    "population": "9616", 
+    "population_proper": "9616"
+  }, 
+  {
+    "name": "Epalinges", 
+    "lat": "46.5500", 
+    "lng": "6.6667", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "9611", 
+    "population_proper": "9611"
+  }, 
+  {
+    "name": "Rorschach", 
+    "lat": "47.4667", 
+    "lng": "9.5000", 
+    "country_id":208, 
+    
+    "admin_name": "Sankt Gallen", 
+   
+    "population": "9439", 
+    "population_proper": "9439"
+  }, 
+  {
+    "name": "Altdorf", 
+    "lat": "46.8667", 
+    "lng": "8.6333", 
+    "country_id":208, 
+    
+    "admin_name": "Uri", 
+     
+    "population": "9401", 
+    "population_proper": "9401"
+  }, 
+  {
+    "name": "Goldach", 
+    "lat": "47.4831", 
+    "lng": "9.4664", 
+    "country_id":208, 
+    
+    "admin_name": "Sankt Gallen", 
+   
+    "population": "9269", 
+    "population_proper": "9269"
+  }, 
+  {
+    "name": "Arlesheim", 
+    "lat": "47.4922", 
+    "lng": "7.6203", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "9202", 
+    "population_proper": "9202"
+  }, 
+  {
+    "name": "Zuchwil", 
+    "lat": "47.2056", 
+    "lng": "7.5597", 
+    "country_id":208, 
+    
+    "admin_name": "Solothurn", 
+   
+    "population": "8875", 
+    "population_proper": "8875"
+  }, 
+  {
+    "name": "Kilchberg", 
+    "lat": "47.3247", 
+    "lng": "8.5492", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "8851", 
+    "population_proper": "8851"
+  }, 
+  {
+    "name": "Neuenhof", 
+    "lat": "47.4469", 
+    "lng": "8.3292", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "8824", 
+    "population_proper": "8824"
+  }, 
+  {
+    "name": "Lachen", 
+    "lat": "47.1833", 
+    "lng": "8.8500", 
+    "country_id":208, 
+    
+    "admin_name": "Schwyz", 
+   
+    "population": "8754", 
+    "population_proper": "8754"
+  }, 
+  {
+    "name": "Fällanden", 
+    "lat": "47.3717", 
+    "lng": "8.6400", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "8575", 
+    "population_proper": "8575"
+  }, 
+  {
+    "name": "Stans", 
+    "lat": "46.9500", 
+    "lng": "8.3500", 
+    "country_id":208, 
+    
+    "admin_name": "Nidwalden", 
+     
+    "population": "8393", 
+    "population_proper": "8393"
+  }, 
+  {
+    "name": "Oberentfelden", 
+    "lat": "47.3597", 
+    "lng": "8.0486", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "8360", 
+    "population_proper": "8360"
+  }, 
+  {
+    "name": "Aarburg", 
+    "lat": "47.3167", 
+    "lng": "7.9000", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "8068", 
+    "population_proper": "8068"
+  }, 
+  {
+    "name": "Chiasso", 
+    "lat": "45.8333", 
+    "lng": "9.0333", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "7975", 
+    "population_proper": "7975"
+  }, 
+  {
+    "name": "Buchs", 
+    "lat": "47.3889", 
+    "lng": "8.0747", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "7966", 
+    "population_proper": "7966"
+  }, 
+  {
+    "name": "Crissier", 
+    "lat": "46.5500", 
+    "lng": "6.5833", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "7930", 
+    "population_proper": "7930"
+  }, 
+  {
+    "name": "Au", 
+    "lat": "47.4331", 
+    "lng": "9.6333", 
+    "country_id":208, 
+    
+    "admin_name": "Sankt Gallen", 
+   
+    "population": "7788", 
+    "population_proper": "7788"
+  }, 
+  {
+    "name": "Dietlikon", 
+    "lat": "47.4200", 
+    "lng": "8.6192", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "7773", 
+    "population_proper": "7773"
+  }, 
+  {
+    "name": "Chavannes-près-Renens", 
+    "lat": "46.5282", 
+    "lng": "6.5762", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "7724", 
+    "population_proper": "7724"
+  }, 
+  {
+    "name": "Windisch", 
+    "lat": "47.4803", 
+    "lng": "8.2222", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "7654", 
+    "population_proper": "7654"
+  }, 
+  {
+    "name": "Minusio", 
+    "lat": "46.1833", 
+    "lng": "8.8167", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "7303", 
+    "population_proper": "7303"
+  }, 
+  {
+    "name": "Heimberg", 
+    "lat": "46.7831", 
+    "lng": "7.5997", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "6827", 
+    "population_proper": "6827"
+  }, 
+  {
+    "name": "Nidau", 
+    "lat": "47.1333", 
+    "lng": "7.2500", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "6815", 
+    "population_proper": "6815"
+  }, 
+  {
+    "name": "Dornach", 
+    "lat": "47.4789", 
+    "lng": "7.6181", 
+    "country_id":208, 
+    
+    "admin_name": "Solothurn", 
+   
+    "population": "6778", 
+    "population_proper": "6778"
+  }, 
+  {
+    "name": "Bottmingen", 
+    "lat": "47.5236", 
+    "lng": "7.5697", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "6691", 
+    "population_proper": "6691"
+  }, 
+  {
+    "name": "Oberengstringen", 
+    "lat": "47.4103", 
+    "lng": "8.4633", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "6569", 
+    "population_proper": "6569"
+  }, 
+  {
+    "name": "Frenkendorf", 
+    "lat": "47.5031", 
+    "lng": "7.7144", 
+    "country_id":208, 
+    
+    "admin_name": "Basel-Landschaft", 
+   
+    "population": "6435", 
+    "population_proper": "6435"
+  }, 
+  {
+    "name": "Rolle", 
+    "lat": "46.4500", 
+    "lng": "6.3333", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "6259", 
+    "population_proper": "6259"
+  }, 
+  {
+    "name": "Buchrain", 
+    "lat": "47.0953", 
+    "lng": "8.3475", 
+    "country_id":208, 
+    
+    "admin_name": "Luzern", 
+   
+    "population": "6235", 
+    "population_proper": "6235"
+  }, 
+  {
+    "name": "Massagno", 
+    "lat": "46.0167", 
+    "lng": "8.9500", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "6227", 
+    "population_proper": "6227"
+  }, 
+  {
+    "name": "Uetikon am See", 
+    "lat": "47.2669", 
+    "lng": "8.6772", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "6145", 
+    "population_proper": "6145"
+  }, 
+  {
+    "name": "Glarus", 
+    "lat": "47.0333", 
+    "lng": "9.0667", 
+    "country_id":208, 
+    
+    "admin_name": "Glarus", 
+     
+    "population": "5996", 
+    "population_proper": "5996"
+  }, 
+  {
+    "name": "Rüschlikon", 
+    "lat": "47.2833", 
+    "lng": "8.5500", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "5830", 
+    "population_proper": "5830"
+  }, 
+  {
+    "name": "Peseux", 
+    "lat": "46.9955", 
+    "lng": "6.8895", 
+    "country_id":208, 
+    
+    "admin_name": "Neuchâtel", 
+   
+    "population": "5809", 
+    "population_proper": "5809"
+  }, 
+  {
+    "name": "Appenzell", 
+    "lat": "47.3333", 
+    "lng": "9.4167", 
+    "country_id":208, 
+    
+    "admin_name": "Appenzell Innerrhoden", 
+     
+    "population": "5750", 
+    "population_proper": "5750"
+  }, 
+  {
+    "name": "Interlaken", 
+    "lat": "46.6833", 
+    "lng": "7.8500", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "5610", 
+    "population_proper": "5610"
+  }, 
+  {
+    "name": "Cologny", 
+    "lat": "46.2167", 
+    "lng": "6.1833", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "5570", 
+    "population_proper": "5570"
+  }, 
+  {
+    "name": "Erlenbach", 
+    "lat": "47.3000", 
+    "lng": "8.5833", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "5567", 
+    "population_proper": "5567"
+  }, 
+  {
+    "name": "Colombier", 
+    "lat": "46.9667", 
+    "lng": "6.8667", 
+    "country_id":208, 
+    
+    "admin_name": "Neuchâtel", 
+   
+    "population": "5547", 
+    "population_proper": "5547"
+  }, 
+  {
+    "name": "Courtepin", 
+    "lat": "46.8667", 
+    "lng": "7.1167", 
+    "country_id":208, 
+    
+    "admin_name": "Fribourg", 
+   
+    "population": "5451", 
+    "population_proper": "5451"
+  }, 
+  {
+    "name": "Greifensee", 
+    "lat": "47.3667", 
+    "lng": "8.6833", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "5345", 
+    "population_proper": "5345"
+  }, 
+  {
+    "name": "Préverenges", 
+    "lat": "46.5167", 
+    "lng": "6.5333", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "5287", 
+    "population_proper": "5287"
+  }, 
+  {
+    "name": "Gerlafingen", 
+    "lat": "47.1722", 
+    "lng": "7.5739", 
+    "country_id":208, 
+    
+    "admin_name": "Solothurn", 
+   
+    "population": "5202", 
+    "population_proper": "5202"
+  }, 
+  {
+    "name": "Schwerzenbach", 
+    "lat": "47.3818", 
+    "lng": "8.6559", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "5088", 
+    "population_proper": "5088"
+  }, 
+  {
+    "name": "Oberrieden", 
+    "lat": "47.2778", 
+    "lng": "8.5781", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "5083", 
+    "population_proper": "5083"
+  }, 
+  {
+    "name": "Geroldswil", 
+    "lat": "47.4167", 
+    "lng": "8.4167", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "4918", 
+    "population_proper": "4918"
+  }, 
+  {
+    "name": "Niederglatt", 
+    "lat": "47.4922", 
+    "lng": "8.5033", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "4917", 
+    "population_proper": "4917"
+  }, 
+  {
+    "name": "Schönenwerd", 
+    "lat": "47.3719", 
+    "lng": "8.0028", 
+    "country_id":208, 
+    
+    "admin_name": "Solothurn", 
+   
+    "population": "4910", 
+    "population_proper": "4910"
+  }, 
+  {
+    "name": "Niederlenz", 
+    "lat": "47.4025", 
+    "lng": "8.1764", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "4776", 
+    "population_proper": "4776"
+  }, 
+  {
+    "name": "Cortaillod", 
+    "lat": "46.9500", 
+    "lng": "6.8500", 
+    "country_id":208, 
+    
+    "admin_name": "Neuchâtel", 
+   
+    "population": "4729", 
+    "population_proper": "4729"
+  }, 
+  {
+    "name": "Saint-Sulpice", 
+    "lat": "46.5167", 
+    "lng": "6.5667", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "4668", 
+    "population_proper": "4668"
+  }, 
+  {
+    "name": "Confignon", 
+    "lat": "46.1834", 
+    "lng": "6.0833", 
+    "country_id":208, 
+    
+    "admin_name": "Genève", 
+   
+    "population": "4627", 
+    "population_proper": "4627"
+  }, 
+  {
+    "name": "Morbio Inferiore", 
+    "lat": "45.8500", 
+    "lng": "9.0167", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "4575", 
+    "population_proper": "4575"
+  }, 
+  {
+    "name": "Caslano", 
+    "lat": "45.9699", 
+    "lng": "8.8795", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "4356", 
+    "population_proper": "4356"
+  }, 
+  {
+    "name": "Gross Höchstetten", 
+    "lat": "46.8997", 
+    "lng": "7.6333", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "4165", 
+    "population_proper": "4165"
+  }, 
+  {
+    "name": "Unterentfelden", 
+    "lat": "47.3692", 
+    "lng": "8.0417", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "4155", 
+    "population_proper": "4155"
+  }, 
+  {
+    "name": "Paradiso", 
+    "lat": "45.9833", 
+    "lng": "8.9500", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "4144", 
+    "population_proper": "4144"
+  }, 
+  {
+    "name": "Niederrohrdorf", 
+    "lat": "47.4235", 
+    "lng": "8.3049", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "4105", 
+    "population_proper": "4105"
+  }, 
+  {
+    "name": "Hilterfingen", 
+    "lat": "46.7432", 
+    "lng": "7.6582", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "4044", 
+    "population_proper": "4044"
+  }, 
+  {
+    "name": "Hunzenschwil", 
+    "lat": "47.3858", 
+    "lng": "8.1264", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "4014", 
+    "population_proper": "4014"
+  }, 
+  {
+    "name": "Unterengstringen", 
+    "lat": "47.4147", 
+    "lng": "8.4497", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "3880", 
+    "population_proper": "3880"
+  }, 
+  {
+    "name": "Langendorf", 
+    "lat": "47.2206", 
+    "lng": "7.5144", 
+    "country_id":208, 
+    
+    "admin_name": "Solothurn", 
+   
+    "population": "3781", 
+    "population_proper": "3781"
+  }, 
+  {
+    "name": "Belmont-sur-Lausanne", 
+    "lat": "46.5265", 
+    "lng": "6.6876", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "3721", 
+    "population_proper": "3721"
+  }, 
+  {
+    "name": "Widen", 
+    "lat": "47.3700", 
+    "lng": "8.3581", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "3698", 
+    "population_proper": "3698"
+  }, 
+  {
+    "name": "Port", 
+    "lat": "47.1167", 
+    "lng": "7.2500", 
+    "country_id":208, 
+    
+    "admin_name": "Bern", 
+   
+    "population": "3695", 
+    "population_proper": "3695"
+  }, 
+  {
+    "name": "Ennetbaden", 
+    "lat": "47.4817", 
+    "lng": "8.3167", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "3693", 
+    "population_proper": "3693"
+  }, 
+  {
+    "name": "Feuerthalen", 
+    "lat": "47.6922", 
+    "lng": "8.6453", 
+    "country_id":208, 
+    
+    "admin_name": "Zürich", 
+   
+    "population": "3636", 
+    "population_proper": "3636"
+  }, 
+  {
+    "name": "Rheineck", 
+    "lat": "47.4667", 
+    "lng": "9.5833", 
+    "country_id":208, 
+    
+    "admin_name": "Sankt Gallen", 
+   
+    "population": "3419", 
+    "population_proper": "3419"
+  }, 
+  {
+    "name": "Vacallo", 
+    "lat": "45.8500", 
+    "lng": "9.0333", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "3398", 
+    "population_proper": "3398"
+  }, 
+  {
+    "name": "Corsier-sur-Vevey", 
+    "lat": "46.4667", 
+    "lng": "6.8500", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "3390", 
+    "population_proper": "3390"
+  }, 
+  {
+    "name": "Balerna", 
+    "lat": "45.8500", 
+    "lng": "9.0000", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "3269", 
+    "population_proper": "3269"
+  }, 
+  {
+    "name": "Coppet", 
+    "lat": "46.3167", 
+    "lng": "6.1917", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "3152", 
+    "population_proper": "3152"
+  }, 
+  {
+    "name": "Turgi", 
+    "lat": "47.4946", 
+    "lng": "8.2527", 
+    "country_id":208, 
+    
+    "admin_name": "Aargau", 
+   
+    "population": "3014", 
+    "population_proper": "3014"
+  }, 
+  {
+    "name": "Coldrerio", 
+    "lat": "45.8500", 
+    "lng": "8.9833", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "2939", 
+    "population_proper": "2939"
+  }, 
+  {
+    "name": "Rickenbach bei Wil", 
+    "lat": "47.4497", 
+    "lng": "9.0497", 
+    "country_id":208, 
+    
+    "admin_name": "Thurgau", 
+   
+    "population": "2774", 
+    "population_proper": "2774"
+  }, 
+  {
+    "name": "Horn", 
+    "lat": "47.4953", 
+    "lng": "9.4630", 
+    "country_id":208, 
+    
+    "admin_name": "Thurgau", 
+   
+    "population": "2752", 
+    "population_proper": "2752"
+  }, 
+  {
+    "name": "Muralto", 
+    "lat": "46.1667", 
+    "lng": "8.8000", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "2683", 
+    "population_proper": "2683"
+  }, 
+  {
+    "name": "Hauterive", 
+    "lat": "47.0167", 
+    "lng": "6.9667", 
+    "country_id":208, 
+    
+    "admin_name": "Neuchâtel", 
+   
+    "population": "2623", 
+    "population_proper": "2623"
+  }, 
+  {
+    "name": "Corseaux", 
+    "lat": "46.4667", 
+    "lng": "6.8333", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "2282", 
+    "population_proper": "2282"
+  }, 
+  {
+    "name": "Canobbio", 
+    "lat": "46.0333", 
+    "lng": "8.9667", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "2249", 
+    "population_proper": "2249"
+  }, 
+  {
+    "name": "Savosa", 
+    "lat": "46.0167", 
+    "lng": "8.9500", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "2213", 
+    "population_proper": "2213"
+  }, 
+  {
+    "name": "Tolochenaz", 
+    "lat": "46.5000", 
+    "lng": "6.4667", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "1932", 
+    "population_proper": "1932"
+  }, 
+  {
+    "name": "Vezia", 
+    "lat": "46.0167", 
+    "lng": "8.9333", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "1914", 
+    "population_proper": "1914"
+  }, 
+  {
+    "name": "Veyras", 
+    "lat": "46.3000", 
+    "lng": "7.5333", 
+    "country_id":208, 
+    
+    "admin_name": "Valais", 
+   
+    "population": "1833", 
+    "population_proper": "1833"
+  }, 
+  {
+    "name": "Sorengo", 
+    "lat": "46.0000", 
+    "lng": "8.9333", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "1774", 
+    "population_proper": "1774"
+  }, 
+  {
+    "name": "Magliaso", 
+    "lat": "45.9833", 
+    "lng": "8.8833", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "1620", 
+    "population_proper": "1620"
+  }, 
+  {
+    "name": "Cadempino", 
+    "lat": "46.0333", 
+    "lng": "8.9333", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "1530", 
+    "population_proper": "1530"
+  }, 
+  {
+    "name": "Paudex", 
+    "lat": "46.5084", 
+    "lng": "6.6737", 
+    "country_id":208, 
+    
+    "admin_name": "Vaud", 
+   
+    "population": "1504", 
+    "population_proper": "1504"
+  }, 
+  {
+    "name": "Cureglia", 
+    "lat": "46.0333", 
+    "lng": "8.9500", 
+    "country_id":208, 
+    
+    "admin_name": "Ticino", 
+   
+    "population": "1385", 
+    "population_proper": "1385"
+  }
+]

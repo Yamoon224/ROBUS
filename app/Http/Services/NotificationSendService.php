@@ -280,6 +280,58 @@ class NotificationSendService
             'message' => ('Le crédit téléphonique a été créé avec succès.')
         ], 200);
     }
+
+    public function sendNotification1xbets($walletXbet)
+    {
+
+
+        if (robus()->is_custumers) {
+            if (robus()->country->code == "CI") {
+
+                $message = 'Votre demande de ' . $walletXbet->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                    . $walletXbet->provider->name  .  ' le '
+                    . $walletXbet->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+                $encode = substr(robus()->phone,  -10);
+
+                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+            }
+        }
+        $admins = $this->getAdminCIVProperty();
+        $msg = 'Demande en cours de validation';
+        $msg_title =  $walletXbet->choose_type_transaction == 1 ? 'Réchargement 1Xbet' : 'Retrait 1Xbet';
+        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletPhoneCreditEvent($walletXbet));
+        Notification::send($admins, new AdminNotification($walletXbet->choose_type_transaction == 1 ? 'Demande de rechargement 1xbet de ' : 'Demande de retrait 1xbet de '  . ' ' . $walletXbet->wallet->sidUser->firstname));
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+
+        if (robus()->email != null) {
+
+            $notify = new MailController;
+            $notify->newPhoneCredit($walletXbet);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id'      => $walletXbet->id,
+                'amount' => $walletXbet->amount,
+                'status' => $walletXbet->status,
+            ],
+            'message' => ('Votre demande ce retrait 1xbet est en cours de traitement .')
+        ], 200);
+    }
+
     public function sendNotificationVirement($walletBank)
     {
 
