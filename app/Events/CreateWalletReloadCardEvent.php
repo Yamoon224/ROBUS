@@ -15,7 +15,7 @@ class CreateWalletReloadCardEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $card;
+    public $card;
 
     /**
      * Create a new event instance.

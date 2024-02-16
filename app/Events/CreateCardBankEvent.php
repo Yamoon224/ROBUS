@@ -13,7 +13,7 @@ class CreateCardBankEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $card_bank;
+    public $card_bank;
 
     /**
      * Create a new event instance.

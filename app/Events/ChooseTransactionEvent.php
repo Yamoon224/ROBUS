@@ -13,7 +13,7 @@ class ChooseTransactionEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $transfers;
+    public $transfers;
 
     /**
      * Create a new event instance.

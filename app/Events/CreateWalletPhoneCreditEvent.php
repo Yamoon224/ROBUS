@@ -15,7 +15,7 @@ class CreateWalletPhoneCreditEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $phone;
+    public $phone;
 
     /**
      * Create a new event instance.

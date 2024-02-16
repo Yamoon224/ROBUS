@@ -4,10 +4,12 @@ use App\Http\Controllers\Api\Auth\AuthentificationController;
 use App\Http\Controllers\Api\Auth\PasswordResetController;
 use App\Http\Controllers\Api\CitieController;
 use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\Api\ComZoneController;
 use App\Http\Controllers\Api\ConverterController;
 use App\Http\Controllers\Api\CountrieController;
 use App\Http\Controllers\Api\CurrencieController;
 use App\Http\Controllers\Api\FaqController;
+use App\Http\Controllers\Api\MasterController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\Api\ProviderController;
 use App\Http\Controllers\Api\Providers\InterProviderController;
@@ -28,6 +30,8 @@ use App\Http\Controllers\Api\Transfers\TransactionController;
 use App\Http\Controllers\Api\Transfers\VirementController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
+
+
 
 
 /*
@@ -201,26 +205,31 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('unloadings/store', [TransactionController::class, 'create_transaction_master']);
             Route::post('reloads/store', [TransactionController::class, 'create_reload_master']);
             Route::post('add_under_distributors/store', [UserController::class, 'add_under_distributor']);
+            Route::post('create_under_distributors/store', [MasterController::class, 'create_under_distributor']);
+            Route::get('citie_masters', [MasterController::class, 'citie_masters']);
         });
 
         // COM ZONE APIS
         Route::prefix('comzones')->group(function () {
-        Route::get('dashboard', [UserController::class, 'dashboard_comzones']);
-        Route::get('info', [UserController::class, 'info_masters']);
-        Route::get('info/kyc', [UserController::class, 'kyc_masters']);
-        Route::post('info/update', [UserController::class, 'update_masters']);
-        Route::post('info/active_compte', [UserController::class, 'updload_identity_masters']);
-        Route::get('under_distributors', [UserController::class, 'masters_under_distributors']);
+            Route::get('dashboard', [UserController::class, 'dashboard_comzones']);
+            Route::get('info', [UserController::class, 'info_masters']);
+            Route::get('info/kyc', [UserController::class, 'kyc_masters']);
+            Route::post('info/update', [UserController::class, 'update_masters']);
+            Route::post('info/active_compte', [UserController::class, 'updload_identity_masters']);
+            Route::get('under_distributors', [UserController::class, 'comzone_under_distributors']);
+            Route::get('masters_distributors', [UserController::class, 'masters_com_zones']);
+            Route::get('custumers_distributors', [UserController::class, 'custumers_com_zones']);
 
-        // Providers transactions
-        Route::prefix('providers')->group(function () {
-            Route::get('transaction_providers', [TransactionProviderController::class, 'index_masters']);
-            Route::get('reload_providers', [ReloadProviderController::class, 'index_masters']);
-        });
+            // Providers transactions
+            Route::prefix('providers')->group(function () {
+                Route::get('transaction_providers', [TransactionProviderController::class, 'index_masters']);
+                Route::get('reload_providers', [ReloadProviderController::class, 'index_masters']);
+            });
 
-        Route::post('add_masters/store', [TransactionController::class, 'create_transaction_master']);
-        Route::post('add_custumers/store', [TransactionController::class, 'create_reload_master']);
-        Route::post('add_under_distributors/store', [UserController::class, 'add_under_distributor']);
+            // create Users
+            Route::post('add_masters/store', [ComZoneController::class, 'create_transaction_master']);
+            Route::post('add_custumers/store', [ComZoneController::class, 'create_reload_master']);
+            Route::post('add_under_distributors/store', [ComZoneController::class, 'add_under_distributor']);
     });
     });
 

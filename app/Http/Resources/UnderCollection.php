@@ -25,6 +25,8 @@ class UnderCollection extends ResourceCollection
         {
                 return [
                         'data' => $this->collection->map(function ($data) {
+                                $is_custumer = $data->is_custumers;
+                                $is_under_distributer = $data->is_under_distributer;
                                 return [
                                         'id'      => $data->id,
                                         'firstname' => $data->firstname,
@@ -33,7 +35,7 @@ class UnderCollection extends ResourceCollection
                                         'phone' => $data->phone,
                                         'status' => $data->status,
                                         'image' => $data->image,
-                                        'type_users' => $data->is_custumers ? " Client " : " Ssuos distribueur",
+                                        'type_users' => $is_custumer ? "Client" : ($is_under_distributer ? "Sous distributeur" : "Master"),
                                         'wallet' => optional($data->wallet)->amount .  ' ' . optional($data->wallet->currencie)->code ?? null,
                                         'wallet_status' => optional($data->wallet)->status,
                                         'wallet_id' => optional($data->wallet)->wallet_id ?? null,
@@ -43,6 +45,7 @@ class UnderCollection extends ResourceCollection
                                         'is_active' => $data->is_active,
                                         'is_distributer' => $data->is_distributer,
                                         'is_under_distributer' => $data->is_under_distributer,
+                                        'is_master' => $data->is_master,
                                         'screen' => [
                                                 'screen_front' => optional($data->kyc)->screen,
                                                 'screen_back' => optional($data->kyc)->screen_back,

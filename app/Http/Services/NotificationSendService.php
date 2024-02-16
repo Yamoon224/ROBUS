@@ -3,19 +3,20 @@
 namespace App\Http\Services;
 
 
-use App\Models\Sid\SidUser;
 use App\Events\AdminNotifEvent;
 use App\Events\CreateCardBankEvent;
-use Illuminate\Support\Facades\Http;
 use App\Events\CreateWalletBankEvent;
-use App\Notifications\UserNotification;
-use App\Notifications\AdminNotification;
+use App\Events\CreateWalletOneXbet;
 use App\Events\CreateWalletPaiementEvent;
-use App\Events\CreateWalletTransfersEvent;
-use App\Events\CreateWalletReloadCardEvent;
 use App\Events\CreateWalletPhoneCreditEvent;
-use Illuminate\Support\Facades\Notification;
+use App\Events\CreateWalletReloadCardEvent;
+use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
+use App\Models\Sid\SidUser;
+use App\Notifications\AdminNotification;
+use App\Notifications\UserNotification;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 
 
 class NotificationSendService
@@ -302,7 +303,7 @@ class NotificationSendService
         $msg_title =  $walletXbet->choose_type_transaction == 1 ? 'Réchargement 1Xbet' : 'Retrait 1Xbet';
         robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
         $notifs = robus()->unreadNotifications;
-        event(new CreateWalletPhoneCreditEvent($walletXbet));
+        event(new CreateWalletOneXbet($walletXbet));
         Notification::send($admins, new AdminNotification($walletXbet->choose_type_transaction == 1 ? 'Demande de rechargement 1xbet de ' : 'Demande de retrait 1xbet de '  . ' ' . $walletXbet->wallet->sidUser->firstname));
         if ($admins->count() > 0) {
 

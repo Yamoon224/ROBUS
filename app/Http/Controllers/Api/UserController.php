@@ -114,7 +114,7 @@ class UserController extends Controller
         // Récupérer le statut de l'application
         $appStatus = AppStatus::latest()->first();
 
-        
+
         // Vérifier si l'application est fermée
         if ($appStatus && $appStatus->status_app === 'closed') {
 
@@ -164,20 +164,13 @@ class UserController extends Controller
         $dashboard_data['Rechargement d\'UV'] = ReloadSingleCollection::collection($walletReload);
         $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
-
-        if (robus()->is_under_distributer) {
-
-            return response()->json([
-                'success' => true,
-                'historicals' =>  $dashboard_data,
-                'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
-            ], 200);
-        } else {
-            return response()->json([
-                'success' => true,
-                'message' => "Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
-            ], 200);
-        }
+        $is_under = robus()->is_under_distributer;
+        return response()->json([
+            'success' => true,
+            'historicals' => $is_under ?  $dashboard_data : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
+            'som_commission' => $is_under ? $som_commissions . ' ' . robus()->wallet->currencie->code  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
+        ], 200);
+       
     }
 
     public function dashboard_masters()
@@ -220,22 +213,25 @@ class UserController extends Controller
         $dashboard_data['Déchargements'] = TransactionSingleCollection::collection($walletTransaction);
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
 
-        if (robus()->is_master) {
-
-            return response()->json([
-                'success' => true,
-                'historicals' =>  $dashboard_data,
-                'som_commission' =>  $som_commissions . ' ' . robus()->wallet->currencie->code,
-            ], 200);
-        } else {
-
-            return response()->json([
-                'success' => false,
-                'message' => "Vous devez etre un MASTER pour avoir accees a son dashboard ",
-            ], 200);
-        }
+        $is_master = robus()->is_master;
+        
+        return response()->json([
+            'success' => $is_master ? true : false,
+            'historicals' =>  $is_master ?  $dashboard_data : "Vous devez etre un MASTER pour avoir accees a son dashboard ",
+            'som_commission' =>  $is_master ?   $som_commissions . ' ' . robus()->wallet->currencie->code : "Vous devez etre un MASTER pour avoir accees a son dashboard " ,
+        ], 200); 
+       
     }
 
+    public function dashboard_comzones()
+    {
+        $under_distributors =    $this->transactionAccount->getMastersUser();
+
+        return response()->json([
+            'success' => true,
+            'user_alls' => robus()->is_com_zone ? new UnderCollection($under_distributors) : "Vous devez être un COM ZONE",
+        ]);
+    }
     /**
      * @OA\GET(
      *      path="/user/info",
@@ -967,7 +963,41 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
-            'under_distributors' => new UnderCollection($under_distributors)
+            'under_distributors' => robus()->is_master ?  new UnderCollection($under_distributors) : " Vous devez etre un Masters"
+        ]);
+    }
+
+
+
+    public function comzone_under_distributors()
+    {
+        $under_distributors =    $this->transactionAccount->getUnderDistributorsComUser();
+
+        return response()->json([
+            'success' => true,
+            'under_distributors' => robus()->is_com_zone ? new UnderCollection($under_distributors) : "Vous devez être un COM ZONE",
+        ]);
+    }
+
+
+    public function masters_com_zones()
+    {
+        $under_distributors =    $this->transactionAccount->getMastersUser();
+
+        return response()->json([
+            'success' => true,
+            'under_distributors' => robus()->is_com_zone ? new UnderCollection($under_distributors) : "Vous devez être un COM ZONE",
+        ]);
+    }
+
+
+    public function custumers_com_zones()
+    {
+        $under_distributors =    $this->transactionAccount->getCustmersUser();
+
+        return response()->json([
+            'success' => true,
+            'under_distributors' => robus()->is_com_zone ? new UnderCollection($under_distributors) : "Vous devez être un COM ZONE",
         ]);
     }
 

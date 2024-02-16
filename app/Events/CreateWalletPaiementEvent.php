@@ -14,7 +14,7 @@ class CreateWalletPaiementEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $paiement;
+    public $paiement;
 
     /**
      * Create a new event instance.

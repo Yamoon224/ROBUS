@@ -135,7 +135,7 @@ class OnexbetTransactionController extends Controller
                 // valueur User send days
                 $percent_robus =  $this->percentRobus->getRobusPercentageOnexbet();
 
-                // try {
+                try {
 
                         if (robus()->country->name_groupe == 'CIV') {
 
@@ -234,15 +234,16 @@ class OnexbetTransactionController extends Controller
                                         'message' => 'Les fournisseurs ne sont pas des pays ',
                                 ], 333);
                         }
-                // } catch (\Exception $exception) {
+                } catch (\Exception $exception) {
 
-                //         return response()->json([
-                //                 'success' => false,
-                //                 'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
-                //         ], 333);
-                // }
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+                        ], 333);
+                }
         }
 
+   
 
         public function messageAfterValidated($walletXbet)
         {

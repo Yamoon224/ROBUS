@@ -246,4 +246,29 @@ class TransactionsAccountService
 
         return $under_distributors;  
     }
+
+    public function getMastersUser()
+    {
+        
+        $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsMaster(true)->get();
+
+        return $under_distributors;  
+    }
+
+    public function getCustmersUser()
+    {
+
+        $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsCustumers(true)->get();
+
+        return $under_distributors;  
+    }
+
+    public function getUnderDistributorsComUser()
+    {
+
+        
+        $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsUnderDistributer(true)->get();
+
+        return $under_distributors;  
+    }
 }

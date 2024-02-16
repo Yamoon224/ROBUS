@@ -9396,7 +9396,7 @@ class Transfers extends Component
 
         $sidAuth = Auth::guard('web')->user();
 
-        try {
+        // try {
 
             if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
@@ -9429,10 +9429,10 @@ class Transfers extends Component
                     'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
                 );
             }
-        } catch (\Exception $exception) {
-            $this->emit('menu-paiement-active');
-            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
+        // } catch (\Exception $exception) {
+        //     $this->emit('menu-paiement-active');
+        //     $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        // }
     }
     public function updateVirement()
     {
