@@ -471,6 +471,7 @@
             @include('components.carte_compo')
             @include('components.credit_compo')
             @include('components.inter_compo')
+            @include('components.xbetTransaction')
         </div>
 
     </div>
@@ -479,6 +480,7 @@
     @include('livewire.commissions.modals.transactions.updateInterTransfer')
     @include('livewire.commissions.modals.transactions.updateRelaodCards')
     @include('livewire.commissions.modals.transactions.updateTransfersUV')
+    @include('livewire.commissions.modals.transactions.updateXbet')
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
     @include('livewire.commissions.modals.transactions.addPhoneCredit')
     @include('livewire.commissions.modals.transactions.addReloadCards')

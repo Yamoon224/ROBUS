@@ -15,8 +15,8 @@
                         <th class="whitespace-nowrap">Nom</th>
                         <th class="whitespace-nowrap text-center">Pourcentage</th>
                         <th class="whitespace-nowrap text-center">Pourcentage Admin</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage S-agent depot</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage S-agent retrait</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage  depot</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage  retrait</th>
                         <th class="whitespace-nowrap text-center">Pourcentage MASTERS</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>

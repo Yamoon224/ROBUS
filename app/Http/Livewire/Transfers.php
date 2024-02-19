@@ -2,76 +2,78 @@
 
 namespace App\Http\Livewire;
 
-use App\Models\Offer;
-use Livewire\Component;
-use App\Models\AdminsCom;
-use App\Mail\CodeValidated;
-use App\Models\Sid\SidUser;
-use App\Models\WalletDrawal;
-use Livewire\WithPagination;
-use App\Services\DataService;
+use App\Events\AdminNotifEvent;
+use App\Events\ChooseInterEvent;
+use App\Events\ChoosePaymentEvent;
+use App\Events\ChoosePhoneCreditEvent;
+use App\Events\ChooseReloadCardEvent;
+use App\Events\ChooseTransactionEvent;
+use App\Events\ChooseVirementEvent;
+use App\Events\ChooseXbetEvent;
+use App\Events\CreateWalletBankEvent;
+use App\Events\CreateWalletInterEvent;
+use App\Events\CreateWalletPaiementEvent;
+use App\Events\CreateWalletPhoneCreditEvent;
+use App\Events\CreateWalletReloadCardEvent;
+use App\Events\CreateWalletTransfersEvent;
+use App\Events\UpdateAllWalletEvent;
+use App\Events\UpdateBankEvent;
+use App\Events\UpdateInterEvent;
+use App\Events\UpdatePaiementEvent;
+use App\Events\UpdatePhoneCreditEvent;
+use App\Events\UpdateReloadCardEvent;
+use App\Events\UpdateTransferEvent;
 use App\Events\UserNotifEvent;
+use App\Http\Controllers\Admin\MailController;
+use App\Mail\CodeValidated;
+use App\Models\AdminsCom;
 use App\Models\Banks\BankCard;
 use App\Models\Costs\BankCost;
-use App\Models\Wallets\Wallet;
-use Illuminate\Support\Carbon;
-use App\Events\AdminNotifEvent;
-use App\Events\UpdateBankEvent;
+use App\Models\Costs\DepositCost;
 use App\Models\Costs\InterCost;
-use App\Events\ChooseInterEvent;
-use App\Events\UpdateInterEvent;
+use App\Models\Costs\PaymentCost;
+use App\Models\Costs\PhoneCreditCost;
+use App\Models\Costs\TransactionCost;
+use App\Models\Custumers\Country;
+use App\Models\Invoices\InvoiceBank;
+use App\Models\Invoices\InvoiceDeposit;
+use App\Models\Invoices\InvoiceInter;
+use App\Models\Invoices\InvoicePayment;
+use App\Models\Invoices\InvoicePhoneCredit;
+use App\Models\Invoices\InvoiceTransaction;
+use App\Models\Moneys\LevelMoney;
+use App\Models\Offer;
 use App\Models\Payments\Deposit;
 use App\Models\Payments\Payment;
-use App\Models\Costs\DepositCost;
-use App\Models\Costs\PaymentCost;
-use App\Models\Custumers\Country;
-use App\Models\Moneys\LevelMoney;
-use App\Events\ChoosePaymentEvent;
-use App\Models\Providers\Provider;
-use App\Models\Wallets\WalletBank;
-use Illuminate\Support\Facades\DB;
-use App\Events\ChooseVirementEvent;
-use App\Events\UpdatePaiementEvent;
-use App\Events\UpdateTransferEvent;
-use App\Models\Wallets\WalletInter;
-use App\Events\UpdateAllWalletEvent;
-use App\Models\Invoices\InvoiceBank;
 use App\Models\Payments\PaymentBank;
+use App\Models\Payments\PaymentPhoneCredit;
 use App\Models\Payments\Transaction;
+use App\Models\Payments\TransactionInter;
+use App\Models\Providers\Provider;
+use App\Models\Sid\SidUser;
+use App\Models\WalletDrawal;
+use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletBank;
+use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletInter;
+use App\Models\Wallets\WalletPayment;
+use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
+use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletXbet;
+use App\Notifications\AdminNotification;
+use App\Notifications\UserNotification;
+use App\Services\DataService;
 use App\Services\PhoneCreditService;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use App\Events\ChooseReloadCardEvent;
-use App\Events\CreateWalletBankEvent;
-use App\Events\UpdateReloadCardEvent;
-use App\Models\Costs\PhoneCreditCost;
-use App\Models\Costs\TransactionCost;
-use App\Models\Invoices\InvoiceInter;
-use App\Models\Wallets\WalletDeposit;
-use App\Models\Wallets\WalletPayment;
-use App\Events\ChoosePhoneCreditEvent;
-use App\Events\ChooseTransactionEvent;
-use App\Events\CreateWalletInterEvent;
-use App\Events\UpdatePhoneCreditEvent;
-use App\Models\Invoices\InvoiceDeposit;
-use App\Models\Invoices\InvoicePayment;
-use App\Notifications\UserNotification;
-use App\Notifications\AdminNotification;
-use App\Events\CreateWalletPaiementEvent;
-use App\Models\Payments\TransactionInter;
-use App\Models\Wallets\WalletPhoneCredit;
-use App\Models\Wallets\WalletTransaction;
-use App\Events\CreateWalletTransfersEvent;
-use App\Events\CreateWalletReloadCardEvent;
-use App\Models\Invoices\InvoicePhoneCredit;
-use App\Models\Invoices\InvoiceTransaction;
-use App\Models\Payments\PaymentPhoneCredit;
-use App\Events\CreateWalletPhoneCreditEvent;
 use Illuminate\Support\Facades\Notification;
-use App\Http\Controllers\Admin\MailController;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class Transfers extends Component
 {
@@ -82,6 +84,7 @@ class Transfers extends Component
     public $wallet;
     public $searchPaiment = '';
     public $searchVirement = '';
+    public $seachXbet = '';
     public $searchUser = '';
     public $searchInter = '';
     public $searchReloadCard = '';
@@ -347,6 +350,20 @@ class Transfers extends Component
     public $number_phone_credit_edit;
     public $amount_phone_credit_edit;
 
+    // Edit Xbet
+    public $provider_xbet_edit;
+    public $provider_name_xbet_edit;
+    public $xbet_id;
+    public $number_xbet_edit;
+    public $amount_xbet_edit;
+    public $countrie_xbet_edit;
+    public $citie_xbet_edit;
+    public $code_xbet_edit;
+    public $fullname_xbet_edit;
+    public $status_xbet_edit;
+    public $choose_xbet_edit;
+    public $xbetDescription;
+  
     // Protected valeurs Services
     private $phoneCreditService1;
 
@@ -358,6 +375,7 @@ class Transfers extends Component
         'echo:wallet-bank-created,.Created_wallet_bank' => 'notifyNewBank',
         'echo:updated_bank,.update_wallet_bank' => 'notifyNewBank',
         'echo:wallet-paiement-created,.Created_wallet_paiement' => 'notifyNewPaiement',
+        'echo:wallet-xbet-created,.Created_wallet_xbet' => 'notifyNewXbet',
         'echo:updated_paiement,.update_wallet_paiement' => 'notifyNewPaiement',
         'echo:wallet-transfers-created,.Created_wallet_transfers' => 'notifyNewTransfers',
         'echo:updated_transfers,.update_wallet_transfers' => 'notifyNewTransfers',
@@ -380,6 +398,8 @@ class Transfers extends Component
         'notifyNewInter',
         'echo:wallet-phone-choose-created,.Created_wallet_phone_choose' =>
         'notifyNewPhone',
+        'echo:wallet-xbet-choose-created,.Created_wallet_xbet_choose' =>
+        'notifyNewXbet',
     ];
 
     public function transactionAll($data)
@@ -539,6 +559,13 @@ class Transfers extends Component
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
         $this->emit('menu-phoneCredit-active');
+    }
+
+    public function notifyNewXbet()
+    {
+        $this->showNTransfersNotification = true;
+        // $this->emit('modal-hide-phoneCredit');
+        $this->emit('menu-xbet-active');
     }
 
     // Add Virement 
@@ -6484,6 +6511,27 @@ class Transfers extends Component
         $this->emit($state);
     }
 
+    public function editXbet($id, $state)
+    {
+        $check = WalletXbet::whereId($id)->first();
+        $provider = Provider::whereId($check->provider_id)->first();
+        $this->xbet_id = $id;
+        $this->provider_xbet_edit = $provider->id;
+        $this->provider_name_xbet_edit = $provider->name;
+        $this->code_xbet_edit = $check->code_drawal;
+        $this->number_xbet_edit = $check->num_acompte ?? null;
+        $this->fullname_xbet_edit = $check->full_name ?? null;
+        $this->amount_xbet_edit = $check->amount ?? null;
+        $this->xbetDescription = $check->description ?? null;
+        $this->status_xbet_edit = null;
+        $this->choose_xbet_edit = $check->choose_type_transaction ?? null;
+        $this->countrie_xbet_edit = $check->countrie ?? null;
+        $this->citie_xbet_edit = $check->citie ?? null;
+        $this->devise_user =   $check->wallet->currencie->code;
+
+        $this->emit($state);
+    }
+
     // Edit Virement
 
     public function editVirement($id, $state)
@@ -9398,37 +9446,37 @@ class Transfers extends Component
 
         // try {
 
-            if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+        if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
-                if (Auth::guard('web')->user()->is_distributer == 1) {
+            if (Auth::guard('web')->user()->is_distributer == 1) {
 
-                    $walletUpdate->update([
-                        'updated_by' => Auth::guard('web')->user()->id,
-                    ]);
+                $walletUpdate->update([
+                    'updated_by' => Auth::guard('web')->user()->id,
+                ]);
 
-                    event(new ChoosePaymentEvent($walletUpdate));
-                    $this->emit('modal-hide-paiement');
-                    $this->emit('menu-paiement-active');
-                    $this->emit('info', 'Vous avez choisi paiement');
-                } else {
-
-                    $walletUpdate->update([
-                        'updated_by' => Auth::guard('web')->user()->id,
-                    ]);
-
-                    event(new ChoosePaymentEvent($walletUpdate));
-                    $this->emit('modal-hide-paiement');
-                    $this->emit('menu-paiement-active');
-                    $this->emit('info', 'Vous avez choisi paiement');
-                }
-            } else {
-                // $this->emit('modal-hide-paiement');
+                event(new ChoosePaymentEvent($walletUpdate));
+                $this->emit('modal-hide-paiement');
                 $this->emit('menu-paiement-active');
-                $this->emit(
-                    'error',
-                    'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                );
+                $this->emit('info', 'Vous avez choisi paiement');
+            } else {
+
+                $walletUpdate->update([
+                    'updated_by' => Auth::guard('web')->user()->id,
+                ]);
+
+                event(new ChoosePaymentEvent($walletUpdate));
+                $this->emit('modal-hide-paiement');
+                $this->emit('menu-paiement-active');
+                $this->emit('info', 'Vous avez choisi paiement');
             }
+        } else {
+            // $this->emit('modal-hide-paiement');
+            $this->emit('menu-paiement-active');
+            $this->emit(
+                'error',
+                'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+            );
+        }
         // } catch (\Exception $exception) {
         //     $this->emit('menu-paiement-active');
         //     $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
@@ -10046,6 +10094,50 @@ class Transfers extends Component
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
     }
+    // Choose 1xbets
+
+    public function ChooseUpdateXbet($id)
+    {
+        $walletUpdate = WalletXbet::findOrFail($id);
+        $sidAuth = Auth::guard('web')->user();
+
+        try {
+
+            if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+
+                if (Auth::guard('web')->user()->is_distributer == 1) {
+
+                    $walletUpdate->update([
+                        'updated_by' => Auth::guard('web')->user()->id,
+                    ]);
+                    event(new ChooseXbetEvent($walletUpdate));
+                    $this->emit('menu-xbet-active');
+                    $this->emit('info', 'Vous avez choisi Xbet');
+                } else {
+
+                    $walletUpdate->update([
+                        'updated_by' => Auth::guard('web')->user()->id,
+                    ]);
+                    event(new ChooseXbetEvent($walletUpdate));
+                    // $this->emit('modal-hide-xbet');
+                    $this->emit('menu-xbet-active');
+                    $this->emit('info', 'Vous avez choisi Xbet');
+                }
+            } else {
+                //  $this->emit('modal-hide-xbet');
+                $this->emit('menu-xbet-active');
+                $this->emit(
+                    'error',
+                    'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+                );
+            }
+        } catch (\Exception $exception) {
+            $this->emit('menu-virement-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+
 
     public function updateInter()
     {
@@ -10356,8 +10448,7 @@ class Transfers extends Component
                                     || $check->provider->id == 76
                                     || $check->provider->id == 77
                                     || $check->provider->id == 78
-                                ) 
-                                {
+                                ) {
 
                                     $commission =  $check->amount;
 
@@ -11109,6 +11200,22 @@ class Transfers extends Component
         $this->emit('modal-hide-virement-validated');
     }
 
+    public function cancelXbetField()
+    {
+        $this->xbetDescription = '';
+        $this->xbet_id = '';
+        $this->status_xbet_edit = '';
+        $this->provider_xbet_edit = null;
+        $this->fullname_xbet_edit = '';
+        $this->amount_xbet_edit = '';
+        $this->citie_xbet_edit = '';
+        $this->countrie_xbet_edit = '';
+        $this->account_number_user = '';
+        $this->emit('modal-hide-xbet');
+        $this->emit('modal-hide-xbet-validated');
+    }
+
+
     public function resetTransactionField()
     {
         $this->transaction_description = '';
@@ -11393,6 +11500,8 @@ class Transfers extends Component
 
         $reload_card = WalletDeposit::query();
 
+        $xbet = WalletXbet::query();
+
         $phone_credit = WalletPhoneCredit::query();
 
         $walletUser = Auth::guard('web')->user();
@@ -11439,967 +11548,10 @@ class Transfers extends Component
         $amount_received_canal = null;
         $reload_card_valeur = $this->ReloadTransaction;
 
-        if ($walletUser->wallet->sidUser->is_under_distributer == true) {
+
+        if ($walletUser->wallet->sidUser->is_under_distributer) {
             //UnderDistributer party
-
-            if ($this->statusFilterTransaction != '') {
-                $transaction->where(
-                    'wallet_transactions.status',
-                    $this->statusFilterTransaction
-                );
-                $this->emit('menu-transaction-active');
-            }
-
-            if ($this->statusFilterPaiement != '') {
-                $paiement->where(
-                    'wallet_payments.status',
-                    $this->statusFilterPaiement
-                );
-                $this->emit('menu-paiement-active');
-            }
-
-            if ($this->statusFilterVirement != '') {
-                $virement_bank->where(
-                    'wallet_banks.status',
-                    $this->statusFilterVirement
-                );
-                $this->emit('menu-virement-active');
-            }
-
-            if ($this->statusFilterInter != '') {
-                $inter_search->where(
-                    'wallet_inters.status',
-                    $this->statusFilterInter
-                );
-                $this->emit('menu-inters-active');
-            }
-
-            if ($this->statusFilterReloadCard != '') {
-                $reload_card->where(
-                    'wallet_deposits.status',
-                    $this->statusFilterReloadCard
-                );
-                $this->emit('menu-reloadCarte-active');
-            }
-
-            if ($this->statusFilterPhoneCredit != '') {
-                $phone_credit->where(
-                    'wallet_phone_credits.status',
-                    $this->statusFilterPhoneCredit
-                );
-                $this->emit('menu-phoneCredit-active');
-            }
-
-            if ($this->searchTransaction != '') {
-                $this->resetPage();
-                $transaction
-                    ->orwhereHas('transaction', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchTransaction . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchTransaction . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchTransaction . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_transactions.amount',
-                        'like',
-                        '%' . $this->searchTransaction . '%'
-                    )
-                    ->orWhere(
-                        'wallet_transactions.num_wallet',
-                        'like',
-                        '%' . $this->searchTransaction . '%'
-                    )
-                    ->orWhere(
-                        'wallet_transactions.phone',
-                        'like',
-                        '%' . $this->searchTransaction . '%'
-                    )
-                    ->where('wallet_transactions.status', 'PENDING');
-
-                $this->emit('menu-transaction-active');
-            }
-
-            if ($this->searchPaiment != '') {
-                $this->resetPage();
-
-                $paiement
-                    ->orwhereHas('payment', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchPaiment . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchPaiment . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchPaiment . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_payments.amount',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->orWhere(
-                        'wallet_payments.number_phone',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->orWhere(
-                        'wallet_payments.name',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->orWhere(
-                        'wallet_payments.number_decoder',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->orWhere(
-                        'wallet_payments.id_invoice',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->where('wallet_payments.status', 'PENDING');
-
-                $this->emit('menu-paiement-active');
-            }
-
-            if ($this->searchVirement != '') {
-                $this->resetPage();
-
-                $virement_bank
-                    ->orwhereHas('paymentBank', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchVirement . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchVirement . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchVirement . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_banks.amount',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->orWhere(
-                        'wallet_banks.phone',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->orWhere(
-                        'wallet_banks.number_compte',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->orWhere(
-                        'wallet_banks.firstname',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->orWhere(
-                        'wallet_banks.lastname',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->where('wallet_banks.status', 'PENDING');
-
-                $this->emit('menu-virement-active');
-            }
-
-            if ($this->searchInter != '') {
-                $this->resetPage();
-
-                $inter_search
-                    ->orwhereHas('transactionInter', function ($query) {
-                        $query
-                            ->where(
-                                'wallet_inters.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchInter . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchInter . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchInter . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_inters.amount',
-                        'like',
-                        '%' . $this->searchInter . '%'
-                    )
-                    ->orWhere(
-                        'wallet_inters.number_compte',
-                        'like',
-                        '%' . $this->searchInter . '%'
-                    )
-                    ->orWhere(
-                        'wallet_inters.phone',
-                        'like',
-                        '%' . $this->searchInter . '%'
-                    )
-                    ->where('wallet_inters.status', 'PENDING');
-
-                $this->emit('menu-inters-active');
-            }
-            if ($this->searchReloadCard != '') {
-                $this->resetPage();
-
-                $reload_card
-                    ->orwhereHas('deposit', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchReloadCard . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchReloadCard . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchReloadCard . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_deposits.amount',
-                        'like',
-                        '%' . $this->searchReloadCard . '%'
-                    )
-                    ->orWhere(
-                        'wallet_deposits.num_carte',
-                        'like',
-                        '%' . $this->searchReloadCard . '%'
-                    )
-                    ->orWhere(
-                        'wallet_deposits.name',
-                        'like',
-                        '%' . $this->searchReloadCard . '%'
-                    )
-                    ->where('wallet_deposits.status', 'PENDING');
-
-                $this->emit('menu-reloadCarte-active');
-            }
-
-            if ($this->searchPhoneCredit != '') {
-                $this->resetPage();
-
-                $phone_credit
-                    ->orwhereHas('paymentPhone', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchPhoneCredit . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchPhoneCredit . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchPhoneCredit . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_phone_credits.amount',
-                        'like',
-                        '%' . $this->searchPhoneCredit . '%'
-                    )
-                    ->orWhere(
-                        'wallet_phone_credits.phone',
-                        'like',
-                        '%' . $this->searchPhoneCredit . '%'
-                    )
-                    ->where('wallet_phone_credits.status', 'PENDING');
-
-                $this->emit('menu-phoneCredit-active');
-            }
-
-            //  Code verifier
-
-            if ($this->code_validated != '') {
-                $transaction_code = WalletTransaction::whereCodeValidated(
-                    $this->code_validated
-                )->first();
-
-                if ($transaction_code != null) {
-                    $code_validated_val_nat = $transaction_code->code_validated ?? null;
-                } else {
-                    $code_validated_val_nat = $transaction_code->code_validated ?? null;
-                }
-            }
-
-            // True valuer of relaod card
-            if ($this->amount_reloadcard != '') {
-
-
-                $commission_reload = DepositCost::whereId(2)->first();
-
-                if ($walletUser->wallet->sidUser->is_under_distributer == true) {
-                    // Verify valeur amount max in Landing the ROBUS
-                    $valeur_end = $commission_reload->levelDepositIvories->where('is_ivoires', true)->last();
-
-                    $valeur_first = $commission_reload->levelDepositIvories->where('is_ivoires', true)->first();
-
-                    //  Conversion valeur
-                    $conversion_valeur_end  = $valeur_end->amount_end;
-
-                    $conversion_valeur_first  = $valeur_first->amount_begin;
-
-
-                    if ($conversion_valeur_first  > $this->amount_reloadcard) {
-                        $commission_reload_val_nat_true_pay = "Montant min est  : " .   number_format($conversion_valeur_first, 2, ',', ' ');
-
-                        $commission_reload_val_nat_true_receive = "Montant min est  : " .  number_format($conversion_valeur_first, 2, ',', ' ');
-                    } elseif ($conversion_valeur_end  < $this->amount_reloadcard) {
-
-                        $commission_reload_val_nat_true_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_reload_val_nat_true_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    } else {
-
-                        if ($this->provider_reloadcard == 14 || $this->provider_reloadcard == 15) {
-
-                            foreach ($commission_reload->levelDepositIvories->where('is_ivoires', true)  as $amount_comission) {
-                                if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
-
-                                    if ($amount_comission->amount == null) {
-
-                                        $percent_admin =  $amount_comission->percent * $this->amount_reloadcard;
-
-                                        $admin_valeur = $percent_admin * $amount_comission->admin_percent;
-
-                                        // Commission valuer ROBUS
-                                        $commission_reload_val_nat_true_pay = $amount_comission->comission_distributer * $admin_valeur;
-
-
-                                        $valeur_receive = (float) $this->amount_reloadcard;
-
-                                        if ($valeur_receive < 0) {
-
-                                            $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                        } else {
-
-                                            $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                        }
-                                    } else {
-
-                                        $commission_reload_val_nat_true_pay = (float) $amount_comission->comission_distributer;
-
-                                        $valeur_receive = (float) $this->amount_reloadcard;
-
-                                        if ($valeur_receive < 0) {
-
-                                            $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                        } else {
-
-                                            $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                        }
-                                    }
-                                }
-                            }
-                        } elseif ($this->provider_reloadcard == 13 || $this->provider_reloadcard == 16 || $this->provider_reloadcard == 17) {
-
-                            foreach ($commission_reload->levelDepositIvories->where('is_ivoires', true)  as $amount_comission) {
-                                if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
-
-                                    if ($amount_comission->amount == null) {
-
-                                        $percent_admin =  $amount_comission->percent * $this->amount_reloadcard;
-
-                                        $admin_valeur = $percent_admin * $amount_comission->admin_percent;
-
-                                        // Commission valuer ROBUS
-                                        $commission_reload_val_nat_true_pay = $amount_comission->comission_distributer * $admin_valeur;
-
-
-                                        $valeur_receive = (float) $this->amount_reloadcard;
-
-                                        if ($valeur_receive < 0) {
-
-                                            $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                        } else {
-
-                                            $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                        }
-                                    } else {
-
-                                        $commission_reload_val_nat_true_pay = (float) $amount_comission->comission_distributer;
-
-                                        $valeur_receive = (float) $this->amount_reloadcard;
-
-                                        if ($valeur_receive < 0) {
-
-                                            $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                        } else {
-
-                                            $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else {
-
-                    // Verify valeur amount max in Landing the ROBUS
-                    $valeur_end = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->last();
-
-                    $valeur_first = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->first();
-
-                    //  Conversion valeur
-                    $conversion_valeur_end  = $valeur_end->amount_end;
-
-                    $conversion_valeur_first  = $valeur_first->amount_begin;
-
-
-                    if ($conversion_valeur_first  > $this->amount_reloadcard) {
-                        $commission_reload_val_nat_true_pay = "Montant min est  : " .   number_format($conversion_valeur_first, 2, ',', ' ');
-
-                        $commission_reload_val_nat_true_receive = "Montant min est  : " .  number_format($conversion_valeur_first, 2, ',', ' ');
-                    } elseif ($conversion_valeur_end  < $this->amount_reloadcard) {
-
-                        $commission_reload_val_nat_true_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_reload_val_nat_true_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    } else {
-
-                        if ($this->provider_reloadcard  == 14 || $this->provider_reloadcard  == 15) {
-
-                            foreach ($commission_reload->levelDepositIvories->where('is_inter_bank', true)  as $amount_comission) {
-                                if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
-
-                                    if ($amount_comission->amount == null) {
-
-                                        $commission_reload_val_nat_true_pay = (float) $amount_comission->percent *  $this->amount_reloadcard;
-
-                                        $valeur_receive = (float) $this->amount_reloadcard;
-
-                                        if ($valeur_receive < 0) {
-
-                                            $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                        } else {
-
-                                            $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                        }
-                                    } else {
-
-                                        $commission_reload_val_nat_true_pay = (float) $amount_comission->amount;
-
-                                        $valeur_receive = (float) $this->amount_reloadcard;
-
-                                        if ($valeur_receive < 0) {
-
-                                            $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                        } else {
-
-                                            $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                        }
-                                    }
-                                }
-                            }
-                        } elseif ($this->provider_reloadcard  == 13 || $this->provider_reloadcard  == 16 || $this->provider_reloadcard  == 17) {
-
-                            foreach ($commission_reload->levelDepositIvories->where('is_inter_bank', false)  as $amount_comission) {
-                                if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
-
-                                    if ($amount_comission->amount == null) {
-
-                                        $commission_reload_val_nat_true_pay = (float) $amount_comission->percent *  $this->amount_reloadcard;
-
-                                        $valeur_receive = (float) $this->amount_reloadcard;
-
-                                        if ($valeur_receive < 0) {
-
-                                            $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                        } else {
-
-                                            $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                        }
-                                    } else {
-
-                                        $commission_reload_val_nat_true_pay = (float) $amount_comission->amount;
-
-                                        $valeur_receive = (float) $this->amount_reloadcard;
-
-                                        if ($valeur_receive < 0) {
-
-                                            $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                        } else {
-
-                                            $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            //  Commission valuer paiement Invoice auther
-
-            // Invoice auther
-
-            if ($this->paiement_amount_total != '') {
-
-                $commission_invoice = PaymentCost::whereId(2)->first();
-
-                if ($walletUser->country->code == 'CI') {
-
-                    $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
-
-                    $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_total;
-                }
-            }
-
-
-
-            // Virement Banks
-            // National virement
-            if ($this->amount_virement != '') {
-
-                $commission_virement = BankCost::whereId(2)->first();
-
-                // Verify valeur amount max in Landing the ROBUS
-                $valeur_end = $commission_virement->levelBankIvories->last();
-
-                //  Conversion valeur
-                $conversion_valeur_end  = $valeur_end->amount_end;
-
-                if ($conversion_valeur_end  < $this->amount_virement) {
-                    $commission_virement_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    $commission_virement_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-                } else {
-
-                    foreach ($commission_virement->levelBankIvories as $amount_comission) {
-                        if ($this->amount_virement >= $amount_comission->amount_begin && $this->amount_virement <= $amount_comission->amount_end) {
-                            if ($walletUser->wallet->sidUser->is_under_distributer == 1) {
-
-                                $commission_virement_val_nat_pay = $amount_comission->comission_distributer;
-
-                                $valeur_receive = (float) $this->amount_virement;
-
-                                if ($valeur_receive < 0) {
-
-                                    $commission_virement_val_nat_receive = "Montant negatif";
-                                } else {
-
-                                    $commission_virement_val_nat_receive = (float) $this->amount_virement;
-                                }
-                            } else {
-
-                                $commission_virement_val_nat_pay = $amount_comission->amount;
-
-                                $valeur_receive = (float) $this->amount_virement;
-
-                                if ($valeur_receive < 0) {
-
-                                    $commission_virement_val_nat_receive = "Montant negatif";
-                                } else {
-
-                                    $commission_virement_val_nat_receive = (float) $this->amount_virement;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            // Phone credit national
-
-            if ($this->amount_phone_credit != '') {
-
-                $commission_phone_credit = PhoneCreditCost::whereId(1)->first();
-
-                $commission_phone_credit_val_nat_pay = (float) $this->amount_phone_credit * (float) $commission_phone_credit->percent;
-
-                $valeur_receive = (float) $this->amount_phone_credit;
-
-
-                if ($valeur_receive < 0) {
-
-                    $commission_phone_credit_val_nat_receive = "Montant negatif";
-                } else {
-
-                    $commission_phone_credit_val_nat_receive =  $valeur_receive;
-                }
-            }
-
-            // transaction_amount_money
-            if ($this->transaction_amount_money != '') {
-
-                if ($walletUser->country->name_groupe == 'AFL') {
-
-
-                    //  Conversion valeur
-                    $conversion_valeur_end  =  $default_valeur  /  $walletUser->wallet->currencie->value;
-
-                    if ($conversion_valeur_end  < $this->transaction_amount_money) {
-
-                        $commission_transaction_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_transaction_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    } else {
-
-                        if ($walletUser->is_under_distributer == 1 ||  $walletUser->is_distributer == 1) {
-                            if ($this->choose_type_transaction == 1) {
-
-
-                                $commission_transaction = LevelMoney::whereId(2)->first();
-
-                                $commission_transaction_val_nal_pay = (float) $commission_transaction->percent * (float)$this->transaction_amount_money;
-
-                                $commission_transaction_val_nal_receive = (float) $this->transaction_amount_money - (float)$commission_transaction_val_nal_pay;
-                            }
-                        } else {
-                            $commission_transaction_cust = TransactionCost::whereId(2)->first();
-
-                            $commission_transaction_val_nal_pay =  (float) $commission_transaction_cust->percent * (float) $this->transaction_amount_money;
-
-                            $commission_transaction_val_nal_receive =  (float) $this->transaction_amount_money - (float) $commission_transaction_val_nal_pay;
-                        }
-                    }
-                } elseif ($walletUser->country->name_groupe == 'AFC') {
-
-                    //  Conversion valeur
-                    $conversion_valeur_end  =  $default_valeur  /  $walletUser->wallet->currencie->value;
-
-                    if ($conversion_valeur_end  < $this->transaction_amount_money) {
-
-                        $commission_transaction_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_transaction_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    } else {
-
-                        if ($walletUser->is_under_distributer == 1 ||  $walletUser->is_distributer == 1) {
-                            if ($this->choose_type_transaction == 1) {
-
-
-                                $commission_transaction = LevelMoney::whereId(17)->first();
-
-                                $commission_transaction_val_nal_pay = (float) $commission_transaction->percent * (float)$this->transaction_amount_money;
-
-                                $commission_transaction_val_nal_receive = (float) $this->transaction_amount_money - (float)$commission_transaction_val_nal_pay;
-                            }
-                        } else {
-
-                            $commission_transaction_cust = LevelMoney::whereId(17)->first();
-
-                            $commission_transaction_val_nal_pay =  (float) $commission_transaction_cust->percent * (float) $this->transaction_amount_money;
-
-                            $commission_transaction_val_nal_receive =  (float) $this->transaction_amount_money - (float) $commission_transaction_val_nal_pay;
-                        }
-                    }
-                }
-            }
-
-            $search_ = $wallet->where('wallet_id', 'like', '%' . $this->account_number_inter . '%')
-                ->where('status', true)
-                ->get();
-
-            return view('livewire.transfers', [
-                'walletSolde' => Wallet::where(
-                    'sid_user_id',
-                    $walletUser->id
-                )->sum('amount'),
-                'transactions' => $transaction
-                    ->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                    ->where('wallet_transactions.status', 'PENDING')
-                    ->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)
-                    // ->where('wallet_transactions.type_transaction' , 'Depot')
-                    ->select('wallet_transactions.*')
-                    ->orderBy('wallet_transactions.created_at', 'desc')
-                    ->paginate(15),
-                'paiements' => $paiement
-                    ->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $walletUser->country->id)
-                    ->where('wallet_payments.status', 'PENDING')
-                    ->where('wallet_payments.created_by', Auth::guard('web')->user()->id)
-                    ->select('wallet_payments.*')
-                    ->orderBy('wallet_payments.created_at', 'desc')
-                    ->paginate(15),
-                'virements' => $virement_bank
-                    ->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $walletUser->country->id)
-                    ->where('wallet_banks.status', 'PENDING')
-                    ->where('wallet_banks.created_by', Auth::guard('web')->user()->id)
-                    ->select('wallet_banks.*')
-                    ->orderBy('wallet_banks.created_at', 'desc')
-                    ->paginate(15),
-                'Internationals' => $inter_search
-                    ->join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                    // ->where('wallet_inters.country_id', $walletUser->country->id)
-                    ->where('wallet_inters.status', 'PENDING')
-                    ->where('wallet_inters.created_by', Auth::guard('web')->user()->id)
-                    ->select('wallet_inters.*')
-                    ->orderBy('wallet_inters.created_at', 'desc')
-                    ->paginate(15),
-                'reloadCards' => $reload_card
-                    ->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $walletUser->country->id)
-                    ->where('wallet_deposits.status', 'PENDING')
-                    ->where('wallet_deposits.created_by', Auth::guard('web')->user()->id)
-                    ->select('wallet_deposits.*')
-                    ->orderBy('wallet_deposits.created_at', 'desc')
-                    ->paginate(15),
-                'phoneCredits' => $phone_credit
-                    ->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $walletUser->country->id)
-                    ->where('wallet_phone_credits.status', 'PENDING')
-                    ->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)
-                    ->select('wallet_phone_credits.*')
-                    ->orderBy('wallet_phone_credits.created_at', 'desc')
-                    ->paginate(15),
-                'countrie_number_local' => Auth::guard('web')->user()->country
-                    ->indecative,
-                'wallet_search' => $wallet->where('wallet_id', 'like', '%' . $this->compte_number_robus . '%')
-                    ->where('country_id', $walletUser->country->id)
-                    ->where('status', true)
-                    ->get(),
-                'number_search' => $sid_search->where(
-                    'phone',
-                    'like',
-                    '%' . $this->transaction_phone . '%'
-                )
-                    ->where('country_id', $walletUser->country->id)
-                    ->where('is_custumers', true)
-                    ->get(),
-                'wallet_search_inter' => $search_,
-                'number_search_inter' => $sid_search
-                    ->where('phone', 'like', '%' . $this->phone_inter . '%')
-                    ->where('is_custumers', true)
-                    ->get(),
-                'withdrawal_robus' => Provider::whereStatus(true)
-                    ->whereId(9)
-                    ->get(),
-
-                // Valuer Commissions begin
-                'amount_deposit_nation_pay' => $commission_reload_val_nat_true_pay,
-                'amount_deposit_nation_receive' => $commission_reload_val_nat_true_receive,
-                'amount_deposit_nation_true_pay' => $commission_reload_val_nat_true_pay,
-                'amount_deposit_nation_true_receive' => $commission_reload_val_nat_true_receive,
-                'amount_deposit_inter' => $commission_reload_val_inter,
-                'amount_deposit_inter_nation' => $commission_reload_inter_val_nat,
-                'amount_deposit_inter_inter_pay' => $commission_reload_inter_val_inter_pay,
-                'amount_deposit_inter_inter_receive' => $commission_reload_inter_val_inter_receive,
-                'amount_deposit_inter_inter_true_pay' => $commission_reload_inter_val_inter_true_pay,
-                'amount_deposit_inter_inter_true_receive' => $commission_reload_inter_val_inter_true_receive,
-                'amount_paiement_invoice_auther_pay' => $commission_paiement_invoice_val_nat_pay,
-                'amount_paiement_invoice_auther_receive' => $commission_paiement_invoice_val_nat_receive,
-                'amount_paiement_invoice_auther_inter_pay' => $commission_paiement_invoice_val_inter_pay,
-                'amount_paiement_invoice_auther_inter_receive' => $commission_paiement_invoice_val_inter_receive,
-                'amount_paiement_invoice_canal' => $commission_paiement_invoice_canal_val_nat,
-                'amount_paiement_invoice_canal_inter' => $commission_paiement_invoice_canal_val_inter,
-                'amount_transaction_under_pay' => $commission_transaction_val_nat_pay,
-                'amount_transaction_under_receive' => $commission_transaction_val_nat_receive,
-                'amount_transaction_mooney_inter_pay' => $commission_transaction_val_inter_mooney_pay,
-                'amount_transaction_mooney_inter_receive' => $commission_transaction_val_inter_mooney_receive,
-                'amount_transaction_under_inter_pay' => $commission_transaction_val_inter_pay,
-                'amount_transaction_under_inter_receive' => $commission_transaction_val_inter_receive,
-                'amount_virement_nation_pay' => $commission_virement_val_nat_pay,
-                'amount_virement_nation_receive' => $commission_virement_val_nat_receive,
-                'amount_phone_credit_val_pay' => $commission_phone_credit_val_inter_pay,
-                'amount_phone_credit_val_receive' => $commission_phone_credit_val_inter_receive,
-                'amount_virement_inter_val_pay' => $commission_virement_val_inter_pay,
-                'amount_virement_inter_val_receive' => $commission_virement_val_inter_receive,
-                'amount_transaction_nat_val_receive' => $commission_transaction_val_nal_receive,
-                'amount_transaction_nat_val_pay' => $commission_transaction_val_nal_pay,
-                'amount_phone_credit_val_nat_pay' => $commission_phone_credit_val_nat_pay,
-                'amount_phone_credit_val_nat_receive' => $commission_phone_credit_val_nat_receive,
-                // New val
-                'amount_received_canal' => $amount_received_canal,
-                // End valeur comissions
-                'code_valided' => $code_validated_val_nat,
-                'code_valided_inter' => $code_validated_val_inter,
-                'payment_error' => $this->PaymentErrorUser,
-                'payment_success' => $this->PaymentSuccessUser,
-                'payment_pendding' => $this->PaymentPenddingUser,
-                'transaction_error' => $this->TransactionErrorUser,
-                'transaction_success' => $this->TransactionSuccessUser,
-                'transaction_pendding' => $this->TransactionPenddingUser,
-                'WalletReloads' => $this->WalletReloadsUser,
-                'reload_error' => $this->ReloadErrorUser,
-                'reload_success' => $this->ReloadSuccessUser,
-                'reload_pendding' => $this->ReloadPenddingUser,
-                'bank_error' => $this->VirementErrorUser,
-                'bank_success' => $this->VirementSuccessUser,
-                'bank_pendding' => $this->VirementPenddingUser,
-                'inter_error' => $this->InterErrorUser,
-                'inter_success' => $this->InterSuccessUser,
-                'inter_pendding' => $this->InterPendding,
-                'card_error' => $this->DepositErrorUser,
-                'card_success' => $this->DepositSuccessUser,
-                'card_pendding' => $this->DepositPenddingUser,
-                'phone_error' => $this->PhoneCreditErrorUser,
-                'phone_success' => $this->PhoneCreditSuccessUser,
-                'phone_pendding' => $this->PhoneCreditPenddingUser,
-                'WalletBanks' => $this->WalletBanksUser,
-                'WalletDeposits' => $this->WalletDepositsUser,
-                'WalletInters' => $this->WalletIntersUser,
-                'WalletPayments' => $this->WalletPaymentsUser,
-                'WalletTransactions' => $this->WalletTransactionsUser,
-                'WalletPhoneCredits' => $this->WalletPhoneCreditsUser,
-                'offers_canal' => $offers,
-                'countries' => Country::whereRobus(true)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'countrie_inter_cf' => Country::whereRobus(true)->whereId(107)
-                    ->first(),
-                'wallet_countries_users' => SidUser::where('status', true)
-                    ->orderBy('firstname', 'asc')
-                    ->get(),
-                'withdrawal_robus_inter' => Provider::whereStatus(true)
-                    ->whereId(51)
-                    ->get(),
-                'provide_came_guine' => Provider::whereIn('id', array(49, 48))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_con_bn_gh_lib' => Provider::whereId(48)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_gha' => Provider::whereIn('id', array(48, 51))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_gabon' => Provider::whereIn('id', array(71, 72))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_mali' => Provider::whereIn('id', array(49, 50, 55))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_west_africa' => Provider::whereIn('id', array(1, 3, 4, 6, 9))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_out_civ' => Provider::whereIn('id', array(1, 3, 4))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_civ' => Provider::whereIn('id', array(49, 50, 55, 48))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_ng_rd_tchad' => Provider::whereId(71)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_senegal' => Provider::whereId(55)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_togo' => Provider::whereId(50)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_burki' => Provider::whereIn('id', array(49, 55))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_ethopie' => Provider::whereIn('id', array(48, 73))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_ouganda' => Provider::whereIn('id', array(71, 48))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_seria' => Provider::whereIn('id', array(49, 74, 75))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_rwanda' => Provider::whereIn('id', array(48, 71))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_civ_out' => Provider::whereIn('id', array(49, 50, 48))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_kenya' => Provider::whereIn('id', array(76, 71, 77))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'countrie_west_send_centre' => Country::whereRobus(true)
-                    ->whereIn('id', array(39, 79, 50, 57, 122, 43, 42, 107))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-
-                'countrie_west_centre' => Country::whereRobus(true)
-                    ->whereIn('id', array(146, 42, 83, 74, 218, 39, 43, 50, 57, 79, 122, 69, 223, 191, 180, 112, 157, 133, 91))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'providers' => $this->NationTransaction,
-                'provider_paiements' => $this->PaiementTransaction,
-                'provider_paiements_inter' => $this->PaymentInterTransaction,
-                'provider_virements' => $this->VirementTransaction,
-                'provider_inters' => $this->ProviderInterTransaction,
-                'provider_reload_inters' => $this->RelaodCardInter,
-                'provider_inter_virements' => $this->VirmentTransactionInter,
-                'provider_reloads' => $this->ReloadTransaction,
-                'provider_credits' => $this->PhoneCreditTransaction,
-                'provider_credits_inter' => $this->PhoneCreditTransactionInter,
-                'usersCountry' => Auth::guard('web')->user()->wallet->currencie
-                    ->code,
-                'user_send' => Auth::guard('web')->user(),
-                'user_auth' => $walletUser,
-            ]);
+            abort(403);
         } else {
             //Admin info
 
@@ -12613,6 +11765,58 @@ class Transfers extends Component
                 $this->emit('menu-virement-active');
             }
 
+            if ($this->seachXbet != '') {
+                $this->resetPage();
+
+                $xbet
+                    ->orwhereHas('one_bet_transactions', function ($query) {
+                        $query
+                            ->join('wallets', 'wallet_id', 'wallets.id')
+                            ->where(
+                                'wallets.country_id',
+                                Auth::guard('web')->user()->country->id
+                            )
+                            ->where(
+                                'operator_transaction_name',
+                                'like',
+                                '%' . $this->seachXbet . '%'
+                            )
+                            ->orWhere(
+                                'transaction_id',
+                                'like',
+                                '%' . $this->seachXbet . '%'
+                            )
+                            ->orWhere(
+                                'trans_comp_id',
+                                'like',
+                                '%' . $this->seachXbet . '%'
+                            );
+                    })
+                    ->orWhere(
+                        'wallet_xbets.amount',
+                        'like',
+                        '%' . $this->seachXbet . '%'
+                    )
+                    ->orWhere(
+                        'wallet_xbets.code_drawal',
+                        'like',
+                        '%' . $this->seachXbet . '%'
+                    )
+                    ->orWhere(
+                        'wallet_xbets.number_compte',
+                        'like',
+                        '%' . $this->seachXbet . '%'
+                    )
+                    ->orWhere(
+                        'wallet_xbets.full_name',
+                        'like',
+                        '%' . $this->seachXbet . '%'
+                    )
+                    ->where('wallet_xbets.status', 'PENDING');
+
+                $this->emit('menu-xbet-active');
+            }
+
             if ($this->searchInter != '') {
                 $this->resetPage();
 
@@ -12761,8 +11965,6 @@ class Transfers extends Component
                     $code_validated_val_nat = $transaction_code->code_validated ?? null;
                 }
             }
-
-            // Commission amount transactions
 
             // Nationnal commission transaction
             if ($this->transaction_amount_robus != '') {
@@ -14105,6 +13307,13 @@ class Transfers extends Component
                     ->where('wallet_deposits.status', 'PENDING')
                     ->select('wallet_deposits.*')
                     ->orderBy('wallet_deposits.created_at', 'desc')
+                    ->paginate(15),
+                'xbets' => $xbet
+                    ->join('wallets', 'wallet_xbets.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $walletUser->country->id)
+                    ->where('wallet_xbets.status', 'PENDING')
+                    ->select('wallet_xbets.*')
+                    ->orderBy('wallet_xbets.created_at', 'desc')
                     ->paginate(15),
                 'phoneCredits' => $phone_credit
                     ->join(

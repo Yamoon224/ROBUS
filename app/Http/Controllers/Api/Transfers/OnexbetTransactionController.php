@@ -152,7 +152,7 @@ class OnexbetTransactionController extends Controller
                                         ];
 
                                         $validationMessages = [
-                                                'code_drawal.required' => 'Votre numero est obligatoire',
+                                                'id_compte.required' => 'Votre numero est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
                                                 'full_name.required' => 'Votre montant est obligatoire',
                                         ];
@@ -163,6 +163,7 @@ class OnexbetTransactionController extends Controller
                                                 "amount" => 'required',
                                                 "countrie" => 'required',
                                                 "citie" => 'required',
+                                                "id_xbet" => 'required',
 
                                         ];
 
@@ -171,6 +172,7 @@ class OnexbetTransactionController extends Controller
                                                 'amount.required' => 'Votre montant est obligatoire',
                                                 'countrie.required' => 'Votre pays est obligatoire',
                                                 'citie.required' => 'Votre ville est obligatoire',
+                                                'id_xbet.required' => 'Id Xbet est obligatoire',
                                         ];
                                 }
 
@@ -198,7 +200,7 @@ class OnexbetTransactionController extends Controller
                                                                 if ($request->choose_type_transaction == 1) {
                                                                         $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($request->amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved);
                                                                 } else {
-                                                                        $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($request->amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie, $amountReceved);
+                                                                        $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($request->amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie , $request->id_xbet , $amountReceved);
                                                                 }
 
                                                                 if ($walletXbet != null) {
