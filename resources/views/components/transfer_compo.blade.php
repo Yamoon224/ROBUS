@@ -21,7 +21,7 @@
           <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
               <div class="flex items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                   <h2 class="font-medium text-base mr-auto">
-                      Liste des transfers d'argent
+                      Liste des transferts d'argent
                   </h2>
               </div>
               <div id="new-products" class="tiny-slider py-5">
@@ -90,11 +90,8 @@
                                                           @endif
                                                           <div class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400  rounded font-medium"
                                                               style="background-color: #b5048f; color:white;">
-                                                              {{-- <div class="fc-event-title-container">
-                                                                  <div class="fc-event-title fc-sticky"> --}}
                                                               Numero : {{ $item->wallet->sidUser->phone ?? null }}
-                                                              {{-- </div>
-                                                              </div> --}}
+                                                            
                                                           </div>
                                                           {{ $item->wallet->sidUser->firstname ?? null }}
                                                           {{ $item->wallet->sidUser->lastname ?? null }}
@@ -152,7 +149,6 @@
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               <a class="flex btn btn-warning items-center  mr-1 mb-2"
                                                                   wire:click="ChooseUpdateTransaction({{ $item->id }})">
-                                                                  {{-- <button class="btn btn-warning mr-1 mb-2"> --}}
                                                                   Je prends <svg width="25" viewBox="0 0 120 30"
                                                                       xmlns="http://www.w3.org/2000/svg" fill="1a202c"
                                                                       class="w-4 h-4 ml-2">
@@ -375,16 +371,5 @@
                   </ul>
               </nav>
           </div>
-          <!-- END: Pagination -->
-          {{-- <script>
-              window.addEventListener('DOMContentLoaded', function() {
-                  Echo.channel('update_all_wallet').listen(
-                      '.wallet_update_all',
-                      (e) => {
-                          window.livewire.emit('notifyNewTransfers:' + e.id);
-                      },
-                  )
-              });
-          </script> --}}
       </div>
   </div>

@@ -48,18 +48,6 @@
 
                     </div>
 
-                    {{-- <div
-                        class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 mt-3 form-check">
-                        <input wire:model="choose_type_paiement" id="bordered-radio-5" type="radio" value="8"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="bordered-radio-5"
-                            class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Rechargement
-                            de
-                            carte</label>
-                        @error('choose_type_paiement')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div> --}}
                 @endif
 
             </div>

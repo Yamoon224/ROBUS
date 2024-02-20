@@ -11,18 +11,10 @@ use App\Events\ChooseTransactionEvent;
 use App\Events\ChooseVirementEvent;
 use App\Events\ChooseXbetEvent;
 use App\Events\CreateWalletBankEvent;
-use App\Events\CreateWalletInterEvent;
 use App\Events\CreateWalletPaiementEvent;
 use App\Events\CreateWalletPhoneCreditEvent;
 use App\Events\CreateWalletReloadCardEvent;
 use App\Events\CreateWalletTransfersEvent;
-use App\Events\UpdateAllWalletEvent;
-use App\Events\UpdateBankEvent;
-use App\Events\UpdateInterEvent;
-use App\Events\UpdatePaiementEvent;
-use App\Events\UpdatePhoneCreditEvent;
-use App\Events\UpdateReloadCardEvent;
-use App\Events\UpdateTransferEvent;
 use App\Events\UserNotifEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Mail\CodeValidated;
@@ -41,9 +33,11 @@ use App\Models\Invoices\InvoiceInter;
 use App\Models\Invoices\InvoicePayment;
 use App\Models\Invoices\InvoicePhoneCredit;
 use App\Models\Invoices\InvoiceTransaction;
+use App\Models\Invoices\OneBetInvoice;
 use App\Models\Moneys\LevelMoney;
 use App\Models\Offer;
 use App\Models\Payments\Deposit;
+use App\Models\Payments\OneBetTransaction;
 use App\Models\Payments\Payment;
 use App\Models\Payments\PaymentBank;
 use App\Models\Payments\PaymentPhoneCredit;
@@ -51,7 +45,6 @@ use App\Models\Payments\Transaction;
 use App\Models\Payments\TransactionInter;
 use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
-use App\Models\WalletDrawal;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
@@ -63,8 +56,6 @@ use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletXbet;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
-use App\Services\DataService;
-use App\Services\PhoneCreditService;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -363,7 +354,7 @@ class Transfers extends Component
     public $status_xbet_edit;
     public $choose_xbet_edit;
     public $xbetDescription;
-  
+
     // Protected valeurs Services
     private $phoneCreditService1;
 
@@ -571,7 +562,6 @@ class Transfers extends Component
     // Add Virement 
     public function addVirement()
     {
-        $check = WalletBank::whereId($this->virementId)->first();
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId($this->provider_virement)->first();
         // Country display
@@ -582,10 +572,6 @@ class Transfers extends Component
         $admins = $this->getAdminValeurProperty();
         $admin_civ = $this->getAdminCIVProperty();
         $som_transfers =  $this->getSumValTransactionProperty();
-        $admin = SidUser::whereStatus(true)
-            ->whereIsAdmin(true)
-            ->where('country_id', Auth::guard('web')->user()->country->id)
-            ->first();
         // Verifier plafond days with piece
         $valeur_ceiling = $walletUser->silver_ceiling;
 
@@ -693,7 +679,7 @@ class Transfers extends Component
 
                                     if ($walletUser->is_under_distributer == 1) {
 
-                                        // Commision of paiement
+                                        // CommiTsion of paiement
                                         $commission =  $walletBank->amount;
 
                                         $walletUser->wallet->update([
@@ -743,47 +729,6 @@ class Transfers extends Component
                                             'commissions' => DB::raw('commissions+'  . $valuer_deposit),
 
                                         ]);
-
-
-                                        // Send Notification In User and Admins and display notification not read
-                                        $msg = 'Demande de virement est en cours de validation  ';
-                                        $msg_title = 'Virement bancaire';
-                                        $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletBankEvent($walletBank));
-                                        Notification::send($admins, new AdminNotification('Demande de virement de ' . ' ' . $walletBank->wallet->sidUser->firstname));
-                                        if ($admins->count() > 0) {
-
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-
-
-                                            $this->resetVirementField();
-                                            $this->emit('modal-hide-virement');
-                                            $this->emit('success', 'Versement effectué !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newVirement($walletBank);
-                                            }
-                                        } else {
-
-                                            $this->resetVirementField();
-                                            $this->emit('modal-hide-virement');
-                                            $this->emit('success', 'Virement effectué !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newVirement($walletBank);
-                                            }
-                                        }
                                     } else {
 
 
@@ -830,43 +775,44 @@ class Transfers extends Component
                                                 ]);
                                             }
                                         }
-                                        // Send Notification In User and Admins and display notification not read
-                                        $msg = 'Demande de virement est en cours de validation  ';
-                                        $msg_title = 'Virement bancaire';
-                                        $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletBankEvent($walletBank));
-                                        Notification::send($admins, new AdminNotification('Demande de virement de ' . ' ' . $walletBank->wallet->sidUser->firstname));
-                                        if ($admins->count() > 0) {
+                                    }
+                                    // Send Notification In User and Admins and display notification not read
+                                    $msg = 'Demande de virement est en cours de validation  ';
+                                    $msg_title = 'Virement bancaire';
+                                    $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
+                                    $notifs = $walletUser->unreadNotifications;
+                                    event(new CreateWalletBankEvent($walletBank));
+                                    Notification::send($admins, new AdminNotification('Demande de virement de ' . ' ' . $walletBank->wallet->sidUser->firstname));
+                                    if ($admins->count() > 0) {
 
 
-                                            foreach ($admins  as $user) {
+                                        foreach ($admins  as $user) {
 
-                                                $admin_single = SidUser::find($user->id);
+                                            $admin_single = SidUser::find($user->id);
 
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-                                            $this->resetVirementField();
-                                            $this->emit('modal-hide-virement');
-                                            $this->emit('success', 'Versement effectué !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newVirement($walletBank);
-                                            }
-                                        } else {
+                                            $notifs = $admin_single->unreadNotifications;
+                                            event(new AdminNotifEvent($notifs));
+                                        }
 
 
-                                            $this->resetVirementField();
-                                            $this->emit('modal-hide-virement');
-                                            $this->emit('success', 'Virement effectué !');
 
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newVirement($walletBank);
-                                            }
+                                        $this->resetVirementField();
+                                        $this->emit('modal-hide-virement');
+                                        $this->emit('success', 'Versement effectué !');
+
+                                        if ($walletUser->email != null) {
+                                            $notify = new MailController();
+                                            $notify->newVirement($walletBank);
+                                        }
+                                    } else {
+
+                                        $this->resetVirementField();
+                                        $this->emit('modal-hide-virement');
+                                        $this->emit('success', 'Virement effectué !');
+
+                                        if ($walletUser->email != null) {
+                                            $notify = new MailController();
+                                            $notify->newVirement($walletBank);
                                         }
                                     }
                                 }
@@ -3086,7 +3032,6 @@ class Transfers extends Component
 
                     if ($this->provider_payment == 8) {
 
-
                         if ($this->facture_choix_type == 1) {
 
                             $this->validate(
@@ -3104,265 +3049,7 @@ class Transfers extends Component
                                     'Numero  est obligatoire',
                                 ]
                             );
-
-                            // Verifier plafond days
-
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
-                            } else {
-
-                                // Verify amount acompte with comission
-                                $valAmount = $this->paiement_amount_total +  $percent_robus->amount_auther;
-
-                                if ($valAmount > $walletUser->wallet->amount) {
-
-                                    $this->resetPaiementField();
-                                    $this->emit('modal-hide-paiement');
-                                    $this->emit('error', 'Verifier votre montant  svp !');
-                                } else {
-
-                                    $amount_solde =  $walletUser->wallet->amount -  $valAmount;
-
-                                    $walletPayment = WalletPayment::create([
-                                        'wallet_id' => $walletUser->wallet->id,
-                                        'amount' => $this->paiement_amount_total,
-                                        'description' => 'Paiement de facture CIE',
-                                        'payment_cost_id' => 2,
-                                        'number_decoder' => $this->paiement_decoder_canal ?? null,
-                                        'id_invoice' => $this->paiement_id_invoice_pre ?? $this->paiement_id_invoice,
-                                        'number_contract' =>  $this->paiement_num_contrat ?? null,
-                                        'phone' => $this->pre_phone_invoice ?? null,
-                                        'id_invoice_pre' =>  $this->pre_id_invoice ?? null,
-                                        'name' => $this->paiement_name_cie ?? null,
-                                        'created_by' => Auth::guard('web')->user()->id,
-                                        'provider_id' => $provider->id,
-                                        'number_phone' => $this->paiement_phone_canal ?? null,
-                                        'offer_id' => $offer->id ?? null,
-                                        'costs_amount' => $percent_robus->amount_auther,
-                                        'status' => 'PENDING',
-                                        'paiementChoix_phone' =>  $this->paiementChoix_phone ?? null,
-                                        'paiementChoix_type' => $this->paiementChoix_type ?? null,
-                                        'factureChoix_type' => $this->facture_choix_type ?? null,
-                                        'amount_solde'  =>   $amount_solde ?? null
-                                    ]);
-
-
-                                    // Commision of paiement
-                                    $commission =  $walletPayment->amount +  $percent_robus->amount_auther;
-
-                                    $walletUser->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname .
-                                            ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $commission),
-                                    ]);
-
-
-
-                                    //  Send valeur in Admin
-
-                                    if ($walletUser->is_under_distributer == 1) {
-
-                                        $walletPayment->update(['is_send' => 1,]);
-
-                                        // Commission admin
-                                        $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
-
-                                        // Commission distributer
-                                        $valuer_deposit =  $percent_robus->comission_auther;
-
-
-                                        $walletPayment->update([
-                                            'commissions' => DB::raw('commissions+'  . $valuer_deposit),
-
-                                        ]);
-
-                                        if ($admin_civ->count() > 0) {
-
-                                            $count_admin = $admin_civ->count();
-
-                                            $valeur_single = $admin_valeur / $count_admin;
-
-                                            foreach ($admin_civ as $user) {
-                                                $admin_single = SidUser::find($user->id);
-                                                AdminsCom::create([
-                                                    'amount' =>   $valeur_single,
-                                                    'sid_user_id' =>   $admin_single->id,
-                                                    'wallet_transaction_id' => null,
-                                                    'wallet_bank_id' => null,
-                                                    'wallet_deposit_id' => null,
-                                                    'wallet_inter_id' => null,
-                                                    'wallet_payment_id' => $walletPayment->id,
-                                                    'wallet_phone_credit_id' => null,
-                                                    'wallet_reload_id' => null,
-                                                    'bank_card_id' => null,
-                                                    'description' => 'Commission',
-                                                ]);
-                                                $admin_single->wallet->update([
-                                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                    'amount' => DB::raw('amount+' . $valeur_single),
-                                                ]);
-                                            }
-                                        }
-
-                                        $msg_title = 'Paiement facture';
-                                        $msg = 'Demande de paiement est en cours de validation ';
-                                        $walletUser->notify(
-                                            new UserNotification([
-                                                'title' => $msg_title,
-                                                'message' => $msg,
-                                            ])
-                                        );
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletPaiementEvent($walletPayment));
-                                        Notification::send(
-                                            $admins,
-                                            new AdminNotification('Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname)
-                                        );
-
-                                        if ($admins->count() > 0) {
-
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        } else {
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        }
-                                    } else {
-
-
-                                        if ($walletUser->country->code == 'CI') {
-
-                                            $message_pro = 'Votre code de la facture prepéyé est ' . $walletPayment->id_invoice_pre;
-
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$walletPayment->phone&from=ROBUS&sms=$message_pro");
-
-                                            $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
-                                                $walletUser->wallet->currencie->code .
-                                                ' ' .
-                                                'par ' .
-                                                $walletPayment->provider->name .
-                                                ' le ' .
-                                                $walletPayment->created_at .
-                                                ' votre demande est en cours de validation ' .
-                                                'Robus vous remercie';
-
-                                            $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                                        }
-
-                                        $walletPayment->update(['is_send' => 1,]);
-
-                                        // Commission admin
-                                        $admin_valeur =  $percent_robus->amount_auther;
-
-                                        if ($admin_civ->count() > 0) {
-
-                                            $count_admin = $admin_civ->count();
-
-                                            $valeur_single = $admin_valeur / $count_admin;
-
-                                            foreach ($admin_civ as $user) {
-                                                $admin_single = SidUser::find($user->id);
-                                                AdminsCom::create([
-                                                    'amount' =>   $valeur_single,
-                                                    'sid_user_id' =>   $admin_single->id,
-                                                    'wallet_transaction_id' => null,
-                                                    'wallet_bank_id' => null,
-                                                    'wallet_deposit_id' => null,
-                                                    'wallet_inter_id' => null,
-                                                    'wallet_payment_id' => $walletPayment->id,
-                                                    'wallet_phone_credit_id' => null,
-                                                    'wallet_reload_id' => null,
-                                                    'bank_card_id' => null,
-                                                    'description' => 'Commission',
-                                                ]);
-                                                $admin_single->wallet->update([
-                                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                    'amount' => DB::raw('amount+' . $valeur_single),
-                                                ]);
-                                            }
-                                        }
-
-                                        $msg_title = 'Paiement facture';
-                                        $msg = 'Demande de paiement est en cours de validation ';
-                                        $walletUser->notify(
-                                            new UserNotification([
-                                                'title' => $msg_title,
-                                                'message' => $msg,
-                                            ])
-                                        );
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletPaiementEvent($walletPayment));
-                                        Notification::send(
-                                            $admins,
-                                            new AdminNotification('Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname)
-                                        );
-
-                                        if ($admins->count() > 0) {
-
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        } else {
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } elseif ($this->facture_choix_type == 2) {
+                        } else {
 
                             $this->validate(
                                 [
@@ -3379,242 +3066,211 @@ class Transfers extends Component
                                     'Numero  est obligatoire',
                                 ]
                             );
+                        }
 
-                            if ($som_transfers >= $valeur_ceiling) {
+
+                        if ($som_transfers >= $valeur_ceiling) {
+                            $this->resetPaiementField();
+                            $this->emit('modal-hide-paiement');
+                            $this->emit('warning', 'Votre montant journier est atteint !');
+                        } else {
+
+                            // Verify amount acompte with comission
+                            $valAmount = $this->paiement_amount_total +  $percent_robus->amount_auther;
+
+                            if ($valAmount > $walletUser->wallet->amount) {
+
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
+                                $this->emit('error', 'Verifier votre montant  svp !');
                             } else {
 
+                                $amount_solde =  $walletUser->wallet->amount -  $valAmount;
 
-                                $valAmount = $this->paiement_amount_total +  $percent_robus->amount_auther;
+                                $walletPayment = WalletPayment::create([
+                                    'wallet_id' => $walletUser->wallet->id,
+                                    'amount' => $this->paiement_amount_total,
+                                    'description' => 'Paiement de facture CIE',
+                                    'payment_cost_id' => 2,
+                                    'number_decoder' => $this->paiement_decoder_canal ?? null,
+                                    'id_invoice' => $this->facture_choix_type == 1 ? $this->paiement_id_invoice_pre : $this->paiement_id_invoice,
+                                    'number_contract' =>  $this->paiement_num_contrat ?? null,
+                                    'phone' => $this->pre_phone_invoice ?? null,
+                                    'id_invoice_pre' =>  $this->pre_id_invoice ?? null,
+                                    'name' => $this->paiement_name_cie ?? null,
+                                    'created_by' => Auth::guard('web')->user()->id,
+                                    'provider_id' => $provider->id,
+                                    'number_phone' => $this->paiement_phone_canal ?? null,
+                                    'offer_id' => $offer->id ?? null,
+                                    'costs_amount' => $percent_robus->amount_auther,
+                                    'status' => 'PENDING',
+                                    'paiementChoix_phone' =>  $this->paiementChoix_phone ?? null,
+                                    'paiementChoix_type' => $this->paiementChoix_type ?? null,
+                                    'factureChoix_type' => $this->facture_choix_type ?? null,
+                                    'amount_solde'  =>   $amount_solde ?? null
+                                ]);
 
-                                if ($valAmount > $walletUser->wallet->amount) {
-                                    $this->resetPaiementField();
-                                    $this->emit('modal-hide-paiement');
-                                    $this->emit('error', 'Verifier votre montant  svp !');
+
+                                // Commision of paiement
+                                $commission =  $walletPayment->amount +  $percent_robus->amount_auther;
+
+                                $walletUser->wallet->update([
+                                    'reload_by' => Auth::guard('web')->user()->firstname .
+                                        ' ' . Auth::guard('web')->user()->lastname,
+                                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                                    'amount' => DB::raw('amount-' . $commission),
+                                ]);
+
+
+
+                                //  Send valeur in Admin
+
+                                if ($walletUser->is_under_distributer == 1) {
+
+                                    $walletPayment->update(['is_send' => 1,]);
+
+                                    // Commission admin
+                                    $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
+
+                                    // Commission distributer
+                                    $valuer_deposit =  $percent_robus->comission_auther;
+
+
+                                    $walletPayment->update([
+                                        'commissions' => DB::raw('commissions+'  . $valuer_deposit),
+
+                                    ]);
+
+                                    if ($admin_civ->count() > 0) {
+
+                                        $count_admin = $admin_civ->count();
+
+                                        $valeur_single = $admin_valeur / $count_admin;
+
+                                        foreach ($admin_civ as $user) {
+                                            $admin_single = SidUser::find($user->id);
+                                            AdminsCom::create([
+                                                'amount' =>   $valeur_single,
+                                                'sid_user_id' =>   $admin_single->id,
+                                                'wallet_transaction_id' => null,
+                                                'wallet_bank_id' => null,
+                                                'wallet_deposit_id' => null,
+                                                'wallet_inter_id' => null,
+                                                'wallet_payment_id' => $walletPayment->id,
+                                                'wallet_phone_credit_id' => null,
+                                                'wallet_reload_id' => null,
+                                                'bank_card_id' => null,
+                                                'description' => 'Commission',
+                                            ]);
+                                            $admin_single->wallet->update([
+                                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                                'sid_user_relod' => Auth::guard('web')->user()->id,
+                                                'amount' => DB::raw('amount+' . $valeur_single),
+                                            ]);
+                                        }
+                                    }
                                 } else {
 
-                                    $amount_solde =  $walletUser->wallet->amount -  $valAmount;
 
-                                    $walletPayment = WalletPayment::create([
-                                        'wallet_id' => $walletUser->wallet->id,
-                                        'amount' => $this->paiement_amount_total,
-                                        'description' => 'Paiement de facture CIE',
-                                        'payment_cost_id' => 2,
-                                        'number_decoder' => $this->paiement_decoder_canal ?? null,
-                                        'id_invoice' =>  $this->paiement_id_invoice ?? $this->paiement_id_invoice_pre,
-                                        'number_contract' => $this->paiement_num_contrat ?? null,
-                                        'phone' => $this->pre_phone_invoice ?? null,
-                                        'id_invoice_pre' => $this->pre_id_invoice ?? null,
-                                        'name' => $this->paiement_name_cie ?? null,
-                                        'created_by' => Auth::guard('web')->user()->id,
-                                        'provider_id' => $provider->id,
-                                        'costs_amount' => $percent_robus->amount_auther,
-                                        'number_phone' => $this->paiement_phone_canal ?? null,
-                                        'offer_id' => $offer->id ?? null,
-                                        'status' => 'PENDING',
-                                        'paiementChoix_phone' => $this->paiementChoix_phone ?? null,
-                                        'paiementChoix_type' => $this->paiementChoix_type ?? null,
-                                        'factureChoix_type' =>  $this->facture_choix_type ?? null,
-                                        'amount_solde'  =>   $amount_solde ?? null
-                                    ]);
+                                    if ($walletUser->country->code == 'CI') {
 
-                                    // Commision of paiement
-                                    $commission =  $walletPayment->amount +  $percent_robus->amount_auther;
+                                        $message_pro = 'Votre code de la facture prepéyé est ' . $walletPayment->id_invoice_pre;
 
-                                    $walletUser->wallet->update([
-                                        'amount' => DB::raw('amount-' . $commission),
-                                    ]);
+                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$walletPayment->phone&from=ROBUS&sms=$message_pro");
 
+                                        $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
+                                            $walletUser->wallet->currencie->code .
+                                            ' ' .
+                                            'par ' .
+                                            $walletPayment->provider->name .
+                                            ' le ' .
+                                            $walletPayment->created_at .
+                                            ' votre demande est en cours de validation ' .
+                                            'Robus vous remercie';
 
+                                        $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                    //  Send valeur in Admin
+                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                    }
 
-                                    if ($walletUser->is_under_distributer == 1) {
+                                    $walletPayment->update(['is_send' => 1,]);
 
-                                        // Commission admin
-                                        $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
+                                    // Commission admin
+                                    $admin_valeur =  $percent_robus->amount_auther;
 
-                                        // Commission distributer
-                                        $valuer_deposit =  $percent_robus->comission_auther;
+                                    if ($admin_civ->count() > 0) {
 
-                                        $walletPayment->update([
-                                            'commissions' => DB::raw('commissions+'  . $valuer_deposit),
-                                        ]);
+                                        $count_admin = $admin_civ->count();
 
-                                        if ($admin_civ->count() > 0) {
+                                        $valeur_single = $admin_valeur / $count_admin;
 
-                                            $count_admin = $admin_civ->count();
-
-                                            $valeur_single = $admin_valeur / $count_admin;
-
-                                            foreach ($admin_civ as $user) {
-                                                $admin_single = SidUser::find($user->id);
-                                                AdminsCom::create([
-                                                    'amount' =>   $valeur_single,
-                                                    'sid_user_id' =>   $admin_single->id,
-                                                    'wallet_transaction_id' => null,
-                                                    'wallet_bank_id' => null,
-                                                    'wallet_deposit_id' => null,
-                                                    'wallet_inter_id' => null,
-                                                    'wallet_payment_id' => $walletPayment->id,
-                                                    'wallet_phone_credit_id' => null,
-                                                    'wallet_reload_id' => null,
-                                                    'bank_card_id' => null,
-                                                    'description' => 'Commission',
-                                                ]);
-                                                $admin_single->wallet->update([
-                                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                    'amount' => DB::raw('amount+' . $valeur_single),
-                                                ]);
-                                            }
+                                        foreach ($admin_civ as $user) {
+                                            $admin_single = SidUser::find($user->id);
+                                            AdminsCom::create([
+                                                'amount' =>   $valeur_single,
+                                                'sid_user_id' =>   $admin_single->id,
+                                                'wallet_transaction_id' => null,
+                                                'wallet_bank_id' => null,
+                                                'wallet_deposit_id' => null,
+                                                'wallet_inter_id' => null,
+                                                'wallet_payment_id' => $walletPayment->id,
+                                                'wallet_phone_credit_id' => null,
+                                                'wallet_reload_id' => null,
+                                                'bank_card_id' => null,
+                                                'description' => 'Commission',
+                                            ]);
+                                            $admin_single->wallet->update([
+                                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                                'sid_user_relod' => Auth::guard('web')->user()->id,
+                                                'amount' => DB::raw('amount+' . $valeur_single),
+                                            ]);
                                         }
+                                    }
+                                }
+
+                                $msg_title = 'Paiement facture';
+                                $msg = 'Demande de paiement est en cours de validation ';
+                                $walletUser->notify(
+                                    new UserNotification([
+                                        'title' => $msg_title,
+                                        'message' => $msg,
+                                    ])
+                                );
+                                $notifs = $walletUser->unreadNotifications;
+                                event(new CreateWalletPaiementEvent($walletPayment));
+                                Notification::send(
+                                    $admins,
+                                    new AdminNotification('Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname)
+                                );
+
+                                if ($admins->count() > 0) {
 
 
-                                        $msg_title = 'Paiement de facture';
-                                        $msg = 'Demande de paiement est en cours de validation ';
-                                        $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletPaiementEvent($walletPayment));
-                                        Notification::send(
-                                            $admins,
-                                            new AdminNotification(
-                                                'Demande de paiement de ' .
-                                                    ' ' . $walletPayment->wallet->sidUser->firstname
-                                            )
-                                        );
-                                        if ($admins->count() > 0) {
+                                    foreach ($admins  as $user) {
 
+                                        $admin_single = SidUser::find($user->id);
 
-                                            foreach ($admins  as $user) {
+                                        $notifs = $admin_single->unreadNotifications;
+                                        event(new AdminNotifEvent($notifs));
+                                    }
 
-                                                $admin_single = SidUser::find($user->id);
+                                    $this->resetPaiementField();
+                                    $this->emit('modal-hide-paiement');
+                                    $this->emit('success', 'Paiement en-cours !');
 
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
+                                    if ($walletUser->email != null) {
+                                        $notify = new MailController();
+                                        $notify->newPaiement($walletPayment);
+                                    }
+                                } else {
 
+                                    $this->resetPaiementField();
+                                    $this->emit('modal-hide-paiement');
+                                    $this->emit('success', 'Paiement en-cours !');
 
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        } else {
-
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        }
-                                    } else {
-
-
-                                        if ($walletUser->country->code == 'CI') {
-
-                                            $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
-                                                $walletUser->wallet->currencie->code .
-                                                ' ' .
-                                                'par ' .
-                                                $walletPayment->provider->name .
-                                                ' le ' .
-                                                $walletPayment->created_at .
-                                                ' votre demande est en cours de validation ' .
-                                                'Robus vous remercie';
-
-                                            $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                                        }
-                                        // Commission admin
-                                        $admin_valeur =  $percent_robus->amount_auther;
-
-
-                                        if ($admin_civ->count() > 0) {
-
-                                            $count_admin = $admin_civ->count();
-
-                                            $valeur_single = $admin_valeur / $count_admin;
-
-                                            foreach ($admin_civ as $user) {
-                                                $admin_single = SidUser::find($user->id);
-                                                AdminsCom::create([
-                                                    'amount' =>   $valeur_single,
-                                                    'sid_user_id' =>   $admin_single->id,
-                                                    'wallet_transaction_id' => null,
-                                                    'wallet_bank_id' => null,
-                                                    'wallet_deposit_id' => null,
-                                                    'wallet_inter_id' => null,
-                                                    'wallet_payment_id' => $walletPayment->id,
-                                                    'wallet_phone_credit_id' => null,
-                                                    'wallet_reload_id' => null,
-                                                    'bank_card_id' => null,
-                                                    'description' => 'Commission',
-                                                ]);
-                                                $admin_single->wallet->update([
-                                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                    'amount' => DB::raw('amount+' . $valeur_single),
-                                                ]);
-                                            }
-                                        }
-
-
-                                        $msg_title = 'Paiement de facture';
-                                        $msg = 'Demande de paiement est en cours de validation ';
-                                        $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletPaiementEvent($walletPayment));
-                                        Notification::send(
-                                            $admins,
-                                            new AdminNotification(
-                                                'Demande de paiement de ' .
-                                                    ' ' . $walletPayment->wallet->sidUser->firstname
-                                            )
-                                        );
-
-                                        if ($admins->count() > 0) {
-
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        } else {
-
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        }
+                                    if ($walletUser->email != null) {
+                                        $notify = new MailController();
+                                        $notify->newPaiement($walletPayment);
                                     }
                                 }
                             }
@@ -3646,7 +3302,7 @@ class Transfers extends Component
                         } else {
 
 
-                            $valAmount = ($this->paiement_amount_total +  $percent_robus->amount_auther);
+                            $valAmount = ((float) $this->paiement_amount_total +  (float) $percent_robus->amount_auther);
 
                             if ($valAmount > $walletUser->wallet->amount) {
                                 $this->resetPaiementField();
@@ -3729,54 +3385,6 @@ class Transfers extends Component
                                             ]);
                                         }
                                     }
-
-                                    $msg_title = 'Paiement de facture';
-                                    $msg = 'Demande de paiement est en cours de validation ';
-                                    $walletUser->notify(
-                                        new UserNotification([
-                                            'title' => $msg_title,
-                                            'message' => $msg,
-                                        ])
-                                    );
-                                    $notifs = $walletUser->unreadNotifications;
-                                    event(new CreateWalletPaiementEvent($walletPayment));
-                                    Notification::send(
-                                        $admins,
-                                        new AdminNotification('Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname)
-                                    );
-                                    if ($admins->count() > 0) {
-
-
-                                        foreach ($admins  as $user) {
-
-                                            $admin_single = SidUser::find($user->id);
-
-                                            $notifs = $admin_single->unreadNotifications;
-                                            event(new AdminNotifEvent($notifs));
-                                        }
-
-                                        $this->resetPaiementField();
-                                        $this->emit('modal-hide-paiement');
-                                        $this->emit('success', 'Paiement en-cours !');
-
-
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPaiement($walletPayment);
-                                        }
-                                    } else {
-
-
-                                        $this->resetPaiementField();
-                                        $this->emit('modal-hide-paiement');
-                                        $this->emit('success', 'Paiement en-cours !');
-
-
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPaiement($walletPayment);
-                                        }
-                                    }
                                 } else {
 
                                     if ($walletUser->country->code == 'CI') {
@@ -3832,54 +3440,54 @@ class Transfers extends Component
                                             ]);
                                         }
                                     }
+                                }
 
-                                    $msg_title = 'Paiement de facture';
-                                    $msg = 'Demande de paiement est en cours de validation ';
-                                    $walletUser->notify(
-                                        new UserNotification([
-                                            'title' => $msg_title,
-                                            'message' => $msg,
-                                        ])
-                                    );
-                                    $notifs = $walletUser->unreadNotifications;
-                                    event(new CreateWalletPaiementEvent($walletPayment));
-                                    Notification::send(
-                                        $admins,
-                                        new AdminNotification('Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname)
-                                    );
-                                    if ($admins->count() > 0) {
+                                $msg_title = 'Paiement de facture';
+                                $msg = 'Demande de paiement est en cours de validation ';
+                                $walletUser->notify(
+                                    new UserNotification([
+                                        'title' => $msg_title,
+                                        'message' => $msg,
+                                    ])
+                                );
+                                $notifs = $walletUser->unreadNotifications;
+                                event(new CreateWalletPaiementEvent($walletPayment));
+                                Notification::send(
+                                    $admins,
+                                    new AdminNotification('Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname)
+                                );
 
-
-                                        foreach ($admins  as $user) {
-
-                                            $admin_single = SidUser::find($user->id);
-
-                                            $notifs = $admin_single->unreadNotifications;
-                                            event(new AdminNotifEvent($notifs));
-                                        }
+                                if ($admins->count() > 0) {
 
 
-                                        $this->resetPaiementField();
-                                        $this->emit('modal-hide-paiement');
-                                        $this->emit('success', 'Paiement en-cours !');
+                                    foreach ($admins  as $user) {
+
+                                        $admin_single = SidUser::find($user->id);
+
+                                        $notifs = $admin_single->unreadNotifications;
+                                        event(new AdminNotifEvent($notifs));
+                                    }
+
+                                    $this->resetPaiementField();
+                                    $this->emit('modal-hide-paiement');
+                                    $this->emit('success', 'Paiement en-cours !');
 
 
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPaiement($walletPayment);
-                                        }
-                                    } else {
+                                    if ($walletUser->email != null) {
+                                        $notify = new MailController();
+                                        $notify->newPaiement($walletPayment);
+                                    }
+                                } else {
 
 
-                                        $this->resetPaiementField();
-                                        $this->emit('modal-hide-paiement');
-                                        $this->emit('success', 'Paiement en-cours !');
+                                    $this->resetPaiementField();
+                                    $this->emit('modal-hide-paiement');
+                                    $this->emit('success', 'Paiement en-cours !');
 
 
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPaiement($walletPayment);
-                                        }
+                                    if ($walletUser->email != null) {
+                                        $notify = new MailController();
+                                        $notify->newPaiement($walletPayment);
                                     }
                                 }
                             }
@@ -3905,245 +3513,7 @@ class Transfers extends Component
                                     'Numero  est obligatoire',
                                 ]
                             );
-
-                            // Verifier plafond days
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
-                            } else {
-
-                                if ($val_amount > $walletUser->wallet->amount) {
-                                    $this->resetPaiementField();
-                                    $this->emit('menu-paiement-active');
-                                    $this->emit('error', 'Verifier votre montant  svp !');
-                                } else {
-
-                                    $amount_solde =  $walletUser->wallet->amount -  $val_amount;
-
-                                    $walletPayment = WalletPayment::create([
-                                        'wallet_id' => $walletUser->wallet->id,
-                                        'amount' => $offer->amount ?? null,
-                                        'description' => 'Paiement de facture CANAL',
-                                        'payment_cost_id' => 2,
-                                        'number_decoder' => $this->paiement_decoder_canal ?? null,
-                                        'id_invoice' => $this->paiement_id_invoice ?? null,
-                                        'number_contract' =>  $this->paiement_num_contrat ?? null,
-                                        'phone' => $this->pre_phone_invoice ?? null,
-                                        'id_invoice_pre' => $this->pre_id_invoice ?? null,
-                                        'name' => $this->paiement_name_sodecie ?? null,
-                                        'created_by' => Auth::guard('web')->user()->id,
-                                        'provider_id' => $provider->id,
-                                        'costs_amount' => $percent_robus->amount_canal,
-                                        'number_phone' => $this->paiement_phone_canal ?? null,
-                                        'offer_id' => $offer->id ?? null,
-                                        'status' => 'PENDING',
-                                        'paiementChoix_phone' => $this->paiementChoix_phone ?? null,
-                                        'paiementChoix_type' =>  $this->paiementChoix_type ?? null,
-                                        'factureChoix_type' => $this->facture_choix_type ?? null,
-                                        'amount_solde'  =>   $amount_solde ?? null
-                                    ]);
-
-                                    // Commision percent an decrement a acompte
-                                    $commission = $walletPayment->amount +   $percent_robus->amount_canal;
-
-                                    $walletUser->wallet->update([
-                                        'amount' => DB::raw('amount-' . $commission),
-                                    ]);
-
-
-                                    if ($walletUser->is_under_distributer == 1) {
-
-                                        // Commission admin
-                                        $admin_valeur =  $percent_robus->amount_canal -  $percent_robus->comission_canal;
-
-                                        // Commission distributer
-                                        $valuer_deposit =  $percent_robus->comission_canal;
-
-                                        $walletPayment->update([
-                                            'commissions' => DB::raw('commissions+'  . $valuer_deposit),
-
-                                        ]);
-
-                                        //  Send valeur in Admin
-                                        if ($admin_civ->count() > 0) {
-
-                                            $count_admin = $admin_civ->count();
-
-                                            $valeur_single = $admin_valeur / $count_admin;
-
-                                            foreach ($admin_civ as $user) {
-                                                $admin_single = SidUser::find($user->id);
-                                                AdminsCom::create([
-                                                    'amount' =>   $valeur_single,
-                                                    'sid_user_id' =>   $admin_single->id,
-                                                    'wallet_transaction_id' => null,
-                                                    'wallet_bank_id' => null,
-                                                    'wallet_deposit_id' => null,
-                                                    'wallet_inter_id' => null,
-                                                    'wallet_payment_id' => $walletPayment->id,
-                                                    'wallet_phone_credit_id' => null,
-                                                    'wallet_reload_id' => null,
-                                                    'bank_card_id' => null,
-                                                    'description' => 'Commission',
-                                                ]);
-                                                $admin_single->wallet->update([
-                                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                    'amount' => DB::raw('amount+' . $valeur_single),
-                                                ]);
-                                            }
-                                        }
-
-
-                                        $msg_title = 'Paiement de facture';
-                                        $msg = 'Demande de paiement est en cours de validation ';
-                                        $walletUser->notify(
-                                            new UserNotification([
-                                                'title' => $msg_title,
-                                                'message' => $msg,
-                                            ])
-                                        );
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletPaiementEvent($walletPayment));
-                                        Notification::send($admins, new AdminNotification('Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname));
-                                        if ($admins->count() > 0) {
-
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        } else {
-
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        }
-                                    } else {
-
-                                        if ($walletUser->country->code == 'CI') {
-
-                                            $message_pro = 'Votre code de la facture prepéyé est ' . $walletPayment->id_invoice_pre;
-
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$walletPayment->phone&from=ROBUS&sms=$message_pro");
-
-                                            $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
-                                                $walletUser->wallet->currencie->code .
-                                                ' ' .
-                                                'par ' .
-                                                $walletPayment->provider->name .
-                                                ' le ' .
-                                                $walletPayment->created_at .
-                                                ' votre demande est en cours de validation ' .
-                                                'Robus vous remercie';
-
-                                            $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                                        }
-                                        // Commission admin
-                                        $admin_valeur =  $percent_robus->amount_canal;
-
-                                        //  Send valeur in Admin
-                                        if ($admin_civ->count() > 0) {
-
-                                            $count_admin = $admin_civ->count();
-
-                                            $valeur_single = $admin_valeur / $count_admin;
-
-                                            foreach ($admin_civ as $user) {
-                                                $admin_single = SidUser::find($user->id);
-                                                AdminsCom::create([
-                                                    'amount' =>   $valeur_single,
-                                                    'sid_user_id' =>   $admin_single->id,
-                                                    'wallet_transaction_id' => null,
-                                                    'wallet_bank_id' => null,
-                                                    'wallet_deposit_id' => null,
-                                                    'wallet_inter_id' => null,
-                                                    'wallet_payment_id' => $walletPayment->id,
-                                                    'wallet_phone_credit_id' => null,
-                                                    'wallet_reload_id' => null,
-                                                    'bank_card_id' => null,
-                                                    'description' => 'Commission',
-                                                ]);
-                                                $admin_single->wallet->update([
-                                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                    'amount' => DB::raw('amount+' . $valeur_single),
-                                                ]);
-                                            }
-                                        }
-
-                                        $msg_title = 'Paiement de facture';
-                                        $msg = 'Demande de paiement est en cours de validation ';
-                                        $walletUser->notify(
-                                            new UserNotification([
-                                                'title' => $msg_title,
-                                                'message' => $msg,
-                                            ])
-                                        );
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletPaiementEvent($walletPayment));
-                                        Notification::send($admins, new AdminNotification('Demande de paiement de ' .
-                                            ' ' . $walletPayment->wallet->sidUser->firstname));
-                                        if ($admins->count() > 0) {
-
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        } else {
-
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } elseif ($this->paiementChoix_phone == 2) {
+                        } else {
 
                             $this->validate(
                                 [
@@ -4156,245 +3526,199 @@ class Transfers extends Component
                                     'Code est obligatoire',
                                 ]
                             );
+                        }
 
-                            // Verifier plafond days
 
-                            if ($som_transfers >= $valeur_ceiling) {
+                        if ($som_transfers >= $valeur_ceiling) {
+                            $this->resetPaiementField();
+                            $this->emit('modal-hide-paiement');
+                            $this->emit('warning', 'Votre montant journier est atteint !');
+                        } else {
+
+
+                            // Verify solde of User send transfers
+
+                            if ($val_amount > $walletUser->wallet->amount) {
+
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
+                                $this->emit(
+                                    'error',
+                                    'Verifier votre montant  svp !'
+                                );
                             } else {
 
 
-                                // Verify solde of User send transfers
+                                $amount_solde =  $walletUser->wallet->amount -  $val_amount;
 
-                                if ($val_amount > $walletUser->wallet->amount) {
+                                $walletPayment = WalletPayment::create([
+                                    'wallet_id' => $walletUser->wallet->id,
+                                    'amount' => $offer->amount ?? null,
+                                    'description' => 'Paiement de facture CANAL',
+                                    'payment_cost_id' => 2,
+                                    'number_decoder' => $this->paiementChoix_phone == 2 ? $this->paiement_decoder_canal  : null,
+                                    'id_invoice' => $this->paiement_id_invoice ?? null,
+                                    'number_contract' =>  $this->paiement_num_contrat ?? null,
+                                    'name' => $this->paiement_name_sodecie ?? null,
+                                    'created_by' => Auth::guard('web')->user()->id,
+                                    'provider_id' => $provider->id,
+                                    'costs_amount' => $percent_robus->amount_canal,
+                                    'number_phone' => $this->paiementChoix_phone == 1 ? $this->paiement_phone_canal : null,
+                                    'offer_id' => $offer->id ?? null,
+                                    'status' => 'PENDING',
+                                    'paiementChoix_phone' => $this->paiementChoix_phone ?? null,
+                                    'paiementChoix_type' => $this->paiementChoix_type ?? null,
+                                    'factureChoix_type' => $this->facture_choix_type ?? null,
+                                    'amount_solde'  =>   $amount_solde ?? null
+                                ]);
+
+                                // Commision percent an decrement a acompte
+                                $commission = $walletPayment->amount +   $percent_robus->amount_canal;
+
+                                $walletUser->wallet->update([
+                                    'amount' => DB::raw('amount-' . $commission),
+                                ]);
+
+
+                                if ($walletUser->is_under_distributer == 1) {
+
+                                    // Commission admin
+                                    $admin_valeur =  $percent_robus->amount_canal -  $percent_robus->comission_canal;
+
+                                    // Commission distributer
+                                    $valuer_deposit =  $percent_robus->comission_canal;
+
+                                    $walletPayment->update([
+                                        'commissions' => DB::raw('commissions+'  . $valuer_deposit),
+                                    ]);
+
+                                    //  Send valeur in Admin
+                                    if ($admin_civ->count() > 0) {
+
+                                        $count_admin = $admin_civ->count();
+
+                                        $valeur_single = $admin_valeur / $count_admin;
+
+                                        foreach ($admin_civ as $user) {
+                                            $admin_single = SidUser::find($user->id);
+                                            AdminsCom::create([
+                                                'amount' =>   $valeur_single,
+                                                'sid_user_id' =>   $admin_single->id,
+                                                'wallet_transaction_id' => null,
+                                                'wallet_bank_id' => null,
+                                                'wallet_deposit_id' => null,
+                                                'wallet_inter_id' => null,
+                                                'wallet_payment_id' => $walletPayment->id,
+                                                'wallet_phone_credit_id' => null,
+                                                'wallet_reload_id' => null,
+                                                'bank_card_id' => null,
+                                                'description' => 'Commission',
+                                            ]);
+                                            $admin_single->wallet->update([
+                                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                                'sid_user_relod' => Auth::guard('web')->user()->id,
+                                                'amount' => DB::raw('amount+' . $valeur_single),
+                                            ]);
+                                        }
+                                    }
+                                } else {
+
+                                    if ($walletUser->country->code == 'CI') {
+
+                                        $message_pro = 'Votre code de la facture prepéyé est ' . $walletPayment->id_invoice_pre;
+
+                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$walletPayment->phone&from=ROBUS&sms=$message_pro");
+
+                                        $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
+                                            $walletUser->wallet->currencie->code .
+                                            ' ' .
+                                            'par ' .
+                                            $walletPayment->provider->name .
+                                            ' le ' .
+                                            $walletPayment->created_at .
+                                            ' votre demande est en cours de validation ' .
+                                            'Robus vous remercie';
+
+                                        $encode = substr(Auth::guard('web')->user()->phone, -10);
+
+                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                    }
+
+                                    // Commission admin
+                                    $admin_valeur =  $percent_robus->amount_canal;
+
+                                    //  Send valeur in Admin
+                                    if ($admin_civ->count() > 0) {
+
+                                        $count_admin = $admin_civ->count();
+
+                                        $valeur_single = $admin_valeur / $count_admin;
+
+                                        foreach ($admin_civ as $user) {
+                                            $admin_single = SidUser::find($user->id);
+                                            AdminsCom::create([
+                                                'amount' =>   $valeur_single,
+                                                'sid_user_id' =>   $admin_single->id,
+                                                'wallet_transaction_id' => null,
+                                                'wallet_bank_id' => null,
+                                                'wallet_deposit_id' => null,
+                                                'wallet_inter_id' => null,
+                                                'wallet_payment_id' => $walletPayment->id,
+                                                'wallet_phone_credit_id' => null,
+                                                'wallet_reload_id' => null,
+                                                'bank_card_id' => null,
+                                                'description' => 'Commission',
+                                            ]);
+                                            $admin_single->wallet->update([
+                                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                                'sid_user_relod' => Auth::guard('web')->user()->id,
+                                                'amount' => DB::raw('amount+' . $valeur_single),
+                                            ]);
+                                        }
+                                    }
+                                }
+
+                                $msg_title = 'Paiement de facture';
+                                $msg = 'Demande de paiement est en cours de validation ';
+                                $walletUser->notify(
+                                    new UserNotification([
+                                        'title' => $msg_title,
+                                        'message' => $msg,
+                                    ])
+                                );
+                                $notifs = $walletUser->unreadNotifications;
+                                event(new CreateWalletPaiementEvent($walletPayment));
+                                Notification::send(
+                                    $admins,
+                                    new AdminNotification(
+                                        'Demande de paiement de ' .
+                                            ' ' . $walletPayment->wallet->sidUser->firstname
+                                    )
+                                );
+                                if ($admins->count() > 0) {
+
+
+                                    foreach ($admins  as $user) {
+
+                                        $admin_single = SidUser::find($user->id);
+
+                                        $notifs = $admin_single->unreadNotifications;
+                                        event(new AdminNotifEvent($notifs));
+                                    }
 
                                     $this->resetPaiementField();
                                     $this->emit('modal-hide-paiement');
-                                    $this->emit(
-                                        'error',
-                                        'Verifier votre montant  svp !'
-                                    );
+                                    $this->emit('success', 'Paiement en-cours !');
                                 } else {
 
 
-                                    $amount_solde =  $walletUser->wallet->amount -  $val_amount;
-                                    $walletPayment = WalletPayment::create([
-                                        'wallet_id' => $walletUser->wallet->id,
-                                        'amount' => $offer->amount ?? null,
-                                        'description' => 'Paiement de facture CANAL',
-                                        'payment_cost_id' => 2,
-                                        'number_decoder' => $this->paiement_decoder_canal ?? null,
-                                        'id_invoice' => $this->paiement_id_invoice ?? null,
-                                        'number_contract' =>  $this->paiement_num_contrat ?? null,
-                                        'name' => $this->paiement_name_sodecie ?? null,
-                                        'created_by' => Auth::guard('web')->user()->id,
-                                        'provider_id' => $provider->id,
-                                        'costs_amount' => $percent_robus->amount_canal,
-                                        'number_phone' =>  $this->paiement_phone_canal ?? null,
-                                        'offer_id' => $offer->id ?? null,
-                                        'status' => 'PENDING',
-                                        'paiementChoix_phone' => $this->paiementChoix_phone ?? null,
-                                        'paiementChoix_type' => $this->paiementChoix_type ?? null,
-                                        'factureChoix_type' => $this->facture_choix_type ?? null,
-                                        'amount_solde'  =>   $amount_solde ?? null
-                                    ]);
+                                    $this->resetPaiementField();
+                                    $this->emit('modal-hide-paiement');
+                                    $this->emit('success', 'Paiement en-cours !');
 
-                                    // Commision percent an decrement a acompte
-                                    $commission = $walletPayment->amount +   $percent_robus->amount_canal;
-
-                                    $walletUser->wallet->update([
-                                        'amount' => DB::raw('amount-' . $commission),
-                                    ]);
-
-
-                                    if ($walletUser->is_under_distributer == 1) {
-
-                                        // Commission admin
-                                        $admin_valeur =  $percent_robus->amount_canal -  $percent_robus->comission_canal;
-
-                                        // Commission distributer
-                                        $valuer_deposit =  $percent_robus->comission_canal;
-
-                                        $walletPayment->update([
-                                            'commissions' => DB::raw('commissions+'  . $valuer_deposit),
-                                        ]);
-
-                                        //  Send valeur in Admin
-                                        if ($admin_civ->count() > 0) {
-
-                                            $count_admin = $admin_civ->count();
-
-                                            $valeur_single = $admin_valeur / $count_admin;
-
-                                            foreach ($admin_civ as $user) {
-                                                $admin_single = SidUser::find($user->id);
-                                                AdminsCom::create([
-                                                    'amount' =>   $valeur_single,
-                                                    'sid_user_id' =>   $admin_single->id,
-                                                    'wallet_transaction_id' => null,
-                                                    'wallet_bank_id' => null,
-                                                    'wallet_deposit_id' => null,
-                                                    'wallet_inter_id' => null,
-                                                    'wallet_payment_id' => $walletPayment->id,
-                                                    'wallet_phone_credit_id' => null,
-                                                    'wallet_reload_id' => null,
-                                                    'bank_card_id' => null,
-                                                    'description' => 'Commission',
-                                                ]);
-                                                $admin_single->wallet->update([
-                                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                    'amount' => DB::raw('amount+' . $valeur_single),
-                                                ]);
-                                            }
-                                        }
-                                        $msg_title = 'Paiement de facture';
-                                        $msg = 'Demande de paiement est en cours de validation ';
-                                        $walletUser->notify(
-                                            new UserNotification([
-                                                'title' => $msg_title,
-                                                'message' => $msg,
-                                            ])
-                                        );
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletPaiementEvent($walletPayment));
-                                        Notification::send(
-                                            $admins,
-                                            new AdminNotification(
-                                                'Demande de paiement de ' .
-                                                    ' ' . $walletPayment->wallet->sidUser->firstname
-                                            )
-                                        );
-                                        if ($admins->count() > 0) {
-
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-                                        } else {
-
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        }
-                                    } else {
-
-                                        if ($walletUser->country->code == 'CI') {
-
-                                            $message_pro = 'Votre code de la facture prepéyé est ' . $walletPayment->id_invoice_pre;
-
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$walletPayment->phone&from=ROBUS&sms=$message_pro");
-
-                                            $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
-                                                $walletUser->wallet->currencie->code .
-                                                ' ' .
-                                                'par ' .
-                                                $walletPayment->provider->name .
-                                                ' le ' .
-                                                $walletPayment->created_at .
-                                                ' votre demande est en cours de validation ' .
-                                                'Robus vous remercie';
-
-                                            $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                                        }
-
-                                        // Commission admin
-                                        $admin_valeur =  $percent_robus->amount_canal;
-
-                                        //  Send valeur in Admin
-                                        if ($admin_civ->count() > 0) {
-
-                                            $count_admin = $admin_civ->count();
-
-                                            $valeur_single = $admin_valeur / $count_admin;
-
-                                            foreach ($admin_civ as $user) {
-                                                $admin_single = SidUser::find($user->id);
-                                                AdminsCom::create([
-                                                    'amount' =>   $valeur_single,
-                                                    'sid_user_id' =>   $admin_single->id,
-                                                    'wallet_transaction_id' => null,
-                                                    'wallet_bank_id' => null,
-                                                    'wallet_deposit_id' => null,
-                                                    'wallet_inter_id' => null,
-                                                    'wallet_payment_id' => $walletPayment->id,
-                                                    'wallet_phone_credit_id' => null,
-                                                    'wallet_reload_id' => null,
-                                                    'bank_card_id' => null,
-                                                    'description' => 'Commission',
-                                                ]);
-                                                $admin_single->wallet->update([
-                                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                    'amount' => DB::raw('amount+' . $valeur_single),
-                                                ]);
-                                            }
-                                        }
-                                        $msg_title = 'Paiement de facture';
-                                        $msg = 'Demande de paiement est en cours de validation ';
-                                        $walletUser->notify(
-                                            new UserNotification([
-                                                'title' => $msg_title,
-                                                'message' => $msg,
-                                            ])
-                                        );
-                                        $notifs = $walletUser->unreadNotifications;
-                                        event(new CreateWalletPaiementEvent($walletPayment));
-                                        Notification::send(
-                                            $admins,
-                                            new AdminNotification(
-                                                'Demande de paiement de ' .
-                                                    ' ' . $walletPayment->wallet->sidUser->firstname
-                                            )
-                                        );
-                                        if ($admins->count() > 0) {
-
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        } else {
-
-                                            $this->resetPaiementField();
-                                            $this->emit('modal-hide-paiement');
-                                            $this->emit('success', 'Paiement en-cours !');
-
-                                            if ($walletUser->email != null) {
-                                                $notify = new MailController();
-                                                $notify->newPaiement($walletPayment);
-                                            }
-                                        }
+                                    if ($walletUser->email != null) {
+                                        $notify = new MailController();
+                                        $notify->newPaiement($walletPayment);
                                     }
                                 }
                             }
@@ -5095,7 +4419,6 @@ class Transfers extends Component
 
                                 foreach ($percent_robus->levelDepositIvories->where('is_ivoires', true)  as $amount_user) {
                                     if ($this->amount_reloadcard >= $amount_user->amount_begin &&  $this->amount_reloadcard <= $amount_user->amount_end) {
-
                                         //  If amount is Null
                                         if ($amount_user->amount == null) {
                                             if ($walletUser->is_under_distributer == 1) {
@@ -5204,70 +4527,6 @@ class Transfers extends Component
                                                     $walletReloadCard->update([
                                                         'commissions' => DB::raw('commissions+'  . $valeur_deposit->amount),
                                                     ]);
-
-
-                                                    $msg_title = 'Rechargement de carte';
-                                                    $msg = 'Demande de rechargement de carte est en cours de validation ';
-                                                    $walletUser->notify(
-                                                        new UserNotification([
-                                                            'title' => $msg_title,
-                                                            'message' => $msg,
-                                                        ])
-                                                    );
-                                                    $notifs = $walletUser->unreadNotifications;
-                                                    event(new CreateWalletReloadCardEvent($walletReloadCard));
-                                                    Notification::send(
-                                                        $admins,
-                                                        new AdminNotification(
-                                                            'Demande de rechargement de carte de ' .
-                                                                ' ' .
-                                                                $walletReloadCard->wallet
-                                                                ->sidUser->firstname
-                                                        )
-                                                    );
-                                                    if ($admins->count() > 0) {
-
-
-                                                        foreach ($admins  as $user) {
-
-                                                            $admin_single = SidUser::find($user->id);
-
-                                                            $notifs = $admin_single->unreadNotifications;
-                                                            event(new AdminNotifEvent($notifs));
-                                                        }
-
-
-
-                                                        $this->resetReloadCardField();
-                                                        $this->emit('modal-hide-reloadCard');
-                                                        $this->emit(
-                                                            'success',
-                                                            'Rechargement en-cours !'
-                                                        );
-
-                                                        if ($walletUser->email != null) {
-                                                            $notify = new MailController();
-                                                            $notify->newReload(
-                                                                $walletReloadCard
-                                                            );
-                                                        }
-                                                    } else {
-
-
-                                                        $this->resetReloadCardField();
-                                                        $this->emit('modal-hide-reloadCard');
-                                                        $this->emit(
-                                                            'success',
-                                                            'Rechargement en-cours !'
-                                                        );
-
-                                                        if ($walletUser->email != null) {
-                                                            $notify = new MailController();
-                                                            $notify->newReload(
-                                                                $walletReloadCard
-                                                            );
-                                                        }
-                                                    }
                                                 } else {
 
 
@@ -5314,67 +4573,68 @@ class Transfers extends Component
                                                             ]);
                                                         }
                                                     }
+                                                }
 
-                                                    $msg_title = 'Rechargement de carte';
-                                                    $msg = 'Demande de rechargement de carte est en cours de validation ';
-                                                    $walletUser->notify(
-                                                        new UserNotification([
-                                                            'title' => $msg_title,
-                                                            'message' => $msg,
-                                                        ])
+                                                $msg_title = 'Rechargement de carte';
+                                                $msg = 'Demande de rechargement de carte est en cours de validation ';
+                                                $walletUser->notify(
+                                                    new UserNotification([
+                                                        'title' => $msg_title,
+                                                        'message' => $msg,
+                                                    ])
+                                                );
+                                                $notifs = $walletUser->unreadNotifications;
+                                                event(new CreateWalletReloadCardEvent($walletReloadCard));
+                                                Notification::send(
+                                                    $admins,
+                                                    new AdminNotification(
+                                                        'Demande de rechargement de carte de ' .
+                                                            ' ' .
+                                                            $walletReloadCard->wallet
+                                                            ->sidUser->firstname
+                                                    )
+                                                );
+                                                if ($admins->count() > 0) {
+
+
+                                                    foreach ($admins  as $user) {
+
+                                                        $admin_single = SidUser::find($user->id);
+
+                                                        $notifs = $admin_single->unreadNotifications;
+                                                        event(new AdminNotifEvent($notifs));
+                                                    }
+
+
+
+                                                    $this->resetReloadCardField();
+                                                    $this->emit('modal-hide-reloadCard');
+                                                    $this->emit(
+                                                        'success',
+                                                        'Rechargement en-cours !'
                                                     );
-                                                    $notifs = $walletUser->unreadNotifications;
-                                                    event(new CreateWalletReloadCardEvent($walletReloadCard));
-                                                    Notification::send(
-                                                        $admins,
-                                                        new AdminNotification(
-                                                            'Demande de rechargement de carte de ' .
-                                                                ' ' .
-                                                                $walletReloadCard->wallet
-                                                                ->sidUser->firstname
-                                                        )
+
+                                                    if ($walletUser->email != null) {
+                                                        $notify = new MailController();
+                                                        $notify->newReload(
+                                                            $walletReloadCard
+                                                        );
+                                                    }
+                                                } else {
+
+
+                                                    $this->resetReloadCardField();
+                                                    $this->emit('modal-hide-reloadCard');
+                                                    $this->emit(
+                                                        'success',
+                                                        'Rechargement en-cours !'
                                                     );
 
-                                                    if ($admins->count() > 0) {
-
-
-                                                        foreach ($admins  as $user) {
-
-                                                            $admin_single = SidUser::find($user->id);
-
-                                                            $notifs = $admin_single->unreadNotifications;
-                                                            event(new AdminNotifEvent($notifs));
-                                                        }
-
-                                                        $this->resetReloadCardField();
-                                                        $this->emit('modal-hide-reloadCard');
-                                                        $this->emit(
-                                                            'success',
-                                                            'Rechargement en-cours !'
+                                                    if ($walletUser->email != null) {
+                                                        $notify = new MailController();
+                                                        $notify->newReload(
+                                                            $walletReloadCard
                                                         );
-
-                                                        if ($walletUser->email != null) {
-                                                            $notify = new MailController();
-                                                            $notify->newReload(
-                                                                $walletReloadCard
-                                                            );
-                                                        }
-                                                    } else {
-
-
-                                                        $this->resetReloadCardField();
-                                                        $this->emit('modal-hide-reloadCard');
-                                                        $this->emit(
-                                                            'success',
-                                                            'Rechargement en-cours !'
-                                                        );
-
-                                                        if ($walletUser->email != null) {
-                                                            $notify = new MailController();
-                                                            $notify->newReload(
-                                                                $walletReloadCard
-                                                            );
-                                                        }
                                                     }
                                                 }
                                             }
@@ -5485,67 +4745,6 @@ class Transfers extends Component
                                                         'commissions' => DB::raw('commissions+'  . $valeur_deposit->amount),
 
                                                     ]);
-
-
-                                                    $msg_title = 'Rechargement de carte';
-                                                    $msg = 'Demande de rechargement de carte est en cours de validation ';
-                                                    $walletUser->notify(
-                                                        new UserNotification([
-                                                            'title' => $msg_title,
-                                                            'message' => $msg,
-                                                        ])
-                                                    );
-                                                    $notifs = $walletUser->unreadNotifications;
-                                                    event(new CreateWalletReloadCardEvent($walletReloadCard));
-                                                    Notification::send(
-                                                        $admins,
-                                                        new AdminNotification(
-                                                            'Demande de rechargement de carte de ' .
-                                                                ' ' .
-                                                                $walletReloadCard->wallet
-                                                                ->sidUser->firstname
-                                                        )
-                                                    );
-                                                    if ($admins->count() > 0) {
-
-
-                                                        foreach ($admins  as $user) {
-
-                                                            $admin_single = SidUser::find($user->id);
-
-                                                            $notifs = $admin_single->unreadNotifications;
-                                                            event(new AdminNotifEvent($notifs));
-                                                        }
-
-                                                        $this->resetReloadCardField();
-                                                        $this->emit('modal-hide-reloadCard');
-                                                        $this->emit(
-                                                            'success',
-                                                            'Rechargement en-cours !'
-                                                        );
-
-                                                        if ($walletUser->email != null) {
-                                                            $notify = new MailController();
-                                                            $notify->newReload(
-                                                                $walletReloadCard
-                                                            );
-                                                        }
-                                                    } else {
-
-                                                        $this->resetReloadCardField();
-                                                        $this->emit('modal-hide-reloadCard');
-                                                        $this->emit(
-                                                            'success',
-                                                            'Rechargement en-cours !'
-                                                        );
-
-                                                        if ($walletUser->email != null) {
-                                                            $notify = new MailController();
-                                                            $notify->newReload(
-                                                                $walletReloadCard
-                                                            );
-                                                        }
-                                                    }
                                                 } else {
 
                                                     $commission =  $walletReloadCard->amount +  $amount_user->amount;
@@ -5590,60 +4789,65 @@ class Transfers extends Component
                                                             ]);
                                                         }
                                                     }
+                                                }
+
+                                                $msg_title = 'Rechargement de carte';
+                                                $msg = 'Demande de rechargement de carte est en cours de validation ';
+                                                $walletUser->notify(
+                                                    new UserNotification([
+                                                        'title' => $msg_title,
+                                                        'message' => $msg,
+                                                    ])
+                                                );
+                                                $notifs = $walletUser->unreadNotifications;
+                                                event(new CreateWalletReloadCardEvent($walletReloadCard));
+                                                Notification::send(
+                                                    $admins,
+                                                    new AdminNotification(
+                                                        'Demande de rechargement de carte de ' .
+                                                            ' ' .
+                                                            $walletReloadCard->wallet
+                                                            ->sidUser->firstname
+                                                    )
+                                                );
+                                                if ($admins->count() > 0) {
 
 
-                                                    $msg_title = 'Rechargement de carte';
-                                                    $msg = 'Demande de rechargement de carte est en cours de validation ';
-                                                    $walletUser->notify(
-                                                        new UserNotification([
-                                                            'title' => $msg_title,
-                                                            'message' => $msg,
-                                                        ])
+                                                    foreach ($admins  as $user) {
+
+                                                        $admin_single = SidUser::find($user->id);
+
+                                                        $notifs = $admin_single->unreadNotifications;
+                                                        event(new AdminNotifEvent($notifs));
+                                                    }
+
+                                                    $this->resetReloadCardField();
+                                                    $this->emit('modal-hide-reloadCard');
+                                                    $this->emit(
+                                                        'success',
+                                                        'Rechargement en-cours !'
                                                     );
-                                                    $notifs = $walletUser->unreadNotifications;
-                                                    event(new CreateWalletReloadCardEvent($walletReloadCard));
-                                                    Notification::send(
-                                                        $admins,
-                                                        new AdminNotification(
-                                                            'Demande de rechargement de carte de ' .
-                                                                ' ' .
-                                                                $walletReloadCard->wallet
-                                                                ->sidUser->firstname
-                                                        )
+
+                                                    if ($walletUser->email != null) {
+                                                        $notify = new MailController();
+                                                        $notify->newReload(
+                                                            $walletReloadCard
+                                                        );
+                                                    }
+                                                } else {
+
+                                                    $this->resetReloadCardField();
+                                                    $this->emit('modal-hide-reloadCard');
+                                                    $this->emit(
+                                                        'success',
+                                                        'Rechargement en-cours !'
                                                     );
-                                                    if ($admins->count() > 0) {
 
-
-                                                        foreach ($admins  as $user) {
-
-                                                            $admin_single = SidUser::find($user->id);
-
-                                                            $notifs = $admin_single->unreadNotifications;
-                                                            event(new AdminNotifEvent($notifs));
-                                                        }
-
-
-                                                        $this->resetReloadCardField();
-                                                        $this->emit('modal-hide-reloadCard');
-                                                        $this->emit(
-                                                            'success',
-                                                            'Rechargement en-cours !'
+                                                    if ($walletUser->email != null) {
+                                                        $notify = new MailController();
+                                                        $notify->newReload(
+                                                            $walletReloadCard
                                                         );
-                                                    } else {
-
-                                                        $this->resetReloadCardField();
-                                                        $this->emit('modal-hide-reloadCard');
-                                                        $this->emit(
-                                                            'success',
-                                                            'Rechargement en-cours !'
-                                                        );
-
-                                                        if ($walletUser->email != null) {
-                                                            $notify = new MailController();
-                                                            $notify->newReload(
-                                                                $walletReloadCard
-                                                            );
-                                                        }
                                                     }
                                                 }
                                             }
@@ -5721,471 +4925,166 @@ class Transfers extends Component
                             if ($encode != 05) {
                                 return $this->errorNumberPhoneValidated();
                             }
-
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-phoneCredit');
-                                $this->emit(
-                                    'warning',
-                                    'Votre montant journier est atteint !'
-                                );
-                            } else {
-
-                                $val_amount = $this->amount_phone_credit +  $percent_robus->percent *  $this->amount_phone_credit;
-
-                                if ($val_amount > $walletUser->wallet->amount) {
-                                    $this->resetPaiementField();
-                                    $this->emit('modal-hide-phoneCredit');
-                                    $this->emit(
-                                        'error',
-                                        'Verifier votre montant  svp !'
-                                    );
-                                } else {
-
-                                    $amount_solde =  $walletUser->wallet->amount -  $val_amount;
-
-                                    $walletPhone = WalletPhoneCredit::create([
-                                        'wallet_id' => $walletUser->wallet->id,
-                                        'amount' => $this->amount_phone_credit,
-                                        'description' => 'Demande de credit',
-                                        'phone_credit_cost_id' => 1,
-                                        'created_by' => Auth::guard('web')->user()->id,
-                                        'provider_id' => $provider->id,
-                                        'costs_amount' => $percent_robus->percent  *  $this->amount_phone_credit,
-                                        'phone' => Auth::guard('web')->user()->country->indecative .  $this->number_phone_credit,
-                                        'status' => 'PENDING',
-                                        'amount_solde'  => $amount_solde ?? null
-                                    ]);
-
-                                    $commission =  $walletPhone->amount + ($walletPhone->amount *  $percent_robus->percent);
-
-                                    $walletUser->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname .
-                                            ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $commission),
-                                    ]);
-
-                                    $admin_valeur = $walletPhone->amount *  $percent_robus->percent;
-
-                                    // $valeur_distributer_drawal = $walletPhone->amount *  $percent_robus->percent  ;
-
-                                    if ($admin_civ->count() > 0) {
-
-                                        $nmbre_admin = $admin_civ->count();
-
-                                        $valeur_single = $admin_valeur / $nmbre_admin;
-
-                                        foreach ($admin_civ as $user) {
-
-                                            $admin_single = SidUser::find($user->id);
-
-                                            AdminsCom::create([
-                                                'amount' =>   $valeur_single,
-                                                'sid_user_id' =>   $admin_single->id,
-                                                'wallet_transaction_id' => null,
-                                                'wallet_bank_id' => null,
-                                                'wallet_deposit_id' => null,
-                                                // 'amount_with_draw' =>  $valeur_single_drawal,
-                                                'wallet_inter_id' => null,
-                                                'wallet_payment_id' => null,
-                                                'wallet_phone_credit_id' =>  $walletPhone->id,
-                                                'wallet_reload_id' => null,
-                                                'bank_card_id' => null,
-                                                'description' => 'Commission',
-                                            ]);
-                                            $admin_single->wallet->update([
-                                                'reload_by' => Auth::guard('web')->user()->firstname .
-                                                    ' ' .
-                                                    Auth::guard('web')->user()->lastname,
-                                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                'amount' => DB::raw('amount+' . $valeur_single),
-                                            ]);
-                                        }
-                                    }
-                                    if ($walletUser->country->code == 'CI') {
-
-                                        $message =
-                                            'Vous avez effectué un paiement de credit de ' .
-                                            $walletPhone->amount .
-                                            $walletUser->wallet->currencie->code .
-                                            ' ' .
-                                            'par ' .
-                                            $walletPhone->provider->name .
-                                            ' le ' .
-                                            $walletPhone->created_at .
-                                            ' votre demande est en cours de validation ' .
-                                            'Robus vous remercie';
-
-                                        $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                                    }
-
-                                    $msg_title = 'Credit téléphonique';
-                                    $msg = 'Demande de paiement de credit est en cours de validation ';
-                                    $walletUser->notify(
-                                        new UserNotification([
-                                            'title' => $msg_title,
-                                            'message' => $msg,
-                                        ])
-                                    );
-                                    $notifs = $walletUser->unreadNotifications;
-                                    event(new CreateWalletPhoneCreditEvent($walletPhone));
-                                    Notification::send(
-                                        $admins,
-                                        new AdminNotification(
-                                            'Demande de paiement de credit de ' .
-                                                ' ' .
-                                                $walletPhone->wallet->sidUser
-                                                ->firstname
-                                        )
-                                    );
-                                    if ($admins->count() > 0) {
-
-
-                                        foreach ($admins  as $user) {
-
-                                            $admin_single = SidUser::find($user->id);
-
-                                            $notifs = $admin_single->unreadNotifications;
-                                            event(new AdminNotifEvent($notifs));
-                                        }
-
-
-                                        $this->resetPhoneCreditField();
-                                        $this->emit('modal-hide-phoneCredit');
-                                        $this->emit('success', 'Rechargement effectué !');
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPhoneCredit($walletPhone);
-                                        }
-                                    } else {
-
-
-                                        $this->resetPhoneCreditField();
-                                        $this->emit('modal-hide-phoneCredit');
-                                        $this->emit('success', 'Rechargement effectué !');
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPhoneCredit($walletPhone);
-                                        }
-                                    }
-                                }
-                            }
                         } elseif ($this->provider_phone_credit == 19) {
                             // Orange
                             if ($encode != 07) {
                                 return $this->errorNumberPhoneValidated();
                             }
+                        } else {
 
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-phoneCredit');
-                                $this->emit(
-                                    'warning',
-                                    'Votre montant journier est atteint !'
-                                );
-                            } else {
-
-                                $val_amount = $this->amount_phone_credit + $percent_robus->percent *  $this->amount_phone_credit;
-
-                                if ($val_amount > $walletUser->wallet->amount) {
-                                    $this->resetPaiementField();
-                                    $this->emit('modal-hide-phoneCredit');
-                                    $this->emit(
-                                        'error',
-                                        'Verifier votre montant  svp !'
-                                    );
-                                } else {
-
-                                    $amount_solde =  $walletUser->wallet->amount -  $val_amount;
-
-                                    $walletPhone = WalletPhoneCredit::create([
-
-                                        'wallet_id' => $walletUser->wallet->id,
-                                        'amount' => $this->amount_phone_credit,
-                                        'description' => 'Demande de credit',
-                                        'phone_credit_cost_id' => 1,
-                                        'created_by' => Auth::guard('web')->user()->id,
-                                        'provider_id' => $provider->id,
-                                        'phone' => Auth::guard('web')->user()->country->indecative .  $this->number_phone_credit,
-                                        'status' => 'PENDING',
-                                        'amount_solde'  => $amount_solde ?? null
-                                    ]);
-
-                                    $commission =  $walletPhone->amount + ($walletPhone->amount *  $percent_robus->percent);
-
-                                    $walletUser->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname .
-                                            ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $commission),
-                                    ]);
-
-                                    $admin_valeur = $walletPhone->amount *  $percent_robus->percent;
-
-                                    if ($admin_civ->count() > 0) {
-
-                                        $nmbre_admin = $admin_civ->count();
-
-                                        $valeur_single = $admin_valeur / $nmbre_admin;
-
-                                        foreach ($admin_civ as $user) {
-                                            $admin_single = SidUser::find($user->id);
-
-                                            AdminsCom::create([
-                                                'amount' =>   $valeur_single,
-                                                'sid_user_id' =>   $admin_single->id,
-                                                'wallet_transaction_id' => null,
-                                                'wallet_bank_id' => null,
-                                                'wallet_deposit_id' => null,
-                                                'wallet_inter_id' => null,
-                                                'wallet_payment_id' => null,
-                                                'wallet_phone_credit_id' =>  $walletPhone->id,
-                                                'wallet_reload_id' => null,
-                                                'bank_card_id' => null,
-                                                'description' => 'Commission',
-                                            ]);
-                                            $admin_single->wallet->update([
-                                                'reload_by' => Auth::guard('web')->user()->firstname .
-                                                    ' ' .
-                                                    Auth::guard('web')->user()->lastname,
-                                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                'amount' => DB::raw('amount+' . $valeur_single),
-                                            ]);
-                                        }
-                                    }
-                                    if ($walletUser->country->code == 'CI') {
-
-                                        $message =
-                                            'Vous avez effectué un paiement de credit de ' .
-                                            $walletPhone->amount .
-                                            $walletUser->wallet->currencie->code .
-                                            ' ' .
-                                            'par ' .
-                                            $walletPhone->provider->name .
-                                            ' le ' .
-                                            $walletPhone->created_at .
-                                            ' votre demande est en cours de validation ' .
-                                            'Robus vous remercie';
-
-                                        $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                                    }
-
-                                    $msg_title = 'Credit téléphonique';
-                                    $msg = 'Deemande de paiement de credit  est en cours de validation ';
-                                    $walletUser->notify(
-                                        new UserNotification([
-                                            'title' => $msg_title,
-                                            'message' => $msg,
-                                        ])
-                                    );
-                                    $notifs = $walletUser->unreadNotifications;
-                                    event(new CreateWalletPhoneCreditEvent($walletPhone));
-                                    Notification::send(
-                                        $admins,
-                                        new AdminNotification(
-                                            'Demande de paiement de credit de ' .
-                                                ' ' .
-                                                $walletPhone->wallet->sidUser->firstname
-                                        )
-                                    );
-                                    if ($admins->count() > 0) {
-
-
-                                        foreach ($admins  as $user) {
-
-                                            $admin_single = SidUser::find($user->id);
-
-                                            $notifs = $admin_single->unreadNotifications;
-                                            event(new AdminNotifEvent($notifs));
-                                        }
-
-
-
-                                        $this->resetPhoneCreditField();
-                                        $this->emit('modal-hide-phoneCredit');
-                                        $this->emit('success', 'Rechargement effectué !');
-
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPhoneCredit($walletPhone);
-                                        }
-                                    } else {
-
-
-
-                                        event(new AdminNotifEvent($notifs));
-                                        $this->resetPhoneCreditField();
-                                        $this->emit('modal-hide-phoneCredit');
-                                        $this->emit('success', 'Rechargement effectué !');
-
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPhoneCredit($walletPhone);
-                                        }
-                                    }
-                                }
-                            }
-                        } elseif ($this->provider_phone_credit == 20) {
                             // Moov
-
                             if ($encode != 01) {
                                 return $this->errorNumberPhoneValidated();
                             }
+                        }
 
-                            $percent_robus = PhoneCreditCost::whereStatus(true)->first();
+                        $percent_robus = PhoneCreditCost::whereStatus(true)->first();
 
-                            if ($som_transfers >= $valeur_ceiling) {
+                        if ($som_transfers >= $valeur_ceiling) {
+                            $this->resetPaiementField();
+                            $this->emit('modal-hide-phoneCredit');
+                            $this->emit(
+                                'warning',
+                                'Votre montant journier est atteint !'
+                            );
+                        } else {
+
+                            $val_amount =  $this->amount_phone_credit + $percent_robus->percent * $this->amount_phone_credit;
+
+                            if ($val_amount > $walletUser->wallet->amount) {
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit(
-                                    'warning',
-                                    'Votre montant journier est atteint !'
+                                    'error',
+                                    'Verifier votre montant  svp !'
                                 );
                             } else {
 
-                                $val_amount =  $this->amount_phone_credit + $percent_robus->percent * $this->amount_phone_credit;
+                                $amount_solde =  $walletUser->wallet->amount -  $val_amount;
 
-                                if ($val_amount > $walletUser->wallet->amount) {
-                                    $this->resetPaiementField();
+                                $walletPhone = WalletPhoneCredit::create([
+                                    'wallet_id' => $walletUser->wallet->id,
+                                    'amount' => $this->amount_phone_credit,
+                                    'description' => 'Demande de credit',
+                                    'phone_credit_cost_id' => 1,
+                                    'created_by' => Auth::guard('web')->user()->id,
+                                    'provider_id' => $provider->id,
+                                    'costs_amount' => $percent_robus->percent  *  $this->amount_phone_credit,
+                                    'phone' => Auth::guard('web')->user()->country->indecative .  $this->number_phone_credit,
+                                    'status' => 'PENDING',
+                                    'amount_solde'  => $amount_solde ?? null
+                                ]);
+
+                                $commission =  $walletPhone->amount + ($walletPhone->amount *  $percent_robus->percent);
+
+                                $walletUser->wallet->update([
+                                    'reload_by' => Auth::guard('web')->user()->firstname .
+                                        ' ' . Auth::guard('web')->user()->lastname,
+                                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                                    'amount' => DB::raw('amount-' . $commission),
+                                ]);
+
+                                $admin_valeur = $walletPhone->amount *  $percent_robus->percent;
+
+                                if ($admin_civ->count() > 0) {
+
+                                    $nmbre_admin = $admin_civ->count();
+
+                                    $valeur_single = $admin_valeur / $nmbre_admin;
+
+                                    foreach ($admin_civ as $user) {
+                                        $admin_single = SidUser::find($user->id);
+
+                                        AdminsCom::create([
+                                            'amount' =>   $valeur_single,
+                                            'sid_user_id' =>   $admin_single->id,
+                                            'wallet_transaction_id' => null,
+                                            'wallet_bank_id' => null,
+                                            'wallet_deposit_id' => null,
+                                            'wallet_inter_id' => null,
+                                            'wallet_payment_id' => null,
+                                            'wallet_phone_credit_id' =>  $walletPhone->id,
+                                            'wallet_reload_id' => null,
+                                            'bank_card_id' => null,
+                                            'description' => 'Commission',
+                                        ]);
+                                        $admin_single->wallet->update([
+                                            'reload_by' => Auth::guard('web')->user()->firstname .
+                                                ' ' .
+                                                Auth::guard('web')->user()->lastname,
+                                            'sid_user_relod' => Auth::guard('web')->user()->id,
+                                            'amount' => DB::raw('amount+' . $valeur_single),
+                                        ]);
+                                    }
+                                }
+                                if ($walletUser->country->code == 'CI') {
+
+                                    $message =
+                                        'Vous avez effectué un paiement de credit de ' .
+                                        $walletPhone->amount .
+                                        $walletUser->wallet->currencie->code .
+                                        ' ' .
+                                        'par ' .
+                                        $walletPhone->provider->name .
+                                        ' le ' .
+                                        $walletPhone->created_at .
+                                        ' votre demande est en cours de validation ' .
+                                        'Robus vous remercie';
+
+                                    $encode = substr(Auth::guard('web')->user()->phone, -10);
+
+                                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                }
+
+                                $msg_title = 'Credit téléphonique';
+                                $msg = 'Deemande de paiement de credit  est en cours de validation ';
+                                $walletUser->notify(
+                                    new UserNotification([
+                                        'title' => $msg_title,
+                                        'message' => $msg,
+                                    ])
+                                );
+                                $notifs = $walletUser->unreadNotifications;
+                                event(new CreateWalletPhoneCreditEvent($walletPhone));
+                                Notification::send(
+                                    $admins,
+                                    new AdminNotification(
+                                        'Demande de paiement de credit de ' .
+                                            ' ' .
+                                            $walletPhone->wallet->sidUser->firstname
+                                    )
+                                );
+
+                                if ($admins->count() > 0) {
+
+
+                                    foreach ($admins  as $user) {
+
+                                        $admin_single = SidUser::find($user->id);
+
+                                        $notifs = $admin_single->unreadNotifications;
+                                        event(new AdminNotifEvent($notifs));
+                                    }
+
+
+                                    $this->resetPhoneCreditField();
                                     $this->emit('modal-hide-phoneCredit');
-                                    $this->emit(
-                                        'error',
-                                        'Verifier votre montant  svp !'
-                                    );
+                                    $this->emit('success', 'Rechargement effectué !');
+
+                                    if ($walletUser->email != null) {
+                                        $notify = new MailController();
+                                        $notify->newPhoneCredit($walletPhone);
+                                    }
                                 } else {
 
-                                    $amount_solde =  $walletUser->wallet->amount -  $val_amount;
 
-                                    $walletPhone = WalletPhoneCredit::create([
-                                        'wallet_id' => $walletUser->wallet->id,
-                                        'amount' => $this->amount_phone_credit,
-                                        'description' => 'Demande de credit',
-                                        'phone_credit_cost_id' => 1,
-                                        'created_by' => Auth::guard('web')->user()->id,
-                                        'provider_id' => $provider->id,
-                                        'phone' => Auth::guard('web')->user()->country->indecative .  $this->number_phone_credit,
-                                        'status' => 'PENDING',
-                                        'amount_solde'  => $amount_solde ?? null
-                                    ]);
-
-                                    $commission =  $walletPhone->amount + ($walletPhone->amount *  $percent_robus->percent);
-
-                                    $walletUser->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname .
-                                            ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $commission),
-                                    ]);
-
-                                    $admin_valeur = $walletPhone->amount *  $percent_robus->percent;
-
-                                    if ($admin_civ->count() > 0) {
-
-                                        $nmbre_admin = $admin_civ->count();
-
-                                        $valeur_single = $admin_valeur / $nmbre_admin;
-
-                                        foreach ($admin_civ as $user) {
-                                            $admin_single = SidUser::find($user->id);
-
-                                            AdminsCom::create([
-                                                'amount' =>   $valeur_single,
-                                                'sid_user_id' =>   $admin_single->id,
-                                                'wallet_transaction_id' => null,
-                                                'wallet_bank_id' => null,
-                                                'wallet_deposit_id' => null,
-                                                'wallet_inter_id' => null,
-                                                'wallet_payment_id' => null,
-                                                'wallet_phone_credit_id' =>  $walletPhone->id,
-                                                'wallet_reload_id' => null,
-                                                'bank_card_id' => null,
-                                                'description' => 'Commission',
-                                            ]);
-                                            $admin_single->wallet->update([
-                                                'reload_by' => Auth::guard('web')->user()->firstname .
-                                                    ' ' .
-                                                    Auth::guard('web')->user()->lastname,
-                                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                'amount' => DB::raw('amount+' . $valeur_single),
-                                            ]);
-                                        }
-                                    }
-                                    if ($walletUser->country->code == 'CI') {
-
-                                        $message =
-                                            'Vous avez effectué un paiement de credit de ' .
-                                            $walletPhone->amount .
-                                            $walletUser->wallet->currencie->code .
-                                            ' ' .
-                                            'par ' .
-                                            $walletPhone->provider->name .
-                                            ' le ' .
-                                            $walletPhone->created_at .
-                                            ' votre demande est en cours de validation ' .
-                                            'Robus vous remercie';
-
-                                        $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                                    }
-
-                                    $msg_title = 'Credit téléphonique';
-                                    $msg = 'Deemande de paiement de credit  est en cours de validation ';
-                                    $walletUser->notify(
-                                        new UserNotification([
-                                            'title' => $msg_title,
-                                            'message' => $msg,
-                                        ])
-                                    );
-                                    $notifs = $walletUser->unreadNotifications;
-                                    event(new CreateWalletPhoneCreditEvent($walletPhone));
-                                    Notification::send(
-                                        $admins,
-                                        new AdminNotification(
-                                            'Demande de paiement de credit de ' .
-                                                ' ' .
-                                                $walletPhone->wallet->sidUser->firstname
-                                        )
-                                    );
-
-                                    if ($admins->count() > 0) {
-
-
-                                        foreach ($admins  as $user) {
-
-                                            $admin_single = SidUser::find($user->id);
-
-                                            $notifs = $admin_single->unreadNotifications;
-                                            event(new AdminNotifEvent($notifs));
-                                        }
-
-
-                                        $this->resetPhoneCreditField();
-                                        $this->emit('modal-hide-phoneCredit');
-                                        $this->emit('success', 'Rechargement effectué !');
-
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPhoneCredit($walletPhone);
-                                        }
-                                    } else {
-
-
-                                        event(new AdminNotifEvent($notifs));
-                                        $this->resetPhoneCreditField();
-                                        $this->emit('modal-hide-phoneCredit');
-                                        $this->emit('success', 'Rechargement effectué !');
-                                        if ($walletUser->email != null) {
-                                            $notify = new MailController();
-                                            $notify->newPhoneCredit($walletPhone);
-                                        }
+                                    event(new AdminNotifEvent($notifs));
+                                    $this->resetPhoneCreditField();
+                                    $this->emit('modal-hide-phoneCredit');
+                                    $this->emit('success', 'Rechargement effectué !');
+                                    if ($walletUser->email != null) {
+                                        $notify = new MailController();
+                                        $notify->newPhoneCredit($walletPhone);
                                     }
                                 }
                             }
@@ -6223,6 +5122,7 @@ class Transfers extends Component
                                     'phone_credit_cost_id' => 1,
                                     'created_by' => Auth::guard('web')->user()->id,
                                     'provider_id' => $provider->id,
+                                    'costs_amount' => $percent_robus->percent  *  $this->amount_phone_credit,
                                     'phone' => Auth::guard('web')->user()->country->indecative .  $this->number_phone_credit,
                                     'status' => 'PENDING',
                                     'amount_solde'  => $amount_solde ?? null
@@ -6528,8 +5428,8 @@ class Transfers extends Component
         $this->countrie_xbet_edit = $check->countrie ?? null;
         $this->citie_xbet_edit = $check->citie ?? null;
         $this->devise_user =   $check->wallet->currencie->code;
-
         $this->emit($state);
+        $this->emit('menu-xbet-active');
     }
 
     // Edit Virement
@@ -7039,239 +5939,11 @@ class Transfers extends Component
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Pas de modification !');
                             }
-                        } elseif ($check->status == 'REFUND') {
-
-                            if ($check->updated_by == Auth::guard('web')->user()->id) {
-
-                                PaymentPhoneCredit::create([
-
-                                    'wallet_phone_credit_id' => $check->id,
-                                    'sid_user_id' => Auth::guard('web')->user()->id,
-                                    'transaction_id' => 'ROBUS_' .  $check->provider->name . '_' . $transactionCode,
-                                    'operator_transaction_name' => $check->provider->name,
-                                    'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
-                                    'pay_amount' => 0.0,
-                                    'fee_amount' => 0.0,
-                                    'received_amount' => $check->amount + $check->costs_amount,
-                                    'status' => $check->status,
-                                ]);
-
-                                $commission = $check->amount +  $check->costs_amount;
-
-                                $check->wallet->update([
-                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    'amount' => DB::raw('amount+' . $commission),
-                                ]);
-
-                                $wallet_received =  $check->amount_solde;
-
-                                $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                // Update commission
-                                $check->update([
-                                    'commissions' => 0,
-                                    'commissions_admin' => 0,
-                                    'amount_solde' => $amount_solde,
-                                ]);
-
-                                // Valeur amount commission distributeur
-                                $valeur_amount_com = $check->adminCom->amount;
-
-
-                                //  Send valeur in Admin
-                                if ($admin_civ->count() > 0) {
-
-                                    $count_admin = $admin_civ->count();
-
-                                    $valeur_single = $valeur_amount_com / $count_admin;
-
-                                    foreach ($admin_civ as $user) {
-                                        $admin_single = SidUser::find($user->id);
-                                        $check->adminCom->update([
-                                            'amount' =>   0,
-                                            'sid_user_id' =>   $admin_single->id,
-                                            'description' => 'Remboursement de la commission client',
-                                            'status'  => "ERROR",
-                                        ]);
-                                        // $admin_single->wallet->update([
-                                        //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        //     'amount' => DB::raw('amount-' . $valeur_single),
-                                        // ]);
-                                    }
-                                }
-
-                                if ($check->wallet->sidUser->is_under_distributer == 1) {
-
-                                    $msg_title = 'Credit téléphonique';
-                                    $msg = 'Demande de paiement de crédit a été remboursée';
-                                    $check->wallet->sidUser->notify(
-                                        new UserNotification([
-                                            'title' => $msg_title,
-                                            'message' => $msg,
-                                        ])
-                                    );
-                                    $notifs = $check->wallet->sidUser->unreadNotifications;
-                                    // event(new UpdatePhoneCreditEvent($check));
-                                    // event(new UserNotifEvent($notifs));
-                                    Notification::send(
-                                        $admins,
-                                        new AdminNotification(
-                                            'Demande de paiement de crédit est refusée'
-                                        )
-                                    );
-
-                                    $this->resetPhoneCreditField();
-                                    $this->emit('modal-hide-phoneCredit');
-                                    $this->emit('info', 'Achat de credit remboursée !');
-
-                                    if ($admins->count() > 0) {
-
-                                        foreach ($admins  as $user) {
-
-                                            $admin_single = SidUser::find($user->id);
-
-                                            $notifs = $admin_single->unreadNotifications;
-
-                                            event(new AdminNotifEvent($notifs));
-                                        }
-
-
-                                        $notify = new MailController;
-                                        $notify->newPhoneCredit($check);
-                                    } else {
-
-                                        $this->resetPhoneCreditField();
-                                        $this->emit('modal-hide-phoneCredit-validated');
-                                        $this->emit('modal-hide-phoneCredit');
-                                        $this->emit('info', 'Achat de credit remboursée !');
-                                        $notify = new MailController;
-                                        $notify->newPhoneCredit($check);
-                                    }
-                                } else {
-
-                                    if ($check->wallet->sidUser->country->code == 'CI') {
-
-                                        $message =  'Votre demande de credit de ' .
-                                            $check->amount .
-                                            $check->wallet->currencie->code .
-                                            ' ' .
-                                            'par ' .
-                                            $check->provider->name .
-                                            ' le ' .
-                                            $check->updated_at .
-                                            ' a été Remboursée ' .
-                                            'Robus vous remercie';
-
-                                        $encode = substr($check->wallet->sidUser->phone, -10);
-
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-
-                                        $msg_title = 'Credit téléphonique';
-                                        $msg = 'Demande de paiement de crédit a été Remboursé';
-                                        $check->wallet->sidUser->notify(
-                                            new UserNotification([
-                                                'title' => $msg_title,
-                                                'message' => $msg,
-                                            ])
-                                        );
-                                        $notifs =
-                                            $check->wallet->sidUser->unreadNotifications;
-                                        // event(new UpdatePhoneCreditEvent($check));
-                                        // event(new UserNotifEvent($notifs));
-                                        Notification::send(
-                                            $admins,
-                                            new AdminNotification(
-                                                'Demande de paiement de crédit est Remboursé'
-                                            )
-                                        );
-
-                                        $this->resetPhoneCreditField();
-                                        $this->emit('modal-hide-phoneCredit-validated');
-                                        $this->emit('modal-hide-phoneCredit');
-                                        $this->emit('info', 'Achat de credit remboursé !');
-
-                                        if ($admins->count() > 0) {
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-
-                                            $notify = new MailController;
-                                            $notify->newPhoneCredit($check);
-                                        } else {
-
-                                            $notify = new MailController;
-                                            $notify->newPhoneCredit($check);
-                                        }
-                                    } else {
-
-                                        $msg_title = 'Credit téléphonique';
-                                        $msg = 'Demande de paiement de credit a été remboursée';
-                                        $check->wallet->sidUser->notify(
-                                            new UserNotification([
-                                                'title' => $msg_title,
-                                                'message' => $msg,
-                                            ])
-                                        );
-                                        $notifs = $check->wallet->sidUser->unreadNotifications;
-                                        // event(new UpdatePhoneCreditEvent($check));
-                                        // event(new UserNotifEvent($notifs));
-                                        Notification::send(
-                                            $admins,
-                                            new AdminNotification(
-                                                'Demande de paiement de crédit est refusée'
-                                            )
-                                        );
-
-                                        $this->resetPhoneCreditField();
-                                        $this->emit('modal-hide-phoneCredit-validated');
-                                        $this->emit('modal-hide-phoneCredit');
-                                        $this->emit('info', 'Achat de credit remboursé !');
-
-                                        if ($admins->count() > 0) {
-
-                                            foreach ($admins  as $user) {
-
-                                                $admin_single = SidUser::find($user->id);
-
-                                                $notifs = $admin_single->unreadNotifications;
-
-                                                event(new AdminNotifEvent($notifs));
-                                            }
-
-
-                                            $notify = new MailController;
-                                            $notify->newPhoneCredit($check);
-                                        } else {
-
-                                            $this->resetPhoneCreditField();
-                                            $this->emit('modal-hide-phoneCredit-validated');
-                                            $this->emit('modal-hide-phoneCredit');
-                                            $this->emit('info', 'Achat de credit remboursé !');
-                                            $notify = new MailController;
-                                            $notify->newPhoneCredit($check);
-                                        }
-                                    }
-                                }
-                            } else {
-                                $this->resetPhoneCreditField();
-                                $this->emit('modal-hide-phoneCredit-validated');
-                                $this->emit('modal-hide-phoneCredit');
-                                $this->emit('error', 'Pas de modification !');
-                            }
                         } else {
                             $this->resetPhoneCreditField();
                             $this->emit('modal-hide-phoneCredit-validated');
                             $this->emit('modal-hide-phoneCredit');
-                            $this->emit('error', 'Pas de modification !');
+                            $this->emit('error', 'Selectionnez le choix du traitement de la demande SVP !');
                         }
                     } else {
                         $this->resetPhoneCreditField();
@@ -7704,12 +6376,6 @@ class Transfers extends Component
                                                 'description' => 'Remboursement de la commission sous distributeur',
                                                 'status'  => "ERROR",
                                             ]);
-
-                                            // $admin_single->wallet->update([
-                                            //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                            //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                            //     'amount' => DB::raw('amount+' . $valeur_single),
-                                            // ]);
                                         }
                                     }
                                 }
@@ -7737,16 +6403,12 @@ class Transfers extends Component
                                     ])
                                 );
                                 $notifs = $check->wallet->sidUser->unreadNotifications;
-                                // event(new UpdateReloadCardEvent($check));
-                                // event(new UserNotifEvent($notifs));
                                 Notification::send(
                                     $admins,
                                     new AdminNotification(
                                         'Demande de commande de carte a été refusée'
                                     )
                                 );
-
-
 
                                 if ($admins->count() > 0) {
 
@@ -7807,11 +6469,6 @@ class Transfers extends Component
                                                 'status'  => "ERROR",
                                                 'description' => 'Remboursement de la commission client',
                                             ]);
-                                            // $admin_single->wallet->update([
-                                            //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                            //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                            //     'amount' => DB::raw('amount-' . $valeur_single),
-                                            // ]);
                                         }
                                     }
                                 }
@@ -7860,8 +6517,6 @@ class Transfers extends Component
                                         ])
                                     );
                                     $notifs = $check->wallet->sidUser->unreadNotifications;
-                                    // event(new UpdateReloadCardEvent($check));
-                                    // event(new UserNotifEvent($notifs));
                                     Notification::send(
                                         $admins,
                                         new AdminNotification(
@@ -7905,8 +6560,6 @@ class Transfers extends Component
                                         ])
                                     );
                                     $notifs = $check->wallet->sidUser->unreadNotifications;
-                                    // event(new UpdateReloadCardEvent($check));
-                                    // event(new UserNotifEvent($notifs));
                                     Notification::send(
                                         $admins,
                                         new AdminNotification(
@@ -7941,229 +6594,11 @@ class Transfers extends Component
                                     }
                                 }
                             }
-                        } elseif ($check->status == 'REFUND') {
-
-                            if ($check->wallet->sidUser->is_under_distributer == 1) {
-                                $commission =  $check->amount;
-
-                                $check->wallet->update([
-                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    'amount' => DB::raw('amount+' . $commission),
-                                ]);
-
-                                // Update commission
-                                $check->update([
-                                    'commissions' => 0,
-                                    'commissions_admin' => 0,
-                                ]);
-
-                                // Valeur amount commission distributeur
-                                $valeur_amount_com = $check->adminCom->amount;
-
-                                if ($valeur_amount_com != null) {
-                                    //  Send valeur in Admin
-                                    if ($admin_civ->count() > 0) {
-
-                                        $count_admin = $admin_civ->count();
-
-                                        $valeur_single = $valeur_amount_com / $count_admin;
-
-                                        foreach ($admin_civ as $user) {
-                                            $admin_single = SidUser::find($user->id);
-                                            $valeur_decrement = $check->adminCom->update([
-                                                'amount' =>   0,
-                                                'sid_user_id' =>   $admin_single->id,
-                                                'description' => 'Remboursement de la commission sous distributeur',
-                                                'status'  => "ERROR",
-                                            ]);
-                                            // $admin_single->wallet->update([
-                                            //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                            //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                            //     'amount' => DB::raw('amount+' . $valeur_single),
-                                            // ]);
-                                        }
-                                    }
-                                }
-                            } else {
-
-                                $commission =  $check->amount + $check->costs_amount;
-
-                                $check->wallet->update([
-                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    'amount' => DB::raw('amount+' . $commission),
-                                ]);
-
-                                // Update commission
-                                $check->update([
-                                    'commissions' => 0,
-                                    'commissions_admin' => 0,
-                                ]);
-
-                                // Valeur amount commission distributeur
-                                $valeur_amount_com = $check->adminCom->amount;
-
-                                if ($valeur_amount_com != null) {
-
-                                    //  Send valeur in Admin
-                                    if ($admin_civ->count() > 0) {
-
-                                        $count_admin = $admin_civ->count();
-
-                                        $valeur_single = $valeur_amount_com / $count_admin;
-
-                                        foreach ($admin_civ as $user) {
-                                            $admin_single = SidUser::find($user->id);
-                                            $valeur_decrement = $check->adminCom->update([
-                                                'amount' =>   0,
-                                                'sid_user_id' =>   $admin_single->id,
-                                                'status'  => "ERROR",
-                                                'description' => 'Remboursement de la commission client',
-                                            ]);
-                                            // $admin_single->wallet->update([
-                                            //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                            //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                            //     'amount' => DB::raw('amount-' . $valeur_single),
-                                            // ]);
-                                        }
-                                    }
-                                }
-
-                                if ($check->wallet->sidUser->country->code == 'CI') {
-                                    $message =
-                                        'Votre demande de rechargement de carte de ' .
-                                        $check->amount .
-                                        $check->wallet->currencie->code .
-                                        ' ' .
-                                        'par ' .
-                                        $check->provider->name .
-                                        ' le ' .
-                                        $check->updated_at .
-                                        ' a été remboursée ' .
-                                        'Robus vous remercie';
-
-                                    $encode = substr($check->wallet->sidUser->phone, -10);
-
-                                    Http::get(
-                                        "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                                    );
-                                }
-                            }
-
-                            Deposit::create([
-                                'wallet_deposit_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'ROBUS_' . $check->provider->name .
-                                    '_' .
-                                    $transactionCode,
-                                'operator_transaction_name' => $check->provider->name,
-                                'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
-                                'pay_amount' => 0.0,
-                                'fee_amount' => 0.0,
-                                'received_amount' => $check->amount + $check->costs_amount,
-                                'status' => $check->status,
-                            ]);
-
-                            if ($check->wallet->sidUser->country->code == 'CI') {
-
-
-
-                                $msg_title = 'Rechagement de carte';
-                                $msg = 'Votre demande de commande de carte a été remboursée';
-                                $check->wallet->sidUser->notify(
-                                    new UserNotification([
-                                        'title' => $msg_title,
-                                        'message' => $msg,
-                                    ])
-                                );
-                                $notifs = $check->wallet->sidUser->unreadNotifications;
-                                // event(new UpdateReloadCardEvent($check));
-                                // event(new UserNotifEvent($notifs));
-                                Notification::send(
-                                    $admins,
-                                    new AdminNotification(
-                                        'Demande de commande de carte a été remboursée'
-                                    )
-                                );
-
-                                $this->resetReloadCardField();
-                                $this->emit('modal-hide-reloadCard-validated');
-                                $this->emit('modal-hide-reloadCard');
-                                $this->emit('info', 'Rechargement remboursé !');
-
-                                if ($admins->count() > 0) {
-
-                                    foreach ($admins  as $user) {
-
-                                        $admin_single = SidUser::find($user->id);
-
-                                        $notifs = $admin_single->unreadNotifications;
-
-                                        event(new AdminNotifEvent($notifs));
-                                    }
-
-
-                                    $notify = new MailController;
-                                    $notify->newReload($check);
-                                } else {
-
-
-                                    $notify = new MailController;
-                                    $notify->newReload($check);
-                                }
-                            } else {
-
-                                $msg_title = 'Rechargement de carte';
-                                $msg = 'Votre demande de commande de carte a été remboursée';
-                                $check->wallet->sidUser->notify(
-                                    new UserNotification([
-                                        'title' => $msg_title,
-                                        'message' => $msg,
-                                    ])
-                                );
-                                $notifs = $check->wallet->sidUser->unreadNotifications;
-                                // event(new UpdateReloadCardEvent($check));
-                                // event(new UserNotifEvent($notifs));
-                                Notification::send(
-                                    $admins,
-                                    new AdminNotification(
-                                        'Demande de commande de carte a été remboursée'
-                                    )
-                                );
-
-                                $this->resetReloadCardField();
-                                $this->emit('modal-hide-reloadCard-validated');
-                                $this->emit('modal-hide-reloadCard');
-                                $this->emit('info', 'Rechargement remboursé !');
-
-                                if ($admins->count() > 0) {
-
-                                    foreach ($admins  as $user) {
-
-                                        $admin_single = SidUser::find($user->id);
-
-                                        $notifs = $admin_single->unreadNotifications;
-
-                                        event(new AdminNotifEvent($notifs));
-                                    }
-
-
-                                    $notify = new MailController;
-                                    $notify->newReload($check);
-                                } else {
-
-
-
-                                    $notify = new MailController;
-                                    $notify->newReload($check);
-                                }
-                            }
                         } else {
                             $this->resetReloadCardField();
                             $this->emit('modal-hide-reloadCard-validated');
                             $this->emit('modal-hide-reloadCard');
-                            $this->emit('error', 'Pas de modification !');
+                            $this->emit('error', 'Selectionnez le choix de la demande SVP !');
                         }
                     } else {
                         $this->resetReloadCardField();
@@ -8239,7 +6674,6 @@ class Transfers extends Component
     {
 
         $check = WalletTransaction::whereId($this->transactionId)->first();
-        $walletUser = Auth::guard('web')->user()->wallet->amount;
         $user_auth = Auth::guard('web')->user();
         $rt = rand(40, 5000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
@@ -8415,10 +6849,6 @@ class Transfers extends Component
                                 ])
                             );
                             $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // $user_search->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                            // $notifs = $user_search->unreadNotifications;
-                            //    event(new UpdateTransferEvent($check));
-                            //    event(new UserNotifEvent($notifs));
                             Notification::send(
                                 $admins,
                                 new AdminNotification('Demande de transfers validé')
@@ -8445,6 +6875,7 @@ class Transfers extends Component
 
                             $notify = new MailController;
                             $notify->newTransaction($check);
+
                         } elseif ($check->status == 'ERROR') {
 
 
@@ -8488,7 +6919,7 @@ class Transfers extends Component
                                                 'amount' =>   $valeur_single,
                                                 'sid_user_id' =>   $admin_single->id,
                                                 'status'  => "ERROR",
-                                                'description' => 'Remboursement des commissions sous distributeur',
+                                                'description' =>  'Remboursement des commissions sous distributeur',
                                             ]);
                                         }
                                     }
@@ -8623,10 +7054,6 @@ class Transfers extends Component
                                 ])
                             );
                             $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // $user_search->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                            // $notifs = $user_search->unreadNotifications;
-                            // event(new UpdateTransferEvent($check));
-                            // event(new UserNotifEvent($notifs));
                             Notification::send(
                                 $admins,
                                 new AdminNotification(
@@ -8651,220 +7078,11 @@ class Transfers extends Component
                             $this->emit('warning', 'Transfers Refusé !');
                             $notify = new MailController;
                             $notify->newTransaction($check);
-                        } elseif ($check->status == 'REFUND') {
-
-                            if ($check->wallet->sidUser->is_under_distributer == 1) {
-
-                                if ($check->provider->id != 9) {
-
-
-                                    $commission =  $check->amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    // Reload
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-
-                                    // Valeur amount commission distributeur
-                                    $valeur_amount_com = $check->adminCom->amount;
-                                    //  Send valeur in Admin
-                                    if ($admin_civ->count() > 0) {
-
-                                        $count_admin = $admin_civ->count();
-
-                                        $valeur_single = $valeur_amount_com / $count_admin;
-
-                                        foreach ($admin_civ as $user) {
-                                            $admin_single = SidUser::find($user->id);
-                                            $check->adminCom->update([
-                                                'amount' =>    $valeur_single,
-                                                'sid_user_id' =>   $admin_single->id,
-                                                'status'  => "ERROR",
-                                                'description' => 'Remboursement des commissions sous distributeur',
-                                            ]);
-                                        }
-                                    }
-                                } else {
-
-
-                                    if ($check->provider->id != 9) {
-
-                                        $commission =  $check->amount;
-                                    } else {
-
-                                        $commission =  $check->amount + $check->costs_amount;
-                                    }
-
-
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-
-                                    // Valeur amount commission distributeur
-                                    $valeur_amount_com = $check->adminCom->amount;
-
-                                    //  Send valeur in Admin
-                                    if ($admin_civ->count() > 0) {
-
-                                        $count_admin = $admin_civ->count();
-
-                                        $valeur_single = $valeur_amount_com / $count_admin;
-
-                                        foreach ($admin_civ as $user) {
-                                            $admin_single = SidUser::find($user->id);
-                                            $check->adminCom->update([
-                                                'amount' =>   0,
-                                                'sid_user_id' =>   $admin_single->id,
-                                                'status'  => "ERROR",
-                                                'description' => 'Remboursement de la commission client',
-                                            ]);
-                                        }
-                                    }
-                                }
-                            } else {
-
-                                $commission =  $check->amount;
-
-                                $check->wallet->update([
-                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    'amount' => DB::raw('amount+' . $commission),
-                                ]);
-
-                                $wallet_received =  $check->amount_solde;
-
-                                $amount_solde = (float)$wallet_received  +   (float)$commission;
-                                // Update commission
-                                $check->update([
-                                    'commissions' => 0,
-                                    'commissions_admin' => 0,
-                                    'amount_solde' => $amount_solde,
-                                ]);
-
-                                // Valeur amount commission distributeur
-                                $valeur_amount_com = $check->adminCom->amount;
-
-                                //  Send valeur in Admin
-                                if ($admin_civ->count() > 0) {
-
-                                    $count_admin = $admin_civ->count();
-
-                                    $valeur_single = $valeur_amount_com / $count_admin;
-
-                                    foreach ($admin_civ as $user) {
-                                        $admin_single = SidUser::find($user->id);
-                                        $check->adminCom->update([
-                                            'amount' =>   0,
-                                            'sid_user_id' =>   $admin_single->id,
-                                            'status'  => "ERROR",
-                                            'description' => 'Remboursement de la commission client',
-                                        ]);
-                                    }
-                                }
-
-                                if ($check->wallet->sidUser->country->code == 'CI') {
-
-                                    $message =
-                                        'Vous demande de transaction de ' .
-                                        $check->amount .
-                                        $check->wallet->currencie->code .
-                                        ' ' .
-                                        'par ' .
-                                        $check->provider->name .
-                                        ' le ' .
-                                        $check->updated_at .
-                                        ' a été remboursée ' .
-                                        'Robus vous remercie';
-
-                                    $encode = substr($check->wallet->sidUser->phone, -10);
-
-                                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                                }
-                            }
-
-                            Transaction::create([
-                                'wallet_transaction_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' .
-                                    $check->provider->name .
-                                    '_' .
-                                    $transactionCode,
-                                'operator_transaction_name' => $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => 0.0,
-                                'fee_amount' => 0.0,
-                                'received_amount' => $check->amount + $check->costs_amount,
-                                'status' => $check->status,
-                            ]);
-
-                            $msg_title = 'Transfers';
-                            $msg = 'Demande de transfers a été remboursé';
-                            $check->wallet->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // $user_search->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                            // $notifs = $user_search->unreadNotifications;
-                            // event(new UpdateTransferEvent($check));
-                            // event(new UserNotifEvent($notifs));
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de transfers a été remboursé'
-                                )
-                            );
-
+                        }else {
                             $this->cancelTransactionField();
                             $this->emit('modal-hide-transfers-validated');
                             $this->emit('modal-hide-transfers');
-                            $this->emit('info', 'Transfers remboursé !');
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-                            }
-                            $this->cancelTransactionField();
-                            $this->emit('modal-hide-transfers-validated');
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('warning', 'Transfers Refusé !');
-                            $notify = new MailController;
-                            $notify->newTransaction($check);
+                            $this->emit('error', 'Vous devez faire un choix de traitement !');
                         }
                     } else {
                         $this->cancelTransactionField();
@@ -9200,11 +7418,6 @@ class Transfers extends Component
                                         'description' => 'Remboursement de la commission client',
                                         'status'  => "ERROR",
                                     ]);
-                                    // $admin_single->wallet->update([
-                                    //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    //     'amount' => DB::raw('amount-' . $valeur_single),
-                                    // ]);
                                 }
                             }
 
@@ -9252,8 +7465,6 @@ class Transfers extends Component
                                 ])
                             );
                             $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // event(new UpdatePaiementEvent($check));
-                            // event(new UserNotifEvent($notifs));
                             Notification::send(
                                 $admins,
                                 new AdminNotification('Demande de transfers refusé')
@@ -9281,130 +7492,11 @@ class Transfers extends Component
                             $this->emit('error', 'Payment Refusé !');
                             $notify = new MailController;
                             $notify->newPaiement($check);
-                        } elseif ($check->status == 'REFUND') {
-
-                            $commission =  $check->amount + $check->costs_amount;
-
-                            $check->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+' . $commission),
-                            ]);
-
-                            $wallet_received =  $check->amount_solde;
-
-                            $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                            // Update commission
-                            $check->update([
-                                'commissions' => 0,
-                                'commissions_admin' => 0,
-                                'amount_solde' => $amount_solde,
-                            ]);
-
-                            // Valeur amount commission distributeur
-                            $valeur_amount_com = $check->adminCom->amount;
-
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
-
-                                $count_admin = $admin_civ->count();
-
-                                $valeur_single = $valeur_amount_com / $count_admin;
-
-                                foreach ($admin_civ as $user) {
-                                    $admin_single = SidUser::find($user->id);
-                                    $valeur_decrement = $check->adminCom->update([
-                                        'amount' =>   0,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'status'  => "ERROR",
-                                        'description' => 'Remboursement de la commission client',
-                                    ]);
-                                    // $admin_single->wallet->update([
-                                    //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    //     'amount' => DB::raw('amount-' . $valeur_single),
-                                    // ]);
-                                }
-                            }
-                            Payment::create([
-                                'wallet_payment_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' =>
-                                'RB_' .
-                                    $check->provider->name .
-                                    '_' .
-                                    $transactionCode,
-                                'operator_transaction_name' => $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => 0.0,
-                                'fee_amount' => 0.0,
-                                'received_amount' => $check->amount + $check->costs_amount,
-                                'status' => $check->status,
-                            ]);
-
-                            if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
-
-                                $message =
-                                    'Votre demande de paiement de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' a ' .
-                                    $check->updated_at .
-                                    ' a été remboursée avec succès ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr($check->wallet->sidUser->phone, -10);
-
-                                Http::get(
-                                    "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                                );
-                            }
-
-                            $msg_title = 'Paiement de facture';
-                            $msg = 'Demande de paiement a été remboursé';
-                            $check->wallet->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // event(new UpdatePaiementEvent($check));
-                            // event(new UserNotifEvent($notifs));
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de transfers remboursé'
-                                )
-                            );
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-                            }
-
+                        }else {
                             $this->resetPaiementField();
                             $this->emit('modal-hide-paiement');
                             $this->emit('modal-hide-paiement-validated');
-                            $this->emit('info', 'Payment remboursé !');
-                            $notify = new MailController;
-                            $notify->newPaiement($check);
-                        } else {
-                            $this->resetPaiementField();
-                            $this->emit('modal-hide-paiement');
-                            $this->emit('modal-hide-paiement-validated');
-                            $this->emit('success', 'Payment modifié !');
+                            $this->emit('error', 'Vous devez faire un choix de traitement de la demande !');
                         }
                     } else {
                         $this->resetPaiementField();
@@ -9444,44 +7536,45 @@ class Transfers extends Component
 
         $sidAuth = Auth::guard('web')->user();
 
-        // try {
+        try {
 
-        if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+            if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
-            if (Auth::guard('web')->user()->is_distributer == 1) {
+                if (Auth::guard('web')->user()->is_distributer == 1) {
 
-                $walletUpdate->update([
-                    'updated_by' => Auth::guard('web')->user()->id,
-                ]);
+                    $walletUpdate->update([
+                        'updated_by' => Auth::guard('web')->user()->id,
+                    ]);
 
-                event(new ChoosePaymentEvent($walletUpdate));
-                $this->emit('modal-hide-paiement');
-                $this->emit('menu-paiement-active');
-                $this->emit('info', 'Vous avez choisi paiement');
+                    event(new ChoosePaymentEvent($walletUpdate));
+                    $this->emit('modal-hide-paiement');
+                    $this->emit('menu-paiement-active');
+                    $this->emit('info', 'Vous avez choisi paiement');
+                } else {
+
+                    $walletUpdate->update([
+                        'updated_by' => Auth::guard('web')->user()->id,
+                    ]);
+
+                    event(new ChoosePaymentEvent($walletUpdate));
+                    $this->emit('modal-hide-paiement');
+                    $this->emit('menu-paiement-active');
+                    $this->emit('info', 'Vous avez choisi paiement');
+                }
             } else {
-
-                $walletUpdate->update([
-                    'updated_by' => Auth::guard('web')->user()->id,
-                ]);
-
-                event(new ChoosePaymentEvent($walletUpdate));
-                $this->emit('modal-hide-paiement');
+                // $this->emit('modal-hide-paiement');
                 $this->emit('menu-paiement-active');
-                $this->emit('info', 'Vous avez choisi paiement');
+                $this->emit(
+                    'error',
+                    'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+                );
             }
-        } else {
-            // $this->emit('modal-hide-paiement');
+        } catch (\Exception $exception) {
             $this->emit('menu-paiement-active');
-            $this->emit(
-                'error',
-                'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-            );
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
-        // } catch (\Exception $exception) {
-        //     $this->emit('menu-paiement-active');
-        //     $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        // }
     }
+
     public function updateVirement()
     {
         $check = WalletBank::whereId($this->virementId)->first();
@@ -9726,11 +7819,6 @@ class Transfers extends Component
                                             'status'  => "ERROR",
                                             'description' => 'Remboursement de la commission sous distributeur',
                                         ]);
-                                        // $admin_single->wallet->update([
-                                        //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        //     'amount' => DB::raw('amount+' . $valeur_single),
-                                        // ]);
                                     }
                                 }
                             } else {
@@ -9823,8 +7911,6 @@ class Transfers extends Component
                                 ])
                             );
                             $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // event(new UpdateBankEvent($check));
-                            // event(new UserNotifEvent($notifs));
                             Notification::send(
                                 $admins,
                                 new AdminNotification(
@@ -9848,178 +7934,13 @@ class Transfers extends Component
                             $this->emit('modal-hide-virement-validated');
                             $this->emit('modal-hide-virement');
                             $this->emit('error', 'Virement refusée !');
-
                             $notify = new MailController;
                             $notify->newVirement($check);
-                        } elseif ($check->status == 'REFUND') {
-
-
-                            if ($check->wallet->sidUser->is_under_distributer == 1) {
-
-                                $commission =  $check->amount;
-
-                                $check->wallet->update([
-                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    'amount' => DB::raw('amount+' . $commission),
-                                ]);
-
-                                $wallet_received =  $check->amount_solde;
-
-                                $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                // Update commission
-                                $check->update([
-                                    'commissions' => 0,
-                                    'commissions_admin' => 0,
-                                    'amount_solde' => $amount_solde,
-                                ]);
-
-                                // Valeur amount commission distributeur
-                                $valeur_amount_com = $check->adminCom->amount;
-                                //  Send valeur in Admin
-                                if ($admin_civ->count() > 0) {
-
-                                    $count_admin = $admin_civ->count();
-
-                                    $valeur_single = $valeur_amount_com / $count_admin;
-
-                                    foreach ($admin_civ as $user) {
-                                        $admin_single = SidUser::find($user->id);
-                                        $valeur_decrement = $check->adminCom->update([
-                                            'amount' =>   0,
-                                            'sid_user_id' =>   $admin_single->id,
-                                            'status'  => "ERROR",
-                                            'description' => 'Remboursement de la commission sous distributeur',
-                                        ]);
-                                    }
-                                }
-                            } else {
-
-                                $commission =  $check->amount + $check->costs_amount;
-
-                                $check->wallet->update([
-                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    'amount' => DB::raw('amount+' . $commission),
-                                ]);
-
-                                $wallet_received =  $check->amount_solde;
-
-                                $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                // Update commission
-                                $check->update([
-                                    'commissions' => 0,
-                                    'commissions_admin' => 0,
-                                    'amount_solde' => $amount_solde,
-                                ]);
-
-                                // Valeur amount commission distributeur
-                                $valeur_amount_com = $check->adminCom->amount;
-
-                                //  Send valeur in Admin
-                                if ($admin_civ->count() > 0) {
-
-                                    $count_admin = $admin_civ->count();
-
-                                    $valeur_single = $valeur_amount_com / $count_admin;
-
-                                    foreach ($admin_civ as $user) {
-                                        $admin_single = SidUser::find($user->id);
-                                        $check->adminCom->update([
-                                            'amount' =>   0,
-                                            'sid_user_id' =>   $admin_single->id,
-                                            'status'  => "ERROR",
-                                            'description' => 'Remboursement de la commission client',
-                                        ]);
-                                    }
-                                }
-
-                                if ($check->wallet->sidUser->country->code == 'CI') {
-
-                                    $message =
-                                        'Votre demande de virement de ' .
-                                        $check->amount .
-                                        $check->wallet->currencie->code .
-                                        ' ' .
-                                        'par ' .
-                                        $check->provider->name .
-                                        ' a ' .
-                                        $check->firstname .
-                                        ' ' .
-                                        $check->firstname .
-                                        'a été remboursée' .
-                                        'le ' .
-                                        $check->updated_at .
-                                        ' ' .
-                                        'Robus vous remercie';
-
-                                    $encode = substr($check->wallet->sidUser->phone, -10);
-
-                                    Http::get(
-                                        "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                                    );
-                                }
-                            }
-
-                            $msg_title = 'Versement banquaire';
-                            $msg = 'Demande de virement a été remboursée';
-                            $check->wallet->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // event(new UpdateBankEvent($check));
-                            event(new UserNotifEvent($notifs));
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de virement a été remboursée'
-                                )
-                            );
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-                            }
-
+                        }  else {
                             $this->resetVirementField();
                             $this->emit('modal-hide-virement-validated');
                             $this->emit('modal-hide-virement');
-                            $this->emit('error', 'Virement Remboursée !');
-
-                            $notify = new MailController;
-                            $notify->newVirement($check);
-
-                            PaymentBank::create([
-                                'wallet_bank_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' =>
-                                'RB_' .
-                                    $check->provider->name .
-                                    '_' .
-                                    $transactionCode,
-                                'operator_transaction_name' => $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => 0.0,
-                                'fee_amount' => 0.0,
-                                'received_amount' => $commission,
-                                'status' => $check->status,
-                            ]);
-                        } else {
-                            $this->resetVirementField();
-                            $this->emit('modal-hide-virement-validated');
-                            $this->emit('modal-hide-virement');
-                            $this->emit('success', 'Virement modifié !');
+                            $this->emit('error', 'Selectionner le choix de traitement de la demande SVP !');
                         }
                     } else {
                         $this->resetVirementField();
@@ -10052,6 +7973,339 @@ class Transfers extends Component
         }
     }
 
+    public function updateXbet()
+    {
+        $check = WalletXbet::whereId($this->xbet_id)->first();
+        $rt = rand(40, 5000) * time();
+        $user_auth = Auth::guard('web')->user();
+        $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
+        $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
+        $admins = $this->getAdminValeurProperty();
+        $admin_civ = SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->where('country_id', 107)
+            ->get();
+        try {
+
+            if ($check) {
+
+                $this->validate([
+                    'status_xbet_edit' => 'required',
+                    'password_transaction' => 'required',
+                ]);
+
+
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                    $check->update([
+                        'description' => $this->xbetDescription ?? null,
+                        'updated_by' => Auth::guard('web')->user()->id,
+                        'status' => $this->status_xbet_edit,
+                    ]);
+
+                    $this->password_transaction = "";
+                    $this->status_xbet_edit = "";
+                    $this->xbet_id = "";
+
+                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+                        if ($check->status == 'SUCCESS') {
+
+                            $commission_transaction = $check->amount_received;
+
+
+                            if ($check->choose_type_transaction == 1) {
+
+                                Auth::guard('web')->user()->wallet->update([
+                                    'reload_by' => Auth::guard('web')->user()->firstname .
+                                        ' ' . Auth::guard('web')->user()->lastname,
+                                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                                    'amount' => DB::raw('amount+' . $commission_transaction),
+                                ]);
+                            } else {
+
+                                Auth::guard('web')->user()->wallet->update([
+                                    'reload_by' => Auth::guard('web')->user()->firstname .
+                                        ' ' . Auth::guard('web')->user()->lastname,
+                                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                                    'amount' => DB::raw('amount-' . $commission_transaction),
+                                ]);
+
+                                // solde custumers
+                                $amount_solde = (float)  $check->wallet->amount + (float) $commission_transaction;
+
+                                $check->update([
+                                    'amount_solde'  => $amount_solde,
+                                ]);
+
+                                $check->wallet->update([
+                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                                    'amount' => DB::raw('amount+' . $commission_transaction),
+                                ]);
+                            }
+
+
+                            $valeur_amount_com = $check->adminCom->amount;
+
+                            if ($admin_civ->count() > 0) {
+
+                                $count_admin = $admin_civ->count();
+
+                                $valeur_single = $valeur_amount_com / $count_admin;
+
+                                foreach ($admin_civ as $user) {
+                                    $admin_single = SidUser::find($user->id);
+                                    $check->adminCom->update([
+                                        'amount' =>   $valeur_amount_com,
+                                        'sid_user_id' =>   $admin_single->id,
+                                        'description' => 'Commission administrateur',
+                                        'status'  => "SUCCESS",
+                                    ]);
+                                    $admin_single->wallet->update([
+                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                        'sid_user_relod' => Auth::guard('web')->user()->id,
+                                        'amount' => DB::raw('amount+' . $valeur_single),
+                                    ]);
+                                }
+                            }
+
+
+                            $transaction = OneBetTransaction::create([
+                                'wallet_xbet_id' => $check->id,
+                                'sid_user_id' => sabdy()->id,
+                                'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+                                'operator_transaction_name' => $check->provider->name,
+                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
+                                'pay_amount' => $check->amount,
+                                'fee_amount' =>  $check->costs_amount,
+                                'received_amount' => $check->amount,
+                                'status' => $check->status,
+                            ]);
+
+                            OneBetInvoice::create([
+                                'title' => "Depot 1xbet",
+                                'wallet_xbet_id' => $check->id,
+                                'one_bet_transaction_id' => $transaction->id,
+                                'description' => $check->description,
+                                'status' => $check->status,
+                                'created_by' => sabdy()->id,
+                            ]);
+
+
+                            if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
+
+                                $messageType = $check->choose_type_transaction == 1 ? 'demande de dépôt de ' : 'demande de retrait de ';
+                                $amount = $check->amount . ' ' . $check->wallet->currencie->code;
+                                $provider = $check->provider->name;
+                                $username = $check->firstname . ' ' . $check->firstname;
+                                $date = $check->updated_at;
+
+                                $message = 'Votre ' . $messageType . $amount . ' par ' . $provider . ' a été validée avec succès le ' . $date . '. Robus vous remercie.';
+
+
+                                Http::get(
+                                    "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                                );
+                            }
+
+                            $msg_title = 'Service Xbet';
+                            $msg = 'Votre xbet a été validé';
+                            $check->wallet->sidUser->notify(
+                                new UserNotification([
+                                    'title' => $msg_title,
+                                    'message' => $msg,
+                                ])
+                            );
+
+                            Notification::send(
+                                $admins,
+                                new AdminNotification(
+                                    'Demande de virement a été validée'
+                                )
+                            );
+
+
+                            if ($admins->count() > 0) {
+
+
+                                foreach ($admins  as $user) {
+
+                                    $admin_single = SidUser::find($user->id);
+
+                                    $notifs = $admin_single->unreadNotifications;
+
+                                    event(new AdminNotifEvent($notifs));
+                                }
+                            }
+                            $this->resetXbetField();
+                            $this->emit('menu-xbet-active');
+                            $this->emit('modal-hide-xbet-validated');
+                            $this->emit('success', 'xbet Accepté !');
+                            $notify = new MailController;
+                            $notify->newVirement($check);
+                        } elseif ($check->status == 'ERROR') {
+
+                            $commission =  $check->amount + $check->costs_amount;
+
+                            if ($check->choose_type_transaction == 1) {
+                                $check->wallet->update([
+                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                                    'amount' => DB::raw('amount+' . $commission),
+                                ]);
+
+                                $wallet_received =  $check->amount_solde;
+
+                                $amount_solde = (float)$wallet_received  +   (float)$commission;
+
+                                // Update commission
+                                $check->update([
+                                    'commissions' => 0,
+                                    'commissions_admin' => 0,
+                                    'amount_solde' => $amount_solde,
+                                    'commission_masters' => 0,
+                                ]);
+                            }
+
+
+                            // Valeur amount commission distributeur
+                            $valeur_amount_com = $check->adminCom->amount;
+
+                            //  Send valeur in Admin
+                            if ($admin_civ->count() > 0) {
+
+                                $count_admin = $admin_civ->count();
+
+                                $valeur_single = $valeur_amount_com / $count_admin;
+
+                                foreach ($admin_civ as $user) {
+                                    $admin_single = SidUser::find($user->id);
+                                    $check->adminCom->update([
+                                        'amount' =>   0,
+                                        'sid_user_id' =>   $admin_single->id,
+                                        'status'  => "ERROR",
+                                        'description' => 'Remboursement de la commission client',
+                                    ]);
+                                }
+                            }
+
+
+                            if ($check->wallet->sidUser->country->code == 'CI') {
+
+                                $messageType = $check->choose_type_transaction == 1 ? 'demande de dépôt de ' : 'demande de retrait de ';
+                                $amount = $check->amount . ' ' . $check->wallet->currencie->code;
+                                $provider = $check->provider->name;
+                                $username = $check->firstname . ' ' . $check->firstname;
+                                $date = $check->updated_at;
+
+                                $message = 'Votre ' . $messageType . $amount . ' par ' . $provider . ' a été refusée le ' . $date . '. Robus vous remercie.';
+
+                                $encode = substr($check->wallet->sidUser->phone, -10);
+
+                                Http::get(
+                                    "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                                );
+                            }
+
+
+                            $transaction = OneBetTransaction::create([
+                                'wallet_xbet_id' => $check->id,
+                                'sid_user_id' => sabdy()->id,
+                                'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+                                'operator_transaction_name' => $check->provider->name,
+                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
+                                'pay_amount' => $check->amount,
+                                'fee_amount' =>  $check->costs_amount,
+                                'received_amount' => $check->amount,
+                                'status' => $check->status,
+                            ]);
+
+                            OneBetInvoice::create([
+                                'title' => "Depot 1xbet",
+                                'wallet_xbet_id' => $check->id,
+                                'one_bet_transaction_id' => $transaction->id,
+                                'description' => $check->description,
+                                'status' => $check->status,
+                                'created_by' => sabdy()->id,
+                            ]);
+
+
+                            $msg_title = 'Service Xbet';
+                            $msg = 'Demande de Xbet a été réfusée ';
+                            $check->wallet->sidUser->notify(
+                                new UserNotification([
+                                    'title' => $msg_title,
+                                    'message' => $msg,
+                                ])
+                            );
+
+                            $notifs = $check->wallet->sidUser->unreadNotifications;
+
+                            Notification::send(
+                                $admins,
+                                new AdminNotification(
+                                    'Demande de xbet a été refusée'
+                                )
+                            );
+                            if ($admins->count() > 0) {
+
+
+                                foreach ($admins  as $user) {
+
+                                    $admin_single = SidUser::find($user->id);
+
+                                    $notifs = $admin_single->unreadNotifications;
+
+                                    event(new AdminNotifEvent($notifs));
+                                }
+                            }
+
+                            $this->resetXbetField();
+                            $this->emit('modal-hide-xbet-validated');
+                            $this->emit('menu-xbet-active');
+
+                            $this->emit('error', 'xbet refusée !');
+
+                            $notify = new MailController;
+                            $notify->newVirement($check);
+                        } else {
+                            $this->resetXbetField();
+                            $this->emit('modal-hide-xbet-validated');
+                            $this->emit('menu-xbet-active');
+                            $this->emit('success', 'xbet modifié !');
+                        }
+                    } else {
+                        $this->resetXbetField();
+                        $this->emit('menu-xbet-active');
+                        $this->emit('modal-hide-xbet-validated');
+                        $this->emit('error', 'Pas vous le valideur !');
+                    }
+                } else {
+                    $this->resetXbetField();
+                    $this->emit('modal-hide-xbet-validated');
+                    $this->emit('menu-xbet-active');
+                    $this->emit('error', 'Mot de passe Incorrect !');
+                }
+            } elseif ($this->password_transaction = "" ||  $this->status_xbet_edit = "") {
+                $this->resetXbetField();
+                $this->emit('modal-hide-xbet-validated');
+                $this->emit('menu-xbet-active');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite !');
+            } else {
+                $this->resetXbetField();
+                $this->emit('modal-hide-xbet-validated');
+                $this->emit('menu-xbet-active');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite!');
+            }
+        } catch (\Exception $exception) {
+            $this->resetXbetField();
+            $this->emit('menu-xbet-active');
+            $this->emit('modal-hide-xbet-validated');
+            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
     // Choose Update Virement
     public function ChooseUpdateVirement($id)
     {
@@ -10115,10 +8369,10 @@ class Transfers extends Component
                     $this->emit('info', 'Vous avez choisi Xbet');
                 } else {
 
+                    event(new ChooseXbetEvent($walletUpdate));
                     $walletUpdate->update([
                         'updated_by' => Auth::guard('web')->user()->id,
                     ]);
-                    event(new ChooseXbetEvent($walletUpdate));
                     // $this->emit('modal-hide-xbet');
                     $this->emit('menu-xbet-active');
                     $this->emit('info', 'Vous avez choisi Xbet');
@@ -10132,7 +8386,7 @@ class Transfers extends Component
                 );
             }
         } catch (\Exception $exception) {
-            $this->emit('menu-virement-active');
+            $this->emit('menu-xbet-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
     }
@@ -10655,239 +8909,11 @@ class Transfers extends Component
                             $this->emit('error', 'Transfers refusé !');
                             $notify = new MailController;
                             $notify->newPaiementInter($check);
-                        } elseif ($check->status == 'REFUND') {
-
-
-                            if ($check->wallet->sidUser->is_under_distributer == 1) {
-
-                                if (
-                                    $check->provider->id == 61
-                                    || $check->provider->id == 62
-                                    || $check->provider->id == 63
-                                    || $check->provider->id == 64
-                                    || $check->provider->id == 65
-                                    || $check->provider->id == 59
-                                    || $check->provider->id == 60
-                                    || $check->provider->id == 48
-                                    || $check->provider->id == 49
-                                    || $check->provider->id == 50
-                                    || $check->provider->id == 55
-                                    || $check->provider->id == 71
-                                    || $check->provider->id == 72
-                                    || $check->provider->id == 73
-                                    || $check->provider->id == 74
-                                    || $check->provider->id == 75
-                                    || $check->provider->id == 76
-                                    || $check->provider->id == 77
-                                    || $check->provider->id == 78
-                                ) {
-
-                                    $commission =  $check->amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                } else {
-
-                                    $commission =  $check->amount + $check->costs_amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                }
-                            } else {
-                                if (
-                                    $check->provider->id == 48 || $check->provider->id == 71
-                                    || $check->provider->id == 72
-                                    || $check->provider->id == 73
-                                    || $check->provider->id == 74
-                                    || $check->provider->id == 75
-                                    || $check->provider->id == 76
-                                    || $check->provider->id == 77
-                                    || $check->provider->id == 78
-                                    || $check->provider->id == 49
-                                    || $check->provider->id == 50 || $check->provider->id == 55
-                                ) {
-
-                                    $commission =  $check->amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                } else {
-
-                                    $commission =  $check->amount + $check->costs_amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                }
-                            }
-
-                            $valeur_amount_com = $check->adminCom->amount;
-
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
-
-                                $count_admin = $admin_civ->count();
-
-                                $valeur_single = $valeur_amount_com / $count_admin;
-
-                                foreach ($admin_civ as $user) {
-                                    $admin_single = SidUser::find($user->id);
-                                    $check->adminCom->update([
-                                        'amount' =>   0,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'status'  => "ERROR",
-                                        'description' => 'Remboursement de la commission sous distributeur',
-                                    ]);
-                                    $admin_single->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $transaction_inter = TransactionInter::create([
-                                'wallet_inter_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $check->provider->name .
-                                    '_' . $transactionCode,
-                                'operator_transaction_name' =>
-                                $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $check->amount,
-                                'fee_amount' => $check->costs_amount,
-                                'received_amount' => $check->amount,
-                                'status' => $check->status,
-                            ]);
-
-                            InvoiceInter::create([
-                                'title' => "Transfers d'argent",
-                                // 'transaction_inter_id' => $check->id,
-                                'transaction_inter_id' => $transaction_inter->id,
-                                // 'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $check->description,
-                                'status' => $check->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-
-                            if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
-                                $message =
-                                    'Votre demande de paiement de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' a ' .
-                                    $check->updated_at .
-                                    ' a été remboursé ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr(
-                                    $check->wallet->sidUser->phone,
-                                    -10
-                                );
-
-
-
-                                Http::get(
-                                    "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                                );
-                            }
-                            $msg_title = 'Paiement internationnal';
-                            $msg = 'Demande de transfers inter été Remboursé';
-                            $check->wallet->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // $user_search->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                            // $notifs = $user_search->unreadNotifications;
-                            // event(new UpdateInterEvent($check));
-                            // event(new UserNotifEvent($notifs));
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de transfers Remboursé'
-                                )
-                            );
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-                            }
-
+                        } else {
                             $this->resetInterField();
                             $this->emit('modal-hide-inters-validated');
                             $this->emit('modal-hide-inters');
-                            $this->emit('info', 'Transfers remboursé !');
-
-                            $notify = new MailController;
-                            $notify->newPaiementInter($check);
+                            $this->emit('error', 'Selectionnez le choix du traitement de la demande SVP !');
                         }
                     } else {
                         $this->resetInterField();
@@ -11170,6 +9196,22 @@ class Transfers extends Component
         $this->emit('modal-hide-virement');
     }
 
+
+    public function resetXbetField()
+    {
+        $this->xbetDescription = '';
+        $this->xbet_id = '';
+        $this->status_xbet_edit = '';
+        $this->provider_xbet_edit = null;
+        $this->fullname_xbet_edit = '';
+        $this->amount_xbet_edit = '';
+        $this->citie_xbet_edit = '';
+        $this->countrie_xbet_edit = '';
+        $this->account_number_user = '';
+        $this->emit('modal-hide-xbet');
+    }
+
+
     public function resetVirementInterField()
     {
         $this->virement_interId = '';
@@ -11211,8 +9253,8 @@ class Transfers extends Component
         $this->citie_xbet_edit = '';
         $this->countrie_xbet_edit = '';
         $this->account_number_user = '';
-        $this->emit('modal-hide-xbet');
         $this->emit('modal-hide-xbet-validated');
+        $this->emit('menu-xbet-active');
     }
 
 

@@ -25,7 +25,10 @@ class XbetService
     public function createRobusWalletTransactionOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $fullName , $amountReceved)
     {
 
-        $amount_solde = robus()->wallet->amount - $amount_valeur;
+        $amount_commission = (float)$amount_valeur + (float)$percent_robus->percent * $amount_valeur ;
+        
+        $amount_solde = (float)robus()->wallet->amount - (float)$amount_commission;
+       
 
         return $this->xbetRepository->create([
             'wallet_id' =>   robus()->wallet->id,
@@ -33,7 +36,7 @@ class XbetService
             'description'  => 'Demande  de depot 1Xbet',
             'Onexbet_id' => 1,
             'created_by' => robus()->id,
-            'amount_solde'  => $amount_solde ?? null,
+            'amount_solde'  => $amount_solde  ?? null,
             'provider_id'  =>  $provider,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
             'choose_type_transaction' => 1,
@@ -49,7 +52,7 @@ class XbetService
     public function createRobusWalletDrawalOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $countrie , $citie , $code_drawal, $amountReceved)
     {
 
-        $amount_solde = robus()->wallet->amount - $amount_valeur;
+        $amount_solde = robus()->wallet->amount ;
 
         return $this->xbetRepository->create([
             'wallet_id' =>   robus()->wallet->id,
@@ -59,7 +62,7 @@ class XbetService
             'created_by' => robus()->id,
             'amount_solde'  => $amount_solde ?? null,
             'provider_id'  =>  $provider,
-            'costs_amount' => ($percent_robus->percent * $amount_valeur),
+            'costs_amount' => ($percent_robus->percent_with_drawal * $amount_valeur),
             'choose_type_transaction' => 2,
             'num_acompte'  =>  $numberAcompte,
             'code_drawal' =>  $code_drawal,
@@ -92,27 +95,6 @@ class XbetService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-
-        $transaction = OneBetTransaction::create([
-            'wallet_xbet_id' => $walletXbet->id,
-            'sid_user_id' => robus()->id,
-            'transaction_id' => 'RB_' . $walletXbet->provider->name . '_' . $transactionCode,
-            'operator_transaction_name' => $walletXbet->provider->name,
-            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-            'pay_amount' => $walletXbet->amount,
-            'fee_amount' =>  $walletXbet->costs_amount,
-            'received_amount' => $walletXbet->amount,
-            'status' => $walletXbet->status,
-        ]);
-
-        OneBetInvoice::create([
-            'title' => "Depot 1xbet",
-            'wallet_xbet_id' => $walletXbet->id,
-            'one_bet_transaction_id' => $transaction->id,
-            'description' => $walletXbet->description,
-            'status' => $walletXbet->status,
-            'created_by' => robus()->id,
-        ]);
         
         $admin_valeur =  $amount * $percent_robus->percent;
 
@@ -146,61 +128,26 @@ class XbetService
         $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
         $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
 
-        // $amount_commission = $amount + ($percent_robus->percent_with_drawal	 * $amount);
 
-        // $amount_solde = robus()->wallet->amount - $amount_commission;
+        $admin_valeur =  $amount * $percent_robus->percent_with_drawal;
 
-        // $walletxbet->update([
-        //     'amount_solde' => $amount_solde,
-        // ]);
+        //  Send valeur in Admin
+        if ($admin_civ->count() > 0) {
 
-        // robus()->wallet->update([
-        //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-        //     'sid_user_relod' => robus()->id,
-        //     'amount' => DB::raw('amount-'  .  $amount_commission),
-        // ]);
+            $count_admin = $admin_civ->count();
 
-        // $transaction = OneBetTransaction::create([
-        //     'wallet_xbet_id' => $walletxbet->id,
-        //     'sid_user_id' => robus()->id,
-        //     'transaction_id' => 'RB_' . $walletxbet->provider->name . '_' . $transactionCode,
-        //     'operator_transaction_name' => $walletxbet->provider->name,
-        //     'trans_comp_id' => 'RB_' . $transactionCompiCode,
-        //     'pay_amount' => $walletxbet->amount,
-        //     'fee_amount' =>  $walletxbet->costs_amount,
-        //     'received_amount' => $walletxbet->amount,
-        //     'status' => $walletxbet->status,
-        // ]);
+            $valeur_single = $admin_valeur / $count_admin;
 
-        // OneBetInvoice::create([
-        //     'title' => "REtrait 1xbet",
-        //     'wallet_xbet_id ' => $walletxbet->id,
-        //     'one_bet_transaction_id' => $transaction->id,
-        //     'description' => $walletxbet->description,
-        //     'status' => $walletxbet->status,
-        //     'created_by' => robus()->id,
-        // ]);
-        
-
-        // $admin_valeur =  $amount * $percent_robus->percent_with_drawal;
-
-        // //  Send valeur in Admin
-        // if ($admin_civ->count() > 0) {
-
-        //     $count_admin = $admin_civ->count();
-
-        //     $valeur_single = $admin_valeur / $count_admin;
-
-        //     foreach ($admin_civ as $user) {
-        //         $admin_single = SidUser::find($user->id);
-        //         AdminsCom::create([
-        //             'amount' =>   $valeur_single,
-        //             'sid_user_id' =>   $admin_single->id,
-        //             'wallet_xbet_id' => $walletxbet->id,
-        //             'description' => 'Commission administrateur',
-        //         ]);
-        //     }
-        // }
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                AdminsCom::create([
+                    'amount' =>   $valeur_single,
+                    'sid_user_id' =>   $admin_single->id,
+                    'wallet_xbet_id' => $walletxbet->id,
+                    'description' => 'Commission administrateur',
+                ]);
+            }
+        }
 
         return true;
     }

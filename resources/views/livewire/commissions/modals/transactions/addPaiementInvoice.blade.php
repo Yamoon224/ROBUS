@@ -58,127 +58,62 @@
                         </div>
                     </div>
                     @if (!is_null($paiementChoix_phone))
-                        @if ($paiementChoix_phone == 1)
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10">
-                                <div class="col-span-6">
-                                    <label for="paiement_phone_canal" class="form-label">Numero du telephone(10
-                                        chiffres)<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_phone_canal" id="paiement_phone_canal"
-                                        type="text" class="form-control" value="" maxlength="10"
-                                        placeholder="Numero du telephone">
-                                    @error('paiement_phone_canal')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col-span-6">
-                                    <label for="offer_paiement" class="form-label">Offre<span class="text-danger">
-                                            *</span></label>
-                                    <select wire:model.debounce.10ms="offer_paiement" class="select2 form-select">
-                                        <option value="null" disabled>Selectionnez offre</option>
-                                        @foreach ($offers_canal as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach
+                        @php
+                            $phoneNumberLabel = $paiementChoix_phone == 1 ? 'Numero du téléphone(10 chiffres)' : 'Numero du décodeur(14 chiffres)';
+                            $phoneNumberInputId = $paiementChoix_phone == 1 ? 'paiement_phone_canal' : 'paiement_decoder_canal';
+                        @endphp
 
-                                    </select>
-                                    @error('offer_paiement')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                @if (!is_null($offer_paiement))
-                                    @if ($user_auth->is_under_distributer == 1)
-                                        <div class="col-span-6 mt-3">
-                                            <label for="offer_paiement" class="form-label">Commission<span
-                                                    class="text-danger">
-                                                    *</span></label>
+                        <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10">
+                            <div class="col-span-6">
+                                <label for="{{ $phoneNumberInputId }}" class="form-label">{{ $phoneNumberLabel }}<span
+                                        class="text-danger">*</span></label>
+                                <input wire:model.defer="{{ $phoneNumberInputId }}" id="{{ $phoneNumberInputId }}"
+                                    type="text" class="form-control" value=""
+                                    maxlength="{{ $paiementChoix_phone == 1 ? 10 : 14 }}"
+                                    placeholder="{{ $phoneNumberLabel }}">
+                                @error($phoneNumberInputId)
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <div class="col-span-6">
+                                <label for="offer_paiement" class="form-label">Offre<span
+                                        class="text-danger">*</span></label>
+                                <select wire:model.debounce.10ms="offer_paiement" class="select2 form-select">
+                                    <option value="null" disabled>Selectionnez offre</option>
+                                    @foreach ($offers_canal as $item)
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('offer_paiement')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
 
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                                style="font-size: 25px; color:white;">
-                                                {{ $amount_received_canal ?? null }}
-                                                {{ $usersCountry }}
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="col-span-12 mt-3">
-
-
-                                        </div>
-                                    @endif
-                                    <div class="col-span-12 mt-3">
-
-                                        <label for="offer_paiement" class="form-label">Montant à payer<span
-                                                class="text-danger">
-                                                *</span></label>
-
+                            @if (!is_null($offer_paiement))
+                                @if ($user_auth->is_under_distributer == 1)
+                                    <div class="col-span-6 mt-3">
+                                        <label for="offer_paiement" class="form-label">Commission<span
+                                                class="text-danger">*</span></label>
                                         <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
                                             style="font-size: 25px; color:white;">
-                                            {{ $amount_paiement_invoice_canal_inter ?? null }}
+                                            {{ $amount_received_canal ?? null }}
                                             {{ $usersCountry }}
                                         </div>
                                     </div>
+                                @else
+                                    <div class="col-span-12 mt-3"></div>
                                 @endif
-                            </div>
-                        @elseif ($paiementChoix_phone == 2)
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10">
-                                <div class="col-span-6">
-                                    <label for="paiement_decoder_canal" class="form-label">Numero du decodeur(14
-                                        chiffres)<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_decoder_canal" id="paiement_decoder_canal"
-                                        type="text" class="form-control" value="" maxlength="14"
-                                        placeholder="Numero du decodeur">
-                                    @error('paiement_decoder_canal')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                <div class="col-span-6">
-                                    <label for="offer_paiement" class="form-label">Offre<span class="text-danger">
-                                            *</span></label>
-                                    <select wire:model.debounce.10ms="offer_paiement" class="select2 form-select">
-                                        <option value="null" disabled>Selectionnez offre</option>
-                                        @foreach ($offers_canal as $item)
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endforeach
-
-                                    </select>
-                                    @error('offer_paiement')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                                @if (!is_null($offer_paiement))
-                                    @if ($user_auth->is_under_distributer == 1)
-                                        <div class="col-span-6 mt-3">
-                                            <label for="offer_paiement" class="form-label">Commission<span
-                                                    class="text-danger">
-                                                    *</span></label>
-
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                                style="font-size: 25px; color:white;">
-                                                {{ $amount_received_canal ?? null }}
-                                                {{ $usersCountry }}
-                                            </div>
-                                        </div>
-                                    @else
-                                        <div class="col-span-12 mt-3">
-
-
-                                        </div>
-                                    @endif
-                                    <div class="col-span-12 mt-3">
-
-                                        <label for="offer_paiement" class="form-label">Montant à payer<span
-                                                class="text-danger">
-                                                *</span></label>
-
-                                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                            style="font-size: 25px; color:white;">
-                                            {{ $amount_paiement_invoice_canal_inter ?? null }}
-                                            {{ $usersCountry }}
-                                        </div>
+                                <div class="col-span-12 mt-3">
+                                    <label for="offer_paiement" class="form-label">Montant à payer<span
+                                            class="text-danger">*</span></label>
+                                    <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                        style="font-size: 25px; color:white;">
+                                        {{ $amount_paiement_invoice_canal_inter ?? null }}
+                                        {{ $usersCountry }}
                                     </div>
-                                @endif
-                            </div>
-                        @endif
+                                </div>
+                            @endif
+                        </div>
                     @endif
 
                 @endif
@@ -191,6 +126,8 @@
                                 src="{{ asset('public/dist/providers/cie.png') }}" alt="Cie">
                         </div>
                     </div>
+
+
                     <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10">
                         <div class="col-span-12">
                             <label class="form-label" for="facture_choix_type">Le choix de type de facture<span
@@ -204,35 +141,24 @@
                         </div>
                     </div>
                     @if (!is_null($facture_choix_type))
-                        @if ($facture_choix_type == 1)
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10">
-                                <div class="col-span-12">
-                                    <label for="paiement_id_invoice_pre" class="form-label">Identifiant facture(11
-                                        chiffres)<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_id_invoice_pre" id="paiement_id_invoice_pre"
-                                        type="text" class="form-control" value="" maxlength="11"
-                                        placeholder="Identifiant facture">
-                                    @error('paiement_id_invoice_pre')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
+
+                        @php
+                            $paiementInvoiceLabel = $facture_choix_type == 1 ? 'Identifiant facture(11 chiffres)' : 'Identifiant facture(09 chiffres)';
+                            $paiementNumberInputId = $facture_choix_type == 1 ? 'paiement_id_invoice_pre' : 'paiement_id_invoice';
+                        @endphp
+
+                        <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10">
+                            <div class="col-span-12">
+                                <label for="{{ $paiementNumberInputId }}" class="form-label">{{ $paiementInvoiceLabel }}<span class="text-danger">
+                                        *</span></label>
+                                <input wire:model.defer="{{ $paiementNumberInputId }}" id="{{ $paiementNumberInputId }}"
+                                    type="text" class="form-control" value="" maxlength="11"
+                                    placeholder="{{ $paiementInvoiceLabel }}">
+                                @error('{{ $paiementNumberInputId }}')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
                             </div>
-                        @elseif ($facture_choix_type == 2)
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10">
-                                <div class="col-span-12">
-                                    <label for="paiement_id_invoice" class="form-label">Identifiant facture(09
-                                        chiffres)<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_id_invoice" id="paiement_id_invoice"
-                                        type="text" class="form-control" value="" maxlength="9"
-                                        placeholder="Identifiant">
-                                    @error('paiement_id_invoice')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        @endif
+                        </div>
                         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10">
                             <div class="col-span-6">
                                 <label for="paiement_name_cie" class="form-label">Nom de la facture<span
@@ -455,9 +381,9 @@
                     class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
                 <button wire:click="addPaiement" type="button" wire:loading.remove=""
                     class="btn btn-primary w-50">Envoyer la demande</button>
-                    <div  wire:loading wire:target="addPaiement">
-                        Traitement en cours...
-                    </div>
+                <div wire:loading wire:target="addPaiement">
+                    Traitement en cours...
+                </div>
             </div>
         </div>
     </div>

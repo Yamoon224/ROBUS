@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header alert alert-primary ">
-                <h2 class="font-medium text-base mr-auto">Valider la  demande de rechargement des cartes</h2>
+                <h2 class="font-medium text-base mr-auto">Valider la  demande de réchargement des cartes</h2>
             </div>
             <a wire:click="$emit('modal-hide-reloadCard')"
                 style="position: absolute; right: 0px; top: 0px; margin-top: 0.75rem; margin-right: 0.75rem;">
@@ -70,7 +70,7 @@
 
             <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-3 mb-3">
 
-                <div class="col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
+                <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
                     <input wire:click="$emit('modal-reloadCards-validted-show' , 'validated-reloadCards-modal')" wire:model="reloadcardStatus" id="bordered-radio-25"  type="radio" value="SUCCESS"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="bordered-radio-25"
@@ -80,21 +80,11 @@
                     @enderror
                 </div>
                 <div
-                    class=" col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
+                    class=" col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
                     <input wire:click="$emit('modal-reloadCards-validted-show' , 'validated-reloadCards-modal')" wire:model="reloadcardStatus" id="bordered-radio-26"  type="radio" value="ERROR"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="bordered-radio-26"
                         class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Refusé</label>
-                    @error('reloadcardStatus')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                  <div
-                    class=" col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
-                    <input wire:click="$emit('modal-reloadCards-validted-show' , 'validated-reloadCards-modal')" wire:model="reloadcardStatus" id="bordered-radio-27"  type="radio" value="REFUND"
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <label for="bordered-radio-27"
-                        class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Remboursé</label>
                     @error('reloadcardStatus')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror

@@ -2123,6 +2123,7 @@
             $('reload-nav').attr('aria-selected', false);
             $('#reload').removeClass('active');
             $('#transfers-nav').addClass('active');
+            $('#transfers').addClass('active');
             $('transfers-nav').attr('aria-selected', true);
             $('#transfers').addClass('active');
             $('#paiement-nav').removeClass('active');

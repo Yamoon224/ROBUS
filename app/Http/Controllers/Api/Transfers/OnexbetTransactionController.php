@@ -128,10 +128,9 @@ class OnexbetTransactionController extends Controller
          */
         public function create_OnexbetTranaction(Request $request)
         {
-               
+
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
                 $valeur_ceiling  =  robus()->silver_ceiling;
-                $admin_civ = $this->validatedamountDays->adminCiv();
                 // valueur User send days
                 $percent_robus =  $this->percentRobus->getRobusPercentageOnexbet();
 
@@ -191,31 +190,22 @@ class OnexbetTransactionController extends Controller
 
                                                 if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                                                        $val_amount_send = $request->amount + ($percent_robus->percent * $request->amount);
-
-                                                        $amountReceved = $request->amount;
-
-                                                        if ($this->validatedamountDays->validateAmount($val_amount_send)) {
-
-                                                                if ($request->choose_type_transaction == 1) {
-                                                                        $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($request->amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved);
-                                                                } else {
-                                                                        $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($request->amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie , $request->id_xbet , $amountReceved);
-                                                                }
-
-                                                                if ($walletXbet != null) {
-
-                                                                        $methodName = ($request->choose_type_transaction == 1) ? 'updateamountOneBetReceveid' : 'updateamountOneBetDrawal';
-
-                                                                        if ($this->oneXbetService->$methodName($admin_civ, $percent_robus, $walletXbet, $request->amount)) {
-                                                                                $this->notificationPhone->sendNotification1xbets($walletXbet);
-                                                                                return $this->messageAfterValidated($walletXbet);
-                                                                        }
-                                                                } else {
-                                                                        return  json_message_response(false, "Error de creation de transfert du montant!", 333);
-                                                                }
+                                                        if ($request->choose_type_transaction == 1) {
+                                                                // Transaction de dépôt
+                                                                $amountReceved = $request->amount;
+                                                                $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
                                                         } else {
-                                                                return json_message_response(false, "Verifié votre solde !!", 333);
+                                                                // Transaction de retrait
+                                                                $amountReceved = $request->amount - ($percent_robus->percent_with_drawal * $request->amount);
+                                                                $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved);
+                                                        }
+
+                                                        if ($transactionResult['success']) {
+
+                                                                $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
+                                                                return $this->messageAfterValidated($transactionResult['walletXbet']);
+                                                        } else {
+                                                                return json_message_response(false, $transactionResult['message'], 333);
                                                         }
                                                 } else {
                                                         return json_message_response(false, "Votre montant journalier est atteint !!", 333);
@@ -245,7 +235,44 @@ class OnexbetTransactionController extends Controller
                 }
         }
 
-   
+
+        // Fonction pour traiter la transaction de dépôt
+        private function processDepositTransaction($request, $percent_robus, $amountReceved)
+        {
+                $val_amount_send = $request->amount + ($percent_robus->percent * $request->amount);
+                if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
+                        return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
+                }
+
+                $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($request->amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved);
+                if ($walletXbet == null) {
+                        return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
+                }
+
+                // Mettre à jour le montant reçu dans le service OneXbet
+                if (!$this->oneXbetService->updateamountOneBetReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletXbet, $request->amount)) {
+                        return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
+                }
+
+                return ['success' => true, 'walletXbet' => $walletXbet];
+        }
+
+        // Fonction pour traiter la transaction de retrait
+        private function processWithdrawalTransaction($request, $percent_robus, $amountReceved)
+        {
+                $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($request->amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie, $request->id_xbet, $amountReceved);
+                if ($walletXbet == null) {
+                        return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
+                }
+
+                // Mettre à jour le montant reçu dans le service OneXbet
+                if (!$this->oneXbetService->updateamountOneBetDrawal($this->validatedamountDays->adminCiv(), $percent_robus, $walletXbet, $request->amount)) {
+                        return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
+                }
+
+
+                return ['success' => true, 'walletXbet' => $walletXbet];
+        }
 
         public function messageAfterValidated($walletXbet)
         {

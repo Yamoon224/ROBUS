@@ -98,7 +98,7 @@
                 </div>
             @else
                 <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 mt-3">
-                    <div class="col-span-6 mt-1">
+                    <div class="col-span-12 mt-1">
                         <label for="transaction_phone" class="form-label">Numero de telephone<span
                                 class="text-danger">*</span></label>
 

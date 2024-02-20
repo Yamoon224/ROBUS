@@ -19,7 +19,7 @@
             <div class="modal-body-transfers  grid grid-cols-12 gap-4 gap-y-3">
                 
                 <div class="col-span-12 ">
-                    <label for="provider_transaction_edit" class="form-label">Canal rechargement carte
+                    <label for="provider_transaction_edit" class="form-label">Canal de transfert
                         <span class="text-danger">
                             *</span></label>
                     <input wire:model.defer="provider_transaction_edit" disabled id="number_phone_credit_edit"
@@ -28,10 +28,11 @@
                 
             </div>
             @if (!is_null($provider_transaction_edit))
+
                 @if ($provider_transaction_edit == 9)
                     <div class="modal-body-transfers  grid grid-cols-12 gap-4 gap-y-3">
                         <div class="col-span-6">
-                            <label for="compte_number_robus_edit" class="form-label">Numero telphone<span
+                            <label for="compte_number_robus_edit" class="form-label">Numero téléphone<span
                                     class="text-danger">
                                     *</span></label>
                             <input wire:model="compte_number_robus_edit" disabled id="compte_number_robus_edit"
@@ -57,7 +58,7 @@
                 @else
                     <div class="modal-body-transfers  grid grid-cols-12 gap-4 gap-y-3">
                         <div class="col-span-6">
-                            <label for="transaction_phone_edit" class="form-label">Numero telphone<span
+                            <label for="transaction_phone_edit" class="form-label">Numero téléphone<span
                                     class="text-danger">
                                     *</span></label>
                             <input wire:model="transaction_phone_edit" disabled id="transaction_phone_edit"
@@ -92,7 +93,7 @@
                     </div>
                 </div>
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-3 mb-3">
-                    <div   class="col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
+                    <div   class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
                         <input  wire:click="$emit('modal-transfers-validted-show' , 'validated-transfersUV-modal')"  wire:model.debounce.10ms="transactionStatus" id="bordered-radio-15"  type="radio" value="SUCCESS"
                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label for="bordered-radio-15"
@@ -103,7 +104,7 @@
                         @enderror
                     </div>
 
-                    <div class=" col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
+                    <div class=" col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
                         <input wire:click="$emit('modal-transfers-validted-show' , 'validated-transfersUV-modal')"  wire:model.debounce.10ms="transactionStatus" id="bordered-radio-16"  type="radio" value="ERROR"
                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label for="bordered-radio-16"
@@ -112,16 +113,7 @@
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class=" col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
-                        <input  wire:click="$emit('modal-transfers-validted-show' , 'validated-transfersUV-modal')"  wire:model.debounce.10ms="transactionStatus" id="bordered-radio-17"  type="radio" value="REFUND"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="bordered-radio-17"
-                            class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Remboursé</label>
-                        @error('transactionStatus')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-
+                   
                 </div>
 
 

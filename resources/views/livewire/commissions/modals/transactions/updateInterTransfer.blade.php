@@ -8,19 +8,17 @@
             <a wire:click="$emit('modal-hide-inters')"
                 style="position: absolute; right: 0px; top: 0px; margin-top: 0.75rem; margin-right: 0.75rem;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="x" style="color: white;"
-                    data-lucide="x" class="lucide lucide-x w-8 h-8 text-slate-400">
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="x"
+                    style="color: white;" data-lucide="x" class="lucide lucide-x w-8 h-8 text-slate-400">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
             </a>
 
-            {{-- @if (!is_null($choose_type_paiement)) --}}
 
 
             @if ($choose_type_paiement == 1)
-                {{-- Canal du paiement mooney --}}
-              
+
                 <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Transfers d'argent
                 </div>
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
@@ -67,8 +65,6 @@
                     </div>
                 </div>
             @elseif($choose_type_paiement == 5)
-                {{-- Canal du paiement de facture --}}
-                
                 <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Paiement facture
                 </div>
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-1">
@@ -85,50 +81,28 @@
                 </div>
                 @if ($provider_inter_edit == 52)
                     @if (!is_null($paiementChoix_phone_edit))
-
-                        @if ($paiementChoix_phone_edit == 1)
-                            <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
-                                <div class="col-span-6  mt-space-padding">
-                                    <label for="offer_paiement_edit" class="form-label">Offre<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="offer_paiement_edit" disabled id="offer_paiement_edit"
-                                        type="text" class="form-control style_edit_form"
-                                        placeholder="Numero de telephone">
-                                </div>
-                                <div class="col-span-6  mt-space-padding">
-                                    <label for="paiement_phone_canal_edit" class="form-label">Numero du
-                                        telephone(10
-                                        chiffres)<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_phone_canal_edit" disabled
-                                        id="paiement_phone_canal_edit" type="text"
-                                        class="form-control style_edit_form" placeholder="Numero de telephone">
-
-                                </div>
+                        @php
+                            $phoneNumberLabel = $paiementChoix_phone_edit == 1 ? 'Numero du téléphone(10 chiffres)' : 'Numero du décodeur(14 chiffres)';
+                            $phoneNumberInputId = $paiementChoix_phone_edit == 1 ? 'paiement_phone_canal_edit' : 'paiement_decoder_canal_edit';
+                        @endphp
+                        <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
+                            <div class="col-span-6  mt-space-padding">
+                                <label for="offer_paiement_edit" class="form-label">Offre<span class="text-danger">
+                                        *</span></label>
+                                <input wire:model.defer="offer_paiement_edit" disabled id="offer_paiement_edit"
+                                    type="text" class="form-control style_edit_form"
+                                    placeholder="Numero de telephone">
                             </div>
-                        @elseif ($paiementChoix_phone_edit == 2)
-                            <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
-                                <div class="col-span-6  mt-space-padding">
-                                    <label for="offer_paiement_edit" class="form-label">Offre<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="offer_paiement_edit" disabled id="offer_paiement_edit"
-                                        type="text" class="form-control style_edit_form"
-                                        placeholder="Numero de telephone">
-                                </div>
-                                <div class="col-span-6  mt-space-padding">
-                                    <label for="paiement_decoder_canal_edit" class="form-label">Numero du
-                                        telephone(10
-                                        chiffres)<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_decoder_canal_edit" disabled
-                                        id="paiement_decoder_canal_edit" type="text"
-                                        class="form-control style_edit_form" placeholder="Numero de telephone">
-
-                                </div>
+                            <div class="col-span-6  mt-space-padding">
+                                <label for="{{ $phoneNumberLabel }}" class="form-label">{{ $phoneNumberLabel }}<span
+                                        class="text-danger">
+                                        *</span></label>
+                                <input wire:model.defer="{{ $phoneNumberInputId }}" disabled
+                                    id="{{ $phoneNumberInputId }}" type="text"
+                                    class="form-control style_edit_form" placeholder="Numero de telephone">
 
                             </div>
-                        @endif
+                        </div>
 
                         <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
 
@@ -160,58 +134,35 @@
 
                             </div>
                         </div>
-
                     @endif
 
                 @endif
                 @if ($provider_inter_edit == 53)
 
                     @if (!is_null($facture_choix_type_edit))
-                        @if ($facture_choix_type_edit == 1)
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                                <div class="col-span-6">
-                                    <label for="paiement_name_cie_edit" class="form-label">Nom de la facture<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_name_cie_edit" disabled
-                                        id="paiement_name_cie_edit" type="text"
-                                        class="form-control style_edit_form" placeholder="Nom facture">
+                        @php
+                            $paiementInvoiceLabel = $facture_choix_type_edit == 1 ? 'Identifiant facture(11 chiffres)' : 'Identifiant facture(09 chiffres)';
+                            $paiementNumberInputId = $facture_choix_type_edit == 1 ? 'paiement_id_invoice_edit' : 'paiement_id_invoice_edit';
+                        @endphp
+                        <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
+                            <div class="col-span-6">
+                                <label for="paiement_name_cie_edit" class="form-label">Nom de la facture<span
+                                        class="text-danger">
+                                        *</span></label>
+                                <input wire:model.defer="paiement_name_cie_edit" disabled id="paiement_name_cie_edit"
+                                    type="text" class="form-control style_edit_form" placeholder="Nom facture">
 
-                                </div>
-                                <div class="col-span-6">
-                                    <label for="paiement_id_invoice_edit" class="form-label">Identifiant
-                                        facture(11
-                                        chiffres)<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_id_invoice_edit" disabled
-                                        id="paiement_id_invoice_edit" type="text"
-                                        class="form-control style_edit_form" placeholder="Identifiant">
-
-                                </div>
                             </div>
-                        @elseif ($facture_choix_type_edit == 2)
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                                <div class="col-span-6 mt-space-padding">
-                                    <label for="paiement_name_cie_edit" class="form-label">Nom de la facture<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_name_cie_edit" disabled
-                                        id="paiement_name_cie_edit" type="text"
-                                        class="form-control style_edit_form" placeholder="Nom facture">
+                            <div class="col-span-6">
+                                <label for="{{ $paiementNumberInputId }}"
+                                    class="form-label">{{ $paiementInvoiceLabel }}<span class="text-danger">
+                                        *</span></label>
+                                <input wire:model.defer="{{ $paiementNumberInputId }}" disabled
+                                    id="{{ $paiementNumberInputId }}" type="text"
+                                    class="form-control style_edit_form" placeholder="Identifiant">
 
-                                </div>
-                                <div class="col-span-6 mt-space-padding">
-                                    <label for="paiement_id_invoice_edit" class="form-label">Identifiant
-                                        facture(09
-                                        chiffres)<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_id_invoice_edit" disabled
-                                        id="paiement_id_invoice_edit" type="text"
-                                        class="form-control style_edit_form" placeholder="Identifiant">
-
-                                </div>
                             </div>
-                        @endif
+                        </div>
 
                         <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                             <div class="col-span-6 mt-space-padding">
@@ -242,7 +193,6 @@
 
                             </div>
                         </div>
-
                     @endif
 
                 @endif
@@ -297,7 +247,7 @@
                 @endif
             @elseif($choose_type_paiement == 6)
                 {{-- Canal du paiement de credit --}}
-              
+
                 <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Credit telephonique
                 </div>
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
@@ -346,7 +296,6 @@
 
                     </div>
                 </div>
-               
             @elseif($choose_type_paiement == 7)
                 {{-- Canal du versement bancaire --}}
                 <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Versement bancaire
@@ -417,10 +366,9 @@
 
                     </div>
                 </div>
-           
             @elseif($choose_type_paiement == 8)
                 {{-- Canal de rechargement de carte --}}
-            
+
                 <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Rechargment carte
                 </div>
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
@@ -487,7 +435,7 @@
 
                     </div>
                 </div>
-              
+
             @endif
 
             <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
@@ -502,9 +450,9 @@
             <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
 
                 <div
-                    class=" col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
-                    <input  wire:click="$emit('modal-inter-validted-show' , 'validated-inter-modal')" wire:model="interStatus" id="bordered-radio-50" type="radio"
-                        value="SUCCESS"
+                    class=" col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
+                    <input wire:click="$emit('modal-inter-validted-show' , 'validated-inter-modal')"
+                        wire:model="interStatus" id="bordered-radio-50" type="radio" value="SUCCESS"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="bordered-radio-50"
                         class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Accepté</label>
@@ -513,22 +461,12 @@
                     @enderror
                 </div>
                 <div
-                    class="col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
-                    <input wire:click="$emit('modal-inter-validted-show' , 'validated-inter-modal')" wire:model="interStatus" id="bordered-radio-51" type="radio"
-                        value="ERROR"
+                    class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
+                    <input wire:click="$emit('modal-inter-validted-show' , 'validated-inter-modal')"
+                        wire:model="interStatus" id="bordered-radio-51" type="radio" value="ERROR"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="bordered-radio-51"
                         class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Refusé</label>
-                    @error('interStatus')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-span-4 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
-                    <input wire:click="$emit('modal-inter-validted-show' , 'validated-inter-modal')" wire:model="interStatus" id="bordered-radio-52" type="radio"
-                        value="REFUND"
-                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                    <label for="bordered-radio-52"
-                        class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Remboursé</label>
                     @error('interStatus')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror

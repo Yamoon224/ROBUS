@@ -60,9 +60,9 @@
                     <div class="px-5 pb-8 text-center mt-6">
                         <button type="button" wire:click="cancelXbetField"
                             class="btn btn-outline-secondary w-25 mr-1 mb-1">Annuler</button>
-                        <button wire:click="updateVirement" type="button" wire:loading.remove=""
+                        <button wire:click="updateXbet" type="button" wire:loading.remove=""
                             class="btn btn-primary w-50">Validez</button>
-                            <div  wire:loading wire:target="updateVirement">
+                            <div  wire:loading wire:target="updateXbet">
                                 Traitement en cours...
                             </div>
                     </div>
