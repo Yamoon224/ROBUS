@@ -802,81 +802,8 @@ class Reloaduv extends Component
 
         if ($walletUser->is_under_distributer == true) {
 
-            if ($this->searchRealod != "") {
-
-                $this->resetPage();
-
-                $realod_search->orwhereHas(
-                    'paymentReload',
-                    function ($query) {
-                        $query->where('operator_transaction_name', 'like', '%' . $this->searchRealod . '%')
-                            ->orWhere('transaction_id', 'like', '%' .  $this->searchRealod   . '%')
-                            ->orWhere('trans_comp_id', 'like', '%' .  $this->searchRealod  . '%');
-                    }
-                )
-                    ->orWhere("wallet_reloads.amount", "like",  "%" . $this->searchRealod . "%")
-                    ->orWhere("wallet_reloads.phone", "like",  "%" . $this->searchRealod . "%")
-                    ->orWhere("wallet_reloads.account_wallet", "like",  "%" . $this->searchRealod . "%");
-
-
-                // $this->emit('menu-reload-active');
-            }
-
-
-            if ($this->statusFilter != "") {
-                $realod_search->where('wallet_reloads.status', $this->statusFilter);
-                // $this->emit('menu-reload-active');
-            }
-
-
-            if ($this->account_reload_uv != '') {
-
-
-                foreach ($wallets  as $wallet_user) {
-
-                    $wallet_search_user = $wallet_user->where('wallet_id', $this->account_reload_uv)->first();
-
-                    if ($wallet_search_user == null) {
-
-                        $wallet_info_user = "N'existe pas chez nous";
-                    } else {
-                        $wallet_info_user = $wallet_search_user->sidUser->firstname ?? null . ' ' .  $wallet_search_user->sidUser->lastname ?? null;
-                    }
-                }
-            }
-
-
-            return view(
-                'livewire.reloaduv',
-                [
-                    'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-                    'WalletReloads' => $this->WalletReloadsUser,
-                    'reload_error' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.updated_by', Auth::guard('web')->user()->id)->where('wallet_reloads.status', 'ERROR')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
-                    'reload_success' =>   WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.updated_by', Auth::guard('web')->user()->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
-                    'reload_pendding' =>   WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.updated_by', Auth::guard('web')->user()->id)->where('wallet_reloads.status', 'PENDING')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
-                    'reaload_uv' => $realod_search->join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)
-                        ->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)
-                        ->select('wallet_reloads.*')
-                        ->orderBy('wallet_reloads.created_at', 'desc')->paginate(20),
-                    'countrie_number_local' => Auth::guard('web')->user()->country->indecative,
-                    'wallet_search' => $wallet->where("wallet_id", "like",  "%" . $this->account_reload_uv . "%")
-                        ->where('country_id',  $walletUser->country->id)->where('status', true)->get(),
-                    'number_search' => $sid_search->where("phone", "like",  "%" . $this->number_reload_uv . "%")
-                        ->where('country_id',  $walletUser->country->id)->where('is_under_distributer', true)->get(),
-                    'amount_reload' => ReloadCost::where('status', true)->first(),
-                    'providers' =>  $this->ReloadUvTransaction,
-                    'withdrawal_robus' => Provider::whereStatus(true)
-                        ->whereId(9)
-                        ->get(),
-                    'wallet_info_searchs' => $wallet_info_user,
-                    'usersCountry' => Auth::guard('web')->user()->country->currencie->name,
-
-                ]
-            );
+            abort(403);
+            
         } elseif ($walletUser->is_distributer == true) {
 
 

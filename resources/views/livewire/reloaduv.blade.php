@@ -1,12 +1,11 @@
 <div>
-    <script src="{{ asset('public/js/script.js') }}"></script>
-    <script src="{{ asset('public/js/app.js') }}"></script>
+    
     <div class="intro-y box px-5 pt-1 mt-1 ">
 
         <div class="grid grid-cols-12 gap-6 mt-6">
             <div class="col-span-12 sm:col-span-6 lg:col-span-6 intro-y info-paiement-show" id="info-paie-show-1">
                 <div class="report-box zoom-in">
-                    <div class="box p-wallet">
+                    <div class="box p-wallet style_table_cartes">
                         <div class="flex mb-transactions">
                             <div class="ml-auto">
                                 <div class="report-box__indicator bg-success tooltip cursor-pointer">
@@ -123,7 +122,7 @@
                         stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                         class="feather feather-shield w-4 h-4 mr-2">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>Rechargement</a>
+                    </svg>Rechargements</a>
             </li>
         </ul>
 
@@ -131,22 +130,25 @@
 
             <div id="reload" class="tab-pane active" role="tabpanel" aria-labelledby="reload-tab">
 
+
+
                 <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
                     <div class="hidden md:block mx-auto text-slate-500"></div>
                     <div class="hidden md:block mx-auto text-slate-500"></div>
                     <div class="hidden md:block mx-auto text-slate-500"></div>
+          
                     <div class="hidden md:block mx-auto text-slate-500"></div>
-
+          
                     <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;   ">
                         <div class="w-56 relative text-slate-500">
-
+          
                             <input type="text" name="table_search" wire:model.debounce.250ms="searchRealod"
                                 class="form-control  w-56 box pr-10" style="height: 3rem; background-color: #eff3f7;"
                                 placeholder="Rechercher">
-                            <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
-                                data-feather="searchRealod"></i>
+                            {{-- <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
+                                data-feather="searchTransaction"></i> --}}
                         </div>
-                    </div>
+                    </div> 
                 </div>
                 <div class="grid grid-cols-12 gap-6  mt-6">
                     <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
@@ -388,7 +390,7 @@
     </div>
     @include('livewire.commissions.modals.transactions.updateReload')
     @include('livewire.commissions.modals.transactions.addReload')
-    {{-- Modal update virement --}}
+
 
 </div>
 

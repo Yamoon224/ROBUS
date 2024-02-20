@@ -227,9 +227,9 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             });
 
             // create Users
-            Route::post('add_masters/store', [ComZoneController::class, 'create_transaction_master']);
-            Route::post('add_custumers/store', [ComZoneController::class, 'create_reload_master']);
-            Route::post('add_under_distributors/store', [ComZoneController::class, 'add_under_distributor']);
+            Route::post('add_masters/store', [ComZoneController::class, 'store_under_masters']);
+            Route::post('add_custumers/store', [ComZoneController::class, 'store_under_custumers']);
+            Route::post('add_under_distributors/store', [ComZoneController::class, 'store_under_distributors']);
     });
     });
 

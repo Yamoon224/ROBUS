@@ -133,7 +133,6 @@ class HomeComZones extends Component
     public function getDaysTransaction($walletModel, $wallet_transaction, $transaction_days, $transaction_status , $wallet_amount)
     {
 
-
         return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
         ->where('wallets.country_id', comzone()->country->id)
         ->whereMonth($transaction_days, now()->month)

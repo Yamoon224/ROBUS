@@ -11,6 +11,7 @@ use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Events\assignementEvent;
 
 class UserAdmin extends Component
 {
@@ -79,9 +80,9 @@ class UserAdmin extends Component
         if (!empty($old_operators)) {
 
             $old_operators->forcedelete();
+            event(new assignementEvent($old_operators));
             $this->resetdesableField();
             $this->emit('modal-hide', 'hide');
-            // $this->emit('success', 'Assurance supprimée avec success !');
             $this->emit('success', 'Liste des operateurs mise à jour !');
 
         }else {
@@ -90,10 +91,11 @@ class UserAdmin extends Component
             $operator_service->sid_user_id =$check_user->id;
             $operator_service->operator_id  = $check_operator->id;
             $operator_service->save();
+            event(new assignementEvent($operator_service));
 
             $this->resetdesableField();
             $this->emit('modal-hide', 'hide');
-            $this->emit('success', 'Liste des attributions mise à jour !');
+            $this->emit('success', 'Liste des operateurs mise à jour !');
 
         }
     }
@@ -234,7 +236,4 @@ class UserAdmin extends Component
     }
 
 
-    public function getMasterCountryProperty($country)
-    {
-    }
 }

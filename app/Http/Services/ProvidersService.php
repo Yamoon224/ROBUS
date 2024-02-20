@@ -6,6 +6,7 @@ namespace App\Http\Services;
 use App\Models\Custumers\Country;
 use App\Models\OperatorService;
 use App\Models\Providers\Provider;
+use App\Events\assignementEvent;
 
 class ProvidersService
 {
@@ -14,9 +15,13 @@ class ProvidersService
 
     public function OperatorServices()
     {
-        return OperatorService::where('sid_user_id' , robus()->id)->get();
+
+        $operatorServices = OperatorService::where('sid_user_id' , robus()->id)->get();
+        event(new assignementEvent($operatorServices));
+
+        return $operatorServices;
     }
-    
+
     public function getProvidersForCountry()
     {
         $countryId = robus()->country->id;
@@ -202,10 +207,10 @@ class ProvidersService
             }
         } else {
             $providerMaps = [
-                "CIV" => ['AFL', 'AFC', 'USA', 'MAG' , 'URP'],
-                "USA" => ['AFL', 'AFC', 'URP', 'MAG' , 'CIV'],
+                "CIV" => ['AFL', 'AFC', 'USA', 'MAG', 'URP'],
+                "USA" => ['AFL', 'AFC', 'URP', 'MAG', 'CIV'],
                 "AFL" => ['AFL', 'AFC', 'URP', 'CIV', 'USA', 'MAG'],
-                "AFC" => ['CIV', 'AFC', 'URP', 'USA', 'MAG' ,'AFL'],
+                "AFC" => ['CIV', 'AFC', 'URP', 'USA', 'MAG', 'AFL'],
                 "URP" => ['CIV', 'AFC', 'AFL', 'USA', 'MAG'],
                 "MAG" => ['CIV', 'AFC', 'URP', 'AFL', 'USA', 'MAG'],
             ];
@@ -234,7 +239,6 @@ class ProvidersService
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
             ->get();
-        
     }
 
     public static function getProvidersByTypeOrderCard($query, $countryId, $providerType)
@@ -251,7 +255,7 @@ class ProvidersService
             ->orderBy('providers.name', 'asc')
             ->get();
     }
-    
+
 
     public static function getProvidersByWithdrawal($query, $countryId, $providerType)
     {
@@ -266,7 +270,6 @@ class ProvidersService
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
             ->get();
-        
     }
 
     public static function getProvidersByReloadType($query, $countryId, $providerType)
@@ -284,23 +287,21 @@ class ProvidersService
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
             ->get();
-        
     }
 
     public static function getProvidersByUnderDistributerType($query, $countryId, $providerType)
     {
 
-        
+
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
             ->where('providers.status', true)
-            ->where('providers.id', '!=' ,51)
+            ->where('providers.id', '!=', 51)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
             ->get();
-        
     }
 
     // Providers countries Inters
@@ -321,21 +322,21 @@ class ProvidersService
     public function getWestInter()
     {
         return  Provider::whereIn('id', array(49, 50, 48))
-        ->orderBy('name', 'asc')
-        ->get();
+            ->orderBy('name', 'asc')
+            ->get();
     }
     public function getOugandaInter()
     {
         return  Provider::whereIn('id', array(71, 48))
-        ->orderBy('name', 'asc')
-        ->get();
+            ->orderBy('name', 'asc')
+            ->get();
     }
 
     public function getKeneyaInter()
     {
         return  Provider::whereIn('id', array(76, 71, 77))
-        ->orderBy('name', 'asc')
-        ->get();
+            ->orderBy('name', 'asc')
+            ->get();
     }
     public function getCIV()
     {

@@ -442,6 +442,11 @@ Route::get('/reads_notifications', function () {
     return Artisan::call('status:readNotifications');
 });
 
+Route::get('/reads_applications', function () {
+    return  Artisan::call('app:close-status');
+});
+
+
 Auth::routes();
 
 // Route::resource('projects', 'ProjectsController');
