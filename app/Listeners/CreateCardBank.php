@@ -7,8 +7,11 @@ use App\Models\EventLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class CreateCardBank
-{
+class CreateCardBank 
+{ 
+    
+   
+   
     /**
      * Create the event listener.
      *

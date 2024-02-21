@@ -26,6 +26,11 @@
                     <form class="form-vertical row" action="{{ route('masters.underdistributors.store') }}" method="post"
                         enctype="multipart/form-data">
                         @csrf
+                        @if (session('status'))
+                            <div class="alert alert-{{ session('color') }} clignote">
+                                {{ session('status') }}
+                            </div>
+                        @endif
                         <div class="mx-auto xl:mr-0 xl:ml-6">
                             <img class="object-none object-center bg-yellow-300 w-30 h-30"
                                 src="{{ old('image') ?? asset('public/dist/images/food-beverage-1.jpg') }}" alt="image"
@@ -83,8 +88,8 @@
                         <div class="crud-form-1 mt-3">
                             <label class="form-label">Nom<span class="text-danger"> *</span></label>
                             <input type="text" name="firstname"
-                                class="form-control @error('firstname') is-invalid @enderror" value="{{ old('firstname') }}"
-                                required>
+                                class="form-control @error('firstname') is-invalid @enderror"
+                                value="{{ old('firstname') }}" required>
                             @error('firstname')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -117,8 +122,9 @@
                             <label class="form-label">Adresse email
                                 <span class="text-danger"> *</span>
                             </label>
-                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror"
-                                value="{{ old('email') }}" required>
+                            <input type="email" name="email"
+                                class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
+                                required>
                             @error('email')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
@@ -209,6 +215,7 @@
                         style="margin-left: 1rem;">Ajouter</button>
 
                 </div>
+
                 </form>
                 <!-- END: Validation Form -->
 
@@ -221,4 +228,3 @@
 
 
 @endsection
-

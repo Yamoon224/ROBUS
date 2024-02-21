@@ -30,45 +30,8 @@ class Statistics extends Component
 
         if ($walletUser->wallet->sidUser->is_under_distributer == true) {
 
-            return view('livewire.statistics', [
+            abort(403);
 
-                'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-                'sum_error' => $this->ReloadErrorUser  + $this->VirementErrorUser + $this->PhoneCreditErrorUser  +  $this->DepositErrorUser +  $this->InterErrorUser + $this->PaymentErrorUser +   $this->TransactionErrorUser,
-                'sum_success' => $this->ReloadSuccessUser  + $this->VirementSuccessUser + $this->PhoneCreditSuccessUser  +  $this->DepositSuccessUser +  $this->InterSuccessUser + $this->PaymentSuccessUser +   $this->TransactionSuccessUser,
-                'pending_success' => $this->ReloadPenddingUser  + $this->VirementPenddingUser + $this->PhoneCreditPenddingUser +  $this->DepositPenddingUser +  $this->InterPenddingUser + $this->PaymentPenddingUser +   $this->TransactionPenddingUser,
-                'wallet_Banks_last' => WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_banks.updated_by')->limit(3)->select('wallet_banks.*')->orderBy('wallet_banks.created_at', 'desc')->get(),
-                'Wallet_Deposits_last' => WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_deposits.updated_by')->limit(3)->select('wallet_deposits.*')->orderBy('wallet_deposits.created_at', 'desc')->get(),
-                'Wallet_Inters_last' => WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                    ->where('wallet_inters.country_id', Auth::guard('web')->user()->country->id)->where('wallet_inters.updated_by')->limit(3)->select('wallet_inters.*')->orderBy('wallet_inters.created_at', 'desc')->get(),
-                'Wallet_Payments_last' => WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_payments.updated_by')->limit(3)->select('wallet_payments.*')->orderBy('wallet_payments.created_at', 'desc')->get(),
-                'Wallet_Transactions_last' => WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_transactions.updated_by')->limit(3)->select('wallet_transactions.*')->orderBy('created_at', 'desc')->get(),
-                'Wallet_PhoneCredits_last' => WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_phone_credits.updated_by')->limit(3)->select('wallet_phone_credits.*')->orderBy('wallet_phone_credits.created_at', 'desc')->get(),
-                'Wallet_Reloads_last' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_reloads.updated_by')->limit(3)->select('wallet_reloads.*')->orderBy('wallet_reloads.created_at', 'desc')->get(),
-                'usersCountry' =>  $walletUser->country->currencie->code ?? null,
-                'sum_bank' => $this->WalletBankSumUser,
-                'sum_deposit' => $this->WalletDepositSumUser,
-                'sum_payment' => $this->WalletPaymentSumUser,
-                'sum_reload' => $this->WalletReloadSumUser,
-                'sum_transaction' => $this->WalletTransactionSumUser,
-                'sum_inter' => $this->WalletInterSumUser,
-                'sum_phoneCredit' => $this->WalletPhoneCreditSumUser,
-                'sum_bank_gain' => $this->WalletBankSumGainUser,
-                'sum_deposit_gain' => $this->WalletDepositSumGainUser,
-                'sum_payment_gain' => $this->WalletPaymentSumGainUser,
-                'sum_reload_gain' => $this->WalletReloadSumGainUser,
-                'sum_transaction_gain' => $this->WalletTransactionSumGainUser,
-                'sum_inter_gain' => $this->WalletInterSumGainUser,
-                'sum_phoneCredit_gain' => $this->WalletInterSumGainUser,
-                'sum_phoneCredit_gain' => $this->WalletInterSumGainUser,
-                'sum_phoneCredit_gain' => $this->WalletInterSumGainUser,
-
-            ]);
         } else if ($walletUser->wallet->sidUser->is_distributer == true || $walletUser->wallet->sidUser->is_admin == true) {
 
             return view('livewire.statistics', [

@@ -11,7 +11,7 @@ use App\Repositories\BaseRepository;
  * @version 
  */
 
-class ReloadCardRepository extends BaseRepository
+        class ReloadCardRepository extends BaseRepository
 {
     /**
      * @var array

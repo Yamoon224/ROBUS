@@ -34,9 +34,9 @@
                         @php
                             $wallet_name = optional(optional($wallet_search)->sidUser)->firstname . ' ' . optional(optional($wallet_search)->sidUser)->lastname ?? 'Numero introuvable';
                             $wallet_image = optional(optional($wallet_search)->sidUser)->image ?? 'public/dist/images/profil.png';
-                            $wallet_phone = optional(optional($wallet_search)->sidUser)->phone;
-                            $wallet_country = optional(optional($wallet_search)->sidUser)->country->name;
-                            $wallet_city = optional(optional($wallet_search)->sidUser)->city->name;
+                            $wallet_phone = optional(optional($wallet_search)->sidUser)->phone ?? null;
+                            $wallet_country = optional(optional($wallet_search)->sidUser)->country->name ?? null;
+                            $wallet_city = optional(optional($wallet_search)->sidUser)->city->name ?? null;
                         @endphp
                         <div class="intro-x relative mr-3 sm:mr-6 text-center  mt-6">
 

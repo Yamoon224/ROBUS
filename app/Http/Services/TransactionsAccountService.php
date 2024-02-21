@@ -10,6 +10,127 @@ class TransactionsAccountService
 {
 
 
+
+    public function getTransactionMasterCount($walletModel,  $status)
+    {
+
+
+        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+        $totalcount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $count = $walletModel::where('wallet_id', $sidUserId)
+                ->where('status', $status)->count();
+
+            if ($count !== null) {
+                $totalcount += $count;
+            }
+        }
+
+        return $totalcount;
+    }
+
+    
+
+    public function getTransactionMasterMonthCount($walletModel)
+    {
+
+
+        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+        $totalcount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $count = $walletModel::where('wallet_id', $sidUserId)
+                ->whereMonth('created_at', now()->month)->count();
+
+            if ($count !== null) {
+                $totalcount += $count;
+            }
+        }
+
+        return $totalcount;
+    }
+
+    public function getTransactionMasterYearCount($walletModel)
+    {
+
+
+        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+        $totalcount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $count = $walletModel::where('wallet_id', $sidUserId)
+                ->whereMonth('created_at', now()->month)->count();
+
+            if ($count !== null) {
+                $totalcount += $count;
+            }
+        }
+
+        return $totalcount;
+    }
+
+    public function getTodayTransactionGainTotal($walletModel)
+    {
+
+        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->whereDate('created_at', Carbon::today())
+                ->sum('commission_masters');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
+    public function getMonthTransactionGain($walletModel)
+    {
+
+        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->whereMonth('created_at', now()->month)
+                ->sum('commission_masters');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
+
+
     public function getTransactionCount($wallets, $id, $status)
     {
 
@@ -244,15 +365,15 @@ class TransactionsAccountService
 
         $under_distributors = SidUser::where('master_id', robus()->id)->get();
 
-        return $under_distributors;  
+        return $under_distributors;
     }
 
     public function getMastersUser()
     {
-        
+
         $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsMaster(true)->get();
 
-        return $under_distributors;  
+        return $under_distributors;
     }
 
     public function getCustmersUser()
@@ -260,15 +381,15 @@ class TransactionsAccountService
 
         $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsCustumers(true)->get();
 
-        return $under_distributors;  
+        return $under_distributors;
     }
 
     public function getUnderDistributorsComUser()
     {
 
-        
+
         $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsUnderDistributer(true)->get();
 
-        return $under_distributors;  
+        return $under_distributors;
     }
 }

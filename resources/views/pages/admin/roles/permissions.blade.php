@@ -22,9 +22,6 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-octagon w-6 h-6 mr-2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
             Attribuer des permissions au rôle : <div class="font-medium text-base ml-2"> {{ $role->name }} </div> 
         </div>
-        {{-- <div class="form-check form-switch w-full sm:w-auto sm:ml-auto mt-3 sm:mt-0">
-            <label class="form-check-label ml-0" for="show-example-5"> Attribuer des permissions au rôle: {{ $role->name }}</label>
-        </div> --}}
     </div>
 </div>
 

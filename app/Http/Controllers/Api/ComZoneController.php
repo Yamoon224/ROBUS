@@ -7,15 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Services\UserCreateService;
 use App\Http\Services\ValidatorService;
 use App\Mail\NewAdmin;
-use App\Models\Kyc;
-use App\Models\Sid\SidUser;
-use App\Models\Wallets\Wallet;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Validator;
-use Spatie\Permission\Models\Role;
 
 class ComZoneController extends Controller
 {
@@ -110,7 +103,7 @@ class ComZoneController extends Controller
 
                 $user = $response['user'];
 
-                $valeur_message =  ' Un MASTER ' ;
+                $valeur_message =  ' Un MASTER ';
                 Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
                     ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
 
@@ -141,8 +134,8 @@ class ComZoneController extends Controller
             ], 333);
         }
 
-        // try {
-         
+        try {
+
             $response = $this->createUserService->createCustumer(
                 $request->all(),
                 $request->file('image'),
@@ -164,15 +157,15 @@ class ComZoneController extends Controller
             } else {
                 return response()->json(['success' => false, 'message' => $response['message']], 333);
             }
-        // } catch (\Throwable $th) {
-        //     return response()->json(
-        //         [
-        //             'success' => false,
-        //             'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
-        //         ],
-        //         301
-        //     );
-        // }
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+                ],
+                301
+            );
+        }
     }
 
 

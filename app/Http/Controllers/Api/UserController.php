@@ -789,6 +789,72 @@ class UserController extends Controller
         ], 200);
     }
 
+
+    public function historical_distributer_evolution_master()
+    {
+
+
+        return response()->json([
+            'success' => true,
+
+            'success_transaction_days' =>   $this->transactionAccount->getTransactionMasterCount(WalletBank::class, 'SUCCESS') +
+                $this->transactionAccount->getTransactionMasterCount(WalletDeposit::class, 'SUCCESS') +
+                $this->transactionAccount->getTransactionMasterCount(WalletPayment::class, 'SUCCESS') +
+                $this->transactionAccount->getTransactionMasterCount(BankCard::class, 'SUCCESS') +
+                $this->transactionAccount->getTransactionMasterCount(WalletPhoneCredit::class, 'SUCCESS') +
+                $this->transactionAccount->getTransactionMasterCount(WalletTransaction::class, 'SUCCESS') +
+                $this->transactionAccount->getTransactionMasterCount(WalletReload::class, 'SUCCESS') +
+                $this->transactionAccount->getTransactionMasterCount(WalletInter::class, 'SUCCESS'),
+
+            'error_transaction_days' =>   $this->transactionAccount->getTransactionMasterCount(WalletBank::class, 'ERROR') +
+                $this->transactionAccount->getTransactionMasterCount(WalletDeposit::class, 'ERROR') +
+                $this->transactionAccount->getTransactionMasterCount(WalletPayment::class, 'ERROR') +
+                $this->transactionAccount->getTransactionMasterCount(BankCard::class, 'ERROR') +
+                $this->transactionAccount->getTransactionMasterCount(WalletPhoneCredit::class, 'ERROR') +
+                $this->transactionAccount->getTransactionMasterCount(WalletTransaction::class, 'ERROR') +
+                $this->transactionAccount->getTransactionMasterCount(WalletReload::class, 'ERROR') +
+                $this->transactionAccount->getTransactionMasterCount(WalletInter::class, 'ERROR'),
+
+            'pendding_transaction_days' =>   $this->transactionAccount->getTransactionMasterCount(WalletBank::class, 'PENDING') +
+                $this->transactionAccount->getTransactionMasterCount(WalletDeposit::class, 'PENDING') +
+                $this->transactionAccount->getTransactionMasterCount(WalletPayment::class, 'PENDING') +
+                $this->transactionAccount->getTransactionMasterCount(BankCard::class, 'PENDING') +
+                $this->transactionAccount->getTransactionMasterCount(WalletPhoneCredit::class, 'PENDING') +
+                $this->transactionAccount->getTransactionMasterCount(WalletTransaction::class, 'PENDING') +
+                $this->transactionAccount->getTransactionMasterCount(WalletReload::class, 'PENDING') +
+                $this->transactionAccount->getTransactionMasterCount(WalletInter::class, 'PENDING'),
+
+        ], 200);
+    }
+
+    public function historical_month_distributer_master()
+    {
+
+        $som_commission_month =
+            $this->transactionAccount->getMonthTransactionGain(WalletBank::class) +
+            $this->transactionAccount->getMonthTransactionGain(WalletDeposit::class) +
+            $this->transactionAccount->getMonthTransactionGain(WalletPayment::class) +
+            $this->transactionAccount->getMonthTransactionGain(BankCard::class) +
+            $this->transactionAccount->getMonthTransactionGain(WalletPhoneCredit::class) +
+            $this->transactionAccount->getMonthTransactionGain(WalletTransaction::class) +
+            $this->transactionAccount->getMonthTransactionGain(WalletReload::class) +
+            $this->transactionAccount->getMonthTransactionGain(WalletInter::class);
+
+        return response()->json([
+            'success' => true,
+            'sum_transaction_month' =>
+            $this->transactionAccount->getTransactionMasterMonthCount(WalletBank::class) +
+                $this->transactionAccount->getTransactionMasterMonthCount(WalletDeposit::class) +
+                $this->transactionAccount->getTransactionMasterMonthCount(WalletPayment::class) +
+                $this->transactionAccount->getTransactionMasterMonthCount(BankCard::class) +
+                $this->transactionAccount->getTransactionMasterMonthCount(WalletPhoneCredit::class) +
+                $this->transactionAccount->getTransactionMasterMonthCount(WalletTransaction::class) +
+                $this->transactionAccount->getTransactionMasterMonthCount(WalletReload::class) +
+                $this->transactionAccount->getTransactionMasterMonthCount(WalletInter::class),
+            'som_commission' =>  $som_commission_month . ' ' . robus()->wallet->currencie->code,
+        ], 200);
+    }
+
     public function historical_month_distributer()
     {
 
@@ -814,6 +880,34 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletReload::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletInter::class),
             'som_commission' =>  $som_commission_month . ' ' . robus()->wallet->currencie->code,
+        ], 200);
+    }
+
+
+    public function historical_year_distributer_master()
+    {
+
+
+        $som_commission_year =
+            $this->transactionAccount->getYearTransactionGainUser(WalletBank::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletDeposit::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletPayment::class) +
+            $this->transactionAccount->getYearTransactionGainUser(BankCard::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletPhoneCredit::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletTransaction::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletReload::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletInter::class);
+
+        return response()->json([
+            'success' => true,
+            'bank_transaction_month' =>    $this->transactionAccount->getYearTransactionSingleGainUser(WalletBank::class),
+            'deposit_transaction_month' => $this->transactionAccount->getYearTransactionSingleGainUser(WalletDeposit::class),
+            'payment_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainUser(WalletPayment::class),
+            'reload_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainUser(WalletReload::class),
+            'transaction_transaction_month' => $this->transactionAccount->getYearTransactionSingleGainUser(WalletTransaction::class),
+            'inter_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainUser(WalletInter::class),
+            'phonecredit_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletPhoneCredit::class),
+            'som_commission' =>  $som_commission_year . ' ' . robus()->wallet->currencie->code,
         ], 200);
     }
 
@@ -877,7 +971,6 @@ class UserController extends Controller
                 WalletTransaction::class,
                 WalletInter::class,
                 WalletPhoneCredit::class,
-                WalletReload::class,
                 BankCard::class
             ];
 
@@ -922,7 +1015,8 @@ class UserController extends Controller
                 ]);
 
                 $msg = 'Vous avez transferé vos commission sur votre compte';
-                $msg_title = 'Demande de virement';
+                $msg_title = 'Remonté les commissions ';
+
 
                 $wallet_user->notify(new UserNotification([
                     'title' => $msg_title,
@@ -956,6 +1050,102 @@ class UserController extends Controller
         }
     }
 
+
+
+    public function drawal_commission_masters()
+    {
+
+        try {
+
+            $data = [];
+
+            $wallet_user = robus();
+
+
+            $transactionTypes = [
+                WalletBank::class,
+                WalletDeposit::class,
+                WalletPayment::class,
+                WalletTransaction::class,
+                WalletInter::class,
+                WalletPhoneCredit::class,
+                BankCard::class
+            ];
+
+
+            foreach ($transactionTypes as $transactionType) {
+                $transactions = $this->transactionAccount->getUserAllCumulTransactions($transactionType);
+                $totalCommission = $transactions->sum('commission_masters');
+                $data[] = $totalCommission;
+
+                $transactions->update([
+                    'commission_masters' => 0,
+                    // 'commissions_admin' => 0,
+                ]);
+            }
+
+            $totalCommissionSum = array_sum($data);
+
+            if ($totalCommissionSum == 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => ('Votre somme de commission est nul .')
+                ]);
+            } else {
+
+                // Update Info valeurs
+
+                $amountSolde = (float) $wallet_user->wallet->amount + (float) $totalCommissionSum;
+
+                $valeurReceived = WithMerchant::create([
+                    'amount_with_draw' => $totalCommissionSum,
+                    'sid_user_id' => $wallet_user->id,
+                    'amount_solde' => $amountSolde,
+                    'type_transaction' => "COMMISSION",
+                    'status' => "SUCCESS",
+                    'date_removed' => Carbon::now(),
+                ]);
+
+                $wallet_user->wallet->update([
+                    'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+                    'sid_user_relod' => robus()->id,
+                    'amount' => DB::raw('amount+'  .  $valeurReceived->amount_with_draw),
+                ]);
+
+                $msg = 'Vous avez transferé vos commission sur votre compte';
+                $msg_title = 'Remonté les commissions ';
+
+                $wallet_user->notify(new UserNotification([
+                    'title' => $msg_title,
+                    'message' => $msg,
+                ]));
+
+                if ($wallet_user->country->code == "CI") {
+
+                    $message = 'Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        . $valeurReceived->created_at  . ' Robus vous remercie';
+
+                    $encode = substr(robus()->phone,  -10);
+                } else {
+
+
+                    if ($wallet_user->email != null) {
+
+                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                            . $valeurReceived->created_at  . ' Robus vous remercie'));
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => ('Votre transfert de commission est effectué avec succès.')
+                ]);
+            }
+        } catch (\Exception $exception) {
+            $message = __('message.is not providers transactions');
+            return json_message_response(false, $message, 333);
+        }
+    }
 
     public function masters_under_distributors()
     {

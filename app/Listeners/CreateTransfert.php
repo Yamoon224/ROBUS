@@ -7,8 +7,12 @@ use App\Models\EventLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class CreateTransfert
-{
+class CreateTransfert 
+{ 
+   
+
+   
+   
     /**
      * Create the event listener.
      *
@@ -33,7 +37,7 @@ class CreateTransfert
             'type_user_event' => $event->transfers->updated_by != null ? "Choisir" : "Creation",
             'user_countrie' => $event->transfers->wallet->country->name ,
             'amount_send' => $event->transfers->amount ,
-            'type_user' => $event->phone->wallet->sidUser->is_under_distributer	 ? "Sous distributeur " : " Client",
+            'type_user' => $event->transfers->wallet->sidUser->is_under_distributer	 ? "Sous distributeur " : " Client",
             'currencie' => $event->transfers->wallet->currencie->name,
             'event_user' =>  $event->transfers->wallet->sidUser->firstname . ' ' . $event->transfers->wallet->sidUser->lastname,
         ]); 

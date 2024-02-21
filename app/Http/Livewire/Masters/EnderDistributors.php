@@ -49,19 +49,19 @@ class EnderDistributors extends Component
 
         $check = Wallet::where('wallet_id', $this->wallet_id_add)->first();
 
-        
+
         if ($check) {
 
 
             if ($check->sidUser->id == master()->id || $check->sidUser->is_company || $check->sidUser->is_master || $check->sidUser->is_admin  || $check->sidUser->is_supervisor || $check->sidUser->is_distributer) {
 
                 $this->emit('modal-hide', 'hide');
-                $this->cancelUnderdistributersField();
-                $this->emit('info', 'Desolé Ce wallet est pour vous !!!');
+                $this->cancelUndersField();
+                $this->emit('info', 'Desolé Ce wallet est pour vous  ou il fais partie de votre groupe !!!');
 
             } else {
 
-                
+
                 // Update Users
                 $check->sidUser->update(
                     [
@@ -98,32 +98,32 @@ class EnderDistributors extends Component
         }
     }
 
-   // Admin valeur function
-   public function getAdminValeurProperty()
-   {
+    // Admin valeur function
+    public function getAdminValeurProperty()
+    {
 
-       $admins = SidUser::whereStatus(true)
-           ->whereIsAdmin(true)
-           ->get();
+        $admins = SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->get();
 
-       return  $admins;
-   }
-    
+        return  $admins;
+    }
 
-   
+
+
 
     public function edit($id, $state)
     {
         $check = Wallet::whereId($id)->first();
         $this->user_id = $check->sidUser->id;
         $this->wallet_id_add = $check->wallet_id;
-        $this->underdistributeurDesabled = $check->master_id ;
+        $this->underdistributeurDesabled = $check->master_id;
         $this->emit($state);
     }
 
     public function updatedWalletIdAdd()
     {
-        $this->reset('wallet_search'); 
+        $this->reset('wallet_search');
 
         if ($this->wallet_id_add) {
             $this->wallet_search =  Wallet::where('wallet_id', $this->wallet_id_add)
@@ -148,7 +148,7 @@ class EnderDistributors extends Component
         $this->emit('modal-hide', 'hide');
         $this->emit('success', 'Sous distributeur modifié !');
     }
-  
+
     public function disable()
     {
         $check = SidUser::find($this->user_id);
@@ -215,7 +215,6 @@ class EnderDistributors extends Component
                     $wallet_info_lastname = $wallet_search_user->sidUser->lastname ?? null;
 
                     $wallet_info_image = $wallet_search_user->sidUser->image ?? "public/dist/images/profil.png";
-
                 }
             }
         }
@@ -230,6 +229,4 @@ class EnderDistributors extends Component
             'imagePath'   =>   $wallet_info_image
         ]);
     }
-
-
 }

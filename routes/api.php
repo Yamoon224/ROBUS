@@ -207,6 +207,13 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('add_under_distributors/store', [UserController::class, 'add_under_distributor']);
             Route::post('create_under_distributors/store', [MasterController::class, 'create_under_distributor']);
             Route::get('citie_masters', [MasterController::class, 'citie_masters']);
+
+            // Historique Masters transactions
+            Route::get('historicals', [UserController::class, 'historical_distributer']);
+            Route::get('historical/evolutions', [UserController::class, 'historical_distributer_evolution_master']);
+            Route::get('historical/month_evolutions', [UserController::class, '']);
+            Route::get('historical/year_evolutions', [UserController::class, 'historical_year_distributer']);
+            Route::post('update_drawal/commission_drawal', [UserController::class, 'drawal_commission_masters']);
         });
 
         // COM ZONE APIS

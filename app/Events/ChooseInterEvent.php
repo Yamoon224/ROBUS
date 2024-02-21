@@ -14,7 +14,7 @@ class ChooseInterEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $inter;
+    public $inter;
 
     /**
      * Create a new event instance.

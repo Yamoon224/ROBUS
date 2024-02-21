@@ -7,8 +7,12 @@ use App\Models\EventLog;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class CreatePaiement
+class CreatePaiement 
 {
+
+
+
+
     /**
      * Create the event listener.
      *

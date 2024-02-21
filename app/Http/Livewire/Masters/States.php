@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire\Masters;
 
+use App\Models\Banks\BankCard;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
@@ -10,6 +11,7 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -53,6 +55,9 @@ class States extends Component
         $inter_padding = $this->getTransactionCount(WalletInter::class, 'PENDING');
         $inter_success = $this->getTransactionCount(WalletInter::class, 'SUCCESS');
 
+        $order_card_padding = $this->getTransactionCount(BankCard::class, 'PENDING');
+        $order_card_success = $this->getTransactionCount(BankCard::class, 'SUCCESS');
+
 
         // Gain Month
         $payement_gain_month = $this->getDaysTransactionGain(WalletPayment::class);
@@ -61,6 +66,7 @@ class States extends Component
         $inter_gain_month = $this->getDaysTransactionGain(WalletInter::class);
         $bank_gain_month = $this->getDaysTransactionGain(WalletBank::class);
         $deposit_gain_month = $this->getDaysTransactionGain(WalletDeposit::class);
+        $ordercard_gain_month = $this->getDaysTransactionGain(BankCard::class);
 
         // Gain Days
         $payement_gain_days = $this->getTodayTransactionAmountTotal(WalletPayment::class);
@@ -68,23 +74,29 @@ class States extends Component
         $phonecredit_gain_days = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class);
         $inter_gain_days = $this->getTodayTransactionAmountTotal(WalletInter::class);
         $bank_gain_days = $this->getTodayTransactionAmountTotal(WalletBank::class);
+        $ordercard_gain_days = $this->getTodayTransactionAmountTotal(BankCard::class);
+
         $deposit_gain_days = $this->getTodayTransactionAmountTotal(WalletDeposit::class);
 
         //  SUm gain 
-        $sum_gain = $payement_gain_days + $transaction_gain_days + $phonecredit_gain_days + $inter_gain_days + $bank_gain_days + $deposit_gain_days;
+        $sum_gain =  $ordercard_gain_days  + $payement_gain_days + $transaction_gain_days + $phonecredit_gain_days + $inter_gain_days + $bank_gain_days + $deposit_gain_days;
 
         // Year
         $state_transaction_year =  $this->getMastersGainProperty(WalletTransaction::class);
         $state_payments_year =  $this->getMastersGainProperty(WalletPayment::class);
         $state_banks_year =  $this->getMastersGainProperty(WalletBank::class);
+    
         $state_phone_year =  $this->getMastersGainProperty(WalletPhoneCredit::class);
         $state_deposit_year =  $this->getMastersGainProperty(WalletDeposit::class);
         $state_inter_year =  $this->getMastersGainProperty(WalletInter::class);
+        $state_ordercard_year =  $this->getMastersGainProperty(BankCard::class);
 
         // days
         $state_transaction_days =  $this->getMastersGainDaysProperty(WalletTransaction::class);
         $state_payments_days =  $this->getMastersGainDaysProperty(WalletPayment::class);
         $state_banks_days =  $this->getMastersGainDaysProperty(WalletBank::class);
+        $state_ordercard_days =  $this->getMastersGainDaysProperty(BankCard::class);
+        
         $state_phone_days =  $this->getMastersGainDaysProperty(WalletPhoneCredit::class);
         $state_deposit_days =  $this->getMastersGainDaysProperty(WalletDeposit::class);
         $state_inter_days =  $this->getMastersGainDaysProperty(WalletInter::class);
@@ -99,6 +111,11 @@ class States extends Component
                 'error_payment' => $payment_error,
                 'success_payment' => $payment_success,
                 'pendding_payment' => $payment_padding,
+
+                // 
+                'success_ordercard' => $order_card_success,
+                'pendding_ordercard' => $order_card_padding,
+
                 // 
                 'error_transaction' => $transaction_error,
                 'success_transaction' => $transaction_success,
@@ -125,7 +142,6 @@ class States extends Component
                 'success_inter' => $inter_success,
                 'pendding_inter' => $inter_padding,
 
-
                 // Gains
                 'gain_payment_month' => $payement_gain_month,
                 'gain_transaction_month' => $transaction_gain_month,
@@ -133,6 +149,8 @@ class States extends Component
                 'gain_inter_month' => $inter_gain_month,
                 'gain_bank_month' => $bank_gain_month,
                 'gain_deposit_month' => $deposit_gain_month,
+                'gain_ordercard_month' => $ordercard_gain_month,
+
                 // 
                 'gain_payment_days' => $payement_gain_days,
                 'gain_transaction_days' => $transaction_gain_days,
@@ -140,6 +158,7 @@ class States extends Component
                 'gain_inter_days' => $inter_gain_days,
                 'gain_bank_days' => $bank_gain_days,
                 'gain_deposit_days' => $deposit_gain_days,
+                'gain_ordercard_days' => $ordercard_gain_days,
 
                 // State days
                 'gain_payment_days_state' => $state_payments_days,
@@ -148,6 +167,7 @@ class States extends Component
                 'gain_inter_days_state' => $state_inter_days,
                 'gain_bank_days_state' => $state_banks_days,
                 'gain_deposit_days_state' => $state_deposit_days,
+                'gain_ordercard_days_state' => $state_ordercard_days,
 
                 'gain_payment_month_state' => $state_payments_year,
                 'gain_transaction_month_state' => $state_transaction_year,
@@ -155,6 +175,7 @@ class States extends Component
                 'gain_inter_month_state' => $state_inter_year,
                 'gain_bank_month_state' => $state_banks_year,
                 'gain_deposit_month_state' => $state_deposit_year,
+                'gain_ordercard_month_state' => $state_ordercard_year,
             ]
         );
     }
@@ -164,28 +185,28 @@ class States extends Component
 
     public function getMastersGainDaysProperty($walletModel)
     {
-        $reloads = [];
 
-        $currentYear = Carbon::now()->year;
 
-        // Boucle pour chaque jour de la semaine (1 pour dimanche, 2 pour lundi, etc.)
-        for ($dayOfWeek = 1; $dayOfWeek <= 7; $dayOfWeek++) {
-            $reloadSum = 0;
+        $sidUsers = SidUser::where('master_id',  master()->id)->get();
 
-            foreach (SidUser::where('master_id', master()->id)->get() as $sidUser) {
-                $sidUserId = $sidUser->wallet->id;
+        $totalAmount = 0;
 
-                $reloadSum += $walletModel::where('wallet_id', $sidUserId)
-                    ->where('status', 'SUCCESS')
-                    ->whereYear('created_at', $currentYear)
-                    ->whereRaw("DAYOFWEEK(created_at) = $dayOfWeek")
-                    ->sum('commission_masters');
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->whereDate('created_at', Carbon::today())
+                ->sum('commission_masters');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
             }
-
-            $reloads[] = $reloadSum;
         }
 
-        return $reloads;
+
+        return $totalAmount;
     }
 
 
