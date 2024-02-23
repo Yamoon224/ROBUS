@@ -18,6 +18,7 @@ use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\LevelCountry;
 use App\Models\Custumers\Country;
+use App\Models\Wallets\WalletXbet;
 
 class AdminHistoriqueController extends Controller
 {
@@ -944,11 +945,11 @@ class AdminHistoriqueController extends Controller
 
         $amount_total_banque = $this->getWalletIntersProperty($searchDateBegin, $searchDateEnd);
 
-        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_inter_days', compact('amount_total', 'walletInters', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd' , 'amount_total_banque'))->setOptions(['defaultFont' => 'sans-serif']);
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_inter_days', compact('amount_total', 'walletInters', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd', 'amount_total_banque'))->setOptions(['defaultFont' => 'sans-serif']);
         return $pdf->download('reporting_inters_days.pdf');
     }
 
-    public function getWalletIntersProperty($searchDateBegin , $searchDateEnd)
+    public function getWalletIntersProperty($searchDateBegin, $searchDateEnd)
     {
 
 
@@ -1829,6 +1830,33 @@ class AdminHistoriqueController extends Controller
         return $pdf->download('reporting_payments_days.pdf');
     }
 
+    public function searchByXbetsDate(Request $request)
+    {
+       
+        $this->validate($request, [
+            'search_begin' => 'required|date',
+            'search_end' => 'required|date|after_or_equal:search_begin',
+        ]);
+
+
+        $searchDateBegin = $request->input('search_begin');
+
+        $searchDateEnd = $request->input('search_end');
+
+        $walletInters = $this->getTransactionDate(WalletXbet::class, $searchDateBegin, $searchDateEnd);
+
+        $account_penddings =  $this->getTransactionCount(WalletXbet::class, 'PENDING', $searchDateBegin, $searchDateEnd);;
+
+        $account_success = $this->getTransactionCount(WalletXbet::class, 'SUCCESS', $searchDateBegin, $searchDateEnd);
+
+        $account_errors = $this->getTransactionCount(WalletXbet::class, 'ERROR', $searchDateBegin, $searchDateEnd);
+
+        $amount_total = $this->walletTransactionsDays(WalletXbet::class, $searchDateBegin, $searchDateEnd);
+
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_bank', compact('amount_total', 'walletInters', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_payments_days.pdf');
+    }
+
     public function searchByCartesDate(Request $request)
     {
         $this->validate($request, [
@@ -1912,14 +1940,14 @@ class AdminHistoriqueController extends Controller
         $data = [];
 
         foreach ($wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('status', 'SUCCESS')->get() as $bank) {
-           
+
             $amount_user =  $bank->amount;
 
             $country_user = $bank->wallet;
 
             $amount_banque = $this->getConvertAdminCommission($amount_user, $country_user);
-    
-           
+
+
             $data[] = $amount_banque;
         }
 
@@ -1932,7 +1960,7 @@ class AdminHistoriqueController extends Controller
         $data = [];
 
         foreach ($wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('status', 'SUCCESS')->get() as $bank) {
-           
+
             $data[] = $bank->amount;
         }
 

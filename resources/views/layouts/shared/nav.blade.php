@@ -391,6 +391,7 @@
                                 <div class="side-menu__title"> Applications </div>
                             </a>
                         </li>
+                        
                     @endif
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('Faqs'))
@@ -412,6 +413,17 @@
                                 </a>
                             </li>
                         @endif
+
+                        @if (Auth::guard('web')->user()->hasPermissionTo('roles'))
+                        <li>
+                            <a href="{{ route('activites.browse_activites') }}"
+                                class="side-menu {{ $route == 'activites.browse_activites'  ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity"
+                                    class="block mx-auto"></i></div>
+                                <div class="side-menu__title"> Activités </div>
+                            </a>
+                        </li>
+                    @endif
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('active-pays'))
                             <li>

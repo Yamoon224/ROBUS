@@ -710,6 +710,12 @@ class HistoricalController extends Controller
     }
 
 
+    public function browse_xbets()
+    {
+        return view('pages.historicals.browse_xbets');
+
+    }
+
     public function browse_drawer()
     {
         return view('pages.historicals.browse_drawer');

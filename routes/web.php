@@ -292,6 +292,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/inters_historical', [HistoricalController::class, 'browse_inter'])->name('inters.historical');
             Route::get('/cartes_historical', [HistoricalController::class, 'browse_carte'])->name('cartes.historical');
             Route::get('/phone_historical', [HistoricalController::class, 'browse_phone'])->name('phones.historical');
+            Route::get('/xbet_historical', [HistoricalController::class, 'browse_xbets'])->name('xbets.historical');
             Route::get('/drawer_historical', [HistoricalController::class, 'browse_drawer'])->name('drawers.historical');
         });
 
@@ -382,6 +383,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('transactions_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByTransactionsDate'])->name('inters.historical.reporting_transaction_days_historical.admins');
             Route::get('payment_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByPaymentsDate'])->name('inters.historical.reporting_payment_days_historical.admins');
             Route::get('banks_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByBanksDate'])->name('inters.historical.reporting_bank_days_historical.admins');
+            Route::get('xbets_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByXbetsDate'])->name('inters.historical.reporting_xbet_days_historical.admins');
             Route::get('cartes_days/reporting_cartes_days_historical', [AdminHistoriqueController::class, 'searchByCartesDate'])->name('inters.historical.reporting_cartes_days_historical.admins');
 
             Route::get('payments/reporting_payment_historical/{id}', [AdminHistoriqueController::class, 'reporting_payment_historical'])->name('payments.historical.reporting_payment_historical.admins');

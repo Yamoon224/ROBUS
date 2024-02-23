@@ -57,7 +57,7 @@ class InterProviderController extends Controller
     public function index()
     {
         $countriesOptions = $this->providersService->getProvidersForCountryInters();
-            
+                
         return new AllCountrieCollection($countriesOptions);
     }
 

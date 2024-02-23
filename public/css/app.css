@@ -23,6 +23,28 @@
   overflow: hidden; /* Si le contenu dépasse la hauteur fixe, masquer le surplus */
 }
 
+.style_user1 {
+
+  background-color: #1FA055  !important;
+  color : white !important;
+
+}
+
+.style_user2 {
+
+  background-color: #175732  !important;
+  color : white !important;
+
+}
+
+.style_user3 {
+  background-color: #798933  !important;
+  color : white !important;
+
+}
+
+
+
 .color-wallet {
   background-color: #fe9f05;
 }
@@ -32,11 +54,30 @@
   background-color: #0000FF;
 }
 
+.style_facture_home  {
+  background-color: #6C0277 !important;
+  color : white !important;
+}
+
+.style_facture_home3  {
+  background-color: #2E006C !important;
+  color : white !important;
+}
+
+.style_facture_home2  {
+  background-color: #AD4F09  !important;
+  color : white !important;
+}
 
 .color-wallet3 {
   background-color: #FF0000;
   color : white !important;
 }
+
+/* .style_app {
+  background-color:  #568203 !important;
+  color : white !important;
+} */
 
 .style_privaty {
   font-size: 1rem;

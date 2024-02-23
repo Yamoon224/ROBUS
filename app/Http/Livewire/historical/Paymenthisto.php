@@ -212,79 +212,8 @@ class Paymenthisto extends Component
 
         if ( Auth::guard('web')->user()->wallet->sidUser->is_under_distributer == true) {
 
-            if ($this->startDate && $this->endDate) {
+                   abort(403);
 
-                // $paiements->whereBetween('wallet_payments.created_at', [$this->startDate, $this->endDate]);
-
-                return view(
-                    'livewire.historical.paymenthisto',
-                    [
-                        'user' => $this->WalletPaymentsDays,
-                        'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->whereBetween('wallet_payments.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
-                        'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
-                        'sum_commissions' => $this->WalletPaymentDays,
-                        'provider_paiements' => $this->PaiementTransaction,
-                        'offers_canal' => $offers,
-    
-    
-                    ]
-                );
-            }
-
-            if ($this->searchPaymentHistorical != "") {
-
-                $this->resetPage();
-
-                $paiements->orwhereHas(
-                    'payment',
-                    function ($query) {
-                        $query->where('operator_transaction_name', 'like', '%' . $this->searchPaymentHistorical . '%')
-                            ->orWhere('transaction_id', 'like', '%' .  $this->searchPaymentHistorical   . '%')
-                            ->orWhere('trans_comp_id', 'like', '%' .  $this->searchPaymentHistorical  . '%');
-                    }
-                )
-                    ->orWhere("wallet_payments.amount", "like",  "%" . $this->searchPaymentHistorical . "%")
-                    ->orWhere("wallet_payments.number_phone", "like",  "%" . $this->searchPaymentHistorical . "%")
-                    ->orWhere("wallet_payments.name", "like",  "%" . $this->searchPaymentHistorical . "%")
-                    ->orWhere("wallet_payments.number_decoder", "like",  "%" . $this->searchPaymentHistorical . "%")
-                    ->orWhere("wallet_payments.phone", "like",  "%" . $this->searchPaymentHistorical . "%")
-                    ->orWhere("wallet_payments.id_invoice_pre", "like",  "%" . $this->searchPaymentHistorical . "%")
-                    ->orWhere("wallet_payments.id_invoice", "like",  "%" . $this->searchPaymentHistorical . "%");
-            }
-            
-            if ($this->statusFilter != "") {
-
-                // $paiements->where("wallet_payments.status", $this->statusFilter);
-
-
-                return view(
-                    'livewire.historical.paymenthisto',
-                    [
-                        'user' => $this->PaymentsAllStatus,
-                        'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where("wallet_payments.status", $this->statusFilter)->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
-                        'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
-                        'sum_commissions' => $this->WalletPaymentStatus,
-                        'provider_paiements' => $this->PaiementTransaction,
-                        'offers_canal' => $offers,
-                    ]
-                );
-            }
-
-            return view(
-                'livewire.historical.paymenthisto',
-                [
-                    'user' => Auth::guard('web')->user(),
-                    'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
-                    'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
-                    'sum_commissions' => $this->WalletPaymentUser,
-                    'provider_paiements' => $this->PaiementTransaction,
-                    'offers_canal' => $offers,
-
-                ]
-            );
         } else 
         {
 
@@ -435,30 +364,6 @@ class Paymenthisto extends Component
     }
 
 
-    public function getWalletPaymentStatusProperty()
-    {
-
-        $data = [];
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where("wallet_payments.status", $this->statusFilter)->where('wallet_payments.status', 'SUCCESS')->select('wallet_payments.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-
-    public function getWalletPaymentDaysProperty()
-    {
-
-        $data = [];
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where("wallet_payments.status", $this->statusFilter)->where('wallet_payments.status', 'SUCCESS')->select('wallet_payments.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
 
 
 
@@ -472,29 +377,5 @@ class Paymenthisto extends Component
 
         return $payments;
     }
-    // Admin 
-    public function getWalletPaymentProperty()
-    {
 
-        $data = [];
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_payments.status', 'SUCCESS')->select('wallet_payments.*')->get() as $bank) {
-            $data[] = $bank->commissions_admin;
-        }
-
-        return array_sum($data);
-    }
-
-    // User 
-    public function getWalletPaymentUserProperty()
-    {
-
-        $data = [];
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->where('wallet_payments.status', 'SUCCESS')->select('wallet_payments.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
 }

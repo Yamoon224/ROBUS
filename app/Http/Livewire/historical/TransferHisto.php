@@ -472,55 +472,7 @@ class TransferHisto extends Component
 
         if ($walletUser->wallet->sidUser->is_under_distributer == true) {
 
-
-            if ($this->startDate && $this->endDate) {
-
-                // $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15);
-
-                return view(
-                    'livewire.historical.transfer-histo',
-                    [
-                        'user' => $this->TransactionsDays,
-                        'transfer_historicals' =>  $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
-                        'usersCountry' =>  $walletUser->country->currencie->name,
-                        'sum_commissions' => $this->WalletRelaodDistributeDays,
-                        'providers' =>  $this->NationTransaction,
-
-                    ]
-                );
-            }
-
-            if ($this->searchTransferHistorical != "") {
-
-                $this->resetPage();
-
-                $transfers->orwhereHas(
-                    'transaction',
-                    function ($query) {
-                        $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchTransferHistorical . '%')
-                            ->orWhere('transaction_id', 'like', '%' .  $this->searchTransferHistorical   . '%')
-                            ->orWhere('trans_comp_id', 'like', '%' .  $this->searchTransferHistorical  . '%');
-                    }
-                )
-                    ->orWhere("wallet_transactions.amount", "LIKE",  "%" . $this->searchTransferHistorical . "%")
-                    ->orWhere("wallet_transactions.num_wallet", "LIKE",  "%" . $this->searchTransferHistorical . "%")
-                    ->orWhere("wallet_transactions.phone", "LIKE",  "%" . $this->searchTransferHistorical . "%");
-            }
-
-            if ($this->statusTransferFilter != "") {
-                $transfers->where("wallet_transactions.status", $this->statusTransferFilter);
-            }
-
-            return view(
-                'livewire.historical.transfer-histo',
-                [
-                    'user' => $this->TransactionsAllDays,
-                    'transfer_historicals' => $transfers->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
-                    'usersCountry' =>  $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletRelaodDistributer,
-                    'providers' =>  $this->NationTransaction,
-                ]
-            );
+            abort(403);
         } else {
 
             if ($this->startDate && $this->endDate) {
@@ -533,7 +485,6 @@ class TransferHisto extends Component
                         'user' => $this->TransactionsDays,
                         'transfer_historicals' =>  $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                         'usersCountry' =>  $walletUser->country->currencie->name,
-                        'sum_commissions' => $this->WalletRelaodDistributeDays,
                         'providers' =>  $this->NationTransaction,
 
                     ]
@@ -567,7 +518,6 @@ class TransferHisto extends Component
                         'user' => $this->TransactionsAllStatus,
                         'transfer_historicals' => $transfers->where("wallet_transactions.status", $this->statusTransferFilter)->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                         'usersCountry' =>  $walletUser->country->currencie->name,
-                        'sum_commissions' => $this->WalletRelaodDistributerStatus,
                         'providers' =>  $this->NationTransaction,
 
                     ]
@@ -580,7 +530,6 @@ class TransferHisto extends Component
                     'user' => $this->TransactionsAllDays,
                     'transfer_historicals' => $transfers->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                     'usersCountry' =>  $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletRelaodDistributer,
                     'providers' =>  $this->NationTransaction,
 
                 ]
@@ -931,41 +880,6 @@ class TransferHisto extends Component
         return $transaction_nationnal;
     }
 
-    // Admin 
-    public function getWalletRelaodProperty()
-    {
-        $data = [];
-        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
-            $data[] = $bank->commissions_admin;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletRelaodDistributerProperty()
-    {
-        $data = [];
-        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
-            $data[] = $bank->costs_amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletRelaodDistributerStatusProperty()
-    {
-        $data = [];
-        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where("wallet_transactions.status", $this->statusTransferFilter)->select('wallet_transactions.*')->get() as $bank) {
-            $data[] = $bank->costs_amount;
-        }
-
-        return array_sum($data);
-    }
-
-
     public function getWalletRelaodDistributeDaysProperty()
     {
 
@@ -977,18 +891,6 @@ class TransferHisto extends Component
         foreach ($wallettransactions as $wallet) {
             // Accédez à la propriété amount sur chaque objet
             $data[] = $wallet->costs_amount;
-        }
-
-        return array_sum($data);
-    }
-    // User 
-    public function getWalletRelaodUserProperty()
-    {
-
-        $data = [];
-        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
-            $data[] = $bank->commissions;
         }
 
         return array_sum($data);

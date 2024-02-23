@@ -186,43 +186,8 @@ class PhoneCredithisto extends Component
 
         if ($walletUser->wallet->sidUser->is_under_distributer == true ) {
 
-            if ($this->startDate && $this->endDate) {
+            abort(403);
 
-                $phones->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate]);
-            }
-
-            if ($this->searchPhoneHistorical != "") {
-
-                $this->resetPage();
-
-                $phones->orwhereHas(
-                    'paymentPhone',
-                    function ($query) {
-                        $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchPhoneHistorical . '%')
-                            ->orWhere('transaction_id', 'like', '%' .  $this->searchPhoneHistorical   . '%')
-                            ->orWhere('trans_comp_id', 'like', '%' .  $this->searchPhoneHistorical  . '%');
-                    }
-                )
-                    ->orWhere("wallet_phone_credits.amount", "LIKE",  "%" . $this->searchPhoneHistorical . "%")
-                    ->orWhere("wallet_phone_credits.phone", "LIKE",  "%" . $this->searchPhoneHistorical . "%");
-            }
-
-            if ($this->statusPhoneFilter != "") {
-                $phones->where("wallet_phone_credits.status", $this->statusPhoneFilter);
-            }
-
-            return view(
-                'livewire.historical.phone-credithisto',
-                [
-                    'user' => $walletUser,
-                    'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
-                    'usersCountry' =>   $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletPhoneCreditUser,
-                    'provider_credits' => $this->PhoneCreditTransaction,
-
-                ]
-            );
         } else
          {
 
@@ -237,7 +202,6 @@ class PhoneCredithisto extends Component
                         'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
                             ->where('wallets.country_id', $walletUser->country->id)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
                         'usersCountry' =>   $walletUser->country->currencie->name,
-                        'sum_commissions' => $this->WalletPhoneCreditDays,
                         'provider_credits' => $this->PhoneCreditTransaction,
     
                     ]
@@ -271,7 +235,6 @@ class PhoneCredithisto extends Component
                         'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
                             ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_phone_credits.created_at', 'desc')->where("wallet_phone_credits.status", $this->statusPhoneFilter)->select('wallet_phone_credits.*')->paginate(15),
                         'usersCountry' =>   $walletUser->country->currencie->name,
-                        'sum_commissions' => $this->WalletPhoneCreditStatus,
                         'provider_credits' => $this->PhoneCreditTransaction,
     
                     ]
@@ -285,7 +248,6 @@ class PhoneCredithisto extends Component
                     'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletPhoneCredit,
                     'provider_credits' => $this->PhoneCreditTransaction,
 
                 ]
@@ -379,32 +341,7 @@ class PhoneCredithisto extends Component
     }
 
 
-    public function getWalletPhoneCreditStatusProperty()
-    {
-
-        $data = [];
-        foreach (WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where("wallet_phone_credits.status", $this->statusPhoneFilter)->where('wallet_phone_credits.status', 'SUCCESS')->select('wallet_phone_credits.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-
-    // Admin 
-    public function getWalletPhoneCreditProperty()
-    {
-
-        $data = [];
-        foreach (WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_phone_credits.status', 'SUCCESS')->select('wallet_phone_credits.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
+   
 
     public function getWalletPhoneCreditDaysProperty()
     {
@@ -425,16 +362,5 @@ class PhoneCredithisto extends Component
     }
 
 
-    // User 
-    public function getWalletPhoneCreditUserProperty()
-    {
 
-        $data = [];
-        foreach (WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)->where('wallet_phone_credits.status', 'SUCCESS')->select('wallet_phone_credits.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
 }

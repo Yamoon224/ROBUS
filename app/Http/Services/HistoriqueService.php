@@ -19,32 +19,128 @@ class HistoriqueService
 {
 
     protected $convertionService;
-    
+
     public function mount(ConvertionService $convertionService)
     {
         $this->convertionService = $convertionService;
     }
 
- 
-
-    // Sum Admin
-    public function getWalletBankSumAdmin()
+    public function getTransactionAllamount($walletModel)
     {
 
 
-        $data = [];
+        return $walletModel::whereStatus('SUCCESS')
+        ->sum('amount');
+    }
 
-        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->whereDate('wallet_banks.created_at', Carbon::today())->select('wallet_banks.*')->where('wallet_banks.status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
-        }
+    public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days)
+    {
 
-        return array_sum($data);
+
+        return $walletModel::join(
+            'wallets',
+            $wallet_transactions,
+            'wallets.id'
+        )
+            ->whereDate($transaction_days, Carbon::today())
+            ->where(function ($query) {
+                $countryId = sabdy()->country->id;
+                if (sabdy()->is_distributer) {
+                    $query->where('wallets.country_id', '=', sabdy()->id);
+                } else {
+
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                }
+            })
+            ->count();
     }
 
 
-    
+    // count valeurs
+    public function getTransactionCount($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status)
+    {
+
+        return $walletModel::join(
+            'wallets',
+            $wallet_transactions,
+            'wallets.id'
+        )
+            ->whereDate($transaction_days, Carbon::today())
+            ->where(function ($query) use ($walletMy) {
+                if (sabdy()->is_distributer) {
+                    $query->where($walletMy, '=', sabdy()->id);
+                } else {
+                    $query->where($walletMy, '=', sabdy()->id)->orWhere($walletMy, '!=', sabdy()->id);
+                }
+            })
+            ->where($wallet_status, $status)
+            ->where(function ($query) {
+                $countryId = sabdy()->country->id;
+                if (sabdy()->is_distributer) {
+                    $query->where('wallets.country_id', '=', sabdy()->id);
+                } else {
+
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                }
+            })
+            ->count();
+    }
+
+    // Sum amount days valeurs
+    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
+    {
+
+        return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+            ->whereDate($transaction_days, Carbon::today())
+            ->where(function ($query) use ($walletMy) {
+                if (sabdy()->is_distributer) {
+                    $query->where($walletMy, '=', sabdy()->id);
+                } else {
+                    $query->where($walletMy, '=', sabdy()->id)->orWhere($walletMy, '!=', sabdy()->id);
+                }
+            })
+            // ->where($transaction_status, 'SUCCESS')
+            ->where(function ($query) {
+                $countryId = sabdy()->country->id;
+                if (sabdy()->is_distributer) {
+                    $query->where('wallets.country_id', '=', sabdy()->id);
+                } else {
+
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                }
+            })
+            ->sum($wallet_amount);
+    }
+
+    // Sum amount month valeurs
+    public function getDaysTransaction($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
+    {
+
+        return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+            ->whereMonth($transaction_days, now()->month)
+            ->where(function ($query) use ($walletMy) {
+                if (sabdy()->is_distributer) {
+                    $query->where($walletMy, '=', sabdy()->id);
+                } else {
+                    $query->where($walletMy, '=', sabdy()->id)->orWhere($walletMy, '!=', sabdy()->id);
+                }
+            })
+            // ->where($transaction_status, 'SUCCESS')
+            ->where(function ($query) {
+                $countryId = sabdy()->country->id;
+                if (sabdy()->is_distributer) {
+                    $query->where('wallets.country_id', '=', sabdy()->id);
+                } else {
+
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                }
+            })
+            ->sum($wallet_amount);
+    }
 
     public function getSDistributeurSumAdmin()
     {
@@ -96,6 +192,8 @@ class HistoriqueService
 
         return array_sum($data);
     }
+
+
     public function getCustumersSumAdmin()
     {
 
@@ -112,102 +210,4 @@ class HistoriqueService
 
         return array_sum($data);
     }
-
-    public function getWalletDepositSumAdmin()
-    {
-
-
-        $data = [];
-
-        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_deposits.*')
-            ->whereDate('wallet_deposits.created_at', Carbon::today())->where('wallet_deposits.status', 'SUCCESS')->get() as $deposit) {
-            $data[] = $deposit->amount;
-        }
-
-        return array_sum($data);
-    }
-
-
-    public function getWalletPaymentSumAdmin()
-    {
-
-
-        $data = [];
-
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_payments.*')
-            ->whereDate('wallet_payments.created_at', Carbon::today())->where('wallet_payments.status', 'SUCCESS')->get() as $payment) {
-            $data[] = $payment->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionSumAdmin()
-    {
-
-
-        $data = [];
-
-        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_transactions.*')
-            ->whereDate('wallet_transactions.created_at', Carbon::today())->where('wallet_transactions.status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletInterSumAdmin()
-    {
-
-
-        $data = [];
-
-        foreach (WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_inters.*')
-            ->whereDate('wallet_inters.created_at', Carbon::today())->where('wallet_inters.status', 'SUCCESS')->get() as $inter) {
-            $data[] = $inter->amount;
-        }
-
-        return array_sum($data);
-    }
-    public function getWalletPhoneCreditSumAdmin()
-    {
-
-
-        $data = [];
-
-        foreach (WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_phone_credits.*')
-            ->whereDate('wallet_phone_credits.created_at', Carbon::today())->where('wallet_phone_credits.status', 'SUCCESS')->get() as $phone) {
-            $data[] = $phone->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletReloadSumAdmin()
-    {
-
-
-
-        $data = [];
-
-        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_reloads.*')
-            ->whereDate('wallet_reloads.created_at', Carbon::today())->where('wallet_reloads.status', 'SUCCESS')->get() as $reload) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
-    }
-  
 }

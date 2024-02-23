@@ -75,6 +75,12 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::get('/read/{id}/delete', [PermissionController::class, 'delete'])->name('permissions.delete');
     });
 
+
+    Route::group(['prefix' => 'activites'], function () {
+        Route::get('/browse',  [AdminController::class, 'browse_activites'])->name('activites.browse_activites');
+    });
+
+
     Route::group(['prefix' => 'roles'], function () {
         Route::post('/search', [RoleController::class, 'search'])->name('roles.search');
         Route::get('/browse', [RoleController::class, 'browse'])->name('roles.browse');

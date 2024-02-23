@@ -63,6 +63,15 @@ class AdminController extends Controller
     }
 
 
+    Public function browse_activites()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-administrateur')) {
+            abort(403);
+        }
+        return view('pages.admin.activities');
+
+    }
+
     public function check(Request $request)
     {
         $validator = Validator::make($request->all(), [

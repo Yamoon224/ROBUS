@@ -73,7 +73,7 @@
                     </div>
                 </div>
 
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-pendd">
+                <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style-pendd">
                     <div>
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
@@ -89,7 +89,7 @@
                     </div>
                 </div>
                 <div
-                    class="col-span-12 sm:col-span-4 2xl:col-span-2 box bg-primary p-5 cursor-pointer zoom-in style-success">
+                    class="col-span-12 sm:col-span-4 2xl:col-span-3 box bg-primary p-5 cursor-pointer zoom-in style-success">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                         stroke-linejoin="round" class="feather feather-check font-medium-5">
@@ -100,7 +100,7 @@
                         {{ $inter_historicals->where('status', 'SUCCESS')->count() ?? null }}
                     </div>
                 </div>
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-error ">
+                <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style-error ">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                         stroke-linejoin="round" class="feather feather-x-circle font-medium-5">
@@ -113,18 +113,6 @@
                         {{ $inter_historicals->where('status', 'ERROR')->count() ?? null }}</div>
                 </div>
 
-                <div
-                    class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                        class="lucide lucide-credit-card report-box__icon text-secondary">
-                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                        <line x1="1" y1="10" x2="23" y2="10"></line>
-                    </svg>
-                    <div class="font-medium text-historique mt-6">Commissions </div>
-                    <div class="text-slate-500 mt-3"> {{ $sum_commissions }} {{ $usersCountry }}</div>
-                </div>
             </div>
         </div>
     </div>

@@ -31,7 +31,7 @@ class Transaction extends Component
                 'percent_admin' => 'required',
                 'percent_transaction' => 'required',
                 'percent_deposit' => 'required',
-        'comission_canal' => 'required',
+                'comission_canal' => 'required',
             ],
             [
                 'transaction_name.required' => 'Ce champ est requis',
@@ -52,7 +52,7 @@ class Transaction extends Component
                     'created_by' => Auth::guard('web')->user()->id,
                     'percent_masters'  => $this->comission_master,
                     'status'  => 1,
-                                        
+
                 ]
             );
             $this->transaction_name = '';
@@ -67,7 +67,7 @@ class Transaction extends Component
     public function edit($id, $state)
     {
         $check = TransactionCost::whereId($id)->first();
-      
+
         $this->transaction_id = $check->id;
         $this->transaction_name = $check->name;
         $this->percent_transaction = $check->percent * 100;
@@ -212,14 +212,6 @@ class Transaction extends Component
 
 
     public function delete()
-    {
-        $check = TransactionCost::find($this->transaction_id);
-        if (!empty($check)) {
-            $check->destroy($this->transaction_id);
-            $this->emit('modal-hide', 'hide');
-            $this->emit('success', 'Internationnal supprimée !');
-        }
-    }  public function delete()
     {
         $check = TransactionCost::find($this->transaction_id);
         if (!empty($check)) {

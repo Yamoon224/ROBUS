@@ -139,8 +139,8 @@
                     </a>
                 </div>
             </div>
-            <div class="col-span-12 md:col-span-6 lg:col-span-4 " style="background-color: #ff0101; color:white;">
-                <div class="intro-y box p-5 mt-12 sm:mt-5" style="background-color: #ff0101; color:white;">
+            <div class="col-span-12 md:col-span-6 lg:col-span-4 style_user1">
+                <div class="intro-y box p-5 mt-12 sm:mt-5 style_user1">
                     <div
                         class="flex text-slate-500 border-b border-slate-200 dark:border-darkmode-300 border-dashed pb-3 mb-3">
                         <div>Paiement de facture</div>
@@ -316,6 +316,39 @@
                         </div>
                     @endforeach
                     <a style="color: white;" href="{{ route('drawers.historical') }}"
+                        class="btn btn-outline-secondary w-full border-slate-300  border-dashed relative justify-start mb-2">
+                        <span class="truncate mr-5">Voir plus</span>
+                        <span
+                            class="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="arrow-right"
+                                data-lucide="arrow-right" class="lucide lucide-arrow-right w-4 h-4">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-span-12 md:col-span-6 lg:col-span-4 mt-1 ">
+                <div class="intro-y box p-5 mt-12 sm:mt-5  ">
+                    <div
+                        class="flex text-slate-500 border-b border-slate-200 dark:border-darkmode-300 border-dashed pb-3 mb-3 v">
+                        <div>Service 1xbets</div>
+                        <div class="ml-auto">Date</div>
+                    </div>
+                    @foreach ($Wallet_xbet_last as $reload)
+                    <div class="flex items-center mb-5">
+                        <div class="flex items-center">
+                            <div>{{ $reload->provider->name ?? null }}</div>
+
+                        </div>
+                        <div class="ml-auto">{{ $reload->created_at ?? null }}</div>
+                    </div>
+                    @endforeach
+                    <a style="color: white;" href="{{ route('xbets.historical') }}"
                         class="btn btn-outline-secondary w-full border-slate-300  border-dashed relative justify-start mb-2">
                         <span class="truncate mr-5">Voir plus</span>
                         <span
