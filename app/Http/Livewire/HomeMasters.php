@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\CloseApp;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
@@ -10,6 +11,7 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
@@ -91,6 +93,8 @@ class HomeMasters extends Component
         //  SUm gain 
         $sum_gain = $payement_gain_days + $transaction_gain_days + $phonecredit_gain_days + $inter_gain_days + $bank_gain_days + $deposit_gain_days ;
 
+        $closeRobus = CloseApp::orderBy('id' , 'asc')->get();
+        
         return view(
             'livewire.home-masters',
             [
@@ -156,9 +160,31 @@ class HomeMasters extends Component
                 'gain_inter_days' => $inter_gain_days,
                 'gain_bank_days' => $bank_gain_days,
                 'gain_deposit_days' => $deposit_gain_days,
+                // Users
+                'custumers_counts' =>  $this->CustumersCount,
+                'under_counts' => $this->SidUsersCount,
+                'open_apps' => $closeRobus,
+
             ]
         );
     }
+
+    public function getSidUsersCountProperty()
+    {
+
+        $sidUsers = SidUser::where('is_under_distributer',true)->where('master_id',  master()->id)->count();
+      
+        return $sidUsers;
+    }
+
+    public function getCustumersCountProperty()
+    {
+
+        $sidUsers = SidUser::whereIsCustumers(true)->where('master_id',  master()->id)->count();
+      
+        return $sidUsers;
+    }
+
 
 
     public function getDaysTransaction($walletModel)

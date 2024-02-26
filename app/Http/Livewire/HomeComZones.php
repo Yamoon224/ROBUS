@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\CloseApp;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
@@ -57,27 +58,46 @@ class HomeComZones extends Component
 
 
         // Amount transactions days
-        $payement_amount = $this->getTodayTransactionAmountTotal(WalletPayment::class , 'wallet_payments.wallet_id', 'wallet_payments.created_at' ,  'wallet_payments.status' ,  'wallet_payments.amount');
-        $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class , 'wallet_transactions.wallet_id', 'wallet_transactions.created_at' ,  'wallet_transactions.status' ,  'wallet_transactions.amount');
+        $payement_amount = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at',  'wallet_payments.status',  'wallet_payments.amount');
+        $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at',  'wallet_transactions.status',  'wallet_transactions.amount');
         $reload_amount = $this->getTodayReloadAmountTotal(WalletReload::class);
-        $phonecredit_amount = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class , 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at' ,  'wallet_phone_credits.status' ,  'wallet_phone_credits.amount');
-        $inter_amount = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at' ,  'wallet_inters.status' ,  'wallet_inters.amount');
-        $bank_amount = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at' ,  'wallet_banks.status',  'wallet_banks.amount');
-        $deposit_amount = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at' ,  'wallet_deposits.status',  'wallet_deposits.amount');
+        $phonecredit_amount = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
+        $inter_amount = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at',  'wallet_inters.status',  'wallet_inters.amount');
+        $bank_amount = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at',  'wallet_banks.status',  'wallet_banks.amount');
+        $deposit_amount = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at',  'wallet_deposits.status',  'wallet_deposits.amount');
 
         // Amount transactions month
-        $payement_amount_month = $this->getDaysTransaction(WalletPayment::class ,'wallet_payments.wallet_id', 'wallet_payments.created_at' ,  'wallet_payments.status',  'wallet_payments.amount');
-        $transaction_amount_month = $this->getDaysTransaction(WalletTransaction::class , 'wallet_transactions.wallet_id', 'wallet_transactions.created_at' ,  'wallet_transactions.status',  'wallet_transactions.amount');
+        $payement_amount_month = $this->getDaysTransaction(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at',  'wallet_payments.status',  'wallet_payments.amount');
+        $transaction_amount_month = $this->getDaysTransaction(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at',  'wallet_transactions.status',  'wallet_transactions.amount');
         $reload_amount_month = $this->getDaysReloadAmountTotal(WalletReload::class);
-        $phonecredit_amount_month = $this->getDaysTransaction(WalletPhoneCredit::class , 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at' ,  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
-        $inter_amount_month = $this->getDaysTransaction(WalletInter::class , 'wallet_inters.wallet_id', 'wallet_inters.created_at' ,  'wallet_inters.status' ,  'wallet_inters.amount');
-        $bank_amount_month = $this->getDaysTransaction(WalletBank::class , 'wallet_banks.wallet_id', 'wallet_banks.created_at' ,  'wallet_banks.status',  'wallet_banks.amount');
-        $deposit_amount_month = $this->getDaysTransaction(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at' ,  'wallet_deposits.status',  'wallet_deposits.amount');
+        $phonecredit_amount_month = $this->getDaysTransaction(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
+        $inter_amount_month = $this->getDaysTransaction(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at',  'wallet_inters.status',  'wallet_inters.amount');
+        $bank_amount_month = $this->getDaysTransaction(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at',  'wallet_banks.status',  'wallet_banks.amount');
+        $deposit_amount_month = $this->getDaysTransaction(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at',  'wallet_deposits.status',  'wallet_deposits.amount');
+        $closeRobus = CloseApp::orderBy('id', 'asc')->get();
 
+        // Get Users
+        $custumers = $this->getUserTypeTotal('is_custumers', true);
+        $underDistributors = $this->getUserTypeTotal('is_under_distributer', true);
+        $masters = $this->getUserTypeTotal('is_master', true);
+        $supervisors = $this->getUserTypeTotal('is_supervisor', true);
+        $distributors = $this->getUserTypeTotal('is_distributer', true);
+        $companies = $this->getUserTypeTotal('is_company', true);
+        $comzones = $this->getUserTypeTotal('is_com_zone', true);
 
         return view(
             'livewire.home-com-zones',
             [
+
+                // Users
+
+                'is_masters' => $masters,
+                'is_custumers' => $custumers,
+                'is_distributors' => $distributors,
+                'is_underdistributors' => $underDistributors,
+                'is_supervisors' => $supervisors,
+                'is_compagnies' => $companies,
+                'is_comzones' => $comzones,
 
                 'user_currencie' => $currencie,
                 'error_payment' => $payment_error,
@@ -125,22 +145,32 @@ class HomeComZones extends Component
                 'amount_inter_month' => $inter_amount_month,
                 'amount_bank_month' => $bank_amount_month,
                 'amount_deposit_month' => $deposit_amount_month,
+                'open_apps' => $closeRobus,
+
             ]
         );
     }
 
 
-    public function getDaysTransaction($walletModel, $wallet_transaction, $transaction_days, $transaction_status , $wallet_amount)
+    public function getUserTypeTotal($user , $status)
+    {
+
+        $totalUsers = SidUser::where('country_id' , sabdy()->country->id)->where($user,  $status)->count();
+
+        return $totalUsers;
+    }
+
+    public function getDaysTransaction($walletModel, $wallet_transaction, $transaction_days, $transaction_status, $wallet_amount)
     {
 
         return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-        ->where('wallets.country_id', comzone()->country->id)
-        ->whereMonth($transaction_days, now()->month)
-        ->where($transaction_status, 'SUCCESS')
-        ->sum($wallet_amount);
+            ->where('wallets.country_id', comzone()->country->id)
+            ->whereMonth($transaction_days, now()->month)
+            ->where($transaction_status, 'SUCCESS')
+            ->sum($wallet_amount);
     }
 
-  
+
 
     public function getTransactionCount($walletModel, $status, $wallet_transactions, $wallet_status)
     {
@@ -169,15 +199,15 @@ class HomeComZones extends Component
     }
 
 
-    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $transaction_status , $wallet_amount)
+    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $transaction_status, $wallet_amount)
     {
 
 
         return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-        ->where('wallets.country_id', comzone()->country->id)
-        ->whereDate($transaction_days, Carbon::today())
-        ->where($transaction_status, 'SUCCESS')
-        ->sum($wallet_amount);
+            ->where('wallets.country_id', comzone()->country->id)
+            ->whereDate($transaction_days, Carbon::today())
+            ->where($transaction_status, 'SUCCESS')
+            ->sum($wallet_amount);
     }
 
 

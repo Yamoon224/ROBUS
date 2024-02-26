@@ -24,6 +24,28 @@
   text-indent: inherit !important;
 
 }
+
+.style_user1 {
+
+  background-color: #1FA055  !important;
+  color : white !important;
+
+}
+
+.style_user2 {
+
+  background-color: #175732  !important;
+  color : white !important;
+
+}
+
+.style_user3 {
+  background-color: #798933  !important;
+  color : white !important;
+
+}
+
+
 .style_image_providers {
   margin-top: -1.2rem;
   margin-bottom: -1.2rem;
