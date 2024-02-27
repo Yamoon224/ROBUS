@@ -5,7 +5,7 @@
 <!-- BEGIN: Side Menu -->
 <nav class="side-nav">
     <a href="{{ route('/') }}" class="intro-x flex items-center pl-5 pt-4">
-        <img alt="" class="w-6" src="{{ asset('public/dist/images/login.jpg') }}">
+        <img alt="Robus" class="w-6" src="{{ asset('public/dist/images/login.jpg') }}">
         <span class="hidden xl:block text-white text-lg ml-3"> ROBUS </span>
     </a>
     <div class="side-nav__devider my-4"></div>
@@ -40,9 +40,7 @@
                                 ->orderBy('name', 'asc')
                                 ->get();
                         } elseif ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false) {
-                            $countries = App\Models\Custumers\Country::where('robus', true)
-                                ->orderBy('name', 'asc')
-                                ->get();
+                            $countries = App\Models\Custumers\Country::where('robus', true)->orderBy('name', 'asc')->get();
                         }
 
                     @endphp
@@ -163,8 +161,8 @@
                     @if (Auth::guard('web')->user()->hasPermissionTo('com-zone'))
                         <li>
 
-                            <a href="{{ route('company.browse') }}"
-                                class="side-menu {{ $route == 'company.browse' || $route == 'masters.admins.show' || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
+                            <a href="{{ route('comzone.browse') }}"
+                                class="side-menu {{ $route == 'comzone.browse' || $route == 'comzone.show_comzone' || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
                                 </div>
                                 <div class="side-menu__title"> COM ZONE </div>
@@ -357,7 +355,7 @@
 
             <li>
                 <a href="javascript:;"
-                    class="side-menu {{ request()->is('application*') || request()->is('operators*')  || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*') ? 'side-menu--active' : '' }}">
+                    class="side-menu {{ request()->is('application*') || request()->is('operators*') || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*') ? 'side-menu--active' : '' }}">
                     <div class="side-menu__icon"> <i data-feather="users" class="block mx-auto"></i> </div>
                     <div class="side-menu__title">
                         Administrateur
@@ -372,7 +370,7 @@
                         Auth::guard('web')->user()->hasPermissionTo('Faqs'))
 
                     <ul
-                        class="{{ request()->is('application*') || request()->is('admin*') || request()->is('operators*')  || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') ? 'side-menu__sub-open' : '' }}">
+                        class="{{ request()->is('application*') || request()->is('admin*') || request()->is('operators*') || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') ? 'side-menu__sub-open' : '' }}">
 
 
                         <li>
@@ -384,20 +382,20 @@
                         </li>
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
-                        <li>
-                            <a href="{{ route('close_app.browse') }}"
-                                class="side-menu {{ $route == 'close_app.browse'  ? 'side-menu--active' : '' }}">
-                                <div class="side-menu__icon"> <i data-feather="package" class="block mx-auto"></i></div>
-                                <div class="side-menu__title"> Applications </div>
-                            </a>
-                        </li>
-                        
-                    @endif
+                            <li>
+                                <a href="{{ route('close_app.browse') }}"
+                                    class="side-menu {{ $route == 'close_app.browse' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="package"
+                                            class="block mx-auto"></i></div>
+                                    <div class="side-menu__title"> Applications </div>
+                                </a>
+                            </li>
+                        @endif
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('Faqs'))
                             <li>
                                 <a href="{{ route('operators.browse') }}"
-                                    class="side-menu {{ $route == 'operators.browse'  ? 'side-menu--active' : '' }}">
+                                    class="side-menu {{ $route == 'operators.browse' ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i class="fas fa-user-tag"></i> </div>
                                     <div class="side-menu__title"> Assignations </div>
                                 </a>
@@ -415,15 +413,15 @@
                         @endif
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('roles'))
-                        <li>
-                            <a href="{{ route('activites.browse_activites') }}"
-                                class="side-menu {{ $route == 'activites.browse_activites'  ? 'side-menu--active' : '' }}">
-                                <div class="side-menu__icon"> <i data-feather="activity"
-                                    class="block mx-auto"></i></div>
-                                <div class="side-menu__title"> Activités </div>
-                            </a>
-                        </li>
-                    @endif
+                            <li>
+                                <a href="{{ route('activites.browse_activites') }}"
+                                    class="side-menu {{ $route == 'activites.browse_activites' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="activity"
+                                            class="block mx-auto"></i></div>
+                                    <div class="side-menu__title"> Activités </div>
+                                </a>
+                            </li>
+                        @endif
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('active-pays'))
                             <li>
@@ -518,9 +516,7 @@
                                 ->orderBy('name', 'asc')
                                 ->get();
                         } elseif ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false) {
-                            $countries = App\Models\Custumers\Country::where('robus', true)
-                                ->orderBy('name', 'asc')
-                                ->get();
+                            $countries = App\Models\Custumers\Country::where('robus', true)->orderBy('name', 'asc')->get();
                         }
 
                     @endphp
@@ -567,9 +563,7 @@
                                 ->orderBy('name', 'asc')
                                 ->get();
                         } elseif ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false) {
-                            $countries = App\Models\Custumers\Country::where('robus', true)
-                                ->orderBy('name', 'asc')
-                                ->get();
+                            $countries = App\Models\Custumers\Country::where('robus', true)->orderBy('name', 'asc')->get();
                         }
 
                     @endphp

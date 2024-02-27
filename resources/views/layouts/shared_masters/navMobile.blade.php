@@ -3,8 +3,8 @@
     $route = Route::current()->getName();
 @endphp
 <div class="mobile-menu-bar">
-    <a href="{{ route('/') }}" class="flex mr-auto">
-        <img alt="Sid-siika" class="w-6" src="{{ asset('public/dist/images/login.jpg') }}">
+    <a href="{{ route('masters.home') }}" class="flex mr-auto">
+        <img alt="Robus" class="w-6" src="{{ asset('public/dist/images/login.jpg') }}">
     </a>
     <a id="mobile-menu-toggler"> <i data-feather="bar-chart-2" class="w-8 h-8 text-white transform -rotate-90"></i> </a>
 </div>
@@ -12,7 +12,7 @@
 
 
     <li>
-        <a href="{{ route('masters.home') }}" class="menu {{ request()->is('masters.home') ? 'menu--active' : '' }}">
+        <a href="{{ route('masters.home ') }}" class="menu {{ request()->is('masters.home') ? 'menu--active' : '' }}">
             <div class="menu__icon"> <i data-feather="home"></i> </div>
             <div class="menu__title">
                 Tableau de bord

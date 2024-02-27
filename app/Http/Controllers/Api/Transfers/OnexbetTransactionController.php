@@ -136,94 +136,88 @@ class OnexbetTransactionController extends Controller
 
                 try {
 
-                        if (robus()->country->name_groupe == 'CIV') {
-
-                                $validationRules = [];
-                                $validationMessages = [];
-
-                                if ($request->choose_type_transaction == 1) {
 
 
-                                        $validationRules = [
-                                                "id_compte" => 'required',
-                                                "amount" => 'required',
-                                                "full_name" => 'required'
-                                        ];
+                        $validationRules = [];
+                        $validationMessages = [];
 
-                                        $validationMessages = [
-                                                'id_compte.required' => 'Votre numero est obligatoire',
-                                                'amount.required' => 'Votre montant est obligatoire',
-                                                'full_name.required' => 'Votre montant est obligatoire',
-                                        ];
-                                } else {
+                        if ($request->choose_type_transaction == 1) {
 
-                                        $validationRules = [
-                                                "code_compte" => 'required',
-                                                "amount" => 'required',
-                                                "countrie" => 'required',
-                                                "citie" => 'required',
-                                                "id_xbet" => 'required',
 
-                                        ];
+                                $validationRules = [
+                                        "id_compte" => 'required',
+                                        "amount" => 'required',
+                                        "full_name" => 'required'
+                                ];
 
-                                        $validationMessages = [
-                                                'code_compte.required' => 'Votre numero est obligatoire',
-                                                'amount.required' => 'Votre montant est obligatoire',
-                                                'countrie.required' => 'Votre pays est obligatoire',
-                                                'citie.required' => 'Votre ville est obligatoire',
-                                                'id_xbet.required' => 'Id Xbet est obligatoire',
-                                        ];
-                                }
+                                $validationMessages = [
+                                        'id_compte.required' => 'Votre numero est obligatoire',
+                                        'amount.required' => 'Votre montant est obligatoire',
+                                        'full_name.required' => 'Votre montant est obligatoire',
+                                ];
+                        } else {
 
-                                $validator = Validator::make($request->all(), $validationRules, $validationMessages);
+                                $validationRules = [
+                                        "code_compte" => 'required',
+                                        "amount" => 'required',
+                                        "countrie" => 'required',
+                                        "citie" => 'required',
+                                        "id_xbet" => 'required',
 
-                                if ($validator->fails()) {
-                                        return response()->json([
-                                                'success' => false,
-                                                'message' => 'QUelque champs obligatoire',
-                                                'data' => $validator->errors()
-                                        ], 333);
-                                }
-                                if ($request->provider == 87) {
+                                ];
 
-                                        if ($percent_robus != null) {
+                                $validationMessages = [
+                                        'code_compte.required' => 'Votre numero est obligatoire',
+                                        'amount.required' => 'Votre montant est obligatoire',
+                                        'countrie.required' => 'Votre pays est obligatoire',
+                                        'citie.required' => 'Votre ville est obligatoire',
+                                        'id_xbet.required' => 'Id Xbet est obligatoire',
+                                ];
+                        }
 
-                                                if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+                        $validator = Validator::make($request->all(), $validationRules, $validationMessages);
 
-                                                        if ($request->choose_type_transaction == 1) {
-                                                                // Transaction de dépôt
-                                                                $amountReceved = $request->amount;
-                                                                $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
-                                                        } else {
-                                                                // Transaction de retrait
-                                                                $amountReceved = $request->amount - ($percent_robus->percent_with_drawal * $request->amount);
-                                                                $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved);
-                                                        }
+                        if ($validator->fails()) {
+                                return response()->json([
+                                        'success' => false,
+                                        'message' => 'QUelque champs obligatoire',
+                                        'data' => $validator->errors()
+                                ], 333);
+                        }
+                        if ($request->provider == 87) {
 
-                                                        if ($transactionResult['success']) {
+                                if ($percent_robus != null) {
 
-                                                                $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
-                                                                return $this->messageAfterValidated($transactionResult['walletXbet']);
-                                                        } else {
-                                                                return json_message_response(false, $transactionResult['message'], 333);
-                                                        }
+                                        if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+
+                                                if ($request->choose_type_transaction == 1) {
+                                                        // Transaction de dépôt
+                                                        $amountReceved = $request->amount;
+                                                        $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
                                                 } else {
-                                                        return json_message_response(false, "Votre montant journalier est atteint !!", 333);
+                                                        // Transaction de retrait
+                                                        $amountReceved = $request->amount - ($percent_robus->percent_with_drawal * $request->amount);
+                                                        $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved);
+                                                }
+
+                                                if ($transactionResult['success']) {
+
+                                                        $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
+                                                        return $this->messageAfterValidated($transactionResult['walletXbet']);
+                                                } else {
+                                                        return json_message_response(false, $transactionResult['message'], 333);
                                                 }
                                         } else {
-
-                                                return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
+                                                return json_message_response(false, "Votre montant journalier est atteint !!", 333);
                                         }
                                 } else {
-                                        return response()->json([
-                                                'success' => false,
-                                                'message' => 'Selectionnez un fournisseur existant SVP ',
-                                        ], 333);
+
+                                        return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
                                 }
                         } else {
                                 return response()->json([
                                         'success' => false,
-                                        'message' => 'Les fournisseurs ne sont pas des pays ',
+                                        'message' => 'Selectionnez un fournisseur existant SVP ',
                                 ], 333);
                         }
                 } catch (\Exception $exception) {

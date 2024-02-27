@@ -5,7 +5,7 @@
 <!-- endinject -->
 <!-- Plugin css for this page -->
 
-<link href="{{ asset('dist/plugins/toastr/css/toastr.min.css') }}" rel="stylesheet">
+<link href="{{ asset('public/dist/plugins/toastr/css/toastr.min.css') }}" rel="stylesheet">
 
 <!-- End plugin css for this page -->
 <!-- inject:css -->
@@ -13,5 +13,5 @@
 
 <!-- Layout styles -->
 <!-- End layout styles -->
-<link rel="stylesheet" href="{{ asset('css/comzones/app.css') }}" />
+<link rel="stylesheet" href="{{ asset('public/css/comzones/app.css') }}" />
 <!-- END: Page CSS-->

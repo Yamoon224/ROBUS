@@ -52,6 +52,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         Route::post('signUp', [AuthentificationController::class, 'signUp']);
         Route::post('login', [AuthentificationController::class, 'login']);
         Route::post('masters/login', [AuthentificationController::class, 'loginMaster']);
+        Route::post('comzones/login', [AuthentificationController::class, 'loginComZone']);
         Route::post('merchants/login', [AuthentificationController::class, 'loginAdmin']);
         Route::post('verify', [AuthentificationController::class, 'verify']);
         Route::post('resendCode', [AuthentificationController::class, 'resendCode']);
@@ -177,6 +178,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
                 Route::get('reload_providers', [ReloadProviderController::class, 'index']);
                 Route::get('virement_providers', [VirementProviderController::class, 'index']);
                 Route::get('orders_providers', [ReloadCardProvideController::class, 'indexOrders']);
+                Route::get('xbets_providers', [ReloadCardProvideController::class, 'indexXbets']);
             });
 
             Route::get('/countries/inter', [CountrieController::class, 'index_inter_auth']);
@@ -202,13 +204,14 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
                 Route::get('reload_providers', [ReloadProviderController::class, 'index_masters']);
             });
 
+
             Route::post('unloadings/store', [TransactionController::class, 'create_transaction_master']);
             Route::post('reloads/store', [TransactionController::class, 'create_reload_master']);
             Route::post('add_under_distributors/store', [UserController::class, 'add_under_distributor']);
             Route::post('create_under_distributors/store', [MasterController::class, 'create_under_distributor']);
             Route::get('citie_masters', [MasterController::class, 'citie_masters']);
 
-            // Historique Masters transactions
+            // Historique Masters   
             Route::get('historicals', [UserController::class, 'historical_distributer']);
             Route::get('historical/evolutions', [UserController::class, 'historical_distributer_evolution_master']);
             Route::get('historical/month_evolutions', [UserController::class, '']);

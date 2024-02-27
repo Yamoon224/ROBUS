@@ -1209,7 +1209,7 @@ class UserController extends Controller
             ]
         );
 
-        if ($validator->fails()) {
+        if ($validator->fails()) {  
             return response()->json(
                 [
                     'success' => false,

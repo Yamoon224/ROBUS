@@ -102,5 +102,4 @@ class UserCompany extends Component
         ]);
     }
 
-
 }

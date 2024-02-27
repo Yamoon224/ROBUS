@@ -87,7 +87,7 @@
         </li>
         <li class="side-nav__devider my-4"></li>
         <li>
-
+            
             <a href="{{ route('masters.account.profile') }}"
                 class="side-menu {{ $route == 'masters.account.profile' || $route == 'masters.account.security' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="user" class="block mx-auto"></i></div>

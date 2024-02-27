@@ -2,10 +2,19 @@
     <!-- inject:js -->
     <script src="{{ asset('public/dist/js/app.js') }}"></script>
     <script src="{{ asset('public/css/app.css') }}"></script>
-    <h2 class="text-lg font-medium truncate mr-5 mt-6">Telechargé les differents raports d'activités</h2>
+    <h2 class="text-lg font-medium truncate mr-6 mt-6">
+
+        <span
+            class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3  font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+
+            Solde : {{ $walletSolde ?? null }} {{ $usersCountry }}
+        </span>
+    </h2>
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
         @if (sabdy()->is_distributer == true)
+
+            <h2 class="text-lg font-medium truncate mr-5 mt-6">Telechargé les differents raports d'activités</h2>
 
             @if (sabdy()->hasPermissionTo('transfers-argent'))
                 <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
@@ -91,7 +100,7 @@
     </div>
     <div class="intro-y box px-5 pt-1 mt-1 ">
         <div class="grid grid-cols-12 gap-6 mt-6">
-           
+
             <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table_factures">
@@ -259,7 +268,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show" >
+            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table4">
                         <div class="flex mb-transactions">
@@ -301,7 +310,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show" >
+            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet ">
                         <div class="flex mb-transactions">
@@ -343,7 +352,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show" >
+            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                 <div class="report-box zoom-in ">
                     <div class="box p-wallet style_table1">
                         <div class="flex mb-transactions">

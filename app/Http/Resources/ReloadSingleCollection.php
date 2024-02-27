@@ -49,7 +49,7 @@ class ReloadSingleCollection extends JsonResource
             'payment_cost_percent' => number_format((float)$this->commissions, 2, '.', '') ?? null,
             'number_decoder' => null,
             'num_wallet' =>  $this->account_wallet,
-            'id_invoice' =>  null,
+            'id_invoice' =>  null,      
             'offer' => null,
             'number_contract' =>  null,
             'amount_received' => number_format((float)$this->amount_received, 2, '.', ' ')  . ' ' . optional($wallet_send->currencie)->code ?? null,

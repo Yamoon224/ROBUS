@@ -4,7 +4,7 @@
 @endphp
 <div class="mobile-menu-bar">
     <a href="{{ route('/') }}" class="flex mr-auto">
-        <img alt="Sid-siika" class="w-6" src="{{ asset('public/dist/images/login.jpg') }}">
+        <img alt="Robus" class="w-6" src="{{ asset('public/dist/images/login.jpg') }}">
     </a>
     <a id="mobile-menu-toggler"> <i data-feather="bar-chart-2" class="w-8 h-8 text-white transform -rotate-90"></i> </a>
 </div>
@@ -37,9 +37,7 @@
                             ->orderBy('name', 'asc')
                             ->get();
                     } elseif ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false) {
-                        $countries = App\Models\Custumers\Country::where('robus', true)
-                            ->orderBy('name', 'asc')
-                            ->get();
+                        $countries = App\Models\Custumers\Country::where('robus', true)->orderBy('name', 'asc')->get();
                     }
 
                 @endphp
@@ -100,12 +98,71 @@
     <li class="menu__devider my-6"></li>
     @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
         <li>
-
-            <a href="{{ route('custumers.browse') }}"
-                class="menu {{ $route == 'custumers.browse' || $route == 'custumers.show' || $route == 'custumers.edit' || $route == 'custumers.add' || $route == 'custumers.activate' ? 'menu--active' : '' }}">
-                <div class="menu__icon"> <i data-feather="user-check" class="block mx-auto"></i></div>
-                <div class="menu__title"> Clients </div>
+            <a href="javascript:;"
+                class="menu {{ request()->is('users*') || request()->is('masters*') ? 'menu--active' : '' }}">
+                <div class="menu__icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
+                    </svg>
+                </div>
+                <div class="menu__title">
+                    Utilisateurs
+                    <div class="menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
+                </div>
             </a>
+            <ul class="{{ request()->is('users*') || request()->is('masters*') ? 'menu__sub-open' : '' }}">
+
+
+                @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
+                    <li>
+
+                        <a href="{{ route('custumers.browse') }}"
+                            class="menu {{ $route == 'custumers.browse' || $route == 'custumers.show' || $route == 'custumers.edit' || $route == 'custumers.add' || $route == 'custumers.activate' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title"> Clients </div>
+                        </a>
+                    </li>
+                @endif
+                @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
+                    <li>
+
+                        <a href="{{ route('company.browse') }}"
+                            class="menu {{ $route == 'company.browse' || $route == 'company.show_company' || $route == 'admin.add_company' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title"> Societés </div>
+                        </a>
+                    </li>
+                @endif
+                @if (Auth::guard('web')->user()->hasPermissionTo('masters'))
+                    <li>
+
+                        <a href="{{ route('masters.admins.browse') }}"
+                            class="menu {{ $route == 'masters.admins.browse' || $route == 'masters.admins.show' || ($route = 'admin.add_master_com' || $route == 'masters.admins.add' ? 'menu--active' : '') }}">
+                            <div class="menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title"> MASTERS </div>
+                        </a>
+                    </li>
+                @endif
+
+                @if (Auth::guard('web')->user()->hasPermissionTo('com-zone'))
+                    <li>
+
+                        <a href="{{ route('comzone.browse') }}"
+                            class="menu {{ $route == 'comzone.browse' || $route == 'comzone.show_comzone' || $route == 'masters.admins.add' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title"> COM ZONE </div>
+                        </a>
+                    </li>
+                @endif
+
+
+            </ul>
         </li>
     @endif
     <li class="menu__devider my-4"></li>
@@ -116,6 +173,18 @@
                 class="menu {{ $route == 'cards.browse' || $route == 'cards.show' || $route == 'cards.add' || $route == 'cards.edit' ? 'menu--active' : '' }}">
                 <div class="menu__icon"> <i data-feather="clipboard" class="block mx-auto"></i></div>
                 <div class="menu__title">Commande Carte </div>
+            </a>
+        </li>
+    @endif
+
+    <li class="nav__devider my-4"></li>
+    @if (Auth::guard('web')->user()->hasPermissionTo('statistiques'))
+        <li>
+
+            <a href="{{ route('browse.states') }}"
+                class="menu {{ $route == 'browse.states' || $route == 'relaods.states' || $route == 'transfers.states' || $route == 'paiements.states' || $route == 'virements.states' || $route == 'inters.states' || $route == 'cartes.states' || $route == 'phones.states' ? 'menu--active' : '' }}">
+                <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i></div>
+                <div class="menu__title"> Statistiques </div>
             </a>
         </li>
     @endif
@@ -131,7 +200,7 @@
             </a>
         </li>
     @endif
- 
+
     <li class="menu__devider my-4"></li>
     @if (Auth::guard('web')->user()->hasPermissionTo('cautions'))
         <li>
@@ -143,8 +212,7 @@
                     <div class="menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
                 </div>
             </a>
-            <ul
-                class="{{ request()->is('commissions*') || request()->is('levels*') ? 'menu__sub-open' : '' }}">
+            <ul class="{{ request()->is('commissions*') || request()->is('levels*') ? 'menu__sub-open' : '' }}">
                 <li>
                     <a href="{{ route('commissions.browse_banks') }}"
                         class="menu {{ $route == 'commissions.browse_banks' ? 'menu--active' : '' }}">
@@ -202,6 +270,15 @@
                         <div class="menu__title"> Commande carte</div>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('commissions.browse_onexbets') }}"
+                        class="menu {{ $route == 'commissions.browse_onexbets' ? 'menu--active' : '' }}">
+                        <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                        </div>
+                        <div class="menu__title">Service 1xbets</div>
+                    </a>
+                </li>
+
 
             </ul>
         </li>
@@ -209,8 +286,7 @@
     <li class="menu__devider my-4"></li>
     @if (Auth::guard('web')->user()->hasPermissionTo('cautions'))
         <li>
-            <a href="javascript:;"
-                class="menu {{ request()->is('pays_commissions*') ? 'menu--active' : '' }}">
+            <a href="javascript:;" class="menu {{ request()->is('pays_commissions*') ? 'menu--active' : '' }}">
                 <div class="menu__icon"> <i data-feather="refresh-cw" class="block mx-auto"></i> </div>
                 <div class="menu__title">
                     Commissions Pays
@@ -293,6 +369,26 @@
                         </a>
                     </li>
 
+                    @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                        <li>
+                            <a href="{{ route('close_app.browse') }}"
+                                class="menu {{ $route == 'close_app.browse' ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-feather="package" class="block mx-auto"></i>
+                                </div>
+                                <div class="menu__title"> Applications </div>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (Auth::guard('web')->user()->hasPermissionTo('Faqs'))
+                        <li>
+                            <a href="{{ route('operators.browse') }}"
+                                class="menu {{ $route == 'operators.browse' ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i class="fas fa-user-tag"></i> </div>
+                                <div class="menu__title"> Assignations </div>
+                            </a>
+                        </li>
+                    @endif
 
 
                     @if (Auth::guard('web')->user()->hasPermissionTo('roles'))
@@ -301,6 +397,17 @@
                                 class="menu {{ $route == 'roles.browse' || $route == 'roles.show' || $route == 'roles.add' || $route == 'roles.activate' || $route == 'roles.permissions' ? 'menu--active' : '' }}">
                                 <div class="menu__icon"> <i class="fas fa-user-tag"></i> </div>
                                 <div class="menu__title"> Roles </div>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (Auth::guard('web')->user()->hasPermissionTo('roles'))
+                        <li>
+                            <a href="{{ route('activites.browse_activites') }}"
+                                class="menu {{ $route == 'activites.browse_activites' ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="menu__title"> Activités </div>
                             </a>
                         </li>
                     @endif
@@ -329,8 +436,7 @@
                         <li>
                             <a href="{{ route('currencies.browse') }}"
                                 class="menu {{ $route == 'currencies.browse' ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-feather="credit-card"
-                                        class="block mx-auto"></i>
+                                <div class="menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i>
                                 </div>
                                 <div class="menu__title"> Devises </div>
                             </a>
@@ -342,13 +448,12 @@
 
                             <a href="{{ route('faqs.browse') }}"
                                 class="menu {{ $route == 'faqs.browse' ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-feather="activity"
-                                        class="block mx-auto"></i></div>
+                                <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i></div>
                                 <div class="menu__title">Faqs</div>
                             </a>
                         </li>
                     @endif
-                    
+
                 </ul>
 
             @endif
@@ -369,11 +474,10 @@
     <li class="menu__devider my-4"></li>
     @if (Auth::guard('web')->user()->hasPermissionTo('voir-s-distibuteurs'))
         <li>
-            <a href="javascript:;"
-                class="menu {{ request()->is('under_commissions*') ? 'menu--active' : '' }}">
+            <a href="javascript:;" class="menu {{ request()->is('under_commissions*') ? 'menu--active' : '' }}">
                 <div class="menu__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94
                          3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0
@@ -398,9 +502,7 @@
                             ->orderBy('name', 'asc')
                             ->get();
                     } elseif ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false) {
-                        $countries = App\Models\Custumers\Country::where('robus', true)
-                            ->orderBy('name', 'asc')
-                            ->get();
+                        $countries = App\Models\Custumers\Country::where('robus', true)->orderBy('name', 'asc')->get();
                     }
 
                 @endphp
@@ -425,8 +527,8 @@
             <a href="javascript:;"
                 class="menu {{ request()->is('distributer_commissions*') ? 'menu--active' : '' }}">
                 <div class="menu__icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z" />
                     </svg>
@@ -447,9 +549,7 @@
                             ->orderBy('name', 'asc')
                             ->get();
                     } elseif ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false) {
-                        $countries = App\Models\Custumers\Country::where('robus', true)
-                            ->orderBy('name', 'asc')
-                            ->get();
+                        $countries = App\Models\Custumers\Country::where('robus', true)->orderBy('name', 'asc')->get();
                     }
 
                 @endphp

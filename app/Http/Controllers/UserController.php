@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletXbet;
 use App\Models\Wallets\WalletPayment;
 use App\Events\UpdateActiveAccountEvent;
 use App\Models\Wallets\WalletPhoneCredit;
@@ -49,9 +50,19 @@ class UserController extends Controller
         } else {
             abort(403);
         }
-
     }
 
+
+    public function browse_comzone()
+    {
+
+        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
+
+            return view('pages.custumers.browse_comzone');
+        } else {
+            abort(403);
+        }
+    }
     public function browse_invalidated(Request $request)
     {
 
@@ -71,44 +82,47 @@ class UserController extends Controller
     public function show(Request $request, int $id)
     {
         if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
-          
+
 
             $user = SidUser::whereId($id)->first();
-            
+
             $kycs = $user->kyc()->get() ?? null;
 
-     
+
             $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
-            
+
             $transactions =  WalletTransaction::where('wallet_id', $wallet_solde->id)
-                ->orWhere('num_wallet' ,  $wallet_solde->wallet_id)
-                ->orderBy('created_at' , 'desc')->paginate(20);
-    
+                ->orWhere('num_wallet',  $wallet_solde->wallet_id)
+                ->orderBy('created_at', 'desc')->paginate(20);
+
             $paiements =  WalletPayment::where('wallet_id', $wallet_solde->id)
-                ->orderBy('created_at' , 'desc')->paginate(20);
-    
-    
+                ->orderBy('created_at', 'desc')->paginate(20);
+
+
             $virements =  WalletBank::where('wallet_id', $wallet_solde->id)
-                ->orderBy('created_at' , 'desc')->paginate(20);
-    
+                ->orderBy('created_at', 'desc')->paginate(20);
+
             $phoneCredits =  WalletPhoneCredit::where('wallet_id', $wallet_solde->id)
-                ->orderBy('created_at' , 'desc')->paginate(20);
-    
+                ->orderBy('created_at', 'desc')->paginate(20);
+
             $reaload_uv =  WalletReload::where('wallet_id', $wallet_solde->id)
-                ->orWhere('account_wallet' ,  $wallet_solde->wallet_id)
-                ->orderBy('created_at' , 'desc')->paginate(20);
-    
-    
+                ->orWhere('account_wallet',  $wallet_solde->wallet_id)
+                ->orderBy('created_at', 'desc')->paginate(20);
+
+
             $reloadCards =  WalletDeposit::where('wallet_id', $wallet_solde->id)
-               ->orderBy('created_at' , 'desc')->paginate(20);
-    
+                ->orderBy('created_at', 'desc')->paginate(20);
+
             $Internationals =  WalletInter::where('wallet_id', $wallet_solde->id)
-                 ->orWhere('number_compte' ,  $wallet_solde->wallet_id)
-               ->orderBy('created_at' , 'desc')->paginate(20);
-    
+                ->orWhere('number_compte',  $wallet_solde->wallet_id)
+                ->orderBy('created_at', 'desc')->paginate(20);
+
             $walletOrderCarte =  BankCard::where('wallet_id', $wallet_solde->id)
-               ->orderBy('created_at' , 'desc')->paginate(20);
-               
+                ->orderBy('created_at', 'desc')->paginate(20);
+
+            $walletxbets =  WalletXbet::where('wallet_id', $wallet_solde->id)
+                ->orderBy('created_at', 'desc')->paginate(20);
+
             $usersCountry = Auth::guard('web')->user()->country->currencie->name;
 
             return view('pages.custumers.show', compact(
@@ -122,6 +136,7 @@ class UserController extends Controller
                 'phoneCredits',
                 'usersCountry',
                 'walletOrderCarte',
+                'walletComzones',
                 'kycs'
             ));
         } else {
@@ -132,22 +147,22 @@ class UserController extends Controller
     public function show_company(Request $request, int $id)
     {
         if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
-          
+
 
             $user = SidUser::whereId($id)->first();
-            
+
             $kycs = $user->kyc()->get() ?? null;
 
-     
+
             $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
-            
+
             $transactions =  WalletTransaction::where('wallet_id', $wallet_solde->id)
                 // ->orWhere('num_wallet' ,  $wallet_solde->wallet_id)
-                ->orderBy('created_at' , 'desc')->paginate(20);
-               
+                ->orderBy('created_at', 'desc')->paginate(20);
 
 
-            $employers =  SidUser::where('id','!=', $id)->where('company_id', $user->company_id)->paginate(20);
+
+            $employers =  SidUser::where('id', '!=', $id)->where('company_id', $user->company_id)->paginate(20);
 
             $usersCountry = Auth::guard('web')->user()->country->currencie->name;
 
@@ -162,6 +177,74 @@ class UserController extends Controller
             abort(403);
         }
     }
+
+    public function show_comzone(Request $request, int $id)
+    {
+
+        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
+
+
+            $user = SidUser::whereId($id)->first();
+
+            $kycs = $user->kyc()->get() ?? null;
+
+            $wallet_user = Wallet::where('sid_user_id', $user->id)->first();
+
+
+            // get transactions days
+            $paiements = $this->getTransactionsAllTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at');
+            $transactions = $this->getTransactionsAllTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at');
+            $reaload_uv = $this->getReloadAmountTotal(WalletReload::class , $wallet_user->id);
+            $phoneCredits = $this->getTransactionsAllTotal(WalletPhoneCredit::class , 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at');
+            $Internationals = $this->getTransactionsAllTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at');
+            $virements = $this->getTransactionsAllTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at');
+            $reloadCards = $this->getTransactionsAllTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at');
+            $walletOrderCarte = $this->getTransactionsAllTotal(BankCard::class, 'bank_cards.wallet_id', 'bank_cards.created_at');
+            $walletxbets = $this->getTransactionsAllTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at');
+
+
+            $usersCountry = sabdy()->country->currencie->name;  
+
+            return view('pages.custumers.show_comzone', compact(
+                'user',
+                'transactions',
+                'paiements',
+                'reaload_uv',
+                'phoneCredits',
+                'Internationals',
+                'walletOrderCarte',
+                'virements',
+                'reloadCards',
+                'walletxbets',
+                'usersCountry', 
+                'kycs'
+            ));
+        } else {
+            abort(403);
+        }
+    }
+
+    public function getReloadAmountTotal($walletModel , $id)
+    {
+
+
+        $total_get = $walletModel::where('wallet_id',  $id)
+            ->whereStatus('SUCCESS')
+            ->paginate(20);
+
+        return $total_get;
+    }
+
+
+    public function getTransactionsAllTotal($walletModel, $wallet_transaction, $wallet_order_by)
+    {
+
+
+        return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+            ->where('wallets.country_id', sabdy()->country->id)
+            ->orderBy($wallet_order_by, 'desc')->paginate(20);
+    }
+
     public function search(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -271,7 +354,7 @@ class UserController extends Controller
 
     public function activate_wallet(int $id)
     {
-  
+
         try {
 
             DB::beginTransaction();
@@ -279,10 +362,10 @@ class UserController extends Controller
             $user = SidUser::find($id);
 
             if ($user->wallet->status == '1') {
-             
+
                 $user->wallet->status == '0';
                 $user->wallet->update([
-                       'status' => 0
+                    'status' => 0
                 ]);
                 $msg = 'Désactivation effectuée avec succès';
                 $message = 'Votre compte a été desactivé avec success';
@@ -299,12 +382,11 @@ class UserController extends Controller
                     $notify = new MailController;
                     $notify->activeAccount($user);
                 }
-                
             } else {
 
                 $user->wallet->status == '1';
                 $user->wallet->update([
-                        'status' => 1
+                    'status' => 1
                 ]);
                 $msg = 'Activation effectuée avec succès';
 
@@ -336,12 +418,12 @@ class UserController extends Controller
         }
 
         return redirect()->back()->with('color', $color)
-        ->with('status', $msg);
+            ->with('status', $msg);
     }
 
     public function activate_wallet_employer(int $id)
     {
-  
+
         try {
 
             DB::beginTransaction();
@@ -349,10 +431,10 @@ class UserController extends Controller
             $user = SidUser::find($id);
 
             if ($user->wallet->status == '1') {
-             
+
                 $user->wallet->status == '0';
                 $user->wallet->update([
-                       'status' => 0
+                    'status' => 0
                 ]);
                 $msg = 'Désactivation effectuée avec succès';
                 $message = 'Votre compte a été desactivé avec success';
@@ -369,12 +451,11 @@ class UserController extends Controller
                     $notify = new MailController;
                     $notify->activeAccount($user);
                 }
-                
             } else {
 
                 $user->wallet->status == '1';
                 $user->wallet->update([
-                        'status' => 1
+                    'status' => 1
                 ]);
                 $msg = 'Activation effectuée avec succès';
 
@@ -406,7 +487,7 @@ class UserController extends Controller
         }
 
         return redirect()->back()->with('color', $color)
-        ->with('status', $msg);
+            ->with('status', $msg);
     }
     public function index()
     {
@@ -586,7 +667,7 @@ class UserController extends Controller
                         $notify->activeAccount($user);
                     }
                     event(new UpdateActiveAccountEvent($user));
-                        return redirect(route('custumers.browse'))->with('status', 'Client active avec succès');
+                    return redirect(route('custumers.browse'))->with('status', 'Client active avec succès');
                 } elseif ($user->kyc->image != null &&  $user->kyc->screen != null &&  $user->kyc->screen_back != null) {
 
 
@@ -765,7 +846,7 @@ class UserController extends Controller
 
     public function delete_employe(int $id)
     {
-       
+
         try {
             DB::beginTransaction();
             $users = SidUser::findOrFail($id);

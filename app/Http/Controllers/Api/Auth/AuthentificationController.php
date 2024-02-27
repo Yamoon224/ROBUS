@@ -886,6 +886,80 @@ class AuthentificationController extends Controller
             );
         }
     }
+
+    public function loginComZone(Request $request)
+    {
+        
+        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+
+            try {
+
+                $data = $request->all();
+
+                $user_data = SidUser::whereStatus(true)->whereEmail($data['email'])->first();
+
+                if (!$user_data) {
+
+                    return response()->json(
+                        [
+                            'success' => false,
+                            'message' => 'Mauvais identifiants ! Authentification échouée',
+                            'data' => 'Verifier vos identifiants :' . $request->email
+                        ],
+                        301
+                    );
+                } elseif ($user_data->is_com_zone) {
+
+                    if (Hash::check($data['password'], $user_data->password)) {
+                        Auth::user()->last_login  = Carbon::now()->toDateTimeString();
+                        Auth::user()->last_logout  = null;
+                        Auth::user()->save();
+                        $tokenResult = $user_data->createToken('auth_token');
+                        return $this->loginSuccess($tokenResult, $user_data);
+                    } else {
+                        return response()->json(
+                            [
+                                'success' => false,
+                                'message' => 'Mauvais identifiants  ! Authentification échouée',
+                                'data' => 'Email do not exist:' . $request->email
+                            ],
+                            301
+                        );
+                    }
+                } else {
+                    return response()->json(
+                        [
+                            'success' => false,
+                            'message' => 'Mauvais identifiants ! Authentification échouée',
+                            'data' => 'Verifier vos identifiants :' . $request->email
+                        ],
+                        301
+                    );
+                }
+            } catch (\Throwable $th) {
+
+                return response()->json(
+                    [
+                        'success' => false,
+                        'message' => 'Mauvais identifiants ! Authentification échouée',
+                        'data' => 'Verifier vos identifiants :' . $request->email
+                    ],
+                    301
+                );
+            }
+        } else {
+
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Email ou mot de passe incorrect.',
+                    'data' => 'ne pas couper'
+                ],
+                301
+            );
+        }
+
+    }
     /**
      * Verify
      * login with username or email

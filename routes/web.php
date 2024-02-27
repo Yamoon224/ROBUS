@@ -136,9 +136,11 @@ Route::group(['prefix' => ''], function () {
         Route::prefix('users')->group(function () {
             Route::get('/browse', [UserController::class, 'browse'])->name('custumers.browse');
             Route::get('/browse_company', [UserController::class, 'browse_company'])->name('company.browse');
+            Route::get('/browse_comzone', [UserController::class, 'browse_comzone'])->name('comzone.browse');
             Route::get('/browse_invalidated', [UserController::class, 'browse_invalidated'])->name('custumers.browse_invalidated');
             Route::get('/show/{id}', [UserController::class, 'show'])->name('custumers.show');
             Route::get('/show_company/{id}', [UserController::class, 'show_company'])->name('company.show_company');
+            Route::get('/show_comzone/{id}', [UserController::class, 'show_comzone'])->name('comzone.show_comzone');
             Route::post('/update_custumers/{id}', [UserController::class, 'update_custumers'])->name('custumers.update_custumers');
             Route::post('/update_silver_ceiling/{id}', [UserController::class, 'update_silver_ceiling'])->name('custumers.update_silver_ceiling');
             Route::post('/admin_silver_ceiling/{id}', [UserController::class, 'update_silver_admin_ceiling'])->name('custumers.update_silver_admin_ceiling');

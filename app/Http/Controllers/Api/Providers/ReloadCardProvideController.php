@@ -52,4 +52,10 @@ class ReloadCardProvideController extends Controller
         return new ProviderCollection(Provider::whereStatus(true)->where('provider_type_id',  5)
         ->orderBy('name', 'asc')->get());
     }
+
+    public function indexXbets()
+    {
+        return new ProviderCollection(Provider::whereStatus(true)->where('provider_type_id',  13)
+        ->orderBy('name', 'asc')->get());
+    }
 }

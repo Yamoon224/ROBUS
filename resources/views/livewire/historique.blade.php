@@ -332,20 +332,20 @@
                 </div>
             </div>
 
-            <div class="col-span-12 md:col-span-6 lg:col-span-4 mt-1 ">
-                <div class="intro-y box p-5 mt-12 sm:mt-5  ">
+            <div class="col-span-12 md:col-span-6 lg:col-span-4 mt-1 style_user1">
+                <div class="intro-y box p-5 mt-12 sm:mt-5 style_user1">
                     <div
                         class="flex text-slate-500 border-b border-slate-200 dark:border-darkmode-300 border-dashed pb-3 mb-3 v">
                         <div>Service 1xbets</div>
                         <div class="ml-auto">Date</div>
                     </div>
-                    @foreach ($Wallet_xbet_last as $reload)
+                    @foreach ($Wallet_xbet_last as $xbet)
                     <div class="flex items-center mb-5">
                         <div class="flex items-center">
-                            <div>{{ $reload->provider->name ?? null }}</div>
+                            <div>{{ $xbet->provider->name ?? null }}</div>
 
                         </div>
-                        <div class="ml-auto">{{ $reload->created_at ?? null }}</div>
+                        <div class="ml-auto">{{ $xbet->created_at ?? null }}</div>
                     </div>
                     @endforeach
                     <a style="color: white;" href="{{ route('xbets.historical') }}"

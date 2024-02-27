@@ -5,7 +5,7 @@
 <!-- endinject -->
 <!-- Plugin css for this page -->
 
-<link href="{{ asset('dist/plugins/toastr/css/toastr.min.css') }}" rel="stylesheet">
+<link href="{{ asset('public/dist/plugins/toastr/css/toastr.min.css') }}" rel="stylesheet">
 {{-- <link href="/path/to/css//css/fileinput.min.css" rel="stylesheet"> --}}
 {{-- <link href="/path/to/css//css/fileinput-rtl.min.css" rel="stylesheet"> --}}
 
@@ -14,10 +14,10 @@
 <!-- endinject -->
 
 <!-- Layout styles -->
-<link rel="stylesheet" href="{{ asset('css/style.css') }}">
+<link rel="stylesheet" href="{{ asset('public/css/style.css') }}">
 
 <!-- End layout styles -->
-<link rel="stylesheet" href="{{ asset('css/app.css') }}" />
+<link rel="stylesheet" href="{{ asset('public/css/app.css') }}" />
 <!-- END: Page CSS-->
 
 {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
