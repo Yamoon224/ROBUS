@@ -42,6 +42,7 @@ class UnderCollection extends ResourceCollection
                                         'country' => optional($data->country)->name,
                                         'city' => optional($data->city)->name,
                                         'is_custumers' => $data->is_custumers,
+                                        'is_accepted' => $data->is_accepted,
                                         'is_active' => $data->is_active,
                                         'is_distributer' => $data->is_distributer,
                                         'is_under_distributer' => $data->is_under_distributer,

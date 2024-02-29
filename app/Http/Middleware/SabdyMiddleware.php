@@ -21,7 +21,7 @@ class SabdyMiddleware
         if (Auth::check()) {
 
             // Vérifie le rôle de l'utilisateur
-            if (!sabdyVerify()) {
+            if (!sabdyWebVerify()) {
                 // Si la vérification échoue, renvoie une réponse avec le code de statut 403 (Interdit)
                 return response()->view('errors.599', [], 599);
             }

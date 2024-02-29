@@ -28,9 +28,24 @@ function sabdyVerify()
     }
 }
 
+
+function sabdyWebVerify()
+{
+    $allowedRoles = ['root', 'Distributeur', 'superviseur'];
+
+    $user = Auth::guard('web')->user();
+
+    if ($user && $user->hasAnyRole($allowedRoles)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
 function sabdyMasterVerify()
 {
-    $allowedRoles = ['master'];
+
 
     $user = Auth::guard('master')->user();
 
