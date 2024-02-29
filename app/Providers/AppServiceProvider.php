@@ -14,11 +14,10 @@ class AppServiceProvider extends ServiceProvider
      * @return void
      */
     public function register()
-    { 
+    {
         $this->app->singleton(CeldingValeurService::class, function () {
-        return new CeldingValeurService();
-    });
-        
+            return new CeldingValeurService();
+        });
     }
 
     /**
@@ -29,5 +28,8 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
+        $this->publishes([
+            __DIR__ . '/../../resources/views/errors' => resource_path('views/errors'),
+        ], 'errors');
     }
 }

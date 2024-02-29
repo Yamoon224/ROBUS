@@ -2,10 +2,11 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use App\Models\Sid\SidUser;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Livewire\Component;
 
 class LoginCompany extends Component
 {
@@ -30,30 +31,25 @@ class LoginCompany extends Component
         $msg = 'Bienvenu chez ROBUS';
         $color = 'success';
 
-        if (Auth::guard('company')->attempt(['email' => $this->email, 'password' => $this->password])) 
-        {
-                   
+        if (Auth::guard('company')->attempt(['email' => $this->email, 'password' => $this->password])) {
+
             $this->validate();
-    
-            $user_sid = SidUser::whereEmail($this->email)->where('is_company' , true)->whereStatus(true)->first();
-    
-            if (!$user_sid)
-            {
+
+            $user_sid = SidUser::whereEmail($this->email)->whereStatus(true)->first();
+
+            if (!$user_sid) {
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');
-    
-            } elseif($user_sid)
-            {
-            
+            } elseif ($user_sid->is_company) {
+
                 Auth::login(Auth::guard('company')->user());
                 Auth::guard('company')->user()->last_login  = Carbon::now()->toDateTimeString();
                 Auth::guard('company')->user()->last_logout  = null;
                 Auth::guard('company')->user()->save();
                 $this->emit('success', 'Authentificaion reussie redirection en cours !');
                 return redirect()->route('companies.home');
-            } 
+            }
+        } else {
 
-        }else{
-            
             $this->emit('error', 'Vous n\'etes pas identifiable !');
         }
     }
@@ -63,30 +59,36 @@ class LoginCompany extends Component
         Auth::user()->last_logout  = Carbon::now()->toDateTimeString();
         Auth::guard('company')->user()->save();
         Auth::logout(Auth::guard('company')->user());
-        Auth::logout(Auth::guard('web')->user());
+        Session::flush();
         $this->emit('success', 'Déconnexion réussi !');
         return redirect()->route('admin.login_companie');
     }
 
+
+
     public function logout_masters()
     {
-        Auth::user()->last_logout  = Carbon::now()->toDateTimeString();
+        // Sauvegarde de la dernière déconnexion pour l'utilisateur
+        Auth::guard('master')->user()->last_logout = Carbon::now()->toDateTimeString();
         Auth::guard('master')->user()->save();
-        Auth::logout(Auth::guard('master')->user());
-        Auth::logout(Auth::guard('web')->user());
-        $this->emit('success', 'Déconnexion réussi !');
+
+        // Déconnexion de l'utilisateur du gardien "master"
+        Auth::guard('master')->logout();
+        // Après la déconnexion
+        Session::flush();
+        // Message de succès et redirection
+        $this->emit('success', 'Déconnexion réussie !');
         return redirect()->route('admin.login_master');
     }
+
 
     public function logout_comzones()
     {
         Auth::user()->last_logout  = Carbon::now()->toDateTimeString();
         Auth::guard('web')->user()->save();
         Auth::logout(Auth::guard('web')->user());
-        Auth::logout(Auth::guard('web')->user());
+        Session::flush();
         $this->emit('success', 'Déconnexion réussi !');
         return redirect()->route('admin.login_com_zone');
     }
-    
-    
 }

@@ -2,10 +2,11 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use App\Models\Sid\SidUser;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Livewire\Component;
 
 class LoginMaster extends Component
 {
@@ -27,33 +28,28 @@ class LoginMaster extends Component
     public function loginMaster()
     {
 
-    
-        if (Auth::guard('master')->attempt(['email' => $this->email, 'password' => $this->password])) 
-        {
-                   
+
+        if (Auth::guard('master')->attempt(['email' => $this->email, 'password' => $this->password])) {
+
             $this->validate();
-    
+
             $user_sid = SidUser::whereEmail($this->email)->whereStatus(true)->first();
-    
-            if (!$user_sid)
-            {
+
+            if (!$user_sid) {
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');
-    
-            } elseif($user_sid->is_master)
-            {
-            
+            } elseif ($user_sid->is_master) {
+
                 Auth::login(Auth::guard('master')->user());
                 Auth::guard('master')->user()->last_login  = Carbon::now()->toDateTimeString();
                 Auth::guard('master')->user()->last_logout  = null;
                 Auth::guard('master')->user()->save();
                 $this->emit('success', 'Authentificaion reussie redirection en cours !');
                 return redirect()->route('masters.home');
-            }else {
+            } else {
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');
             }
+        } else {
 
-        }else{
-            
             $this->emit('error', 'Vous n\'etes pas identifiable !');
         }
     }
@@ -63,10 +59,8 @@ class LoginMaster extends Component
         Auth::user()->last_logout  = Carbon::now()->toDateTimeString();
         Auth::guard('master')->user()->save();
         Auth::logout(Auth::guard('master')->user());
-        Auth::logout(Auth::guard('master')->user());
+        Session::flush();
         $this->emit('success', 'Déconnexion réussi !');
         return redirect()->route('admin.login_companie');
     }
-    
-
 }

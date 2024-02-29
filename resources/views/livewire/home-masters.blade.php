@@ -53,7 +53,7 @@
                                 <div class="text-3xl font-medium leading-8 mt-6">
                                     {{ $under_counts ?? null }}
                                 </div>
-                                <div class="text-base text-slate-500 mt-1">Clients</div>
+                                <div class="text-base text-slate-500 mt-1">Sous distributeurs</div>
                             </div>
                         </div>
                     </div>

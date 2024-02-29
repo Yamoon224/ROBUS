@@ -4,7 +4,7 @@
 @endphp
 <!-- BEGIN: Side Menu -->
 <nav class="side-nav">
-    <a href="{{ route('/') }}" class="intro-x flex items-center pl-5 pt-4">
+    <a href="{{ route('companies.home') }}" class="intro-x flex items-center pl-5 pt-4">
         <img alt="" class="w-6" src="{{ asset('public/dist/images/login.jpg') }}">
         <span class="hidden xl:block text-white text-lg ml-3"> ROBUS </span>
     </a>

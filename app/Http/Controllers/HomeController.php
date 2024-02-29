@@ -17,16 +17,20 @@ class HomeController extends Controller
    * Display a listing of the resource.
    *
    * @return \Illuminate\Http\Response
-   */ public function index()
+   */
+  public function index()
   {
+    // if (sabdyVerify()) {
+    //   return view('home');
+    // } else {
+    //   abort(599);
+    // }
 
-
-    // $users = User::orderBy('created_at', 'DESC')->get();
-    // $countries = Country::where('robus' , true)->orderBy('name','desc')->get();
-    // $usersAdmin = SidUser::orderBy('created_at', 'desc')->get();
-
-    //  return view('home', compact('users','usersAdmin' ,'countries'));  
+    if (sabdy()) {
       return view('home');
+    } else {
+      abort(403);
+    }
   }
 
   /**

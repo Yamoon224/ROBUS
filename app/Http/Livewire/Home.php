@@ -25,6 +25,7 @@ class Home extends Component
     public $startDate = '';
     public $endDate = '';
 
+    
     public function render()
     {
         $walletUser = sabdy();

@@ -71,7 +71,10 @@ Route::group(['prefix' => 'robus'], function () {
 
 Route::group(['prefix' => ''], function () {
 
+   
     Route::group(['middleware' => ['auth:web']], function () {
+
+       
         Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('/');
 
         Route::get('/logout', [Login::class, 'logout'])->name('admin.logout');

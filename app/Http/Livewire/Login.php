@@ -61,6 +61,7 @@ class Login extends Component
         $this->emit('success', 'Déconnexion réussi !');
         Auth::guard('web')->user()->save();
         Auth::logout(Auth::guard('web')->user());
+        Session::flush();
         return redirect()->route('admin.logout');
     }
 }

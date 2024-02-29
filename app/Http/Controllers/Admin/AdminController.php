@@ -41,6 +41,7 @@ use App\Models\Master;
 class AdminController extends Controller
 {
 
+    
 
     // Company Infos
 
