@@ -12,7 +12,7 @@
 
 
     <li>
-        <a href="{{ route('masters.home ') }}" class="menu {{ request()->is('masters.home') ? 'menu--active' : '' }}">
+        <a href="{{ route('masters.home') }}" class="menu {{ request()->is('masters.home') ? 'menu--active' : '' }}">
             <div class="menu__icon"> <i data-feather="home"></i> </div>
             <div class="menu__title">
                 Tableau de bord

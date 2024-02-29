@@ -173,6 +173,9 @@ class UserController extends Controller
        
     }
 
+     /**
+     * @CrossOrigin
+     */
     public function dashboard_masters()
     {
 

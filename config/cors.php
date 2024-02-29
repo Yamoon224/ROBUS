@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['GET' , 'POST', 'PUT' , 'DELETE'],
 
-    'allowed_origins' => ['http://127.0.0.1:9880/'],
+    'allowed_origins' => ['https://robus.home.ci/'],
 
     'allowed_origins_patterns' => [],
 

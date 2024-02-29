@@ -18,6 +18,16 @@
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
 */
 
+@keyframes blink {
+  10% { opacity: 1; }
+  50% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.blinking {
+  animation: blink 0.9s infinite;
+}
+
 .text-height-fixed {
   width: 50px; /* Remplacez 50px par la hauteur souhaitée */
   overflow: hidden; /* Si le contenu dépasse la hauteur fixe, masquer le surplus */

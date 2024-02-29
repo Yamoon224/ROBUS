@@ -4,7 +4,20 @@
         <div class="grid grid-cols-12 gap-6">
 
             <div class="col-span-12 2xl:col-span-12">
-
+                @php
+                    $currentDayOfWeek = Illuminate\Support\Carbon::now()->dayOfWeek;
+                @endphp
+                @foreach ($open_apps as $index => $open)
+                    <div class="col-span-12 xl:col-span-6 ml-3 mr-3 mb-3">
+                        @if ($currentDayOfWeek == $open->id)
+                            <h2 class="text-lg font-medium truncate items-center text-xs mt-3 mr-6 ml-6 text-center whitespace-nowrap blinking style_app text-white"
+                                id="box_{{ $index }}">
+                                Robus est ouvert ce {{ $open->day_of_week ?? null }} de :
+                                {{ $open->time_start ?? null }} a {{ $open->time_end ?? null }}
+                            </h2>
+                        @endif
+                    </div>
+                @endforeach
                 <div class="grid grid-cols-12 gap-6 mt-5">
                     <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y style_user1">
                         <div class="report-box zoom-in style_user1">
@@ -508,31 +521,34 @@
                             </h2>
                         </div>
 
+                        @php
+                            $currentDayOfWeek = Illuminate\Support\Carbon::now()->dayOfWeek;
+                        @endphp
                         @foreach ($open_apps as $index => $open)
                             <div class="col-span-12 xl:col-span-6 ml-3 mr-3 mb-3">
-                                <div class="box style_app" id="box_{{ $index }}">
-                                    <div
-                                        class="flex flex-col items-center p-3 border-b border-slate-200/60 dark:border-darkmode-400">
-                                        <h2 class="text-lg font-medium truncate mr-5 text-white">
-                                            {{ $open->day_of_week ?? null }}
-                                        </h2>
+                                @if ($currentDayOfWeek == $open->id)
+                                    <div class="box blinking style_app" id="box_{{ $index }}">
+                                    @else
+                                        <div class="box style_app" id="box_{{ $index }}">
+                                @endif
+                                <div class="flex flex-col items-center p-3 border-b border-slate-200/60 dark:border-darkmode-400"
+                                    style="overflow-x: auto;">
+                                    <h2 class="text-lg font-medium truncate mr-5 text-white">
+                                        {{ $open->day_of_week ?? null }}
+                                    </h2>
+                                </div>
+                                <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6">
+                                    <div class="mr-auto text-white">Ouverture : {{ $open->time_start ?? null }}
                                     </div>
-                                    <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6">
-                                        <div class="mr-auto text-white">Ouverture : {{ $open->time_start ?? null }}
-                                        </div>
-                                    </div>
-                                    <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6 mb-3">
-                                        <div class="mr-auto text-white">Fermeture : {{ $open->time_end ?? null }}
-                                        </div>
+                                </div>
+                                <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6 mb-3">
+                                    <div class="mr-auto text-white">Fermeture : {{ $open->time_end ?? null }}
                                     </div>
                                 </div>
                             </div>
-                        @endforeach
-
-
-
-
                     </div>
+                    @endforeach
+
                 </div>
             </div>
         </div>
