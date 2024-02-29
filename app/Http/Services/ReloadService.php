@@ -156,7 +156,7 @@ class ReloadService
                                 'id'      => $reload_unders->id,
                                 'status' => $reload_unders->status,
                         ],
-                        'message' => ('Votre demande de déchargement a bien été prise en compte.')
+                        'message' => ('Votre demande de réchargement a bien été prise en compte.')
                 ], 200);
         }
 }

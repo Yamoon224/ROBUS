@@ -15,7 +15,7 @@ class CreateReloadEvent implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    private $reload;
+    public $reload;
 
     /**
      * Create a new event instance.
