@@ -20,13 +20,8 @@ class HomeController extends Controller
    */
   public function index()
   {
-    // if (sabdyVerify()) {
-    //   return view('home');
-    // } else {
-    //   abort(599);
-    // }
 
-    if (sabdy()) {
+    if (sabdyWebVerify()) {
       return view('home');
     } else {
       abort(403);

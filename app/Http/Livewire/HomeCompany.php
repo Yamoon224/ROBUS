@@ -2,14 +2,15 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
 use App\Models\Categorie;
+use App\Models\CloseApp;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
-use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
 use App\Models\Wallets\WalletTransaction;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Livewire\Component;
 
 class HomeCompany extends Component
 {
@@ -142,6 +143,8 @@ class HomeCompany extends Component
             }
         }
 
+        $closeRobus = CloseApp::orderBy('id' , 'asc')->get();
+
         return view('livewire.home-company', [
             'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
             'sum_error' =>  $this->TransactionErrorUser,
@@ -158,6 +161,8 @@ class HomeCompany extends Component
             'realods' => $this->RealodsAdmin,
             // 'reloads_gain'  =>  $this->RealodsAdminGain,
             'reloads_days'  =>  $this->RealodsAdminDays,
+            'open_apps' => $closeRobus,
+
         ]);
     }
 

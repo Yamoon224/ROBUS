@@ -23,7 +23,7 @@
             display: none !important;
         }
     </style> --}}
-    @vite('ressource/js/app.js')
+    {{-- @vite('ressource/js/app.js') --}}
 
 
     @stack('styles')

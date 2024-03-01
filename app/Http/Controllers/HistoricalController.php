@@ -25,8 +25,11 @@ class HistoricalController extends Controller
      */
     public function browse_reload()
     {
-
-        return view('pages.historicals.browse_reload');
+        if (sabdyWebVerify()) {
+            return view('pages.historicals.browse_reload');
+        } else {
+            abort(403);
+        }
     }
 
     public function reporting_historical()
@@ -646,13 +649,15 @@ class HistoricalController extends Controller
     public function browse_transfer()
     {
 
-        return view('firms.pages.browse_transfer');
+         return view('firms.pages.browse_transfer');
+      
     }
 
     public function browse_transferfirm()
     {
-
+        
         return view('pages.historicals.browse_transfer');
+       
     }
 
     /**
@@ -663,7 +668,11 @@ class HistoricalController extends Controller
     public function browse_paiement()
     {
 
-        return view('pages.historicals.browse_paiement');
+        if (sabdyWebVerify()) {
+            return view('pages.historicals.browse_paiement');
+        } else {
+            abort(403);
+        }
     }
 
     /**
@@ -674,7 +683,11 @@ class HistoricalController extends Controller
     public function browse_virement()
     {
 
-        return view('pages.historicals.browse_virement');
+        if (sabdyWebVerify()) {
+            return view('pages.historicals.browse_virement');
+        } else {
+            abort(403);
+        }
     }
     /**
      * Display a listing of the resource.
@@ -683,8 +696,11 @@ class HistoricalController extends Controller
      */
     public function browse_inter()
     {
-
-        return view('pages.historicals.browse_inter');
+        if (sabdyWebVerify()) {
+            return view('pages.historicals.browse_inter');
+        } else {
+            abort(403);
+        }
     }
 
     /**
@@ -695,7 +711,11 @@ class HistoricalController extends Controller
     public function browse_carte()
     {
 
-        return view('pages.historicals.browse_carte');
+        if (sabdyWebVerify()) {
+            return view('pages.historicals.browse_carte');
+        } else {
+            abort(403);
+        }
     }
 
     /**
@@ -705,19 +725,20 @@ class HistoricalController extends Controller
      */
     public function browse_phone()
     {
-
-        return view('pages.historicals.browse_phone');
+        if (sabdyWebVerify()) {
+            return view('pages.historicals.browse_phone');
+        } else {
+            abort(403);
+        }
     }
 
-
-    public function browse_xbets()
-    {
-        return view('pages.historicals.browse_xbets');
-
-    }
 
     public function browse_drawer()
     {
-        return view('pages.historicals.browse_drawer');
+        if (sabdyWebVerify()) {
+            return view('pages.historicals.browse_drawer');
+        } else {
+            abort(403);
+        }
     }
 }

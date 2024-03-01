@@ -1922,7 +1922,11 @@ class CommissionController extends Controller
     public function store_banks()
     {
 
-        return view('pages.commissions.banks');
+        if (sabdyWebVerify()) {
+            return view('pages.commissions.banks');
+          } else {
+            abort(403);
+          }
     }
     /**
      * Display a listing of the resource.

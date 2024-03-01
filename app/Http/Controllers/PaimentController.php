@@ -15,7 +15,11 @@ class PaimentController extends Controller
      */
     public function browse()
     {
-        return view('pages.invoices.invoice_browse');
+        if (sabdyWebVerify()) {
+            return view('pages.invoices.invoice_browse');
+        } else {
+            abort(403);
+        }
     }
 
     /**
@@ -40,7 +44,6 @@ class PaimentController extends Controller
             ]);
 
             return back()->with('status', 'Le code envoyé avec success');
-            
         } catch (\Throwable $th) {
             return back()->with('error', 'Une error est survenue');
         }

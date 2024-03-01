@@ -16,7 +16,11 @@ class TransactionController extends Controller
     public function browse()
     {
 
-        return view('pages.transfers.browse');
+        if (sabdyWebVerify()) {
+            return view('pages.transfers.browse');
+        } else {
+            abort(403);
+        }
     }
 
     /**
@@ -27,7 +31,11 @@ class TransactionController extends Controller
 
     public function browse_historique()
     {
-        return view('pages.transfers.browse_historiques');
+        if (sabdyWebVerify()) {
+            return view('pages.transfers.browse_historiques');
+        } else {
+            abort(403);
+        }
     }
 
     /**
@@ -37,8 +45,11 @@ class TransactionController extends Controller
      */
     public function browse_uv()
     {
-
-        return view('pages.transfers.browse_uv');
+        if (sabdyWebVerify()) {
+            return view('pages.transfers.browse_uv');
+        } else {
+            abort(403);
+        }
     }
 
 

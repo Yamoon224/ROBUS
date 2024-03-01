@@ -42,7 +42,11 @@ class CardController extends Controller
      */
     public function browse()
     {
-        return view('pages.cards.browse');
+        if (sabdyWebVerify()) {
+            return view('pages.cards.browse');
+        } else {
+            abort(403);
+        }
     }
 
     /**
@@ -57,7 +61,11 @@ class CardController extends Controller
         // $countries = Country::where('robus', true)->where('indecative', '!=', null)->get();
         $type_reload  = Provider::where('status', true)->where('provider_type_id',  5)->orderBy('name', 'asc')->get();
         $amount_valeur = OrderCardCost::whereId(1)->first();
-        return view('pages.cards.add', compact('type_reload', 'amount_valeur'));
+        if (sabdyWebVerify()) {
+            return view('pages.cards.add', compact('type_reload', 'amount_valeur'));
+        } else {
+            abort(403);
+        }
     }
     /**
      * Store a newly created resource in storage.
@@ -163,8 +171,8 @@ class CardController extends Controller
                         $card_bank->wallet->update([
                             'amount' => DB::raw('amount-'  .   $card_bank->amount),
                         ]);
-                       
-                        if ( $wallet_user->is_under_distributer == 1) {
+
+                        if ($wallet_user->is_under_distributer == 1) {
 
                             // Commission if distributer
                             $valuer_deposit =  $percent_robus->percent_merchands;
@@ -379,17 +387,17 @@ class CardController extends Controller
                         $file_identity_doc = $request->file('identity_doc');
                         $file_identity_form = $request->file('identity_form');
 
-                             // Upload Images        
+                        // Upload Images        
                         if (isset($file_identity_doc)) {
                             $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id . '/');
-                            $front_file = 'recto_' .date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
+                            $front_file = 'recto_' . date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
                             $file_identity_doc->move($destination_path, $front_file);
                             $card_bank->identity_doc =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id . "/$front_file";
-                            }
+                        }
 
                         if (isset($file_identity_form)) {
                             $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id  . '/');
-                            $back_file = 'verso_' .date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
+                            $back_file = 'verso_' . date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
                             $file_identity_form->move($destination_path, $back_file);
                             $card_bank->identity_form =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id  . "/$back_file";
                         }
@@ -401,7 +409,7 @@ class CardController extends Controller
                             'amount' => DB::raw('amount-'  .   $card_bank->amount),
                         ]);
 
-                        if ( $wallet_user->is_under_distributer == 1) {
+                        if ($wallet_user->is_under_distributer == 1) {
 
                             // Commission if distributer
                             $valuer_deposit =  $percent_robus->percent_merchands;
@@ -619,14 +627,14 @@ class CardController extends Controller
                         // Upload Images        
                         if (isset($file_identity_doc)) {
                             $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id . '/');
-                            $front_file = 'recto_' .date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
+                            $front_file = 'recto_' . date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
                             $file_identity_doc->move($destination_path, $front_file);
                             $card_bank->identity_doc =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id . "/$front_file";
                         }
 
                         if (isset($file_identity_form)) {
                             $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id  . '/');
-                            $back_file = 'verso_' .date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
+                            $back_file = 'verso_' . date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
                             $file_identity_form->move($destination_path, $back_file);
                             $card_bank->identity_form =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id  . "/$back_file";
                         }
@@ -638,7 +646,7 @@ class CardController extends Controller
                             'amount' => DB::raw('amount-'  .   $card_bank->amount),
                         ]);
 
-                        if ( $wallet_user->is_under_distributer == 1) {
+                        if ($wallet_user->is_under_distributer == 1) {
 
                             // Commission if distributer
                             $valuer_deposit =  $percent_robus->percent_merchands;
@@ -851,6 +859,7 @@ class CardController extends Controller
         if (empty($card)) {
             return redirect(route('cards.browse'))->with('color', 'danger')->with('status', 'Pas de doc');
         }
+        
         return view('pages.cards.show', compact('card'));
     }
 

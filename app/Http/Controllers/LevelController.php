@@ -14,7 +14,11 @@ class LevelController extends Controller
      */
     public function browse_levels_bank()
     {
-        return view('pages.levels.browse_level_bank');
+        if (sabdyWebVerify()) {
+            return view('pages.levels.browse_level_bank');
+        } else {
+            abort(403);
+        }
     }
 
 
@@ -25,24 +29,35 @@ class LevelController extends Controller
      */
     public function browse_levels_ivoire()
     {
-        return view('pages.levels.browse_level_ivoirie');
+        if (sabdyWebVerify()) {
+            return view('pages.levels.browse_level_ivoirie');
+        } else {
+            abort(403);
+        }
     }
 
-    public function browse_levels_custumers() 
+    public function browse_levels_custumers()
     {
 
-        return view('pages.levels.browse_level_custumers');
-
+        if (sabdyWebVerify()) {
+            return view('pages.levels.browse_level_custumers');
+        } else {
+            abort(403);
+        }
     }
 
-     /**
+    /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function browse_levels_deposit()
     {
-        return view('pages.levels.browse_level_deposit');
+        if (sabdyWebVerify()) {
+            return view('pages.levels.browse_level_deposit');
+        } else {
+            abort(403);
+        }
     }
 
 
@@ -53,14 +68,22 @@ class LevelController extends Controller
      */
     public function browse_levels_deposit_ivoire()
     {
-        return view('pages.levels.browse_level_deposit_ivoirie');
+        if (sabdyWebVerify()) {
+            return view('pages.levels.browse_level_deposit_ivoirie');
+        } else {
+            abort(403);
+        }
     }
 
 
-    public function browse_levels_deposit_ivoire_under() {
+    public function browse_levels_deposit_ivoire_under()
+    {
 
-        return view('pages.levels.browse_levels_deposit_ivoire_under');
-
+        if (sabdyWebVerify()) {
+            return view('pages.levels.browse_levels_deposit_ivoire_under');
+        } else {
+            abort(403);
+        }
     }
 
 

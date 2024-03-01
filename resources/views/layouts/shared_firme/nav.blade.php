@@ -11,7 +11,7 @@
     <div class="side-nav__devider my-4"></div>
     <ul>
         <li>
-            <a href="{{ route('companies.home') }}" class="side-menu {{ request()->is('companies.home') ? 'side-menu--active' : '' }}">
+            <a href="{{ route('companies.home') }}" class="side-menu {{ $route == 'companies.home' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="home"></i> </div>
                 <div class="side-menu__title">
                     Tableau de bord
