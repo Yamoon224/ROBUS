@@ -750,7 +750,7 @@
                         '#FFFF00',
                         '#0000FF'
                     ],
-                    borderWidth: 1,
+                    borderWidth: 2,
                 }]
             },
             options: {

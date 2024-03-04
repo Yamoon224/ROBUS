@@ -22,6 +22,8 @@ use App\Http\Services\HistoriqueService;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTransaction;
 use Illuminate\Database\Eloquent\Collection;
+use App\Models\Wallets\WalletXbet;
+
 
 class CountrieController extends Controller
 {
@@ -286,9 +288,9 @@ class CountrieController extends Controller
         return view('pages.historicals.under_distributer.browse_paiement', compact('wallet_payments', 'valeur_payments', 'countrie'));
     }
 
-    public function show_under_inter(Request $request , String $code)
+    public function show_under_inter(Request $request, String $code)
     {
-        
+
         $countrie = Country::where('name', $code)->first();
 
         $wallet_payments =  WalletInter::join('wallets', 'wallets.id', 'wallet_inters.wallet_id')
@@ -374,535 +376,118 @@ class CountrieController extends Controller
 
         $users_status = null;
 
-        if (Auth::guard('web')->user()->wallet->sidUser->is_distributer == true) {
-
-            $countrie = Country::whereName($code)->whereId(Auth::guard('web')->user()->wallet->country->id)->first();
-
-
-            $walletSolde  = Wallet::where('sid_user_id',  Auth::guard('web')->user()->id)->sum('amount');
-
-            $usersCountries = SidUser::where('country_id', $countrie->id)->whereIsCustumers(true)->whereIsActive(true)->get();
-
-            $custumers_countries = SidUser::whereIsCustumers(true)->where('country_id', $countrie->id)->count();
-
-            $admin_countries = SidUser::where('is_distributer', true)->orWhere('is_under_distributer', true)
-                ->orWhere('is_admin', true)
-                ->where('country_id', $countrie->id)->count();
-
-
-
-
-            $data_bank = [];
-            $data_deposit = [];
-            $data_phone = [];
-            $data_payement = [];
-            $data_inter = [];
-            $data_transaction = [];
-            $data_reload = [];
-
-            $result = WalletBank::join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_banks.created_at', '>=', Carbon::now()->subDays(30))
-                ->where('wallet_banks.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_banks.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_banks.created_at')
-                ->get();
-
-            foreach ($result as $sumBank) {
-                $data_bank[] = $sumBank->cumul_amount_chiffre;
-            }
-
-            $result = walletDeposit::join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_deposits.created_at', '>=', Carbon::now()->subDays(30))
-                ->where('wallet_deposits.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_deposits.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_deposits.created_at')
-                ->get();
-
-
-            foreach ($result as $sumDepos) {
-                $data_deposit[] = $sumDepos->cumul_amount_chiffre;
-            }
-
-            $result = WalletPayment::join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_payments.created_at', '>=', Carbon::now()->subDays(30))
-                ->where('wallet_payments.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_payments.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_payments.created_at')
-                ->get();
-
-            foreach ($result as $sumPay) {
-                $data_payement[] = $sumPay->cumul_amount_chiffre;
-            }
-
-            $result = WalletReload::join('wallets', 'wallets.id', 'wallet_reloads.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_reloads.created_at', '>=', Carbon::now()->subDays(30))
-                ->where('wallet_reloads.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_reloads.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_reloads.created_at')
-                ->get();
-
-            foreach ($result as $sumReload) {
-                $data_reload[] = $sumReload->cumul_amount_chiffre;
-            }
-
-            $result = WalletTransaction::join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_transactions.created_at', '>=', Carbon::now()->subDays(30))
-                ->where('wallet_transactions.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_transactions.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_transactions.created_at')
-                ->get();
-
-            foreach ($result as $sumTrans) {
-                $data_transaction[] = $sumTrans->cumul_amount_chiffre;
-            }
-
-            $result = WalletInter::join('wallets', 'wallets.id', 'wallet_inters.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_inters.created_at', '>=', Carbon::now()->subDays(30))
-                ->where('wallet_inters.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_inters.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_inters.created_at')
-                ->get();
-
-            foreach ($result as $sumInter) {
-                $data_inter[] = $sumInter->cumul_amount_chiffre;
-            }
-
-            $result = WalletPhoneCredit::join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_phone_credits.created_at', '>=', Carbon::now()->subDays(30))
-                ->where('wallet_phone_credits.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_phone_credits.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_phone_credits.created_at')
-                ->get();
-
-
-            foreach ($result as $sumPhone) {
-                $data_phone[] = $sumPhone->cumul_amount_chiffre;
-            }
-
-            $data_bank_todays = [];
-            $data_deposit_todays = [];
-            $data_phone_todays  = [];
-            $data_payement_todays = [];
-            $data_inter_todays = [];
-            $data_transaction_todays = [];
-            $data_reload_todays = [];
-
-
-            $result_todays = WalletBank::join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_banks.created_at', Carbon::today())
-                ->where('wallet_banks.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_banks.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_banks.created_at')
-                ->get();
-
-            foreach ($result_todays as $sumBank) {
-                $data_bank_todays[] = $sumBank->cumul_amount_chiffre;
-            }
-
-            $result_todays = walletDeposit::join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_deposits.created_at', Carbon::today())
-                ->where('wallet_deposits.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_deposits.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_deposits.created_at')
-                ->get();
-
-
-            foreach ($result_todays as $sumDepos) {
-                $data_deposit_todays[] = $sumDepos->cumul_amount_chiffre;
-            }
-
-            $result_todays = WalletPayment::join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_payments.created_at', Carbon::today())
-                ->where('wallet_payments.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_payments.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_payments.created_at')
-                ->get();
-
-            foreach ($result_todays as $sumPay) {
-                $data_payement_todays[] = $sumPay->cumul_amount_chiffre;
-            }
-
-            $result_todays = WalletReload::join('wallets', 'wallets.id', 'wallet_reloads.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_reloads.created_at', Carbon::today())
-                ->where('wallet_reloads.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_reloads.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_reloads.created_at')
-                ->get();
-
-            foreach ($result_todays as $sumReload) {
-                $data_reload_todays[] = $sumReload->cumul_amount_chiffre;
-            }
-
-
-            $result_todays = WalletTransaction::join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_transactions.created_at', Carbon::today())
-                ->where('wallet_transactions.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_transactions.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_transactions.created_at')
-                ->get();
-
-            foreach ($result_todays as $sumTrans) {
-                $data_transaction_todays[] = $sumTrans->cumul_amount_chiffre;
-            }
-
-            $result_todays = WalletInter::join('wallets', 'wallets.id', 'wallet_inters.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_inters.created_at', Carbon::today())
-                ->where('wallet_inters.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_inters.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_inters.created_at')
-                ->get();
-
-            foreach ($result_todays as $sumInter) {
-                $data_inter_todays[] = $sumInter->cumul_amount_chiffre;
-            }
-
-            $result_todays = WalletPhoneCredit::join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-                ->where('wallet_phone_credits.created_by',  Auth::guard('web')->user()->id)
-                ->select(DB::raw('sum(wallet_phone_credits.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_phone_credits.created_at')
-                ->get();
-
-
-            foreach ($result_todays as $sumPhone) {
-                $data_phone_todays[] = $sumPhone->cumul_amount_chiffre;
-            }
-
-            // Admin
-            $sum_bank_month = array_sum($data_bank);
-            $sum_deposit_month = array_sum($data_deposit);
-            $sum_payment_month = array_sum($data_payement);
-            $sum_reload_month = array_sum($data_reload);
-            $sum_transaction_month = array_sum($data_transaction);
-            $sum_inter_month  = array_sum($data_inter);
-            $sum_phoneCredit_month = array_sum($data_phone);
-
-            //  Todays
-            $sum_bank_todays = array_sum($data_bank_todays);
-            $sum_deposit_todays = array_sum($data_deposit_todays);
-            $sum_payment_todays = array_sum($data_payement_todays);
-            $sum_reload_todays = array_sum($data_reload_todays);
-            $sum_transaction_todays = array_sum($data_transaction_todays);
-            $sum_inter_todays =  array_sum($data_inter_todays);
-            $sum_phoneCredit_todays = array_sum($data_phone_todays);
-            $usersCountry = $countrie->currencie->name ?? null;
-
-            return view('pages.countries.show', compact(
-                'countrie',
-                'sum_bank_month',
-                'sum_deposit_month',
-                'sum_payment_month',
-                'sum_reload_month',
-                'sum_transaction_month',
-                'sum_inter_month',
-                'sum_phoneCredit_month',
-                'sum_bank_todays',
-                'sum_deposit_todays',
-                'sum_payment_todays',
-                'sum_reload_todays',
-                'sum_transaction_todays',
-                'sum_inter_todays',
-                'sum_phoneCredit_todays',
-                'walletSolde',
-                'custumers_countries',
-                'usersCountry'
-            ));
-        } else {
-
-            $countrie = Country::where('name', $code)->first();
-
-            $collection = new Collection([]);
-
-            $walletSolde = Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->where('sid_users.is_custumers', true)
-                ->sum('amount');
-
-            $walletSoldeAdmin = Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->where('sid_users.is_admin', true)
-                ->sum('amount');
-
-            $users_distri_Countries = SidUser::Where('country_id', $countrie->id)->Where('is_distributer', true)->Where('is_distributer', true)->get();
-
-            $users_admin_distriCountries = SidUser::Where('country_id', $countrie->id)->Where('is_admin', true)->get();
-
-            $usersCountries = SidUser::where('country_id', $countrie->id)->where('is_custumers', true)->where('is_active', true)->get();
-
-            $custumers_countries = SidUser::where('is_custumers', true)->where('country_id', $countrie->id)->count();
-
-            $distri_countries = SidUser::where('is_distributer', true)->Where('is_under_distributer', true)
-                ->where('country_id', $countrie->id)->count();
-
-            $admin_countries = SidUser::Where('is_admin', true)
-                ->where('country_id', $countrie->id)->count();
-
-
-            $usersAdmin = SidUser::where('country_id', $countrie->id)->where('is_active', true)->latest()->paginate(15);
-
-            $data_bank = [];
-            $data_deposit = [];
-            $data_phone = [];
-            $data_payement = [];
-            $data_inter = [];
-            $data_transaction = [];
-            $data_reload = [];
-
-            $result = WalletBank::join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_banks.created_at', '>=', Carbon::now()->subDays(30))
-                ->select(DB::raw('sum(wallet_banks.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_banks.created_at')
-                ->get();
-
-            foreach ($result as $sumBank) {
-                $data_bank[] = $sumBank->cumul_amount_chiffre;
-            }
-
-            $result = walletDeposit::join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_deposits.created_at', '>=', Carbon::now()->subDays(30))
-                ->select(DB::raw('sum(wallet_deposits.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_deposits.created_at')
-                ->get();
-
-
-            foreach ($result as $sumDepos) {
-                $data_deposit[] = $sumDepos->cumul_amount_chiffre;
-            }
-
-            $result = WalletPayment::join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_payments.created_at', '>=', Carbon::now()->subDays(30))
-                ->select(DB::raw('sum(wallet_payments.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_payments.created_at')
-                ->get();
-
-            foreach ($result as $sumPay) {
-                $data_payement[] = $sumPay->cumul_amount_chiffre;
-            }
-
-            $result = WalletReload::join('wallets', 'wallets.id', 'wallet_reloads.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_reloads.created_at', '>=', Carbon::now()->subDays(30))
-                ->select(DB::raw('sum(wallet_reloads.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_reloads.created_at')
-                ->get();
-
-            foreach ($result as $sumReload) {
-                $data_reload[] = $sumReload->cumul_amount_chiffre;
-            }
-
-            $result = WalletTransaction::join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_transactions.created_at', '>=', Carbon::now()->subDays(30))
-                ->select(DB::raw('sum(wallet_transactions.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_transactions.created_at')
-                ->get();
-
-            foreach ($result as $sumTrans) {
-                $data_transaction[] = $sumTrans->cumul_amount_chiffre;
-            }
-
-            $result = WalletInter::join('wallets', 'wallets.id', 'wallet_inters.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_inters.created_at', '>=', Carbon::now()->subDays(30))
-                ->select(DB::raw('sum(wallet_inters.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_inters.created_at')
-                ->get();
-
-            foreach ($result as $sumInter) {
-                $data_inter[] = $sumInter->cumul_amount_chiffre;
-            }
-
-            $result = WalletPhoneCredit::join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_phone_credits.created_at', '>=', Carbon::now()->subDays(30))
-                ->select(DB::raw('sum(wallet_phone_credits.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_phone_credits.created_at')
-                ->get();
-
-
-            foreach ($result as $sumPhone) {
-                $data_phone[] = $sumPhone->cumul_amount_chiffre;
-            }
-
-            $data_bank_todays = [];
-            $data_deposit_todays = [];
-            $data_phone_todays  = [];
-            $data_payement_todays = [];
-            $data_inter_todays = [];
-            $data_transaction_todays = [];
-            $data_reload_todays = [];
-
-
-            $result_todays = WalletBank::join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_banks.created_at', Carbon::today())
-                ->select(DB::raw('sum(wallet_banks.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_banks.created_at')
-                ->get();
-            foreach ($result_todays as $sumBank) {
-                $data_bank_todays[] = $sumBank->cumul_amount_chiffre;
-            }
-
-            $result_todays = walletDeposit::join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_deposits.created_at', Carbon::today())
-                ->select(DB::raw('sum(wallet_deposits.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_deposits.created_at')
-                ->get();
-
-
-            foreach ($result_todays as $sumDepos) {
-                $data_deposit_todays[] = $sumDepos->cumul_amount_chiffre;
-            }
-
-            $result_todays = WalletPayment::join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_payments.created_at', Carbon::today())
-                ->select(DB::raw('sum(wallet_payments.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_payments.created_at')
-                ->get();
-
-            foreach ($result_todays as $sumPay) {
-                $data_payement_todays[] = $sumPay->cumul_amount_chiffre;
-            }
-
-            $result_todays = WalletReload::join('wallets', 'wallets.id', 'wallet_reloads.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_reloads.created_at', Carbon::today())
-                ->select(DB::raw('sum(wallet_reloads.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_reloads.created_at')
-                ->get();
-
-            foreach ($result_todays as $sumReload) {
-                $data_reload_todays[] = $sumReload->cumul_amount_chiffre;
-            }
-
-
-            $result_todays = WalletTransaction::join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_transactions.created_at', Carbon::today())
-                ->select(DB::raw('sum(wallet_transactions.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_transactions.created_at')
-                ->get();
-
-            foreach ($result_todays as $sumTrans) {
-                $data_transaction_todays[] = $sumTrans->cumul_amount_chiffre;
-            }
-
-            $result_todays = WalletInter::join('wallets', 'wallets.id', 'wallet_inters.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_inters.created_at', Carbon::today())
-                ->select(DB::raw('sum(wallet_inters.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_inters.created_at')
-                ->get();
-
-            foreach ($result_todays as $sumInter) {
-                $data_inter_todays[] = $sumInter->cumul_amount_chiffre;
-            }
-
-            $result_todays = WalletPhoneCredit::join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-                ->where('wallets.country_id', $countrie->id)
-                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-                ->select(DB::raw('sum(wallet_phone_credits.amount) as cumul_amount_chiffre'))
-                ->groupBy('wallet_phone_credits.created_at')
-                ->get();
-
-
-            foreach ($result_todays as $sumPhone) {
-                $data_phone_todays[] = $sumPhone->cumul_amount_chiffre;
-            }
-
-            if ($request->users_status != null) {
-                $usersAdmin = $usersAdmin->where($request->users_status);
-                $users_status = $request->users_status;
-            }
-
-            // Admin
-            $sum_bank_month = array_sum($data_bank);
-            $sum_deposit_month = array_sum($data_deposit);
-            $sum_payment_month = array_sum($data_payement);
-            $sum_reload_month = array_sum($data_reload);
-            $sum_transaction_month = array_sum($data_transaction);
-            $sum_inter_month  = array_sum($data_inter);
-            $sum_phoneCredit_month = array_sum($data_phone);
-
-            //  Todays
-            $sum_bank_todays = array_sum($data_bank_todays);
-            $sum_deposit_todays = array_sum($data_deposit_todays);
-            $sum_payment_todays = array_sum($data_payement_todays);
-            $sum_reload_todays = array_sum($data_reload_todays);
-            $sum_transaction_todays = array_sum($data_transaction_todays);
-            $sum_inter_todays =  array_sum($data_inter_todays);
-            $sum_phoneCredit_todays = array_sum($data_phone_todays);
-
-            $usersCountry = $countrie->currencie->name ?? null;
-
-            $data_admin = [];
-
-
-            $data_admin = $users_admin_distriCountries;
-
-            $cumul_amount = [];
-
-            $cumul_amount_distri = [];
-
-            foreach ($data_admin as $value) {
-                $data1 = [
-                    'sumAmount' => $value->wallet->amount ?? null,
-                ];
-                $collection->push($data1);
-            }
-
-            for ($i = 0; $i < $collection->count(); $i++) {
-                $cumul_amount[] = $collection[$i]['sumAmount'];
-            }
-
-            return view('pages.countries.show', compact(
-                'countrie',
-                'walletSolde',
-                'usersAdmin',
-                'usersCountries',
-                'cumul_amount',
-                'usersCountry',
-                'sum_bank_month',
-                'sum_deposit_month',
-                'sum_payment_month',
-                'sum_reload_month',
-                'sum_transaction_month',
-                'sum_inter_month',
-                'sum_phoneCredit_month',
-                'sum_bank_todays',
-                'sum_deposit_todays',
-                'sum_payment_todays',
-                'sum_reload_todays',
-                'sum_transaction_todays',
-                'sum_inter_todays',
-                'sum_phoneCredit_todays',
-                'custumers_countries',
-                'admin_countries',
-                'users_status',
-                'users_distri_Countries',
-                'distri_countries',
-                'walletSoldeAdmin'
-            ));
-        }
+        $countrie = Country::whereName($code)->first();
+        // Amount transactions days
+        $sum_payment_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
+        $sum_transaction_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletTransaction::class, 'wallet_transactions.wallet_id' , $countrie->id, 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
+        $sum_reload_todays =  $this->historiqueService->getTodayReloadAmountTotal(WalletReload::class);
+        $sum_phoneCredit_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id , 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
+        $sum_inter_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount');
+        $sum_bank_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
+        $sum_deposit_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
+        $xbet_amount =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
+
+        // Amount transactions month
+        $sum_payment_month =  $this->historiqueService->getDaysTransactionCountrie(WalletPayment::class, 'wallet_payments.wallet_id' , $countrie->id, 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
+        $sum_transaction_month =  $this->historiqueService->getDaysTransactionCountrie(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
+        $sum_reload_month =  $this->historiqueService->getDaysReloadAmountTotal(WalletReload::class);
+        $sum_phoneCredit_month =  $this->historiqueService->getDaysTransactionCountrie(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
+        $sum_inter_month =  $this->historiqueService->getDaysTransactionCountrie(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount');
+        $sum_bank_month =  $this->historiqueService->getDaysTransactionCountrie(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
+        $sum_deposit_month =  $this->historiqueService->getDaysTransactionCountrie(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
+        $xbet_amount_month =  $this->historiqueService->getDaysTransactionCountrie(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
+        // Infos uses
+ 
+
+        $custumers_countries = SidUser::whereIsCustumers(true)->where('country_id', $countrie->id)->get();
+        $users_distri_Countries = SidUser::Where('country_id', $countrie->id)->Where('is_distributer', true)->get();
+        $user_company = SidUser::where('country_id', $countrie->id)->where('is_company', true)->get();
+        $user_master = SidUser::where('country_id', $countrie->id)->where('is_master', true)->get();
+        $user_supervisor = SidUser::where('country_id', $countrie->id)->where('is_supervisor', true)->get();
+        $user_comzone = SidUser::where('country_id', $countrie->id)->where('is_com_zone', true)->get();
+        $user_under_distributors = SidUser::where('country_id', $countrie->id)->where('is_under_distributer', true)->get();
+
+        // Counts Users
+        $custumers_countrie_count = SidUser::whereIsCustumers(true)->where('country_id', $countrie->id)->count();
+        $users_distri_Countrie_count = SidUser::Where('country_id', $countrie->id)->Where('is_distributer', true)->count();
+        $user_company_count = SidUser::where('country_id', $countrie->id)->where('is_company', true)->count();
+        $user_master_count = SidUser::where('country_id', $countrie->id)->where('is_master', true)->count();
+        $user_supervisor_count = SidUser::where('country_id', $countrie->id)->where('is_supervisor', true)->count();
+        $user_comzone_count = SidUser::where('country_id', $countrie->id)->where('is_com_zone', true)->count();
+        $user_under_distributor_count = SidUser::where('country_id', $countrie->id)->where('is_under_distributer', true)->count();
+
+
+        $sum_wallet_custumers = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_custumers');
+
+        $sum_wallet_supervisors = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_supervisor');
+
+        $sum_wallet_companies = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_company');
+
+        $sum_wallet_under_distributors = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_under_distributer');
+
+        $sum_wallet_distributors = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_distributer');
+
+        $sum_wallet_masters = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_master');
+
+        $sum_wallet_comZones = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_com_zone');
+
+        $countrie = Country::where('name', $code)->first();
+
+        $get_users =    SidUser::Where('country_id', $countrie->id)->paginate(20);
+
+      
+        $usersCountry = $countrie->currencie->name ?? null;
+
+
+    
+
+        return view('pages.countries.show', compact(
+            'get_users',
+            'countrie',
+            'usersCountry',     
+            // Users
+            'custumers_countries',
+            'users_distri_Countries',
+            'user_company',
+            'user_master',
+            'user_supervisor',
+            'user_comzone',
+            'user_under_distributors',
+
+            // Users counts
+            'custumers_countrie_count',
+            'users_distri_Countrie_count',
+            'user_company_count',
+            'user_master_count',
+            'user_supervisor',
+            'user_supervisor_count',
+            'user_comzone_count',
+            'user_under_distributor_count',
+
+            // Wallet Sum
+            'sum_wallet_custumers',
+            'sum_wallet_supervisors',
+            'sum_wallet_companies',
+            'sum_wallet_under_distributors',
+            'sum_wallet_distributors',
+            'sum_wallet_masters',
+            'sum_wallet_comZones',
+            'users_status',
+            'sum_bank_month',
+            'sum_deposit_month',
+            'sum_payment_month',
+            'sum_reload_month',
+            'sum_transaction_month',
+            'sum_inter_month',
+            'sum_phoneCredit_month',
+            'sum_bank_todays',
+            'sum_deposit_todays',
+            'sum_payment_todays',
+            'sum_reload_todays',
+            'sum_transaction_todays',
+            'sum_inter_todays',
+            'sum_phoneCredit_todays',
+        ));
     }
 
     /**

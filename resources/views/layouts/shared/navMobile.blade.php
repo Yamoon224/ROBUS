@@ -29,18 +29,9 @@
             <ul class="{{ request()->is('countries*') ? 'menu__sub-open' : '' }}">
                 @php
 
-                    $walletUser = Auth::guard('web')->user();
+                            $countries = getCountriesForUser(Auth::guard('web')->user());
 
-                    if ($walletUser->wallet->sidUser->is_distributer == true || $walletUser->wallet->sidUser->is_under_distributer == true) {
-                        $countries = App\Models\Custumers\Country::where('id', $walletUser->wallet->country->id)
-                            ->where('robus', true)
-                            ->orderBy('name', 'asc')
-                            ->get();
-                    } elseif ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false) {
-                        $countries = App\Models\Custumers\Country::where('robus', true)->orderBy('name', 'asc')->get();
-                    }
-
-                @endphp
+                        @endphp
                 @foreach ($countries as $countrie)
                     <li>
                         <a href="{{ route('countries.show', ['key' => $countrie->name]) }}"

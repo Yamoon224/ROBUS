@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Custumers\Country;
 use Illuminate\Support\Facades\Auth;
+
 
 
 function firm()
@@ -15,6 +17,7 @@ function sabdy()
     return Auth::guard('web')->user();
 }
 
+
 function sabdyVerify()
 {
     $allowedRoles = ['root', 'Distributeur', 'superviseur', 'com_zone'];
@@ -26,6 +29,20 @@ function sabdyVerify()
     } else {
         return false;
     }
+}
+
+function getCountriesForUser($user)
+{
+    $isDistributor = $user->wallet->sidUser->is_distributor;
+
+    $countries = Country::whereRobus(true)
+        ->orderBy('name', 'asc');
+
+    if ($isDistributor) {
+        $countries->where('id', $user->wallet->country->id);
+    }
+
+    return $countries->get();
 }
 
 
