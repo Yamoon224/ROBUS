@@ -8,7 +8,6 @@ use App\Models\Sid\SidUser;
 use App\Models\WithMerchant;
 use Illuminate\Http\Request;
 use App\Models\Custumers\City;
-use App\Models\Wallets\Wallet;
 use Illuminate\Support\Carbon;
 use App\Models\Custumers\Country;
 use App\Models\Wallets\WalletBank;
@@ -51,9 +50,12 @@ class CountrieController extends Controller
 
 
         $valeur_payments = $this->getCumulsWalletPaymentDistributers($countrie->id);
-        $valeur_success = $this->getCountWalletPaymentSuccess($countrie->id);
-        $valeur_pending = $this->getCountWalletPaymentPending($countrie->id);
-        $valeur_error = $this->getCountWalletPaymentError($countrie->id);
+
+        $valeur_success =  $this->historiqueService->getCountWalletCountSuccess('wallet_payments', 'wallet_payments.id', 'admins_coms.wallet_payment_id', 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.status', 'SUCCESS');
+
+        $valeur_pending =  $this->historiqueService->getCountWalletCountSuccess('wallet_payments', 'wallet_payments.id', 'admins_coms.wallet_payment_id', 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.status', 'PENDING');
+
+        $valeur_error =  $this->historiqueService->getCountWalletCountSuccess('wallet_payments', 'wallet_payments.id', 'admins_coms.wallet_payment_id', 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.status', 'ERROR');
 
         return view('pages.historicals.under_distributer.browse_paiement_distri', compact('wallet_payments', 'valeur_payments', 'countrie', 'valeur_success', 'valeur_pending', 'valeur_error'));
     }
@@ -72,9 +74,13 @@ class CountrieController extends Controller
 
 
         $valeur_payments = $this->getCumulsWalletTransactionDistributers($countrie->id);
-        $valeur_success = $this->getCountWalletTransactionSuccess($countrie->id);
-        $valeur_pending = $this->getCountWalletTransactionPending($countrie->id);
-        $valeur_error = $this->getCountWalletTransactionError($countrie->id);
+
+        $valeur_success =  $this->historiqueService->getCountWalletCountSuccess('wallet_transactions', 'wallet_transactions.id', 'admins_coms.wallet_payment_id', 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.status', 'SUCCESS');
+
+        $valeur_pending =  $this->historiqueService->getCountWalletCountSuccess('wallet_transactions', 'wallet_transactions.id', 'admins_coms.wallet_payment_id', 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.status', 'PENDING');
+
+        $valeur_error =  $this->historiqueService->getCountWalletCountSuccess('wallet_transactions', 'wallet_transactions.id', 'admins_coms.wallet_payment_id', 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.status', 'ERROR');
+
         return view('pages.historicals.under_distributer.browse_transfer_distri', compact('wallet_payments', 'valeur_payments', 'countrie', 'valeur_success', 'valeur_pending', 'valeur_error'));
     }
 
@@ -91,9 +97,12 @@ class CountrieController extends Controller
             ->paginate(20);
 
         $valeur_payments = $this->getCumulsWalletBankDistributers($countrie->id);
-        $valeur_success = $this->getCountWalletBankSuccess($countrie->id);
-        $valeur_pending = $this->getCountWalletBankPending($countrie->id);
-        $valeur_error = $this->getCountWalletBankError($countrie->id);
+
+        $valeur_success =  $this->historiqueService->getCountWalletCountSuccess('wallet_banks', 'wallet_banks.id', 'admins_coms.wallet_payment_id', 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.status', 'SUCCESS');
+
+        $valeur_pending =  $this->historiqueService->getCountWalletCountSuccess('wallet_banks', 'wallet_banks.id', 'admins_coms.wallet_payment_id', 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.status', 'PENDING');
+
+        $valeur_error =  $this->historiqueService->getCountWalletCountSuccess('wallet_banks', 'wallet_banks.id', 'admins_coms.wallet_payment_id', 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.status', 'ERROR');
 
 
         return view('pages.historicals.under_distributer.browse_virement_distri', compact('wallet_payments', 'valeur_payments', 'countrie', 'valeur_success', 'valeur_pending', 'valeur_error'));
@@ -111,10 +120,12 @@ class CountrieController extends Controller
             // ->groupBy('admins_coms.created_at')
             ->paginate(20);
 
-        $valeur_success = $this->getCountWalletDepositSuccess($countrie->id);
-        $valeur_pending = $this->getCountWalletDepositPending($countrie->id);
-        $valeur_error = $this->getCountWalletDepositError($countrie->id);
 
+        $valeur_success =  $this->historiqueService->getCountWalletCountSuccess('wallet_deposits', 'wallet_deposits.id', 'admins_coms.wallet_payment_id', 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.status', 'SUCCESS');
+
+        $valeur_pending =  $this->historiqueService->getCountWalletCountSuccess('wallet_deposits', 'wallet_deposits.id', 'admins_coms.wallet_payment_id', 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.status', 'PENDING');
+
+        $valeur_error =  $this->historiqueService->getCountWalletCountSuccess('wallet_deposits', 'wallet_deposits.id', 'admins_coms.wallet_payment_id', 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.status', 'ERROR');
 
         $valeur_payments = $this->getCumulsWalletDepositDistributers($countrie->id);
 
@@ -179,9 +190,12 @@ class CountrieController extends Controller
 
 
         $valeur_payments = $this->getCumulsWalletPhoneDistributers($countrie->id);
-        $valeur_success = $this->getCountWalletPhoneSuccess($countrie->id);
-        $valeur_pending = $this->getCountWalletPhonePending($countrie->id);
-        $valeur_error = $this->getCountWalletPhoneError($countrie->id);
+
+        $valeur_success =  $this->historiqueService->getCountWalletCountSuccess('wallet_phone_credits', 'wallet_phone_credits.id', 'admins_coms.wallet_payment_id', 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.status', 'SUCCESS');
+
+        $valeur_pending =  $this->historiqueService->getCountWalletCountSuccess('wallet_phone_credits', 'wallet_phone_credits.id', 'admins_coms.wallet_payment_id', 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.status', 'PENDING');
+
+        $valeur_error =  $this->historiqueService->getCountWalletCountSuccess('wallet_phone_credits', 'wallet_phone_credits.id', 'admins_coms.wallet_payment_id', 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.status', 'ERROR');
 
         return view('pages.historicals.under_distributer.browse_phone_distri', compact('wallet_payments', 'valeur_payments', 'countrie', 'valeur_success', 'valeur_pending', 'valeur_error'));
     }
@@ -379,16 +393,16 @@ class CountrieController extends Controller
         $countrie = Country::whereName($code)->first();
         // Amount transactions days
         $sum_payment_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
-        $sum_transaction_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletTransaction::class, 'wallet_transactions.wallet_id' , $countrie->id, 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
+        $sum_transaction_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
         $sum_reload_todays =  $this->historiqueService->getTodayReloadAmountTotal(WalletReload::class);
-        $sum_phoneCredit_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id , 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
+        $sum_phoneCredit_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
         $sum_inter_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount');
         $sum_bank_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $sum_deposit_todays =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount =  $this->historiqueService->getTodayTransactionAmountCountrieTotal(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
 
         // Amount transactions month
-        $sum_payment_month =  $this->historiqueService->getDaysTransactionCountrie(WalletPayment::class, 'wallet_payments.wallet_id' , $countrie->id, 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
+        $sum_payment_month =  $this->historiqueService->getDaysTransactionCountrie(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
         $sum_transaction_month =  $this->historiqueService->getDaysTransactionCountrie(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
         $sum_reload_month =  $this->historiqueService->getDaysReloadAmountTotal(WalletReload::class);
         $sum_phoneCredit_month =  $this->historiqueService->getDaysTransactionCountrie(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
@@ -397,7 +411,7 @@ class CountrieController extends Controller
         $sum_deposit_month =  $this->historiqueService->getDaysTransactionCountrie(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount_month =  $this->historiqueService->getDaysTransactionCountrie(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
         // Infos uses
- 
+
 
         $custumers_countries = SidUser::whereIsCustumers(true)->where('country_id', $countrie->id)->get();
         $users_distri_Countries = SidUser::Where('country_id', $countrie->id)->Where('is_distributer', true)->get();
@@ -433,18 +447,20 @@ class CountrieController extends Controller
 
         $countrie = Country::where('name', $code)->first();
 
+
         $get_users =    SidUser::Where('country_id', $countrie->id)->paginate(20);
 
-      
+
+
         $usersCountry = $countrie->currencie->name ?? null;
 
 
-    
+
 
         return view('pages.countries.show', compact(
             'get_users',
             'countrie',
-            'usersCountry',     
+            'usersCountry',
             // Users
             'custumers_countries',
             'users_distri_Countries',
@@ -517,27 +533,30 @@ class CountrieController extends Controller
 
 
             // Admin
-            $sum_bank =  $this->getCumulsWalletBanks($countrie->id);
+            $sum_bank =  $this->historiqueService->getCumulsWalletTransactions(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.commissions', 'wallet_banks.status',  'wallet_banks.created_at');
+            $sum_deposit =  $this->historiqueService->getCumulsWalletTransactions(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.commissions', 'wallet_deposits.status',  'wallet_deposits.created_at');
+            $sum_payment =  $this->historiqueService->getCumulsWalletTransactions(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.commissions', 'wallet_payments.status',  'wallet_payments.created_at');
+            $sum_transaction =  $this->historiqueService->getCumulsWalletTransactions(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.commissions', 'wallet_transactions.status',  'wallet_transactions.created_at');
+            $sum_inter =  $this->historiqueService->getCumulsWalletTransactions(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.commissions', 'wallet_inters.status',  'wallet_inters.created_at');
+            $sum_phoneCredit =  $this->historiqueService->getCumulsWalletTransactions(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.commissions', 'wallet_phone_credits.status',  'wallet_phone_credits.created_at');
+            $sum_xbet =  $this->historiqueService->getCumulsWalletTransactions(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.commissions', 'wallet_xbets.status',  'wallet_xbets.created_at');
+
+
             $sum_amount_distributer =  $this->historiqueService->getSDistributeurSumCountryAdmin($countrie->id);
             $sum_amount_custumers =  $this->historiqueService->getCustumersSumCountrieAdmin($countrie->id);
-            $sum_deposit = $this->getCumulsWalletDeposits($countrie->id);
-            $sum_payment = $this->getCumulsWalletPayments($countrie->id);
-            $sum_reload = $this->getCumulsWalletReloads($countrie->id);
-            $sum_transaction = $this->getCumulsWalletTransactions($countrie->id);
-            $sum_inter  = $this->getCumulsWalletInters($countrie->id);
-            $sum_phoneCredit = $this->getCumulsWalletPhones($countrie->id);
 
 
-            $cumul_solde =   $this->getCumulsWalletBanks($countrie->id)  +   $this->getCumulsWalletPayments($countrie->id) + $this->getCumulsWalletDeposits($countrie->id) +   $this->getCumulsWalletReloads($countrie->id) + $this->getCumulsWalletTransactions($countrie->id)
-                +    $this->getCumulsWalletInters($countrie->id) +   $this->getCumulsWalletPhones($countrie->id);
+            $cumul_solde = $sum_bank +  $sum_deposit +  $sum_payment + $sum_transaction + $sum_inter +  $sum_phoneCredit + $sum_xbet;
 
-            $wallet_banks =   $this->getWalletBanks($countrie->id);
-            $wallet_deposits =   $this->getWalletDepostits($countrie->id);
-            $wallet_payments =   $this->getWalletPayments($countrie->id);
-            $wallet_reloads =   $this->getWalletReloads($countrie->id);
-            $wallet_transactions =   $this->getWalletTransactions($countrie->id);
-            $wallet_inters =   $this->getWalletInters($countrie->id);
-            $wallet_phones =   $this->getWalletPhoneCredits($countrie->id);
+
+            $wallet_banks =  $this->historiqueService->getWalletLimitViews(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.commissions', 'wallet_banks.status',  'wallet_banks.created_at');
+            $wallet_deposits =  $this->historiqueService->getWalletLimitViews(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.commissions', 'wallet_deposits.status',  'wallet_deposits.created_at');
+            $wallet_payments =  $this->historiqueService->getWalletLimitViews(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.commissions', 'wallet_payments.status',  'wallet_payments.created_at');
+            $wallet_transactions =  $this->historiqueService->getWalletLimitViews(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.commissions', 'wallet_transactions.status',  'wallet_transactions.created_at');
+            $wallet_inters =  $this->historiqueService->getWalletLimitViews(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.commissions', 'wallet_inters.status',  'wallet_inters.created_at');
+            $wallet_phones =  $this->historiqueService->getWalletLimitViews(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.commissions', 'wallet_phone_credits.status',  'wallet_phone_credits.created_at');
+            $wallet_xbets =  $this->historiqueService->getWalletLimitViews(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.commissions', 'wallet_xbets.status',  'wallet_xbets.created_at');
+
             $sum_wallet_drawer = $this->getWalletWithMerchantSumUserDaysProperty($countrie->id);
             $With_drawer_merchant = $this->getWalletWithMerchantSumUserDaygetProperty($countrie->id);
 
@@ -548,8 +567,8 @@ class CountrieController extends Controller
                 'sum_bank',
                 'sum_deposit',
                 'sum_payment',
-                'sum_reload',
                 'sum_transaction',
+                'sum_xbet',
                 'sum_inter',
                 'sum_phoneCredit',
                 'users_distri_Countries',
@@ -558,10 +577,10 @@ class CountrieController extends Controller
                 'wallet_banks',
                 'wallet_deposits',
                 'wallet_payments',
-                'wallet_reloads',
                 'wallet_transactions',
                 'wallet_inters',
                 'wallet_phones',
+                'wallet_xbets',
                 'sum_wallet_drawer',
                 'With_drawer_merchant',
                 'sum_amount_distributer',
@@ -593,29 +612,40 @@ class CountrieController extends Controller
             $distri_countries = SidUser::where('is_custumers', true)->where('country_id', $countrie->id)->count();
 
 
+            // Admin
+            $sum_bank =  $this->historiqueService->getCumulsWalletDepositDistributers('wallet_banks', 'wallet_banks.id', 'admins_coms.wallet_bank_id', 'wallet_banks.wallet_id', $countrie->id);
 
-            // Admins
-            $sum_deposit = $this->getCumulsWalletDepositDistributers($countrie->id);
-            $sum_payment = $this->getCumulsWalletPaymentDistributers($countrie->id);
-            $sum_reload = $this->getCumulsWalletReloadDistributers($countrie->id);
-            $sum_transaction = $this->getCumulsWalletTransactionDistributers($countrie->id);
-            $sum_inter  = $this->getCumulsWalletInterDistributers();
-            $sum_phoneCredit = $this->getCumulsWalletPhoneDistributers($countrie->id);
-            $sum_bank = $this->getCumulsWalletBankDistributers($countrie->id);
+            $sum_deposit =  $this->historiqueService->getCumulsWalletDepositDistributers('wallet_deposits', 'wallet_deposits.id', 'admins_coms.wallet_deposit_id', 'wallet_deposits.wallet_id', $countrie->id);
+
+            $sum_payment =  $this->historiqueService->getCumulsWalletDepositDistributers('wallet_payments', 'wallet_payments.id', 'admins_coms.wallet_payment_id', 'wallet_payments.wallet_id', $countrie->id);
+
+            $sum_transaction =  $this->historiqueService->getCumulsWalletDepositDistributers('wallet_transactions', 'wallet_transactions.id', 'admins_coms.wallet_transaction_id', 'wallet_transactions.wallet_id', $countrie->id);
+
+            $sum_inter =  $this->historiqueService->getCumulsWalletDepositDistributers('wallet_inters', 'wallet_inters.id', 'admins_coms.wallet_inter_id', 'wallet_inters.wallet_id', $countrie->id);
+
+            $sum_phoneCredit =  $this->historiqueService->getCumulsWalletDepositDistributers('wallet_phone_credits', 'wallet_phone_credits.id', 'admins_coms.wallet_phone_credit_id', 'wallet_phone_credits.wallet_id', $countrie->id);
+
+            $sum_xbet =  $this->historiqueService->getCumulsWalletDepositDistributers('wallet_xbets', 'wallet_xbets.id', 'admins_coms.wallet_xbet_id', 'wallet_xbets.wallet_id', $countrie->id);
 
 
+            $cumul_solde = $sum_bank +  $sum_deposit +  $sum_payment + $sum_transaction + $sum_inter +  $sum_phoneCredit + $sum_xbet;
 
-            $cumul_solde =   $this->getCumulsWalletBankDistributers($countrie->id)  +   $this->getCumulsWalletPaymentDistributers($countrie->id) + $this->getCumulsWalletDepositDistributers($countrie->id) +   $this->getCumulsWalletReloadDistributers($countrie->id) + $this->getCumulsWalletTransactionDistributers($countrie->id)
-                +    $this->getCumulsWalletInterDistributers() +   $this->getCumulsWalletPhoneDistributers($countrie->id);
 
-            $wallet_banks =   $this->getWalletBankDistributers($countrie->id);
-            $wallet_deposits =   $this->getWalletDepositDistributers($countrie->id);
-            $wallet_payments =   $this->getWalletPaymentDistributers($countrie->id);
-            $wallet_reloads =   $this->getWalletReloadDistributers($countrie->id);
-            $wallet_transactions =   $this->getWalletTransactionDistributers($countrie->id);
-            $wallet_inters =   $this->getWalletInterDistributers();
-            $wallet_phones =   $this->getWalletPhoneCreditDistributers($countrie->id);
-            $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($countrie->id);
+            $wallet_banks =  $this->historiqueService->getWalletBankDistributersLimitViews('wallet_banks', 'wallet_banks.id', 'admins_coms.wallet_bank_id', 'wallet_banks.wallet_id', $countrie->id);
+
+            $wallet_deposits =  $this->historiqueService->getWalletBankDistributersLimitViews('wallet_deposits', 'wallet_deposits.id', 'admins_coms.wallet_deposit_id', 'wallet_deposits.wallet_id', $countrie->id);
+
+            $wallet_payments =  $this->historiqueService->getWalletBankDistributersLimitViews('wallet_payments', 'wallet_payments.id', 'admins_coms.wallet_payment_id', 'wallet_payments.wallet_id', $countrie->id);
+
+            $wallet_transactions =  $this->historiqueService->getWalletBankDistributersLimitViews('wallet_transactions', 'wallet_transactions.id', 'admins_coms.wallet_transaction_id', 'wallet_transactions.wallet_id', $countrie->id);
+
+            $wallet_inters =  $this->historiqueService->getWalletBankDistributersLimitViews('wallet_inters', 'wallet_inters.id', 'admins_coms.wallet_inter_id', 'wallet_inters.wallet_id', $countrie->id);
+
+            $wallet_phones =  $this->historiqueService->getWalletBankDistributersLimitViews('wallet_phone_credits', 'wallet_phone_credits.id', 'admins_coms.wallet_phone_credit_id', 'wallet_phone_credits.wallet_id', $countrie->id);
+
+            $wallet_xbets =  $this->historiqueService->getWalletBankDistributersLimitViews('wallet_xbets', 'wallet_xbets.id', 'admins_coms.wallet_xbet_id', 'wallet_xbets.wallet_id', $countrie->id);
+
+
 
             // Last valeurs
             return view('pages.countries.show_distri_distributer', compact(
@@ -624,7 +654,7 @@ class CountrieController extends Controller
                 'sum_bank',
                 'sum_deposit',
                 'sum_payment',
-                'sum_reload',
+                'sum_xbet',
                 'sum_transaction',
                 'sum_inter',
                 'sum_phoneCredit',
@@ -634,11 +664,10 @@ class CountrieController extends Controller
                 'wallet_banks',
                 'wallet_deposits',
                 'wallet_payments',
-                'wallet_reloads',
+                'wallet_xbets',
                 'wallet_transactions',
                 'wallet_inters',
                 'wallet_phones',
-                'sum_wallet_drawer'
             ));
         } else {
             abort(403);
@@ -667,27 +696,6 @@ class CountrieController extends Controller
         return array_sum($data);
     }
 
-    public function getWalletWithMerchantSumUserProperty($countrie)
-    {
-
-
-        $data = [];
-
-        $withMerchant = WithMerchant::join('sid_users', 'sid_users.id', 'with_merchants.sid_user_id')
-            ->where('sid_users.country_id', $countrie)
-            ->where('with_merchants.date_removed', '!=', null)
-            // ->whereDate('with_merchants.date_removed', Carbon::now())
-            ->orderBy('with_merchants.created_at', 'desc')
-            ->select('with_merchants.*')
-            ->distinct()
-            ->get();
-
-        foreach ($withMerchant  as $bank) {
-            $data[] = $bank->amount_with_draw;
-        }
-
-        return array_sum($data);
-    }
     public function getWalletWithMerchantSumUserDaygetProperty($countrie)
     {
 
@@ -706,159 +714,10 @@ class CountrieController extends Controller
 
         return   $withMerchant;
     }
+
+
     // Count valeur of Wallets
 
-    public function getCountWalletBankSuccess($countrie)
-    {
-        $results =  AdminsCom::join('wallet_banks', 'wallet_banks.id', 'admins_coms.wallet_bank_id')
-            ->join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-
-    public function getCountWalletBankPending($countrie)
-    {
-        $results =  AdminsCom::join('wallet_banks', 'wallet_banks.id', 'admins_coms.wallet_bank_id')
-            ->join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_banks.status', 'PENDING')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-    public function getCountWalletBankError($countrie)
-    {
-        $results =  AdminsCom::join('wallet_banks', 'wallet_banks.id', 'admins_coms.wallet_bank_id')
-            ->join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_banks.status', 'ERROR')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-
-    public function getCountWalletPaymentSuccess($countrie)
-    {
-        $results =  AdminsCom::join('wallet_payments', 'wallet_payments.id', 'admins_coms.wallet_payment_id')
-            ->join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-
-    public function getCountWalletPaymentPending($countrie)
-    {
-        $results =  AdminsCom::join('wallet_payments', 'wallet_payments.id', 'admins_coms.wallet_payment_id')
-            ->join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_payments.status', 'PENDING')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-    public function getCountWalletPaymentError($countrie)
-    {
-        $results =  AdminsCom::join('wallet_payments', 'wallet_payments.id', 'admins_coms.wallet_payment_id')
-            ->join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_payments.status', 'ERROR')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-
-    public function getCountWalletTransactionSuccess($countrie)
-    {
-        $results =  AdminsCom::join('wallet_transactions', 'wallet_transactions.id', 'admins_coms.wallet_transaction_id')
-            ->join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-
-    public function getCountWalletTransactionPending($countrie)
-    {
-        $results =  AdminsCom::join('wallet_transactions', 'wallet_transactions.id', 'admins_coms.wallet_transaction_id')
-            ->join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_transactions.status', 'PENDING')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-    public function getCountWalletTransactionError($countrie)
-    {
-        $results =  AdminsCom::join('wallet_transactions', 'wallet_transactions.id', 'admins_coms.wallet_transaction_id')
-            ->join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_transactions.status', 'ERROR')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-
-    public function getCountWalletDepositSuccess($countrie)
-    {
-        $results =  AdminsCom::join('wallet_deposits', 'wallet_deposits.id', 'admins_coms.wallet_deposit_id')
-            ->join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-
-    public function getCountWalletDepositPending($countrie)
-    {
-        $results =  AdminsCom::join('wallet_deposits', 'wallet_deposits.id', 'admins_coms.wallet_deposit_id')
-            ->join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_deposits.status', 'PENDING')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-    public function getCountWalletDepositError($countrie)
-    {
-        $results =  AdminsCom::join('wallet_deposits', 'wallet_deposits.id', 'admins_coms.wallet_deposit_id')
-            ->join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_deposits.status', 'ERROR')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
 
     public function getCountWalletReloadSuccess($countrie)
     {
@@ -898,43 +757,6 @@ class CountrieController extends Controller
         return  $results;
     }
 
-    public function getCountWalletPhoneSuccess($countrie)
-    {
-        $results =  AdminsCom::join('wallet_phone_credits', 'wallet_phone_credits.id', 'admins_coms.wallet_phone_credit_id')
-            ->join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-
-    public function getCountWalletPhonePending($countrie)
-    {
-        $results =  AdminsCom::join('wallet_phone_credits', 'wallet_phone_credits.id', 'admins_coms.wallet_phone_credit_id')
-            ->join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_phone_credits.status', 'PENDING')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
-    public function getCountWalletPhoneError($countrie)
-    {
-        $results =  AdminsCom::join('wallet_phone_credits', 'wallet_phone_credits.id', 'admins_coms.wallet_phone_credit_id')
-            ->join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_phone_credits.status', 'ERROR')
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->count();
-
-        return  $results;
-    }
 
     public function getCountWalletInterSuccess()
     {
@@ -1034,26 +856,6 @@ class CountrieController extends Controller
         return  array_sum($data_payement);
     }
 
-    public function getCumulsWalletReloadDistributers($countrie)
-    {
-        $data_payement = [];
-
-
-        $result =  AdminsCom::join('wallet_reloads', 'wallet_reloads.id', 'admins_coms.wallet_reload_id')
-            ->join('wallets', 'wallets.id', 'wallet_reloads.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select(DB::raw('sum(admins_coms.amount) as cumul_amount_chiffre'))
-            ->groupBy('admins_coms.created_at')
-            ->get();
-
-
-        foreach ($result as $sumPay) {
-            $data_payement[] = $sumPay->cumul_amount_chiffre;
-        }
-
-        return  array_sum($data_payement);
-    }
 
     public function getCumulsWalletTransactionDistributers($countrie)
     {
@@ -1115,111 +917,8 @@ class CountrieController extends Controller
         return  array_sum($data_payement);
     }
 
-    // Account 5 valeur distributer 
-    public function getWalletBankDistributers($countrie)
-    {
-
-        $result =  AdminsCom::join('wallet_banks', 'wallet_banks.id', 'admins_coms.wallet_bank_id')
-            ->join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->groupBy('admins_coms.created_at')
-            ->limit(5)
-            ->get();
 
 
-        return   $result;
-    }
-
-    public function getWalletPaymentDistributers($countrie)
-    {
-
-        $result =  AdminsCom::join('wallet_payments', 'wallet_payments.id', 'admins_coms.wallet_payment_id')
-            ->join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->groupBy('admins_coms.created_at')
-            ->limit(5)
-            ->get();
-
-        return   $result;
-    }
-
-    public function getWalletDepositDistributers($countrie)
-    {
-
-        $result =  AdminsCom::join('wallet_deposits', 'wallet_deposits.id', 'admins_coms.wallet_deposit_id')
-            ->join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->groupBy('admins_coms.created_at')
-            ->limit(5)
-            ->get();
-
-        return  $result;
-    }
-
-    public function getWalletReloadDistributers($countrie)
-    {
-
-        $result =  AdminsCom::join('wallet_reloads', 'wallet_reloads.id', 'admins_coms.wallet_reload_id')
-            ->join('wallets', 'wallets.id', 'wallet_reloads.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->groupBy('admins_coms.created_at')
-            ->limit(5)
-            ->get();
-        return  $result;
-    }
-
-    public function getWalletTransactionDistributers($countrie)
-    {
-
-        $result =  AdminsCom::join('wallet_transactions', 'wallet_transactions.id', 'admins_coms.wallet_transaction_id')
-            ->join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->groupBy('admins_coms.created_at')
-            ->limit(5)
-            ->get();
-
-        return  $result;
-    }
-
-    public function getWalletInterDistributers()
-    {
-
-        $result =  AdminsCom::join('wallet_inters', 'wallet_inters.id', 'admins_coms.wallet_inter_id')
-            ->join('wallets', 'wallets.id', 'wallet_inters.wallet_id')
-            // ->where('wallets.country_id', $countrie)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->groupBy('admins_coms.created_at')
-            ->limit(5)
-            ->get();
-
-        return  $result;
-    }
-
-    public function getWalletPhoneCreditDistributers($countrie)
-    {
-
-        $result =  AdminsCom::join('wallet_phone_credits', 'wallet_phone_credits.id', 'admins_coms.wallet_phone_credit_id')
-            ->join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-            ->where('wallets.country_id', $countrie)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select('admins_coms.*')
-            ->groupBy('admins_coms.created_at')
-            ->limit(5)
-            ->get();
-
-        return  $result;
-    }
 
     // Cumuls valeurs Under distributer
 
@@ -1290,50 +989,6 @@ class CountrieController extends Controller
         return  array_sum($data_payement);
     }
 
-    public function getCumulsWalletReloads($countrie)
-    {
-        $data_payement = [];
-
-
-        $result = WalletReload::join('wallets', 'wallets.id', 'wallet_reloads.wallet_id')
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->where('wallet_reloads.commissions', '!=', 0)
-            ->select(DB::raw('sum(wallet_reloads.commissions) as cumul_amount_chiffre'))
-            ->groupBy('wallet_reloads.created_at')
-            ->get();
-
-
-        foreach ($result as $sumPay) {
-            $data_payement[] = $sumPay->cumul_amount_chiffre;
-        }
-
-        return  array_sum($data_payement);
-    }
-
-    public function getCumulsWalletTransactions($countrie)
-    {
-        $data_payement = [];
-
-
-        $result = WalletTransaction::join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->where('wallet_transactions.commissions', '!=', 0)
-            ->select(DB::raw('sum(wallet_transactions.commissions) as cumul_amount_chiffre'))
-            ->groupBy('wallet_transactions.created_at')
-            ->get();
-
-        foreach ($result as $sumPay) {
-            $data_payement[] = $sumPay->cumul_amount_chiffre;
-        }
-
-        return  array_sum($data_payement);
-    }
 
     public function getCumulsWalletInters($countrie)
     {
@@ -1382,118 +1037,8 @@ class CountrieController extends Controller
     }
 
 
-    public function getWalletBanks($countrie)
-    {
 
 
-        return    $results_banks = WalletBank::join('wallets', 'wallets.id', 'wallet_banks.wallet_id')
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_banks.commissions', '!=', 0)
-            ->select('wallet_banks.*')
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->groupBy('wallet_banks.created_at')
-            ->limit(5)
-            ->get();
-    }
-
-    public function getWalletDepostits($countrie)
-    {
-
-
-        return    walletDeposit::join('wallets', 'wallets.id', 'wallet_deposits.wallet_id')
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_deposits.commissions', '!=', 0)
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->select('wallet_deposits.*')
-            ->limit(5)
-            ->groupBy('wallet_deposits.created_at')
-            ->get();
-    }
-
-    public function getWalletPayments($countrie)
-    {
-
-
-        return    WalletPayment::join('wallets', 'wallets.id', 'wallet_payments.wallet_id')
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_payments.commissions', '!=', 0)
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->select('wallet_payments.*')
-            ->limit(5)
-            ->groupBy('wallet_payments.created_at')
-            ->get();
-    }
-
-    public function getWalletReloads($countrie)
-    {
-
-
-        return   WalletReload::join('wallets', 'wallets.id', 'wallet_reloads.wallet_id')
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_reloads.commissions', '!=', 0)
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->select('wallet_reloads.*')
-            ->limit(5)
-            ->groupBy('wallet_reloads.created_at')
-            ->get();
-    }
-
-    public function getWalletTransactions($countrie)
-    {
-
-
-        return   WalletTransaction::join('wallets', 'wallets.id', 'wallet_transactions.wallet_id')
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_transactions.commissions', '!=', 0)
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->select('wallet_transactions.*')
-            ->limit(5)
-            ->groupBy('wallet_transactions.created_at')
-            ->get();
-    }
-
-    public function getWalletInters($countrie)
-    {
-
-
-        return   WalletInter::join('wallets', 'wallets.id', 'wallet_inters.wallet_id')
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_inters.commissions', '!=', 0)
-            ->where('wallet_inters.status', 'SUCCESS')
-            ->select('wallet_inters.*')
-            ->limit(5)
-            ->groupBy('wallet_inters.created_at')
-            ->get();
-    }
-
-
-    public function getWalletPhoneCredits($countrie)
-    {
-
-
-        return   WalletPhoneCredit::join('wallets', 'wallets.id', 'wallet_phone_credits.wallet_id')
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->where('wallet_phone_credits.commissions', '!=', 0)
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->select('wallet_phone_credits.*')
-            ->limit(5)
-            ->groupBy('wallet_phone_credits.created_at')
-            ->get();
-    }
     /**
      * Update the specified resource in storage.
      *

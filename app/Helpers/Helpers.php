@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\CloseApp;
 use App\Models\Custumers\Country;
 use Illuminate\Support\Facades\Auth;
+
 
 
 
@@ -102,6 +104,10 @@ function robus()
     return Auth::guard('api')->user();
 }
 
+function getOpenRobus()
+{
+        return CloseApp::orderBy('id' , 'asc')->get();
+}
 function json_message_response($status, $message, $status_code)
 {
     return response()->json(['success' => $status, 'message' => $message], $status_code);

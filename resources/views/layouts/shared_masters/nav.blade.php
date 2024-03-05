@@ -12,7 +12,7 @@
     <ul>
         <li>
             <a href="{{ route('masters.home') }}"
-                class="side-menu {{ request()->is('masters.home') ? 'side-menu--active' : '' }}">
+                class="side-menu {{ request()->is('master/robus/browse') ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="home"></i> </div>
                 <div class="side-menu__title">
                     Tableau de bord

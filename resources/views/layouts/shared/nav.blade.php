@@ -1,6 +1,7 @@
 @php
     $prefix = Request::route()->getPrefix();
     $route = Route::current()->getName();
+    $countries = getCountriesForUser(Auth::guard('web')->user());
 @endphp
 <!-- BEGIN: Side Menu -->
 
@@ -33,11 +34,7 @@
                         </div>
                     </a>
                     <ul class="{{ request()->is('countries*') ? 'side-menu__sub-open' : '' }}">
-                        @php
 
-                            $countries = getCountriesForUser(Auth::guard('web')->user());
-
-                        @endphp
 
                         @foreach ($countries as $countrie)
                             <li>
@@ -103,7 +100,7 @@
             @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('users*') || request()->is('masters*') ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -117,7 +114,7 @@
                         </div>
                     </a>
                     <ul
-                        class="{{ request()->is('users*') || request()->is('masters*') ? 'side-menu__sub-open' : '' }}">
+                        class="{{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*')     ? 'side-menu__sub-open' : '' }}">
 
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
@@ -148,7 +145,7 @@
                             <li>
 
                                 <a href="{{ route('masters.admins.browse') }}"
-                                    class="side-menu {{ $route == 'masters.admins.browse' || $route == 'masters.admins.show' || ($route = 'admin.add_master_com' || $route == 'masters.admins.add' ? 'side-menu--active' : '') }}">
+                                    class="side-menu {{ $route == 'masters.admins.browse' || $route == 'masters.admins.show'  || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-feather="user-check"
                                             class="block mx-auto"></i>
                                     </div>
@@ -160,8 +157,8 @@
                         @if (Auth::guard('web')->user()->hasPermissionTo('com-zone'))
                             <li>
 
-                                <a href="{{ route('comzone.browse') }}"
-                                    class="side-menu {{ $route == 'comzone.browse' || $route == 'comzone.show_comzone' || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
+                                <a href="{{ route('comzones.admins.browse') }}"
+                                    class="side-menu {{ $route == 'comzones.admins.browse' || $route == 'comzones.admins.add' || $route == 'comzones.admins.show' ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-feather="user-check"
                                             class="block mx-auto"></i>
                                     </div>
@@ -508,28 +505,7 @@
                         </div>
                     </a>
                     <ul class="{{ request()->is('under_commissions*') ? 'side-menu__sub-open' : '' }}">
-                        @php
 
-                            $walletUser = Auth::guard('web')->user();
-
-                            if (
-                                $walletUser->wallet->sidUser->is_distributer == true ||
-                                $walletUser->wallet->sidUser->is_under_distributer == true
-                            ) {
-                                $countries = App\Models\Custumers\Country::where('id', $walletUser->wallet->country->id)
-                                    ->where('robus', true)
-                                    ->orderBy('name', 'asc')
-                                    ->get();
-                            } elseif (
-                                $walletUser->wallet->sidUser->is_distributer == false &&
-                                $walletUser->wallet->sidUser->is_under_distributer == false
-                            ) {
-                                $countries = App\Models\Custumers\Country::where('robus', true)
-                                    ->orderBy('name', 'asc')
-                                    ->get();
-                            }
-
-                        @endphp
 
                         @foreach ($countries as $countrie)
                             <li>
@@ -564,28 +540,7 @@
                         </div>
                     </a>
                     <ul class="{{ request()->is('distributer_commissions*') ? 'side-menu__sub-open' : '' }}">
-                        @php
 
-                            $walletUser = Auth::guard('web')->user();
-
-                            if (
-                                $walletUser->wallet->sidUser->is_distributer == true ||
-                                $walletUser->wallet->sidUser->is_under_distributer == true
-                            ) {
-                                $countries = App\Models\Custumers\Country::where('id', $walletUser->wallet->country->id)
-                                    ->where('robus', true)
-                                    ->orderBy('name', 'asc')
-                                    ->get();
-                            } elseif (
-                                $walletUser->wallet->sidUser->is_distributer == false &&
-                                $walletUser->wallet->sidUser->is_under_distributer == false
-                            ) {
-                                $countries = App\Models\Custumers\Country::where('robus', true)
-                                    ->orderBy('name', 'asc')
-                                    ->get();
-                            }
-
-                        @endphp
 
                         @foreach ($countries as $countrie)
                             <li>

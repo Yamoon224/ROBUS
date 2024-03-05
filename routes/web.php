@@ -71,10 +71,10 @@ Route::group(['prefix' => 'robus'], function () {
 
 Route::group(['prefix' => ''], function () {
 
-   
+
     Route::group(['middleware' => ['auth:web']], function () {
 
-       
+
         Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('/');
 
         Route::get('/logout', [Login::class, 'logout'])->name('admin.logout');
@@ -134,12 +134,21 @@ Route::group(['prefix' => ''], function () {
             Route::get('/read/{id}/delete', [CardController::class, 'delete'])->name('cards.delete');
         });
 
+        //Com zones
+        Route::prefix('comzones')->group(function () {
+            Route::get('/browse', [UserController::class, 'browse_comzone'])->name('comzones.admins.browse');
+            Route::get('/add', [AdminController::class, 'add_com_zone'])->name('comzones.admins.add');
+            Route::post('/store', [MasterController::class, 'store_comzones'])->name('comzones.admin.store');
+            Route::get('/show/{id}', [MasterController::class, 'show_comzone'])->name('comzones.admins.show');
+            Route::post('/update/{id}', [MasterController::class, 'update_comzone'])->name('comzones.admins.update');
+        });
+
 
         //   Users
         Route::prefix('users')->group(function () {
             Route::get('/browse', [UserController::class, 'browse'])->name('custumers.browse');
             Route::get('/browse_company', [UserController::class, 'browse_company'])->name('company.browse');
-            Route::get('/browse_comzone', [UserController::class, 'browse_comzone'])->name('comzone.browse');
+            // Route::get('/browse_comzone', [UserController::class, 'browse_comzone'])->name('comzone.browse');
             Route::get('/browse_invalidated', [UserController::class, 'browse_invalidated'])->name('custumers.browse_invalidated');
             Route::get('/show/{id}', [UserController::class, 'show'])->name('custumers.show');
             Route::get('/show_company/{id}', [UserController::class, 'show_company'])->name('company.show_company');

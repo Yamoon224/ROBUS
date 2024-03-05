@@ -29,12 +29,14 @@ class Login extends Component
 
         $msg = 'Bienvenu chez ROBUS';
         $color = 'success';
+        
+    
+        $user_sid = SidUser::whereEmail($this->email)->whereStatus(true)->first();
 
         if (Auth::guard('web')->attempt(['email' => $this->email, 'password' => $this->password])) {
 
             $this->validate();
 
-            $user_sid = SidUser::whereEmail($this->email)->whereStatus(true)->first();
 
             if (!$user_sid) {
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');

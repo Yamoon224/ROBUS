@@ -5,6 +5,7 @@ namespace App\Http\Services;
 
 
 use App\Http\Services\ConvertionService;
+use App\Models\AdminsCom;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
@@ -56,6 +57,79 @@ class HistoriqueService
                 }
             })
             ->count();
+    }
+
+    public function getCountWalletCountSuccess($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type, $wallet_id, $countrie, $wallet_success, $status)
+    {
+       
+        $results =  AdminsCom::join($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
+            ->join('wallets', 'wallets.id', $wallet_id)
+            ->where('wallets.country_id', $countrie)
+            ->where($wallet_success, $status)
+            ->where('admins_coms.description_distributer', 'Validation distributeur')
+            ->select('admins_coms.*')
+            ->count();
+
+        return  $results;
+    }
+
+    public function getCumulsWalletTransactions($wallet, $wallet_transaction, $countryId, $wallet_commission, $wallet_success, $wallet_created)
+    {
+        $cumulAmountComissions = $wallet::join('wallets', 'wallets.id', $wallet_transaction)
+            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
+            ->where('sid_users.is_under_distributer', true)
+            ->where('wallets.country_id', $countryId)
+            ->where($wallet_commission, '!=', 0)
+            ->where($wallet_success, 'SUCCESS')
+            ->groupBy($wallet_created)
+            ->sum($wallet_commission);
+
+
+        return $cumulAmountComissions;
+    }
+
+    public function getCumulsWalletDepositDistributers($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type, $wallet_id, $countrie)
+    {
+
+
+        $result =  AdminsCom::join($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
+            ->join('wallets', 'wallets.id', $wallet_id)
+            ->where('wallets.country_id', $countrie)
+            ->where('admins_coms.description_distributer', 'Validation distributeur')
+            ->select(DB::raw('sum(admins_coms.amount) as cumul_amount_chiffre'))
+            ->groupBy('admins_coms.created_at')
+            ->get();
+
+
+        return $result->sum('cumul_amount_chiffre');
+    }
+
+    public function getWalletLimitViews($wallet, $wallet_transaction, $countryId, $wallet_commission, $wallet_success, $wallet_created)
+    {
+        return $wallet::join('wallets', 'wallets.id', $wallet_transaction)
+            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
+            ->where('sid_users.is_under_distributer', true)
+            ->where('wallets.country_id', $countryId)
+            ->where($wallet_commission, '!=', 0)
+            ->where($wallet_success, 'SUCCESS')
+            ->groupBy($wallet_created)
+            ->limit(5)
+            ->get();
+    }
+
+    public function getWalletBankDistributersLimitViews($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type, $wallet_id, $countrie)
+    {
+
+        $result =  AdminsCom::join($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
+            ->join('wallets', 'wallets.id', $wallet_id)
+            ->where('wallets.country_id', $countrie)
+            ->where('admins_coms.description_distributer', 'Validation distributeur')
+            ->groupBy('admins_coms.created_at')
+            ->limit(5)
+            ->get();
+
+
+        return   $result;
     }
 
 

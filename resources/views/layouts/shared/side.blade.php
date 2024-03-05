@@ -12,38 +12,54 @@
     </ol>
     <div class="mr-6 dropdown-toggle w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in" role="button"
         aria-expanded="false" data-tw-toggle="dropdown">
-        <img alt="ROBUS" src="{{ asset(Auth::user()->country->image ?? 'public/dist/images/profil.png') }}">
+        <img alt="ROBUS" src="{{ asset(sabdy()->country->image ?? 'public/dist/images/profil.png') }}">
     </div>
     <div class="mr-6 dropdown-toggle w-8 h-8 rounded-full shadow-lg image-fit zoom-in" role="button"
         aria-expanded="false" data-tw-toggle="dropdown">
-        @if (Auth::user()->is_custumers == '1')
+        @if (sabdy()->is_custumers)
             <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5 mb-2">
                 <p class="font-medium whitespace-nowrap">Client</p>
             </div>
             <div class="text-slate-500  mt-0.5">
                 <span
                     class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                    {{ Auth::user()->wallet->wallet_id ?? null }}
+                    {{ sabdy()->wallet->wallet_id ?? null }}
                 </span>
             </div>
-        @elseif(Auth::user()->is_distributer == '1')
+        @elseif(sabdy()->is_distributer)
             <div class="font-medium whitespace-nowrap">
                 <p class="font-medium whitespace-nowrap">Distributeur </p>
             </div>
             <div class="text-slate-500  mt-0.5">
                 <span
                     class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                    {{ Auth::user()->wallet->wallet_id ?? null }}
+                    {{ sabdy()->wallet->wallet_id ?? null }}
                 </span>
             </div>
-        @elseif(Auth::user()->is_under_distributer == '1')
+        @elseif(sabdy()->is_under_distributer)
             <div class="font-medium whitespace-nowrap">
                 <p class="font-medium whitespace-nowrap"> Sous-distributeur</p>
             </div>
             <div class="text-slate-500  mt-0.5">
                 <span
                     class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                    {{ Auth::user()->wallet->wallet_id ?? null }}
+                    {{ sabdy()->wallet->wallet_id ?? null }}
+                </span>
+            </div>
+        @elseif(sabdy()->is_master)
+            <div class="font-medium whitespace-nowrap">Master</div>
+            <div class="text-slate-500  mt-0.5">
+                <span
+                    class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                    {{ sabdy()->wallet->wallet_id ?? null }}
+                </span>
+            </div>
+        @elseif(sabdy()->is_supervisor)
+            <div class="font-medium whitespace-nowrap">Superviseur</div>
+            <div class="text-slate-500  mt-0.5">
+                <span
+                    class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                    {{ sabdy()->wallet->wallet_id ?? null }}
                 </span>
             </div>
         @else
@@ -51,7 +67,7 @@
             <div class="text-slate-500  mt-0.5">
                 <span
                     class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                    {{ Auth::user()->wallet->wallet_id ?? null }}
+                    {{ sabdy()->wallet->wallet_id ?? null }}
                 </span>
             </div>
         @endif
@@ -76,7 +92,7 @@
 
     <span
         class="alert alert-primary inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-          {{ auth()->guard('web')->user()->country->name ?? null }}
+        {{ auth()->guard('web')->user()->country->name ?? null }}
     </span>
 
 </div>
@@ -98,7 +114,7 @@
 <div class="intro-x dropdown w-8 h-8">
     <div class="dropdown-toggle w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in" role="button"
         aria-expanded="false" data-tw-toggle="dropdown">
-        <img alt="ROBUS" src="{{ asset(Auth::user()->image ?? 'public/dist/images/profil.png') }}">
+        <img alt="ROBUS" src="{{ asset(sabdy()->image ?? 'public/dist/images/profil.png') }}">
     </div>
     <div class="dropdown-menu w-56">
         <ul class="dropdown-content bg-primary text-white">

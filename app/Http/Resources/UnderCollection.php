@@ -60,6 +60,7 @@ class UnderCollection extends ResourceCollection
                                         'Rechargement de carte' =>   new ReloadCardUnderCollection($data->wallet->walletDeposits),
                                         'Rechargement d\'UV' =>   new reloadUnderCollection($data->wallet->walletReloads),
                                         'Commande de carte' =>   new relaoadCardUnderCollection($data->wallet->orderCards),
+                                        // 'Commande de carte' =>   new relaoadCardUnderCollection($data->wallet->orderCards),
                                         'Transfers inter' =>   new InterTransactionUnderCollection($data->wallet->walletInters),
                                 ];
                         })

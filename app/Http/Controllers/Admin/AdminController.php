@@ -300,6 +300,18 @@ class AdminController extends Controller
         return view('pages.admin.add_master_zone', compact('roles', 'countries'));
     }
 
+    public function add_com_zone()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur')) {
+            abort(403);
+        }
+
+        $roles = Role::whereId(8)->orderBy('created_at', 'desc')->first();
+        $countries = Country::whereRobus(true)
+            ->where('indecative', '!=', null)->get();
+        return view('pages.admin.add_com_zone', compact('roles', 'countries'));
+    }
+
     public function add_under_distributer()
     {
 

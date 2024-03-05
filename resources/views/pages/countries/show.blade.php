@@ -20,7 +20,7 @@
             <div class="col-span-12 sm:col-span-8 xl:col-span-8 intro-y">
                 <div class="alert alert-secondary show mb-2 font-medium text-lg text-center" role="alert">Les
                     paiements
-                    entrants en/au {{ $countrie->name ?? null }} </div>
+                    entrants en/au {{ $countrie->name ?? null }} en   {{ $usersCountry ?? null }}</div>
             </div>
             <div class="col-span-12 sm:col-span-2 xl:col-span-2 intro-y">
 
@@ -37,7 +37,7 @@
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
 
-                            {{ number_format($sum_wallet_custumers, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
+                            {{ $sum_wallet_custumers  ?? null }} 
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde cliens
                         </div>
@@ -51,7 +51,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ number_format($sum_wallet_supervisors, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
+                            {{ $sum_wallet_supervisors  ?? null }} 
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde superviseurs
                         </div>
@@ -65,7 +65,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ number_format($sum_wallet_companies, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
+                            {{ $sum_wallet_companies ?? null }} 
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde Compagnie
                         </div>
@@ -79,7 +79,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ number_format($sum_wallet_under_distributors, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
+                            {{ $sum_wallet_under_distributors ?? null }} 
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde Sous distributeurs
                         </div>
@@ -93,7 +93,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ number_format($sum_wallet_distributors, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
+                            {{ $sum_wallet_distributors ?? null }} 
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde  distributeurs
                         </div>
@@ -107,7 +107,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ number_format($sum_wallet_masters, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
+                            {{ $sum_wallet_masters ?? null }} 
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde  masters
                         </div>
@@ -122,7 +122,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ number_format($sum_wallet_comZones, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
+                            {{ $sum_wallet_comZones ?? null }} 
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde COM ZONES
                         </div>
@@ -135,10 +135,13 @@
 
             <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
-                    <div class="box p-5 style_table2">
+                    <div class="box p-5 style_user1">
                         <div class="flex">
-                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
-                        </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                        </svg>                        </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                            {{ $custumers_countrie_count ?? null }}
                         </div>
@@ -149,9 +152,13 @@
             </div>
             <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
-                    <div class="box p-5 style_table4">
+                    <div class="box p-5 style_2">
                         <div class="flex">
-                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                    </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $user_supervisor_count ?? null }}
@@ -164,9 +171,13 @@
             </div>
             <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
-                    <div class="box p-5 style_table4">
+                    <div class="box p-5 style_user2">
                         <div class="flex">
-                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                    </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $user_company_count ?? null }}
@@ -179,9 +190,13 @@
             </div>
             <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
-                    <div class="box p-5 style_table4">
+                    <div class="box p-5 style_user3">
                         <div class="flex">
-                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                    </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $users_distri_Countrie_count ?? null }}
@@ -195,7 +210,11 @@
                 <div class="report-box zoom-in">
                     <div class="box p-5 style_table4">
                         <div class="flex">
-                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                    </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $user_under_distributor_count ?? null }}
@@ -207,14 +226,18 @@
             </div>
             <div class="col-span-12 sm:col-span-4 xl:col-span-4 intro-y">
                 <div class="report-box zoom-in">
-                    <div class="box p-5 style_table4">
+                    <div class="box p-5 style_table_factures">
                         <div class="flex">
-                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                    </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $user_master_count    ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Solde  masters
+                        <div class="text-base text-slate-500 mt-1">Masters
                         </div>
                     </div>
                 </div>
@@ -222,9 +245,13 @@
 
             <div class="col-span-12 sm:col-span-4 xl:col-span-4 intro-y">
                 <div class="report-box zoom-in">
-                    <div class="box p-5 style_table4">
+                    <div class="box p-5 ">
                         <div class="flex">
-                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                    </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $user_comzone_count    ?? null }}
@@ -236,147 +263,11 @@
             </div>
             
         </div>
-        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-            <div class="hidden md:block mx-auto text-slate-500"></div>
-            <div class="hidden md:block mx-auto text-slate-500"></div>
-            <div class="hidden md:block mx-auto text-slate-500"></div>
-            <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-                <form class="" id="sort_status" action="" method="GET">
-                    <div class="w-56 relative text-slate-500">
-                        <label for="countriesFilter">Filtrer par utilisateurs</label>
-                        <select class="form-select py-3 px-4 box w-full dark-border-dark-3 w-lg-auto mt-3 mt-lg-0 ms-auto"
-                            name="users_status" onchange="sort_status()" data-selected="{{ $users_status }}">
-                            <option value="">Filtrer par utilisateurs</option>
-                            <option value="is_admin">Administrateurs</option>
-                            <option value="is_distributer">Distributeurs</option>
-                            <option value="is_under_distributer	">Sous-distributeurs</option>
-                            <option value="is_custumers">Clients</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-
-            <div class="hidden md:block mx-auto text-slate-500"></div>
-        </div>
-        <h2 class="intro-y text-lg font-medium mt-10 style-country-info">
-            Liste des utilisateurs
-        </h2>
-        <div class="grid grid-cols-12 gap-6 mt-5 mb-3">
 
 
-            <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
-                <table class="table table-bordered table-hover -mt-2 -intro-x ">
-                    <thead class="table-dark">
-                        <tr>
-                            <th class="whitespace-nowrap">Date</th>
-                            <th class="text-center whitespace-nowrap">Prénom(s) & nom</th>
-                            <th class="text-center whitespace-nowrap">Téléphone</th>
-                            <th class="text-center whitespace-nowrap">Type</th>
-                            <th class="text-center whitespace-nowrap">Email</th>
-                            <th class="text-center whitespace-nowrap">Rôle</th>
-                            <th class="text-center whitespace-nowrap">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if ($get_users->count() > 0)
+        @livewire('user-countrie', ['countrie' => $countrie->id])
 
-                            @foreach ($get_users as $item)
-                                <tr class="intro-x">
-                                    <td class="w-35">
-                                        <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
-
-                                    </td>
-                                    <td class="w-50">
-                                        <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                            <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname }}
-                                                {{ $item->lastname }}</div>
-                                        </div>
-                                        <div class="text-slate-500  mt-0.5">
-                                            <span
-                                                class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->country->name ?? null }} ville :
-                                                {{ $item->city->name ?? null }}
-                                            </span>
-                                        </div>
-
-                                    </td>
-                                    <td>
-                                        <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                                            {{ $item->phone }}
-                                        </div>
-
-                                    </td>
-                                    <td>
-
-                                        @if ($item->is_distributer == true)
-                                            <div class="font-medium whitespace-nowrap">Distributeur</div>
-                                        @elseif($item->is_under_distributer == true)
-                                            <div class="font-medium whitespace-nowrap">Sous-distributeur</div>
-                                        @elseif($item->is_custumers == true)
-                                            <div class="font-medium whitespace-nowrap">Client</div>
-                                        @else
-                                            <div class="font-medium whitespace-nowrap">Admin</div>
-                                        @endif
-
-                                    </td>
-                                    <td>
-                                        <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                                            {{ $item->email }}
-                                        </div>
-
-                                    </td>
-                                    <td class="text-center">
-                                        @if ($item->is_distributer == true)
-                                            <div class="font-medium whitespace-nowrap">Distributeur</div>
-                                        @elseif($item->is_under_distributer == true)
-                                            <div class="font-medium whitespace-nowrap">Sous-distributeur</div>
-                                        @elseif($item->is_custumers == true)
-                                            <div class="font-medium whitespace-nowrap">Client</div>
-                                        @else
-                                            <div class="font-medium whitespace-nowrap">Admin</div>
-                                        @endif
-                                    </td>
-                                    <td class="table-report__action w-30">
-                                        <div class="flex justify-center items-center">
-                                            @if ($item->deleted_at)
-                                                @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
-                                                    <a class="flex items-center mr-3"
-                                                        href="{{ route('admin.activate', ['id' => $item->id]) }}">
-                                                        <i data-feather="user-check" class="block mx-auto"></i>Activé
-                                                    </a>
-                                                @endif
-                                            @else
-                                                @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
-                                                    <a class="flex items-center mr-3"
-                                                        href="{{ route('admin.ShowProfil', ['id' => $item->id]) }}">
-                                                        <i data-feather="eye" class="h-15 mr-1"></i>
-                                                    </a>
-                                                @endif
-                                                @if (Auth::guard('web')->user()->hasPermissionTo('supprimer-administrateur'))
-                                                    <a class="flex items-center text-danger"
-                                                        data-message="Etes vous sûr de vouloir effectuer cette action ?"
-                                                        href="{{ route('admin.delete', ['id' => $item->id]) }}"
-                                                        onclick="promptAlert(this)" data-tw-toggle="modal"
-                                                        data-tw-target="#delete-confirmation-modal"> <i
-                                                            data-feather="trash-2" class="h-15 mr-1"></i> </a>
-                                                @endif
-                                            @endif
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @else
-                            <tr>
-                                <td colspan="7" class="text-center">Aucun client pour le moment</td>
-                            </tr>
-                        @endif
-                    </tbody>
-
-                </table>
-            </div>
-            <!-- END: Data List -->
-
-        </div>
+   
         <div class="grid grid-cols-12 gap-6 mt-6">
 
             <!-- BEGIN: Sales Report -->
@@ -402,7 +293,7 @@
             <div class="col-span-12 sm:col-span-6 lg:col-span-6 mt-8">
                 <div class="intro-y flex items-center h-10">
                     <h2 class="text-lg font-medium truncate mr-5">
-                        Les activités des 30 derniers jours en {{ $usersCountry }}
+                        Les activités du mois  en {{ $usersCountry }}
                     </h2>
                 </div>
                 <div class="intro-y box p-5 mt-12 sm:mt-5">
@@ -416,8 +307,6 @@
             </div>
             <!-- END: Sales Report -->
         </div>
-
-
 
     </div>
 

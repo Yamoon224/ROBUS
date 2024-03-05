@@ -7,7 +7,7 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
          
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
-                <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add_company') }}">Ajouter une
+                <a class="btn btn-primary shadow-md mr-2" href="{{ route('comzones.admins.add') }}">Ajouter une
                     COM ZONE</a>
             @endif
            

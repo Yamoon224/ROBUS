@@ -112,6 +112,16 @@
                                             {{ $item->wallet->wallet_id ?? null }}
                                         </span>
                                     </div>
+                                @elseif($item->is_supervisor)
+                                    <div class="font-medium whitespace-nowrap">
+                                        <p class="font-medium whitespace-nowrap">Superviseur </p>
+                                    </div>
+                                    <div class="text-slate-500  mt-0.5">
+                                        <span
+                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            {{ $item->wallet->wallet_id ?? null }}
+                                        </span>
+                                    </div>
                                 @elseif($item->is_under_distributer)
                                     <div class="font-medium whitespace-nowrap">
                                         <p class="font-medium whitespace-nowrap"> Sous-distributeur</p>

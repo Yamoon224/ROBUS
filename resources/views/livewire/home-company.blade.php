@@ -329,11 +329,11 @@
     });
 
     new Chart(_ctx2, {
-        type: 'bar',
+        type: 'line',
         data: {
-            labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimande'],
+            labels: ['Transactions'],
             datasets: [{
-                label: 'Rechargement semaine',
+                label: 'Rechargement du mois',
                 data: sumReload,
                 backgroundColor: [
                     'rgba(255, 99, 132,1)',
@@ -357,14 +357,16 @@
             }]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                labels: {
-                    render: 'percentage',
-                    fontColor: ['white', 'white'],
+            animations: {
+                tension: {
+                    duration: 1000,
+                    easing: 'linear',
+                    from: 1,
+                    to: 0,
+                    loop: true
                 }
             },
+
         }
     });
 </script>

@@ -90,7 +90,7 @@
     @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
         <li>
             <a href="javascript:;"
-                class="menu {{ request()->is('users*') || request()->is('masters*') ? 'menu--active' : '' }}">
+                class="menu {{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*') ? 'menu--active' : '' }}">
                 <div class="menu__icon">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6">
@@ -143,8 +143,8 @@
                 @if (Auth::guard('web')->user()->hasPermissionTo('com-zone'))
                     <li>
 
-                        <a href="{{ route('comzone.browse') }}"
-                            class="menu {{ $route == 'comzone.browse' || $route == 'comzone.show_comzone' || $route == 'masters.admins.add' ? 'menu--active' : '' }}">
+                        <a href="{{ route('comzones.admins.browse') }}"
+                            class="menu {{ $route == 'comzones.admins.browse' || $route == 'comzone.show_comzone' || $route == 'masters.admins.add' ? 'menu--active' : '' }}">
                             <div class="menu__icon"> <i data-feather="user-check" class="block mx-auto"></i>
                             </div>
                             <div class="menu__title"> COM ZONE </div>

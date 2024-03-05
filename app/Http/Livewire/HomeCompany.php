@@ -143,7 +143,11 @@ class HomeCompany extends Component
             }
         }
 
-        $closeRobus = CloseApp::orderBy('id' , 'asc')->get();
+        $state_transaction_year =  $this->getMastersGainProperty(WalletTransaction::class);
+
+        $transaction_amount_month = $this->getDaysTransaction(WalletTransaction::class);
+
+        $closeRobus = CloseApp::orderBy('id', 'asc')->get();
 
         return view('livewire.home-company', [
             'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
@@ -158,12 +162,56 @@ class HomeCompany extends Component
             'usersCountry' => $walletUser->country->currencie->name,
             'sum_transaction' => $this->WalletTransactionSumUser,
             'sum_transaction_month' => $this->WalletTransactionMonthUser,
-            'realods' => $this->RealodsAdmin,
+            'realods' => $state_transaction_year,
             // 'reloads_gain'  =>  $this->RealodsAdminGain,
-            'reloads_days'  =>  $this->RealodsAdminDays,
+            'reloads_days'  =>  $transaction_amount_month,
             'open_apps' => $closeRobus,
 
         ]);
+    }
+
+    public function getDaysTransaction($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', firm()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->whereMonth('created_at', now()->month)
+            ->sum('amount');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+
+        return $totalAmount;
+    }
+
+
+    public function getMastersGainProperty($walletModel)
+    {
+        $reloads = [];
+
+        $currentYear = Carbon::now()->year;
+
+        for ($month = 1; $month <= 12; $month++) {
+            $formattedMonth = str_pad($month, 2, '0', STR_PAD_LEFT);
+
+            $reloadSum = 0;
+
+            $reloadSum += $walletModel::where('wallet_id', firm()->wallet->id)
+                ->where('status', 'SUCCESS')
+                ->whereYear('created_at', $currentYear)
+                ->where('created_at', 'like', "%-$formattedMonth-%")
+                ->sum('amount');
+
+
+            $reloads[] = $reloadSum;
+        }
+
+        return $reloads;
     }
 
     public function getRealodsAdminDaysProperty()
@@ -226,51 +274,6 @@ class HomeCompany extends Component
         return $reloads;
     }
 
-    public function getRealodsAdminProperty()
-    {
-
-        $reload1 = [];
-        $reload2 = [];
-        $reload3 = [];
-        $reload4 = [];
-        $reload5 = [];
-        $reload6 = [];
-        $reload7 = [];
-        $reload8 = [];
-        $reload9 = [];
-        $reload10 = [];
-        $reload11 = [];
-        $reload12 = [];
-
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-01-%')->get() as $reload)
-            $reload1[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-02-%')->get() as $reload)
-            $reload2[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-03-%')->get() as $reload)
-            $reload3[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-04-%')->get() as $reload)
-            $reload4[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-05-%')->get() as $reload)
-            $reload5[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-06-%')->get() as $reload)
-            $reload6[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-07-%')->get() as $reload)
-            $reload7[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-08-%')->get() as $reload)
-            $reload8[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-09-%')->get() as $reload)
-            $reload9[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-10-%')->get() as $reload)
-            $reload10[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-11-%')->get() as $reload)
-            $reload11[] = ($reload->amount);
-        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-12-%')->get() as $reload)
-            $reload12[] = ($reload->amount);
-        $reloads = [array_sum($reload1), array_sum($reload2), array_sum($reload3), array_sum($reload4), array_sum($reload5), array_sum($reload6), array_sum($reload7), array_sum($reload8), array_sum($reload9), array_sum($reload10), array_sum($reload11), array_sum($reload12)];
-        // dd($reloads);
-        return $reloads;
-    }
-
 
     public function getTransactionPenddingUserProperty()
     {
@@ -320,22 +323,22 @@ class HomeCompany extends Component
         $data = [];
 
         foreach (WalletTransaction::join(
-                'wallets',
-                'wallet_transactions.wallet_id',
-                'wallets.id'
+            'wallets',
+            'wallet_transactions.wallet_id',
+            'wallets.id'
+        )
+            ->where(
+                'wallets.country_id',
+                firm()->country->id
             )
-                ->where(
-                    'wallets.country_id',
-                    firm()->country->id
-                )
-                ->select('wallet_transactions.*')
-                ->where(
-                    'wallet_transactions.created_by',
-                    firm()->id
-                )
-                ->whereDate('wallet_transactions.created_at', Carbon::now())
-                ->where('wallet_transactions.status', 'SUCCESS')
-                ->get()
+            ->select('wallet_transactions.*')
+            ->where(
+                'wallet_transactions.created_by',
+                firm()->id
+            )
+            ->whereDate('wallet_transactions.created_at', Carbon::now())
+            ->where('wallet_transactions.status', 'SUCCESS')
+            ->get()
             as $transaction) {
             $data[] = $transaction->amount;
         }
