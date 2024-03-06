@@ -42,64 +42,7 @@ class UserAdmin extends Component
     }
 
 
-    public function editConnected($id, $state)
-    {
-        $check = SidUser::whereId($id)->first();
-        $this->user_id = $check->id;
-        $this->master_id = $check->master_id;
-        $this->underdistributeurDesabled = $check->is_accepted;
-        $this->emit($state);
-    }
 
-    public function addConnected($id, $state)
-    {
-        $check = SidUser::whereId($id)->first();
-        $this->user_id = $check->id;
-        $this->master_id = $check->master_id;
-        $this->user_country = $check->country->id;
-        $this->user_city = $check->city->id;
-        $this->underdistributeurDesabled = $check->is_accepted;
-        $this->emit($state);
-    }
-
-    public function edit_update($data)
-    {
-      
-        $sid_user = $data['user_id'];
-        
-        $operator_id = $data['operator_id'];
-
-        $check_user = SidUser::whereId($sid_user)->first();
-
-        $check_operator = Operator::whereId($operator_id)->first();
-        
-        $old_operators = OperatorService::where('sid_user_id', $check_user->id)
-                                                ->where('operator_id', $check_operator->id)
-                                                ->first();
-      
-        if (!empty($old_operators)) {
-
-            $old_operators->forcedelete();
-            event(new assignementEvent($old_operators));
-            $this->resetdesableField();
-            $this->emit('modal-hide', 'hide');
-            $this->emit('success', 'Liste des operateurs mise à jour !');
-
-        }else {
-
-            $operator_service = new OperatorService;
-            $operator_service->sid_user_id =$check_user->id;
-            $operator_service->operator_id  = $check_operator->id;
-            $operator_service->save();
-            event(new assignementEvent($operator_service));
-
-            $this->resetdesableField();
-            $this->emit('modal-hide', 'hide');
-            $this->emit('success', 'Liste des operateurs mise à jour !');
-
-        }
-    }
-     
     public function resetdesableField()
     {
         $this->emit('modal-hide', 'hide');
@@ -107,34 +50,6 @@ class UserAdmin extends Component
     }
 
 
-
-
-    public function connected()
-    {
-        $check = SidUser::find($this->user_id);
-
-        $check_master = SidUser::find($this->master_id)->first();
-
-        if (!empty($check)) {
-            if ($check->master_id  == $this->master_id && $check->is_accepted) {
-                $msg = 'Vous avez été lié a un sous distributeur';
-                $msg_title = 'Liaison a un sous distributeur';
-                $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                $check->update(['master_id' => null, 'is_accepted' => false]);
-                $check->assignRole(4);
-            } else {
-                $msg = 'Vous avez été detaché a un sous distributeur';
-                $msg_title = 'Détachément a un sous distributeur';
-                $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                $check->update(['master_id' => $this->master_id, 'is_accepted' => true]);
-                $check->assignRole(4);
-            }
-            $this->cancelConnectedField();
-            $this->emit('modal-hide', 'hide');
-            $this->emit('refreshPage'); // À appeler après avoir effectué les modifications
-            $this->emit('success', $check->master_id  == $this->master_id ? 'Sous distributeur lié !' : 'Sous distributeur détaché !');
-        }
-    }
 
     public function cancelConnectedField()
     {
@@ -145,24 +60,6 @@ class UserAdmin extends Component
     }
 
 
-    public function connectedOneMaster()
-    {
-        $check = SidUser::find($this->user_id);
-
-        $check_master = SidUser::find($this->master_selected)->first();
-
-        if (!empty($check)) {
-            $check->update(['master_id' => $this->master_selected, 'is_accepted' => true]);
-            $check->assignRole(4);
-            $msg = 'Vous avez été lié a un sous distributeur';
-            $msg_title = 'Liaison a un sous distributeur';
-            $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-            $this->emit('modal-hide', 'hide');
-            $this->cancelConnectedField();
-            $this->emit('refreshPage'); // À appeler après avoir effectué les modifications
-            $this->emit('success', $check->master_id  == $this->master_selected ? 'Sous distributeur lié !' : 'Sous distributeur désactivée !');
-        }
-    }
 
     public function resetField()
     {
@@ -210,18 +107,24 @@ class UserAdmin extends Component
         $master_country = null;
 
         if ($this->search != "") {
-
             $this->resetPage();
 
-            $users->where("firstname", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("lastname", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("phone", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("email", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("wallet_id", "LIKE",  "%" . $this->search . "%");
+            $users->where(function ($query) {
+                $query->where('is_supervisor', true)
+                    ->orWhere('is_admin', true)
+                    ->orWhere(function ($innerQuery) {
+                        $innerQuery->where("firstname", "LIKE",  "%" . $this->search . "%")
+                            ->orWhere("lastname", "LIKE",  "%" . $this->search . "%")
+                            ->orWhere("phone", "LIKE",  "%" . $this->search . "%")
+                            ->orWhere("email", "LIKE",  "%" . $this->search . "%")
+                            ->orWhere("wallet_id", "LIKE",  "%" . $this->search . "%");
+                    });
+            });
         }
 
+
         if ($this->countriesFilter != "") {
-            $users->where("country_id", $this->countriesFilter);
+            $users->where("country_id", $this->countriesFilter)->where('is_supervisor', true)->orWhere('is_admin',  true);
         }
 
         if ($this->user_country !== null) {
@@ -229,11 +132,15 @@ class UserAdmin extends Component
         }
 
         return view('livewire.user-admin', [
-            "users" => $users->where('is_custumers', '!=', true)->where('is_master', '!=', true)->where('is_com_zone', '!=', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
+            "users" => $users->where(function ($query) {
+                $query->where('is_supervisor', true)
+                    ->orWhere('is_admin', true);
+            })
+                ->orderBy('created_at', 'desc')
+                ->paginate(30),
+
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->orderBy("name", 'desc')->get(),
         ]);
     }
-
-
 }

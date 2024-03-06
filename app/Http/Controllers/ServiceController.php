@@ -36,6 +36,25 @@ class ServiceController extends Controller
 
         return view('pages.services.browse_close_app');
     }
+
+    public function browse_close_app_masters()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('close-robus')) {
+            abort(403);
+        }
+
+        return view('pages.services.browse_close_app_master');
+    }
+
+    public function browse_close_app_comzones()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('close-robus')) {
+            abort(403);
+        }
+
+        return view('pages.services.browse_close_app_comzone');
+    }
+
     public function browse_operators()
     {
 

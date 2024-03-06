@@ -6,14 +6,10 @@
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
-                <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add') }}">Ajouter</a>
+                <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add') }}">Ajouter superviseur</a>
             @endif
 
             <div class="hidden md:block mx-auto text-slate-500"></div>
-            @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
-                <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add_company') }}">Ajouter une
-                    sociéte</a>
-            @endif
 
 
             <div class="hidden md:block mx-auto text-slate-500"></div>
@@ -58,13 +54,6 @@
 
                 @foreach ($users as $item)
                     <tbody>
-                        @php
-
-                            $old_operators = \App\Models\OperatorService::where('sid_user_id', $item->id)
-                                ->pluck('operator_id')
-                                ->toArray();
-
-                        @endphp
                         <tr class="intro-x">
                             <td class="w-35">
                                 <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
@@ -92,27 +81,7 @@
                                 </div>
                             </td>
                             <td>
-                                @if ($item->is_custumers)
-                                    <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5 mb-2">
-                                        <p class="font-medium whitespace-nowrap">Client</p>
-                                    </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_distributer)
-                                    <div class="font-medium whitespace-nowrap">
-                                        <p class="font-medium whitespace-nowrap">Distributeur </p>
-                                    </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_supervisor)
+                                @if($item->is_supervisor)
                                     <div class="font-medium whitespace-nowrap">
                                         <p class="font-medium whitespace-nowrap">Superviseur </p>
                                     </div>
@@ -122,25 +91,6 @@
                                             {{ $item->wallet->wallet_id ?? null }}
                                         </span>
                                     </div>
-                                @elseif($item->is_under_distributer)
-                                    <div class="font-medium whitespace-nowrap">
-                                        <p class="font-medium whitespace-nowrap"> Sous-distributeur</p>
-                                    </div>
-
-                                    <div class="text-slate-500  mt-0.5">
-
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                    <p>Operations : </p>
-                                    @foreach ($item->operator_services as $opera)
-                                        <span
-                                            class="alert alert-success font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $opera->operator->name ?? null }}
-                                        </span>
-                                    @endforeach
                                 @else
                                     <div class="font-medium whitespace-nowrap">Admin</div>
                                     <div class="text-slate-500  mt-0.5">
@@ -155,141 +105,10 @@
 
                             <td class="text-center w-50">
 
-                                @if ($item->get_role() != '[]')
                                     @foreach ($item->get_role() as $role)
-                                        @if ($role->id == 4)
-                                            @if ($item->master_id != null)
-                                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                                    <p>MASTER :</p>
-                                                    <div class="text-slate-300 text-xs  mt-2">
-                                                        {{ $item->master_id != null ? $item->master->firstname . ' ' . $item->master->lastname : null }}
-                                                    </div>
-                                                </div>
-                                                <div class="text-slate-500  mt-0.5">
-                                                    <span
-                                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                        {{ $item->country->name ?? null }} ville :
-                                                        {{ $item->city->name ?? null }}
-                                                    </span>
-                                                </div>
-                                                <div
-                                                    class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
-
-                                                    @if ($item->is_accepted)
-                                                        @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                            <div class="flex items-center justify-center text-success">
-
-                                                                <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                                    class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
-                                                                    href="javascript:;" wire:loading.attr="disabled"
-                                                                    title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
-                                                                    <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i>
-                                                                    Deja Lié
-
-                                                                </a>
-
-                                                            </div>
-                                                        @endif
-                                                    @else
-                                                        @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                            <div class="flex items-center justify-center text-danger">
-                                                                <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                                    class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
-                                                                    href="javascript:;"
-                                                                    title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
-                                                                    En-attente de liaison
-
-                                                                </a>
-
-                                                            </div>
-                                                        @endif
-                                                    @endif
-
-
-                                                </div>
-                                            @else
-                                                @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                    <div class="flex items-center justify-center text-primary ">
-
-                                                        <a wire:click="addConnected({{ $item->id }}, 'show-connected-master-modal'); $emit('show-connected-master-modal')"
-                                                            class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
-                                                            href="javascript:;" wire:loading.attr="disabled"
-                                                            title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
-                                                            Lié a un MASTER
-                                                        </a>
-
-                                                    </div>
-                                                @endif
-                                            @endif
-                                        @endif
                                         <span class="m-1 badge badge-info mt-2"> {{ $role->name }} </span>
                                     @endforeach
-                                @else
-                                    @if ($item->master_id != null)
-                                        <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                            <p>MASTER :</p>
-                                            <div class="text-slate-300 text-xs  mt-2">
-                                                {{ $item->master_id != null ? $item->master->firstname . ' ' . $item->master->lastname : null }}
-                                            </div>
-                                        </div>
-                                        <div class="text-slate-500  mt-0.5">
-                                            <span
-                                                class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->country->name ?? null }} ville :
-                                                {{ $item->city->name ?? null }}
-                                            </span>
-                                        </div>
-                                        <div class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
-
-                                            @if ($item->is_accepted)
-                                                @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                    <div class="flex items-center justify-center text-success">
-
-                                                        <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                            class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
-                                                            href="javascript:;" wire:loading.attr="disabled"
-                                                            title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
-                                                            <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i>
-                                                            Deja Lié
-
-                                                        </a>
-
-                                                    </div>
-                                                @endif
-                                            @else
-                                                @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                    <div class="flex items-center justify-center text-danger">
-                                                        <a wire:click="editConnected({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                            class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
-                                                            href="javascript:;"
-                                                            title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
-                                                            En-attente de liaison
-
-                                                        </a>
-
-                                                    </div>
-                                                @endif
-                                            @endif
-
-
-                                        </div>
-                                    @else
-                                        @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                            <div class="flex items-center justify-center text-primary ">
-
-                                                <a wire:click="addConnected({{ $item->id }}, 'show-connected-master-modal'); $emit('show-connected-master-modal')"
-                                                    class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
-                                                    href="javascript:;" wire:loading.attr="disabled"
-                                                    title="@if ($item->is_accepted == 1) Désactiver @else Activer @endif">
-                                                    Lié a un MASTER
-                                                </a>
-
-                                            </div>
-                                        @endif
-                                    @endif
-
-                                @endif
-
+                                    
                             </td>
                             <td class="table-report__action w-35">
                                 @if ($item->status == '1')

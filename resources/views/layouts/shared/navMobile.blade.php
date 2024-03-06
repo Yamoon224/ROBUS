@@ -1,6 +1,8 @@
 @php
     $prefix = Request::route()->getPrefix();
     $route = Route::current()->getName();
+    $countries = getCountriesForUser(Auth::guard('web')->user());
+
 @endphp
 <div class="mobile-menu-bar">
     <a href="{{ route('/') }}" class="flex mr-auto">
@@ -27,11 +29,7 @@
                 </div>
             </a>
             <ul class="{{ request()->is('countries*') ? 'menu__sub-open' : '' }}">
-                @php
-
-                            $countries = getCountriesForUser(Auth::guard('web')->user());
-
-                        @endphp
+         
                 @foreach ($countries as $countrie)
                     <li>
                         <a href="{{ route('countries.show', ['key' => $countrie->name]) }}"
@@ -363,10 +361,31 @@
                     @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
                         <li>
                             <a href="{{ route('close_app.browse') }}"
-                                class="menu {{ $route == 'close_app.browse' ? 'menu--active' : '' }}">
-                                <div class="menu__icon"> <i data-feather="package" class="block mx-auto"></i>
+                                class="side-menu {{ $route == 'close_app.browse' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="package" class="block mx-auto"></i>
                                 </div>
-                                <div class="menu__title"> Applications </div>
+                                <div class="side-menu__title"> App S-distributeurs </div>
+                            </a>
+                        </li>
+                    @endif
+
+                    @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                        <li>
+                            <a href="{{ route('browse_close_app_masters.browse') }}"
+                                class="side-menu {{ $route == 'browse_close_app_masters.browse' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="package" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title"> App Masters </div>
+                            </a>
+                        </li>
+                    @endif
+                    @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                        <li>
+                            <a href="{{ route('browse_close_app_comzones.browse') }}"
+                                class="side-menu {{ $route == 'browse_close_app_comzones.browse' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="package" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title"> App Com zones </div>
                             </a>
                         </li>
                     @endif
@@ -483,20 +502,7 @@
                 </div>
             </a>
             <ul class="{{ request()->is('under_commissions*') ? 'menu__sub-open' : '' }}">
-                @php
-
-                    $walletUser = Auth::guard('web')->user();
-
-                    if ($walletUser->wallet->sidUser->is_distributer == true || $walletUser->wallet->sidUser->is_under_distributer == true) {
-                        $countries = App\Models\Custumers\Country::where('id', $walletUser->wallet->country->id)
-                            ->where('robus', true)
-                            ->orderBy('name', 'asc')
-                            ->get();
-                    } elseif ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false) {
-                        $countries = App\Models\Custumers\Country::where('robus', true)->orderBy('name', 'asc')->get();
-                    }
-
-                @endphp
+          
 
                 @foreach ($countries as $countrie)
                     <li>
@@ -530,20 +536,7 @@
                 </div>
             </a>
             <ul class="{{ request()->is('distributer_commissions*') ? 'menu__sub-open' : '' }}">
-                @php
-
-                    $walletUser = Auth::guard('web')->user();
-
-                    if ($walletUser->wallet->sidUser->is_distributer == true || $walletUser->wallet->sidUser->is_under_distributer == true) {
-                        $countries = App\Models\Custumers\Country::where('id', $walletUser->wallet->country->id)
-                            ->where('robus', true)
-                            ->orderBy('name', 'asc')
-                            ->get();
-                    } elseif ($walletUser->wallet->sidUser->is_distributer == false && $walletUser->wallet->sidUser->is_under_distributer == false) {
-                        $countries = App\Models\Custumers\Country::where('robus', true)->orderBy('name', 'asc')->get();
-                    }
-
-                @endphp
+          
 
                 @foreach ($countries as $countrie)
                     <li>

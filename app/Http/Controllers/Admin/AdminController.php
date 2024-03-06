@@ -2,46 +2,62 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Models\Kyc;
-use App\Tools\Image;
-use App\Mail\NewAdmin;
-use App\Models\Company;
-use App\Mail\OtpValidated;
-use App\Models\Commission;
-use App\Mail\CodeValidated;
-use App\Models\Sid\SidUser;
-use App\Models\WithMerchant;
-use Illuminate\Http\Request;
-use App\Mail\NotificationMail;
-use App\Models\Banks\BankCard;
-use App\Models\Custumers\City;
-use App\Models\Custumers\Zone;
-use App\Models\Wallets\Wallet;
-use Illuminate\Support\Carbon;
-use App\Rules\MatchOldPassword;
-use App\Models\Custumers\Country;
-use App\Models\Wallets\WalletBank;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
-use App\Models\Wallets\WalletInter;
+use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Controller;
+use App\Http\Services\TransactionsAccountService;
+use App\Mail\CodeValidated;
+use App\Mail\NewAdmin;
+use App\Mail\NotificationMail;
+use App\Mail\OtpValidated;
+use App\Models\Banks\BankCard;
+use App\Models\Commission;
+use App\Models\Company;
+use App\Models\Custumers\City;
+use App\Models\Custumers\Country;
+use App\Models\Custumers\Zone;
+use App\Models\Kyc;
+use App\Models\Master;
+use App\Models\Sid\SidUser;
+use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletBank;
+use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletInter;
+use App\Models\Wallets\WalletPayment;
+use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
+use App\Models\Wallets\WalletTransaction;
+use App\Models\WithMerchant;
+use App\Rules\MatchOldPassword;
+use App\Tools\Image;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use App\Models\Wallets\WalletDeposit;
-use App\Models\Wallets\WalletPayment;
 use Illuminate\Support\Facades\Session;
-use App\Models\Wallets\WalletPhoneCredit;
-use App\Models\Wallets\WalletTransaction;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Admin\MailController;
-use App\Models\Master;
+use Spatie\Permission\Models\Role;
+use App\Http\Services\UserCreateService;
+use App\Http\Services\ValidatorService;
 
 class AdminController extends Controller
 {
 
-    
+
+    protected $transactionAccountService;
+    protected $userValidatorService;
+    protected $createUserService;
+
+    public function __construct(
+        TransactionsAccountService $transactionAccountService,
+        ValidatorService $userValidatorService,
+        UserCreateService $createUserService
+    ) {
+        $this->transactionAccountService = $transactionAccountService;
+        $this->userValidatorService = $userValidatorService;
+        $this->createUserService = $createUserService;
+    }
 
     // Company Infos
 
@@ -56,7 +72,7 @@ class AdminController extends Controller
         return view('home_masters');
     }
 
-    
+
 
     public function home_com_zones()
     {
@@ -64,13 +80,12 @@ class AdminController extends Controller
     }
 
 
-    Public function browse_activites()
+    public function browse_activites()
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-administrateur')) {
             abort(403);
         }
         return view('pages.admin.activities');
-
     }
 
     public function check(Request $request)
@@ -270,7 +285,9 @@ class AdminController extends Controller
         if (!Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur')) {
             abort(403);
         }
-        $roles = Role::orderBy('created_at', 'desc')->get();
+        // $roles = Role::orderBy('created_at', 'desc')->get();
+        $roles = Role::whereId(5)->orderBy('created_at', 'desc')->first();
+
         $countries = Country::whereRobus(true)
             ->where('indecative', '!=', null)->get();
         return view('pages.admin.add', compact('roles', 'countries'));
@@ -312,6 +329,35 @@ class AdminController extends Controller
         return view('pages.admin.add_com_zone', compact('roles', 'countries'));
     }
 
+
+    public function addunders()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur')) {
+            abort(403);
+        }
+
+        $roles = Role::whereId(4)->orderBy('created_at', 'desc')->first();
+        $countries = Country::whereRobus(true)
+            ->where('indecative', '!=', null)->get();
+
+        return view('pages.admin.add_unders', compact('roles', 'countries'));
+    }
+
+
+    public function adddistributors()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur')) {
+            abort(403);
+        }
+
+        $roles = Role::whereId(3)->orderBy('created_at', 'desc')->first();
+        $countries = Country::whereRobus(true)
+            ->where('indecative', '!=', null)->get();
+
+        return view('pages.admin.add_operators', compact('roles', 'countries'));
+    }
+
     public function add_under_distributer()
     {
 
@@ -321,6 +367,8 @@ class AdminController extends Controller
         $countries = Country::whereRobus(true)->where('indecative', '!=', null)->get();
         return view('pages.admin.add_under_distributer', compact('roles', 'countries', 'currentStep'));
     }
+
+
 
     public function add_under_distributer_two(Request $request)
     {
@@ -784,20 +832,8 @@ class AdminController extends Controller
     {
 
 
-        $validator = Validator::make($request->all(), [
-            'firstname' => ['required', 'string', 'max:255'],
-            'lastname' => ['required', 'string', 'max:255'],
-            'country_id' => 'required',
-            'zone' => 'required',
-            'roles' => ['required'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:sid_users'],
-            'phone' => ['required', 'unique:sid_users'],
-            'password' => ['required', 'confirmed'],
-            'image' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
-            'image_recto' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
-            'image_verso' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+        $validator = $this->userValidatorService->validateUserDataAdmin($request->all());
 
-        ]);
         if ($validator->fails()) {
             return redirect('application/admin/add')
                 ->withErrors($validator)
@@ -807,117 +843,39 @@ class AdminController extends Controller
         }
 
 
-        $user = DB::table('sid_users')->where('email', $request->email)->first();
-
-        $tool = new Image;
-
         try {
 
-            $rt = rand(40, 5000) * time();
-            $tr = str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-            $walletCode = sprintf("%0.6s", str_shuffle($rt . $tr));
+            $response = $this->createUserService->createSupervisorsWeb(
+                $request->all(),
+                $request->file('image'),
+                $request->file('image_recto'),
+                $request->file('image_verso')
+            );
 
-            $user = new SidUser();
-            $user->firstname  = $request->firstname;
-            $user->company_id  = 1;
-            $user->lastname  = $request->lastname;
-            $user->country_id  = $request->country_id ?? null;
-            $user->city_id  = $request->city ?? null;
-            $user->zone_id  = $request->zone_id ?? null;
-            $user->zone  = $request->zone ?? null;
-            $user->email =  $request->email;
-            $user->phone  = $request->phone;
-            $user->created_by = Auth::user()->id;
-            $file_image = $request->file('image');
-            $file_image_recto = $request->file('image_recto');
-            $file_image_verso = $request->file('image_verso');
-            if ($file_image) {
-                $destination_path = public_path('profil/' . $user->id . '/');
-                $front_file = date('YmdHis') . "." . $file_image->getClientOriginalExtension();
-                $file_image->move($destination_path, $front_file);
-                $user->image =  env('APP_URL') . "/public/profil/" . $user->id . "/$front_file";
-            }
+            $msg = "Un superviseur crée avec succès";
 
+            if ($response['success']) {
 
-            $user->password  = Hash::make($request->password);
-            $user->is_under_distributer  = $request->is_under_distributer ? true : false;
-            $user->is_distributer  = $request->is_distributer ? true : false;
-            $user->is_accounting  = $request->is_accounting ? true : false;
-            $user->is_admin  = $request->is_admin ? true : false;
-            $user->is_custumers  = $request->is_custumers ? true : false;
-            $user->is_supervisor  = $request->is_supervisor ? true : false;
+                $user = $response['user'];
 
-            $user->is_company  = false;
+                $valeur_message = ' Un superviseur ';
+                Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
+                    ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
 
-            $user->assignRole($request['roles']);
+                $msg = "Superviseur crée avec succès";
+                $color = 'success';
 
-            if (!$user->country->currencie) {
+                return redirect(route('admins.browse'))->with('color', $color)->with('status', $msg);
+            } else {
+
+                $message = $response['message'];
 
                 return redirect('application/admin/add')
-                    ->withErrors($validator)
+                    // ->withErrors($validator)
                     ->with('color', 'danger')
-                    ->with('status', 'Pas de devise dans se pays\n \nveillez activer la devise')
+                    ->with('status', $message)
                     ->withInput();
             }
-
-
-
-            $user->save();
-
-            if (isset($file_image_recto) && !empty($file_image_recto) && isset($file_image_verso) && !empty($file_image_verso)) {
-
-                $destination_path = public_path('kyc_distributer/' . $user->id . '/');
-                $front_file =  'face_' .  date('YmdHis') . "." . $file_image_recto->getClientOriginalExtension();
-                $back_file = 'arriere_' . date('YmdHis') . "." . $file_image_verso->getClientOriginalExtension();
-                $file_image_recto->move($destination_path, $front_file);
-                $file_image_verso->move($destination_path, $back_file);
-                Kyc::updateOrCreate(
-                    [
-                        'sid_user_id' => $user->id,
-                        'company_id'  =>  $user->company->id
-                    ],
-                    [
-                        'motif' => 'Validation de compte',
-                        'screen' => env('APP_URL') . "/public/kyc_distributer/" . $user->id . "/$front_file",
-                        'screen_back' => env('APP_URL') . "/public/kyc_distributer/" . $user->id . "/$back_file",
-                        'sid_user_id' => $user->id,
-                        'status' => true,
-                        'company_id'  =>  $user->company->id
-                    ]
-                );
-            }
-
-
-            $wallet_user = Wallet::create([
-                'company_id' =>  $user->company->id,
-                'wallet_id' =>   $user->country->code . $walletCode,
-                'country_id' =>  $user->country->id,
-                'created_by' => Auth::guard('web')->user()->id,
-                'sid_user_id' =>  $user->id,
-                'currencie_id' =>  $user->country->currencie->id,
-                'amount' => 0.0,
-                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                'status' => true
-
-            ]);
-
-
-
-            $user->update([
-                'wallet_id'  => $wallet_user->wallet_id,
-                'phone'  =>   $user->country->indecative . $user->phone,
-                'silver_ceiling'  =>   $user->country->silver_ceiling
-            ]);
-
-
-
-            Mail::to($user->email)->send(new NewAdmin('Vous etes désormais un  utilisateur marchant de ' . env('APP_NAME') .
-                ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
-
-            $msg = "administrateur crée avec succès";
-            $color = 'success';
-
-            return redirect(route('admin.browse'))->with('color', $color)->with('status', $msg);
         } catch (\Throwable $th) {
             return redirect('application/admin/add')
                 ->withErrors($validator)
@@ -1089,7 +1047,7 @@ class AdminController extends Controller
         }
     }
 
-  
+
     public function activate(int $id)
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('activer-administrateur')) {

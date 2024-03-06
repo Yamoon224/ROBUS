@@ -30,6 +30,7 @@ class ValidatorService
             'lastname' => ['required', 'string', 'max:255'],
             'country_id' => 'required',
             'zone' => 'required',
+            'city' => 'required',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:sid_users'],
             'phone' => ['required', 'unique:sid_users'],
             'password' => ['required', 'confirmed'],

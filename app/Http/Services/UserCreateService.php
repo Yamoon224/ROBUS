@@ -500,7 +500,7 @@ class UserCreateService
                         'lastname' => $requestData['lastname'],
                         'company_id' => 1,
                         'country_id' => $requestData['country_id'] ?? null,
-                        'city_id' => $requestData['city'] ?? null,   
+                        'city_id' => $requestData['city'] ?? null,
                         'zone' => $requestData['zone'] ?? null,
                         'email' => $requestData['email'],
                         'phone' => $requestData['phone'],
@@ -585,6 +585,191 @@ class UserCreateService
                 return ['success' => true, 'user' => $user];
         }
 
+        public function createUserDistriOperatorsWeb($requestData, $role_id, $image, $imageRecto, $imageVerso, $is_distributors = false, $is_unders = false)
+        {
+                $user = new SidUser();
+                $role = Role::findOrFail($role_id);
+
+                // Phone search
+                $phone_countrie = Country::whereId($requestData['country_id'])->first();
+
+                $verify_phone =  SidUser::wherePhone($phone_countrie->indecative . $requestData['phone'])->first();
+
+
+                if ($verify_phone) {
+                        return ['success' => false, 'message' => "Le numero est déja utilisé par quelqu'un"];
+                }
+
+                $user->fill([
+                        'firstname' => $requestData['firstname'],
+                        'lastname' => $requestData['lastname'],
+                        'company_id' => 1,
+                        'country_id' => $requestData['country_id'] ?? null,
+                        'city_id' => $requestData['city'] ?? null,
+                        'zone' => $requestData['zone'] ?? null,
+                        'email' => $requestData['email'],
+                        'phone' => $requestData['phone'],
+                        'created_by' => sabdy()->id,
+                        'password' => Hash::make($requestData['password']),
+                        'is_distributer' => $is_distributors,
+                        'is_under_distributer' => $is_unders,
+                ]);
+
+                if ($image) {
+                        $destination_path = public_path('profil/' . $user->id . '/');
+                        $front_file = date('YmdHis') . "." . $image->getClientOriginalExtension();
+                        $image->move($destination_path, $front_file);
+                        $user->image = env('APP_URL') . "/public/profil/" . $user->id . "/$front_file";
+                }
+
+                if (!$user->country->currencie) {
+                        return ['success' => false, 'message' => 'Pas de devise dans ce pays. Veuillez activer la devise'];
+                }
+
+                $user->assignRole($role);
+
+                $user->save();
+
+                if ($imageRecto && $imageVerso) {
+                        $destination_path = public_path('kyc_underDistributors/' . $user->id . '/');
+                        $front_file = 'face_' .  date('YmdHis') . "." . $imageRecto->getClientOriginalExtension();
+                        $back_file = 'arriere_' . date('YmdHis') . "." . $imageVerso->getClientOriginalExtension();
+                        $imageRecto->move($destination_path, $front_file);
+                        $imageVerso->move($destination_path, $back_file);
+
+                        Kyc::updateOrCreate([
+                                'sid_user_id' => $user->id,
+                                'company_id' =>  $user->company->id
+                        ], [
+                                'motif' => 'Validation de compte',
+                                'screen' => env('APP_URL') . "/public/kyc_underDistributors/" . $user->id . "/$front_file",
+                                'screen_back' => env('APP_URL') . "/public/kyc_underDistributors/" . $user->id . "/$back_file",
+                                'sid_user_id' => $user->id,
+                                'status' => true,
+                                'company_id' =>  $user->company->id
+                        ]);
+                }
+
+
+                $walletCode = sprintf("%0.6s", str_shuffle(rand(40, 5000) * time() . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ')));
+
+
+                $wallet_user = Wallet::create([
+                        'company_id' =>   1,
+                        'wallet_id' =>   $user->country->code . $walletCode,
+                        'country_id' =>  $user->country->id,
+                        'created_by' => sabdy()->id,
+                        'sid_user_id' =>  $user->id,
+                        'currencie_id' =>  $user->country->currencie->id,
+                        'amount' => 0.0,
+                        'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                        'status' => true
+                ]);
+
+                $user->update([
+                        'company_id'  => 1,
+                        'wallet_id'  => $wallet_user->wallet_id,
+                        // 'master_id'  => $user->id,
+                        'is_accepted' => false,
+                        'phone'  =>   $user->country->indecative . $user->phone,
+                        'silver_ceiling'  =>   $user->country->silver_ceiling
+                ]);
+
+                return ['success' => true, 'user' => $user];
+        }
+
+        public function createUserSupervisorsWeb($requestData, $role_id, $image, $imageRecto, $imageVerso, $is_supervisors = false)
+        {
+                $user = new SidUser();
+                $role = Role::findOrFail($role_id);
+
+                // Phone search
+                $phone_countrie = Country::whereId($requestData['country_id'])->first();
+
+                $verify_phone =  SidUser::wherePhone($phone_countrie->indecative . $requestData['phone'])->first();
+
+
+                if ($verify_phone) {
+                        return ['success' => false, 'message' => "Le numero est déja utilisé par quelqu'un"];
+                }
+
+                $user->fill([
+                        'firstname' => $requestData['firstname'],
+                        'lastname' => $requestData['lastname'],
+                        'company_id' => 1,
+                        'country_id' => $requestData['country_id'] ?? null,
+                        'city_id' => $requestData['city'] ?? null,
+                        'zone' => $requestData['zone'] ?? null,
+                        'email' => $requestData['email'],
+                        'phone' => $requestData['phone'],
+                        'created_by' => sabdy()->id,
+                        'password' => Hash::make($requestData['password']),
+                        'is_supervisor' => $is_supervisors,
+                ]);
+
+                if ($image) {
+                        $destination_path = public_path('profil/' . $user->id . '/');
+                        $front_file = date('YmdHis') . "." . $image->getClientOriginalExtension();
+                        $image->move($destination_path, $front_file);
+                        $user->image = env('APP_URL') . "/public/profil/" . $user->id . "/$front_file";
+                }
+
+                if (!$user->country->currencie) {
+                        return ['success' => false, 'message' => 'Pas de devise dans ce pays. Veuillez activer la devise'];
+                }
+
+                $user->assignRole($role);
+
+                $user->save();
+
+                if ($imageRecto && $imageVerso) {
+                        $destination_path = public_path('kyc_supervisors/' . $user->id . '/');
+                        $front_file = 'face_' .  date('YmdHis') . "." . $imageRecto->getClientOriginalExtension();
+                        $back_file = 'arriere_' . date('YmdHis') . "." . $imageVerso->getClientOriginalExtension();
+                        $imageRecto->move($destination_path, $front_file);
+                        $imageVerso->move($destination_path, $back_file);
+
+                        Kyc::updateOrCreate([
+                                'sid_user_id' => $user->id,
+                                'company_id' =>  $user->company->id
+                        ], [
+                                'motif' => 'Validation de compte',
+                                'screen' => env('APP_URL') . "/public/kyc_supervisors/" . $user->id . "/$front_file",
+                                'screen_back' => env('APP_URL') . "/public/kyc_supervisors/" . $user->id . "/$back_file",
+                                'sid_user_id' => $user->id,
+                                'status' => true,
+                                'company_id' =>  $user->company->id
+                        ]);
+                }
+
+
+                $walletCode = sprintf("%0.6s", str_shuffle(rand(40, 5000) * time() . str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ')));
+
+
+                $wallet_user = Wallet::create([
+                        'company_id' =>   1,
+                        'wallet_id' =>   $user->country->code . $walletCode,
+                        'country_id' =>  $user->country->id,
+                        'created_by' => sabdy()->id,
+                        'sid_user_id' =>  $user->id,
+                        'currencie_id' =>  $user->country->currencie->id,
+                        'amount' => 0.0,
+                        'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                        'status' => true
+                ]);
+
+                $user->update([
+                        'company_id'  => 1,
+                        'wallet_id'  => $wallet_user->wallet_id,
+                        // 'master_id'  => $user->id,
+                        'is_accepted' => false,
+                        'phone'  =>   $user->country->indecative . $user->phone,
+                        'silver_ceiling'  =>   $user->country->silver_ceiling
+                ]);
+
+                return ['success' => true, 'user' => $user];
+        }
+
         public function createMasterWeb($requestData, $image, $imageRecto, $imageVerso)
         {
                 return $this->createUserMasterWeb($requestData, 7, $image, $imageRecto, $imageVerso, true, false);
@@ -593,5 +778,20 @@ class UserCreateService
         public function createComZoneWeb($requestData, $image, $imageRecto, $imageVerso)
         {
                 return $this->createUserMasterWeb($requestData, 8, $image, $imageRecto, $imageVerso, false, true);
+        }
+
+        public function createUnderDistributorWeb($requestData, $image, $imageRecto, $imageVerso)
+        {
+                return $this->createUserDistriOperatorsWeb($requestData, 4, $image, $imageRecto, $imageVerso, false, true);
+        }
+
+        public function createOperatorsWeb($requestData, $image, $imageRecto, $imageVerso)
+        {
+                return $this->createUserDistriOperatorsWeb($requestData, 3, $image, $imageRecto, $imageVerso, true, false);
+        }
+
+        public function createSupervisorsWeb($requestData, $image, $imageRecto, $imageVerso)
+        {
+                return $this->createUserSupervisorsWeb($requestData, 5, $image, $imageRecto, $imageVerso, true);
         }
 }

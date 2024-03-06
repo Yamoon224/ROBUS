@@ -276,6 +276,120 @@ class MasterController extends Controller
         }
     }
 
+    public function storeunders(Request $request)
+    {
+
+        $validator = $this->userValidatorService->validateUserDataAdmin($request->all());
+
+        if ($validator->fails()) {
+            return redirect('underdistributors/add')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Champ requise')
+                ->withInput();
+        }
+
+
+        try {
+
+            $response = $this->createUserService->createUnderDistributorWeb(
+                $request->all(),
+                $request->file('image'),
+                $request->file('image_recto'),
+                $request->file('image_verso')
+            );
+
+            $msg = "Un sous distributeur crée avec succès";
+
+            if ($response['success']) {
+
+                $user = $response['user'];
+
+                $valeur_message = ' Sous distributeur ';
+                Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
+                    ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+
+                $msg = "Sous distributeur crée avec succès";
+                $color = 'success';
+
+                return redirect(route('unders.admins.browse'))->with('color', $color)->with('status', $msg);
+            } else {
+
+                $message = $response['message'];
+
+                return redirect('underdistributors/add')
+                    // ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', $message)
+                    ->withInput();
+            }
+        } catch (\Throwable $th) {
+            return redirect('underdistributors/add')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de création')
+                ->withInput();
+        }
+    }
+
+    public function storedistributors(Request $request)
+    {
+
+        $validator = $this->userValidatorService->validateUserDataAdmin($request->all());
+
+        if ($validator->fails()) {
+            return redirect('distribitors/add')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Champ requise')
+                ->withInput();
+        }
+
+
+        try {
+
+            $response = $this->createUserService->createOperatorsWeb(
+                $request->all(),
+                $request->file('image'),
+                $request->file('image_recto'),
+                $request->file('image_verso')
+            );
+
+            $msg = "Une operatrice crée avec succès";
+
+            if ($response['success']) {
+
+                $user = $response['user'];
+
+                $valeur_message = ' Une operatrice ';
+                Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
+                    ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+
+                $msg = "Operatrice crée avec succès";
+                $color = 'success';
+
+                return redirect(route('operators.admins.browse'))->with('color', $color)->with('status', $msg);
+            } else {
+
+                $message = $response['message'];
+
+                return redirect('distribitors/add')
+                    // ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', $message)
+                    ->withInput();
+            }
+        } catch (\Throwable $th) {
+            return redirect('distribitors/add')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de création')
+                ->withInput();
+        }
+    }
+
+
+
     public function store_under_distributors(Request $request)
     {
 

@@ -152,7 +152,7 @@ class ProviderController extends Controller
                     $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
-                    $dashboard_data['SERVICE  1XBET'] = ProviderSingleCollection::collection($wallet1xbet);
+                    $dashboard_data['SERVICE 1XBET'] = ProviderSingleCollection::collection($wallet1xbet);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
                     $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);
                     $dashboard_data['Transfert international'] = [
@@ -171,6 +171,9 @@ class ProviderController extends Controller
                             case 1:
                                 $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
                                 break;
+                            case 2:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletWithdrawal);
+                                break;
                             case 7:
                                 $dashboard_data[$operator->operator->name] = [
                                     "Transfert" => ProviderSingleCollection::collection($walletInter),
@@ -178,6 +181,9 @@ class ProviderController extends Controller
                                 break;
                             case 8:
                                 $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletBank);
+                                break;
+                            case 9:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($wallet1xbet);
                                 break;
                             default:
                                 // Ne rien faire ou ajouter une logique de gestion d'erreur
@@ -193,6 +199,7 @@ class ProviderController extends Controller
                         "Crédit téléphonique" => ProviderSingleCollection::collection($walletPhoneInter),
                         "Versement bancaire" => ProviderSingleCollection::collection($walletVirementBank),
                         "Rechargement de carte" => ProviderSingleCollection::collection($walletReloadCardInter),
+                        "Service 1Xbet" => ProviderSingleCollection::collection($wallet1xbet),
                     ];
                 }
             }

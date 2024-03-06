@@ -100,7 +100,7 @@
             @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*') ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*')  || request()->is('distribitors*') || request()->is('underdistributors*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -114,7 +114,7 @@
                         </div>
                     </a>
                     <ul
-                        class="{{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*')     ? 'side-menu__sub-open' : '' }}">
+                        class="{{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*') || request()->is('distribitors*') || request()->is('underdistributors*') ? 'side-menu__sub-open' : '' }}">
 
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
@@ -145,7 +145,7 @@
                             <li>
 
                                 <a href="{{ route('masters.admins.browse') }}"
-                                    class="side-menu {{ $route == 'masters.admins.browse' || $route == 'masters.admins.show'  || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
+                                    class="side-menu {{ $route == 'masters.admins.browse' || $route == 'masters.admins.show' || $route == 'masters.admins.add' ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-feather="user-check"
                                             class="block mx-auto"></i>
                                     </div>
@@ -163,6 +163,32 @@
                                             class="block mx-auto"></i>
                                     </div>
                                     <div class="side-menu__title"> COM ZONE </div>
+                                </a>
+                            </li>
+                        @endif
+
+                        @if (Auth::guard('web')->user()->hasPermissionTo('com-zone'))
+                            <li>
+
+                                <a href="{{ route('unders.admins.browse') }}"
+                                    class="side-menu {{ $route == 'unders.admins.browse' || $route == 'unders.admins.add' || $route == 'unders.admins.show' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="user-check"
+                                            class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Sous-distributeurs</div>
+                                </a>
+                            </li>
+                        @endif
+
+                        @if (Auth::guard('web')->user()->hasPermissionTo('com-zone'))
+                            <li>
+
+                                <a href="{{ route('operators.admins.browse') }}"
+                                    class="side-menu {{ $route == 'operators.admins.browse' || $route == 'operators.admins.add' || $route == 'operators.admins.show' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="user-check"
+                                            class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Operatrices</div>
                                 </a>
                             </li>
                         @endif
@@ -352,7 +378,7 @@
 
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('application*') || request()->is('operators*') || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*') ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('application*') || request()->is('operators*') || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*')  || request()->is('close_app*')  ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-feather="users" class="block mx-auto"></i> </div>
                         <div class="side-menu__title">
                             Administrateur
@@ -367,7 +393,7 @@
                             Auth::guard('web')->user()->hasPermissionTo('Faqs'))
 
                         <ul
-                            class="{{ request()->is('application*') || request()->is('admin*') || request()->is('operators*') || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') ? 'side-menu__sub-open' : '' }}">
+                            class="{{ request()->is('application*') || request()->is('admin*') || request()->is('operators*') || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*')  || request()->is('close_app*') ? 'side-menu__sub-open' : '' }}">
 
 
                             <li>
@@ -384,7 +410,28 @@
                                         class="side-menu {{ $route == 'close_app.browse' ? 'side-menu--active' : '' }}">
                                         <div class="side-menu__icon"> <i data-feather="package"
                                                 class="block mx-auto"></i></div>
-                                        <div class="side-menu__title"> Applications </div>
+                                        <div class="side-menu__title"> App S-distributeurs </div>
+                                    </a>
+                                </li>
+                            @endif
+
+                            @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                                <li>
+                                    <a href="{{ route('browse_close_app_masters.browse') }}"
+                                        class="side-menu {{ $route == 'browse_close_app_masters.browse' ? 'side-menu--active' : '' }}">
+                                        <div class="side-menu__icon"> <i data-feather="package"
+                                                class="block mx-auto"></i></div>
+                                        <div class="side-menu__title"> App Masters </div>
+                                    </a>
+                                </li>
+                            @endif
+                            @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                                <li>
+                                    <a href="{{ route('browse_close_app_comzones.browse') }}"
+                                        class="side-menu {{ $route == 'browse_close_app_comzones.browse' ? 'side-menu--active' : '' }}">
+                                        <div class="side-menu__icon"> <i data-feather="package"
+                                                class="block mx-auto"></i></div>
+                                        <div class="side-menu__title"> App Com zones </div>
                                     </a>
                                 </li>
                             @endif

@@ -143,6 +143,23 @@ Route::group(['prefix' => ''], function () {
             Route::post('/update/{id}', [MasterController::class, 'update_comzone'])->name('comzones.admins.update');
         });
 
+        //Under distributors
+        Route::prefix('underdistributors')->group(function () {
+            Route::get('/browse', [UserController::class, 'browseunders'])->name('unders.admins.browse');
+            Route::get('/add', [AdminController::class, 'addunders'])->name('unders.admins.add');
+            Route::post('/store', [MasterController::class, 'storeunders'])->name('unders.admin.store');
+            Route::get('/show/{id}', [UserController::class, 'showunders'])->name('unders.admins.show');
+            Route::post('/update/{id}', [MasterController::class, 'updateunders'])->name('unders.admins.update');
+        });
+
+        // distributors
+        Route::prefix('distribitors')->group(function () {
+            Route::get('/browse', [UserController::class, 'browsedistributors'])->name('operators.admins.browse');
+            Route::get('/add', [AdminController::class, 'adddistributors'])->name('operators.admins.add');
+            Route::post('/store', [MasterController::class, 'storedistributors'])->name('operators.admin.store');
+            Route::get('/show/{id}', [UserController::class, 'showdistributors'])->name('operators.admins.show');
+            Route::post('/update/{id}', [MasterController::class, 'updatedistributors'])->name('operators.admins.update');
+        });
 
         //   Users
         Route::prefix('users')->group(function () {
@@ -273,6 +290,8 @@ Route::group(['prefix' => ''], function () {
 
         Route::group(['prefix' => 'close_app'], function () {
             Route::get('/browse',  [ServiceController::class, 'browse_close_app'])->name('close_app.browse');
+            Route::get('/browse_masters',  [ServiceController::class, 'browse_close_app_masters'])->name('browse_close_app_masters.browse');
+            Route::get('/browse_comzones',  [ServiceController::class, 'browse_close_app_comzones'])->name('browse_close_app_comzones.browse');
         });
 
         //Invoices

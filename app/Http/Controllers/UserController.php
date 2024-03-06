@@ -63,6 +63,31 @@ class UserController extends Controller
             abort(403);
         }
     }
+
+    public function browseunders()
+    {
+
+        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
+
+            return view('pages.custumers.browseunder');
+        } else {
+            abort(403);
+        }
+    }
+
+    public function browsedistributors()
+    {
+
+        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
+
+            return view('pages.custumers.browsedistributor');
+        } else {
+            abort(403);
+        }
+    }
+
+
+
     public function browse_invalidated(Request $request)
     {
 
@@ -194,8 +219,8 @@ class UserController extends Controller
             // get transactions days
             $paiements = $this->getTransactionsAllTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at');
             $transactions = $this->getTransactionsAllTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at');
-            $reaload_uv = $this->getReloadAmountTotal(WalletReload::class , $wallet_user->id);
-            $phoneCredits = $this->getTransactionsAllTotal(WalletPhoneCredit::class , 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at');
+            $reaload_uv = $this->getReloadAmountTotal(WalletReload::class, $wallet_user->id);
+            $phoneCredits = $this->getTransactionsAllTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at');
             $Internationals = $this->getTransactionsAllTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at');
             $virements = $this->getTransactionsAllTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at');
             $reloadCards = $this->getTransactionsAllTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at');
@@ -203,7 +228,7 @@ class UserController extends Controller
             $walletxbets = $this->getTransactionsAllTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at');
 
 
-            $usersCountry = sabdy()->country->currencie->name;  
+            $usersCountry = sabdy()->country->currencie->name;
 
             return view('pages.custumers.show_comzone', compact(
                 'user',
@@ -216,7 +241,7 @@ class UserController extends Controller
                 'virements',
                 'reloadCards',
                 'walletxbets',
-                'usersCountry', 
+                'usersCountry',
                 'kycs'
             ));
         } else {
@@ -224,7 +249,53 @@ class UserController extends Controller
         }
     }
 
-    public function getReloadAmountTotal($walletModel , $id)
+
+    public function showunders(Request $request, int $id)
+    {
+        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
+
+
+            $user = SidUser::whereId($id)->first();
+
+            $kycs = $user->kyc()->get() ?? null;
+
+            $wallet_user = Wallet::where('sid_user_id', $user->id)->first();
+
+
+            // get transactions days
+            $paiements = $this->getTransactionsAllTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at');
+            $transactions = $this->getTransactionsAllTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at');
+            $reaload_uv = $this->getReloadAmountTotal(WalletReload::class, $wallet_user->id);
+            $phoneCredits = $this->getTransactionsAllTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at');
+            $Internationals = $this->getTransactionsAllTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at');
+            $virements = $this->getTransactionsAllTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at');
+            $reloadCards = $this->getTransactionsAllTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at');
+            $walletOrderCarte = $this->getTransactionsAllTotal(BankCard::class, 'bank_cards.wallet_id', 'bank_cards.created_at');
+            $walletxbets = $this->getTransactionsAllTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at');
+
+
+            $usersCountry = sabdy()->country->currencie->name;
+
+            return view('pages.custumers.show_comzone', compact(
+                'user',
+                'transactions',
+                'paiements',
+                'reaload_uv',
+                'phoneCredits',
+                'Internationals',
+                'walletOrderCarte',
+                'virements',
+                'reloadCards',
+                'walletxbets',
+                'usersCountry',
+                'kycs'
+            ));
+            
+        } else {
+            abort(403);
+        }
+    }
+    public function getReloadAmountTotal($walletModel, $id)
     {
 
 
