@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Details du client')
+@section('title', 'Details du société')
 
 @section('content')
 

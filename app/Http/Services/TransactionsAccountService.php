@@ -9,6 +9,36 @@ use Illuminate\Support\Carbon;
 class TransactionsAccountService
 {
 
+    public function getTransactionUserWallet($wallet ,$id , $num_wallet , $wallet_user)
+    {
+        return  $wallet::where('wallet_id', $id)
+        ->orWhere($num_wallet,  $wallet_user)
+        ->orderBy('created_at', 'desc')->paginate(20);
+    }
+
+  
+    public function getTransactionsWallet($wallet ,$id)
+    {
+        return  $wallet::where('wallet_id', $id)
+        ->orderBy('created_at', 'desc')->paginate(20);
+    }
+    
+
+    public function getTransactionWalletDetailsCount($wallet, $id, $status)
+    {
+
+        return $wallet::where('wallet_id', $id)->where('status', $status)
+            ->count();
+    }
+
+
+    public function getTransactionserUDetailsCount($wallet, $id, $status)
+    {
+
+        return $wallet::where('updated_by', $id)->where('status', $status)
+            ->count();
+    }
+
 
 
     public function getTransactionMasterCount($walletModel,  $status)
@@ -33,7 +63,7 @@ class TransactionsAccountService
         return $totalcount;
     }
 
-    
+
 
     public function getTransactionMasterMonthCount($walletModel)
     {
@@ -194,6 +224,17 @@ class TransactionsAccountService
         return array_sum($data);
     }
 
+    public function getTransactionCommissionAmount($wallets, $id)
+    {
+
+        $data = [];
+
+        foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->commissions;
+        }
+
+        return array_sum($data);
+    }
 
 
     public function walletSumCommission($wallets, $id)

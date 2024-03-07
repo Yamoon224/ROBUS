@@ -148,7 +148,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/browse', [UserController::class, 'browseunders'])->name('unders.admins.browse');
             Route::get('/add', [AdminController::class, 'addunders'])->name('unders.admins.add');
             Route::post('/store', [MasterController::class, 'storeunders'])->name('unders.admin.store');
-            Route::get('/show/{id}', [UserController::class, 'showunders'])->name('unders.admins.show');
+            Route::get('/show/{id}', [AdminController::class, 'showunders'])->name('unders.admins.show');
             Route::post('/update/{id}', [MasterController::class, 'updateunders'])->name('unders.admins.update');
         });
 
@@ -157,7 +157,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/browse', [UserController::class, 'browsedistributors'])->name('operators.admins.browse');
             Route::get('/add', [AdminController::class, 'adddistributors'])->name('operators.admins.add');
             Route::post('/store', [MasterController::class, 'storedistributors'])->name('operators.admin.store');
-            Route::get('/show/{id}', [UserController::class, 'showdistributors'])->name('operators.admins.show');
+            Route::get('/show/{id}', [AdminController::class, 'showdistributors'])->name('operators.admins.show');
             Route::post('/update/{id}', [MasterController::class, 'updatedistributors'])->name('operators.admins.update');
         });
 

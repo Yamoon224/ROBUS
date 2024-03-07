@@ -150,7 +150,7 @@
 
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
                                         <a class="btn btn-primary mr-1 mb-2 btn-sm"
-                                            href="{{ route('comzone.show_comzone', ['id' => $item->id]) }}">
+                                            href="{{ route('operators.admins.show', ['id' => $item->id]) }}">
                                             Voir
                                         </a>
                                     @endif  

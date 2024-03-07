@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Controller;
 use App\Http\Services\TransactionsAccountService;
+use App\Http\Services\UserCreateService;
+use App\Http\Services\ValidatorService;
 use App\Mail\CodeValidated;
 use App\Mail\NewAdmin;
 use App\Mail\NotificationMail;
@@ -26,6 +28,7 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use App\Rules\MatchOldPassword;
 use App\Tools\Image;
@@ -38,8 +41,6 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
-use App\Http\Services\UserCreateService;
-use App\Http\Services\ValidatorService;
 
 class AdminController extends Controller
 {
@@ -1107,6 +1108,108 @@ class AdminController extends Controller
 
         $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
 
+
+        $transactions =  $this->transactionAccountService->getTransactionUserWallet(WalletTransaction::class, $wallet_solde->id, 'num_wallet',  $wallet_solde->wallet_id);
+
+        $paiements =  $this->transactionAccountService->getTransactionsWallet(WalletPayment::class, $wallet_solde->id);
+
+        $virements =  $this->transactionAccountService->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
+
+        $phoneCredits =  $this->transactionAccountService->getTransactionsWallet(WalletPhoneCredit::class, $wallet_solde->id);
+
+        $reloadCards =  $this->transactionAccountService->getTransactionsWallet(WalletDeposit::class, $wallet_solde->id);
+
+        $walletOrderCarte =  $this->transactionAccountService->getTransactionsWallet(BankCard::class, $wallet_solde->id);
+
+        $walletxbet =  $this->transactionAccountService->getTransactionsWallet(WalletXbet::class, $wallet_solde->id);
+
+        $reaload_uv =  $this->transactionAccountService->getTransactionUserWallet(WalletReload::class, $wallet_solde->id, 'account_wallet',  $wallet_solde->wallet_id);
+
+        $Internationals =  $this->transactionAccountService->getTransactionUserWallet(WalletInter::class, $wallet_solde->id, 'number_compte',  $wallet_solde->wallet_id);
+
+
+        $usersCountry = Auth::guard('web')->user()->country->currencie->name;
+
+        $kycs = $user->kyc()->get() ?? null;
+
+        $roles = Role::all();
+        $countries = Country::where('status', true)->get();
+
+        $sum_error    = $this->getCountWalletTransaction($wallet_solde->id, 'ERROR');
+        $sum_success    = $this->getCountWalletTransaction($wallet_solde->id, 'SUCCESS');
+        $pending_success    = $this->getCountWalletTransaction($wallet_solde->id, 'PENDING');
+
+
+        $sum_wallet_transaction = $this->transactionAccountService->getTransactionsTypeAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
+
+        $sum_wallet_bank = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $wallet_solde->id);
+
+        $sum_wallet_deposit = $this->transactionAccountService->getTransactionAmount(WalletDeposit::class, $wallet_solde->id);
+
+        $sum_wallet_payment = $this->transactionAccountService->getTransactionAmount(WalletPayment::class, $wallet_solde->id);
+
+        $sum_wallet_phone = $this->transactionAccountService->getTransactionAmount(WalletPhoneCredit::class, $wallet_solde->id);
+
+        $sum_wallet_bank = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $wallet_solde->id);
+
+        $sum_wallet_Inter = $this->transactionAccountService->getTransactionsTypeAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
+
+        $sum_wallet_Reload = $this->getWalletReloadSumAdminProperty($wallet_solde->id);
+        $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
+        $sum_wallet_reload_received = $this->getWalletReloadSumReceviedAdminProperty($wallet_solde->id);
+
+        $sum_commissions  = $this->getCommissionsWalletTransaction($wallet_solde->id)  ;
+
+        $sum_drawals  =  $this->getWalletTransactionSumRetraitsProperty($wallet_solde->id);
+
+        return view('pages.admin.show', compact(
+            'user',
+            'roles',
+            'sum_wallet_drawer',
+            'sum_drawals',
+            'sum_error',
+            'sum_commissions',
+            'sum_success',
+            'pending_success',
+            'sum_wallet_deposit',
+            'sum_wallet_bank',
+            'sum_wallet_payment',
+            'sum_wallet_transaction',
+            'sum_wallet_transaction_received',
+            'sum_wallet_phone',
+            'sum_wallet_Inter',
+            'sum_wallet_Inter_received',
+            'sum_wallet_Reload',
+            'sum_wallet_reload_received',
+            'countries',
+            'virements',
+            'reaload_uv',
+            'reloadCards',
+            'paiements',
+            'Internationals',
+            'transactions',
+            'phoneCredits',
+            'usersCountry',
+            'paiement_status',
+            'walletOrderCarte',
+            'kycs'
+
+        ));
+    }
+
+    public function showunders(int $id, Request $request)
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur')) {
+            abort(403);
+        }
+
+        $paiement_status = null;
+
+        $user = SidUser::whereId($id)->first();
+
+        $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
+
         $transactions =  WalletTransaction::where('wallet_id', $wallet_solde->id)
             ->orWhere('num_wallet',  $wallet_solde->wallet_id)
             ->orderBy('created_at', 'desc')->paginate(20);
@@ -1147,6 +1250,8 @@ class AdminController extends Controller
         $sum_error = $this->getTransactionErrorUserProperty($wallet_solde->id)  + $this->getPaymentErrorUserProperty($wallet_solde->id) + $this->getReloadErrorUserProperty($wallet_solde->id)  +  $this->getVirementErrorUserProperty($wallet_solde->id) +  $this->getInterErrorUserProperty($wallet_solde->id) + $this->getPhoneCreditErrorUserProperty($wallet_solde->id) +   $this->getDepositErrorUserProperty($wallet_solde->id);
         $sum_success = $this->getTransactionSuccessUserProperty($wallet_solde->id)  + $this->getPaymentSuccessUserProperty($wallet_solde->id) + $this->getReloadSuccessUserProperty($wallet_solde->id)  +  $this->getVirementSuccessUserProperty($wallet_solde->id) +  $this->getInterSuccessUserProperty($wallet_solde->id) + $this->getPhoneCreditSuccessUserProperty($wallet_solde->id) +   $this->getDepositSuccessUserProperty($wallet_solde->id);
         $pending_success = $this->getTransactionPenddingUserProperty($wallet_solde->id)  + $this->getPaymentPenddingUserProperty($wallet_solde->id) + $this->getReloadPenddingUserProperty($wallet_solde->id)  +  $this->getVirementPenddingUserProperty($wallet_solde->id) +  $this->getInterPenddingUserProperty($wallet_solde->id) + $this->getPhoneCreditPenddingUserProperty($wallet_solde->id) +   $this->getDepositPenddingUserProperty($wallet_solde->id);
+
+
         $sum_wallet_bank = $this->getWalletBankSumUserProperty($wallet_solde->id);
         $sum_wallet_deposit = $this->getWalletDepositSumAdminProperty($wallet_solde->id);
         $sum_wallet_payment = $this->getWalletPaymentSumAdminProperty($wallet_solde->id);
@@ -1167,7 +1272,7 @@ class AdminController extends Controller
             $this->getWalletReloadSumCommissionsProperty($wallet_solde->id)  + $this->getWalletOrderBankSumGainUserProperty($wallet_solde->id);
         $sum_drawals  =  $this->getWalletTransactionSumRetraitsProperty($wallet_solde->id);
 
-        return view('pages.admin.show', compact(
+        return view('pages.admin.show_unders', compact(
             'user',
             'roles',
             'sum_wallet_drawer',
@@ -1195,6 +1300,112 @@ class AdminController extends Controller
             'transactions',
             'phoneCredits',
             'usersCountry',
+            'paiement_status',
+            'walletOrderCarte',
+            'kycs'
+
+        ));
+    }
+
+    public function showdistributors(int $id, Request $request)
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur')) {
+            abort(403);
+        }
+
+        $paiement_status = null;
+
+        $user = SidUser::whereId($id)->first();
+
+
+        $transactions =  WalletTransaction::where('updated_by',  $user->id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+
+        $paiements =  WalletPayment::where('updated_by',  $user->id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+
+
+        $virements =  WalletBank::where('updated_by',  $user->id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+
+        $phoneCredits =  WalletPhoneCredit::where('updated_by',  $user->id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+
+        $reaload_uv =  WalletReload::where('updated_by',  $user->id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+
+
+        $reloadCards =  WalletDeposit::where('updated_by',  $user->id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+
+        $Internationals =  WalletInter::where('updated_by',  $user->id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+
+        $walletOrderCarte =  BankCard::where('updated_by',  $user->id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+
+        $walletxBet =  WalletXbet::where('updated_by',  $user->id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+
+        $usersCountry = Auth::guard('web')->user()->country->currencie->name;
+
+        $kycs = $user->kyc()->get() ?? null;
+
+        $roles = Role::all();
+        $countries = Country::where('status', true)->get();
+
+        $sum_error = $this->getTransactionErrorUserProperty($wallet_solde->id)  + $this->getPaymentErrorUserProperty($wallet_solde->id) + $this->getReloadErrorUserProperty($wallet_solde->id)  +  $this->getVirementErrorUserProperty($wallet_solde->id) +  $this->getInterErrorUserProperty($wallet_solde->id) + $this->getPhoneCreditErrorUserProperty($wallet_solde->id) +   $this->getDepositErrorUserProperty($wallet_solde->id);
+        $sum_success = $this->getTransactionSuccessUserProperty($wallet_solde->id)  + $this->getPaymentSuccessUserProperty($wallet_solde->id) + $this->getReloadSuccessUserProperty($wallet_solde->id)  +  $this->getVirementSuccessUserProperty($wallet_solde->id) +  $this->getInterSuccessUserProperty($wallet_solde->id) + $this->getPhoneCreditSuccessUserProperty($wallet_solde->id) +   $this->getDepositSuccessUserProperty($wallet_solde->id);
+        $pending_success = $this->getTransactionPenddingUserProperty($wallet_solde->id)  + $this->getPaymentPenddingUserProperty($wallet_solde->id) + $this->getReloadPenddingUserProperty($wallet_solde->id)  +  $this->getVirementPenddingUserProperty($wallet_solde->id) +  $this->getInterPenddingUserProperty($wallet_solde->id) + $this->getPhoneCreditPenddingUserProperty($wallet_solde->id) +   $this->getDepositPenddingUserProperty($wallet_solde->id);
+        $sum_wallet_bank = $this->getWalletBankSumUserProperty($wallet_solde->id);
+        $sum_wallet_deposit = $this->getWalletDepositSumAdminProperty($wallet_solde->id);
+        $sum_wallet_payment = $this->getWalletPaymentSumAdminProperty($wallet_solde->id);
+        $sum_wallet_transaction = $this->getWalletTransactionSumAdminProperty($wallet_solde->id);
+        $sum_wallet_transaction_received = $this->getWalletTransactionSumReceivedProperty($wallet_solde->id);
+        $sum_wallet_phone = $this->getWalletPhoneCreditSumAdminProperty($wallet_solde->id);
+        $sum_wallet_Inter = $this->getWalletInterSumAdminProperty($wallet_solde->id);
+        $sum_wallet_Inter_received = $this->getWalletInterSumReceivedProperty($wallet_solde->id);
+        $sum_wallet_Reload = $this->getWalletReloadSumAdminProperty($wallet_solde->id);
+        $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
+        $sum_wallet_reload_received = $this->getWalletReloadSumReceviedAdminProperty($wallet_solde->id);
+        $sum_commissions  =   $this->getWalletBankSumCommissionsProperty($wallet_solde->id) +
+            $this->getWalletDepositSumCommissionsProperty($wallet_solde->id)
+            +  $this->getWalletTransactionSumCommissionsProperty($wallet_solde->id) +
+            $this->getWalletPaymentSumCommissionsProperty($wallet_solde->id) +
+            $this->getWalletInterSumCommissionsProperty($wallet_solde->id) +
+            $this->getWalletPhoneCreditSumCommissionsProperty($wallet_solde->id) +
+            $this->getWalletReloadSumCommissionsProperty($wallet_solde->id)  + $this->getWalletOrderBankSumGainUserProperty($wallet_solde->id);
+        $sum_drawals  =  $this->getWalletTransactionSumRetraitsProperty($wallet_solde->id);
+
+        return view('pages.admin.show_operators', compact(
+            'user',
+            'roles',
+            'sum_wallet_drawer',
+            'sum_drawals',
+            'sum_error',
+            'sum_commissions',
+            'sum_success',
+            'pending_success',
+            'sum_wallet_deposit',
+            'sum_wallet_bank',
+            'sum_wallet_payment',
+            'sum_wallet_transaction',
+            'sum_wallet_transaction_received',
+            'sum_wallet_phone',
+            'sum_wallet_Inter',
+            'sum_wallet_Inter_received',
+            'sum_wallet_Reload',
+            'sum_wallet_reload_received',
+            'countries',
+            'virements',
+            'reaload_uv',
+            'reloadCards',
+            'paiements',
+            'Internationals',
+            'transactions',
+            'phoneCredits',
+            'usersCountry',
+            'walletxBet',
             'paiement_status',
             'walletOrderCarte',
             'kycs'
@@ -1250,6 +1461,31 @@ class AdminController extends Controller
         return array_sum($data);
     }
 
+    public function getCountWalletTransaction($wallet_id, $status)
+    {
+        return  $this->transactionAccountService->getTransactionWalletDetailsCount(WalletTransaction::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletPayment::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletBank::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletPhoneCredit::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletReload::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletDeposit::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletInter::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(BankCard::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletXbet::class, $wallet_id, $status);
+    }
+
+    public function getCommissionsWalletTransaction($wallet_id)
+    {
+        return  $this->transactionAccountService->getTransactionCommissionAmount(WalletTransaction::class, $wallet_id) +
+            $this->transactionAccountService->getTransactionCommissionAmount(WalletPayment::class, $wallet_id) +
+            $this->transactionAccountService->getTransactionCommissionAmount(WalletBank::class, $wallet_id) +
+            $this->transactionAccountService->getTransactionCommissionAmount(WalletPhoneCredit::class, $wallet_id) +
+            $this->transactionAccountService->getTransactionCommissionAmount(WalletReload::class, $wallet_id) +
+            $this->transactionAccountService->getTransactionCommissionAmount(WalletDeposit::class, $wallet_id) +
+            $this->transactionAccountService->getTransactionCommissionAmount(WalletInter::class, $wallet_id) +
+            $this->transactionAccountService->getTransactionCommissionAmount(BankCard::class, $wallet_id) +
+            $this->transactionAccountService->getTransactionCommissionAmount(WalletXbet::class, $wallet_id);
+    }
     // Retrait valeurs
 
     public function getWalletTransactionSumRetraitsProperty($id)
