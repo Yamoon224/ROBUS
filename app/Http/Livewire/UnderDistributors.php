@@ -11,6 +11,7 @@ use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Events\assignementEvent;
 
 class UnderDistributors extends Component
 {

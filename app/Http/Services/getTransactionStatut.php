@@ -3,20 +3,34 @@
 namespace App\Http\Services;
 
 
-use App\Models\Wallets\Wallet;
+use App\Http\Services\TransactionsAccountService;
+use App\Models\Banks\BankCard;
+use App\Models\Costs\TransactionCost;
 use App\Models\Custumers\Country;
 use App\Models\Moneys\LevelMoney;
-use App\Models\Costs\TransactionCost;
+use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletBank;
+use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletPayment;
+use App\Models\Wallets\WalletPhoneCredit;
+use App\Models\Wallets\WalletReload;
+use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletXbet;
 use App\Repositories\TransactionRepository;
+use App\Models\Wallets\WalletInter;
 
 class SearchTransactionService
 {
 
     /** @var  TransactionRepository */
     public $transctionRepository;
+    public $transactionAccountService;
 
-    public function __construct(TransactionRepository $transactionReposi)
-    {
+    public function __construct(
+        TransactionRepository $transactionReposi,
+        TransactionsAccountService $transactionAccountService,
+    ) {
+        $this->transactionAccountService = $transactionAccountService;
         $this->transctionRepository = $transactionReposi;
     }
 
@@ -50,7 +64,7 @@ class SearchTransactionService
         return  $data;
     }
 
-    public function searchTransactionWalletInter($country_robus,$search)
+    public function searchTransactionWalletInter($country_robus, $search)
     {
 
         // Search Wallet Send
@@ -119,5 +133,30 @@ class SearchTransactionService
     }
 
 
-  
+    public function getTotalAllTransactionsAmount($wallet_solde)
+    {
+
+        $transactions =  $this->transactionAccountService->getTransactionUserWallet(WalletTransaction::class, $wallet_solde->id, 'num_wallet',  $wallet_solde->wallet_id);
+        $paiements =  $this->transactionAccountService->getTransactionsWallet(WalletPayment::class, $wallet_solde->id);
+        $virements =  $this->transactionAccountService->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
+        $phoneCredits =  $this->transactionAccountService->getTransactionsWallet(WalletPhoneCredit::class, $wallet_solde->id);
+        $reloadCards =  $this->transactionAccountService->getTransactionsWallet(WalletDeposit::class, $wallet_solde->id);
+        $walletOrderCarte =  $this->transactionAccountService->getTransactionsWallet(BankCard::class, $wallet_solde->id);
+        $walletxbet =  $this->transactionAccountService->getTransactionsWallet(WalletXbet::class, $wallet_solde->id);
+        $reaload_uv =  $this->transactionAccountService->getTransactionUserWallet(WalletReload::class, $wallet_solde->id, 'account_wallet',  $wallet_solde->wallet_id);
+        $Internationals =  $this->transactionAccountService->getTransactionUserWallet(WalletInter::class, $wallet_solde->id, 'number_compte',  $wallet_solde->wallet_id);
+
+        return [
+            'transactions' => $transactions,
+            'paiements' => $paiements,
+            'virements' => $virements,
+            'phoneCredits' => $phoneCredits,
+            'phoneCredits' => $phoneCredits,
+            'reloadCards' => $reloadCards,
+            'walletOrderCarte' => $walletOrderCarte,
+            'walletxbet' => $walletxbet,
+            'reaload_uv' => $reaload_uv,
+            'Internationals' => $Internationals
+        ];
+    }
 }

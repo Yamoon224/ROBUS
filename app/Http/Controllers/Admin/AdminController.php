@@ -9,12 +9,9 @@ use App\Http\Services\UserCreateService;
 use App\Http\Services\ValidatorService;
 use App\Mail\CodeValidated;
 use App\Mail\NewAdmin;
-use App\Mail\NotificationMail;
 use App\Mail\OtpValidated;
 use App\Models\Banks\BankCard;
-use App\Models\Commission;
 use App\Models\Company;
-use App\Models\Custumers\City;
 use App\Models\Custumers\Country;
 use App\Models\Custumers\Zone;
 use App\Models\Kyc;
@@ -241,7 +238,7 @@ class AdminController extends Controller
                 Mail::to($user_info->email)->send(new NewAdmin('Vote numero de telephone a été modifier par' . env('APP_NAME') .
                     ' Votre email : '  . $user_info->email . ' Votre nouveau numero : ' . $request->new_phone));
 
-                return redirect(route('admin.browse'))->with('status', 'Mise a jour effectuée avec succès');
+                return redirect(route('unders.admins.browse'))->with('status', 'Mise a jour effectuée avec succès');
             }
         } catch (\Throwable $th) {
             return back()
@@ -1150,7 +1147,7 @@ class AdminController extends Controller
 
         $sum_wallet_phone = $this->transactionAccountService->getTransactionAmount(WalletPhoneCredit::class, $wallet_solde->id);
 
-        $sum_wallet_bank = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $wallet_solde->id);
+        $sum_wallet_xbet = $this->transactionAccountService->getTransactionAmount(WalletXbet::class, $wallet_solde->id);
 
         $sum_wallet_Inter = $this->transactionAccountService->getTransactionsTypeAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
 
@@ -1158,7 +1155,7 @@ class AdminController extends Controller
         $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
         $sum_wallet_reload_received = $this->getWalletReloadSumReceviedAdminProperty($wallet_solde->id);
 
-        $sum_commissions  = $this->getCommissionsWalletTransaction($wallet_solde->id)  ;
+        $sum_commissions  = $this->getCommissionsWalletTransaction($wallet_solde->id);
 
         $sum_drawals  =  $this->getWalletTransactionSumRetraitsProperty($wallet_solde->id);
 
@@ -1204,104 +1201,37 @@ class AdminController extends Controller
             abort(403);
         }
 
-        $paiement_status = null;
 
         $user = SidUser::whereId($id)->first();
 
         $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
-
-        $transactions =  WalletTransaction::where('wallet_id', $wallet_solde->id)
-            ->orWhere('num_wallet',  $wallet_solde->wallet_id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $paiements =  WalletPayment::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-
-        $virements =  WalletBank::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $phoneCredits =  WalletPhoneCredit::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $reaload_uv =  WalletReload::where('wallet_id', $wallet_solde->id)
-            ->orWhere('account_wallet',  $wallet_solde->wallet_id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-
-        $reloadCards =  WalletDeposit::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $Internationals =  WalletInter::where('wallet_id', $wallet_solde->id)
-            ->orWhere('number_compte',  $wallet_solde->wallet_id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $walletOrderCarte =  BankCard::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
 
         $usersCountry = Auth::guard('web')->user()->country->currencie->name;
 
         $kycs = $user->kyc()->get() ?? null;
 
         $roles = Role::all();
+
         $countries = Country::where('status', true)->get();
 
-        $sum_error = $this->getTransactionErrorUserProperty($wallet_solde->id)  + $this->getPaymentErrorUserProperty($wallet_solde->id) + $this->getReloadErrorUserProperty($wallet_solde->id)  +  $this->getVirementErrorUserProperty($wallet_solde->id) +  $this->getInterErrorUserProperty($wallet_solde->id) + $this->getPhoneCreditErrorUserProperty($wallet_solde->id) +   $this->getDepositErrorUserProperty($wallet_solde->id);
-        $sum_success = $this->getTransactionSuccessUserProperty($wallet_solde->id)  + $this->getPaymentSuccessUserProperty($wallet_solde->id) + $this->getReloadSuccessUserProperty($wallet_solde->id)  +  $this->getVirementSuccessUserProperty($wallet_solde->id) +  $this->getInterSuccessUserProperty($wallet_solde->id) + $this->getPhoneCreditSuccessUserProperty($wallet_solde->id) +   $this->getDepositSuccessUserProperty($wallet_solde->id);
-        $pending_success = $this->getTransactionPenddingUserProperty($wallet_solde->id)  + $this->getPaymentPenddingUserProperty($wallet_solde->id) + $this->getReloadPenddingUserProperty($wallet_solde->id)  +  $this->getVirementPenddingUserProperty($wallet_solde->id) +  $this->getInterPenddingUserProperty($wallet_solde->id) + $this->getPhoneCreditPenddingUserProperty($wallet_solde->id) +   $this->getDepositPenddingUserProperty($wallet_solde->id);
-
-
-        $sum_wallet_bank = $this->getWalletBankSumUserProperty($wallet_solde->id);
-        $sum_wallet_deposit = $this->getWalletDepositSumAdminProperty($wallet_solde->id);
-        $sum_wallet_payment = $this->getWalletPaymentSumAdminProperty($wallet_solde->id);
-        $sum_wallet_transaction = $this->getWalletTransactionSumAdminProperty($wallet_solde->id);
-        $sum_wallet_transaction_received = $this->getWalletTransactionSumReceivedProperty($wallet_solde->id);
-        $sum_wallet_phone = $this->getWalletPhoneCreditSumAdminProperty($wallet_solde->id);
-        $sum_wallet_Inter = $this->getWalletInterSumAdminProperty($wallet_solde->id);
-        $sum_wallet_Inter_received = $this->getWalletInterSumReceivedProperty($wallet_solde->id);
-        $sum_wallet_Reload = $this->getWalletReloadSumAdminProperty($wallet_solde->id);
+        // Wallet Error and other
+        $sum_error    = $this->getCountWalletTransaction($wallet_solde->id, 'ERROR');
+        $sum_success    = $this->getCountWalletTransaction($wallet_solde->id, 'SUCCESS');
+        $pending_success    = $this->getCountWalletTransaction($wallet_solde->id, 'PENDING');
+        $totalSumAmounts = $this->getTotalSumTransactionsAmount($wallet_solde);
+        // Execeptions
         $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
-        $sum_wallet_reload_received = $this->getWalletReloadSumReceviedAdminProperty($wallet_solde->id);
-        $sum_commissions  =   $this->getWalletBankSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletDepositSumCommissionsProperty($wallet_solde->id)
-            +  $this->getWalletTransactionSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletPaymentSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletInterSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletPhoneCreditSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletReloadSumCommissionsProperty($wallet_solde->id)  + $this->getWalletOrderBankSumGainUserProperty($wallet_solde->id);
-        $sum_drawals  =  $this->getWalletTransactionSumRetraitsProperty($wallet_solde->id);
 
         return view('pages.admin.show_unders', compact(
             'user',
             'roles',
             'sum_wallet_drawer',
-            'sum_drawals',
             'sum_error',
-            'sum_commissions',
             'sum_success',
             'pending_success',
-            'sum_wallet_deposit',
-            'sum_wallet_bank',
-            'sum_wallet_payment',
-            'sum_wallet_transaction',
-            'sum_wallet_transaction_received',
-            'sum_wallet_phone',
-            'sum_wallet_Inter',
-            'sum_wallet_Inter_received',
-            'sum_wallet_Reload',
-            'sum_wallet_reload_received',
             'countries',
-            'virements',
-            'reaload_uv',
-            'reloadCards',
-            'paiements',
-            'Internationals',
-            'transactions',
-            'phoneCredits',
             'usersCountry',
-            'paiement_status',
-            'walletOrderCarte',
+            'totalSumAmounts',
             'kycs'
 
         ));
@@ -1317,101 +1247,109 @@ class AdminController extends Controller
 
         $user = SidUser::whereId($id)->first();
 
+        $user = SidUser::whereId($id)->first();
 
-        $transactions =  WalletTransaction::where('updated_by',  $user->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $paiements =  WalletPayment::where('updated_by',  $user->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-
-        $virements =  WalletBank::where('updated_by',  $user->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $phoneCredits =  WalletPhoneCredit::where('updated_by',  $user->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $reaload_uv =  WalletReload::where('updated_by',  $user->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-
-        $reloadCards =  WalletDeposit::where('updated_by',  $user->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $Internationals =  WalletInter::where('updated_by',  $user->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $walletOrderCarte =  BankCard::where('updated_by',  $user->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-
-        $walletxBet =  WalletXbet::where('updated_by',  $user->id)
-            ->orderBy('created_at', 'desc')->paginate(20);
+        $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
 
         $usersCountry = Auth::guard('web')->user()->country->currencie->name;
 
         $kycs = $user->kyc()->get() ?? null;
 
         $roles = Role::all();
+
         $countries = Country::where('status', true)->get();
 
-        $sum_error = $this->getTransactionErrorUserProperty($wallet_solde->id)  + $this->getPaymentErrorUserProperty($wallet_solde->id) + $this->getReloadErrorUserProperty($wallet_solde->id)  +  $this->getVirementErrorUserProperty($wallet_solde->id) +  $this->getInterErrorUserProperty($wallet_solde->id) + $this->getPhoneCreditErrorUserProperty($wallet_solde->id) +   $this->getDepositErrorUserProperty($wallet_solde->id);
-        $sum_success = $this->getTransactionSuccessUserProperty($wallet_solde->id)  + $this->getPaymentSuccessUserProperty($wallet_solde->id) + $this->getReloadSuccessUserProperty($wallet_solde->id)  +  $this->getVirementSuccessUserProperty($wallet_solde->id) +  $this->getInterSuccessUserProperty($wallet_solde->id) + $this->getPhoneCreditSuccessUserProperty($wallet_solde->id) +   $this->getDepositSuccessUserProperty($wallet_solde->id);
-        $pending_success = $this->getTransactionPenddingUserProperty($wallet_solde->id)  + $this->getPaymentPenddingUserProperty($wallet_solde->id) + $this->getReloadPenddingUserProperty($wallet_solde->id)  +  $this->getVirementPenddingUserProperty($wallet_solde->id) +  $this->getInterPenddingUserProperty($wallet_solde->id) + $this->getPhoneCreditPenddingUserProperty($wallet_solde->id) +   $this->getDepositPenddingUserProperty($wallet_solde->id);
-        $sum_wallet_bank = $this->getWalletBankSumUserProperty($wallet_solde->id);
-        $sum_wallet_deposit = $this->getWalletDepositSumAdminProperty($wallet_solde->id);
-        $sum_wallet_payment = $this->getWalletPaymentSumAdminProperty($wallet_solde->id);
-        $sum_wallet_transaction = $this->getWalletTransactionSumAdminProperty($wallet_solde->id);
-        $sum_wallet_transaction_received = $this->getWalletTransactionSumReceivedProperty($wallet_solde->id);
-        $sum_wallet_phone = $this->getWalletPhoneCreditSumAdminProperty($wallet_solde->id);
-        $sum_wallet_Inter = $this->getWalletInterSumAdminProperty($wallet_solde->id);
-        $sum_wallet_Inter_received = $this->getWalletInterSumReceivedProperty($wallet_solde->id);
-        $sum_wallet_Reload = $this->getWalletReloadSumAdminProperty($wallet_solde->id);
-        $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
-        $sum_wallet_reload_received = $this->getWalletReloadSumReceviedAdminProperty($wallet_solde->id);
-        $sum_commissions  =   $this->getWalletBankSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletDepositSumCommissionsProperty($wallet_solde->id)
-            +  $this->getWalletTransactionSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletPaymentSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletInterSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletPhoneCreditSumCommissionsProperty($wallet_solde->id) +
-            $this->getWalletReloadSumCommissionsProperty($wallet_solde->id)  + $this->getWalletOrderBankSumGainUserProperty($wallet_solde->id);
-        $sum_drawals  =  $this->getWalletTransactionSumRetraitsProperty($wallet_solde->id);
+        // Wallet Error and other
+        $sum_error    = $this->getCountWalletOperatorsTransaction($user->id, 'ERROR');
+        $sum_success    = $this->getCountWalletOperatorsTransaction($user->id, 'SUCCESS');
+        $pending_success    = $this->getCountWalletOperatorsTransaction($user->id, 'PENDING');
+        $totalSumAmounts = $this->getTotalSumTransactionsOperatorsAmount($user);
+        $sum_wallet_Inter_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
+        $sum_wallet_reload_received =  $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletReload::class, 'account_wallet', $wallet_solde);
+        $sum_wallet_transaction_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
 
         return view('pages.admin.show_operators', compact(
             'user',
             'roles',
-            'sum_wallet_drawer',
-            'sum_drawals',
             'sum_error',
-            'sum_commissions',
             'sum_success',
             'pending_success',
-            'sum_wallet_deposit',
-            'sum_wallet_bank',
-            'sum_wallet_payment',
-            'sum_wallet_transaction',
-            'sum_wallet_transaction_received',
-            'sum_wallet_phone',
-            'sum_wallet_Inter',
-            'sum_wallet_Inter_received',
-            'sum_wallet_Reload',
-            'sum_wallet_reload_received',
             'countries',
-            'virements',
-            'reaload_uv',
-            'reloadCards',
-            'paiements',
-            'Internationals',
-            'transactions',
-            'phoneCredits',
             'usersCountry',
-            'walletxBet',
-            'paiement_status',
-            'walletOrderCarte',
+            'sum_wallet_Inter_received',
+            'sum_wallet_reload_received',
+            'sum_wallet_transaction_received',
+            'totalSumAmounts',
             'kycs'
 
         ));
     }
+
+    public function getTotalSumTransactionsOperatorsAmount($user)
+    {
+        $sum_wallet_transaction = $this->transactionAccountService->getTransactionOperatorsAmount(WalletTransaction::class, $user->id);
+        $sum_wallet_bank = $this->transactionAccountService->getTransactionOperatorsAmount(WalletBank::class, $user->id);
+        $sum_wallet_deposit = $this->transactionAccountService->getTransactionOperatorsAmount(WalletDeposit::class, $user->id);
+        $sum_wallet_payment = $this->transactionAccountService->getTransactionOperatorsAmount(WalletPayment::class, $user->id);
+        $sum_wallet_phone = $this->transactionAccountService->getTransactionOperatorsAmount(WalletPhoneCredit::class, $user->id);
+        $sum_wallet_Reload = $this->transactionAccountService->getTransactionOperatorsAmount(WalletReload::class, $user->id);
+        $sum_wallet_xbet_depot = $this->transactionAccountService->getTransactionOperatorsAmount(WalletXbet::class, $user->id);
+        $sum_wallet_xbet_retrait = $this->transactionAccountService->getTransactionOperatorsAmount(WalletXbet::class, $user->id);
+        $sum_wallet_Inter = $this->transactionAccountService->getTransactionOperatorsAmount(WalletInter::class,  $user);
+
+
+        return [
+            'sum_wallet_transaction' => $sum_wallet_transaction,
+            'sum_wallet_bank' => $sum_wallet_bank,
+            'sum_wallet_deposit' => $sum_wallet_deposit,
+            'sum_wallet_payment' => $sum_wallet_payment,
+            'sum_wallet_phone' => $sum_wallet_phone,
+            'sum_wallet_Reload' => $sum_wallet_Reload,
+            'sum_wallet_xbet_depot' => $sum_wallet_xbet_depot,
+            'sum_wallet_xbet_retrait' => $sum_wallet_xbet_retrait,
+            'sum_wallet_Inter' => $sum_wallet_Inter
+        ];
+    }
+
+    public function getTotalSumTransactionsAmount($wallet_solde)
+    {
+        $sum_wallet_transaction = $this->transactionAccountService->getTransactionAmount(WalletTransaction::class, $wallet_solde);
+        $sum_wallet_bank = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $wallet_solde->id);
+        $sum_wallet_deposit = $this->transactionAccountService->getTransactionAmount(WalletDeposit::class, $wallet_solde->id);
+        $sum_wallet_payment = $this->transactionAccountService->getTransactionAmount(WalletPayment::class, $wallet_solde->id);
+        $sum_wallet_phone = $this->transactionAccountService->getTransactionAmount(WalletPhoneCredit::class, $wallet_solde->id);
+        $sum_wallet_Reload = $this->transactionAccountService->getTransactionAmount(WalletReload::class, $wallet_solde->id);
+        $sum_wallet_xbet_depot = $this->transactionAccountService->getTransactionXbetAmount(WalletXbet::class, $wallet_solde->id, 1);
+        $sum_wallet_xbet_retrait = $this->transactionAccountService->getTransactionXbetAmount(WalletXbet::class, $wallet_solde->id, 2);
+        $sum_wallet_Inter = $this->transactionAccountService->getTransactionAmount(WalletInter::class,  $wallet_solde);
+        $sum_wallet_Inter_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
+        $sum_wallet_reload_received =  $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletReload::class, 'account_wallet', $wallet_solde);
+        // Wallet commissions
+        $sum_commissions  = $this->getCommissionsWalletTransaction($wallet_solde->id);
+        $sum_drawals  =  $this->getWalletTransactionSumRetraitsProperty($wallet_solde->id);
+        $sum_wallet_transaction_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
+
+
+        return [
+            'sum_wallet_transaction' => $sum_wallet_transaction,
+            'sum_wallet_bank' => $sum_wallet_bank,
+            'sum_wallet_deposit' => $sum_wallet_deposit,
+            'sum_wallet_payment' => $sum_wallet_payment,
+            'sum_wallet_phone' => $sum_wallet_phone,
+            'sum_wallet_Reload' => $sum_wallet_Reload,
+            'sum_wallet_xbet_depot' => $sum_wallet_xbet_depot,
+            'sum_wallet_xbet_retrait' => $sum_wallet_xbet_retrait,
+            'sum_wallet_Inter' => $sum_wallet_Inter,
+            'sum_wallet_Inter_received' => $sum_wallet_Inter_received,
+            'sum_wallet_reload_received' => $sum_wallet_reload_received,
+            'sum_commissions' => $sum_commissions,
+            'sum_drawals' => $sum_drawals,
+            'sum_wallet_transaction_received' => $sum_wallet_transaction_received,
+        ];
+    }
+
+
+
 
     public function update_password(int $id, Request $request)
     {
@@ -1439,7 +1377,7 @@ class AdminController extends Controller
             Mail::to($user_info->email)->send(new NewAdmin('Votre compte  sous distributeur marchant est activé ' . env('APP_NAME') .
                 ' Votre email : '  . $user_info->email . ' Votre mot de passe : ' . $request->password));
 
-            return redirect(route('admin.browse'))->with('status', 'Mise a jour effectuée avec succès');
+            return redirect(route('unders.admins.browse'))->with('status', 'Mise a jour effectuée avec succès');
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)
@@ -1474,6 +1412,19 @@ class AdminController extends Controller
             $this->transactionAccountService->getTransactionWalletDetailsCount(WalletXbet::class, $wallet_id, $status);
     }
 
+
+    public function getCountWalletOperatorsTransaction($wallet_id, $status)
+    {
+        return  $this->transactionAccountService->getTransactionserUDetailsCount(WalletTransaction::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionserUDetailsCount(WalletPayment::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionserUDetailsCount(WalletBank::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionserUDetailsCount(WalletPhoneCredit::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionserUDetailsCount(WalletReload::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionserUDetailsCount(WalletDeposit::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionserUDetailsCount(WalletInter::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionserUDetailsCount(WalletXbet::class, $wallet_id, $status);
+    }
+
     public function getCommissionsWalletTransaction($wallet_id)
     {
         return  $this->transactionAccountService->getTransactionCommissionAmount(WalletTransaction::class, $wallet_id) +
@@ -1500,252 +1451,14 @@ class AdminController extends Controller
 
         return array_sum($data);
     }
-    // Commissions valeurs
-    public function getWalletBankSumCommissionsProperty($id)
-    {
+   
 
-        $data = [];
-
-        foreach (WalletBank::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletDepositSumCommissionsProperty($id)
-    {
-
-        $data = [];
-
-        foreach (WalletDeposit::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $deposit) {
-            $data[] = $deposit->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-
-    public function getWalletPaymentSumCommissionsProperty($id)
-    {
-
-        $data = [];
-
-        foreach (WalletPayment::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $payment) {
-            $data[] = $payment->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionSumCommissionsProperty($id)
-    {
-
-
-        $data = [];
-
-        foreach (WalletTransaction::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-
-
-    public function getWalletInterSumCommissionsProperty($id)
-    {
-
-
-        $data = [];
-
-        foreach (WalletInter::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $inter) {
-            $data[] = $inter->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPhoneCreditSumCommissionsProperty($id)
-    {
-
-        $data = [];
-
-        foreach (WalletPhoneCredit::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $phone) {
-            $data[] = $phone->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletReloadSumCommissionsProperty($id)
-    {
-
-        $data = [];
-
-        foreach (WalletReload::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $reload) {
-            $data[] = $reload->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-
-    public function getWalletOrderBankSumGainUserProperty($id)
-    {
-        $data = [];
-
-        foreach (BankCard::where('wallet_id', $id)->where('status', 1)->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
-
-    // Sum Admin
-    public function getWalletBankSumUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $data = [];
-
-        foreach (WalletBank::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletDepositSumAdminProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $data = [];
-
-        foreach (WalletDeposit::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $deposit) {
-            $data[] = $deposit->amount;
-        }
-
-        return array_sum($data);
-    }
-
-
-    public function getWalletPaymentSumAdminProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $data = [];
-
-        foreach (WalletPayment::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $payment) {
-            $data[] = $payment->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionSumAdminProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-
-        $data = [];
-
-        foreach (WalletTransaction::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
-    }
-
-
-    public function getWalletTransactionSumReceivedProperty($id)
-    {
-
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $data = [];
-
-        $wallet_id = Wallet::whereId($id)->first();
-
-
-        foreach (WalletTransaction::where('num_wallet', $wallet_id->wallet_id)->where('status', 'SUCCESS')->get() as $reload) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletInterSumAdminProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $data = [];
-
-        foreach (WalletInter::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $inter) {
-            $data[] = $inter->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletInterSumReceivedProperty($id)
-    {
-
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $data = [];
-
-        $wallet_id = Wallet::whereId($id)->first();
-
-
-        foreach (WalletInter::where('number_compte', $wallet_id->wallet_id)->where('status', 'SUCCESS')->get() as $reload) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
-    }
-    public function getWalletPhoneCreditSumAdminProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $data = [];
-
-        foreach (WalletPhoneCredit::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $phone) {
-            $data[] = $phone->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletReloadSumAdminProperty($id)
-    {
-
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $data = [];
-
-        foreach (WalletReload::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $reload) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
-    }
-
+  
     public function getWalletReloadSumReceviedAdminProperty($id)
     {
 
 
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
+
         $data = [];
 
         $wallet_id = Wallet::whereId($id)->first();
@@ -1852,211 +1565,7 @@ class AdminController extends Controller
         }
     }
 
-    // Details Transaction User
-    public function getTransactionErrorUserProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $transactionError = WalletTransaction::where('wallet_id', $id)->where('status', 'ERROR')
-            ->count();
-        return $transactionError;
-    }
-
-    public function getTransactionSuccessUserProperty($id)
-    {
-
-        $transactionSuccess = WalletTransaction::where('wallet_id', $id)->where('status', 'SUCCESS')
-            ->count();
-        return $transactionSuccess;
-    }
-
-    public function getTransactionPenddingUserProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $transactionPendding = WalletTransaction::where('wallet_id', $id)->where('status', 'PENDING')
-            ->count();
-        return $transactionPendding;
-    }
-
-    public function getPaymentErrorUserProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-
-        $paimentError = WalletPayment::where('wallet_id', $id)->where('status', 'ERROR')
-            ->count();
-        return $paimentError;
-    }
-
-    public function getPaymentSuccessUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $paimentSuccess = WalletPayment::where('wallet_id', $id)->where('status', 'SUCCESS')
-            ->count();
-        return $paimentSuccess;
-    }
-
-    public function getPaymentPenddingUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $paimentPendding = WalletPayment::where('wallet_id', $id)->where('status', 'PENDING')
-            ->count();
-        return $paimentPendding;
-    }
-
-
-    public function getReloadErrorUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $reloadError = WalletReload::where('wallet_id', $id)->where('status', 'ERROR')
-            ->count();
-        return $reloadError;
-    }
-
-    public function getReloadSuccessUserProperty($id)
-    {
-
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $reloadSuccess = WalletReload::where('wallet_id', $id)->where('wallet_reloads.status', 'SUCCESS')
-            ->count();
-        return $reloadSuccess;
-    }
-
-    public function getReloadPenddingUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $reloadPendding = WalletReload::where('wallet_id', $id)->where('status', 'PENDING')
-            ->count();
-        return $reloadPendding;
-    }
-
-    public function getVirementSuccessUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $virementSuccess = WalletBank::where('wallet_id', $id)->where('status', 'SUCCESS')
-            ->count();
-        return $virementSuccess;
-    }
-
-    public function getVirementPenddingUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $virementPendding = WalletBank::where('wallet_id', $id)->where('status', 'PENDING')
-            ->count();
-        return $virementPendding;
-    }
-
-    public function getVirementErrorUserProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-
-        $virementError = WalletBank::where('wallet_id', $id)->where('status', 'ERROR')
-            ->count();
-        return $virementError;
-    }
-
-    public function getInterErrorUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $interError = WalletInter::where('wallet_id', $id)->where('status', 'ERROR')
-            ->count();
-        return $interError;
-    }
-
-    public function getInterSuccessUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $interSuccess = WalletInter::where('wallet_id', $id)->where('status', 'SUCCESS')
-            ->count();
-        return $interSuccess;
-    }
-
-    public function getInterPenddingUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $interPendding = WalletInter::where('wallet_id', $id)->where('status', 'PENDING')
-            ->count();
-        return $interPendding;
-    }
-
-    public function getPhoneCreditErrorUserProperty($id)
-    {
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $phoneCreditError = WalletPhoneCredit::where('wallet_id', $id)->where('status', 'ERROR')
-            ->count();
-        return $phoneCreditError;
-    }
-
-    public function getPhoneCreditSuccessUserProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-
-        $phoneCreditSuccess = WalletPhoneCredit::where('wallet_id', $id)->where('status', 'SUCCESS')
-            ->count();
-        return $phoneCreditSuccess;
-    }
-
-    public function getPhoneCreditPenddingUserProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $phoneCreditPendding = WalletPhoneCredit::where('wallet_id', $id)->where('status', 'PENDING')
-            ->count();
-        return $phoneCreditPendding;
-    }
-
-    public function getDepositErrorUserProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $depositError = WalletDeposit::where('wallet_id', $id)->where('status', 'ERROR')
-            ->count();
-        return $depositError;
-    }
-
-    public function getDepositSuccessUserProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $depositSuccess = WalletDeposit::where('wallet_id', $id)->where('status', 'SUCCESS')
-            ->count();
-        return $depositSuccess;
-    }
-
-    public function getDepositPenddingUserProperty($id)
-    {
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $depositPendding = WalletDeposit::where('wallet_id', $id)->where('status', 'PENDING')
-            ->count();
-        return $depositPendding;
-    }
-
+    
     public function updateProfilManager(Request $request)
     {
 

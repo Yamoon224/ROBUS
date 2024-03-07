@@ -2,10 +2,28 @@
 
 use App\Models\CloseApp;
 use App\Models\Custumers\Country;
+use App\Models\Payments\PaymentReload;
+use App\Models\Providers\Provider;
+use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletReload;
 use Illuminate\Support\Facades\Auth;
 
 
 
+function provideId($id)
+{
+    return Provider::find($id);
+}
+
+function walletId($id)
+{
+    return Wallet::find($id);
+}
+
+function paymentId($id)
+{
+    return WalletReload::find($id);
+}
 
 function firm()
 {
@@ -106,7 +124,7 @@ function robus()
 
 function getOpenRobus()
 {
-        return CloseApp::orderBy('id' , 'asc')->get();
+    return CloseApp::orderBy('id', 'asc')->get();
 }
 function json_message_response($status, $message, $status_code)
 {

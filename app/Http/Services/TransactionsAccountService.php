@@ -9,20 +9,20 @@ use Illuminate\Support\Carbon;
 class TransactionsAccountService
 {
 
-    public function getTransactionUserWallet($wallet ,$id , $num_wallet , $wallet_user)
+    public function getTransactionUserWallet($wallet, $id, $num_wallet, $wallet_user)
     {
         return  $wallet::where('wallet_id', $id)
-        ->orWhere($num_wallet,  $wallet_user)
-        ->orderBy('created_at', 'desc')->paginate(20);
+            ->orWhere($num_wallet,  $wallet_user)
+            ->orderBy('created_at', 'desc')->paginate(20);
     }
 
-  
-    public function getTransactionsWallet($wallet ,$id)
+
+    public function getTransactionsWallet($wallet, $id)
     {
         return  $wallet::where('wallet_id', $id)
-        ->orderBy('created_at', 'desc')->paginate(20);
+            ->orderBy('created_at', 'desc')->paginate(20);
     }
-    
+
 
     public function getTransactionWalletDetailsCount($wallet, $id, $status)
     {
@@ -37,6 +37,19 @@ class TransactionsAccountService
 
         return $wallet::where('updated_by', $id)->where('status', $status)
             ->count();
+    }
+
+
+    public function getTransactionOperatorsAmount($wallets, $id)
+    {
+
+        $data = [];
+
+        foreach ($wallets::where('updated_by', $id)->where('status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->amount;
+        }
+
+        return array_sum($data);
     }
 
 
@@ -212,6 +225,20 @@ class TransactionsAccountService
         return array_sum($data);
     }
 
+    public function getTransactionsRecevedAllAmount($wallets, $number_compte, $wallet_solde)
+    {
+
+
+        $data = [];
+
+
+        foreach ($wallets::where($number_compte,  $wallet_solde->wallet_id)->where('status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->amount;
+        }
+
+        return array_sum($data);
+    }
+
     public function getTransactionAmount($wallets, $id)
     {
 
@@ -223,6 +250,22 @@ class TransactionsAccountService
 
         return array_sum($data);
     }
+
+
+    
+
+    public function getTransactionXbetAmount($wallets, $id, $choose)
+    {
+
+        $data = [];
+
+        foreach ($wallets::where('wallet_id', $id)->where('choose_type_transaction', $choose)->where('status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->amount;
+        }
+
+        return array_sum($data);
+    }
+
 
     public function getTransactionCommissionAmount($wallets, $id)
     {
