@@ -13,7 +13,7 @@
                         @if ($currentDayOfWeek == $open->id)
                             <h2 class="text-lg font-medium truncate items-center text-xs mt-3 mr-6 ml-6 text-center whitespace-nowrap blinking style_app text-white"
                                 id="box_{{ $index }}">
-                                Robus est ouvert ce {{ $open->day_of_week ?? null }} de :
+                               App Robus Distributeur est ouvert ce {{ $open->day_of_week ?? null }} de :
                                 {{ $open->time_start ?? null }} a {{ $open->time_end ?? null }}
                             </h2>
                         @endif

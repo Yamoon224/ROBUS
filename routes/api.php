@@ -50,10 +50,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
     Route::prefix('auth')->group(function () {
 
         Route::post('signUp', [AuthentificationController::class, 'signUp']);
-        Route::post('login', [AuthentificationController::class, 'login']);
+        Route::post('login', [AuthentificationController::class, 'loginCustumers']);
         Route::post('masters/login', [AuthentificationController::class, 'loginMaster']);
         Route::post('comzones/login', [AuthentificationController::class, 'loginComZone']);
-        Route::post('merchants/login', [AuthentificationController::class, 'loginAdmin']);
+        Route::post('merchants/login', [AuthentificationController::class, 'loginUnderDistributor']);
         Route::post('verify', [AuthentificationController::class, 'verify']);
         Route::post('resendCode', [AuthentificationController::class, 'resendCode']);
         Route::post('active_account', [AuthentificationController::class, 'activatePhone']);
@@ -199,11 +199,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('under_distributors', [UserController::class, 'masters_under_distributors']);
 
             // Providers transactions
-            Route::prefix('providers')->group(function () {
-                Route::get('transaction_providers', [TransactionProviderController::class, 'index_masters']);
-                Route::get('reload_providers', [ReloadProviderController::class, 'index_masters']);
-            });
-
+            Route::get('/providers', [ProviderController::class, 'masters_providers']);
 
             Route::post('unloadings/store', [TransactionController::class, 'create_transaction_master']);
             Route::post('reloads/store', [TransactionController::class, 'create_reload_master']);

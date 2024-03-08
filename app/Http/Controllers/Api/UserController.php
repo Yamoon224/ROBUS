@@ -17,11 +17,14 @@ use App\Http\Resources\UnderCollection;
 use App\Http\Resources\UserSingleCollection;
 use App\Http\Resources\VirementSingleCollection;
 use App\Http\Resources\WalletSingleCollection;
+use App\Http\Services\AuthenticationService;
 use App\Http\Services\RobusTransactionService;
 use App\Http\Services\TransactionsAccountService;
 use App\Http\Services\ValidateDailyLimitService;
 use App\Mail\NewAdmin;
 use App\Mail\UvSend;
+use App\Models\AppCloseCom;
+use App\Models\AppCloseMaster;
 use App\Models\AppStatus;
 use App\Models\Banks\BankCard;
 use App\Models\CloseApp;
@@ -61,16 +64,19 @@ class UserController extends Controller
     protected $transactionAccount;
     protected $validatedamountDays;
     protected $robusTransactionService;
+    protected $authService;
 
     public function __construct(
         TransactionsAccountService $transactionAccount,
         ValidateDailyLimitService $validatedamountDays,
         RobusTransactionService $robusTransactionService,
+        AuthenticationService $authService
 
     ) {
         $this->transactionAccount = $transactionAccount;
         $this->validatedamountDays = $validatedamountDays;
         $this->robusTransactionService = $robusTransactionService;
+        $this->authService = $authService;
     }
 
     /**
@@ -109,23 +115,11 @@ class UserController extends Controller
     public function dashboard()
     {
 
-        Artisan::call('app:close-status');
+        // Vérifier l'état de l'application
+        $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
-        // Récupérer le statut de l'application
-        $appStatus = AppStatus::latest()->first();
-
-
-        // Vérifier si l'application est fermée
-        if ($appStatus && $appStatus->status_app === 'closed') {
-
-            $robus_hour_begin = $appStatus->time_start;
-            $robus_hour_end = $appStatus->time_end;
-            $robus_hour_description = $appStatus->description;
-
-            return response()->json([
-                'success' => false,
-                'message' => "L'application ROBUS etait ouverte aujourd'hui de  " . $robus_hour_begin . " a " . $robus_hour_end .  " et est fermée pour cause de " . $robus_hour_description,
-            ], 301);
+        if (!$appStatusResult['success']) {
+            return response()->json($appStatusResult, 301);
         }
 
 
@@ -170,32 +164,21 @@ class UserController extends Controller
             'historicals' => $is_under ?  $dashboard_data : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
             'som_commission' => $is_under ? $som_commissions . ' ' . robus()->wallet->currencie->code  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
         ], 200);
-       
     }
 
-     /**
+    /**
      * @CrossOrigin
      */
     public function dashboard_masters()
     {
 
-        Artisan::call('app:close-status');
+        // Vérifier l'état de l'application
+        $appStatusResult = $this->authService->appDispoMasterRobus(AppCloseMaster::class);
 
-        // Récupérer le statut de l'application
-        $appStatus = AppStatus::latest()->first();
-
-        // Vérifier si l'application est fermée
-        if ($appStatus && $appStatus->status_app === 'closed') {
-
-            $robus_hour_begin = $appStatus->time_start;
-            $robus_hour_end = $appStatus->time_end;
-            $robus_hour_description = $appStatus->description;
-
-            return response()->json([
-                'success' => false,
-                'message' => "L'application ROBUS etait ouverte aujourd'hui de  " . $robus_hour_begin . " a " . $robus_hour_end .  " et est fermée pour cause de " . $robus_hour_description,
-            ], 301);
+        if (!$appStatusResult['success']) {
+            return response()->json($appStatusResult, 301);
         }
+
 
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
 
@@ -217,17 +200,24 @@ class UserController extends Controller
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
 
         $is_master = robus()->is_master;
-        
+
         return response()->json([
             'success' => $is_master ? true : false,
             'historicals' =>  $is_master ?  $dashboard_data : "Vous devez etre un MASTER pour avoir accees a son dashboard ",
-            'som_commission' =>  $is_master ?   $som_commissions . ' ' . robus()->wallet->currencie->code : "Vous devez etre un MASTER pour avoir accees a son dashboard " ,
-        ], 200); 
-       
+            'som_commission' =>  $is_master ?   $som_commissions . ' ' . robus()->wallet->currencie->code : "Vous devez etre un MASTER pour avoir accees a son dashboard ",
+        ], 200);
     }
 
     public function dashboard_comzones()
     {
+
+        // Vérifier l'état de l'application
+        $appStatusResult = $this->authService->appDispoComZoneRobus(AppCloseCom::class);
+
+        if (!$appStatusResult['success']) {
+            return response()->json($appStatusResult, 301);
+        }
+
         $under_distributors =    $this->transactionAccount->getMastersUser();
 
         return response()->json([
@@ -1212,7 +1202,7 @@ class UserController extends Controller
             ]
         );
 
-        if ($validator->fails()) {  
+        if ($validator->fails()) {
             return response()->json(
                 [
                     'success' => false,

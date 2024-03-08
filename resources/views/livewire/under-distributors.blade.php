@@ -56,11 +56,9 @@
                     <tbody>
                         @php
 
-                            $old_operators = \App\Models\OperatorService::where('sid_user_id', $item->id)
-                                ->pluck('operator_id')
-                                ->toArray();
+                        $old_operators = getOperators($item->id);
 
-                        @endphp
+                    @endphp
                         <tr class="intro-x">
                             <td class="w-35">
                                 <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>

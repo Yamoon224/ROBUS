@@ -478,7 +478,13 @@ Route::get('/reads_notifications', function () {
 });
 
 Route::get('/reads_applications', function () {
-    return  Artisan::call('app:close-status');
+    
+    Artisan::call('app:close-status');
+    Artisan::call('close-comzone-status');
+    Artisan::call('app:master-status');
+
+
+    return 'Artisan commands executed successfully.';
 });
 
 

@@ -227,7 +227,7 @@ class UnderDistributors extends Component
         return view('livewire.under-distributors', [
             "users" => $users->where('is_under_distributer', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
-            "operators" => Operator::whereStatus(true)->orderBy("name", 'desc')->get(),
+            "operators" => Operator::whereStatus(true)->whereIsUnder(true)->orderBy("name", 'desc')->get(),
         ]);
     }
 }

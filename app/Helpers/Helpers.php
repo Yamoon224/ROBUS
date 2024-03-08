@@ -2,11 +2,13 @@
 
 use App\Models\CloseApp;
 use App\Models\Custumers\Country;
+use App\Models\OperatorService;
 use App\Models\Payments\PaymentReload;
 use App\Models\Providers\Provider;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletReload;
 use Illuminate\Support\Facades\Auth;
+
 
 
 
@@ -65,6 +67,15 @@ function getCountriesForUser($user)
     return $countries->get();
 }
 
+
+function getOperators($userId)
+{
+ 
+    return OperatorService::where('sid_user_id', $userId)
+                            ->pluck('operator_id')
+                            ->toArray();
+
+}
 
 function sabdyWebVerify()
 {

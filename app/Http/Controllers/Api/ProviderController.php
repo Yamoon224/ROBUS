@@ -4,15 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\AllOfferCollection;
-use App\Http\Resources\ProviderCollection;
 use App\Http\Resources\ProviderSingleCollection;
+use App\Http\Services\AuthenticationService;
 use App\Http\Services\ProvidersService;
+use App\Models\AppCloseCom;
+use App\Models\AppCloseMaster;
+use App\Models\AppComZoneStatus;
+use App\Models\AppMasterStatus;
 use App\Models\AppStatus;
-use App\Models\Costs\OrderCardCost;
 use App\Models\Offer;
-use App\Models\OperatorService;
 use App\Models\Providers\Provider;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 
@@ -53,17 +54,20 @@ class ProviderController extends Controller
 
     /** @var  ReloadCardRepository */
     protected $percentRobus;
+    protected $authService;
 
     public function __construct(
         ProvidersService $percentRobus,
+        AuthenticationService $authService
     ) {
         $this->percentRobus = $percentRobus;
+        $this->authService = $authService;
     }
 
     public function index()
     {
-        $walletUser  =  Auth::guard('api')->user();
 
+        $walletUser  =  Auth::guard('api')->user();
         $walletTransaction =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 1);
         $walletPayment =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 2);
         $walletPaymentInter =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 7);
@@ -81,24 +85,13 @@ class ProviderController extends Controller
 
         try {
 
-            Artisan::call('app:close-status');
+            // Vérifier l'état de l'application
+            $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
-            // Récupérer le statut de l'application
-            $appStatus = AppStatus::latest()->first();
-
-
-            // Vérifier si l'application est fermée
-            if ($appStatus && $appStatus->status_app === 'closed') {
-
-                $robus_hour_begin = $appStatus->time_start;
-                $robus_hour_end = $appStatus->time_end;
-                $robus_hour_description = $appStatus->description;
-
-                return response()->json([
-                    'success' => false,
-                    'message' => "L'application ROBUS etait ouverte aujourd'hui de  " . $robus_hour_begin . " a " . $robus_hour_end .  " et est fermée pour cause de " . $robus_hour_description,
-                ], 301);
+            if (!$appStatusResult['success']) {
+                return response()->json($appStatusResult, 301);
             }
+
 
             $operators = $this->percentRobus->OperatorServices();
 
@@ -216,6 +209,124 @@ class ProviderController extends Controller
         }
     }
 
+
+    public function masters_providers()
+    {
+
+        $walletTransaction =  $this->percentRobus->getProvidersByReloadType(new Provider, robus()->country->id, 1);
+        $walletMasters =  $this->percentRobus->getProvidersByMasterType(new Provider, robus()->country->id, 14);
+
+        try {
+
+            // Vérifier l'état de l'application
+            $appStatusResult = $this->authService->appDispoMasterRobus(AppMasterStatus::class);
+
+            if (!$appStatusResult['success']) {
+
+                return response()->json($appStatusResult, 301);
+            }
+
+
+            $operators = $this->percentRobus->operatorServices();
+
+
+            $dashboard_data = [];
+
+            if (!robus()->is_master) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Vous devez etre un Utilisateur Master pour l'API ",
+                ], 301);
+            }
+
+            foreach ($operators as $operator) {
+
+                switch ($operator->operator->id) {
+                    case 10:
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        break;
+                    case 11:
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        break;
+                    case 12:
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        break;
+                    case 16:
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        break;
+                    default:
+                        // Ne rien faire ou ajouter une logique de gestion d'erreur
+                        break;
+                }
+            }
+
+            return response()->json([
+                'success' => true,
+                'Wallets' =>  $dashboard_data,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+            ], 333);
+        }
+    }
+
+    public function comzones_providers()
+    {
+
+
+        $walletTransaction =  $this->percentRobus->getProvidersByReloadType(new Provider, robus()->country->id, 1);
+
+        try {
+
+            // Vérifier l'état de l'application
+            $appStatusResult = $this->authService->appDispoRobus(AppComZoneStatus::class);
+
+            if (!$appStatusResult['success']) {
+                return response()->json($appStatusResult, 301);
+            }
+
+
+            $operators = $this->percentRobus->operatorServices();
+
+            if (!robus()->is_master) {
+                return response()->json([
+                    'success' => false,
+                    'message' => "Vous devez etre un Utilisateur Master pour l'API ",
+                ], 301);
+            }
+
+            $dashboard_data = [];
+
+            foreach ($operators as $operator) {
+
+                switch ($operator->operator->id) {
+                    case 13:
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        break;
+                    case 14:
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        break;
+                    case 15:
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        break;
+                    default:
+                        // Ne rien faire ou ajouter une logique de gestion d'erreur
+                        break;
+                }
+            }
+            return response()->json([
+                'success' => true,
+                'Wallets' =>  $dashboard_data,
+            ], 200);
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+            ], 333);
+        }
+    }
 
     public function offers()
     {

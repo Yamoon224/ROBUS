@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\AppCloseMaster;
 use App\Models\CloseApp;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletBank;
@@ -93,7 +94,7 @@ class HomeMasters extends Component
         //  SUm gain 
         $sum_gain = $payement_gain_days + $transaction_gain_days + $phonecredit_gain_days + $inter_gain_days + $bank_gain_days + $deposit_gain_days ;
 
-        $closeRobus = CloseApp::orderBy('id' , 'asc')->get();
+        $closeRobus = AppCloseMaster::orderBy('id' , 'asc')->get();
         
         return view(
             'livewire.home-masters',

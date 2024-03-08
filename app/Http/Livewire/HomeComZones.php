@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\AppCloseCom;
 use App\Models\CloseApp;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletBank;
@@ -74,7 +75,7 @@ class HomeComZones extends Component
         $inter_amount_month = $this->getDaysTransaction(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at',  'wallet_inters.status',  'wallet_inters.amount');
         $bank_amount_month = $this->getDaysTransaction(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at',  'wallet_banks.status',  'wallet_banks.amount');
         $deposit_amount_month = $this->getDaysTransaction(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at',  'wallet_deposits.status',  'wallet_deposits.amount');
-        $closeRobus = CloseApp::orderBy('id', 'asc')->get();
+        $closeRobus = AppCloseCom::orderBy('id', 'asc')->get();
 
         // Get Users
         $custumers = $this->getUserTypeTotal('is_custumers', true);

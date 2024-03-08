@@ -13,10 +13,10 @@ class ProvidersService
 
 
 
-    public function OperatorServices()
+    public function operatorServices()
     {
 
-        $operatorServices = OperatorService::where('sid_user_id' , robus()->id)->get();
+        $operatorServices = OperatorService::where('sid_user_id', robus()->id)->get();
         event(new assignementEvent($operatorServices));
 
         return $operatorServices;
@@ -275,15 +275,41 @@ class ProvidersService
     public static function getProvidersByReloadType($query, $countryId, $providerType)
     {
 
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', $providerType)
+            ->whereNotIn('providers.name', ['Wave', 'ORANGE', 'MTN', 'MOOV'])
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+    }
+
+    public static function getProvidersByMasterType($query, $countryId, $providerType)
+    {
 
         return $query
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
-            ->where('providers.name', '!=', 'Wave')
-            ->where('providers.name', '!=', 'ORANGE')
-            ->where('providers.name', '!=', 'MTN')
+            ->whereNotIn('providers.name', ['CREER UN MASTER'])
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+    }
+
+
+    public static function getProvidersByComZoneType($query, $countryId, $providerType)
+    {
+
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', $providerType)
+            // ->whereNotIn('providers.name', ['Wave', 'ORANGE', 'MTN', 'MOOV'])
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
             ->get();

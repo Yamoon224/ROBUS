@@ -51,13 +51,18 @@
                     </tr>
                 </thead>
                 @foreach ($users as $item)
+                @php
+
+                $old_operators = getOperators($item->id);
+
+            @endphp
                     <tbody>
                         <tr class="intro-x">
                             <td class="w-35">
                                 <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
 
                             </td>
-                            <td class="w-50">
+                            <td class="w-60">
                                 <div class="text-slate-300 text-xs  mt-0.5 mb-2">
                                     <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname }}
                                         {{ $item->lastname }}</div>
@@ -77,22 +82,9 @@
                                 </div>
                             </td>
                             <td>
-                                @if ($item->is_custumers)
-                                    <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5 mb-2">
-                                        <p class="font-medium whitespace-nowrap">Client</p>
-                                    </div>
-                                @elseif($item->is_distributer)
-                                    <div class="font-medium whitespace-nowrap">
-                                        <p class="font-medium whitespace-nowrap">Distributeur </p>
-                                    </div>
-                                @elseif($item->is_under_distributer)
-                                    <div class="font-medium whitespace-nowrap">
-                                        <p class="font-medium whitespace-nowrap"> Sous-distributeur</p>
-                                    </div>
-                                @elseif($item->is_master)
+
+                                @if ($item->is_master)
                                     <div class="font-medium whitespace-nowrap">MASTER</div>
-                                @elseif ($item->is_com_zone)
-                                    <div class="font-medium whitespace-nowrap">COM ZONE</div>
                                 @else
                                     <div class="font-medium whitespace-nowrap">Admin</div>
                                 @endif
@@ -102,9 +94,16 @@
                                         {{ $item->wallet->wallet_id ?? null }}
                                     </span>
                                 </div>
+                                <p>Operations : </p>
+                                @foreach ($item->operator_services as $opera)
+                                    <span
+                                        class="alert alert-success font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        {{ $opera->operator->name ?? null }}
+                                    </span>
+                                @endforeach
                             </td>
 
-                            <td class="text-center">
+                            <td class="text-center w-50">
                                 @foreach ($item->get_role() as $role)
                                     <span class="m-1 badge badge-info"> {{ $role->name }} </span>
                                 @endforeach
@@ -138,11 +137,54 @@
                             </td>
 
                             <td class="table-report__action w-30">
-                                <div class="flex justify-center items-center">
+                                <div class="flex mt-4 lg:mt-0">
+                                    @if ($item->is_master)
+                                        <div class="flex items-start ">
+
+                                            <div class="absolute right-0 top-0 mr-5 mt-3 dropdown">
+                                                <h2 class="intro-y text-lg font-medium ">
+                                                    Assigner
+                                                </h2>
+                                                <a class="dropdown-toggle w-5 h-5 block" href="javascript:;"
+                                                    aria-expanded="false" data-tw-toggle="dropdown"> <svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        icon-name="more-horizontal" data-lucide="more-horizontal"
+                                                        class="lucide lucide-more-horizontal w-5 h-5 text-slate-500">
+                                                        <circle cx="12" cy="12" r="1"></circle>
+                                                        <circle cx="19" cy="12" r="1"></circle>
+                                                        <circle cx="5" cy="12" r="1"></circle>
+                                                    </svg>
+
+                                                </a>
+
+
+                                                <div class="dropdown-menu w-50" id="_8vqni2v1b"
+                                                    data-popper-placement="bottom-end"
+                                                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
+                                                    <div class="dropdown-content">
+                                                        @foreach ($operators as $operator)
+                                                            <input
+                                                                wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                                value="{{ $operator->id }}" type="checkbox"
+                                                                class="sid-switch"
+                                                                @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
+
+
+                                                            <p class="font-assign ">
+                                                                {{ $operator->name ?? null }}
+
+                                                            </p>
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endif
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-master'))
                                         <a class="btn btn-primary mr-1 mb-2 btn-sm"
                                             href="{{ route('masters.admins.show', ['id' => $item->id]) }}">
-                                            <i data-feather="eye" class="h-15 mr-1"></i>
                                             Voir
                                         </a>
                                     @endif
@@ -168,5 +210,6 @@
         </nav>
     </div>
     @include('livewire.modals.disabledUsers')
+
 
 </div>

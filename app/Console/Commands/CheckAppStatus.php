@@ -40,6 +40,7 @@ class CheckAppStatus extends Command
         foreach ($days_open_robus as $robus_app) {
 
             if ($currentDayOfWeek == $robus_app->id) {
+                
                 $robus_hour_begin = $robus_app->time_start;
                 $robus_hour_end = $robus_app->time_end;
                 $currentHour = Carbon::now()->format('H:i:s');
