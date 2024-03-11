@@ -14,6 +14,8 @@ use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletWave;
+use App\Models\Wallets\WalletXbet;
 use App\Repositories\TransactionRepository;
 
 class ValidateDailyLimitService
@@ -29,7 +31,7 @@ class ValidateDailyLimitService
 
 
 
-    
+
     public function validateDailyLimit($som_transfers, $valeur_ceiling)
     {
         if ($som_transfers >= $valeur_ceiling) {
@@ -72,7 +74,7 @@ class ValidateDailyLimitService
     }
 
 
-    
+
     public function validateAmountDrawel($transaction_amount_robus, $num_wallet)
     {
 
@@ -93,15 +95,16 @@ class ValidateDailyLimitService
         return true;
     }
 
-    
+
     public function getCeilingProperty()
     {
         $amount_days = $this->getWalletBanksCeilingProperty() + $this->getWalletDepositsCeilingProperty()
             + $this->getWalletIntersCeilingProperty() + $this->getWalletPaymentsCeilingProperty()
             + $this->getWalletTransactionsCeilingProperty() + $this->getWalletPhoneCreditsCeilingProperty()
-            + $this->getWalletReloadsCeilingProperty()  + $this->getWalletBankCardCeilingProperty();
-        
-      return  $amount_days;
+            + $this->getWalletReloadsCeilingProperty()  + $this->getWalletBankCardCeilingProperty() + $this->getWalletWavesCeilingProperty()
+            + $this->getWalletXbetsCeilingProperty();
+
+        return  $amount_days;
     }
     public function getWalletBankCardCeilingProperty()
     {
@@ -127,19 +130,42 @@ class ValidateDailyLimitService
     }
 
 
+    public function getWalletWavesCeilingProperty()
+    {
+        $data = [];
+        foreach (WalletWave::where('created_by', robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
+    }
+
+
+    public function getWalletXbetsCeilingProperty()
+    {
+        $data = [];
+        foreach (WalletXbet::where('created_by', robus()->id)
+            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
+    }
+
+
     public function adminAllcountries()
     {
-       return SidUser::whereStatus(true)->whereIsAdmin(true)->where('country_id', robus()->country->id)->get();
+        return SidUser::whereStatus(true)->whereIsAdmin(true)->where('country_id', robus()->country->id)->get();
     }
 
     public function adminCiv()
     {
-       
-       return  SidUser::whereStatus(true)
+
+        return  SidUser::whereStatus(true)
             ->whereIsAdmin(true)
             ->where('country_id', 107)
             ->get();
-
     }
     public function getWalletDepositsCeilingProperty()
     {
@@ -168,13 +194,13 @@ class ValidateDailyLimitService
 
     public function validatedTransaction($code_validated)
     {
-       return WalletTransaction::whereCodeValidated($code_validated)->first();
+        return WalletTransaction::whereCodeValidated($code_validated)->first();
     }
 
     public function validatedWallet($num_wallet)
     {
 
-        return Wallet::where('wallet_id' ,$num_wallet)->first();
+        return Wallet::where('wallet_id', $num_wallet)->first();
     }
 
     public function getWalletPaymentsCeilingProperty()

@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('invoice_banks', function (Blueprint $table) {
-             $table->bigIncrements('id');
+            $table->bigIncrements('id');
             $table->unsignedBigInteger('company_id');
             $table->foreign('company_id')->references('id')->on('companies')->onDelete('cascade');
             $table->string('title');

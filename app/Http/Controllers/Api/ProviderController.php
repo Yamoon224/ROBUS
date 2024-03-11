@@ -82,6 +82,7 @@ class ProviderController extends Controller
         $walletReloadCardInter =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 11);
         $walletOrderCard =  $this->percentRobus->getProvidersByTypeOrderCard(new Provider, robus()->country->id, 5);
         $wallet1xbet =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 13);
+        $walletWave =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 17);
 
         try {
 
@@ -131,6 +132,9 @@ class ProviderController extends Controller
                             case 8:
                                 $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletBank);
                                 break;
+                            case 17:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletWave);
+                                break;
                             case 9:
                                 $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($wallet1xbet);
                                 break;
@@ -145,6 +149,7 @@ class ProviderController extends Controller
                     $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
+                    $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($walletWave);
                     $dashboard_data['SERVICE 1XBET'] = ProviderSingleCollection::collection($wallet1xbet);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
                     $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);
@@ -214,7 +219,9 @@ class ProviderController extends Controller
     {
 
         $walletTransaction =  $this->percentRobus->getProvidersByReloadType(new Provider, robus()->country->id, 1);
-        $walletMasters =  $this->percentRobus->getProvidersByMasterType(new Provider, robus()->country->id, 14);
+        $walletUnders =  $this->percentRobus->getProvidersByMasterType(new Provider, robus()->country->id, 14);
+        $walletMasters =  $this->percentRobus->getProvidersByMasterType(new Provider, robus()->country->id, 16);
+        $walletCustumers =  $this->percentRobus->getProvidersByMasterType(new Provider, robus()->country->id, 15);
 
         try {
 
@@ -249,10 +256,10 @@ class ProviderController extends Controller
                         $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
                         break;
                     case 12:
-                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletUnders);
                         break;
                     case 16:
-                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletCustumers);
                         break;
                     default:
                         // Ne rien faire ou ajouter une logique de gestion d'erreur
@@ -277,11 +284,14 @@ class ProviderController extends Controller
 
 
         $walletTransaction =  $this->percentRobus->getProvidersByReloadType(new Provider, robus()->country->id, 1);
+        $walletUnders =  $this->percentRobus->getProvidersByMasterType(new Provider, robus()->country->id, 14);
+        $walletMasters =  $this->percentRobus->getProvidersByMasterType(new Provider, robus()->country->id, 16);
+        $walletCustumers =  $this->percentRobus->getProvidersByMasterType(new Provider, robus()->country->id, 15);
 
         try {
 
             // Vérifier l'état de l'application
-            $appStatusResult = $this->authService->appDispoRobus(AppComZoneStatus::class);
+            $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
 
             if (!$appStatusResult['success']) {
                 return response()->json($appStatusResult, 301);
@@ -290,10 +300,10 @@ class ProviderController extends Controller
 
             $operators = $this->percentRobus->operatorServices();
 
-            if (!robus()->is_master) {
+            if (!robus()->is_com_zone) {
                 return response()->json([
                     'success' => false,
-                    'message' => "Vous devez etre un Utilisateur Master pour l'API ",
+                    'message' => "Vous devez etre un Utilisateur COM ZONE pour l'API ",
                 ], 301);
             }
 
@@ -302,14 +312,14 @@ class ProviderController extends Controller
             foreach ($operators as $operator) {
 
                 switch ($operator->operator->id) {
-                    case 13:
-                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
-                        break;
                     case 14:
-                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletUnders);
                         break;
                     case 15:
-                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletTransaction);
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletCustumers);
+                        break;
+                    case 16:
+                        $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletMasters);
                         break;
                     default:
                         // Ne rien faire ou ajouter une logique de gestion d'erreur

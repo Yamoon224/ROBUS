@@ -481,6 +481,7 @@
             @include('components.credit_compo')
             @include('components.inter_compo')
             @include('components.xbetTransaction')
+            @include('components.waveTransaction')
         </div>
 
     </div>

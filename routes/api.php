@@ -28,8 +28,10 @@ use App\Http\Controllers\Api\Transfers\ReloadCardController;
 use App\Http\Controllers\Api\Transfers\ReloadController;
 use App\Http\Controllers\Api\Transfers\TransactionController;
 use App\Http\Controllers\Api\Transfers\VirementController;
+use App\Http\Controllers\Api\Transfers\WaveTransactionController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -87,6 +89,11 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             // 1Xbets
             Route::post('oneXbet/store', [OnexbetTransactionController::class, 'create_OnexbetTranaction']);
             Route::post('oneXbet/delete/{id}', [OnexbetTransactionController::class, 'delete_wallet_xbet']);
+
+            // 1Xbets
+            Route::post('wave/store', [WaveTransactionController::class, 'create_WaveTranaction']);
+            Route::post('wave/delete/{id}', [WaveTransactionController::class, 'delete_wallet_wave']);
+            Route::get('search_wave/{amount_wave}', [WaveTransactionController::class, 'search_wave']);
 
             // Reload
             Route::post('reloads/store', [ReloadController::class, 'create_reload']);
@@ -236,7 +243,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('add_masters/store', [ComZoneController::class, 'store_under_masters']);
             Route::post('add_custumers/store', [ComZoneController::class, 'store_under_custumers']);
             Route::post('add_under_distributors/store', [ComZoneController::class, 'store_under_distributors']);
-    });
+        });
     });
 
 

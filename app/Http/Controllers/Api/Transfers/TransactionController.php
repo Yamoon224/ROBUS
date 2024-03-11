@@ -397,6 +397,7 @@ class TransactionController extends Controller
                             333
                         );
                     }
+                    
                     if (robus()->country->name_groupe == 'CIV') {
 
                         $percent_robus = $this->percentRobus->getRobusPercentageMobile();

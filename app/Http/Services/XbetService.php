@@ -48,7 +48,6 @@ class XbetService
     }
 
 
-
     public function createRobusWalletDrawalOneBet($amount_valeur, $provider, $percent_robus, $numberAcompte, $countrie , $citie , $code_drawal, $amountReceved)
     {
 

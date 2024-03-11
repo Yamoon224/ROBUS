@@ -148,7 +148,7 @@ class VirementController extends Controller
         $valeur_ceiling  =  robus()->silver_ceiling;
         $admin_civ = $this->validatedamountDays->adminCiv();
 
-        // try {
+        try {
 
             if (robus()->country->name_groupe == 'CIV') {
 
@@ -271,12 +271,12 @@ class VirementController extends Controller
                     'message' => 'Les fournisseurs ne sont pas des pays ',
                 ], 333);
             }
-        // } catch (\Exception $exception) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
-        //     ], 333);
-        // }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+            ], 333);
+        }
     }
 
     public function messageAfterValidated($walletVirement)

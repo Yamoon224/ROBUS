@@ -43,8 +43,8 @@ class OnexbetTransactionController extends Controller
 
         /**
          * @OA\POST(
-         *      path="/user/phone_credits/store",
-         *      tags={"Phone credit User"},
+         *      path="/user/onexbets/store",
+         *      tags={"One xbets "},
          *      summary="Create new phone credit user",
          *      description="Faire des achats de credit telephonique 
          *       Selon les id des providers nous faisons nos verifications.
@@ -285,7 +285,7 @@ class OnexbetTransactionController extends Controller
         /**
          * Delete 1xbet
          * @OA\Delete (
-         *      path="/user/phone_credit/delete/{id}",
+         *      path="/user/onexbet/delete/{id}",
          *      tags={"1xbet User"},
          *      summary="Delete 1xbet",
          *      description="Supprimer les 1xbet ", 

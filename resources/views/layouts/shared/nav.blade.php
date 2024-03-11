@@ -19,7 +19,7 @@
                     <div class="side-menu__title">
                         Tableau de bord
                     </div>
-                </a>
+                </a>            
             </li>
 
             <li class="side-nav__devider my-4"></li>
@@ -370,6 +370,46 @@
                                 <div class="side-menu__title">Etat-Unis</div>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('commissions.asie') }}"
+                                class="side-menu {{ $route == 'commissions.asie' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title">Asie</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('commissions.usa') }}"
+                                class="side-menu {{ $route == 'commissions.usa' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title">Afrique de l'EST</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('commissions.usa') }}"
+                                class="side-menu {{ $route == 'commissions.usa' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title">Afrique centrale</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('commissions.usa') }}"
+                                class="side-menu {{ $route == 'commissions.usa' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title">Afrique Orientale</div>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ route('commissions.usa') }}"
+                                class="side-menu {{ $route == 'commissions.usa' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title">Asie</div>
+                            </a>
+                        </li>   
                     </ul>
                 </li>
             @endif

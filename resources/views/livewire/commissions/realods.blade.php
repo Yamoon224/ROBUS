@@ -1,6 +1,6 @@
 <div>
     <h2 class="intro-y text-lg font-medium mt-10">
-        Commissions pour les rechargements
+        Commissions pour les rechargements UV par wave      
     </h2>
 
     <div class="grid grid-cols-12 gap-6 mt-5">
@@ -16,7 +16,6 @@
                         <th class="whitespace-nowrap">Nom</th>
                         <th class="whitespace-nowrap text-center">Pourcentage</th>
                         <th class="whitespace-nowrap text-center">Pourcentage marchants</th>
-                        <th class="whitespace-nowrap">Description</th>
                         <th class="text-center whitespace-nowrap">Status</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -47,11 +46,7 @@
                                         {{ $item->percent_merchands * 100 ?? null }} %
                                     </p>
 
-                                </td>
-                                <td class="w-40">
-                                    <p href="" class="font-medium whitespace-nowrap">
-                                        {{ $item->walletBank->decription ?? null }}</p>
-                                </td>
+                                </td>   
                                 <td class="w-40">
                                     @if ($item->status == '1')
                                         @if (Auth::guard('web')->user()->hasPermissionTo('active-caution'))

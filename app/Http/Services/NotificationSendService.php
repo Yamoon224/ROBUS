@@ -11,6 +11,7 @@ use App\Events\CreateWalletPaiementEvent;
 use App\Events\CreateWalletPhoneCreditEvent;
 use App\Events\CreateWalletReloadCardEvent;
 use App\Events\CreateWalletTransfersEvent;
+use App\Events\CreateWaveEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Models\Sid\SidUser;
 use App\Notifications\AdminNotification;
@@ -330,6 +331,58 @@ class NotificationSendService
                 'status' => $walletXbet->status,
             ],
             'message' => ('Votre demande ce retrait 1xbet est en cours de traitement .')
+        ], 200);
+    }
+
+
+    public function sendNotificationWaves($walletWaves)
+    {
+
+
+        if (robus()->is_custumers) {
+            if (robus()->country->code == "CI") {
+
+                $message = 'Votre demande de ' . $walletWaves->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                    . $walletWaves->provider->name  .  ' le '
+                    . $walletWaves->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+                $encode = substr(robus()->phone,  -10);
+
+                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+            }
+        }
+        $admins = $this->getAdminCIVProperty();
+        $msg = 'Demande en cours de validation';
+        $msg_title =  'Réchargement Wave ' ;
+        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWaveEvent($walletWaves));
+        Notification::send($admins, new AdminNotification('Demande de rechargement par wave de ' . ' ' . $walletWaves->wallet->sidUser->firstname));
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+
+        if (robus()->email != null) {
+
+            $notify = new MailController;
+            $notify->newPhoneCredit($walletWaves);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id'      => $walletWaves->id,
+                'amount' => $walletWaves->amount,
+                'status' => $walletWaves->status,
+            ],
+            'message' => ('Votre demande de rechargement UV par Wave est en cours de traitement .')
         ], 200);
     }
 

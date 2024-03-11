@@ -7,6 +7,7 @@ use App\Models\Costs\BankCost;
 use App\Models\Costs\DepositCost;
 use App\Models\Costs\PaymentCost;
 use App\Models\Costs\PhoneCreditCost;
+use App\Models\Costs\ReloadCost;
 use App\Models\Costs\TransactionCost;
 use App\Models\LevelCountry;
 use App\Models\Moneys\LevelMoney;
@@ -101,6 +102,18 @@ class PercentRobusAuthService
         switch ($countryNameGroup) {
             case 'CIV':
                 return TransactionCost::whereId(27)->first();
+            default:
+                return null;
+        }
+    }
+
+    public function getRobusPercentageMobileWave()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return ReloadCost::whereId(1)->first();
             default:
                 return null;
         }

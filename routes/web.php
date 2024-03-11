@@ -266,6 +266,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/europe', [CommissionController::class, 'browse_europe'])->name('commissions.europe');
             Route::get('/maghreb', [CommissionController::class, 'browse_maghredb'])->name('commissions.maghredb');
             Route::get('/usa', [CommissionController::class, 'browse_usa'])->name('commissions.usa');
+            Route::get('/asie', [CommissionController::class, 'browse_asie'])->name('commissions.asie');
         });
 
         //contacts
