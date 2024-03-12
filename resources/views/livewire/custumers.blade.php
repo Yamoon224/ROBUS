@@ -1,4 +1,4 @@
-<div>
+x<div>
     {{-- <script src="{{ asset('public/js/script.js') }}"></script>
     <script src="{{ asset('public/js/app.js') }}"></script> --}}
     <h2 class="intro-y text-lg font-medium mt-10">

@@ -63,6 +63,16 @@
                    </svg> 1Xbet
                </a>
            </li>
+           <li id="wave-tab" class="nav-item" role="presentation">
+            <a href="javascript:;" class="nav-link py-4 flex items-center" id="wave-nav" data-tw-target="#wave"
+                aria-controls="wave" aria-selected="false" role="tab"> <svg
+                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-shield w-4 h-4 mr-2">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                </svg> UV Wave
+            </a>
+        </li>
            <li id="inter-tab" class="nav-item" role="presentation">
                <a href="javascript:;" class="nav-link py-4 flex items-center" id="inter-nav" data-tw-target="#inter"
                    aria-controls="inter" aria-selected="false" role="tab"> <svg

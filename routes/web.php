@@ -304,6 +304,8 @@ Route::group(['prefix' => ''], function () {
             Route::get('/internationnal/{inters_id}', [InvoiceController::class, 'inters_invoice'])->name('inters.invoice.print');
             Route::get('/reload_cards/{relaod_card_id}', [InvoiceController::class, 'reload_card_invoice'])->name('reload_card.invoice.print');
             Route::get('/phone_credit/{phone_credit_id}', [InvoiceController::class, 'phone_credit_invoice'])->name('phone.invoice.print');
+            Route::get('/waves/{wave_id}', [InvoiceController::class, 'waves_invoice'])->name('waves.invoice.print');
+            Route::get('/xbets/{wave_id}', [InvoiceController::class, 'xbets_invoice'])->name('xbets.invoice.print');
         });
 
         //Historical
@@ -327,6 +329,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/cartes_historical', [HistoricalController::class, 'browse_carte'])->name('cartes.historical');
             Route::get('/phone_historical', [HistoricalController::class, 'browse_phone'])->name('phones.historical');
             Route::get('/xbet_historical', [HistoricalController::class, 'browse_xbets'])->name('xbets.historical');
+            Route::get('/wave_historical', [HistoricalController::class, 'browse_waves'])->name('waves.historical');
             Route::get('/drawer_historical', [HistoricalController::class, 'browse_drawer'])->name('drawers.historical');
         });
 
@@ -411,6 +414,8 @@ Route::group(['prefix' => ''], function () {
             Route::get('reloads/reporting_reload_historical/{id}', [AdminHistoriqueController::class, 'reporting_reload_historical'])->name('reloads.historical.received.reporting_reload_historical.admins');
             Route::get('reloads/reporting_reload_historical_received/{id}', [AdminHistoriqueController::class, 'reporting_reload_received_historical'])->name('reloads.historical.reporting_reload_historical.admins');
             Route::get('cards/reporting_card_historical/{id}', [AdminHistoriqueController::class, 'reporting_card_historical'])->name('cards.historical.reporting_card_historical.admins');
+            Route::get('xbets/reporting_xbet_historical/{id}', [AdminHistoriqueController::class, 'reporting_xbet_historical'])->name('xbets.historical.reporting_xbet_historical.admins');
+            Route::get('waves/reporting_wave_historical/{id}', [AdminHistoriqueController::class, 'reporting_wa ve_historical'])->name('waves.historical.reporting_wave_historical.admins');
             Route::get('inters/reporting_inter_historical/{id}', [AdminHistoriqueController::class, 'reporting_inter_historical'])->name('inters.historical.reporting_inter_historical.admins');
             // Reporting in date transactions
             Route::get('inter_days/reporting_inter_days_historical', [AdminHistoriqueController::class, 'searchByIntersDate'])->name('inters.historical.reporting_inter_days_historical.admins');
@@ -418,6 +423,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('payment_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByPaymentsDate'])->name('inters.historical.reporting_payment_days_historical.admins');
             Route::get('banks_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByBanksDate'])->name('inters.historical.reporting_bank_days_historical.admins');
             Route::get('xbets_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByXbetsDate'])->name('inters.historical.reporting_xbet_days_historical.admins');
+            Route::get('waves_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchBywavesDate'])->name('inters.historical.reporting_wave_days_historical.admins');
             Route::get('cartes_days/reporting_cartes_days_historical', [AdminHistoriqueController::class, 'searchByCartesDate'])->name('inters.historical.reporting_cartes_days_historical.admins');
 
             Route::get('payments/reporting_payment_historical/{id}', [AdminHistoriqueController::class, 'reporting_payment_historical'])->name('payments.historical.reporting_payment_historical.admins');

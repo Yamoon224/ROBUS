@@ -649,15 +649,13 @@ class HistoricalController extends Controller
     public function browse_transfer()
     {
 
-         return view('firms.pages.browse_transfer');
-      
+        return view('firms.pages.browse_transfer');
     }
 
     public function browse_transferfirm()
     {
-        
+
         return view('pages.historicals.browse_transfer');
-       
     }
 
     /**
@@ -732,6 +730,23 @@ class HistoricalController extends Controller
         }
     }
 
+    public function browse_waves()
+    {
+        if (sabdyWebVerify()) {
+            return view('pages.historicals.browse_wave');
+        } else {
+            abort(403);
+        }
+    }
+    
+    public function browse_xbets()
+    {
+        if (sabdyWebVerify()) {
+            return view('pages.historicals.browse_xbets');
+        } else {
+            abort(403);
+        }
+    }
 
     public function browse_drawer()
     {

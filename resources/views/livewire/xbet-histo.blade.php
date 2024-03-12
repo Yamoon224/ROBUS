@@ -46,16 +46,7 @@
         </div>
 
         <div class="intro-y col-span-12 lg:col-span-12">
-            <div class="intro-y block sm:flex items-center h-10">
-                <h2 class="text-lg font-medium truncate mr-5"> Les Activites des services 1Xbets</h2>
-                <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
-
-                    <a class="ml-3  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary mr-1 mb-2"
-                        href="{{ route('virements.historical.reporting_historical') }}" style="color: white;">
-                        <i data-lucide="file-text" class="hidden sm:block w-4 h-4 mr-2"></i> Telecharger le rapport
-                    </a>
-                </div>
-            </div>
+     
 
             <div class="intro-y grid grid-cols-12 gap-5 mt-5">
                 <div
@@ -343,21 +334,14 @@
                                                                 @endif
                                                             @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)
                                                                 <a target="_bank"
-                                                                    href="{{ route('virements.invoice.print', $item->id) }}"
+                                                                    href="{{ route('xbets.invoice.print', $item->id) }}"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                     title="Facture">
                                                                     Facture
                                                                 </a>
-                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                    <a wire:click="editVirementHisto({{ $item->id }}, 'update-virementHisto-modal')"
-                                                                        class="btn btn-danger mr-1 mb-2 btn-sm"
-                                                                        href="javascript:;" title="Remboursé">
-                                                                        Remboursé
-                                                                    </a>
-                                                                @endif
                                                             @elseif($item->status == 'REFUND' || $item->status == 'SUCCESS')
                                                                 <a target="_bank"
-                                                                    href="{{ route('virements.invoice.print', $item->id) }}"
+                                                                    href="{{ route('xbets.invoice.print', $item->id) }}"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                     title="Facture">
                                                                     Facture

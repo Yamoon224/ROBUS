@@ -56,12 +56,12 @@ class XbetHisto extends Component
 
             if ($this->statusFilter != "") {
 
-                // $realod->where("wallet_reloads.status", $this->statusFilter);
+                // $realod->where("wallet_xbets.status", $this->statusFilter);
           
                 return view(
                     'livewire.xbet-histo',
                     [
-                        'xbet_historicals' =>   $realod->where("status", $this->statusFilter)->where('created_by', Auth::guard('web')->user()->id)->select('wallet_reloads.*')->orderBy('created_at', 'desc')->paginate(15),
+                        'xbet_historicals' =>   $realod->where("status", $this->statusFilter)->where('created_by', Auth::guard('web')->user()->id)->select('wallet_xbets.*')->orderBy('created_at', 'desc')->paginate(15),
                         'usersCountry' =>  $walletUser->country->currencie->name,    
                     ]
                 );

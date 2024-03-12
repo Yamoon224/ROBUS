@@ -11,6 +11,7 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use Illuminate\Support\Carbon;
@@ -70,7 +71,10 @@ class Historique extends Component
         $xbet_padding = $this->getTransactionCount(WalletXbet::class, 'PENDING', 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
         $xbet_success = $this->getTransactionCount(WalletXbet::class, 'SUCCESS',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
 
-
+        $wave_error = $this->getTransactionCount(WalletWave::class, 'ERROR',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+        $wave_padding = $this->getTransactionCount(WalletWave::class, 'PENDING', 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+        $wave_success = $this->getTransactionCount(WalletWave::class, 'SUCCESS',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+       
         // Amount transactions days
         $payement_amount = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
         $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
@@ -80,6 +84,7 @@ class Historique extends Component
         $bank_amount = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $deposit_amount = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
+        $wave_amount = $this->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount');
 
         if ($walletUser->wallet->sidUser->is_under_distributer == true) {
 
@@ -89,9 +94,9 @@ class Historique extends Component
             return view('livewire.historique', [
 
                 'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-                'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error,
-                'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success,
-                'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding,
+                'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error + $wave_error,
+                'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success +  $wave_success ,
+                'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding + $wave_padding,
                 'wallet_Banks_last' => WalletBank::select('wallet_banks.*')->limit(5)->orderBy('wallet_banks.created_at', 'desc')->get(),
                 'Wallet_Deposits_last' => WalletDeposit::select('wallet_deposits.*')->limit(5)->orderBy('wallet_deposits.created_at', 'desc')->get(),
                 'Wallet_Inters_last' => WalletInter::select('wallet_inters.*')->limit(5)->orderBy('wallet_inters.created_at', 'desc')->get(),
@@ -100,6 +105,7 @@ class Historique extends Component
                 'Wallet_PhoneCredits_last' => WalletPhoneCredit::select('wallet_phone_credits.*')->limit(5)->orderBy('wallet_phone_credits.created_at', 'desc')->get(),
                 'Wallet_Reloads_last' => WalletReload::select('wallet_reloads.*')->limit(5)->orderBy('wallet_reloads.created_at', 'desc')->get(),
                 'Wallet_xbet_last' => WalletXbet::select('wallet_xbets.*')->limit(5)->orderBy('wallet_xbets.created_at', 'desc')->get(),
+                'Wallet_wave_last' => WalletWave::select('wallet_waves.*')->limit(5)->orderBy('wallet_waves.created_at', 'desc')->get(),
                 'With_drawer_merchant' => WithMerchant::limit(5)->orderBy('date_removed', 'desc')->get(),
                 'usersCountry' =>  $walletUser->country->currencie->name,
                 'sum_bank' =>  $bank_amount,
@@ -110,6 +116,7 @@ class Historique extends Component
                 'sum_inter' => $inter_amount,
                 'sum_phoneCredit' => $phonecredit_amount,
                 'sum_xbets' => $xbet_amount,
+                'sum_waves' => $wave_amount,
                 'sum_under_distributers' => $this->historiqueService->getSDistributeurSumAdmin(),
                 'sum_custumers' => $this->historiqueService->getCustumersSumAdmin(),
 

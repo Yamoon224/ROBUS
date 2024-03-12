@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\WithMerchant;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Models\Custumers\Country;
+use App\Models\LevelCountry;
 use App\Models\Wallets\Wallet;
-use Illuminate\Support\Carbon;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Wallets\WalletBank;
-use App\Models\Wallets\WalletInter;
-use App\Models\Wallets\WalletReload;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletInter;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
+use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
-use App\Models\LevelCountry;
-use App\Models\Custumers\Country;
+use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
+use App\Models\WithMerchant;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 
 class AdminHistoriqueController extends Controller
 {
@@ -74,6 +76,54 @@ class AdminHistoriqueController extends Controller
             $amount_total = $this->getWalletBankSumProperty($id);
 
             $pdf = Pdf::loadView('pages.historicals.reports.pdf_bank', compact('wallet_user', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
+            return $pdf->download('reporting_virement.pdf');
+        }
+    }
+
+    public function reporting_xbet_historical($id)
+    {
+
+
+        $usersCountry  =   Auth::guard('web')->user();
+        $todays = Carbon::now();
+        $formattedDate = today();
+        $bank_historicals = [];
+
+        $wallet_user = Wallet::whereId($id)->first();
+
+        $userId =  $wallet_user->sidUser->id;
+
+        if (sabdy()->is_distributer == true) {
+
+            foreach (WalletXbet::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
+                $bank_historicals[] = $bank;
+            }
+
+            $account_penddings = WalletXbet::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'PENDING')->count();
+
+            $account_success = WalletXbet::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->count();
+
+            $account_errors = WalletXbet::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'ERROR')->count();
+
+            $amount_total = $this->getWalletSumDaysProperty(WalletXbet::class ,$userId);
+
+            $pdf = Pdf::loadView('pages.historicals.distributers.pdf_xbets', compact('wallet_user', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
+            return $pdf->download('reporting_virement.pdf');
+        } else {
+
+            foreach (WalletXbet::where('wallet_id', $id)->get() as $bank) {
+                $bank_historicals[] = $bank;
+            }
+
+            $account_penddings = WalletXbet::where('wallet_id', $id)->where('status', 'PENDING')->count();
+
+            $account_success = WalletXbet::where('wallet_id', $id)->where('status', 'SUCCESS')->count();
+
+            $account_errors = WalletXbet::where('wallet_id', $id)->where('status', 'ERROR')->count();
+
+            $amount_total = $this->getWalletSumDaysProperty(WalletXbet::class ,$userId);
+
+            $pdf = Pdf::loadView('pages.historicals.reports.pdf_xbets', compact('wallet_user', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_virement.pdf');
         }
     }
@@ -747,6 +797,21 @@ class AdminHistoriqueController extends Controller
         return array_sum($data);
     }
 
+    public function getWalletSumDaysProperty($wallet ,$id)
+    {
+
+        $todays = Carbon::now();
+        $formattedDate = today();
+
+        $data = [];
+
+        foreach ($wallet::where('updated_by', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->get() as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
+    }
+
     public function getWalletDepositSumCommissionsProperty($id)
     {
 
@@ -917,6 +982,58 @@ class AdminHistoriqueController extends Controller
 
             $pdf = Pdf::loadView('pages.historicals.reports.pdf_card_bank', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_commande.pdf');
+        }
+    }
+
+
+    public function reporting_wave_historical($id)
+    {
+        $bank_historicals = [];
+        $todays = Carbon::now();
+        $formattedDate = today();
+
+        $wallet_id = Wallet::whereId($id)->first();
+
+        $userId =  $wallet_id->sidUser->id;
+
+        if (sabdy()->is_distributer == true) {
+
+            foreach (WalletWave::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
+                $bank_historicals[] = $bank;
+            }
+
+            $account_penddings = WalletWave::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'PENDING')->count();
+
+            $account_success = WalletWave::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->count();
+
+            $account_errors = WalletWave::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'ERROR')->count();
+
+            $amount_total = $this->walletCardDepositSumUserProperty($userId);
+
+            $wallet_id = Wallet::whereId($id)->first();
+
+
+            $pdf = Pdf::loadView('pages.historicals.distributers.pdf_wave', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
+            return $pdf->download('reporting_commande.pdf');
+        } else {
+
+            foreach (WalletWave::where('wallet_id', $id)->get() as $bank) {
+                $bank_historicals[] = $bank;
+            }
+
+            $account_penddings = WalletWave::where('wallet_id', $id)->where('status', 'PENDING')->count();
+
+            $account_success = WalletWave::where('wallet_id', $id)->where('status', 'SUCCESS')->count();
+
+            $account_errors = WalletWave::where('wallet_id', $id)->where('status', 'ERROR')->count();
+
+            $amount_total = $this->walletCardDepositSumUserProperty($id);
+
+            $wallet_id = Wallet::whereId($id)->first();
+
+
+            $pdf = Pdf::loadView('pages.historicals.reports.pdf_wave', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
+            return $pdf->download('reporting_wave.pdf');
         }
     }
 
@@ -1832,7 +1949,7 @@ class AdminHistoriqueController extends Controller
 
     public function searchByXbetsDate(Request $request)
     {
-       
+
         $this->validate($request, [
             'search_begin' => 'required|date',
             'search_end' => 'required|date|after_or_equal:search_begin',
@@ -1855,6 +1972,33 @@ class AdminHistoriqueController extends Controller
 
         $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_bank', compact('amount_total', 'walletInters', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
         return $pdf->download('reporting_payments_days.pdf');
+    }
+
+    public function searchBywavesDate(Request $request)
+    {
+
+        $this->validate($request, [
+            'search_begin' => 'required|date',
+            'search_end' => 'required|date|after_or_equal:search_begin',
+        ]);
+
+
+        $searchDateBegin = $request->input('search_begin');
+
+        $searchDateEnd = $request->input('search_end');
+
+        $walletInters = $this->getTransactionDate(WalletWave::class, $searchDateBegin, $searchDateEnd);
+
+        $account_penddings =  $this->getTransactionCount(WalletWave::class, 'PENDING', $searchDateBegin, $searchDateEnd);;
+
+        $account_success = $this->getTransactionCount(WalletWave::class, 'SUCCESS', $searchDateBegin, $searchDateEnd);
+
+        $account_errors = $this->getTransactionCount(WalletWave::class, 'ERROR', $searchDateBegin, $searchDateEnd);
+
+        $amount_total = $this->walletTransactionsDays(WalletWave::class, $searchDateBegin, $searchDateEnd);
+
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_wave', compact('amount_total', 'walletInters', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_waves_days.pdf');
     }
 
     public function searchByCartesDate(Request $request)

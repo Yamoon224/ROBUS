@@ -89,6 +89,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             // 1Xbets
             Route::post('oneXbet/store', [OnexbetTransactionController::class, 'create_OnexbetTranaction']);
             Route::post('oneXbet/delete/{id}', [OnexbetTransactionController::class, 'delete_wallet_xbet']);
+            Route::get('search_onexbet/{amount_wave}', [OnexbetTransactionController::class, 'search_xbet']);
 
             // 1Xbets
             Route::post('wave/store', [WaveTransactionController::class, 'create_WaveTranaction']);
@@ -212,6 +213,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('reloads/store', [TransactionController::class, 'create_reload_master']);
             Route::post('add_under_distributors/store', [UserController::class, 'add_under_distributor']);
             Route::post('create_under_distributors/store', [MasterController::class, 'create_under_distributor']);
+            Route::post('create_custumers/store', [MasterController::class, 'create_custumers']);
             Route::get('citie_masters', [MasterController::class, 'citie_masters']);
 
             // Historique Masters   
@@ -234,10 +236,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('custumers_distributors', [UserController::class, 'custumers_com_zones']);
 
             // Providers transactions
-            Route::prefix('providers')->group(function () {
-                Route::get('transaction_providers', [TransactionProviderController::class, 'index_masters']);
-                Route::get('reload_providers', [ReloadProviderController::class, 'index_masters']);
-            });
+            Route::get('/providers', [ProviderController::class, 'comzones_providers']);
 
             // create Users
             Route::post('add_masters/store', [ComZoneController::class, 'store_under_masters']);

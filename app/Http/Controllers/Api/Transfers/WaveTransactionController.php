@@ -147,12 +147,11 @@ class WaveTransactionController extends Controller
 
                                         $request->all(),
                                         [
-                                                "phone" => 'required',
+
                                                 "amount" => 'required'
                                         ],
                                         [
 
-                                                'phone.required' => 'Votre numero est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
 
                                         ]
@@ -182,7 +181,9 @@ class WaveTransactionController extends Controller
 
                                                         if ($transactionResult['success']) {
 
+
                                                                 $this->notificationPhone->sendNotificationWaves($transactionResult['walletWave']);
+
                                                                 return $this->messageAfterValidated($transactionResult['walletWave']);
                                                         } else {
                                                                 return json_message_response(false, $transactionResult['message'], 333);
@@ -225,7 +226,7 @@ class WaveTransactionController extends Controller
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletWave =  $this->waveService->createRobusWalletTransactionWave($request->amount, $request->provider, $percent_robus, $request->phone, $amountReceved);
+                $walletWave =  $this->waveService->createRobusWalletTransactionWave($request->amount, $request->provider, $percent_robus, $amountReceved);
 
                 if ($walletWave == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
@@ -251,7 +252,7 @@ class WaveTransactionController extends Controller
                                 'amount' => $walletWave->amount,
                                 'status' => $walletWave->status,
                         ],
-                        'message' =>  'Votre demande de rechargement 1xbet a bien été prise en compte.'
+                        'message' =>  'Votre demande de rechargement UV wave a bien été prise en compte.'
                 ], 200);
         }
         /**
@@ -320,7 +321,6 @@ class WaveTransactionController extends Controller
         {
 
 
-                $default_valeur = 2000000;
 
 
                 try {
@@ -334,26 +334,17 @@ class WaveTransactionController extends Controller
                                         $commission_wave_val_nat_pay = 0;
                                         $commission_wave_val_nat_receive = 0;
                                         //  Conversion valeur
-                                        $conversion_valeur_end  =  $default_valeur;
+                                     
+                                        $commission_wave_val_nat_pay =   $percent_robus->percent  *  $amount_wave;
 
-                                        if ($conversion_valeur_end  < $amount_wave) {
+                                        $valeur_receive =  $amount_wave - $commission_wave_val_nat_pay;
 
-                                                $commission_wave_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+                                        if ($valeur_receive < 0) {
 
-                                                $commission_wave_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+                                                $commission_wave_val_nat_receive = "Montant negatif";
                                         } else {
 
-                                                $commission_wave_val_nat_pay =   $percent_robus->percent  *  $amount_wave;
-
-                                                $valeur_receive =  $amount_wave - $commission_wave_val_nat_pay;
-
-                                                if ($valeur_receive < 0) {
-
-                                                        $commission_wave_val_nat_receive = "Montant negatif";
-                                                } else {
-
-                                                        $commission_wave_val_nat_receive =  $valeur_receive;
-                                                }
+                                                $commission_wave_val_nat_receive =  $valeur_receive;
                                         }
 
                                         return response()->json([

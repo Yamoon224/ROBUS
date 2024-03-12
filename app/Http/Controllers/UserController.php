@@ -2,35 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Tools\Image;
-use App\Models\Sid\SidUser;
-use Illuminate\Http\Request;
+use App\Events\UpdateActiveAccountEvent;
+use App\Http\Controllers\Admin\MailController;
+use App\Http\Controllers\Controller;
+use App\Http\Services\TransactionsAccountService;
+use App\Http\Services\UserCreateService;
+use App\Http\Services\ValidatorService;
 use App\Models\Banks\BankCard;
-use App\Models\Custumers\Zone;
-use App\Models\Wallets\Wallet;
-use Illuminate\Support\Carbon;
-use App\Rules\MatchOldPassword;
 use App\Models\Custumers\Country;
+use App\Models\Custumers\Zone;
+use App\Models\Sid\SidUser;
+use App\Models\User;
+use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Role;
+use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletInter;
+use App\Models\Wallets\WalletPayment;
+use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
+use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletWave;
+use App\Models\Wallets\WalletXbet;
+use App\Rules\MatchOldPassword;
+use App\Tools\Image;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use App\Models\Wallets\WalletDeposit;
-use App\Models\Wallets\WalletXbet;
-use App\Models\Wallets\WalletPayment;
-use App\Events\UpdateActiveAccountEvent;
-use App\Models\Wallets\WalletPhoneCredit;
-use App\Models\Wallets\WalletTransaction;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Admin\MailController;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
+
+    protected $transactionAccountService;
+    protected $userValidatorService;
+    protected $createUserService;
+
+    public function __construct(
+        TransactionsAccountService $transactionAccountService,
+        ValidatorService $userValidatorService,
+        UserCreateService $createUserService
+    ) {
+        $this->transactionAccountService = $transactionAccountService;
+        $this->userValidatorService = $userValidatorService;
+        $this->createUserService = $createUserService;
+    }
+
 
     public function browse(Request $request)
     {
@@ -116,52 +137,21 @@ class UserController extends Controller
 
             $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
 
-            $transactions =  WalletTransaction::where('wallet_id', $wallet_solde->id)
-                ->orWhere('num_wallet',  $wallet_solde->wallet_id)
-                ->orderBy('created_at', 'desc')->paginate(20);
-
-            $paiements =  WalletPayment::where('wallet_id', $wallet_solde->id)
-                ->orderBy('created_at', 'desc')->paginate(20);
-
-
-            $virements =  WalletBank::where('wallet_id', $wallet_solde->id)
-                ->orderBy('created_at', 'desc')->paginate(20);
-
-            $phoneCredits =  WalletPhoneCredit::where('wallet_id', $wallet_solde->id)
-                ->orderBy('created_at', 'desc')->paginate(20);
-
-            $reaload_uv =  WalletReload::where('wallet_id', $wallet_solde->id)
-                ->orWhere('account_wallet',  $wallet_solde->wallet_id)
-                ->orderBy('created_at', 'desc')->paginate(20);
-
-
-            $reloadCards =  WalletDeposit::where('wallet_id', $wallet_solde->id)
-                ->orderBy('created_at', 'desc')->paginate(20);
-
-            $Internationals =  WalletInter::where('wallet_id', $wallet_solde->id)
-                ->orWhere('number_compte',  $wallet_solde->wallet_id)
-                ->orderBy('created_at', 'desc')->paginate(20);
-
-            $walletOrderCarte =  BankCard::where('wallet_id', $wallet_solde->id)
-                ->orderBy('created_at', 'desc')->paginate(20);
-
-            $walletxbets =  WalletXbet::where('wallet_id', $wallet_solde->id)
-                ->orderBy('created_at', 'desc')->paginate(20);
+            // Wallet Error and other
+            $sum_error    = $this->getCountWalletTransaction($wallet_solde->id, 'ERROR');
+            $sum_success    = $this->getCountWalletTransaction($wallet_solde->id, 'SUCCESS');
+            $pending_success    = $this->getCountWalletTransaction($wallet_solde->id, 'PENDING');
+            $totalSumAmounts = $this->getTotalSumTransactionsAmount($wallet_solde);
 
             $usersCountry = Auth::guard('web')->user()->country->currencie->name;
 
             return view('pages.custumers.show', compact(
                 'user',
-                'virements',
-                'reaload_uv',
-                'reloadCards',
-                'paiements',
-                'Internationals',
-                'transactions',
-                'phoneCredits',
+                'sum_error',
+                'sum_success',
+                'pending_success',
                 'usersCountry',
-                'walletOrderCarte',
-                'walletComzones',
+                'totalSumAmounts',
                 'kycs'
             ));
         } else {
@@ -186,7 +176,6 @@ class UserController extends Controller
                 ->orderBy('created_at', 'desc')->paginate(20);
 
 
-
             $employers =  SidUser::where('id', '!=', $id)->where('company_id', $user->company_id)->paginate(20);
 
             $usersCountry = Auth::guard('web')->user()->country->currencie->name;
@@ -203,98 +192,50 @@ class UserController extends Controller
         }
     }
 
-    public function show_comzone(Request $request, int $id)
+    public function getTotalSumTransactionsAmount($wallet_solde)
     {
+        $sum_wallet_transaction = $this->transactionAccountService->getTransactionAmount(WalletTransaction::class,  $wallet_solde->id);
+        $sum_wallet_bank = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $wallet_solde->id);
+        $sum_wallet_deposit = $this->transactionAccountService->getTransactionAmount(WalletDeposit::class, $wallet_solde->id);
+        $sum_wallet_payment = $this->transactionAccountService->getTransactionAmount(WalletPayment::class, $wallet_solde->id);
+        $sum_wallet_phone = $this->transactionAccountService->getTransactionAmount(WalletPhoneCredit::class, $wallet_solde->id);
+        $sum_wallet_wave = $this->transactionAccountService->getTransactionAmount(WalletWave::class, $wallet_solde->id);
+        $sum_wallet_xbet_depot = $this->transactionAccountService->getTransactionXbetAmount(WalletXbet::class, $wallet_solde->id, 1);
+        $sum_wallet_xbet_retrait = $this->transactionAccountService->getTransactionXbetAmount(WalletXbet::class, $wallet_solde->id, 2);
+        $sum_wallet_Inter = $this->transactionAccountService->getTransactionAmount(WalletInter::class,   $wallet_solde->id);
+        $sum_wallet_Inter_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
+        // Wallet commissions
+        $sum_wallet_transaction_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
 
-        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
-
-
-            $user = SidUser::whereId($id)->first();
-
-            $kycs = $user->kyc()->get() ?? null;
-
-            $wallet_user = Wallet::where('sid_user_id', $user->id)->first();
-
-
-            // get transactions days
-            $paiements = $this->getTransactionsAllTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at');
-            $transactions = $this->getTransactionsAllTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at');
-            $reaload_uv = $this->getReloadAmountTotal(WalletReload::class, $wallet_user->id);
-            $phoneCredits = $this->getTransactionsAllTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at');
-            $Internationals = $this->getTransactionsAllTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at');
-            $virements = $this->getTransactionsAllTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at');
-            $reloadCards = $this->getTransactionsAllTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at');
-            $walletOrderCarte = $this->getTransactionsAllTotal(BankCard::class, 'bank_cards.wallet_id', 'bank_cards.created_at');
-            $walletxbets = $this->getTransactionsAllTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at');
-
-
-            $usersCountry = sabdy()->country->currencie->name;
-
-            return view('pages.custumers.show_comzone', compact(
-                'user',
-                'transactions',
-                'paiements',
-                'reaload_uv',
-                'phoneCredits',
-                'Internationals',
-                'walletOrderCarte',
-                'virements',
-                'reloadCards',
-                'walletxbets',
-                'usersCountry',
-                'kycs'
-            ));
-        } else {
-            abort(403);
-        }
+        return [
+            'sum_wallet_transaction' => $sum_wallet_transaction,
+            'sum_wallet_bank' => $sum_wallet_bank,
+            'sum_wallet_deposit' => $sum_wallet_deposit,
+            'sum_wallet_payment' => $sum_wallet_payment,
+            'sum_wallet_phone' => $sum_wallet_phone,
+            'sum_wallet_xbet_depot' => $sum_wallet_xbet_depot,
+            'sum_wallet_xbet_retrait' => $sum_wallet_xbet_retrait,
+            'sum_wallet_Inter' => $sum_wallet_Inter,
+            'sum_wallet_Inter_received' => $sum_wallet_Inter_received,
+            'sum_wallet_wave' => $sum_wallet_wave,
+            'sum_wallet_transaction_received' => $sum_wallet_transaction_received
+        ];
     }
 
-
-    public function showunders(Request $request, int $id)
+    public function getCountWalletTransaction($wallet_id, $status)
     {
-        if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {
-
-
-            $user = SidUser::whereId($id)->first();
-
-            $kycs = $user->kyc()->get() ?? null;
-
-            $wallet_user = Wallet::where('sid_user_id', $user->id)->first();
-
-
-            // get transactions days
-            $paiements = $this->getTransactionsAllTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at');
-            $transactions = $this->getTransactionsAllTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at');
-            $reaload_uv = $this->getReloadAmountTotal(WalletReload::class, $wallet_user->id);
-            $phoneCredits = $this->getTransactionsAllTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at');
-            $Internationals = $this->getTransactionsAllTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at');
-            $virements = $this->getTransactionsAllTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at');
-            $reloadCards = $this->getTransactionsAllTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at');
-            $walletOrderCarte = $this->getTransactionsAllTotal(BankCard::class, 'bank_cards.wallet_id', 'bank_cards.created_at');
-            $walletxbets = $this->getTransactionsAllTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at');
-
-
-            $usersCountry = sabdy()->country->currencie->name;
-
-            return view('pages.custumers.show_comzone', compact(
-                'user',
-                'transactions',
-                'paiements',
-                'reaload_uv',
-                'phoneCredits',
-                'Internationals',
-                'walletOrderCarte',
-                'virements',
-                'reloadCards',
-                'walletxbets',
-                'usersCountry',
-                'kycs'
-            ));
-            
-        } else {
-            abort(403);
-        }
+        return  $this->transactionAccountService->getTransactionWalletDetailsCount(WalletTransaction::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletPayment::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletBank::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletPhoneCredit::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletReload::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletDeposit::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletInter::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(BankCard::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletXbet::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletWave::class, $wallet_id, $status);
     }
+
     public function getReloadAmountTotal($walletModel, $id)
     {
 

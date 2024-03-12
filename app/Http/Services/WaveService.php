@@ -20,7 +20,7 @@ class WaveService
     }
 
 
-    public function createRobusWalletTransactionWave($amount_valeur, $provider, $percent_robus, $numberAcompte, $amountReceved)
+    public function createRobusWalletTransactionWave($amount_valeur, $provider, $percent_robus , $amountReceved)
     {
 
         $amount_commission = (float)$amount_valeur + (float)$percent_robus->percent * $amount_valeur;
@@ -37,7 +37,7 @@ class WaveService
             'amount_solde'  => $amount_solde  ?? null,
             'provider_id'  =>  $provider,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
-            'phone'  =>  robus()->country->indecative .  $numberAcompte,
+            'phone'  =>  robus()->phone,
             'full_name' =>  robus()->firstname . ' ' . robus()->lastname,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,

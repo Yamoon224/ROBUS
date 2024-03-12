@@ -41,16 +41,16 @@ class XbetsUsers extends Component
 
 
                 $realod_search->where('updated_by', $this->walletAllXbets)->orWhereHas(
-                    'paymentReload',
+                    'transaction',
                     function ($query) {
                         $query->where('operator_transaction_name', 'like', '%' . $this->search . '%')
                             ->orWhere('transaction_id', 'like', '%' .  $this->search   . '%')
                             ->orWhere('trans_comp_id', 'like', '%' .  $this->search  . '%');
                     }
                 )
-                    ->orWhere("wallet_reloads.amount", "like",  "%" . $this->search . "%")
-                    ->orWhere("wallet_reloads.phone", "like",  "%" . $this->search . "%")
-                    ->orWhere("wallet_reloads.account_wallet", "like",  "%" . $this->search . "%");
+                    ->orWhere("wallet_xbets.amount", "like",  "%" . $this->search . "%")
+                    ->orWhere("wallet_xbets.phone", "like",  "%" . $this->search . "%")
+                    ->orWhere("wallet_xbets.account_wallet", "like",  "%" . $this->search . "%");
             }
         } else {
 
@@ -62,18 +62,17 @@ class XbetsUsers extends Component
             if ($this->search != "") {
 
 
-                $realod_search->where('wallet_id', $wallet_solde->id)
-                    ->orWhere('account_wallet',   $wallet_solde->wallet_id)->orWhereHas(
-                        'paymentReload',
-                        function ($query) {
-                            $query->where('operator_transaction_name', 'like', '%' . $this->search . '%')
-                                ->orWhere('transaction_id', 'like', '%' .  $this->search   . '%')
-                                ->orWhere('trans_comp_id', 'like', '%' .  $this->search  . '%');
-                        }
-                    )
-                    ->orWhere("wallet_reloads.amount", "like",  "%" . $this->search . "%")
-                    ->orWhere("wallet_reloads.phone", "like",  "%" . $this->search . "%")
-                    ->orWhere("wallet_reloads.account_wallet", "like",  "%" . $this->search . "%");
+                $realod_search->where('wallet_id', $wallet_solde->id)->orWhereHas(
+                    'transaction',
+                    function ($query) {
+                        $query->where('operator_transaction_name', 'like', '%' . $this->search . '%')
+                            ->orWhere('transaction_id', 'like', '%' .  $this->search   . '%')
+                            ->orWhere('trans_comp_id', 'like', '%' .  $this->search  . '%');
+                    }
+                )
+                    ->orWhere("wallet_xbets.amount", "like",  "%" . $this->search . "%")
+                    ->orWhere("wallet_xbets.phone", "like",  "%" . $this->search . "%")
+                    ->orWhere("wallet_xbets.account_wallet", "like",  "%" . $this->search . "%");
             }
         }
 

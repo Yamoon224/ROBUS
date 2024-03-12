@@ -9,12 +9,18 @@ use App\Events\ChoosePhoneCreditEvent;
 use App\Events\ChooseReloadCardEvent;
 use App\Events\ChooseTransactionEvent;
 use App\Events\ChooseVirementEvent;
+use App\Events\ChooseWaveEvent;
 use App\Events\ChooseXbetEvent;
 use App\Events\CreateWalletBankEvent;
 use App\Events\CreateWalletPaiementEvent;
 use App\Events\CreateWalletPhoneCreditEvent;
 use App\Events\CreateWalletReloadCardEvent;
 use App\Events\CreateWalletTransfersEvent;
+use App\Events\UpdateBankEvent;
+use App\Events\UpdateInterEvent;
+use App\Events\UpdatePaiementEvent;
+use App\Events\UpdatePhoneCreditEvent;
+use App\Events\UpdateReloadCardEvent;
 use App\Events\UserNotifEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Mail\CodeValidated;
@@ -33,6 +39,7 @@ use App\Models\Invoices\InvoiceInter;
 use App\Models\Invoices\InvoicePayment;
 use App\Models\Invoices\InvoicePhoneCredit;
 use App\Models\Invoices\InvoiceTransaction;
+use App\Models\Invoices\InvoiceWave;
 use App\Models\Invoices\OneBetInvoice;
 use App\Models\Moneys\LevelMoney;
 use App\Models\Offer;
@@ -41,6 +48,7 @@ use App\Models\Payments\OneBetTransaction;
 use App\Models\Payments\Payment;
 use App\Models\Payments\PaymentBank;
 use App\Models\Payments\PaymentPhoneCredit;
+use App\Models\Payments\PaymentWave;
 use App\Models\Payments\Transaction;
 use App\Models\Payments\TransactionInter;
 use App\Models\Providers\Provider;
@@ -53,9 +61,11 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -355,6 +365,19 @@ class Transfers extends Component
     public $choose_xbet_edit;
     public $xbetDescription;
 
+
+    // Edit Wave UV
+    public $provider_wave_edit;
+    public $provider_name_wave_edit;
+    public $wave_id;
+    public $number_wave_edit;
+    public $amount_wave_edit;
+    public $countrie_wave_edit;
+    public $citie_wave_edit;
+    public $fullname_wave_edit;
+    public $status_wave_edit;
+    public $waveDescription;
+
     // Protected valeurs Services
     private $phoneCreditService1;
 
@@ -376,6 +399,9 @@ class Transfers extends Component
         'echo:updated_card,.update_wallet_card' => 'notifyNewCard',
         'echo:wallet-phone-created,.Created_wallet_phone' => 'notifyNewPhone',
         'echo:updated_phone,.update_wallet_phone' => 'notifyNewPhone',
+        'echo:updated_phone,.update_wallet_phone' => 'notifyNewPhone',
+        'echo:updated_xbet,.update_wallet_xbet' => 'notifyNewXbet',
+        'echo:updated_wave,.update_wallet_wave' => 'notifyNewWave',
         // Choose Event Channel
         'echo:wallet-bank-choose-created,.Created_wallet_bank_choose' =>
         'notifyNewBank',
@@ -391,6 +417,8 @@ class Transfers extends Component
         'notifyNewPhone',
         'echo:wallet-xbet-choose-created,.Created_wallet_xbet_choose' =>
         'notifyNewXbet',
+        'echo:wallet-wave-choose-created,.Created_wallet_wave_choose' =>
+        'notifyNewWave',
     ];
 
     public function transactionAll($data)
@@ -557,6 +585,13 @@ class Transfers extends Component
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
         $this->emit('menu-xbet-active');
+    }
+
+    public function notifyNewWave()
+    {
+        $this->showNTransfersNotification = true;
+        // $this->emit('modal-hide-phoneCredit');
+        $this->emit('menu-wave-active');
     }
 
     // Add Virement 
@@ -5432,6 +5467,25 @@ class Transfers extends Component
         $this->emit('menu-xbet-active');
     }
 
+    public function editWave($id, $state)
+    {
+        $check = WalletWave::whereId($id)->first();
+        $provider = Provider::whereId($check->provider_id)->first();
+        $this->wave_id = $id;
+        $this->provider_wave_edit = $provider->id;
+        $this->provider_name_wave_edit = $provider->name;
+        $this->number_wave_edit = $check->phone ?? null;
+        $this->fullname_wave_edit = $check->full_name ?? null;
+        $this->amount_wave_edit = $check->amount ?? null;
+        $this->waveDescription = $check->description ?? null;
+        $this->status_wave_edit = null;
+        $this->countrie_wave_edit = $check->countrie ?? null;
+        $this->citie_wave_edit = $check->citie ?? null;
+        $this->devise_user =   $check->wallet->currencie->code;
+        $this->emit($state);
+        $this->emit('menu-wave-active');
+    }
+
     // Edit Virement
 
     public function editVirement($id, $state)
@@ -8305,6 +8359,329 @@ class Transfers extends Component
             $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
     }
+
+
+    public function updateWave()
+    {
+        $check = WalletWave::whereId($this->wave_id)->first();
+        $rt = rand(40, 5000) * time();
+        $user_auth = Auth::guard('web')->user();
+        $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
+        $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
+        $admins = $this->getAdminValeurProperty();
+        $admin_civ = SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->where('country_id', 107)
+            ->get();
+        try {
+
+            if ($check) {
+
+                $this->validate([
+                    'status_wave_edit' => 'required',
+                    'password_transaction' => 'required',
+                ]);
+
+
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                    $check->update([
+                        'description' => $this->waveDescription ?? null,
+                        'updated_by' => Auth::guard('web')->user()->id,
+                        'status' => $this->status_wave_edit,
+                    ]);
+
+                    $this->password_transaction = "";
+                    $this->status_wave_edit = "";
+                    $this->wave_id = "";
+
+                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+                        if ($check->status == 'SUCCESS') {
+
+                            $commission_transaction = $check->amount_received;
+
+
+                            Auth::guard('web')->user()->wallet->update([
+                                'reload_by' => Auth::guard('web')->user()->firstname .
+                                    ' ' . Auth::guard('web')->user()->lastname,
+                                'sid_user_relod' => Auth::guard('web')->user()->id,
+                                'amount' => DB::raw('amount-' . $commission_transaction),
+                            ]);
+
+                            // solde custumers
+                            $amount_solde = (float)  $check->wallet->amount + (float) $commission_transaction;
+
+                            $check->update([
+                                'amount_solde'  => $amount_solde,
+                            ]);
+
+                            $check->wallet->update([
+                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                'sid_user_relod' => Auth::guard('web')->user()->id,
+                                'amount' => DB::raw('amount+' . $commission_transaction),
+                            ]);
+
+
+                            $valeur_amount_com = $check->adminCom->amount;
+
+                            if ($admin_civ->count() > 0) {
+
+                                $count_admin = $admin_civ->count();
+
+                                $valeur_single = $valeur_amount_com / $count_admin;
+
+                                foreach ($admin_civ as $user) {
+                                    $admin_single = SidUser::find($user->id);
+                                    $check->adminCom->update([
+                                        'amount' =>   $valeur_amount_com,
+                                        'sid_user_id' =>   $admin_single->id,
+                                        'description' => 'Commission administrateur',
+                                        'status'  => "SUCCESS",
+                                    ]);
+                                    $admin_single->wallet->update([
+                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                        'sid_user_relod' => Auth::guard('web')->user()->id,
+                                        'amount' => DB::raw('amount+' . $valeur_single),
+                                    ]);
+                                }
+                            }
+
+
+                            $transaction = PaymentWave::create([
+                                'wallet_wave_id' => $check->id,
+                                'sid_user_id' => sabdy()->id,
+                                'transaction_id' => 'WV_' . $check->provider->name . '_' . $transactionCode,
+                                'operator_transaction_name' => $check->provider->name,
+                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
+                                'pay_amount' => $check->amount,
+                                'fee_amount' =>  $check->costs_amount,
+                                'received_amount' => $check->amount,
+                                'status' => $check->status,
+                            ]);
+
+                            InvoiceWave::create([
+                                'title' => "Achat UV par Wave",
+                                'wallet_wave_id' => $check->id,
+                                'payment_wave_id' => $transaction->id,
+                                'description' => $check->description,
+                                'status' => $check->status,
+                                'created_by' => sabdy()->id,
+                            ]);
+
+
+                            if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
+
+                                $messageType = 'demande achat UV par WAVE ';
+                                $amount = $check->amount . ' ' . $check->wallet->currencie->code;
+                                $provider = $check->provider->name;
+                                $username = $check->firstname . ' ' . $check->firstname;
+                                $date = $check->updated_at;
+
+                                $message = 'Votre ' . $messageType . $amount . ' par ' . $provider . ' a été validée avec succès le ' . $date . '. Robus vous remercie.';
+
+
+                                Http::get(
+                                    "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                                );
+                            }
+
+                            $msg_title = 'Service achat UV par WAVE';
+                            $msg = 'Votre achat Wave a été validé';
+                            $check->wallet->sidUser->notify(
+                                new UserNotification([
+                                    'title' => $msg_title,
+                                    'message' => $msg,
+                                ])
+                            );
+
+                            Notification::send(
+                                $admins,
+                                new AdminNotification(
+                                    'Demande de achat wave a été validée'
+                                )
+                            );
+
+
+                            if ($admins->count() > 0) {
+
+
+                                foreach ($admins  as $user) {
+
+                                    $admin_single = SidUser::find($user->id);
+
+                                    $notifs = $admin_single->unreadNotifications;
+
+                                    event(new AdminNotifEvent($notifs));
+                                }
+                            }
+                            $this->resetWaveField();
+                            $this->emit('menu-wave-active');
+                            $this->emit('modal-hide-wave-validated');
+                            $this->emit('success', 'wave Accepté !');
+                            $notify = new MailController;
+                            $notify->newVirement($check);
+                        } elseif ($check->status == 'ERROR') {
+
+                            $commission =  $check->amount + $check->costs_amount;
+
+                            if ($check->choose_type_transaction == 1) {
+                                $check->wallet->update([
+                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                                    'amount' => DB::raw('amount+' . $commission),
+                                ]);
+
+                                $wallet_received =  $check->amount_solde;
+
+                                $amount_solde = (float)$wallet_received  +   (float)$commission;
+
+                                // Update commission
+                                $check->update([
+                                    'commissions' => 0,
+                                    'commissions_admin' => 0,
+                                    'amount_solde' => $amount_solde,
+                                    'commission_masters' => 0,
+                                ]);
+                            }
+
+
+                            // Valeur amount commission distributeur
+                            $valeur_amount_com = $check->adminCom->amount;
+
+                            //  Send valeur in Admin
+                            if ($admin_civ->count() > 0) {
+
+                                $count_admin = $admin_civ->count();
+
+                                $valeur_single = $valeur_amount_com / $count_admin;
+
+                                foreach ($admin_civ as $user) {
+                                    $admin_single = SidUser::find($user->id);
+                                    $check->adminCom->update([
+                                        'amount' =>   0,
+                                        'sid_user_id' =>   $admin_single->id,
+                                        'status'  => "ERROR",
+                                        'description' => 'Remboursement de la commission client',
+                                    ]);
+                                }
+                            }
+
+
+                            if ($check->wallet->sidUser->country->code == 'CI') {
+
+                                $messageType = 'demande achat UV par Wave de ';
+                                $amount = $check->amount . ' ' . $check->wallet->currencie->code;
+                                $provider = $check->provider->name;
+                                $username = $check->firstname . ' ' . $check->firstname;
+                                $date = $check->updated_at;
+
+                                $message = 'Votre ' . $messageType . $amount . ' par ' . $provider . ' a été refusée le ' . $date . '. Robus vous remercie.';
+
+                                $encode = substr($check->wallet->sidUser->phone, -10);
+
+                                Http::get(
+                                    "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                                );
+                            }
+
+
+                            $transaction = PaymentWave::create([
+                                'wallet_wave_id' => $check->id,
+                                'sid_user_id' => sabdy()->id,
+                                'transaction_id' => 'WV_' . $check->provider->name . '_' . $transactionCode,
+                                'operator_transaction_name' => $check->provider->name,
+                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
+                                'pay_amount' => $check->amount,
+                                'fee_amount' =>  $check->costs_amount,
+                                'received_amount' => $check->amount,
+                                'status' => $check->status,
+                            ]);
+
+                            InvoiceWave::create([
+                                'title' => "Achat UV par Wave",
+                                'wallet_wave_id' => $check->id,
+                                'payment_wave_id' => $transaction->id,
+                                'description' => $check->description,
+                                'status' => $check->status,
+                                'created_by' => sabdy()->id,
+                            ]);
+
+                            $msg_title = 'Service Achat UV WAVE ';
+                            $msg = 'Demande achat a été réfusée ';
+                            $check->wallet->sidUser->notify(
+                                new UserNotification([
+                                    'title' => $msg_title,
+                                    'message' => $msg,
+                                ])
+                            );
+
+                            $notifs = $check->wallet->sidUser->unreadNotifications;
+
+                            Notification::send(
+                                $admins,
+                                new AdminNotification(
+                                    'Demande de xbet a été refusée'
+                                )
+                            );
+                            if ($admins->count() > 0) {
+
+
+                                foreach ($admins  as $user) {
+
+                                    $admin_single = SidUser::find($user->id);
+
+                                    $notifs = $admin_single->unreadNotifications;
+
+                                    event(new AdminNotifEvent($notifs));
+                                }
+                            }
+
+                            $this->resetWaveField();
+                            $this->emit('modal-hide-wave-validated');
+                            $this->emit('menu-wave-active');
+
+                            $this->emit('error', 'wave refusée !');
+
+                            $notify = new MailController;
+                            $notify->newVirement($check);
+                        } else {
+                            $this->resetWaveField();
+                            $this->emit('modal-hide-wave-validated');
+                            $this->emit('menu-wave-active');
+                            $this->emit('success', 'wave modifié !');
+                        }
+                    } else {
+                        $this->resetWaveField();
+                        $this->emit('menu-wave-active');
+                        $this->emit('modal-hide-wave-validated');
+                        $this->emit('error', 'Pas vous le valideur !');
+                    }
+                } else {
+                    $this->resetWaveField();
+                    $this->emit('modal-hide-wave-validated');
+                    $this->emit('menu-wave-active');
+                    $this->emit('error', 'Mot de passe Incorrect !');
+                }
+            } elseif ($this->password_transaction = "" ||  $this->status_wave_edit = "") {
+                $this->resetWaveField();
+                $this->emit('modal-hide-wave-validated');
+                $this->emit('menu-wave-active');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite !');
+            } else {
+                $this->resetWaveField();
+                $this->emit('modal-hide-wave-validated');
+                $this->emit('menu-wave-active');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite!');
+            }
+        } catch (\Exception $exception) {
+            $this->resetWaveField();
+            $this->emit('menu-wave-active');
+            $this->emit('modal-hide-wave-validated');
+            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
     // Choose Update Virement
     public function ChooseUpdateVirement($id)
     {
@@ -8391,7 +8768,46 @@ class Transfers extends Component
     }
 
 
+    public function ChooseUpdateWave($id)
+    {
+        $walletUpdate = WalletWave::findOrFail($id);
+        $sidAuth = Auth::guard('web')->user();
 
+        try {
+
+            if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+
+                if (Auth::guard('web')->user()->is_distributer == 1) {
+
+                    $walletUpdate->update([
+                        'updated_by' => Auth::guard('web')->user()->id,
+                    ]);
+                    event(new ChooseWaveEvent($walletUpdate));
+                    $this->emit('menu-wave-active');
+                    $this->emit('info', 'Vous avez choisi Wave');
+                } else {
+
+                    event(new ChooseWaveEvent($walletUpdate));
+                    $walletUpdate->update([
+                        'updated_by' => Auth::guard('web')->user()->id,
+                    ]);
+                    // $this->emit('modal-hide-wave');
+                    $this->emit('menu-wave-active');
+                    $this->emit('info', 'Vous avez choisi Wave');
+                }
+            } else {
+                //  $this->emit('modal-hide-wave');
+                $this->emit('menu-wave-active');
+                $this->emit(
+                    'error',
+                    'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+                );
+            }
+        } catch (\Exception $exception) {
+            $this->emit('menu-xbet-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
     public function updateInter()
     {
         $check = WalletInter::whereId($this->interId)->first();
@@ -9211,6 +9627,19 @@ class Transfers extends Component
     }
 
 
+    public function resetWaveField()
+    {
+        $this->waveDescription = '';
+        $this->wave_id = '';
+        $this->status_wave_edit = '';
+        $this->provider_wave_edit = null;
+        $this->fullname_wave_edit = '';
+        $this->amount_wave_edit = '';
+        $this->account_number_user = '';
+        $this->emit('modal-hide-wave');
+    }
+
+
     public function resetVirementInterField()
     {
         $this->virement_interId = '';
@@ -9254,6 +9683,22 @@ class Transfers extends Component
         $this->account_number_user = '';
         $this->emit('modal-hide-xbet-validated');
         $this->emit('menu-xbet-active');
+    }
+
+    public function cancelWaveField()
+    {
+        $this->waveDescription = '';
+        $this->wave_id = '';
+        $this->status_wave_edit = '';
+        $this->provider_wave_edit = null;
+        $this->fullname_wave_edit = '';
+        $this->amount_wave_edit = '';
+        $this->citie_wave_edit = '';
+        $this->countrie_wave_edit = '';
+        $this->account_number_user = '';
+        // $this->emit('modal-hide-wave');
+        $this->emit('modal-hide-wave-validated');
+        $this->emit('menu-wave-active');
     }
 
 
@@ -9542,6 +9987,8 @@ class Transfers extends Component
         $reload_card = WalletDeposit::query();
 
         $xbet = WalletXbet::query();
+
+        $wave = WalletWave::query();
 
         $phone_credit = WalletPhoneCredit::query();
 
@@ -10433,6 +10880,10 @@ class Transfers extends Component
             $xbet_padding = $this->getTransactionCountValidated(WalletXbet::class, 'PENDING', 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
             $xbet_success = $this->getTransactionCountValidated(WalletXbet::class, 'SUCCESS',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
 
+            $wave_error = $this->getTransactionCountValidated(WalletWave::class, 'ERROR',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+            $wave_padding = $this->getTransactionCountValidated(WalletWave::class, 'PENDING', 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+            $wave_success = $this->getTransactionCountValidated(WalletWave::class, 'SUCCESS',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+
             // Amount transactions days Error
             $payement_amount_error = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at',  'wallet_payments.status', 'ERROR', 'wallet_payments.updated_by', 'wallet_payments.amount');
             $transaction_amount_error  = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at',  'wallet_transactions.status', 'ERROR', 'wallet_transactions.updated_by',  'wallet_transactions.amount');
@@ -10450,7 +10901,7 @@ class Transfers extends Component
             $bank_amount_success  = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at',  'wallet_banks.status', 'SUCCESS', 'wallet_banks.updated_by',  'wallet_banks.amount');
             $deposit_amount_success  = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at',  'wallet_deposits.status', 'SUCCESS', 'wallet_deposits.updated_by',  'wallet_deposits.amount');
             $xbet_amount_success  = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at',  'wallet_xbets.status', 'SUCCESS', 'wallet_xbets.updated_by',  'wallet_xbets.amount');
-
+            $wave_amount_success  = $this->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at',  'wallet_waves.status', 'SUCCESS', 'wallet_waves.updated_by',  'wallet_waves.amount');
 
 
             $search_ = $wallet->where('wallet_id', 'like', '%' . $this->account_number_inter . '%')
@@ -10504,6 +10955,13 @@ class Transfers extends Component
                     ->where('wallet_xbets.status', 'PENDING')
                     ->select('wallet_xbets.*')
                     ->orderBy('wallet_xbets.created_at', 'desc')
+                    ->paginate(15),
+                'waves' => $wave
+                    ->join('wallets', 'wallet_waves.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $walletUser->country->id)
+                    ->where('wallet_waves.status', 'PENDING')
+                    ->select('wallet_waves.*')
+                    ->orderBy('wallet_waves.created_at', 'desc')
                     ->paginate(15),
                 'phoneCredits' => $phone_credit
                     ->join(
@@ -10666,6 +11124,9 @@ class Transfers extends Component
                 'xbets_error' => $xbet_error,
                 'xbets_success' => $xbet_success,
                 'xbets_pendding' => $xbet_padding,
+                'waves_error' => $wave_error,
+                'waves_success' => $wave_success,
+                'waves_pendding' => $wave_padding,
                 'phone_error' => $phone_credit_error,
                 'phone_success' => $phone_credit_success,
                 'phone_pendding' => $phone_credit_padding,
@@ -10676,6 +11137,7 @@ class Transfers extends Component
                 'WalletTransactions' => $transaction_amount_success,
                 'WalletPhoneCredits' => $phonecredit_amount_success,
                 'walletsXbets' => $xbet_amount_success,
+                'walletwaves' => $wave_amount_success,
                 'offers_canal' => $offers,
                 'countries' => Country::whereRobus(true)
                     ->orderBy('name', 'asc')
@@ -11192,7 +11654,7 @@ class Transfers extends Component
 
     // Transaction account
 
-    public function getTransactionCountValidated($walletModel, $status, $wallet_transactions , $transaction_days, $walletMy, $wallet_status)
+    public function getTransactionCountValidated($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status)
     {
         return $walletModel::join('wallets', $wallet_transactions, '=', 'wallets.id')
             ->where('wallets.country_id', sabdy()->country->id)
@@ -11208,5 +11670,4 @@ class Transfers extends Component
             ->where($wallet_status, $status)
             ->count();
     }
-
 }

@@ -142,8 +142,8 @@
             @endif
             <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
                 <div class="col-span-12 mt-space">
-                    <label for="virementDescription_edit" class="form-label">Commentaire</label>
-                    <textarea wire:model.defer="virementDescription_edit" id="virementDescription_edit" type="text" class="form-control"
+                    <label for="xbetDescription" class="form-label">Commentaire</label>
+                    <textarea wire:model.defer="xbetDescription" id="xbetDescription" type="text" class="form-control"
                         cols="13" rows="3">
                     </textarea>
                 </div>

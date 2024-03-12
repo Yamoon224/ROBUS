@@ -637,7 +637,7 @@ class AuthentificationController extends Controller
         $appStatusResult = $this->authService->appDispoMasterRobus(AppMasterStatus::class);
 
         if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 301);
+            return response()->json($appStatusResult, 200);
         }
 
         return $this->loginAll($request, 'masterLogin');
@@ -648,7 +648,7 @@ class AuthentificationController extends Controller
         $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
 
         if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 301);
+            return response()->json($appStatusResult, 200);
         }
 
         return $this->loginAll($request, 'comZoneLogin');
@@ -661,7 +661,7 @@ class AuthentificationController extends Controller
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
         if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 301);
+            return response()->json($appStatusResult, 200);
         }
 
         return $this->loginAll($request, 'underDistributorLogin');

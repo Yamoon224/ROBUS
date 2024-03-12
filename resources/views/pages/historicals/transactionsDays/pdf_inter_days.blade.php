@@ -347,6 +347,31 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                                                     Client</div>
                                                                             </div>
                                                                         </div>
+                                                                    @elseif($item->wallet->sidUser->is_supervisor == 1)
+                                                                        <div
+                                                                            class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                            <div class="fc-event-title-container">
+                                                                                <div class="fc-event-title fc-sticky">
+                                                                                    SUPERVISUER
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @elseif($item->wallet->sidUser->is_master == 1)
+                                                                        <div
+                                                                            class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                            <div class="fc-event-title-container">
+                                                                                <div class="fc-event-title fc-sticky">
+                                                                                    MASTER</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @elseif($item->wallet->sidUser->is_com_zone == 1)
+                                                                        <div
+                                                                            class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                            <div class="fc-event-title-container">
+                                                                                <div class="fc-event-title fc-sticky">
+                                                                                    COM ZONE</div>
+                                                                            </div>
+                                                                        </div>
                                                                     @else
                                                                         <div
                                                                             class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">

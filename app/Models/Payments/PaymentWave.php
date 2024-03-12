@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Payments;
 
 use App\Models\Company;
 use App\Models\Sid\SidUser;

@@ -342,4 +342,57 @@ class OnexbetTransactionController extends Controller
                         return   json_message_response(false, "Erreur de suppression !", 300);
                 }
         }
+
+        // Search Valeur receive and valeur pay of UV
+        public function search_xbet($amount_wave)
+        {
+
+
+
+                try {
+
+                        $percent_robus =  $this->percentRobus->getRobusPercentageOnexbet();
+
+                        if ($percent_robus != null) {
+
+                                if ($amount_wave != '') {
+
+                                        $commission_wave_val_nat_pay = 0;
+                                        $commission_wave_val_nat_receive = 0;
+                                        //  Conversion valeur
+                                  
+                                        $commission_wave_val_nat_pay =   $percent_robus->percent  *  $amount_wave;
+
+                                        $valeur_receive =  $amount_wave - $commission_wave_val_nat_pay;
+
+                                        if ($valeur_receive < 0) {
+
+                                                $commission_wave_val_nat_receive = "Montant negatif";
+                                        } else {
+
+                                                $commission_wave_val_nat_receive =  $valeur_receive;
+                                        }
+
+                                        return response()->json([
+                                                'success' => $percent_robus != null ? true : false,
+                                                'data' =>  [
+                                                        'amount_pay' => $commission_wave_val_nat_pay,
+                                                        'amount_send' => $commission_wave_val_nat_pay,
+                                                        'amount_receive' => $commission_wave_val_nat_receive,
+                                                ],
+                                        ], 200);
+                                }
+                        } else {
+                                return response()->json([
+                                        'success' =>  false,
+                                        'message' => 'Pas de Rechargement dans cette zone ...',
+                                ], 200);
+                        }
+                } catch (\Exception $exception) {
+                        return response()->json([
+                                'success' =>  false,
+                                'message' => 'Pas d\'utilisateur',
+                        ], 200);
+                }
+        }
 }

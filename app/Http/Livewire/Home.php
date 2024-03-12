@@ -13,6 +13,7 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
@@ -65,6 +66,10 @@ class Home extends Component
         $xbet_padding = $this->getTransactionCount(WalletXbet::class, 'PENDING', 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
         $xbet_success = $this->getTransactionCount(WalletXbet::class, 'SUCCESS',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
 
+        $wave_error = $this->getTransactionCount(WalletWave::class, 'ERROR',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+        $wave_padding = $this->getTransactionCount(WalletWave::class, 'PENDING', 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+        $wave_success = $this->getTransactionCount(WalletWave::class, 'SUCCESS',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+
         // Amount transactions days
         $payement_amount = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
         $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
@@ -74,6 +79,7 @@ class Home extends Component
         $bank_amount = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $deposit_amount = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
+        $wave_amount = $this->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount');
 
         // Amount transactions month
         $payment_amount_month = $this->getDaysTransaction(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
@@ -84,6 +90,7 @@ class Home extends Component
         $bank_amount_month = $this->getDaysTransaction(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $deposit_amount_month = $this->getDaysTransaction(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount_month = $this->getDaysTransaction(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
+        $wave_amount_month = $this->getDaysTransaction(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount');
 
         // count One transactions
         $transaction_amount_days = $this->getTransactionAllCount(WalletTransaction::class , 'wallet_transactions.wallet_id', 'wallet_transactions.created_at');
@@ -94,6 +101,7 @@ class Home extends Component
         $bank_amount_days = $this->getTransactionAllCount(WalletBank::class , 'wallet_banks.wallet_id', 'wallet_banks.created_at');
         $deposit_amount_days = $this->getTransactionAllCount(WalletDeposit::class , 'wallet_deposits.wallet_id', 'wallet_deposits.created_at');
         $xbet_amount_days = $this->getTransactionAllCount(WalletXbet::class , 'wallet_xbets.wallet_id', 'wallet_xbets.created_at');
+        $wave_amount_days = $this->getTransactionAllCount(WalletWave::class , 'wallet_waves.wallet_id', 'wallet_waves.created_at');
         $closeRobus = CloseApp::orderBy('id' , 'asc')->get();
         // Get Users
         $custumers =$this->getUserTypeTotal('is_custumers' , true);
@@ -132,7 +140,12 @@ class Home extends Component
                 // 
                 'error_xbet' => $xbet_error,
                 'success_xbet' => $xbet_success,
-                'pendding_xbet' => $transaction_padding,
+                'pendding_xbet' => $xbet_padding,
+
+                'error_wave' => $wave_error,
+                'success_wave' => $wave_success,
+                'pendding_wave' => $wave_padding,
+
                 // 
                 'error_bank' => $bank_error,
                 'success_bank' => $bank_success,
@@ -155,6 +168,8 @@ class Home extends Component
                 'success_inter' => $inter_success,
                 'pendding_inter' => $inter_padding,
 
+
+
                 // 
                 'amount_payment_days' => $payement_amount,
                 'amount_transaction_days' => $transaction_amount,
@@ -163,6 +178,8 @@ class Home extends Component
                 'amount_inter_days' => $inter_amount,
                 'amount_bank_days' => $bank_amount,
                 'amount_deposit_days' => $deposit_amount,
+                'amount_xbet_days' => $xbet_amount,
+                'amount_wave_days' => $wave_amount,
           
 
                 'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
@@ -175,6 +192,7 @@ class Home extends Component
                 'sum_inter' => $inter_amount,
                 'sum_phoneCredit' => $phonecredit_amount,
                 'sum_xbet' => $xbet_amount,
+                'sum_wave' => $wave_amount,
                 'sum_bank_month' => $bank_amount_month,
                 'sum_deposit_month' => $deposit_amount_month,
                 'sum_payment_month' => $payment_amount_month,
@@ -183,6 +201,7 @@ class Home extends Component
                 'sum_inter_month' => $inter_amount_month,
                 'sum_phoneCredit_month' => $phonecredit_amount_month,
                 'sum_xbet_month' => $xbet_amount_month,
+                'sum_wave_month' => $wave_amount_month,
                 // Transaction days
                 'account_bank_days' => $bank_amount_days,
                 'account_deposit_days' => $deposit_amount_days,
@@ -192,6 +211,7 @@ class Home extends Component
                 'account_inter_days' => $inter_amount_days,
                 'account_phoneCredit_days' => $phone_amount_days,
                 'account_xbet_days' => $xbet_amount_days,
+                'account_wave_days' => $wave_amount_days,
                 'open_apps' => $closeRobus,
             ]);
         }

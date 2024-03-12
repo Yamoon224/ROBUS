@@ -5,11 +5,8 @@ namespace App\Models\Wallets;
 
 use App\Models\AdminsCom;
 use App\Models\Costs\ReloadCost;
-use App\Models\Invoices\OneBetInvoice;
-use App\Models\InvoiceWave;
-use App\Models\Onexbet;
-use App\Models\Payments\OneBetTransaction;
-use App\Models\PaymentWave;
+use App\Models\Invoices\InvoiceWave;
+use App\Models\Payments\PaymentWave;
 use App\Models\Providers\Provider;
 use App\Models\Wallets\Wallet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

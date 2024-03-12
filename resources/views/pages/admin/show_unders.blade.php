@@ -784,8 +784,10 @@
 
         </div>
         
+        <div id="wave" class="tab-pane" role="tabpanel" aria-labelledby="wave-tab">
+            @livewire('transaction-details.waves-users', ['walletWave' => $user->id])
 
-
+        </div>
 
 
 

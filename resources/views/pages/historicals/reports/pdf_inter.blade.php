@@ -322,6 +322,31 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                                                     Client</div>
                                                                             </div>
                                                                         </div>
+                                                                    @elseif($item->wallet->sidUser->is_supervisor == 1)
+                                                                        <div
+                                                                            class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                            <div class="fc-event-title-container">
+                                                                                <div class="fc-event-title fc-sticky">
+                                                                                    SUPERVISUER
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @elseif($item->wallet->sidUser->is_master == 1)
+                                                                        <div
+                                                                            class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                            <div class="fc-event-title-container">
+                                                                                <div class="fc-event-title fc-sticky">
+                                                                                    MASTER</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    @elseif($item->wallet->sidUser->is_com_zone == 1)
+                                                                        <div
+                                                                            class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                            <div class="fc-event-title-container">
+                                                                                <div class="fc-event-title fc-sticky">
+                                                                                    COM ZONE</div>
+                                                                            </div>
+                                                                        </div>
                                                                     @else
                                                                         <div
                                                                             class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
@@ -349,26 +374,45 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                         @php
                                                             if ($item->provider_type == 1) {
                                                                 //  Convertion of amount valeur
-                                                                if ($item->wallet->currencie->code == 'EUR' || $item->wallet->currencie->code == 'DH' || $item->wallet->currencie->code == 'Dt' || $item->wallet->currencie->code == 'CEDI' || $item->wallet->currencie->code == 'USD') {
-                                                                    $valeur_amount_receveid = $item->amount_received * $item->wallet->currencie->value;
+                                                                if (
+                                                                    $item->wallet->currencie->code == 'EUR' ||
+                                                                    $item->wallet->currencie->code == 'DH' ||
+                                                                    $item->wallet->currencie->code == 'Dt' ||
+                                                                    $item->wallet->currencie->code == 'CEDI' ||
+                                                                    $item->wallet->currencie->code == 'USD'
+                                                                ) {
+                                                                    $valeur_amount_receveid =
+                                                                        $item->amount_received *
+                                                                        $item->wallet->currencie->value;
                                                                 } elseif ($item->wallet->currencie->code == 'GN') {
                                                                     // Montant Update  if Diff country or Auth is <  a send client
-                                                                    $valeur_amount_receveid = $item->amount_received / $item->wallet->currencie->value;
+                                                                    $valeur_amount_receveid =
+                                                                        $item->amount_received /
+                                                                        $item->wallet->currencie->value;
                                                                 } elseif ($item->wallet->currencie->code == 'CFA') {
-                                                                    $valeur_amount_receveid = $item->amount_received ?? null;
+                                                                    $valeur_amount_receveid =
+                                                                        $item->amount_received ?? null;
                                                                 }
                                                             } else {
                                                                 //  Convertion of amount valeur
-                                                                if ($item->wallet->currencie->code == 'EUR' || $item->wallet->currencie->code == 'DH' || $item->wallet->currencie->code == 'Dt' || $item->wallet->currencie->code == 'CEDI' || $item->wallet->currencie->code == 'USD') {
-                                                                    $valeur_amount = $item->amount * $item->wallet->currencie->value;
+                                                                if (
+                                                                    $item->wallet->currencie->code == 'EUR' ||
+                                                                    $item->wallet->currencie->code == 'DH' ||
+                                                                    $item->wallet->currencie->code == 'Dt' ||
+                                                                    $item->wallet->currencie->code == 'CEDI' ||
+                                                                    $item->wallet->currencie->code == 'USD'
+                                                                ) {
+                                                                    $valeur_amount =
+                                                                        $item->amount * $item->wallet->currencie->value;
                                                                 } elseif ($item->wallet->currencie->code == 'GN') {
                                                                     // Montant Update  if Diff country or Auth is <  a send client
-                                                                    $valeur_amount = $item->amount / $item->wallet->currencie->value;
+                                                                    $valeur_amount =
+                                                                        $item->amount / $item->wallet->currencie->value;
                                                                 } elseif ($item->wallet->currencie->code == 'CFA') {
                                                                     $valeur_amount = $item->amount ?? null;
                                                                 }
                                                             }
-                                                            
+
                                                         @endphp
                                                         <td>
                                                             @if ($item->provider_type == 1)
@@ -776,26 +820,45 @@ Template Name: Rubick - HTML Admin Dashboard Template
                                                         @php
                                                             if ($item->provider_type == 1) {
                                                                 //  Convertion of amount valeur
-                                                                if ($item->wallet->currencie->code == 'EUR' || $item->wallet->currencie->code == 'DH' || $item->wallet->currencie->code == 'Dt' || $item->wallet->currencie->code == 'CEDI' || $item->wallet->currencie->code == 'USD') {
-                                                                    $valeur_amount_receveid = $item->amount_received * $item->wallet->currencie->value;
+                                                                if (
+                                                                    $item->wallet->currencie->code == 'EUR' ||
+                                                                    $item->wallet->currencie->code == 'DH' ||
+                                                                    $item->wallet->currencie->code == 'Dt' ||
+                                                                    $item->wallet->currencie->code == 'CEDI' ||
+                                                                    $item->wallet->currencie->code == 'USD'
+                                                                ) {
+                                                                    $valeur_amount_receveid =
+                                                                        $item->amount_received *
+                                                                        $item->wallet->currencie->value;
                                                                 } elseif ($item->wallet->currencie->code == 'GN') {
                                                                     // Montant Update  if Diff country or Auth is <  a send client
-                                                                    $valeur_amount_receveid = $item->amount_received / $item->wallet->currencie->value;
+                                                                    $valeur_amount_receveid =
+                                                                        $item->amount_received /
+                                                                        $item->wallet->currencie->value;
                                                                 } elseif ($item->wallet->currencie->code == 'CFA') {
-                                                                    $valeur_amount_receveid = $item->amount_received ?? null;
+                                                                    $valeur_amount_receveid =
+                                                                        $item->amount_received ?? null;
                                                                 }
                                                             } else {
                                                                 //  Convertion of amount valeur
-                                                                if ($item->wallet->currencie->code == 'EUR' || $item->wallet->currencie->code == 'DH' || $item->wallet->currencie->code == 'Dt' || $item->wallet->currencie->code == 'CEDI' || $item->wallet->currencie->code == 'USD') {
-                                                                    $valeur_amount = $item->amount * $item->wallet->currencie->value;
+                                                                if (
+                                                                    $item->wallet->currencie->code == 'EUR' ||
+                                                                    $item->wallet->currencie->code == 'DH' ||
+                                                                    $item->wallet->currencie->code == 'Dt' ||
+                                                                    $item->wallet->currencie->code == 'CEDI' ||
+                                                                    $item->wallet->currencie->code == 'USD'
+                                                                ) {
+                                                                    $valeur_amount =
+                                                                        $item->amount * $item->wallet->currencie->value;
                                                                 } elseif ($item->wallet->currencie->code == 'GN') {
                                                                     // Montant Update  if Diff country or Auth is <  a send client
-                                                                    $valeur_amount = $item->amount / $item->wallet->currencie->value;
+                                                                    $valeur_amount =
+                                                                        $item->amount / $item->wallet->currencie->value;
                                                                 } elseif ($item->wallet->currencie->code == 'CFA') {
                                                                     $valeur_amount = $item->amount ?? null;
                                                                 }
                                                             }
-                                                            
+
                                                         @endphp
                                                         <td>
                                                             @if ($item->provider_type == 1)

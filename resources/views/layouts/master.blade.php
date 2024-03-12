@@ -466,9 +466,11 @@
             $('#validated-virement-modal').removeClass('show');
             $('#validated-virement-modal').addClass('hide');
 
-
             $('#validated-xbet-modal').removeClass('show');
             $('#validated-xbet-modal').addClass('hide');
+
+            $('#validated-wave-modal').removeClass('show');
+            $('#validated-wave-modal').addClass('hide');
 
             $('#validated-reloadCards-modal').removeClass('show');
             $('#validated-reloadCards-modal').addClass('hide');
@@ -557,6 +559,12 @@
             $('#transfers-nav').removeClass('active');
             $('transfers-nav').attr('aria-selected', false);
             $('#transfers').removeClass('active');
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
             $('#paiement-nav').removeClass('active');
             $('paiement-nav').attr('aria-selected', false);
             $('#paiement').removeClass('active');
@@ -598,6 +606,15 @@
             $('#paiement-nav').removeClass('active');
             $('paiement-nav').attr('aria-selected', false);
             $('#paiement').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#virement-nav').removeClass('active');
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
@@ -639,6 +656,15 @@
             $('#virement-nav').removeClass('active');
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#inter-nav').addClass('active');
             $('inter-nav').attr('aria-selected', true);
             $('#inter').addClass('active');
@@ -673,6 +699,15 @@
             $('#paiement-nav').removeClass('active');
             $('paiement-nav').attr('aria-selected', false);
             $('#paiement').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#virement-nav').removeClass('active');
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
@@ -719,6 +754,15 @@
             $('#virement-nav').removeClass('active');
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
@@ -774,6 +818,15 @@
             $('paiement-nav').attr('aria-selected', false);
             $('#paiement').removeClass('active');
             $('#virement-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
@@ -811,6 +864,15 @@
             $('#paiement-nav').removeClass('active');
             $('paiement-nav').attr('aria-selected', false);
             $('#paiement').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#virement-nav').removeClass('active');
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
@@ -852,6 +914,15 @@
             $('paiement-nav').attr('aria-selected', false);
             $('#paiement').removeClass('active');
             $('#virement-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
@@ -890,6 +961,15 @@
             $('paiement-nav').attr('aria-selected', true);
             $('#paiement').addClass('active');
             $('#virement-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
@@ -929,6 +1009,15 @@
             $('#virement').addClass('active');
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+            
             $('#inter').removeClass('active');
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
@@ -966,12 +1055,54 @@
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
             $('#carte').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
             $('#phone-nav').removeClass('active');
             $('phone-nav').attr('aria-selected', false);
             $('#phone').removeClass('active');
             $('#xbet-nav').addClass('active');
             $('xbet-nav').attr('aria-selected', true);
 
+            // $('body').css('overflow', 'auto');
+        });
+
+        Livewire.on('modal-hide-wave-validated', () => {
+
+
+            $('#update-wave-modal').removeClass('show');
+            $('#update-wave-modal').addClass('hide');
+
+
+            $('#validated-wave-modal').removeClass('show');
+            $('#validated-wave-modal').addClass('hide');
+
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+            $('#transfers-nav').removeClass('active');
+            $('transfers-nav').attr('aria-selected', false);
+            $('#transfers').removeClass('active');
+            $('#paiement-nav').removeClass('active');
+            $('paiement-nav').attr('aria-selected', false);
+            $('#paiement').removeClass('active');
+            $('#virement-nav').removeClass('active');
+            $('virement-nav').attr('aria-selected', false);
+            $('#inter-nav').removeClass('active');
+            $('inter-nav').attr('aria-selected', false);
+            $('#inter').removeClass('active');
+            $('#carte-nav').removeClass('active');
+            $('carte-nav').attr('aria-selected', false);
+            $('#carte').removeClass('active');
+            $('#phone-nav').removeClass('active');
+            $('phone-nav').attr('aria-selected', false);
+            $('#phone').removeClass('active');
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('wave-nav').attr('aria-selected', true);
+            $('#wave-nav').addClass('active');
             // $('body').css('overflow', 'auto');
         });
 
@@ -1002,6 +1133,15 @@
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
             $('#carte').removeClass('active');
@@ -1045,6 +1185,15 @@
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
             $('#carte').removeClass('active');
@@ -1078,6 +1227,15 @@
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#inter').removeClass('active');
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
@@ -1117,6 +1275,15 @@
             $('#virement-nav').addClass('active');
             $('virement-nav').attr('aria-selected', true);
             $('#virement').addClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
@@ -1153,6 +1320,10 @@
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
             $('#carte').removeClass('active');
@@ -1162,6 +1333,46 @@
 
             // $('body').css('overflow', 'auto');
         });
+
+
+        Livewire.on('modal-hide-wave', () => {
+
+            $('#update-wave-modal').removeClass('show');
+            $('#update-wave-modal').addClass('hide');
+
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+            $('#transfers-nav').removeClass('active');
+            $('transfers-nav').attr('aria-selected', false);
+            $('#transfers').removeClass('active');
+            $('#paiement-nav').removeClass('active');
+            $('paiement-nav').attr('aria-selected', false);
+            $('#paiement').removeClass('active');
+            $('#virement-nav').removeClass('active');
+            $('virement-nav').attr('aria-selected', false);
+            $('#xbet-nav').removeClass('active');
+            $('#xbet').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+
+            $('#wave-nav').addClass('active');
+            $('#wave').addClass('active');
+            $('wave-nav').attr('aria-selected', true);
+
+            $('#virement').addClass('active');
+            $('#inter-nav').removeClass('active');
+            $('inter-nav').attr('aria-selected', false);
+            $('#inter').removeClass('active');
+            $('#carte-nav').removeClass('active');
+            $('carte-nav').attr('aria-selected', false);
+            $('#carte').removeClass('active');
+            $('#phone-nav').removeClass('active');
+            $('phone-nav').attr('aria-selected', false);
+            $('#phone').removeClass('active');
+
+            // $('body').css('overflow', 'auto');
+        });
+
 
         // Active menu
         Livewire.on('menu-virement-active', () => {
@@ -1183,6 +1394,15 @@
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
             $('#carte').removeClass('active');
@@ -1207,6 +1427,15 @@
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
             $('#carte-nav').removeClass('active');
@@ -1234,6 +1463,15 @@
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
             $('#carte').removeClass('active');
@@ -1261,6 +1499,15 @@
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
             $('#carte-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('carte-nav').attr('aria-selected', false);
             $('#carte').removeClass('active');
             $('#phone-nav').addClass('active');
@@ -1298,6 +1545,38 @@
 
         });
 
+        Livewire.on('menu-wave-active', () => {
+
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+            $('#transfers-nav').removeClass('active');
+            $('transfers-nav').attr('aria-selected', false);
+            $('#transfers').removeClass('active');
+            $('#paiement-nav').removeClass('active');
+            $('paiement-nav').attr('aria-selected', false);
+            $('#paiement').removeClass('active');
+            $('#virement-nav').removeClass('active');
+            $('virement-nav').attr('aria-selected', false);
+            $('#virement').removeClass('active');
+            $('#inter-nav').removeClass('active');
+            $('inter-nav').attr('aria-selected', false);
+            $('#inter').removeClass('active');
+            $('#carte-nav').removeClass('active');
+            $('carte-nav').attr('aria-selected', false);
+            $('#carte').removeClass('active');
+            $('#phone-nav').removeClass('active');
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+            $('#phone-nav').removeClass('active');
+            $('#wave-nav').addClass('active');
+            $('wave-nav').attr('aria-selected', true);
+            $('#wave').addClass('active');
+            $('phone-nav').attr('aria-selected', false);
+            $('#phone').removeClass('active');
+
+        });
 
         Livewire.on('menu-reload-active', () => {
 
@@ -1316,6 +1595,15 @@
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
             $('#carte-nav').removeClass('active');
@@ -1345,6 +1633,15 @@
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
             $('#carte-nav').addClass('active');
@@ -1373,6 +1670,15 @@
             $('#virement-nav').removeClass('active');
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#inter-nav').addClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').addClass('active');
@@ -1717,6 +2023,15 @@
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#inter').removeClass('active');
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
@@ -1759,6 +2074,15 @@
             $('paiement-nav').attr('aria-selected', false);
             $('"paiement').removeClass('active');
             $('#virement-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
@@ -1801,6 +2125,15 @@
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
             $('#carte').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#phone-nav').addClass('active');
             $('phone-nav').attr('aria-selected', true);
             $('#phone').addClass('active');
@@ -1850,6 +2183,15 @@
             $('#virement-nav').removeClass('active');
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
@@ -1887,6 +2229,15 @@
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#carte-nav').addClass('active');
             $('carte-nav').attr('aria-selected', true);
             $('#carte').addClass('active');
@@ -1932,6 +2283,15 @@
             $('#virement-nav').removeClass('active');
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
@@ -1971,6 +2331,12 @@
             $('#virement-nav').removeClass('active');
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+
             $('#inter-nav').removeClass('active');
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
@@ -2017,6 +2383,11 @@
             $('virement-nav').attr('aria-selected', false);
             $('#virement').removeClass('active');
             $('#inter-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
             $('inter-nav').attr('aria-selected', false);
             $('#inter').removeClass('active');
             $('#carte-nav').removeClass('active');
@@ -2055,8 +2426,41 @@
             $('#phone-nav').removeClass('active');
             $('phone-nav').attr('aria-selected', false);
             $('#phone').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
         });
 
+        Livewire.on('update-wave-modal', () => {
+            $('#update-wave-modal').removeClass('hide');
+            $('#update-wave-modal').addClass('show');
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+            $('#transfers-nav').removeClass('active');
+            $('transfers-nav').attr('aria-selected', false);
+            $('transfers').removeClass('active');
+            $('#paiement-nav').removeClass('active');
+            $('paiement-nav').attr('aria-selected', false);
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#wave-nav').addClass('active');
+            $('wave-nav').attr('aria-selected', true);
+            $('#paiement').addClass('active');
+            $('#virement-nav').removeClass('active');
+            $('virement-nav').attr('aria-selected', false);
+            $('#virement').removeClass('active');
+            $('#inter-nav').removeClass('active');
+            $('inter-nav').attr('aria-selected', false);
+            $('#inter').removeClass('active');
+            $('#carte-nav').removeClass('active');
+            $('carte-nav').attr('aria-selected', false);
+            $('#carte').removeClass('active');
+            $('#phone-nav').removeClass('active');
+            $('phone-nav').attr('aria-selected', false);
+            $('#phone').removeClass('active');
+        });
 
         Livewire.on('update-paiementHisto-modal', () => {
             $('#update-paiementHisto-modal').removeClass('hide');
@@ -2116,6 +2520,12 @@
             // $('body').removeClass('overflow');
         });
 
+        Livewire.on('modal-wave-validted-show', () => {
+            $('#validated-wave-modal').removeClass('hide');
+            $('#validated-wave-modal').addClass('show');
+            // $('body').removeClass('overflow');
+        });
+
         Livewire.on('modal-transfers-show', () => {
             $('#create-transfersUV-modal').removeClass('hide');
             $('#create-transfersUV-modal').addClass('show');
@@ -2141,6 +2551,11 @@
             $('#phone-nav').removeClass('active');
             $('phone-nav').attr('aria-selected', false);
             $('#phone').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -2188,6 +2603,11 @@
             $('#phone-nav').removeClass('active');
             $('phone-nav').attr('aria-selected', false);
             $('#phone').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -2246,6 +2666,11 @@
             $('phone-nav').attr('aria-selected', false);
             $('#phone').removeClass('active');
             $('#xbet-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
             $('xbet-nav').attr('aria-selected', false);
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
@@ -2291,6 +2716,11 @@
             $('#phone').removeClass('active');
             $('#xbet-nav').removeClass('active');
             $('xbet-nav').attr('aria-selected', false);
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -2337,6 +2767,10 @@
             $('#phone').removeClass('active');
             $('#xbet-nav').removeClass('active');
             $('xbet-nav').attr('aria-selected', false);
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -2383,6 +2817,11 @@
             $('#phone').removeClass('active');
             $('#xbet-nav').removeClass('active');
             $('xbet-nav').attr('aria-selected', false);
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');
@@ -2428,6 +2867,11 @@
             $('#phone').removeClass('active');
             $('#xbet-nav').removeClass('active');
             $('xbet-nav').attr('aria-selected', false);
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
             $('#info-paie-hide-1').removeClass('info-paiement-hide');
             $('#info-paie-hide-2').removeClass('info-paiement-hide');
             $('#info-paie-hide-3').removeClass('info-paiement-hide');

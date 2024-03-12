@@ -25,6 +25,8 @@ use App\Mail\NewAdmin;
 use App\Mail\UvSend;
 use App\Models\AppCloseCom;
 use App\Models\AppCloseMaster;
+use App\Models\AppComZoneStatus;
+use App\Models\AppMasterStatus;
 use App\Models\AppStatus;
 use App\Models\Banks\BankCard;
 use App\Models\CloseApp;
@@ -41,6 +43,8 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletWave;
+use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
@@ -119,7 +123,7 @@ class UserController extends Controller
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
         if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 301);
+            return response()->json($appStatusResult, 200);
         }
 
 
@@ -144,6 +148,11 @@ class UserController extends Controller
 
         $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, $wallet_solde);
 
+        $wallet1xbets = $this->transactionAccount->getUserAllTransactions(WalletXbet::class, $wallet_solde);
+
+        $walletWave = $this->transactionAccount->getUserAllTransactions(WalletWave::class, $wallet_solde);
+
+
         $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
             $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
             + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) + $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
@@ -157,6 +166,8 @@ class UserController extends Controller
         $dashboard_data['Rechargement de carte'] = ReloadCardSingle::collection($walletReloadCard);
         $dashboard_data['Rechargement d\'UV'] = ReloadSingleCollection::collection($walletReload);
         $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
+        $dashboard_data['1xbet'] = ReloadCartCollection::collection($wallet1xbets);
+        $dashboard_data['Achat UV wave'] = ReloadCartCollection::collection($walletWave);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
         $is_under = robus()->is_under_distributer;
         return response()->json([
@@ -172,11 +183,13 @@ class UserController extends Controller
     public function dashboard_masters()
     {
 
+
         // Vérifier l'état de l'application
-        $appStatusResult = $this->authService->appDispoMasterRobus(AppCloseMaster::class);
+        $appStatusResult = $this->authService->appDispoMasterRobus(AppMasterStatus::class);
 
         if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 301);
+
+            return response()->json($appStatusResult, 200);
         }
 
 
@@ -210,12 +223,11 @@ class UserController extends Controller
 
     public function dashboard_comzones()
     {
-
         // Vérifier l'état de l'application
-        $appStatusResult = $this->authService->appDispoComZoneRobus(AppCloseCom::class);
+        $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
 
         if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 301);
+            return response()->json($appStatusResult, 200);
         }
 
         $under_distributors =    $this->transactionAccount->getMastersUser();

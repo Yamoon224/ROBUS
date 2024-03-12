@@ -90,7 +90,7 @@ class ProviderController extends Controller
             $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
             if (!$appStatusResult['success']) {
-                return response()->json($appStatusResult, 301);
+                return response()->json($appStatusResult, 200);
             }
 
 
@@ -132,11 +132,14 @@ class ProviderController extends Controller
                             case 8:
                                 $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletBank);
                                 break;
+                            case 9:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($wallet1xbet);
+                                break;
                             case 17:
                                 $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletWave);
                                 break;
-                            case 9:
-                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($wallet1xbet);
+                            case 18:
+                                $dashboard_data[$operator->operator->name] = ProviderSingleCollection::collection($walletPhone);
                                 break;
                             default:
                                 // Ne rien faire ou ajouter une logique de gestion d'erreur
@@ -230,7 +233,7 @@ class ProviderController extends Controller
 
             if (!$appStatusResult['success']) {
 
-                return response()->json($appStatusResult, 301);
+                return response()->json($appStatusResult, 200);
             }
 
 
@@ -294,7 +297,7 @@ class ProviderController extends Controller
             $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
 
             if (!$appStatusResult['success']) {
-                return response()->json($appStatusResult, 301);
+                return response()->json($appStatusResult, 200);
             }
 
 

@@ -25,6 +25,7 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use App\Rules\MatchOldPassword;
@@ -1292,6 +1293,7 @@ class AdminController extends Controller
         $sum_wallet_deposit = $this->transactionAccountService->getTransactionOperatorsAmount(WalletDeposit::class, $user->id);
         $sum_wallet_payment = $this->transactionAccountService->getTransactionOperatorsAmount(WalletPayment::class, $user->id);
         $sum_wallet_phone = $this->transactionAccountService->getTransactionOperatorsAmount(WalletPhoneCredit::class, $user->id);
+        $sum_wallet_wave = $this->transactionAccountService->getTransactionOperatorsAmount(WalletWave::class, $user->id);
         $sum_wallet_Reload = $this->transactionAccountService->getTransactionOperatorsAmount(WalletReload::class, $user->id);
         $sum_wallet_xbet_depot = $this->transactionAccountService->getTransactionOperatorsAmount(WalletXbet::class, $user->id);
         $sum_wallet_xbet_retrait = $this->transactionAccountService->getTransactionOperatorsAmount(WalletXbet::class, $user->id);
@@ -1305,6 +1307,7 @@ class AdminController extends Controller
             'sum_wallet_payment' => $sum_wallet_payment,
             'sum_wallet_phone' => $sum_wallet_phone,
             'sum_wallet_Reload' => $sum_wallet_Reload,
+            'sum_wallet_wave' => $sum_wallet_wave,
             'sum_wallet_xbet_depot' => $sum_wallet_xbet_depot,
             'sum_wallet_xbet_retrait' => $sum_wallet_xbet_retrait,
             'sum_wallet_Inter' => $sum_wallet_Inter
@@ -1328,6 +1331,7 @@ class AdminController extends Controller
         $sum_commissions  = $this->getCommissionsWalletTransaction($wallet_solde->id);
         $sum_drawals  =  $this->getWalletTransactionSumRetraitsProperty($wallet_solde->id);
         $sum_wallet_transaction_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
+        $sum_wallet_wave = $this->transactionAccountService->getTransactionAmount(WalletWave::class, $wallet_solde->id);
 
 
         return [
@@ -1344,11 +1348,10 @@ class AdminController extends Controller
             'sum_wallet_reload_received' => $sum_wallet_reload_received,
             'sum_commissions' => $sum_commissions,
             'sum_drawals' => $sum_drawals,
+            'sum_wallet_wave' => $sum_wallet_wave,
             'sum_wallet_transaction_received' => $sum_wallet_transaction_received,
         ];
     }
-
-
 
 
     public function update_password(int $id, Request $request)
@@ -1409,7 +1412,8 @@ class AdminController extends Controller
             $this->transactionAccountService->getTransactionWalletDetailsCount(WalletDeposit::class, $wallet_id, $status) +
             $this->transactionAccountService->getTransactionWalletDetailsCount(WalletInter::class, $wallet_id, $status) +
             $this->transactionAccountService->getTransactionWalletDetailsCount(BankCard::class, $wallet_id, $status) +
-            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletXbet::class, $wallet_id, $status);
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletXbet::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionWalletDetailsCount(WalletWave::class, $wallet_id, $status);
     }
 
 
@@ -1422,7 +1426,8 @@ class AdminController extends Controller
             $this->transactionAccountService->getTransactionserUDetailsCount(WalletReload::class, $wallet_id, $status) +
             $this->transactionAccountService->getTransactionserUDetailsCount(WalletDeposit::class, $wallet_id, $status) +
             $this->transactionAccountService->getTransactionserUDetailsCount(WalletInter::class, $wallet_id, $status) +
-            $this->transactionAccountService->getTransactionserUDetailsCount(WalletXbet::class, $wallet_id, $status);
+            $this->transactionAccountService->getTransactionserUDetailsCount(WalletXbet::class, $wallet_id, $status) +
+            $this->transactionAccountService->getTransactionserUDetailsCount(WalletWave::class, $wallet_id, $status);
     }
 
     public function getCommissionsWalletTransaction($wallet_id)
@@ -1435,7 +1440,8 @@ class AdminController extends Controller
             $this->transactionAccountService->getTransactionCommissionAmount(WalletDeposit::class, $wallet_id) +
             $this->transactionAccountService->getTransactionCommissionAmount(WalletInter::class, $wallet_id) +
             $this->transactionAccountService->getTransactionCommissionAmount(BankCard::class, $wallet_id) +
-            $this->transactionAccountService->getTransactionCommissionAmount(WalletXbet::class, $wallet_id);
+            $this->transactionAccountService->getTransactionCommissionAmount(WalletXbet::class, $wallet_id) +
+            $this->transactionAccountService->getTransactionCommissionAmount(WalletWave::class, $wallet_id);
     }
     // Retrait valeurs
 
@@ -1451,9 +1457,9 @@ class AdminController extends Controller
 
         return array_sum($data);
     }
-   
 
-  
+
+
     public function getWalletReloadSumReceviedAdminProperty($id)
     {
 
@@ -1565,7 +1571,7 @@ class AdminController extends Controller
         }
     }
 
-    
+
     public function updateProfilManager(Request $request)
     {
 

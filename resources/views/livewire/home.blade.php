@@ -294,7 +294,7 @@
 
         </div>
         <div class="grid grid-cols-12 gap-6 mt-6">
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show" id="info-paie-show-1">
+            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show" id="info-paie-show-1">
                 <div class="report-box zoom-in ">
                     <div class="box p-wallet style_table4">
                         <div class="flex mb-transactions">
@@ -339,7 +339,7 @@
                 </div>
             </div>
 
-            <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y info-paiement-show" id="info-paie-show-2">
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y info-paiement-show" id="info-paie-show-2">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table_factures">
                         <div class="flex mb-transactions">
@@ -383,7 +383,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y " id="info-paie-show-2">
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y " id="info-paie-show-2">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table2">
                         <div class="flex mb-transactions">
@@ -428,7 +428,95 @@
                 </div>
             </div>
 
-            <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y info-paiement-show" id="info-paie-show-2">
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y info-paiement-show" id="info-paie-show-2">
+                <div class="report-box zoom-in">
+                    <div class="box p-wallet">
+                        <div class="flex mb-transactions">
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Success
+                                    {{ $success_deposit ?? null }}
+
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente
+                                    {{ $pendding_transaction ?? null }}
+
+                                </div>
+
+                            </div>
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec
+                                    {{ $pendding_deposit ?? null }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                            class="lucide lucide-credit-card report-box__icon text-secondary">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ $amount_deposit_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Rechargements carte {{ $user_currencie }} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y info-paiement-show" id="info-paie-show-2">
+                <div class="report-box zoom-in">
+                    <div class="box p-wallet style_user3">
+                        <div class="flex mb-transactions">
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Success
+                                    {{ $success_wave ?? null }}
+
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente
+                                    {{ $pendding_wave ?? null }}
+
+                                </div>
+
+                            </div>
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec
+                                    {{ $pendding_wave ?? null }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                            class="lucide lucide-credit-card report-box__icon text-secondary">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ $amount_wave_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Achat UV Wave{{ $user_currencie }} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y info-paiement-show" id="info-paie-show-2">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table_factures">
                         <div class="flex mb-transactions">
@@ -606,7 +694,9 @@
                                         payment="{{ json_encode($sum_payment) }}"
                                         reload="{{ json_encode($sum_reload) }}"
                                         transaction="{{ json_encode($sum_transaction) }}"
-                                        inter="{{ json_encode($sum_inter) }}" xbet="{{ json_encode($sum_xbet) }}"
+                                        inter="{{ json_encode($sum_inter) }}" 
+                                        xbet="{{ json_encode($sum_xbet) }}"
+                                        wave="{{ json_encode($sum_wave) }}"
                                         phone="{{ json_encode($sum_phoneCredit) }}"></canvas>
 
                                 </div>
@@ -626,6 +716,7 @@
                                     transaction_month="{{ json_encode($sum_transaction_month) }}"
                                     inter_month="{{ json_encode($sum_inter_month) }}"
                                     xbet_month="{{ json_encode($sum_xbet_month) }}"
+                                    wave_month="{{ json_encode($sum_wave_month) }}"
                                     phone_month="{{ json_encode($sum_phoneCredit_month) }}">
                                 </canvas>
                             </div>
@@ -698,6 +789,7 @@
         var sumTransaction = JSON.parse($('#sum').attr('transaction'));
         var sumInter = JSON.parse($('#sum').attr('inter'));
         var sumPhone = JSON.parse($('#sum').attr('phone'));
+        var sumWave = JSON.parse($('#sum').attr('wave'));
         var sumXbet = JSON.parse($('#sum').attr('xbet'));
         var sum_v_month = JSON.parse($('#sum_month').attr('virement_month'));
         var sum_d_month = JSON.parse($('#sum_month').attr('deposit_month'));
@@ -707,6 +799,7 @@
         var sum_i_month = JSON.parse($('#sum_month').attr('inter_month'));
         var sum_phone_month = JSON.parse($('#sum_month').attr('phone_month'));
         var sum_xbet_month = JSON.parse($('#sum_month').attr('xbet_month'));
+        var sum_wave_month = JSON.parse($('#sum_month').attr('wave_month'));
         var _ctx = $('#sum');
         var _ctx2 = $('#sum_month');
 
@@ -721,13 +814,14 @@
                     'Transactions',
                     'Inters',
                     'Credits',
-                    'Xbets'
+                    'Xbets',
+                    'Wave'
                 ],
                 datasets: [{
 
                     label: 'Activites du jours',
                     data: [sumVirement, sumDeposit, sumPayment, sumReload, sumTransaction, sumInter,
-                        sumPhone, sumXbet
+                        sumPhone, sumXbet , sumWave
                     ],
                     backgroundColor: [
                         '#84cc17',
@@ -737,7 +831,9 @@
                         '#ff6384',
                         '#b5048f',
                         '#FFFF00',
-                        '#0000FF'
+                        '#0000FF',
+                        '#ff0000'
+
 
                     ],
                     borderColor: [
@@ -748,7 +844,9 @@
                         '#ff6384',
                         '#b5048f',
                         '#FFFF00',
-                        '#0000FF'
+                        '#0000FF',
+                        '#ff0000'
+
                     ],
                     borderWidth: 2,
                 }]
@@ -779,14 +877,14 @@
                     'Transactions',
                     'Inters',
                     'Credits',
-                    'Xbets'
-
+                    'Xbets',
+                    'Waves'
                 ],
                 datasets: [{
 
                     label: 'Activites du mois',
                     data: [sum_v_month, sum_d_month, sum_p_month, sum_r_month, sum_t_month, sum_i_month,
-                        sum_phone_month, sum_xbet_month
+                        sum_phone_month, sum_xbet_month , sum_wave_month
                     ],
                     backgroundColor: [
                         '#84cc17',
@@ -796,7 +894,8 @@
                         '#ff6384',
                         '#b5048f',
                         '#FFFF00',
-                        '#0000FF'
+                        '#0000FF',
+                        '#ff0000'
 
                     ],
                     borderColor: [
@@ -807,7 +906,8 @@
                         '#ff6384',
                         '#b5048f',
                         '#FFFF00',
-                        '#0000FF'
+                        '#0000FF',
+                        '#ff6384'
 
                     ],
                     borderWidth: 1,

@@ -77,6 +77,24 @@
                     </a>
                 </div>
             @endif
+            @if (sabdy()->hasPermissionTo('rechargement-carte'))
+                <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
+                    <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
+                        href="{{ route('xbets.historical.reporting_xbet_historical.admins', ['id' => sabdy()->wallet->id]) }}"
+                        style="color: white;">
+                        Rapport 1xbet
+                    </a>
+                </div>
+            @endif
+            @if (sabdy()->hasPermissionTo('rechargement-carte'))
+                <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
+                    <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
+                        href="{{ route('waves.historical.reporting_wave_historical.admins', ['id' => sabdy()->wallet->id]) }}"
+                        style="color: white;">
+                        Rapport Achat UV Wave
+                    </a>
+                </div>
+            @endif
             @if (sabdy()->hasPermissionTo('rechargement-inters'))
                 <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
                     <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
@@ -95,6 +113,7 @@
                     </a>
                 </div>
             @endif
+
         @endif
 
     </div>
@@ -268,7 +287,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table4">
                         <div class="flex mb-transactions">
@@ -310,7 +329,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet ">
                         <div class="flex mb-transactions">
@@ -352,27 +371,27 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
                 <div class="report-box zoom-in ">
                     <div class="box p-wallet style_table1">
                         <div class="flex mb-transactions">
                             <div class="ml-auto">
                                 <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $phone_success }}
+                                    Success {{ $xbets_success }}
 
                                 </div>
                             </div>
                             <div class="ml-auto">
 
                                 <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $phone_pendding }}
+                                    Attente {{ $xbets_pendding }}
 
                                 </div>
 
                             </div>
                             <div class="ml-auto">
                                 <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $phone_error }}
+                                    Echec {{ $xbets_error }}
 
                                 </div>
 
@@ -391,6 +410,48 @@
 
                         </div>
                         <div class="text-base text-slate-500 mt-1">Service 1Xbets {{ $usersCountry }} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                <div class="report-box zoom-in ">
+                    <div class="box p-wallet style_table1">
+                        <div class="flex mb-transactions">
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Success {{ $waves_success }}
+
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente {{ $waves_pendding }}
+
+                                </div>
+
+                            </div>
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec {{ $waves_error }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                            class="lucide lucide-credit-card report-box__icon text-secondary">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ $walletsXbets ?? null }}
+
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Achat UV Waves {{ $usersCountry }} </div>
                     </div>
                 </div>
             </div>
@@ -490,6 +551,7 @@
     @include('livewire.commissions.modals.transactions.updateInterTransfer')
     @include('livewire.commissions.modals.transactions.updateRelaodCards')
     @include('livewire.commissions.modals.transactions.updateTransfersUV')
+    @include('livewire.commissions.modals.transactions.updateWave')
     @include('livewire.commissions.modals.transactions.updateXbet')
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
     @include('livewire.commissions.modals.transactions.addPhoneCredit')

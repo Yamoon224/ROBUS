@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Invoices;
 
 use App\Models\Wallets\WalletWave;
 use Illuminate\Database\Eloquent\Factories\HasFactory;

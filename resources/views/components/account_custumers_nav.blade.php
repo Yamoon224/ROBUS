@@ -2,7 +2,7 @@
          <li id="doc-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center active" data-tw-target="#doc"
                  aria-controls="doc" aria-selected="true" role="tab"> <i class="w-4 h-4 mr-2"
-                     data-feather="shield"></i> Documents </a>
+                     data-feather="shield"></i> Docs </a>
          </li>
          <li id="transfers-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#transfers"
@@ -23,7 +23,7 @@
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#virement"
                  aria-controls="virement" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
                      data-feather="shield"></i> Versement
-                 bancaires </a>
+                 Banque </a>
          </li>
          <li id="carte-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#carte"
@@ -33,7 +33,7 @@
          <li id="inter-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#inter"
                  aria-controls="inter" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
-                     data-feather="shield"></i> Internationnal </a>
+                     data-feather="shield"></i> Inters </a>
          </li>
          <li id="phone-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#phone"
@@ -44,5 +44,10 @@
             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#xbet"
                 aria-controls="xbet" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
                     data-feather="shield"></i> Xbet </a>
+        </li>
+        <li id="wave-tab" class="nav-item" role="presentation">
+            <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#wave"
+                aria-controls="wave" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                    data-feather="shield"></i> Wave </a>
         </li>
      </ul>
