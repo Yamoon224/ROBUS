@@ -193,7 +193,6 @@ class RobusTransactionService
         $admin_single->wallet->increment('amount', $amount);
     }
 
-
     private function convertAdminCommission($amount)
     {
         $country_civ = Country::find(107);

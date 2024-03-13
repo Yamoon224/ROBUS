@@ -171,12 +171,14 @@ class WaveTransactionController extends Controller
 
                                 if ($request->provider == 94) {
 
+                                        $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                                         if ($percent_robus != null) {
 
                                                 if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
                                                         // Transaction de retrait
-                                                        $amountReceved = $request->amount - ($percent_robus->percent  * $request->amount);
+                                                        $amountReceved =  $reel_amount - (float) ($percent_robus->percent  *  $reel_amount);
                                                         $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
 
                                                         if ($transactionResult['success']) {
@@ -220,20 +222,22 @@ class WaveTransactionController extends Controller
         // Fonction pour traiter la transaction de dépôt
         private function processDepositTransaction($request, $percent_robus, $amountReceved)
         {
-                $val_amount_send = $request->amount + ($percent_robus->percent * $request->amount);
+                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
+                $val_amount_send =  $reel_amount + (float) ($percent_robus->percent *  $reel_amount);
 
                 if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletWave =  $this->waveService->createRobusWalletTransactionWave($request->amount, $request->provider, $percent_robus, $amountReceved);
+                $walletWave =  $this->waveService->createRobusWalletTransactionWave( $reel_amount, $request->provider, $percent_robus, $amountReceved);
 
                 if ($walletWave == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
                 // Mettre à jour le montant reçu dans le service OneXbet
-                if (!$this->waveService->updateamountWaveReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletWave, $request->amount)) {
+                if (!$this->waveService->updateamountWaveReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletWave,  $reel_amount)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
@@ -322,7 +326,6 @@ class WaveTransactionController extends Controller
 
 
 
-
                 try {
 
                         $percent_robus =  $this->percentRobus->getRobusPercentageMobileWave();
@@ -334,18 +337,59 @@ class WaveTransactionController extends Controller
                                         $commission_wave_val_nat_pay = 0;
                                         $commission_wave_val_nat_receive = 0;
                                         //  Conversion valeur
-                                     
-                                        $commission_wave_val_nat_pay =   $percent_robus->percent  *  $amount_wave;
 
-                                        $valeur_receive =  $amount_wave - $commission_wave_val_nat_pay;
+                                        $reel_amount = $this->validatedamountDays->search_amount($amount_wave);
 
-                                        if ($valeur_receive < 0) {
+                                        $commission_wave_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
-                                                $commission_wave_val_nat_receive = "Montant negatif";
-                                        } else {
+                                        $commission_wave_val_nat_receive =  $reel_amount - $commission_wave_val_nat_pay;
 
-                                                $commission_wave_val_nat_receive =  $valeur_receive;
-                                        }
+                                        return response()->json([
+                                                'success' => $percent_robus != null ? true : false,
+                                                'data' =>  [
+                                                        'amount_pay' => $commission_wave_val_nat_pay,
+                                                        'amount_send' => $commission_wave_val_nat_pay,
+                                                        'amount_receive' => $commission_wave_val_nat_receive,
+                                                ],
+                                        ], 200);
+                                }
+                        } else {
+                                return response()->json([
+                                        'success' =>  false,
+                                        'message' => 'Pas de Rechargement dans cette zone ...',
+                                ], 200);
+                        }
+                } catch (\Exception $exception) {
+                        return response()->json([
+                                'success' =>  false,
+                                'message' => 'Pas d\'utilisateur',
+                        ], 200);
+                }
+        }
+
+        // Search Valeur receive and valeur pay of UV
+        public function search_wave_received($amount_wave)
+        {
+
+
+
+                try {
+
+                        $percent_robus =  $this->percentRobus->getRobusPercentageMobileWave();
+
+                        if ($percent_robus != null) {
+
+                                if ($amount_wave != '') {
+
+                                        $commission_wave_val_nat_pay = 0;
+                                        $commission_wave_val_nat_receive = 0;
+
+                                        $reel_amount = $this->validatedamountDays->search_amount($amount_wave);
+
+
+                                        $commission_wave_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
+
+                                        $commission_wave_val_nat_receive =  $reel_amount + $commission_wave_val_nat_pay;
 
                                         return response()->json([
                                                 'success' => $percent_robus != null ? true : false,

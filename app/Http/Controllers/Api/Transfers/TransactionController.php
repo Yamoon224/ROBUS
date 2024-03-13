@@ -211,6 +211,9 @@ class TransactionController extends Controller
                     ], 333);
                 }
 
+                // Convertion valeur amount
+                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                 if (robus()->is_under_distributer) {
 
                     $percent_robus = $this->percentRobus->getRobusPercentageSDistributers();
@@ -228,21 +231,22 @@ class TransactionController extends Controller
 
                             if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                                if ($this->validatedamountDays->validateAmount($request->amount)) {
 
-                                    $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
+                                if ($this->validatedamountDays->validateAmount($reel_amount)) {
+
+                                    $valeur_received = $reel_amount - (float) ($percent_robus->percent * $reel_amount);
 
                                     // Update Info valeurs
                                     $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
 
                                     $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
-                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
+                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($reel_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
 
                                     if ($walletTransaction != null) {
 
                                         if ($this->robusTransactionService->updateAmountRobusReceived($request->num_wallet, $walletTransaction, $valeur_received)) {
-                                            if ($this->robusTransactionService->processCommissionsDistributerRobus($request->amount, $percent_robus, $walletTransaction, $admin_civ)) {
+                                            if ($this->robusTransactionService->processCommissionsDistributerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
                                                 $this->notifications->sendNotification($walletTransaction);
                                                 return $this->messageAfterValidated($walletTransaction);
                                             } else {
@@ -268,21 +272,22 @@ class TransactionController extends Controller
 
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            if ($this->validatedamountDays->validateAmount($request->amount)) {
 
-                                $valeur_received = $request->amount;
+                            if ($this->validatedamountDays->validateAmount($reel_amount)) {
+
+                                $valeur_received = $reel_amount;
 
                                 // Update Info valeurs
                                 $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
 
                                 $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
-                                $walletTransaction =  $this->robusTransactionService->createRobusWalletTransactionDistributer($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
+                                $walletTransaction =  $this->robusTransactionService->createRobusWalletTransactionDistributer($reel_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
 
                                 if ($walletTransaction != null) {
 
                                     if ($this->robusTransactionService->updateAmountRobusReceivedDistributer($request->num_wallet, $walletTransaction, $valeur_received)) {
-                                        if ($this->robusTransactionService->processCommissionsRobusDistributer($request->amount)) {
+                                        if ($this->robusTransactionService->processCommissionsRobusDistributer($reel_amount)) {
                                             $this->notifications->sendNotification($walletTransaction);
                                             return $this->messageAfterValidated($walletTransaction);
                                         } else {
@@ -329,21 +334,22 @@ class TransactionController extends Controller
 
                             if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                                if ($this->validatedamountDays->validateAmount($request->amount)) {
 
-                                    $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
+                                if ($this->validatedamountDays->validateAmount($reel_amount)) {
+
+                                    $valeur_received = $reel_amount - (float) ($percent_robus->percent * $reel_amount);
 
                                     // Update Info valeurs
                                     $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
 
                                     $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
-                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
+                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($reel_amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
 
                                     if ($walletTransaction != null) {
 
                                         if ($this->robusTransactionService->updateAmountRobusReceived($request->num_wallet, $walletTransaction, $valeur_received)) {
-                                            if ($this->robusTransactionService->processCommissionsCustumerRobus($request->amount, $percent_robus, $walletTransaction, $admin_civ)) {
+                                            if ($this->robusTransactionService->processCommissionsCustumerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
                                                 $this->notifications->sendNotification($walletTransaction);
                                                 return $this->messageAfterValidated($walletTransaction);
                                             } else {
@@ -397,7 +403,7 @@ class TransactionController extends Controller
                             333
                         );
                     }
-                    
+
                     if (robus()->country->name_groupe == 'CIV') {
 
                         $percent_robus = $this->percentRobus->getRobusPercentageMobile();
@@ -455,41 +461,43 @@ class TransactionController extends Controller
                     }
                 }
 
+                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                 if ($percent_robus !== null) {
 
                     if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                        if ($this->validatedamountDays->validateAmountSendLimit($request->amount, $valeur_max_send)) {
+                        if ($this->validatedamountDays->validateAmountSendLimit($reel_amount, $valeur_max_send)) {
 
                             if (robus()->is_under_distributer) {
 
-                                $valeur_received = $request->amount;
+                                $valeur_received = $reel_amount;
 
-                                $cost_payment = $percent_robus->percent *  $request->amount;
+                                $cost_payment = $percent_robus->percent *  $reel_amount;
 
-                                $amount_payment = $request->amount;
+                                $amount_payment = $reel_amount;
                             } else {
 
-                                $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
+                                $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
 
-                                $cost_payment = $percent_robus->percent *  $request->amount;
+                                $cost_payment = $percent_robus->percent *  $reel_amount;
 
-                                $amount_payment =  $request->amount + ($percent_robus->percent * $request->amount);
+                                $amount_payment =  $reel_amount + ($percent_robus->percent * $reel_amount);
                             }
 
                             if ($this->validatedamountDays->validateAmount($amount_payment)) {
 
-                                $walletTransaction =  $this->mobileWalletTransactionService->createRobusWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone);
+                                $walletTransaction =  $this->mobileWalletTransactionService->createRobusWalletTransactionDistributer($percent_robus, $request->provider, $reel_amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone);
 
                                 if ($walletTransaction != null) {
 
                                     if ($this->mobileWalletTransactionService->updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)) {
 
                                         if (robus()->is_under_distributer) {
-                                            $processCommission = $this->mobileWalletTransactionService->processCommissionsMobileDistributer($request->amount, $percent_robus, $walletTransaction, $admin_civ);
+                                            $processCommission = $this->mobileWalletTransactionService->processCommissionsMobileDistributer($reel_amount, $percent_robus, $walletTransaction, $admin_civ);
                                         } else {
 
-                                            $processCommission = $this->mobileWalletTransactionService->processCommissionsMobile($request->amount, $percent_robus, $walletTransaction, $admin_civ);
+                                            $processCommission = $this->mobileWalletTransactionService->processCommissionsMobile($reel_amount, $percent_robus, $walletTransaction, $admin_civ);
                                         }
 
                                         if ($processCommission) {
@@ -583,6 +591,8 @@ class TransactionController extends Controller
 
                 if ($sidUser) {
 
+                    $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                     if ($sidUser->is_master) {
 
                         if ($wallet_search == null &&  $request->num_wallet == robus()->wallet->wallet_id) {
@@ -595,10 +605,10 @@ class TransactionController extends Controller
 
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            if ($this->validatedamountDays->validateAmount($request->amount)) {
+                            if ($this->validatedamountDays->validateAmount($reel_amount)) {
 
 
-                                $valeur_receive = $this->SearchConvertionService->convertAdminCommissionReload($request->amount, $wallet_search);
+                                $valeur_receive = $this->SearchConvertionService->convertAdminCommissionReload($reel_amount, $wallet_search);
 
                                 // $amount_solde = $check->wallet->amount +  $commission;
                                 $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
@@ -607,12 +617,12 @@ class TransactionController extends Controller
 
                                 $amount_drawal =    $amount_solde_drawal;
 
-                                $amount_solde = (float)robus()->wallet->amount - (float)$request->amount;
+                                $amount_solde = (float)robus()->wallet->amount - $reel_amount;
 
-                                $walletReloads =  $this->robusReloadMasterTransaction->createWAlletReloadRobus(robus(), $request->amount, $provider, $request->num_wallet, $valeur_receive, $amount_solde, $amount_drawal);
+                                $walletReloads =  $this->robusReloadMasterTransaction->createWAlletReloadRobus(robus(), $reel_amount, $provider, $request->num_wallet, $valeur_receive, $amount_solde, $amount_drawal);
 
                                 if ($walletReloads != null) {
-                                    if ($this->robusReloadMasterTransaction->updateAmountRobusReceived($walletReloads, robus(), $wallet_search, $request->amount)) {
+                                    if ($this->robusReloadMasterTransaction->updateAmountRobusReceived($walletReloads, robus(), $wallet_search, $reel_amount)) {
                                         return  $this->robusReloadMasterTransaction->sendNotification($wallet_search, robus(), $walletReloads, $admin_civ);
                                     } else {
 
@@ -653,10 +663,10 @@ class TransactionController extends Controller
 
                                 if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                                    if ($this->validatedamountDays->validateAmount($request->amount)) {
+                                    if ($this->validatedamountDays->validateAmount($reel_amount)) {
 
 
-                                        $valeur_receive = $this->SearchConvertionService->convertAdminCommissionReload($request->amount, $wallet_search);
+                                        $valeur_receive = $this->SearchConvertionService->convertAdminCommissionReload($reel_amount, $wallet_search);
 
                                         // $amount_solde = $check->wallet->amount +  $commission;
                                         $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
@@ -665,12 +675,12 @@ class TransactionController extends Controller
 
                                         $amount_drawal =    $amount_solde_drawal;
 
-                                        $amount_solde = (float)robus()->wallet->amount - (float)$request->amount;
+                                        $amount_solde = (float)robus()->wallet->amount -  $reel_amount;
 
-                                        $walletReloads =  $this->robusReloadMasterTransaction->createWAlletReloadRobus(robus(), $request->amount, $provider, $request->num_wallet, $valeur_receive, $amount_solde, $amount_drawal);
+                                        $walletReloads =  $this->robusReloadMasterTransaction->createWAlletReloadRobus(robus(), $reel_amount, $provider, $request->num_wallet, $valeur_receive, $amount_solde, $amount_drawal);
 
                                         if ($walletReloads != null) {
-                                            if ($this->robusReloadMasterTransaction->updateAmountRobusReceived($walletReloads, robus(), $wallet_search, $request->amount)) {
+                                            if ($this->robusReloadMasterTransaction->updateAmountRobusReceived($walletReloads, robus(), $wallet_search, $reel_amount)) {
                                                 return  $this->robusReloadMasterTransaction->sendNotification($wallet_search, robus(), $walletReloads, $admin_civ);
                                             } else {
 
@@ -784,6 +794,8 @@ class TransactionController extends Controller
                                 ], 333);
                             }
 
+                            $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                             if ($account_is_under) {
 
                                 if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
@@ -791,7 +803,7 @@ class TransactionController extends Controller
 
                                     $wallet_send = $wallet_search;
 
-                                    $commission_receiveid =  $request->amount;
+                                    $commission_receiveid =  $reel_amount;
 
                                     $wallet_receveid =  robus()->wallet;
 
@@ -809,12 +821,12 @@ class TransactionController extends Controller
 
                                         $amount_drawal =    $amount_solde_drawal;
 
-                                        $amount_solde = (float)robus()->wallet->amount +  (float) $request->amount;
+                                        $amount_solde = (float)robus()->wallet->amount +  (float) $reel_amount;
 
-                                        $walletUnlock =   $this->robusMasterTransaction->createRobusUnlocked(robus(), $request->amount, $provider, $request->num_wallet, $amount_solde, $amount_drawal, $commission_send);
+                                        $walletUnlock =   $this->robusMasterTransaction->createRobusUnlocked(robus(), $reel_amount, $provider, $request->num_wallet, $amount_solde, $amount_drawal, $commission_send);
 
                                         if ($walletUnlock != null) {
-                                            if ($this->robusMasterTransaction->updateAmountRobusReceived($commission_send, robus(), $wallet_search, $walletUnlock, $request->amount)) {
+                                            if ($this->robusMasterTransaction->updateAmountRobusReceived($commission_send, robus(), $wallet_search, $walletUnlock, $reel_amount)) {
                                                 return  $this->robusMasterTransaction->sendNotification($wallet_search, robus(), $walletUnlock, $admin_civ);
                                             } else {
 
@@ -928,11 +940,13 @@ class TransactionController extends Controller
                         ], 333);
                     } else {
 
+                        $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            if ($this->validatedamountDays->validateAmountDrawel($request->amount, $request->num_wallet)) {
+                            if ($this->validatedamountDays->validateAmountDrawel($reel_amount, $request->num_wallet)) {
 
-                                $walletTransaction = $this->transactionWalletDrawal->createRobusWalletWithDrawalTransaction($request->amount, $request->provider, $request->num_wallet,  $wallet_search);
+                                $walletTransaction = $this->transactionWalletDrawal->createRobusWalletWithDrawalTransaction($reel_amount, $request->provider, $request->num_wallet,  $wallet_search);
 
                                 if ($walletTransaction != null) {
 
@@ -1184,31 +1198,34 @@ class TransactionController extends Controller
 
             if ($amount_transaction != '') {
 
+                $reel_amount = $this->validatedamountDays->search_amount($amount_transaction);
+
+
                 $commission_transaction = $this->searchTransaction->getCommissionTransactionMobileForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
                 $commission_transaction_val_percent_pay = 0;
                 $commission_transaction_val_nat_pay = 0;
 
                 if ($commission_transaction) {
 
-                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $reel_amount;
 
                     if (robus()->is_under_distributer) {
 
                         $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
 
-                        $commission_transaction_val_nat_receive = (float)$amount_transaction;
+                        $commission_transaction_val_nat_receive = (float)$reel_amount;
                     } else {
 
-                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent * $amount_transaction;
+                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent * $reel_amount;
 
-                        $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+                        $commission_transaction_val_nat_receive = (float)$reel_amount - $commission_transaction_val_percent_pay;
                     }
 
 
 
                     $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
 
-                    if ($conversion_valeur_end < $amount_transaction) {
+                    if ($conversion_valeur_end < $reel_amount) {
                         $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
                     }
                 }
@@ -1247,15 +1264,17 @@ class TransactionController extends Controller
             // dd(  $data);
             if ($amount_transaction != '') {
 
+                $reel_amount = $this->validatedamountDays->search_amount($amount_transaction);
+
                 $commission_transaction_val_nat_pay = 0;
                 $commission_transaction_val_percent_pay = 0;
-                $commission_transaction_val_nat_receive = (float)$amount_transaction;
+                $commission_transaction_val_nat_receive = (float)$reel_amount;
 
                 // Si l'utilisateur est sous distributeur, admin ou distributeur
                 if ($data->sidUser->is_under_distributer || $data->sidUser->is_admin || $data->sidUser->is_distributer) {
                     $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
 
-                    if ($conversion_valeur_end < $amount_transaction) {
+                    if ($conversion_valeur_end < $reel_amount) {
                         $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
                     }
                 } else {
@@ -1268,14 +1287,14 @@ class TransactionController extends Controller
 
                         if ($data->sidUser->is_custumers) {
 
-                            $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
+                            $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $reel_amount;
                             $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
-                            $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+                            $commission_transaction_val_nat_receive = (float)$reel_amount - $commission_transaction_val_percent_pay;
                         }
 
                         $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
 
-                        if ($conversion_valeur_end < $amount_transaction) {
+                        if ($conversion_valeur_end < $reel_amount) {
                             $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
                         }
                     }

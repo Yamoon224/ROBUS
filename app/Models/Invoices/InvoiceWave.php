@@ -15,7 +15,7 @@ class InvoiceWave extends Model
     use SoftDeletes;
     use LogsActivity;
 
-    protected $table = 'one_bet_invoices';
+    protected $table = 'invoice_waves';
 
     protected $hidden = [
         'created_at',

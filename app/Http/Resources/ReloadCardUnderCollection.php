@@ -22,7 +22,7 @@ class ReloadCardUnderCollection extends ResourceCollection
                                 return [
                                         'id' => (int) $data->id,
                                         'provider'  =>  optional($data->provider)->name,
-                                        'amount' =>  number_format((double)$data->amount, 2, '.', ''),
+                                        'amount' =>  number_format((float)$data->amount, 2, '.', ''),
                                         'amount_wallet' =>  optional($data->wallet)->amount . ' ' . optional($data->wallet->currencie)->code,
                                         'type' =>  'Rechargement de carte',
                                         'date_created' =>  $data->created_at,
@@ -30,10 +30,11 @@ class ReloadCardUnderCollection extends ResourceCollection
                                         'Reference'  => optional($data->deposit)->transaction_id,
                                         'name' =>  $data->name,
                                         'description'  =>  $data->description,
-                                        'deposit_cost_percent' =>  number_format((double)$data->commissions, 2, '.', '') ?? null,
+                                        'deposit_cost_percent' =>  number_format((float)$data->commissions, 2, '.', '') ?? null,
                                         'num_carte' => $data->num_carte,
+                                        'master_cost_percent' =>  number_format((float)$data->commission_masters, 2, '.', '') ?? null,
                                         'devise'  => optional($data->wallet->currencie)->code,
-                                        'frais' => number_format((double)$data->costs_amount, 2, '.', ' ') ,
+                                        'frais' => number_format((float)$data->costs_amount, 2, '.', ' '),
                                         'status'  =>  $data->status,
                                         'solde_account'  => $data->amount_solde .  ' ' . optional($data->wallet->currencie)->code ?? null,
                                 ];

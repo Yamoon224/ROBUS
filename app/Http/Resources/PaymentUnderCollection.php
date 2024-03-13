@@ -37,6 +37,7 @@ class PaymentUnderCollection extends ResourceCollection
                                         'number_contract' =>  $data->number_contract,
                                         'number_phone' =>  $data->number_phone,
                                         'paiementChoix_phone' =>  $data->paiementChoix_phone,
+                                        'master_cost_percent' =>  number_format((float)$data->commission_masters, 2, '.', '') ?? null,
                                         'factureChoix_type' =>  $data->factureChoix_type,
                                         'frais' => number_format((float)$data->costs_amount, 2, '.', ' '),
                                         'devise'  => optional($data->wallet->currencie)->code,

@@ -33,7 +33,6 @@ class AdminSeeder extends Seeder
             'password' => Hash::make('k9z!C}#e,kRKmoz]TXpaS'),
             'created_by' => 1,
             'country_id' => 107,
-
             // 490 439 000,39
             'city_id' => 1,
             'remember_token' => null,   

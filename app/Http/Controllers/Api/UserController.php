@@ -5,11 +5,12 @@ namespace App\Http\Controllers\Api;
 use App\Events\AdminNotifEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InterTransactionSingleCollection;
-use App\Http\Resources\KycSingleCollection;
 use App\Http\Resources\PaymentSingleCollection;
 use App\Http\Resources\PhoneCreditSingleCollection;
 use App\Http\Resources\ReloadCardSingle;
 use App\Http\Resources\ReloadCartCollection;
+use App\Http\Resources\WaveSingleCollection;
+use App\Http\Resources\OneXbetSingleCollection;
 use App\Http\Resources\ReloadSingleCollection;
 use App\Http\Resources\RemonteSingleCollection;
 use App\Http\Resources\TransactionSingleCollection;
@@ -23,17 +24,11 @@ use App\Http\Services\TransactionsAccountService;
 use App\Http\Services\ValidateDailyLimitService;
 use App\Mail\NewAdmin;
 use App\Mail\UvSend;
-use App\Models\AppCloseCom;
-use App\Models\AppCloseMaster;
 use App\Models\AppComZoneStatus;
 use App\Models\AppMasterStatus;
 use App\Models\AppStatus;
 use App\Models\Banks\BankCard;
-use App\Models\CloseApp;
-use App\Models\Custumers\City;
-use App\Models\Custumers\Country;
 use App\Models\Kyc;
-use App\Models\Payments\Deposit;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
@@ -48,7 +43,6 @@ use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
-use App\Tools\Image;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -156,7 +150,9 @@ class UserController extends Controller
         $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
             $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
             + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) + $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletInter::class);
+            $this->transactionAccount->getWalletSumGainUser(WalletInter::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletXbet::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletWave::class);
 
         $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
@@ -166,13 +162,13 @@ class UserController extends Controller
         $dashboard_data['Rechargement de carte'] = ReloadCardSingle::collection($walletReloadCard);
         $dashboard_data['Rechargement d\'UV'] = ReloadSingleCollection::collection($walletReload);
         $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
-        $dashboard_data['1xbet'] = ReloadCartCollection::collection($wallet1xbets);
-        $dashboard_data['Achat UV wave'] = ReloadCartCollection::collection($walletWave);
+        $dashboard_data['1xbet'] = OneXbetSingleCollection::collection($wallet1xbets);
+        $dashboard_data['Achat UV wave'] = WaveSingleCollection::collection($walletWave);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
         $is_under = robus()->is_under_distributer;
         return response()->json([
             'success' => true,
-            'historicals' => $is_under ?  $dashboard_data : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
+            'historicals' =>  $dashboard_data,
             'som_commission' => $is_under ? $som_commissions . ' ' . robus()->wallet->currencie->code  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
         ], 200);
     }
@@ -203,10 +199,12 @@ class UserController extends Controller
 
         $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, $wallet_solde);
 
-        $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
-            + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) + $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletInter::class);
+        $som_commissions = $this->transactionAccount->getTodayTransactionMasterAmountTotal(WalletTransaction::class) +  $this->transactionAccount->getTodayTransactionMasterAmountTotal(WalletPayment::class) +
+            $this->transactionAccount->getTodayTransactionMasterAmountTotal(WalletBank::class) +  $this->transactionAccount->getTodayTransactionMasterAmountTotal(WalletPhoneCredit::class)
+            + $this->transactionAccount->getTodayTransactionMasterAmountTotal(WalletDeposit::class) + $this->transactionAccount->getTodayTransactionMasterAmountTotal(BankCard::class) +
+            $this->transactionAccount->getTodayTransactionMasterAmountTotal(WalletInter::class) +
+            $this->transactionAccount->getTodayTransactionMasterAmountTotal(WalletXbet::class) +
+            $this->transactionAccount->getTodayTransactionMasterAmountTotal(WalletWave::class);
 
         $dashboard_data['Réchargements'] = ReloadSingleCollection::collection($walletReload);
         $dashboard_data['Déchargements'] = TransactionSingleCollection::collection($walletTransaction);
@@ -230,7 +228,7 @@ class UserController extends Controller
             return response()->json($appStatusResult, 200);
         }
 
-        $under_distributors =    $this->transactionAccount->getMastersUser();
+        $under_distributors =    $this->transactionAccount->getComZonesUser();
 
         return response()->json([
             'success' => true,
@@ -752,7 +750,28 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletPhoneCredit::class) +
                 $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletTransaction::class) +
                 $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletReload::class) +
-                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletInter::class),
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletInter::class)   +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletXbet::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletWave::class),
+        ], 200);
+    }
+
+
+    public function historical_distributer_master()
+    {
+        return response()->json([
+            'success' => true,
+            'sum_transaction_days' =>
+            $this->transactionAccount->getTodayTransactionGainTotal(WalletBank::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(WalletDeposit::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(WalletPayment::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(BankCard::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(WalletPhoneCredit::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(WalletTransaction::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(WalletReload::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(WalletInter::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(WalletXbet::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(WalletWave::class),
         ], 200);
     }
 

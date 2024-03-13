@@ -27,7 +27,7 @@ use App\Http\Services\PhoneCreditInterService;
 use App\Http\Services\SearchTransactionService;
 use App\Http\Services\ValidateDailyLimitService;
 
-class IntersPaymentController extends Controller
+class IntersPaymentAncienController extends Controller
 {
 
     /** @var  IntersRepository */
@@ -544,9 +544,9 @@ class IntersPaymentController extends Controller
 
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            
+
                             if ($request->provider != 52) {
-                                
+
                                 $amount_receved = $request->amount;
 
                                 $valeur_convertion_amount =   $this->convertionservice->convertAdminCommissionPayment($percent_robus->amount_auther);
@@ -562,11 +562,11 @@ class IntersPaymentController extends Controller
                                 $convertion_amount_pay =  $amount_valeur;
                             } else {
 
-                                
+
                                 $amount_valeur = $offers->amount + $percent_robus->amount_canal;
-                                
+
                                 $valeur_convertion =   $this->convertionservice->convertAdminCommissionPayment($offers->amount);
-                                
+
                                 $amount_receved = $valeur_convertion;
 
                                 $amount_commission = $percent_robus->amount_canal;
@@ -3284,10 +3284,6 @@ class IntersPaymentController extends Controller
     {
 
 
-        $wallet_user = Auth::guard('api')->user();
-
-        $default_valeur = 2000000;
-
         //Valuer inter  bank
         $commission_inter = DepositCost::whereId(1)->first();
 
@@ -3353,6 +3349,111 @@ class IntersPaymentController extends Controller
                             $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
 
                             $valeur_cfa_receive = $valeur_amount - $percent_distr_cfa;
+
+                            $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+                            // Convertion commission
+
+                            if ($valeur_cfa_receive < 0) {
+                                $commission_reload_inter_val_inter_receive =  "Montant negatif";
+                            } else {
+
+                                $commission_reload_inter_val_inter_receive = $valeur_cfa_receive;
+                            }
+                        }
+                    }
+                }
+
+                return response()->json([
+                    'success' => $commission_inter != null ? true : false,
+                    'data' =>  [
+                        'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
+                        'amount_pay' => $commission_reload_inter_val_inter_pay,
+                        'amount_receive' => $commission_reload_inter_val_inter_receive,
+                    ],
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Donnez le montant',
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
+
+    public function paiement_reload_card_received($amount_reload_card)
+    {
+
+        //Valuer inter  bank
+        $commission_inter = DepositCost::whereId(1)->first();
+
+
+        try {
+
+
+
+            $valeur_amount =   $this->convertionservice->convertAdminCommission($amount_reload_card);
+
+            if ($valeur_amount) {
+
+                $commission_reload_inter_val_inter_percent_pay = 0;
+                // Convertion valeurs Send maxi
+
+
+                foreach ($commission_inter->levelDeposits->where('is_inter_bank', true) as $amount_comission) {
+
+                    if ($valeur_amount >= $amount_comission->amount_begin &&  $valeur_amount <= $amount_comission->amount_end) {
+
+                        if ($amount_comission->amount == null) {
+
+                            $percent_distr_cfa =   $amount_comission->percent * $valeur_amount;
+
+                            if (robus()->is_under_distributer) {
+
+                                $valeur_cfa =   $amount_comission->comission_distributer *  $valeur_amount;
+                            } else {
+
+                                $valeur_cfa =   $amount_comission->percent * $valeur_amount;
+                            }
+
+                            $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
+
+                            // Valeur receive 
+
+                            $receive_valeur = $valeur_amount +  (float)  $percent_distr_cfa;
+
+                            $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+
+                            if ($receive_valeur < 0) {
+
+                                $commission_reload_inter_val_inter_receive = "Montant negatif";
+                            } else {
+
+                                $commission_reload_inter_val_inter_receive = $receive_valeur;
+                            }
+                        } else {
+
+
+                            $percent_distr_cfa  = (float) $amount_comission->amount;
+
+                            if (robus()->is_under_distributer) {
+
+                                $valeur_cfa =   $amount_comission->comission_distributer;
+                            } else {
+
+                                $valeur_cfa = $valeur_amount + (float) $amount_comission->amount;
+                            }
+
+
+                            $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
+
+                            $valeur_cfa_receive = $valeur_amount + $percent_distr_cfa;
 
                             $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
 

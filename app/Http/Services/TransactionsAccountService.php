@@ -1,479 +1,526 @@
 <?php
 
-namespace App\Http\Services;
+    namespace App\Http\Services;
 
-use App\Models\Custumers\Zone;
-use App\Models\Sid\SidUser;
-use Illuminate\Support\Carbon;
+    use App\Models\Custumers\Zone;
+    use App\Models\Sid\SidUser;
+    use Illuminate\Support\Carbon;
 
-class TransactionsAccountService
-{
-
-    public function getTransactionUserWallet($wallet, $id, $num_wallet, $wallet_user)
-    {
-        return  $wallet::where('wallet_id', $id)
-            ->orWhere($num_wallet,  $wallet_user)
-            ->orderBy('created_at', 'desc')->paginate(20);
-    }
-
-
-    public function getTransactionsWallet($wallet, $id)
-    {
-        return  $wallet::where('wallet_id', $id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-    }
-
-
-    public function getTransactionWalletDetailsCount($wallet, $id, $status)
+    class TransactionsAccountService
     {
 
-        return $wallet::where('wallet_id', $id)->where('status', $status)
-            ->count();
-    }
-
-
-    public function getTransactionserUDetailsCount($wallet, $id, $status)
-    {
-
-        return $wallet::where('updated_by', $id)->where('status', $status)
-            ->count();
-    }
-
-
-    public function getTransactionOperatorsAmount($wallets, $id)
-    {
-
-        $data = [];
-
-        foreach ($wallets::where('updated_by', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
+        public function getTransactionUserWallet($wallet, $id, $num_wallet, $wallet_user)
+        {
+            return  $wallet::where('wallet_id', $id)
+                ->orWhere($num_wallet,  $wallet_user)
+                ->orderBy('created_at', 'desc')->paginate(20);
         }
 
-        return array_sum($data);
-    }
+
+        public function getTransactionsWallet($wallet, $id)
+        {
+            return  $wallet::where('wallet_id', $id)
+                ->orderBy('created_at', 'desc')->paginate(20);
+        }
 
 
+        public function getTransactionWalletDetailsCount($wallet, $id, $status)
+        {
 
-    public function getTransactionMasterCount($walletModel,  $status)
-    {
+            return $wallet::where('wallet_id', $id)->where('status', $status)
+                ->count();
+        }
 
 
-        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
-        $totalcount = 0;
+        public function getTransactionserUDetailsCount($wallet, $id, $status)
+        {
 
-        foreach ($sidUsers as $sidUser) {
+            return $wallet::where('updated_by', $id)->where('status', $status)
+                ->count();
+        }
 
-            $sidUserId = $sidUser->wallet->id;
 
-            $count = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', $status)->count();
+        public function getTransactionOperatorsAmount($wallets, $id)
+        {
 
-            if ($count !== null) {
-                $totalcount += $count;
+            $data = [];
+
+            foreach ($wallets::where('updated_by', $id)->where('status', 'SUCCESS')->get() as $transaction) {
+                $data[] = $transaction->amount;
             }
+
+            return array_sum($data);
         }
 
-        return $totalcount;
-    }
 
 
+        public function getTransactionMasterCount($walletModel,  $status)
+        {
 
-    public function getTransactionMasterMonthCount($walletModel)
-    {
 
+            $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+            $totalcount = 0;
 
-        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
-        $totalcount = 0;
+            foreach ($sidUsers as $sidUser) {
 
-        foreach ($sidUsers as $sidUser) {
+                $sidUserId = $sidUser->wallet->id;
 
-            $sidUserId = $sidUser->wallet->id;
+                $count = $walletModel::where('wallet_id', $sidUserId)
+                    ->where('status', $status)->count();
 
-            $count = $walletModel::where('wallet_id', $sidUserId)
-                ->whereMonth('created_at', now()->month)->count();
-
-            if ($count !== null) {
-                $totalcount += $count;
+                if ($count !== null) {
+                    $totalcount += $count;
+                }
             }
+
+            return $totalcount;
         }
 
-        return $totalcount;
-    }
-
-    public function getTransactionMasterYearCount($walletModel)
-    {
 
 
-        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
-        $totalcount = 0;
+        public function getTransactionMasterMonthCount($walletModel)
+        {
 
-        foreach ($sidUsers as $sidUser) {
 
-            $sidUserId = $sidUser->wallet->id;
+            $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+            $totalcount = 0;
 
-            $count = $walletModel::where('wallet_id', $sidUserId)
-                ->whereMonth('created_at', now()->month)->count();
+            foreach ($sidUsers as $sidUser) {
 
-            if ($count !== null) {
-                $totalcount += $count;
+                $sidUserId = $sidUser->wallet->id;
+
+                $count = $walletModel::where('wallet_id', $sidUserId)
+                    ->whereMonth('created_at', now()->month)->count();
+
+                if ($count !== null) {
+                    $totalcount += $count;
+                }
             }
+
+            return $totalcount;
         }
 
-        return $totalcount;
-    }
+        public function getTransactionMasterYearCount($walletModel)
+        {
 
-    public function getTodayTransactionGainTotal($walletModel)
-    {
 
-        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+            $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+            $totalcount = 0;
 
-        $totalAmount = 0;
+            foreach ($sidUsers as $sidUser) {
 
-        foreach ($sidUsers as $sidUser) {
+                $sidUserId = $sidUser->wallet->id;
 
-            $sidUserId = $sidUser->wallet->id;
+                $count = $walletModel::where('wallet_id', $sidUserId)
+                    ->whereMonth('created_at', now()->month)->count();
 
-            $amount = $walletModel::where('wallet_id', $sidUserId)
+                if ($count !== null) {
+                    $totalcount += $count;
+                }
+            }
+
+            return $totalcount;
+        }
+
+        public function getTodayTransactionGainTotal($walletModel)
+        {
+
+            $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+
+            $totalAmount = 0;
+
+            foreach ($sidUsers as $sidUser) {
+
+                $sidUserId = $sidUser->wallet->id;
+
+                $amount = $walletModel::where('wallet_id', $sidUserId)
+                    ->whereStatus('SUCCESS')
+                    ->whereDate('created_at', Carbon::today())
+                    ->sum('commission_masters');
+
+                if ($amount !== null) {
+                    $totalAmount += $amount;
+                }
+            }
+
+
+            return $totalAmount;
+        }
+
+        public function getMonthTransactionGain($walletModel)
+        {
+
+            $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+
+            $totalAmount = 0;
+
+            foreach ($sidUsers as $sidUser) {
+
+                $sidUserId = $sidUser->wallet->id;
+
+                $amount = $walletModel::where('wallet_id', $sidUserId)
+                    ->whereStatus('SUCCESS')
+                    ->whereMonth('created_at', now()->month)
+                    ->sum('commission_masters');
+
+                if ($amount !== null) {
+                    $totalAmount += $amount;
+                }
+            }
+
+
+            return $totalAmount;
+        }
+
+
+
+        public function getTransactionCount($wallets, $id, $status)
+        {
+
+            $wallet_counts = $wallets::where('wallet_id', $id)->where('status', $status)->count();
+
+            return $wallet_counts;
+        }
+
+        public function getTransactionsAll($wallets, $wallet_solde, $page = 20)
+        {
+
+            $wallet_all =   $wallets::where('wallet_id', $wallet_solde->id)->orderBy('created_at', 'desc')->paginate($page);
+
+            return $wallet_all;
+        }
+
+
+        public function getTransactionsTypeAll($wallets, $number_compte, $wallet_solde, $page = 20)
+        {
+
+            $wallet_all =   $wallets::where('wallet_id', $wallet_solde->id)
+                ->orWhere($number_compte,  $wallet_solde->wallet_id)
+                ->orderBy('created_at', 'desc')->paginate($page);
+
+            return $wallet_all;
+        }
+
+
+        public function getUsersMasters($wallet_solde, $page = 20)
+        {
+
+            $master_users =   SidUser::where('master_id', $wallet_solde)
+                ->orderBy('created_at', 'desc')->paginate($page);
+            return $master_users;
+        }
+
+
+        public function getTransactionsTypeAllAmount($wallets, $number_compte, $wallet_solde)
+        {
+
+
+            $data = [];
+
+
+            foreach ($wallets::where('wallet_id', $wallet_solde->id)->orWhere($number_compte,  $wallet_solde->wallet_id)->where('status', 'SUCCESS')->get() as $transaction) {
+                $data[] = $transaction->amount;
+            }
+
+            return array_sum($data);
+        }
+
+        public function getTransactionsRecevedAllAmount($wallets, $number_compte, $wallet_solde)
+        {
+
+
+            $data = [];
+
+
+            foreach ($wallets::where($number_compte,  $wallet_solde->wallet_id)->where('status', 'SUCCESS')->get() as $transaction) {
+                $data[] = $transaction->amount;
+            }
+
+            return array_sum($data);
+        }
+
+        public function getTransactionAmount($wallets, $id)
+        {
+
+            $data = [];
+
+            foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
+                $data[] = $transaction->amount;
+            }
+
+            return array_sum($data);
+        }
+
+
+
+
+        public function getTransactionXbetAmount($wallets, $id, $choose)
+        {
+
+            $data = [];
+
+            foreach ($wallets::where('wallet_id', $id)->where('choose_type_transaction', $choose)->where('status', 'SUCCESS')->get() as $transaction) {
+                $data[] = $transaction->amount;
+            }
+
+            return array_sum($data);
+        }
+
+
+        public function getTransactionCommissionAmount($wallets, $id)
+        {
+
+            $data = [];
+
+            foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
+                $data[] = $transaction->commissions;
+            }
+
+            return array_sum($data);
+        }
+
+
+        public function walletSumCommission($wallets, $id)
+        {
+
+            $data = [];
+
+            foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
+                $data[] = $transaction->commission_masters;
+            }
+
+            return array_sum($data);
+        }
+
+
+        public function getWalletTransactions($wallets, $id)
+        {
+            return $wallets::where('wallet_id', $id)->orderBy('created_at', 'desc')->paginate(20);
+        }
+
+        public function getAllUsers()
+        {
+            // Logique pour récupérer tous les utilisateurs
+            return Zone::all();
+        }
+
+        public function getUserTransactions($wallets, $wallet_solde, $numWallet)
+        {
+            return   $wallets::where('wallet_id', $wallet_solde->id)
+                ->orWhere($numWallet, $wallet_solde->wallet_id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+
+
+        public function getUserAllTransactions($wallets, $wallet_solde)
+        {
+            return   $wallets::where('wallet_id', $wallet_solde->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+
+
+        public function getUserAllCumulTransactions($wallets)
+        {
+            return   $wallets::where('created_by', robus()->id)
                 ->whereStatus('SUCCESS')
-                ->whereDate('created_at', Carbon::today())
-                ->sum('commission_masters');
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
 
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
+        public function getUserAllCumulOrderTransactions($wallets)
+        {
+            return   $wallets::where('created_by', robus()->id)
+                ->whereStatus(1)
+                ->orderBy('created_at', 'desc')
+                ->get();
         }
 
 
-        return $totalAmount;
-    }
+        public function getUserRemonte($wallets, $wallet_solde)
+        {
+            return   $wallets::where('sid_user_id', $wallet_solde->id)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
 
-    public function getMonthTransactionGain($walletModel)
-    {
+        public function getWalletSumGainUser($wallet)
+        {
+            // Récupérer toutes les commissions des banques avec le statut 'SUCCESS'
 
-        $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+            $commissions = $wallet::where('created_by', robus()->id)->whereStatus('SUCCESS')->pluck('commissions');
 
-        $totalAmount = 0;
+            // Calculer la somme des commissions
+            $totalCommissions = $commissions->sum();
 
-        foreach ($sidUsers as $sidUser) {
+            return $totalCommissions;
+        }
 
-            $sidUserId = $sidUser->wallet->id;
+        public function getWalletSumGainMasterUser($wallet)
+        {
+            // Récupérer toutes les commissions des banques avec le statut 'SUCCESS'
 
-            $amount = $walletModel::where('wallet_id', $sidUserId)
+            $commissions = $wallet::where('created_by', robus()->id)->whereStatus('SUCCESS')->pluck('commission_masters');
+
+            // Calculer la somme des commissions
+            $totalCommissions = $commissions->sum();
+
+            return $totalCommissions;
+        }
+
+        public function getTodayTransactionMasterAmountTotal($walletModel)
+        {
+
+            $sidUsers = SidUser::where('master_id',  robus()->id)->get();
+
+            $totalAmount = 0;
+
+            foreach ($sidUsers as $sidUser) {
+
+                $sidUserId = $sidUser->wallet->id;
+
+                $amount = $walletModel::where('wallet_id', $sidUserId)
+                    ->whereStatus('SUCCESS')
+                    // ->whereDate('created_at', Carbon::today())
+                    ->sum('commission_masters');
+
+                if ($amount !== null) {
+                    $totalAmount += $amount;
+                }
+            }
+
+
+            return $totalAmount;
+        }
+
+
+        public function getWalletTransactionDaysAccountGainUser($wallet)
+        {
+
+            $account_valeur = $wallet::whereDate('created_at', Carbon::now())
+                ->where('created_by', robus()->id)
                 ->whereStatus('SUCCESS')
-                ->whereMonth('created_at', now()->month)
-                ->sum('commission_masters');
+                ->count();
 
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
+            return $account_valeur;
+        }
+
+        public function getWalletTransactionDaysAccountStatusUser($wallet, $status)
+        {
+
+            $account_valeur = $wallet::whereDate('created_at', Carbon::now())
+                ->where('created_by', robus()->id)
+                ->whereStatus($status)
+                ->count();
+
+            return $account_valeur;
         }
 
 
-        return $totalAmount;
-    }
 
+        public function getMonthTransactionAmount($walletModel)
+        {
 
+            // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
+            $amounts = $walletModel::whereStatus('SUCCESS')->whereMonth('created_at', now()->month)->pluck('amount');
 
-    public function getTransactionCount($wallets, $id, $status)
-    {
+            // Calculer la somme des amounts
+            $totalAmounts = $amounts->sum();
 
-        $wallet_counts = $wallets::where('wallet_id', $id)->where('status', $status)->count();
-
-        return $wallet_counts;
-    }
-
-    public function getTransactionsAll($wallets, $wallet_solde, $page = 20)
-    {
-
-        $wallet_all =   $wallets::where('wallet_id', $wallet_solde->id)->orderBy('created_at', 'desc')->paginate($page);
-
-        return $wallet_all;
-    }
-
-
-    public function getTransactionsTypeAll($wallets, $number_compte, $wallet_solde, $page = 20)
-    {
-
-        $wallet_all =   $wallets::where('wallet_id', $wallet_solde->id)
-            ->orWhere($number_compte,  $wallet_solde->wallet_id)
-            ->orderBy('created_at', 'desc')->paginate($page);
-
-        return $wallet_all;
-    }
-
-
-    public function getUsersMasters($wallet_solde, $page = 20)
-    {
-
-        $master_users =   SidUser::where('master_id', $wallet_solde)
-            ->orderBy('created_at', 'desc')->paginate($page);
-        return $master_users;
-    }
-
-
-    public function getTransactionsTypeAllAmount($wallets, $number_compte, $wallet_solde)
-    {
-
-
-        $data = [];
-
-
-        foreach ($wallets::where('wallet_id', $wallet_solde->id)->orWhere($number_compte,  $wallet_solde->wallet_id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
+            return $totalAmounts;
         }
 
-        return array_sum($data);
-    }
 
-    public function getTransactionsRecevedAllAmount($wallets, $number_compte, $wallet_solde)
-    {
+        public function getMonthTransactionGainUser($walletModel)
+        {
 
+            // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
+            $amounts = $walletModel::whereStatus('SUCCESS')->whereMonth('created_at', now()->month)->pluck('commissions');
 
-        $data = [];
+            // Calculer la somme des amounts
+            $totalAmounts = $amounts->sum();
 
-
-        foreach ($wallets::where($number_compte,  $wallet_solde->wallet_id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
+            return $totalAmounts;
         }
 
-        return array_sum($data);
-    }
+        public function getYearTransactionGainUser($walletModel)
+        {
 
-    public function getTransactionAmount($wallets, $id)
-    {
+            $year = Carbon::now()->year;
 
-        $data = [];
+            // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
+            $amounts = $walletModel::whereStatus('SUCCESS')
+                ->whereYear('created_at', $year)
+                ->pluck('commissions');
 
-        foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
+            // Calculer la somme des amounts
+            $totalAmounts = $amounts->sum();
+
+            return $totalAmounts;
         }
 
-        return array_sum($data);
-    }
 
 
-    
+        public function getWalletTransactionMonthAccountStatusUser($wallet)
+        {
 
-    public function getTransactionXbetAmount($wallets, $id, $choose)
-    {
+            $account_valeur = $wallet::whereMonth('created_at', now()->month)
+                ->where('created_by', robus()->id)
+                ->count();
 
-        $data = [];
-
-        foreach ($wallets::where('wallet_id', $id)->where('choose_type_transaction', $choose)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
+            return $account_valeur;
         }
 
-        return array_sum($data);
-    }
+        public function getYearTransactionSingleGainUser($walletModel)
+        {
 
+            $totalAmount = $walletModel::where('created_by', robus()->id)
+                ->whereYear('created_at', Carbon::now()->year)
+                ->sum('amount');
 
-    public function getTransactionCommissionAmount($wallets, $id)
-    {
-
-        $data = [];
-
-        foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->commissions;
+            return $totalAmount;
         }
 
-        return array_sum($data);
-    }
 
+        public function getUnderDistributorsUser()
+        {
 
-    public function walletSumCommission($wallets, $id)
-    {
+            $under_distributors = SidUser::where('master_id', robus()->id)->get();
 
-        $data = [];
-
-        foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->commission_masters;
+            return $under_distributors;
         }
 
-        return array_sum($data);
+        public function getMastersUser()
+        {
+
+            $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsMaster(true)->get();
+
+            return $under_distributors;
+        }
+
+        public function getComZonesUser()
+        {
+
+            $under_distributors = SidUser::where('country_id', robus()->country->id)->get();
+
+            return $under_distributors;
+        }
+
+        public function getCustmersUser()
+        {
+
+            $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsCustumers(true)->get();
+
+            return $under_distributors;
+        }
+
+        public function getUnderDistributorsComUser()
+        {
+
+
+            $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsUnderDistributer(true)->get();
+
+            return $under_distributors;
+        }
     }
-
-
-    public function getWalletTransactions($wallets, $id)
-    {
-        return $wallets::where('wallet_id', $id)->orderBy('created_at', 'desc')->paginate(20);
-    }
-
-    public function getAllUsers()
-    {
-        // Logique pour récupérer tous les utilisateurs
-        return Zone::all();
-    }
-
-    public function getUserTransactions($wallets, $wallet_solde, $numWallet)
-    {
-        return   $wallets::where('wallet_id', $wallet_solde->id)
-            ->orWhere($numWallet, $wallet_solde->wallet_id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-    }
-
-
-    public function getUserAllTransactions($wallets, $wallet_solde)
-    {
-        return   $wallets::where('wallet_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-    }
-
-
-    public function getUserAllCumulTransactions($wallets)
-    {
-        return   $wallets::where('created_by', robus()->id)
-            ->whereStatus('SUCCESS')
-            ->orderBy('created_at', 'desc')
-            ->get();
-    }
-
-    public function getUserAllCumulOrderTransactions($wallets)
-    {
-        return   $wallets::where('created_by', robus()->id)
-            ->whereStatus(1)
-            ->orderBy('created_at', 'desc')
-            ->get();
-    }
-
-
-    public function getUserRemonte($wallets, $wallet_solde)
-    {
-        return   $wallets::where('sid_user_id', $wallet_solde->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-    }
-
-    public function getWalletSumGainUser($wallet)
-    {
-        // Récupérer toutes les commissions des banques avec le statut 'SUCCESS'
-        $commissions = $wallet::whereStatus('SUCCESS')->pluck('commission_masters');
-
-        // Calculer la somme des commissions
-        $totalCommissions = $commissions->sum();
-
-        return $totalCommissions;
-    }
-
-    public function getWalletTransactionDaysAccountGainUser($wallet)
-    {
-
-        $account_valeur = $wallet::whereDate('created_at', Carbon::now())
-            ->where('created_by', robus()->id)
-            ->whereStatus('SUCCESS')
-            ->count();
-
-        return $account_valeur;
-    }
-
-    public function getWalletTransactionDaysAccountStatusUser($wallet, $status)
-    {
-
-        $account_valeur = $wallet::whereDate('created_at', Carbon::now())
-            ->where('created_by', robus()->id)
-            ->whereStatus($status)
-            ->count();
-
-        return $account_valeur;
-    }
-
-
-
-    public function getMonthTransactionAmount($walletModel)
-    {
-
-        // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
-        $amounts = $walletModel::whereStatus('SUCCESS')->whereMonth('created_at', now()->month)->pluck('amount');
-
-        // Calculer la somme des amounts
-        $totalAmounts = $amounts->sum();
-
-        return $totalAmounts;
-    }
-
-
-    public function getMonthTransactionGainUser($walletModel)
-    {
-
-        // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
-        $amounts = $walletModel::whereStatus('SUCCESS')->whereMonth('created_at', now()->month)->pluck('commissions');
-
-        // Calculer la somme des amounts
-        $totalAmounts = $amounts->sum();
-
-        return $totalAmounts;
-    }
-
-    public function getYearTransactionGainUser($walletModel)
-    {
-
-        $year = Carbon::now()->year;
-
-        // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
-        $amounts = $walletModel::whereStatus('SUCCESS')
-            ->whereYear('created_at', $year)
-            ->pluck('commissions');
-
-        // Calculer la somme des amounts
-        $totalAmounts = $amounts->sum();
-
-        return $totalAmounts;
-    }
-
-
-
-    public function getWalletTransactionMonthAccountStatusUser($wallet)
-    {
-
-        $account_valeur = $wallet::whereMonth('created_at', now()->month)
-            ->where('created_by', robus()->id)
-            ->count();
-
-        return $account_valeur;
-    }
-
-    public function getYearTransactionSingleGainUser($walletModel)
-    {
-
-        $totalAmount = $walletModel::where('created_by', robus()->id)
-            ->whereYear('created_at', Carbon::now()->year)
-            ->sum('amount');
-
-        return $totalAmount;
-    }
-
-
-    public function getUnderDistributorsUser()
-    {
-
-        $under_distributors = SidUser::where('master_id', robus()->id)->get();
-
-        return $under_distributors;
-    }
-
-    public function getMastersUser()
-    {
-
-        $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsMaster(true)->get();
-
-        return $under_distributors;
-    }
-
-    public function getCustmersUser()
-    {
-
-        $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsCustumers(true)->get();
-
-        return $under_distributors;
-    }
-
-    public function getUnderDistributorsComUser()
-    {
-
-
-        $under_distributors = SidUser::where('country_id', robus()->country->id)->whereIsUnderDistributer(true)->get();
-
-        return $under_distributors;
-    }
-}

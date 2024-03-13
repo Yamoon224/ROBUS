@@ -51,6 +51,7 @@ class InterTransactionSingleCollection extends JsonResource
             'id_invoice_pre'  =>  $this->id_invoice_pre ?? null,
             'name'  =>  $this->name ?? $this->name_complet ?? null,
             'number_phone'  =>  $this->number_phone ?? null,
+            'master_cost_percent' =>  number_format((float)$this->commission_masters, 2, '.', '') ?? null,
             'amount_received' => number_format((float)$this->amount_received, 2, '.', ' ') . ' ' . optional($this->country->currencie)->code ?? null,
             'offer'  =>  optional($this->offer)->name ?? null,
             'phone' =>  $this->phone ?? null,

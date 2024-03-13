@@ -136,7 +136,7 @@ class PhoneCreditController extends Controller
         $percent_robus = PhoneCreditCost::whereId(1)->first();
         // valueur User send days
 
-         try {
+        try {
 
             if (robus()->country->name_groupe == 'CIV') {
 
@@ -175,19 +175,21 @@ class PhoneCreditController extends Controller
 
                     if ($percent_robus != null) {
 
+                        $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            $val_amount_send = $request->amount + ($percent_robus->percent * $request->amount);
+                            $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
 
-                            $amountReceved = $request->amount ;
+                            $amountReceved = $reel_amount;
 
                             if ($this->validatedamountDays->validateAmount($val_amount_send)) {
 
-                                $walletPhoneCredit =  $this->phoneCreditService->createRobusWalletTransactionPhone($request->amount, $request->provider , $percent_robus, $request->phone , $amountReceved);
+                                $walletPhoneCredit =  $this->phoneCreditService->createRobusWalletTransactionPhone($reel_amount, $request->provider, $percent_robus, $request->phone, $amountReceved);
 
                                 if ($walletPhoneCredit != null) {
 
-                                    if ($this->phoneCreditService->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhoneCredit , $request->amount)) {
+                                    if ($this->phoneCreditService->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhoneCredit, $reel_amount)) {
                                         $this->notificationPhone->sendNotificationPhoneCredit($walletPhoneCredit);
                                         return $this->messageAfterValidated($walletPhoneCredit);
                                     }
@@ -205,7 +207,7 @@ class PhoneCreditController extends Controller
 
                         return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
                     }
-                }else {
+                } else {
                     return response()->json([
                         'success' => false,
                         'message' => 'Selectionnez un fournisseur existant SVP ',
@@ -307,8 +309,6 @@ class PhoneCreditController extends Controller
     public function search_phone_credit($amount_phone_credit)
     {
 
-        $wallet_user = Auth::guard('api')->user();
-
         $default_valeur = 2000000;
 
 
@@ -316,10 +316,11 @@ class PhoneCreditController extends Controller
 
             $percent_robus =  $this->percentRobus->getRobusPercentagePhoneCredit();
 
-            if($percent_robus != null)
-            {
+            if ($percent_robus != null) {
 
                 if ($amount_phone_credit != '') {
+
+                    $reel_amount = $this->validatedamountDays->search_amount($amount_phone_credit);
 
                     $commission_phone_credit_val_nat_pay = 0;
                     $commission_phone_credit_val_nat_receive = 0;
@@ -327,17 +328,16 @@ class PhoneCreditController extends Controller
                     //  Conversion valeur
                     $conversion_valeur_end  =  $default_valeur;
 
-                    if ($conversion_valeur_end  < $amount_phone_credit) {
+                    if ($conversion_valeur_end  < $reel_amount) {
 
                         $commission_phone_credit_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
 
                         $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
                     } else {
 
-                        $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $amount_phone_credit;
+                        $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
-                        $valeur_receive =  $amount_phone_credit - $commission_phone_credit_val_nat_pay;
+                        $valeur_receive =  $reel_amount - (float) $commission_phone_credit_val_nat_pay;
 
                         if ($valeur_receive < 0) {
 
@@ -346,8 +346,6 @@ class PhoneCreditController extends Controller
 
                             $commission_phone_credit_val_nat_receive =  $valeur_receive;
                         }
-
-                    
                     }
 
                     return response()->json([
@@ -358,9 +356,8 @@ class PhoneCreditController extends Controller
                             'amount_receive' => $commission_phone_credit_val_nat_receive,
                         ],
                     ], 200);
-
                 }
-            }else {
+            } else {
                 return response()->json([
                     'success' =>  false,
                     'message' => 'Pas de Virement dans cette zone ...',
@@ -374,4 +371,67 @@ class PhoneCreditController extends Controller
         }
     }
 
+    public function search_phone_received($amount_phone_credit)
+    {
+        $default_valeur = 2000000;
+
+
+        try {
+
+            $percent_robus =  $this->percentRobus->getRobusPercentagePhoneCredit();
+
+            if ($percent_robus != null) {
+
+                if ($amount_phone_credit != '') {
+
+                    $reel_amount = $this->validatedamountDays->search_amount($amount_phone_credit);
+
+                    $commission_phone_credit_val_nat_pay = 0;
+                    $commission_phone_credit_val_nat_receive = 0;
+                    $commission_virement_val_nat_send = 0;
+                    //  Conversion valeur
+                    $conversion_valeur_end  =  $default_valeur;
+
+                    if ($conversion_valeur_end  < $reel_amount) {
+
+                        $commission_phone_credit_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+
+                        $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+                    } else {
+
+                        $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
+
+                        $valeur_receive =  $reel_amount +  (float) $commission_phone_credit_val_nat_pay;
+
+                        if ($valeur_receive < 0) {
+
+                            $commission_phone_credit_val_nat_receive = "Montant negatif";
+                        } else {
+
+                            $commission_phone_credit_val_nat_receive =  $valeur_receive;
+                        }
+                    }
+
+                    return response()->json([
+                        'success' => $percent_robus != null ? true : false,
+                        'data' =>  [
+                            'amount_pay' => $commission_phone_credit_val_nat_pay,
+                            'amount_send' => $commission_phone_credit_val_nat_pay,
+                            'amount_receive' => $commission_phone_credit_val_nat_receive,
+                        ],
+                    ], 200);
+                }
+            } else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Pas de Virement dans cette zone ...',
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
 }

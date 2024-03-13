@@ -34,6 +34,7 @@ class relaoadCardUnderCollection extends ResourceCollection
                                         'num_carte' => $data->num_carte,
                                         'devise'  => optional($data->wallet->currencie)->code,
                                         'frais' => number_format((float)$data->costs_amount, 2, '.', ' '),
+                                        'master_cost_percent' =>  number_format((float)$data->commission_masters, 2, '.', '') ?? null,
                                         'status'  =>  $data->status,
                                         'solde_account'  => $data->amount_solde .  ' ' . optional($data->wallet->currencie)->code ?? null,
                                 ];

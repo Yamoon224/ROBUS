@@ -22,16 +22,13 @@ class reloadUnderCollection extends ResourceCollection
 
                                 $wallet_send = Wallet::where('wallet_id',  $data->account_wallet)->first();
 
-                                if($wallet_send != null)
-                                {
-                                    $wallet_send = Wallet::where('wallet_id',  $data->account_wallet)->first();
-                        
-                                }else {
-                        
-                                    $wallet_send = null;
-                        
+                                if ($wallet_send != null) {
+                                        $wallet_send = Wallet::where('wallet_id',  $data->account_wallet)->first();
+                                } else {
+
+                                        $wallet_send = null;
                                 }
-                        
+
                                 return [
                                         'id' => (int) $data->id,
                                         'provider'  =>  optional($data->provider)->name,
@@ -54,6 +51,7 @@ class reloadUnderCollection extends ResourceCollection
                                         'id_invoice' =>  null,
                                         'offer' => null,
                                         'number_contract' =>  null,
+                                        'master_cost_percent' =>  number_format((float)$data->commission_masters, 2, '.', '') ?? null,
                                         'amount_received' => number_format((float)$data->amount_received, 2, '.', ' ')  . ' ' . optional($wallet_send->currencie)->code ?? null,
                                         'number_phone' => null,
                                         'paiementChoix_phone' =>  null,

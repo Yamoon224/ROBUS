@@ -102,6 +102,16 @@ class Wallet extends Model
         return $this->hasMany(WalletTransaction::class);
     }
 
+    public function walletXbets()
+    {
+        return $this->hasMany(WalletXbet::class);
+    }
+
+    public function walletWaves()
+    {
+        return $this->hasMany(WalletWave::class);
+    }
+
     public function walletPhoneCredits()
     {
         return $this->hasMany(WalletPhoneCredit::class);

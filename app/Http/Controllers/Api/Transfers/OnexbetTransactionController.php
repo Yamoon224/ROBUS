@@ -7,8 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Services\DeletedService;
 use App\Http\Services\NotificationSendService;
 use App\Http\Services\PercentRobusAuthService;
-use App\Http\Services\XbetService;
 use App\Http\Services\ValidateDailyLimitService;
+use App\Http\Services\XbetService;
 use App\Models\Wallets\WalletXbet;
 use App\Repositories\OnexbetRepository;
 use Illuminate\Http\Request;
@@ -190,13 +190,15 @@ class OnexbetTransactionController extends Controller
 
                                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
+                                                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                                                 if ($request->choose_type_transaction == 1) {
                                                         // Transaction de dépôt
-                                                        $amountReceved = $request->amount;
+                                                        $amountReceved =  $reel_amount;
                                                         $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
                                                 } else {
                                                         // Transaction de retrait
-                                                        $amountReceved = $request->amount - ($percent_robus->percent_with_drawal * $request->amount);
+                                                        $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
                                                         $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved);
                                                 }
 
@@ -233,12 +235,14 @@ class OnexbetTransactionController extends Controller
         // Fonction pour traiter la transaction de dépôt
         private function processDepositTransaction($request, $percent_robus, $amountReceved)
         {
-                $val_amount_send = $request->amount + ($percent_robus->percent * $request->amount);
+                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
+                $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
                 if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($request->amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved);
+                $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($reel_amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved);
                 if ($walletXbet == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -254,13 +258,17 @@ class OnexbetTransactionController extends Controller
         // Fonction pour traiter la transaction de retrait
         private function processWithdrawalTransaction($request, $percent_robus, $amountReceved)
         {
-                $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($request->amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie, $request->id_xbet, $amountReceved);
+
+                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
+
+                $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($reel_amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie, $request->id_xbet, $amountReceved);
                 if ($walletXbet == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
                 // Mettre à jour le montant reçu dans le service OneXbet
-                if (!$this->oneXbetService->updateamountOneBetDrawal($this->validatedamountDays->adminCiv(), $percent_robus, $walletXbet, $request->amount)) {
+                if (!$this->oneXbetService->updateamountOneBetDrawal($this->validatedamountDays->adminCiv(), $percent_robus, $walletXbet,  $reel_amount)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
@@ -344,55 +352,97 @@ class OnexbetTransactionController extends Controller
         }
 
         // Search Valeur receive and valeur pay of UV
+
+
         public function search_xbet($amount_wave)
         {
-
-
-
                 try {
+                        $percent_robus = $this->percentRobus->getRobusPercentageOnexbet();
 
-                        $percent_robus =  $this->percentRobus->getRobusPercentageOnexbet();
-
-                        if ($percent_robus != null) {
-
-                                if ($amount_wave != '') {
-
-                                        $commission_wave_val_nat_pay = 0;
-                                        $commission_wave_val_nat_receive = 0;
-                                        //  Conversion valeur
-                                  
-                                        $commission_wave_val_nat_pay =   $percent_robus->percent  *  $amount_wave;
-
-                                        $valeur_receive =  $amount_wave - $commission_wave_val_nat_pay;
-
-                                        if ($valeur_receive < 0) {
-
-                                                $commission_wave_val_nat_receive = "Montant negatif";
-                                        } else {
-
-                                                $commission_wave_val_nat_receive =  $valeur_receive;
-                                        }
-
-                                        return response()->json([
-                                                'success' => $percent_robus != null ? true : false,
-                                                'data' =>  [
-                                                        'amount_pay' => $commission_wave_val_nat_pay,
-                                                        'amount_send' => $commission_wave_val_nat_pay,
-                                                        'amount_receive' => $commission_wave_val_nat_receive,
-                                                ],
-                                        ], 200);
-                                }
-                        } else {
+                        if ($percent_robus == null) {
                                 return response()->json([
-                                        'success' =>  false,
-                                        'message' => 'Pas de Rechargement dans cette zone ...',
+                                        'success' => false,
+                                        'message' => 'Pas de rechargement dans cette zone...',
                                 ], 200);
                         }
+
+                        $commission_wave_val_nat_pay = 0;
+                        $commission_wave_val_nat_receive = 0;
+
+
+                        if ($amount_wave != '') {
+
+                                $reel_amount = $this->validatedamountDays->search_amount($amount_wave);
+                                // Conversion valeur
+                                $commission_wave_val_nat_pay = $percent_robus->percent * $reel_amount;
+                                $commission_wave_val_nat_receive = $reel_amount - $commission_wave_val_nat_pay;
+                        } else {
+                                return response()->json([
+                                        'success' => false,
+                                        'message' => 'Montant d\'onde ou montant reçu non spécifié...',
+                                ], 400);
+                        }
+
+                        return response()->json([
+                                'success' => true,
+                                'data' =>  [
+                                        'amount_pay' => $commission_wave_val_nat_pay,
+                                        'amount_send' => $commission_wave_val_nat_pay,
+                                        'amount_receive' => $commission_wave_val_nat_receive,
+                                ],
+                        ], 200);
                 } catch (\Exception $exception) {
                         return response()->json([
-                                'success' =>  false,
-                                'message' => 'Pas d\'utilisateur',
+                                'success' => false,
+                                'message' => 'Une erreur s\'est produite lors de la recherche.',
+                        ], 500);
+                }
+        }
+
+        public function search_xbet_received($amount_received)
+        {
+                try {
+                        $percent_robus = $this->percentRobus->getRobusPercentageOnexbet();
+
+                        if ($percent_robus == null) {
+                                return response()->json([
+                                        'success' => false,
+                                        'message' => 'Pas de rechargement dans cette zone...',
+                                ], 200);
+                        }
+
+                        $commission_wave_val_nat_pay = 0;
+                        $commission_wave_val_nat_receive = 0;
+
+
+
+                        if ($amount_received != '') {
+
+                                $reel_amount = $this->validatedamountDays->search_amount($amount_received);
+                                $commission_wave_val_nat_pay = $percent_robus->percent * $reel_amount;
+                                $commission_wave_val_nat_receive = $reel_amount + $commission_wave_val_nat_pay;
+                        } else {
+                                return response()->json([
+                                        'success' => false,
+                                        'message' => 'Montant d\'onde ou montant reçu non spécifié...',
+                                ], 400);
+                        }
+
+
+
+                        return response()->json([
+                                'success' => true,
+                                'data' =>  [
+                                        'amount_pay' => $commission_wave_val_nat_pay,
+                                        'amount_send' => $commission_wave_val_nat_pay,
+                                        'amount_receive' => $commission_wave_val_nat_receive,
+                                ],
                         ], 200);
+                } catch (\Exception $exception) {
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'Une erreur s\'est produite lors de la recherche.',
+                        ], 500);
                 }
         }
 }

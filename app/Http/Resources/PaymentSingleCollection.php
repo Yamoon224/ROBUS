@@ -26,6 +26,7 @@ class PaymentSingleCollection extends JsonResource
             'name' =>  $this->name,
             'description'  =>  $this->description,
             'payment_cost_percent' =>  number_format((float)$this->commissions, 2, '.', '') ?? null,
+            'master_cost_percent' =>  number_format((float)$this->commission_masters, 2, '.', '') ?? null,
             'number_decoder' =>  $this->number_decoder,
             'id_invoice' =>  $this->id_invoice,
             'offer' => optional($this->offer)->name,

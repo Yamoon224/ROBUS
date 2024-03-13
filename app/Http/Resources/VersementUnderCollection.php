@@ -45,6 +45,7 @@ class VersementUnderCollection extends ResourceCollection
                                         'phone'  => $data->phone ?? null,
                                         'name' => null,
                                         'description'  =>  $data->description ?? null,
+                                        'master_cost_percent' =>  number_format((float)$data->commission_masters, 2, '.', '') ?? null,
                                         'payment_cost_percent' => number_format((float)$data->commissions, 2, '.', '') ?? null,
                                         'number_decoder' =>  null,
                                         'num_wallet' => null,

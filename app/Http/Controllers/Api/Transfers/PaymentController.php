@@ -230,10 +230,13 @@ class PaymentController extends Controller
 
                     if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
+                        $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
+
                         if ($request->provider != 7) {
 
-                            $amount_send = $request->amount;
-                            $amount_valeur = $request->amount + $percent_robus->amount_auther;
+                            $amount_send = $reel_amount;
+                            $amount_valeur = $reel_amount + (float) $percent_robus->amount_auther;
                         } else {
 
                             $amount_send = $offers->amount;
@@ -380,7 +383,7 @@ class PaymentController extends Controller
     public function search_payment($amount_paiement)
     {
 
-        $wallet_user = Auth::guard('api')->user();
+        $wallet_user = robus();
 
         // valeur amount virement bank
 
@@ -388,6 +391,8 @@ class PaymentController extends Controller
 
             // Invoice auther
             if ($amount_paiement != '') {
+
+                $reel_amount = $this->validatedamountDays->search_amount($amount_paiement);
 
                 $commission_invoice = PaymentCost::whereId(2)->first();
 
@@ -402,7 +407,7 @@ class PaymentController extends Controller
 
                         $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->amount_auther;
 
-                        $commission_paiement_invoice_val_nat_receive =  (float) $amount_paiement;
+                        $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount;
                     }
 
                     return response()->json([
@@ -422,6 +427,52 @@ class PaymentController extends Controller
         }
     }
 
+    public function search_payment_received($amount_paiement)
+    {
+
+        $wallet_user = robus();
+
+        // valeur amount virement bank
+
+        try {
+
+            // Invoice auther
+            if ($amount_paiement != '') {
+
+                $reel_amount = $this->validatedamountDays->search_amount($amount_paiement);
+
+                $commission_invoice = PaymentCost::whereId(2)->first();
+
+                if ($wallet_user->country->code == 'CI') {
+
+                    if ($wallet_user->is_under_distributer == 1) {
+
+                        $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
+
+                        $commission_paiement_invoice_val_nat_receive =  (float) $commission_invoice->amount_auther;
+                    } else {
+
+                        $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->amount_auther;
+
+                        $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount;
+                    }
+
+                    return response()->json([
+                        'success' => $commission_invoice != null ? true : false,
+                        'data' =>  [
+                            'amount_pay' => $commission_paiement_invoice_val_nat_pay,
+                            'amount_receive' => $commission_paiement_invoice_val_nat_receive,
+                        ],
+                    ], 200);
+                }
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
     // Search amount offers
     public function search_payment_offer($amount_offer)
     {

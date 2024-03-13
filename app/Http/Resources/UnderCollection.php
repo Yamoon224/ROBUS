@@ -4,11 +4,13 @@ namespace App\Http\Resources;
 
 
 use App\Http\Resources\InterTransactionUnderCollection;
+use App\Http\Resources\OneXbetUnderCollection;
 use App\Http\Resources\PaymentUnderCollection;
 use App\Http\Resources\PhoneCreditUnderCollection;
 use App\Http\Resources\ReloadCardUnderCollection;
 use App\Http\Resources\TransactionUnderCollection;
 use App\Http\Resources\VersementUnderCollection;
+use App\Http\Resources\WaveUnderCollection;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class UnderCollection extends ResourceCollection
@@ -62,6 +64,8 @@ class UnderCollection extends ResourceCollection
                                         'Commande de carte' =>   new relaoadCardUnderCollection($data->wallet->orderCards),
                                         // 'Commande de carte' =>   new relaoadCardUnderCollection($data->wallet->orderCards),
                                         'Transfers inter' =>   new InterTransactionUnderCollection($data->wallet->walletInters),
+                                        '1xbet' =>   new OneXbetUnderCollection($data->wallet->walletXbets),
+                                        'Achat UV wave' =>   new WaveUnderCollection($data->wallet->walletWaves),
                                 ];
                         })
                 ];

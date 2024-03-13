@@ -50,6 +50,7 @@ class TransactionUnderCollection extends ResourceCollection
                                         'id_invoice' =>  $data->id_invoice,
                                         'offer' => optional($data->offer)->name,
                                         'number_contract' =>  $data->number_contract,
+                                        'master_cost_percent' =>  number_format((float)$data->commission_masters, 2, '.', '') ?? null,
                                         'amount_received' => Wallet::where('wallet_id',  $data->num_wallet)->first() != null ? number_format((float)$data->amount_received, 2, '.', ' ')  . ' ' . optional($wallet_send->currencie)->code : number_format((float)$data->amount_received, 2, '.', ' '),
                                         'number_phone' =>  $data->number_phone,
                                         'paiementChoix_phone' =>  $data->paiementChoix_phone,

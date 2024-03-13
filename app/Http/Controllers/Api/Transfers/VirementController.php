@@ -188,37 +188,35 @@ class VirementController extends Controller
 
                     $percent_robus =  $this->percentRobus->getRobusPercentageVirement();
 
+                    $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                     if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
                         if ($percent_robus != null) {
 
                             foreach ($percent_robus->levelBankIvories as $amount_user) {
 
-                                if ($request->amount >= $amount_user->amount_begin && $request->amount <= $amount_user->amount_end) {
+                                if ($reel_amount >= $amount_user->amount_begin && $reel_amount <= $amount_user->amount_end) {
 
 
                                     if ($percent_robus !== null) {
 
                                         if (robus()->is_under_distributer) {
 
-                                            $amount_valeur = $request->amount;
+                                            $amount_valeur = $reel_amount;
 
-                                            $amountReceved =  (float) $request->amount;
-
-
+                                            $amountReceved =  (float) $reel_amount;
                                         } else {
 
-                                            $amount_valeur = (float)$amount_user->amount + (float)$request->amount;
+                                            $amount_valeur = (float)$amount_user->amount + (float)$reel_amount;
 
-                                           $amountReceved =  (float) $request->amount -  (float) $amount_user->amount;
-   
-                                            
+                                            $amountReceved =  (float) $reel_amount -  (float) $amount_user->amount;
                                         }
 
                                         $comission_distributer = $amount_user->amount;
-                                        
-                                        $amount_send = $request->amount ;
-                                        
+
+                                        $amount_send = $reel_amount;
+
 
 
                                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
@@ -228,7 +226,7 @@ class VirementController extends Controller
 
                                                 //valeur commissions
 
-                                                $walletVirement =  $this->virementServices->createRobusVirement($amount_valeur , $amount_send, $request->provider, $request->description, $percent_robus, $request->number_compte, $request->firstname, $request->lastname, $comission_distributer, $request->phone, $amountReceved);
+                                                $walletVirement =  $this->virementServices->createRobusVirement($amount_valeur, $amount_send, $request->provider, $request->description, $percent_robus, $request->number_compte, $request->firstname, $request->lastname, $comission_distributer, $request->phone, $amountReceved);
 
                                                 if ($walletVirement != null) {
 
@@ -308,6 +306,8 @@ class VirementController extends Controller
 
                 if ($amount_virement != '') {
 
+                    $reel_amount = $this->validatedamountDays->search_amount($amount_virement);
+
                     $commission_virement_val_nat_pay = 0;
                     $commission_virement_val_nat_receive = 0;
                     $commission_virement_val_nat_send = 0;
@@ -317,17 +317,16 @@ class VirementController extends Controller
                     //  Conversion valeur
                     $conversion_valeur_end  = $valeur_end->amount_end;
 
-                    if ($conversion_valeur_end < $amount_virement) {
+                    if ($conversion_valeur_end < $reel_amount) {
 
                         $commission_virement_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
 
                         $commission_virement_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-
                     } else {
 
                         foreach ($percent_robus->levelBankIvories as $amount_comission) {
 
-                            if ($amount_virement >= $amount_comission->amount_begin && $amount_virement <= $amount_comission->amount_end) {
+                            if ($reel_amount >= $amount_comission->amount_begin && $reel_amount <= $amount_comission->amount_end) {
 
 
                                 $commission_virement_val_nat_pay = $amount_comission->comission_distributer;
@@ -336,10 +335,10 @@ class VirementController extends Controller
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
-                                    $valeur_receive =  $amount_virement;
+                                    $valeur_receive =  $reel_amount;
                                 } else {
 
-                                    $valeur_receive =  $amount_virement -  $commission_virement_val_nat_send;
+                                    $valeur_receive =  $reel_amount -  $commission_virement_val_nat_send;
                                 }
 
 

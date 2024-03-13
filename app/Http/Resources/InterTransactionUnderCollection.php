@@ -57,6 +57,7 @@ class InterTransactionUnderCollection extends ResourceCollection
                                         'id_invoice_pre'  =>  $data->id_invoice_pre ?? null,
                                         'name'  =>  $data->name ?? $data->name_complet ?? null,
                                         'number_phone'  =>  $data->number_phone ?? null,
+                                        'master_cost_percent' =>  number_format((float)$data->commission_masters, 2, '.', '') ?? null,
                                         'amount_received' => number_format((float)$data->amount_received, 2, '.', ' ') . ' ' . optional($data->country->currencie)->code ?? null,
                                         'offer'  =>  optional($data->offer)->name ?? null,
                                         'phone' =>  $data->phone ?? null,

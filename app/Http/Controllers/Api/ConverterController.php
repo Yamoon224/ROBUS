@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Faq;
-use App\Models\Currency;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Services\ValidateDailyLimitService;
+use App\Models\Currency;
 use App\Models\Custumers\Country;
+use App\Models\Faq;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @OA\Get(
@@ -39,8 +40,20 @@ use App\Models\Custumers\Country;
  *   ),
  *  )
  */
+
+
+
 class ConverterController extends Controller
 {
+    protected $validatedamountDays;
+
+
+    public function __construct(
+        ValidateDailyLimitService $validatedamountDays
+    ) {
+        $this->validatedamountDays = $validatedamountDays;
+    }
+
     public function converter_browse($amount, $currency)
     {
 
@@ -51,22 +64,25 @@ class ConverterController extends Controller
         $country_civ = Country::find(107);
 
 
+        $reel_amount = $this->validatedamountDays->search_amount($amount);
+
+
         if ($wallet_user->wallet->currencie->value >  $currency_valeur->value) {
 
 
             if ($currency_valeur->code == 'CFA') {
 
-                $valeur_converter = $amount *  $wallet_user->wallet->currencie->value;
+                $valeur_converter = (float)  $reel_amount *  $wallet_user->wallet->currencie->value;
             } elseif ($country_civ->currencie->value > $currency_valeur->value) {
 
                 // Convertion in cfa
-                $valeur_converter_cfa = $amount *  $wallet_user->wallet->currencie->value;
+                $valeur_converter_cfa =  (float)  $reel_amount *  $wallet_user->wallet->currencie->value;
 
                 // Convertion in cfa
                 $valeur_converter = $valeur_converter_cfa /  $currency_valeur->value;
             } else {
 
-                $valeur_converter_cfa = $amount *  $wallet_user->wallet->currencie->value;
+                $valeur_converter_cfa = (float)  $reel_amount *  $wallet_user->wallet->currencie->value;
 
                 $valeur_converter = $valeur_converter_cfa /  $currency_valeur->value;
             }
@@ -80,7 +96,7 @@ class ConverterController extends Controller
         } elseif ($wallet_user->wallet->currencie->value == $currency_valeur->value) {
 
 
-            $valeur_converter = $amount;
+            $valeur_converter = $reel_amount;
 
             return response()->json([
                 'success' => $wallet_user != null ? true : false,
@@ -89,24 +105,23 @@ class ConverterController extends Controller
                 ],
             ], 200);
         } elseif ($wallet_user->wallet->currencie->value <  $currency_valeur->value) {
-            
+
             // Convertion in CFA
             if ($currency_valeur->code == 'CFA') {
 
                 // Convertion in cfa
-                $valeur_converter = $amount *  $wallet_user->wallet->currencie->value;
-
+                $valeur_converter = (float) $reel_amount *  $wallet_user->wallet->currencie->value;
             } elseif ($country_civ->currencie->value > $currency_valeur->value) {
 
                 // Convertion in cfa
-                $valeur_converter_cfa = $amount *  $wallet_user->wallet->currencie->value;
+                $valeur_converter_cfa = (float) $reel_amount *  $wallet_user->wallet->currencie->value;
 
                 // Convertion in cfa
                 $valeur_converter = $valeur_converter_cfa /  $currency_valeur->value;
             } else {
 
                 // Convertion in cfa
-                $valeur_converter_cfa = $amount *  $wallet_user->wallet->currencie->value;
+                $valeur_converter_cfa = (float)  $reel_amount *  $wallet_user->wallet->currencie->value;
 
                 $valeur_converter = $valeur_converter_cfa /  $currency_valeur->value;
             }

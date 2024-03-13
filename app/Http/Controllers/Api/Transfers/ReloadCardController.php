@@ -195,11 +195,13 @@ class ReloadCardController extends Controller
                     $all_valeurs = $percent_robus->levelDepositIvories->where('is_inter_bank', true);
                 }
 
+                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
                 if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
                     if ($percent_robus != null) {
 
-                        if ($valeur_first->amount_begin > $request->amount) {
+                        if ($valeur_first->amount_begin > $reel_amount) {
 
                             return response()->json(
                                 [
@@ -208,7 +210,7 @@ class ReloadCardController extends Controller
                                 ],
                                 341
                             );
-                        } elseif ($valeur_end->amount_end < $request->amount) {
+                        } elseif ($valeur_end->amount_end < $reel_amount) {
 
                             return response()->json(
                                 [
@@ -223,55 +225,55 @@ class ReloadCardController extends Controller
 
                             foreach ($all_valeurs as $amount_user) {
 
-                                if ($request->amount >= $amount_user->amount_begin && $request->amount <= $amount_user->amount_end) {
+                                if ($reel_amount >= $amount_user->amount_begin && $reel_amount <= $amount_user->amount_end) {
 
 
                                     if ($percent_robus !== null) {
 
-                                        $amount_send = $request->amount;
+                                        $amount_send = $reel_amount;
 
                                         if ($amount_user->amount == null) {
 
-                                            $percent_valeur = $amount_user->percent * $request->amount;
+                                            $percent_valeur = $amount_user->percent * $reel_amount;
 
                                             if (robus()->is_under_distributer) {
-                                                $amount_verify = $request->amount;
-                                                $valuer_under_com = $amount_user->comission_distributer * $request->amount;
+                                                $amount_verify = $reel_amount;
+                                                $valuer_under_com = (float) $amount_user->comission_distributer * $reel_amount;
                                                 $valuer_master_com =  $master_id ?  $amount_user->percent_masters * $valuer_under_com : 0;
                                                 $valuer_deposit_com = (float) $valuer_under_com - (float)$valuer_master_com;
 
                                                 $valuer_admin_com = (float) $percent_valeur -  (float) $valuer_under_com;
-                                                $amount_cost = $amount_user->comission_distributer * $request->amount;
-                                                $amountReceved = (float)$request->amount;
+                                                $amount_cost = $amount_user->comission_distributer * $reel_amount;
+                                                $amountReceved = (float)$reel_amount;
                                             } else {
-                                                $amount_verify = $request->amount;
-                                                $amount_admin_com =  $amount_user->percent * $request->amount;
+                                                $amount_verify = $reel_amount;
+                                                $amount_admin_com = (float)  $amount_user->percent * $reel_amount;
                                                 $valuer_master_com =  $master_id ?  $amount_user->percent_masters * $amount_admin_com : 0;
-                                                $valuer_admin_com = (float)$amount_admin_com - (float) $valuer_master_com ;
+                                                $valuer_admin_com = (float)$amount_admin_com - (float) $valuer_master_com;
                                                 $amount_cost = $amount_user->percent * $percent_valeur;
                                                 $valuer_deposit_com = 0;
-                                                $amountReceved = (float)$request->amount - (float)$percent_valeur;
+                                                $amountReceved = $reel_amount - (float)$percent_valeur;
                                             }
                                         } else {
 
-                                            $percent_valeur = (float)$amount_user->amount + (float)$request->amount;
+                                            $percent_valeur = (float)$amount_user->amount + (float)$reel_amount;
 
                                             if (robus()->is_under_distributer) {
 
-                                                $amount_verify =  (float)$request->amount;
-                                                $valuer_under_com = $amount_user->comission_distributer ;
+                                                $amount_verify =  (float)$reel_amount;
+                                                $valuer_under_com = $amount_user->comission_distributer;
                                                 $valuer_master_com =  $master_id ?  $amount_user->percent_masters : 0;
                                                 $valuer_deposit_com = (float)  $amount_user->comission_distributer - (float) $valuer_master_com;
                                                 $valuer_admin_com = $amount_user->amount - $valuer_under_com;
                                                 $amount_cost = $amount_user->comission_distributer;
-                                                $amountReceved = (float)$request->amount;
+                                                $amountReceved = $reel_amount;
                                             } else {
-                                                $amount_verify = (float)$request->amount;
+                                                $amount_verify = $reel_amount;
                                                 $amount_cost = $amount_user->amount;
                                                 $valuer_master_com =  $master_id ?  $amount_user->percent_masters : 0;
                                                 $valuer_deposit_com = 0;
                                                 $valuer_admin_com = (float)$amount_user->amount - (float) $valuer_master_com;
-                                                $amountReceved = (float)$request->amount - (float)$amount_user->amount;
+                                                $amountReceved = $reel_amount - (float)$amount_user->amount;
                                             }
                                         }
 
@@ -287,7 +289,7 @@ class ReloadCardController extends Controller
 
                                                 if ($walletReloadCard != null) {
 
-                                                    if ($this->reloadCardService->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $amount_verify , $valuer_master_com)) {
+                                                    if ($this->reloadCardService->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $amount_verify, $valuer_master_com)) {
                                                         $this->notificationOrderCard->sendNotificationReloadCard($walletReloadCard);
                                                         return $this->messageAfterValidated($walletReloadCard);
                                                     }
@@ -420,6 +422,9 @@ class ReloadCardController extends Controller
 
         try {
 
+     
+
+            $reel_amount = $this->validatedamountDays->search_amount($amount_virement);
 
             if ($provider == 14 || $provider == 15) {
 
@@ -438,7 +443,7 @@ class ReloadCardController extends Controller
                     $conversion_valeur_end  = $valeur_end->amount_end;
 
 
-                    if ($conversion_valeur_end  < $amount_virement) {
+                    if ($conversion_valeur_end  < $reel_amount) {
 
                         $commission_reload_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
 
@@ -447,18 +452,18 @@ class ReloadCardController extends Controller
 
                         foreach ($commission_reload->levelDepositIvories->where('is_ivoires', true)  as $amount_comission) {
 
-                            if ($amount_virement >= $amount_comission->amount_begin &&  $amount_virement <= $amount_comission->amount_end) {
+                            if ($reel_amount >= $amount_comission->amount_begin &&  $reel_amount <= $amount_comission->amount_end) {
 
                                 if ($amount_comission->amount == null) {
 
-                                    $percent_admin =  $amount_comission->percent * $amount_virement;
+                                    $percent_admin =  $amount_comission->percent * $reel_amount;
 
                                     // Commission valuer ROBUS
-                                    $commission_reload_val_nat_pay = $amount_comission->comission_distributer * $amount_virement;
+                                    $commission_reload_val_nat_pay = $amount_comission->comission_distributer * $reel_amount;
 
                                     // Valeur receive 
 
-                                    $receive_valeur = $amount_virement;
+                                    $receive_valeur = $reel_amount;
 
                                     if ($receive_valeur < 0) {
 
@@ -471,14 +476,14 @@ class ReloadCardController extends Controller
 
                                     $commission_reload_val_nat_pay = (float) $amount_comission->comission_distributer;
 
-                                    $valeur_receive = (float) $amount_virement;
+                                    $valeur_receive = (float) $reel_amount;
 
                                     if ($valeur_receive < 0) {
 
                                         $commission_reload_val_nat_receive = "Montant negatif";
                                     } else {
 
-                                        $commission_reload_val_nat_receive = (float) $amount_virement;
+                                        $commission_reload_val_nat_receive = (float) $reel_amount;
                                     }
                                 }
                             }
@@ -499,7 +504,7 @@ class ReloadCardController extends Controller
                     $conversion_valeur_end  = $valeur_end->amount_end;
 
 
-                    if ($conversion_valeur_end  < $amount_virement) {
+                    if ($conversion_valeur_end  < $reel_amount) {
 
                         $commission_reload_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
 
@@ -508,16 +513,16 @@ class ReloadCardController extends Controller
 
                         foreach ($commission_reload->levelDepositIvories->where('is_inter_bank', true)  as $amount_comission) {
 
-                            if ($amount_virement >= $amount_comission->amount_begin &&  $amount_virement <= $amount_comission->amount_end) {
+                            if ($reel_amount >= $amount_comission->amount_begin &&  $reel_amount <= $amount_comission->amount_end) {
 
                                 if ($amount_comission->amount == null) {
 
                                     // Commission valuer ROBUS
-                                    $commission_reload_val_nat_pay = $amount_comission->percent * $amount_virement;
+                                    $commission_reload_val_nat_pay = $amount_comission->percent * $reel_amount;
 
                                     // Valeur receive 
 
-                                    $receive_valeur = $amount_virement;
+                                    $receive_valeur = $reel_amount;
 
                                     if ($receive_valeur < 0) {
 
@@ -530,14 +535,14 @@ class ReloadCardController extends Controller
 
                                     $commission_reload_val_nat_pay = (float) $amount_comission->amount;
 
-                                    $valeur_receive = (float) $amount_virement;
+                                    $valeur_receive = (float) $reel_amount;
 
                                     if ($valeur_receive < 0) {
 
                                         $commission_reload_val_nat_receive = "Montant negatif";
                                     } else {
 
-                                        $commission_reload_val_nat_receive = (float) $amount_virement;
+                                        $commission_reload_val_nat_receive = (float) $reel_amount;
                                     }
                                 }
                             }
@@ -555,7 +560,7 @@ class ReloadCardController extends Controller
             } elseif ($provider == 13 || $provider == 16 || $provider == 17 || $provider == 66) {
 
 
-                if ($amount_virement != '') {
+                if ($reel_amount != '') {
 
                     if (robus()->is_under_distributer) {
 
@@ -574,7 +579,7 @@ class ReloadCardController extends Controller
                         //  Conversion valeur
 
 
-                        if ($conversion_valeur_end  < $amount_virement) {
+                        if ($conversion_valeur_end  < $reel_amount) {
 
                             $commission_reload_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
 
@@ -583,18 +588,18 @@ class ReloadCardController extends Controller
 
                             foreach ($commission_reload->levelDepositIvories->where('is_ivoires', true)  as $amount_comission) {
 
-                                if ($amount_virement >= $amount_comission->amount_begin &&  $amount_virement <= $amount_comission->amount_end) {
+                                if ($reel_amount >= $amount_comission->amount_begin &&  $reel_amount <= $amount_comission->amount_end) {
 
                                     if ($amount_comission->amount == null) {
 
-                                        $percent_admin =  $amount_comission->percent * $amount_virement;
+                                        $percent_admin =  $amount_comission->percent * $reel_amount;
 
                                         // Commission valuer ROBUS
-                                        $commission_reload_val_nat_pay = $amount_comission->comission_distributer * $amount_virement;
+                                        $commission_reload_val_nat_pay = $amount_comission->comission_distributer * $reel_amount;
 
                                         // Valeur receive 
 
-                                        $receive_valeur = $amount_virement;
+                                        $receive_valeur = $reel_amount;
 
                                         if ($receive_valeur < 0) {
 
@@ -607,14 +612,14 @@ class ReloadCardController extends Controller
 
                                         $commission_reload_val_nat_pay = (float) $amount_comission->comission_distributer;
 
-                                        $valeur_receive = (float) $amount_virement;
+                                        $valeur_receive = (float) $reel_amount;
 
                                         if ($valeur_receive < 0) {
 
                                             $commission_reload_val_nat_receive = "Montant negatif";
                                         } else {
 
-                                            $commission_reload_val_nat_receive = (float) $amount_virement;
+                                            $commission_reload_val_nat_receive = (float) $reel_amount;
                                         }
                                     }
                                 }
@@ -635,7 +640,7 @@ class ReloadCardController extends Controller
                         $conversion_valeur_begin  = $valeur_begin->amount_begin;
 
 
-                        if ($conversion_valeur_end  < $amount_virement) {
+                        if ($conversion_valeur_end  < $reel_amount) {
 
                             $commission_reload_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
 
@@ -644,16 +649,16 @@ class ReloadCardController extends Controller
 
                             foreach ($commission_reload->levelDepositIvories->where('is_inter_bank', true)  as $amount_comission) {
 
-                                if ($amount_virement >= $amount_comission->amount_begin &&  $amount_virement <= $amount_comission->amount_end) {
+                                if ($reel_amount >= $amount_comission->amount_begin &&  $reel_amount <= $amount_comission->amount_end) {
 
                                     if ($amount_comission->amount == null) {
 
                                         // Commission valuer ROBUS
-                                        $commission_reload_val_nat_pay = $amount_comission->percent * $amount_virement;
+                                        $commission_reload_val_nat_pay = $amount_comission->percent * $reel_amount;
 
                                         // Valeur receive 
 
-                                        $receive_valeur = $amount_virement;
+                                        $receive_valeur = $reel_amount;
 
                                         if ($receive_valeur < 0) {
 
@@ -666,14 +671,14 @@ class ReloadCardController extends Controller
 
                                         $commission_reload_val_nat_pay = (float) $amount_comission->amount;
 
-                                        $valeur_receive = (float) $amount_virement;
+                                        $valeur_receive = (float) $reel_amount;
 
                                         if ($valeur_receive < 0) {
 
                                             $commission_reload_val_nat_receive = "Montant negatif";
                                         } else {
 
-                                            $commission_reload_val_nat_receive = (float) $amount_virement;
+                                            $commission_reload_val_nat_receive = (float) $reel_amount;
                                         }
                                     }
                                 }

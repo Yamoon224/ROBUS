@@ -252,4 +252,18 @@ class ValidateDailyLimitService
 
         return array_sum($data);
     }
+
+    public function search_amount($amount_received)
+    {
+
+        // Replace commas or periods with a space
+        $reel_amount = str_replace(['.', ','], '', $amount_received);
+
+        // Convert the modified string to float
+        $reel_amount = (float) $reel_amount;
+
+        return $reel_amount;
+
+        return $reel_amount;
+    }
 }
