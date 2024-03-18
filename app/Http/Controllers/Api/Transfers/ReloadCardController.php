@@ -422,7 +422,305 @@ class ReloadCardController extends Controller
 
         try {
 
-     
+
+
+            $reel_amount = $this->validatedamountDays->search_amount($amount_virement);
+
+            if ($provider == 14 || $provider == 15) {
+
+                if ($wallet_user->is_under_distributer == 1) {
+
+                    $commission_reload = DepositCost::whereId(2)->first();
+
+                    // Verify valeur amount max in Landing the ROBUS
+                    $valeur_end = $commission_reload->levelDepositIvories->where('is_ivoires', true)->last();
+
+                    $valeur_begin = $commission_reload->levelDepositIvories->where('is_ivoires', false)->first();
+
+                    $conversion_valeur_begin  = $valeur_begin->amount_begin;
+
+                    //  Conversion valeur
+                    $conversion_valeur_end  = $valeur_end->amount_end;
+
+
+                    if ($conversion_valeur_end  < $reel_amount) {
+
+                        $commission_reload_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
+
+                        $commission_reload_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
+                    } else {
+
+                        foreach ($commission_reload->levelDepositIvories->where('is_ivoires', true)  as $amount_comission) {
+
+                            if ($reel_amount >= $amount_comission->amount_begin &&  $reel_amount <= $amount_comission->amount_end) {
+
+                                if ($amount_comission->amount == null) {
+
+                                    $percent_admin =  $amount_comission->percent * $reel_amount;
+
+                                    // Commission valuer ROBUS
+                                    $commission_reload_val_nat_pay = $amount_comission->comission_distributer * $reel_amount;
+
+                                    // Valeur receive 
+
+                                    $receive_valeur = $reel_amount;
+
+                                    if ($receive_valeur < 0) {
+
+                                        $commission_reload_val_nat_receive = "Montant negatif";
+                                    } else {
+
+                                        $commission_reload_val_nat_receive = $receive_valeur;
+                                    }
+                                } else {
+
+                                    $commission_reload_val_nat_pay = (float) $amount_comission->comission_distributer;
+
+                                    $valeur_receive = (float) $reel_amount;
+
+                                    if ($valeur_receive < 0) {
+
+                                        $commission_reload_val_nat_receive = "Montant negatif";
+                                    } else {
+
+                                        $commission_reload_val_nat_receive = (float) $reel_amount;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else {
+
+                    $commission_reload = DepositCost::whereId(2)->first();
+
+                    // Verify valeur amount max in Landing the ROBUS
+                    $valeur_end = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->last();
+
+
+                    $valeur_begin = $commission_reload->levelDepositIvories->where('is_inter_bank', false)->first();
+
+                    $conversion_valeur_begin  = $valeur_begin->amount_begin;
+                    //  Conversion valeur
+                    $conversion_valeur_end  = $valeur_end->amount_end;
+
+
+                    if ($conversion_valeur_end  < $reel_amount) {
+
+                        $commission_reload_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
+
+                        $commission_reload_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
+                    } else {
+
+                        foreach ($commission_reload->levelDepositIvories->where('is_inter_bank', true)  as $amount_comission) {
+
+                            if ($reel_amount >= $amount_comission->amount_begin &&  $reel_amount <= $amount_comission->amount_end) {
+
+                                if ($amount_comission->amount == null) {
+
+                                    // Commission valuer ROBUS
+                                    $commission_reload_val_nat_pay = $amount_comission->percent * $reel_amount;
+
+                                    // Valeur receive 
+
+                                    $receive_valeur = $reel_amount;
+
+                                    if ($receive_valeur < 0) {
+
+                                        $commission_reload_val_nat_receive = "Montant negatif";
+                                    } else {
+
+                                        $commission_reload_val_nat_receive = number_format($receive_valeur, 2, ',', ' ');
+                                    }
+                                } else {
+
+                                    $commission_reload_val_nat_pay = (float) $amount_comission->amount;
+
+                                    $valeur_receive = (float) $reel_amount;
+
+                                    if ($valeur_receive < 0) {
+
+                                        $commission_reload_val_nat_receive = "Montant negatif";
+                                    } else {
+
+                                        $commission_reload_val_nat_receive = (float) $reel_amount;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return response()->json([
+                    'success' => $commission_reload != null ? true : false,
+                    'data' =>  [
+                        'amount_pay' => $commission_reload_val_nat_pay,
+                        'amount_receive' => $commission_reload_val_nat_receive,
+                    ],
+                ], 200);
+            } elseif ($provider == 13 || $provider == 16 || $provider == 17 || $provider == 66) {
+
+
+                if ($reel_amount != '') {
+
+                    if (robus()->is_under_distributer) {
+
+                        $commission_reload = DepositCost::whereId(2)->first();
+
+                        // Verify valeur amount max in Landing the ROBUS
+                        $valeur_end = $commission_reload->levelDepositIvories->where('is_ivoires', true)->last();
+
+
+                        $valeur_begin = $commission_reload->levelDepositIvories->where('is_ivoires', false)->first();
+
+                        //  Conversion valeur
+                        $conversion_valeur_end  = $valeur_end->amount_end;
+                        $conversion_valeur_begin  = $valeur_begin->amount_begin;
+
+                        //  Conversion valeur
+
+
+                        if ($conversion_valeur_end  < $reel_amount) {
+
+                            $commission_reload_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
+
+                            $commission_reload_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
+                        } else {
+
+                            foreach ($commission_reload->levelDepositIvories->where('is_ivoires', true)  as $amount_comission) {
+
+                                if ($reel_amount >= $amount_comission->amount_begin &&  $reel_amount <= $amount_comission->amount_end) {
+
+                                    if ($amount_comission->amount == null) {
+
+                                        $percent_admin =  $amount_comission->percent * $reel_amount;
+
+                                        // Commission valuer ROBUS
+                                        $commission_reload_val_nat_pay = $amount_comission->comission_distributer * $reel_amount;
+
+                                        // Valeur receive 
+
+                                        $receive_valeur = $reel_amount;
+
+                                        if ($receive_valeur < 0) {
+
+                                            $commission_reload_val_nat_receive = "Montant negatif";
+                                        } else {
+
+                                            $commission_reload_val_nat_receive = $receive_valeur;
+                                        }
+                                    } else {
+
+                                        $commission_reload_val_nat_pay = (float) $amount_comission->comission_distributer;
+
+                                        $valeur_receive = (float) $reel_amount;
+
+                                        if ($valeur_receive < 0) {
+
+                                            $commission_reload_val_nat_receive = "Montant negatif";
+                                        } else {
+
+                                            $commission_reload_val_nat_receive = (float) $reel_amount;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+
+                        $commission_reload = DepositCost::whereId(2)->first();
+
+
+                        // Verify valeur amount max in Landing the ROBUS
+                        $valeur_end = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->last();
+
+                        $valeur_begin = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->first();
+
+                        //  Conversion valeur
+                        $conversion_valeur_end  = $valeur_end->amount_end;
+                        $conversion_valeur_begin  = $valeur_begin->amount_begin;
+
+
+                        if ($conversion_valeur_end  < $reel_amount) {
+
+                            $commission_reload_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
+
+                            $commission_reload_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
+                        } else {
+
+                            foreach ($commission_reload->levelDepositIvories->where('is_inter_bank', true)  as $amount_comission) {
+
+                                if ($reel_amount >= $amount_comission->amount_begin &&  $reel_amount <= $amount_comission->amount_end) {
+
+                                    if ($amount_comission->amount == null) {
+
+                                        // Commission valuer ROBUS
+                                        $commission_reload_val_nat_pay = $amount_comission->percent * $reel_amount;
+
+                                        // Valeur receive 
+
+                                        $receive_valeur = $reel_amount;
+
+                                        if ($receive_valeur < 0) {
+
+                                            $commission_reload_val_nat_receive = "Montant negatif";
+                                        } else {
+
+                                            $commission_reload_val_nat_receive = number_format($receive_valeur, 2, ',', ' ');
+                                        }
+                                    } else {
+
+                                        $commission_reload_val_nat_pay = (float) $amount_comission->amount;
+
+                                        $valeur_receive = (float) $reel_amount;
+
+                                        if ($valeur_receive < 0) {
+
+                                            $commission_reload_val_nat_receive = "Montant negatif";
+                                        } else {
+
+                                            $commission_reload_val_nat_receive = (float) $reel_amount;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return response()->json([
+                        'success' => $commission_reload != null ? true : false,
+                        'data' =>  [
+                            'amount_pay' => $commission_reload_val_nat_pay,
+                            'amount_receive' => $commission_reload_val_nat_receive,
+                        ],
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'success' =>  false,
+                        'message' => 'Saisie le montant SVP',
+                    ], 200);
+                }
+            } else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Pas de service disponible',
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
+
+    public function search_reload_card_received($provider, $amount_virement)
+    {
+        $wallet_user = Auth::guard('api')->user();
+
+        // valeur amount virement bank
+        try {
+
+
 
             $reel_amount = $this->validatedamountDays->search_amount($amount_virement);
 

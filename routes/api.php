@@ -85,6 +85,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('virement/show/{id}', [VirementController::class, 'virement_show']);
             Route::post('virement/delete/{id}', [VirementController::class, 'delete_virement']);
             Route::get('search_virement/{amount_virment}', [VirementController::class, 'search_virement']);
+            Route::get('search_virement_received/{amount_virment_received}', [VirementController::class, 'search_virement_received']);
 
             // 1Xbets
             Route::post('oneXbet/store', [OnexbetTransactionController::class, 'create_OnexbetTranaction']);
@@ -117,6 +118,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('reload_card/show/{id}', [ReloadCardController::class, 'reload_card_show']);
             Route::post('reload_card/delete/{id}', [ReloadCardController::class, 'delete_reload_card']);
             Route::get('search_reload_card/{provider_id}/{commission_id}', [ReloadCardController::class, 'search_reload_card']);
+            Route::get('search_reload_card_received/{provider_id}/{commission_id}', [ReloadCardController::class, 'search_reload_card_received']);
 
             // Active cards
             Route::post('order_cards/store', [BankCardController::class, 'create_order_card']);
@@ -128,7 +130,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('phone_credit/show/{id}', [PhoneCreditController::class, 'phone_credit_show']);
             Route::post('phone_credit/delete/{id}', [PhoneCreditController::class, 'delete_phone_credit']);
             Route::get('search_phone_credit/{commission_id}', [PhoneCreditController::class, 'search_phone_credit']);
-            Route::get('search_phone_received/{amount_received}', [PhoneCreditController::class, 'search_phone_received']);
+            Route::get('search_phone_credit_received/{amount_received}', [PhoneCreditController::class, 'search_phone_received']);
 
             // Inters
             Route::post('inters/store', [IntersPaymentController::class, 'create_inter']);
@@ -165,6 +167,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('search/{wallet_id}', [TransactionController::class, 'search_transaction']);
             // Route::get('search_user/{user_id}', [TransactionController::class, 'search_transaction_user']);
             Route::get('search_transaction/{commission_id}', [TransactionController::class, 'search_transaction_money_commission']);
+            Route::get('search_transaction_received/{commission_id}', [TransactionController::class, 'search_transaction_money_commission_received']);
             Route::get('search_transaction_robus_commission/{wallet}/{commission_id}', [TransactionController::class, 'search_transaction_commission_robus']);
 
 

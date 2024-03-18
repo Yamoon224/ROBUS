@@ -376,6 +376,86 @@ class VirementController extends Controller
         }
     }
 
+    public function search_virement_received($amount_virement)
+    {
+        try {
+
+            $percent_robus =  $this->percentRobus->getRobusPercentageVirement();
+
+            if ($percent_robus != null) {
+
+                if ($amount_virement != '') {
+
+                    $reel_amount = $this->validatedamountDays->search_amount($amount_virement);
+
+                    $commission_virement_val_nat_pay = 0;
+                    $commission_virement_val_nat_receive = 0;
+                    $commission_virement_val_nat_send = 0;
+                    // Verify valeur amount max in Landing the ROBUS
+                    $valeur_end = $percent_robus->levelBankIvories->last();
+
+                    //  Conversion valeur
+                    $conversion_valeur_end  = $valeur_end->amount_end;
+
+                    if ($conversion_valeur_end < $reel_amount) {
+
+                        $commission_virement_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
+
+                        $commission_virement_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
+                    } else {
+
+                        foreach ($percent_robus->levelBankIvories as $amount_comission) {
+
+                            if ($reel_amount >= $amount_comission->amount_begin && $reel_amount <= $amount_comission->amount_end) {
+
+
+                                $commission_virement_val_nat_pay = $amount_comission->comission_distributer;
+
+                                $commission_virement_val_nat_send = $amount_comission->amount;
+
+                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
+
+                                    $valeur_receive =  $reel_amount;
+                                } else {
+
+                                    $valeur_receive =  $reel_amount +  $commission_virement_val_nat_send;
+                                }
+
+
+                                if ($valeur_receive < 0) {
+
+                                    $commission_virement_val_nat_receive = "Montant negatif";
+                                } else {
+
+                                    $commission_virement_val_nat_receive =  $valeur_receive;
+                                }
+                            }
+                        }
+                    }
+
+                    return response()->json([
+                        'success' => $percent_robus != null ? true : false,
+                        'data' =>  [
+                            'amount_pay' => robus()->is_under_distributer ? $commission_virement_val_nat_pay : $commission_virement_val_nat_send,
+                            'amount_send' => $commission_virement_val_nat_pay,
+                            'amount_receive' => $commission_virement_val_nat_receive,
+                        ],
+                    ], 200);
+                }
+            } else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Pas de Virement dans cette zone ...',
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
+
 
     /**
      * Delete virement

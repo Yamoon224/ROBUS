@@ -1189,9 +1189,7 @@ class TransactionController extends Controller
     public function search_transaction_money_commission($amount_transaction)
     {
 
-
         $default_valeur = 2000000;
-
 
         try {
 
@@ -1219,6 +1217,65 @@ class TransactionController extends Controller
                         $commission_transaction_val_nat_pay = (float)$commission_transaction->percent * $reel_amount;
 
                         $commission_transaction_val_nat_receive = (float)$reel_amount - $commission_transaction_val_percent_pay;
+                    }
+
+
+
+                    $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
+
+                    if ($conversion_valeur_end < $reel_amount) {
+                        $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
+                    }
+                }
+
+
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'amount_pay' => $commission_transaction_val_nat_pay,
+                        'amount_send' => $commission_transaction_val_nat_pay,
+                        'amount_receive' => $commission_transaction_val_nat_receive,
+                    ],
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
+
+    public function search_transaction_money_commission_received($amount_transaction)
+    {
+        $default_valeur = 2000000;
+
+        try {
+
+
+            if ($amount_transaction != '') {
+
+                $reel_amount = $this->validatedamountDays->search_amount($amount_transaction);
+
+
+                $commission_transaction = $this->searchTransaction->getCommissionTransactionMobileForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
+                $commission_transaction_val_percent_pay = 0;
+                $commission_transaction_val_nat_pay = 0;
+
+                if ($commission_transaction) {
+
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $reel_amount;
+
+                    if (robus()->is_under_distributer) {
+
+                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
+
+                        $commission_transaction_val_nat_receive = (float)$reel_amount;
+                    } else {
+
+                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent * $reel_amount;
+
+                        $commission_transaction_val_nat_receive = (float)$reel_amount + $commission_transaction_val_percent_pay;
                     }
 
 
