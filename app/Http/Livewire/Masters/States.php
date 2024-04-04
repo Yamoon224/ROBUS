@@ -85,7 +85,7 @@ class States extends Component
         $state_transaction_year =  $this->getMastersGainProperty(WalletTransaction::class);
         $state_payments_year =  $this->getMastersGainProperty(WalletPayment::class);
         $state_banks_year =  $this->getMastersGainProperty(WalletBank::class);
-    
+
         $state_phone_year =  $this->getMastersGainProperty(WalletPhoneCredit::class);
         $state_deposit_year =  $this->getMastersGainProperty(WalletDeposit::class);
         $state_inter_year =  $this->getMastersGainProperty(WalletInter::class);
@@ -96,7 +96,7 @@ class States extends Component
         $state_payments_days =  $this->getMastersGainDaysProperty(WalletPayment::class);
         $state_banks_days =  $this->getMastersGainDaysProperty(WalletBank::class);
         $state_ordercard_days =  $this->getMastersGainDaysProperty(BankCard::class);
-        
+
         $state_phone_days =  $this->getMastersGainDaysProperty(WalletPhoneCredit::class);
         $state_deposit_days =  $this->getMastersGainDaysProperty(WalletDeposit::class);
         $state_inter_days =  $this->getMastersGainDaysProperty(WalletInter::class);
@@ -263,7 +263,6 @@ class States extends Component
 
         return $reloads;
     }
-
 
 
 

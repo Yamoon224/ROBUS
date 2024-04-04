@@ -17,7 +17,7 @@ class Cities extends Component
     public $search = "";
     public $citieStatus;
     public $citieId;
-    public $countriesFilter = "";
+    public $countriesFilter = "";   
 
      public function edit($id, $state)
     {

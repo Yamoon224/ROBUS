@@ -586,6 +586,7 @@ class AuthentificationController extends Controller
                 if ($result['success']) {
 
                     return $this->loginSuccess($result['token'], $result['user']);
+                    
                 } else {
                     return response()->json(
                         ['success' => false, 'message' => $result['message']],

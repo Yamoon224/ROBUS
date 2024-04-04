@@ -163,18 +163,18 @@
         Livewire.on('modal-hide', () => {
 
 
-            //Categories
-            $('#create-categorie-modal').removeClass('show');
-            $('#create-categorie-modal').addClass('hide');
+                //Categories
+                $('#create-categorie-modal').removeClass('show');
+                $('#create-categorie-modal').addClass('hide');
 
-            $('#disabled-categorie-modal').removeClass('show');
-            $('#disabled-categorie-modal').addClass('hide');
+                $('#disabled-categorie-modal').removeClass('show');
+                $('#disabled-categorie-modal').addClass('hide');
 
-            $('#update-categorie-modal').removeClass('show');
-            $('#update-categorie-modal').addClass('hide');
+                $('#update-categorie-modal').removeClass('show');
+                $('#update-categorie-modal').addClass('hide');
 
-            $('#delete-categorie-modal').removeClass('show');
-            $('#delete-categorie-modal').addClass('hide');
+                $('#delete-categorie-modal').removeClass('show');
+                $('#delete-categorie-modal').addClass('hide');
 
             //employers
             $('#create-employers-modal').removeClass('show');

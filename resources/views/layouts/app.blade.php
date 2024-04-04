@@ -26,7 +26,6 @@
 
     <div class="container sm:px-10">
         @yield('content')
-
     </div>
     <!-- BEGIN: Dark Mode Switcher-->
 

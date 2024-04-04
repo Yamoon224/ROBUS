@@ -2,13 +2,7 @@ import './bootstrap'
 import { createApp } from 'vue'
 import 'vue-toastr-2/dist/vue-toastr-2.min.css'
 import './style.css'
-// import VueRouter from 'vue-router'
 
-// Vue.use(VueRouter)
-
-// window.toastr = require('toastr')
-
-// Vue.use(VueToastr2)
 
 import App from './components/AdminNotification.vue'
 

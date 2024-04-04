@@ -13,7 +13,7 @@
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="hidden md:block ml-8 text-slate-500">
             </div>
-            <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;">
+            <div class="input-group input-group-md" style="margin-taop: 13px;width: 250px;">
                 <div class="w-56 relative text-slate-500">
                     <input type="text" name="table_search" wire:model.debounce.250ms="search"
                         class="form-control  w-56 box pr-10" style="height: 3rem;" placeholder="Rechercher">

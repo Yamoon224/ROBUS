@@ -466,7 +466,7 @@ Route::get('clear-route-robus',  function () {
 
 
 Route::get('clear-cache-robus',  function () {
-    Artisan::call('config:cache');
+    Artisan::call('cache:clear');
     return "Config setting update";
 });
 

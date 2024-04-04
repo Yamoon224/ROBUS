@@ -1,4 +1,4 @@
-{{-- <script type="text/javascript">
+<script type="text/javascript">
 $(document).ready(function() {
 
     $('input[name="is_distributer"]').click(function() {
@@ -141,4 +141,4 @@ $(document).ready(function() {
     });
 
 });
-</script> --}}
+</script> 
