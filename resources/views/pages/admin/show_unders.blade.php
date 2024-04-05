@@ -361,42 +361,25 @@
 
                     <div class="p-5">
                         <div class="" id="step-2">
-                            <form class="form-vertical row"
-                                action="{{ route('admin.update_password', ['id' => $user->id]) }}" method="post"
-                                enctype="multipart/form-data">
-                                @csrf
+                            @include('components.update_password_form')
+                        </div>
+                    </div>
 
-                                <div class="grid grid-cols-12 gap-6 mt-3 items-center">
-                                    <div class="col-span-12 lg:col-span-4">
-                                        <label class="form-label">Mot de passe <span class="text-danger"> *</label>
-                                        <input type="password"
-                                            class="form-control @error('password') is-invalid @enderror" name="password"
-                                            id="password" required maxlength="4">
-                                        @error('password')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                    <div class="col-span-12 lg:col-span-4">
-                                        <label class="form-label">Confirmer Mot de passe <span
-                                                class="text-danger">*</span></label>
-                                        <input type="password"
-                                            class="form-control @error('password_confirmation') is-invalid @enderror"
-                                            name="password_confirmation" id="password_confirmation" required
-                                            maxlength="4">
-                                    </div>
-                                    <div class="col-span-12 lg:col-span-4">
-                                        <div class="text-center">
-                                            <button type="submit"
-                                                class="btn btn-primary w-24  mb-2 mt-6 ">Enregistrer</button>
-                                        </div>
 
-                                    </div>
+                </div>
+                <!-- END: Form Validation -->
+            </div>
+        </div>
+    @else
+        <div class="grid grid-cols-12 gap-6 mt-3">
 
-                                </div>
+            <div class="intro-y col-span-12 lg:col-span-12">
+                <!-- BEGIN: Form Validation -->
+                <div class="intro-y box">
 
-                            </form>
+                    <div class="p-5">
+                        <div class="" id="step-2">
+                            @include('components.update_password_form')
                         </div>
                     </div>
 
@@ -408,42 +391,34 @@
     @endif
     <div class="grid grid-cols-12 gap-6 mt-3">
 
-        <div class="intro-y col-span-12 lg:col-span-12">
+        <div class="intro-y col-span-6 lg:col-span-12">
             <!-- BEGIN: Form Validation -->
             <div class="intro-y box">
 
                 <div class="p-5">
+                    <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Modification du Numero</h2>
+
                     <div class="" id="step-2">
-                        <form class="form-vertical row" action="{{ route('admin.update_phone', ['id' => $user->id]) }}"
-                            method="post" enctype="multipart/form-data">
-                            @csrf
+                        @include('components.update_phone_form')
 
-                            <div class="grid grid-cols-12 gap-6 mt-3 items-center">
-                                <div class="col-span-12 lg:col-span-4">
-                                    <label class="form-label">Ancien numero <span class="text-danger"> *</label>
-                                    <span
-                                        class="alert alert-secondary mr-10 inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        Phone :{{ $user->phone ?? null }}
-                                    </span>
+                    </div>
+                </div>
 
-                                </div>
-                                <div class="col-span-12 lg:col-span-4">
-                                    <label class="form-label">Modifier le numero <span
-                                            class="text-danger">*</span></label>
-                                    <input type="text" class="form-control @error('new_phone') is-invalid @enderror"
-                                        name="new_phone" id="new_phone" maxlength="15">
-                                </div>
-                                <div class="col-span-12 lg:col-span-4">
-                                    <div class="text-center">
-                                        <button type="submit"
-                                            class="btn btn-primary w-24  mb-2 mt-6 ">Enregistrer</button>
-                                    </div>
 
-                                </div>
+            </div>
+            <!-- END: Form Validation -->
+        </div>
 
-                            </div>
+        <div class="intro-y col-span-6 lg:col-span-12">
+            <!-- BEGIN: Form Validation -->
+            <div class="intro-y box">
 
-                        </form>
+                <div class="p-5">
+                    <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Modification du email</h2>
+
+                    <div class="" id="step-2">
+
+                        @include('components.update_email_form')
                     </div>
                 </div>
 
@@ -746,7 +721,7 @@
             @livewire('transaction-details.reload-transactions', ['walletAllReloads' => $user->id])
         </div>
         <div id="transfers" class="tab-pane " role="tabpanel" aria-labelledby="transfers-tab">
-        
+
             @livewire('transaction-details.transactions-users', ['walletAllTransactions' => $user->id])
 
         </div>
@@ -767,23 +742,23 @@
             @livewire('transaction-details.phone-credit-users', ['walletAllPhoneCredits' => $user->id])
 
         </div>
-      <div id="inter" class="tab-pane" role="tabpanel" aria-labelledby="inter-tab">
+        <div id="inter" class="tab-pane" role="tabpanel" aria-labelledby="inter-tab">
             @livewire('transaction-details.inters-users', ['walletAllInters' => $user->id])
 
         </div>
-        
+
 
         <div id="carte" class="tab-pane" role="tabpanel" aria-labelledby="carte-tab">
             @livewire('transaction-details.carte-users', ['walletAllDeposits' => $user->id])
 
         </div>
-        
+
 
         <div id="xbet" class="tab-pane" role="tabpanel" aria-labelledby="xbet-tab">
             @livewire('transaction-details.xbets-users', ['walletAllXbets' => $user->id])
 
         </div>
-        
+
         <div id="wave" class="tab-pane" role="tabpanel" aria-labelledby="wave-tab">
             @livewire('transaction-details.waves-users', ['walletWave' => $user->id])
 

@@ -172,7 +172,7 @@
                             <li>
 
                                 <a href="{{ route('unders.admins.browse') }}"
-                                    class="side-menu {{ $rout   e == 'unders.admins.browse' || $route == 'unders.admins.add' || $route == 'unders.admins.show' ? 'side-menu--active' : '' }}">
+                                    class="side-menu {{ $route == 'unders.admins.browse' || $route == 'unders.admins.add' || $route == 'unders.admins.show' ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-feather="user-check"
                                             class="block mx-auto"></i>
                                     </div>

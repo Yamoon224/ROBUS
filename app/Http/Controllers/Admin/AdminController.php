@@ -239,7 +239,54 @@ class AdminController extends Controller
                 Mail::to($user_info->email)->send(new NewAdmin('Vote numero de telephone a été modifier par' . env('APP_NAME') .
                     ' Votre email : '  . $user_info->email . ' Votre nouveau numero : ' . $request->new_phone));
 
-                return redirect(route('unders.admins.browse'))->with('status', 'Mise a jour effectuée avec succès');
+                return back()->with('status', 'Numero de téléphone modifié avec succès');
+            }
+        } catch (\Throwable $th) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de création')
+                ->withInput();
+        }
+    }
+
+    public function update_email(int $id, Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'new_email' => ['required'],
+            // 'password_confirmation' => ['required'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Verifier le champ saisie')
+                ->withInput();
+        }
+
+
+        try {
+
+            $user_info =  SidUser::whereId($id)->first();
+
+            $verify_email =  SidUser::whereEmail($request->new_email)->first();
+
+            if ($verify_email) {
+                return back()
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Utilisateur existe déja ')
+                    ->withInput();
+            } else {
+
+                SidUser::find($id)->update(['email' => $request->new_email]);
+
+                Mail::to($user_info->email)->send(new NewAdmin('Votre email a été modifier par' . env('APP_NAME') .
+                    ' Votre nouveau email : '  . $request->new_email . ' Votre nouveau numero : ' . $user_info->phone));
+
+                return back()->with('status', 'Email modifié  avec succès');
             }
         } catch (\Throwable $th) {
             return back()
@@ -1160,6 +1207,10 @@ class AdminController extends Controller
 
         $sum_drawals  =  $this->getWalletTransactionSumRetraitsProperty($wallet_solde->id);
 
+        $sum_wallet_transaction_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
+
+        $sum_wallet_Inter_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
+
         return view('pages.admin.show', compact(
             'user',
             'roles',
@@ -1380,7 +1431,7 @@ class AdminController extends Controller
             Mail::to($user_info->email)->send(new NewAdmin('Votre compte  sous distributeur marchant est activé ' . env('APP_NAME') .
                 ' Votre email : '  . $user_info->email . ' Votre mot de passe : ' . $request->password));
 
-            return redirect(route('unders.admins.browse'))->with('status', 'Mise a jour effectuée avec succès');
+            return back()->with('status', 'Mise a jour effectuée avec succès');
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)
@@ -1388,6 +1439,17 @@ class AdminController extends Controller
                 ->with('status', 'Erreur de création')
                 ->withInput();
         }
+    }
+
+    public function getWalletReloadSumAdminProperty($id)
+    {
+        $data = [];
+
+        foreach (WalletReload::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->amount;
+        }
+
+        return array_sum($data);
     }
     public function getWalletWithMerchantSumUserProperty($id)
     {

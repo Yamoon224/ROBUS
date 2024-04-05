@@ -49,6 +49,7 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::get('/read/{id}/update', [AdminController::class, 'showUpdate'])->name('admin.showUpdate');
         Route::post('/update_password/{id}',  [AdminController::class, 'update_password'])->name('admin.update_password');
         Route::post('/update_phone/{id}',  [AdminController::class, 'update_phone'])->name('admin.update_phone');
+        Route::post('/update_email/{id}',  [AdminController::class, 'update_email'])->name('admin.update_email');
         Route::post('/update/{id}',  [AdminController::class, 'update'])->name('admin.update');
         Route::get('/read/{id}/delete', [AdminController::class, 'delete'])->name('admin.delete');
         Route::get('/user/{id}/activate', [AdminController::class, 'activate'])->name('admin.activate');

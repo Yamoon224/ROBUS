@@ -411,7 +411,7 @@ class UserController extends Controller
         $user->update([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
-            'email' => $request->email,
+            // 'email' => $request->email,
         ]);
 
         if (!empty($user->forget_password)) {
@@ -466,7 +466,7 @@ class UserController extends Controller
         $user->update([
             'firstname' => $request->firstname,
             'lastname' => $request->lastname,
-            'email' => $request->email,
+            // 'email' => $request->email,
         ]);
 
         if (!empty($user->forget_password)) {
