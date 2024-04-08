@@ -325,7 +325,8 @@
 
                     <div class="p-5">
                         <div class="" id="step-2">
-                            @include('update-password-form')
+                            @include('components.update_password_form')
+
                         </div>
                     </div>
 
@@ -2350,6 +2351,7 @@
     </div>
 
 @endsection
+
 
 @push('scripts')
     <script type="text/javascript">

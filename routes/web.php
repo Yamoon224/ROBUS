@@ -17,12 +17,14 @@ use App\Http\Controllers\PaimentController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TransactionWebController;
 use App\Http\Controllers\UserController;
 use App\Http\Livewire\Historical\UnderHistorical\PaymentHisto;
 use App\Http\Livewire\Login;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
 
 
 
@@ -444,6 +446,14 @@ Route::group(['prefix' => 'under_distributers'], function () {
     Route::post('/store_step_two', [AdminController::class, 'store_under_distributerTwo'])->name('admin.store_under_distributer_two');
 });
 
+
+// Transactions 
+Route::group(['prefix' => 'transactions'], function () {
+    Route::get('/robus/cartes',  [TransactionWebController::class, 'transactions_reloads'])->name('admin.add_under_distributer');
+    // Route::get('robus/cartes',  [TransactionWebController::class, ' transactions_reloads'])->name('transactions.web.reloads');
+});
+
+
 // Countries
 Route::get('countrie_distributers/cities/{id}',  [CountrieController::class, 'countrie_cities']);
 
@@ -485,7 +495,7 @@ Route::get('/reads_notifications', function () {
 });
 
 Route::get('/reads_applications', function () {
-    
+
     Artisan::call('app:close-status');
     Artisan::call('close-comzone-status');
     Artisan::call('app:master-status');

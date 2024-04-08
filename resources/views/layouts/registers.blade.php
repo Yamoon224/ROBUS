@@ -15,7 +15,7 @@
     @include('layouts.shared.styles')
     {{-- <script type="module"  src="{{ asset('build/assets/app.13c293c6.js') }}"></script>
     <script type="module" crossorigin src="/boostrap/assets/app2.mjs"></script> --}}
-    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+    {{-- <script src="https://js.pusher.com/4.1/pusher.min.js"></script> --}}
     <script type="module"  src="{{ asset('build/assets/app.c57777cd.js') }}"></script>
     {{-- <script type="module" crossorigin src="{{ asset('boostrap/ssr/app2.mjs') }}"></script> --}}
     {{-- <link rel="stylesheet" href="/build/assets/app2.mjs">
@@ -25,7 +25,7 @@
             display: none !important;
         }
     </style> --}}
-    @vite('ressource/js/app.js')
+    {{-- @vite('ressource/js/app.js') --}}
 
 
     @stack('styles')
