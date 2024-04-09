@@ -94,28 +94,24 @@
         </div>
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
             <h2 class="alert alert-dark  intro-y text-lg font-medium">
-                Envoie d'un compte d'un compte client vers un client de son pays
+               Transactions sur le site visiteurs
             </h2>
 
             <table class="table table-bordered table-hover -intro-x mt-6">
                 <thead class="table-dark">
                     <tr>
                         <th class="whitespace-nowrap">Nom</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage Wave</th>
                         <th class="whitespace-nowrap text-center">Pourcentage Admin</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage S-agent retrait</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage MASTERS</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if ($centre_afriques->count() > 0)
-                        @foreach ($centre_afriques->where('custumer_custumer', true) as $item)
+                        @foreach ($centre_afriques->where('is_web', true) as $item)
                             <tr class="intro-x">
                                 <td class="w-65">
-                                    {{-- <p class="font-medium whitespace-nowrap"> --}}
                                     {{ $item->name ?? null }}
-                                    {{-- </p> --}}
 
                                 </td>
                                 <td class="text-center">
@@ -129,15 +125,6 @@
                                         {{ $item->percent_admin * 100 ?? null }} %
                                     </p>
 
-                                </td>
-
-                                <td class="w-40">
-                                    <p class="font-medium whitespace-nowrap">
-                                        {{ $item->percent_with_drawal * 100 ?? null }} %</p>
-                                </td>
-                                <td class="w-40">
-                                    <p class="font-medium whitespace-nowrap">
-                                        {{ $item->percent_masters * 100 ?? null }} %</p>
                                 </td>
 
                                 <td class="w-56">

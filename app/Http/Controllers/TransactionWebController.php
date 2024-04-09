@@ -14,7 +14,26 @@ class TransactionWebController extends Controller
         public function transactions_reloads()
         {
 
-            return view('pages.transactionWeb.browse_carte_reloads');
+                return view('pages.transactionWeb.browse_carte_reloads');
+        }
+
+        public function transactions_pushs()
+        {
+
+                return view('pages.transactionWeb.browse_carte_pushs');
+        }
+
+
+        public function transactions_robus()
+        {
+
+                return view('pages.transactionWeb.browse_robus');
+        }
+
+        public function transactions_deposits()
+        {
+
+                return view('pages.transactionWeb.browse_deposits');
         }
 
         /**
@@ -23,29 +42,28 @@ class TransactionWebController extends Controller
          * @return \Illuminate\Http\Response
          */
 
-        public function browse_historique()
+        public function transactions_inters()
         {
-                if (sabdyWebVerify()) {
-                        return view('pages.transfers.browse_historiques');
-                } else {
-                        abort(403);
-                }
+                return view('pages.transactionWeb.browse_inters');
         }
+
+        public function transactions_xbets()
+        {
+                return view('pages.transactionWeb.browse_xbets');
+        }
+
+        public function transactions_payments()
+        {
+                return view('pages.transactionWeb.browse_payments');
+        }
+
 
         /**
          * Display a listing of the resource.
          *
          * @return \Illuminate\Http\Response
          */
-        public function browse_uv()
-        {
-                if (sabdyWebVerify()) {
-                        return view('pages.transfers.browse_uv');
-                } else {
-                        abort(403);
-                }
-        }
-
+      
 
         /**
          * Store a newly created resource in storage.

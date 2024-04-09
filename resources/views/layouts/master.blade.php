@@ -258,8 +258,11 @@
             $('#disabled-deposit-modal').removeClass('show');
             $('#disabled-deposit-modal').addClass('hide');
 
-            $('#update-deposit-modal').removeClass('show');
-            $('#update-deposit-modal').addClass('hide');
+            $('#update-deposit-web-modal').removeClass('show');
+            $('#update-deposit-web-modal').addClass('hide');
+
+            $('#update-1xbet-transaction-modal').removeClass('show');
+            $('#update-1xbet-transaction-modal').addClass('hide');
 
             //   Update CAfrique
             $('#update-trans-cafrique-modal').removeClass('show');
@@ -526,6 +529,11 @@
 
         });
 
+        Livewire.on('show-depositWeb-modal', () => {
+            $('#update-deposit-web-modal').removeClass('hide');
+            $('#update-deposit-web-modal').addClass('show');
+
+        });
 
         Livewire.on('show-disabled-modal', () => {
             $('#disabled-master-admin-modal').removeClass('hide');

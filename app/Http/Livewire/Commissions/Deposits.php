@@ -13,6 +13,7 @@ class Deposits extends Component
     public $depositStatus;
     public $depositName;
     public $depositPercent;
+    public $depositPercentAdmin;
     public $orderCardMerchant;
 
     protected $rules = [
@@ -54,9 +55,11 @@ class Deposits extends Component
     public function edit($id, $state)
     {
         $check = DepositCost::whereId($id)->first();
+        $this->depositId = $check->id;
         $this->depositName = $check->name;
         $this->depositPercent = $check->percent * 100;
-        $this->orderCardMerchant = $check->percent_merchands * 100;
+        $this->depositPercentAdmin = $check->percent_admin * 100;
+        $this->orderCardMerchant = $check->percent_merchands * 100; 
         $this->depositStatus = $check->status;
         $this->emit($state);
     }
@@ -64,7 +67,7 @@ class Deposits extends Component
     public function update()
     {
         $this->validate();
-        $check = DepositCost::first();
+        $check = DepositCost::whereId($this->depositId)->first();
         if ($this->orderCardMerchant > $this->depositPercent) {
             $this->emit('modal-hide', 'hide');
             $this->emit('error', 'Svp verifier les comissions !');
@@ -74,6 +77,7 @@ class Deposits extends Component
                 'name' => $this->depositName,
                 'percent' => $this->depositPercent,
                 'percent_merchands'  => $this->orderCardMerchant,
+                'percent_admin'  => $this->depositPercentAdmin,
                 'status' => 1,
                 'created_by' => Auth::guard('web')->user()->id,
             ]);
@@ -89,6 +93,7 @@ class Deposits extends Component
         $this->depositName = '';
         $this->depositPercent = '';
         $this->orderCardMerchant = '';
+        $this->depositPercentAdmin = '';
         $this->emit('modal-hide', 'hide');
     }
 

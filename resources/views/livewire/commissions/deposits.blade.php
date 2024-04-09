@@ -30,7 +30,7 @@
 
         </div>
         @if ($deposits->count() > 0)
-            @foreach ($deposits as $item)
+            @foreach ($deposits->where('is_web', false) as $item)
                 <div class="intro-y col-span-12 lg:col-span-6">
 
                     <div class="box">
@@ -95,13 +95,69 @@
 
                 </div>
             @endforeach
-
-
         @endif
         <!-- END: Data List -->
+    </div>
+    <div class="intro-y col-span-12 overflow-auto lg:overflow-visible mt-6">
+        <h2 class="alert alert-dark  intro-y text-lg font-medium">
+           Rechargement de carte Visiteurs
+        </h2>
+
+        <table class="table table-bordered table-hover -intro-x mt-6">
+            <thead class="table-dark">
+                <tr>
+                    <th class="whitespace-nowrap">Nom</th>
+                    <th class="whitespace-nowrap text-center">Pourcentage Wave</th>
+                    <th class="whitespace-nowrap text-center">Pourcentage Admin</th>
+                    <th class="text-center whitespace-nowrap">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if ($deposits->count() > 0)
+                    @foreach ($deposits->where('is_web', true) as $item)
+                        <tr class="intro-x">
+                            <td class="w-65">
+                                {{ $item->name ?? null }}
+
+                            </td>
+                            <td class="text-center">
+                                <p class="font-medium whitespace-nowrap">
+                                    {{ $item->percent * 100 ?? null }} %
+                                </p>
+
+                            </td>
+                            <td class="text-center">
+                                <p class="font-medium whitespace-nowrap">
+                                    {{ $item->percent_admin * 100 ?? null }} %
+                                </p>
+
+                            </td>
+
+                            <td class="w-56">
+                                <div class="flex justify-center items-center">
+                                    @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))
+                                        <a wire:click="edit({{ $item->id }}, 'show-depositWeb-modal')"
+                                            class="btn btn-primary mr-1 mb-2 btn-sm" href="javascript:;"
+                                            title="Modifier">
+                                            Modifier
+                                        </a>
+                                    @endif
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
+                @else
+                    <tr>
+                        <td colspan="7" class="text-center">Aucune donnée pour le moment</td>
+                    </tr>
+                @endif
+            </tbody>
+
+        </table>
     </div>
     @include('livewire.commissions.modals.addDeposit')
     @include('livewire.commissions.modals.disabledDeposit')
     @include('livewire.commissions.modals.updateDeposit')
+    @include('livewire.commissions.modals.updateDepositWeb')
 
 </div>

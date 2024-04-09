@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\CloseApp;
+use App\Models\Costs\DepositCost;
 use App\Models\Custumers\Country;
 use App\Models\OperatorService;
 use App\Models\Payments\PaymentReload;
@@ -11,6 +12,12 @@ use Illuminate\Support\Facades\Auth;
 
 
 
+function reloadCardPercent()
+{
+   
+    return DepositCost::whereId(2)->first();
+
+}
 
 function provideId($id)
 {
@@ -77,6 +84,23 @@ function getOperators($userId)
 
 }
 
+function getReloadCartes()
+{
+ 
+    return Provider::whereStatus(true)->where('provider_type_id',  5)
+    ->orderBy('name', 'asc')->get();
+
+}
+
+
+function getReloadPaiements()
+{
+ 
+    return Provider::whereStatus(true)->where('provider_type_id',  1)
+    ->orderBy('name', 'asc')->get();
+
+}
+
 function sabdyWebVerify()
 {
     $allowedRoles = ['root', 'Distributeur', 'superviseur'];
@@ -101,6 +125,13 @@ function sabdyMasterVerify()
         return true;
     } else {
         return false;
+    }
+}
+
+if (!function_exists('asset_url')) {
+    function asset_url($path)
+    {
+        return asset('/' . $path);
     }
 }
 

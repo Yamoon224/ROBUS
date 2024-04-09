@@ -219,6 +219,7 @@ Route::group(['prefix' => ''], function () {
         // Countries Modify
         Route::group(['prefix' => 'list_countries'], function () {
             Route::get('/browse',  [CountrieController::class, 'browse'])->name('countries.browse');
+            Route::get('/visitors',  [CountrieController::class, 'browse_visitors'])->name('countries.visitors');
             Route::get('/cities',  [CountrieController::class, 'cities'])->name('cities.browse');
             Route::get('/currencies',  [CountrieController::class, 'currencies'])->name('currencies.browse');
         });
@@ -446,12 +447,6 @@ Route::group(['prefix' => 'under_distributers'], function () {
     Route::post('/store_step_two', [AdminController::class, 'store_under_distributerTwo'])->name('admin.store_under_distributer_two');
 });
 
-
-// Transactions 
-Route::group(['prefix' => 'transactions'], function () {
-    Route::get('/robus/cartes',  [TransactionWebController::class, 'transactions_reloads'])->name('admin.add_under_distributer');
-    // Route::get('robus/cartes',  [TransactionWebController::class, ' transactions_reloads'])->name('transactions.web.reloads');
-});
 
 
 // Countries

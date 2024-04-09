@@ -110,6 +110,11 @@ class TransactionCost extends Model
         $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
     }
 
+    public function setPercentWebAttribute($value)
+    {
+        $this->attributes['percent_web'] = ($value / 100) ? json_encode($value / 100) : null;
+    }
+
     
     public function WalletTransaction()
     {

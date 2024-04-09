@@ -1,14 +1,10 @@
 <input type="hidden" id="app_url" value="{{ env('APP_URL') }}">
 
-<script src="{{ asset('js/bootstrap.min.js') }}"></script>
-<script src="{{ asset('js/revolution_web.js') }}"></script>
-<script src="{{ asset('js/fancybox.js') }}"></script>
-<script src="{{ asset('js/fancybox-media.js') }}"></script>
-<script src="{{ asset('js/owl.js') }}"></script>
-<script src="{{ asset('js/wow.js') }}"></script>
-<script src="{{ asset('js/isotope.js') }}"></script>
-<script src="{{ asset('js/validate.js') }}"></script>
-<script src="{{ asset('js/script_web.js') }}"></script>
+<script src="{{ asset_url('web/js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ asset_url('web/js/popper.min.js') }}"></script>
+<script src=" {{ asset_url('web/js/bootstrap.min.js.js') }}"></script>
+<script src="{{ asset_url('web/js/jquery.sticky.js') }}"></script>
+<script src="{{ asset_url('web/js/main.js') }}"></script>
 
 <script>
     $.ajaxSetup({
@@ -17,6 +13,7 @@
         }
     });
 </script>
+
 @if (session('status'))
     @if (session('color') === 'danger')
         <script>

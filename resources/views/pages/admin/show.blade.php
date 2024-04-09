@@ -2352,7 +2352,7 @@
 
 @endsection
 
-
+    
 @push('scripts')
     <script type="text/javascript">
         function sort_status(el) {

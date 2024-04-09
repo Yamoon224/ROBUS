@@ -23,6 +23,8 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+
+                
                 <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Pourcentage admin<span class="text-danger">
                             *</span></label>
@@ -32,6 +34,7 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+
                 <div class="col-span-12">
                     <label for="modal-form-1" class="form-label">Pourcentage MASTERS<span class="text-danger">
                             *</span></label>
@@ -41,6 +44,7 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+                
                 @if ($distributer_custumer)
                     <div class="col-span-6">
                         <label for="modal-form-1" class="form-label">Pourcentage S-agens depot<span class="text-danger">

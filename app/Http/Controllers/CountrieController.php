@@ -360,6 +360,16 @@ class CountrieController extends Controller
         return view('pages.countries.browse');
     }
 
+
+    public function browse_visitors()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-pays')) {
+            abort(403);
+        }
+
+        return view('pages.countries.browse_visitors');
+    }
+
     public function cities()
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-pays')) {

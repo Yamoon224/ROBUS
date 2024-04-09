@@ -37,20 +37,24 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
 
             Route::middleware('web')
-                 ->prefix('application')
+                ->prefix('application')
                 ->group(base_path('routes/admin.php'));
 
             Route::middleware('company')
                 ->prefix('company')
-               ->group(base_path('routes/firm.php'));
+                ->group(base_path('routes/firm.php'));
 
             Route::middleware('master')
                 ->prefix('master')
-               ->group(base_path('routes/masters.php'));
+                ->group(base_path('routes/masters.php'));
 
             Route::middleware('comzone')
-               ->prefix('comzone')
-              ->group(base_path('routes/com.php'));
+                ->prefix('comzone')
+                ->group(base_path('routes/com.php'));
+
+            Route::middleware('web')
+                ->prefix('transactions')
+                ->group(base_path('routes/trans.php'));
         });
     }
 
