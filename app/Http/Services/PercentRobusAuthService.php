@@ -177,6 +177,12 @@ class PercentRobusAuthService
         return DepositCost::whereId(2)->first();
     }
 
+    public function getRobusPercentageReloadWeb()
+    {
+        return DepositCost::whereId(3)->first();
+    }
+
+
     public function getRobusPercentagePhoneInter()
     {
         return PhoneCreditCost::whereId(2)->first();

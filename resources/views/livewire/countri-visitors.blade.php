@@ -25,10 +25,11 @@
                     <tr>
                         <th class="whitespace-nowrap text-center">Code</th>
                         <th class="text-center whitespace-nowrap text-center">Name</th>
-                        <th class="text-center whitespace-nowrap text-center">Compagnie</th>
+                        <th class="text-center whitespace-nowrap text-center">Robus</th>
                         <th class="text-center whitespace-nowrap text-center">Devise</th>
                         <th class="text-center whitespace-nowrap text-center">Plafond</th>
                         <th class="text-center whitespace-nowrap text-center">Montant Maxi a envoyé</th>
+                        <th class="text-center whitespace-nowrap text-center">Visiteurs</th>
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>
                 </thead>
@@ -49,7 +50,7 @@
                                         @if (Auth::guard('web')->user()->hasPermissionTo('active-caution'))
                                             <div class="flex items-center justify-center text-success">
 
-                                                <a wire:click="edit({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                <a wire:click="edit({{ $item->id }}, 'show-visitors-modal'); $emit('show-visitors-modal')"
                                                     class="flex items-center mr-3 @if ($item->robus == 1) @else @endif"
                                                     href="javascript:;"
                                                     title="@if ($item->robus == 1) Désactiver @else Activer @endif">
@@ -61,7 +62,7 @@
                                     @else
                                         @if (Auth::guard('web')->user()->hasPermissionTo('desactive-caution'))
                                             <div class="flex items-center justify-center text-danger">
-                                                <a wire:click="edit({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                <a wire:click="edit({{ $item->id }}, 'show-visitors-modal'); $emit('show-visitors-modal')"
                                                     class="flex items-center mr-3 @if ($item->robus == 1) @else @endif"
                                                     href="javascript:;"
                                                     title="@if ($item->robus == 1) Désactiver @else Activer @endif">
@@ -87,11 +88,34 @@
                                         {{ $item->amount_max_send ?? '00' }}
                                     </div>
                                 </td>
-                                {{-- <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">
-                                        {{ $item->silver_ceiling_no_identity ?? '00' }}
-                                    </div>
-                                </td> --}}
+                                <td class="w-40 ">
+                                    @if ($item->is_web == '1')
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('active-caution'))
+                                            <div class="flex items-center justify-center text-success">
+
+                                                <a wire:click="edit({{ $item->id }}, 'show-visitors-modal'); $emit('show-visitors-modal')"
+                                                    class="flex items-center mr-3 @if ($item->is_web == 1) @else @endif"
+                                                    href="javascript:;"
+                                                    title="@if ($item->is_web == 1) Désactiver @else Activer @endif">
+                                                    <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
+                                                </a>
+
+                                            </div>
+                                        @endif
+                                    @else
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('desactive-caution'))
+                                            <div class="flex items-center justify-center text-danger">
+                                                <a wire:click="edit({{ $item->id }}, 'show-visitors-modal'); $emit('show-visitors-modal')"
+                                                    class="flex items-center mr-3 @if ($item->is_web == 1) @else @endif"
+                                                    href="javascript:;"
+                                                    title="@if ($item->is_web == 1) Désactiver @else Activer @endif">
+                                                    <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
+                                                </a>
+
+                                            </div>
+                                        @endif
+                                    @endif
+                                </td>
                                 <td class="w-56">
                                     <div class="flex justify-center items-center">
                                         @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))
@@ -126,7 +150,7 @@
         </div>
         <!-- END: Pagination -->
     </div>
-    @include('livewire.commissions.modals.disabledCountries')
+    @include('livewire.commissions.modals.visitorsCountries')
     @include('livewire.commissions.modals.updateCountries')
 
 </div>

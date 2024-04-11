@@ -1,10 +1,10 @@
 <input type="hidden" id="app_url" value="{{ env('APP_URL') }}">
 
+<script src=" {{ asset_url('web/js/percent.js') }}"></script>
 <script src="{{ asset_url('web/js/jquery-3.3.1.min.js') }}"></script>
 <script src="{{ asset_url('web/js/popper.min.js') }}"></script>
-<script src=" {{ asset_url('web/js/bootstrap.min.js.js') }}"></script>
-<script src="{{ asset_url('web/js/jquery.sticky.js') }}"></script>
-<script src="{{ asset_url('web/js/main.js') }}"></script>
+{{-- <script src=" {{ asset_url('web/js/bootstrap.min.js') }}"></script> --}}
+<script src=" {{ asset_url('web/js/bootstrap.bundle.min.js') }}"></script>
 
 <script>
     $.ajaxSetup({

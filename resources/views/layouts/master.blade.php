@@ -367,6 +367,9 @@
             $('#disabled-countrie-modal').removeClass('show');
             $('#disabled-countrie-modal').addClass('hide');
 
+            $('#visitors-countrie-modal').removeClass('show');
+            $('#visitors-countrie-modal').addClass('hide');
+
             $('#update-countrie-modal').removeClass('show');
             $('#update-countrie-modal').addClass('hide');
 
@@ -1976,6 +1979,12 @@
             $('#disabled-countrie-modal').removeClass('hide');
             $('#disabled-countrie-modal').addClass('show');
         });
+
+        Livewire.on('show-visitors-modal', () => {
+            $('#visitors-countrie-modal').removeClass('hide');
+            $('#visitors-countrie-modal').addClass('show');
+        });
+
 
         Livewire.on('update-countrie-modal', () => {
             $('#update-countrie-modal').removeClass('hide');

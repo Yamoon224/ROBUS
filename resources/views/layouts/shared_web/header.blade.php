@@ -1,42 +1,45 @@
-<header class="site-navbar js-sticky-header site-navbar-target style_header" role="banner">
+@php
+    $prefix = Request::route()->getPrefix();
+    $route = Route::current()->getName();
+@endphp
 
-    <div class="container">
-        <div class="row align-items-center position-relative">
-
-
-            <div class="site-logo">
-            
-                <a href="index.html" class="text-black"><img src="https://robus.africa/wp-content/uploads/2023/07/LOGO_ROBUS-web.png" alt="Brighton" title="Brighton" height="70"></a>
-            </div>
-
-            <div class="col-12 margin-menu">
-                <nav class="site-navigation text-right ml-auto" role="navigation">
-
-                    <ul class="site-menu main-menu js-clone-nav ml-auto d-none d-lg-block">
-                        <li><a href="https://robus.africa/" class="nav-link">Acceuil</a></li>
-
-                        <li class="has-children">
-                            <a href="#about-section" class="nav-link">Réchargement de carte  </a>
-                            <ul class="dropdown arrow-top">
-                                <li><a href="{{ route('web.transactions_reloads') }}" class="nav-link">Visa/Master Carte</a></li>
-                                <li><a href="{{ route('web.transactions_pushs') }}" class="nav-link">Carte PUSH</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="{{ route('web.transactions_deposits') }}" class="nav-link">Transfert et paiment de credit</a></li>
-
-                        <li><a href="{{ route('web.transactions_robus') }}" class="nav-link">Récharger mon compte ROBUS</a></li>
-                        <li><a href="{{ route('web.transactions_xbets') }}" class="nav-link">Récharger mon compte 1XBET</a></li>
-                        <li><a href="https://robus.africa/#contacts" class="nav-link">Contact</a></li>
+<nav class="navbar navbar-expand-md navbar-dark fixed-top  style_header">
+    <div class="container-fluid margin-menu-all">
+        <a class="navbar-brand" href="#"><img
+                src="https://robus.africa/wp-content/uploads/2023/07/LOGO_ROBUS-web.png" alt="Brighton" title="Brighton"
+                height="70"></a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+            aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse margin-menu" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                <li class="nav-item">
+                    <a class="nav-link text-white" aria-current="page" href="https://robus.africa/">Acceuil</a>
+                </li>
+                <li class="nav-item dropdown ">
+                    <a class="nav-link dropdown-toggle text-white {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'show' : '' }}" href="#" id="dropdown10"
+                        data-bs-toggle="dropdown" aria-expanded="{{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'true' : 'false' }}">Récharger ma carte</a>
+                    <ul class="dropdown-menu {{ $route == 'web.transactions_reloads' ? 'show' : '' }}" aria-labelledby="dropdown10" data-bs-popper="{{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'none' : '' }}">
+                        <li><a class="dropdown-item {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'active' : '' }}" href="{{ route('web.transactions_reloads') }}">Carte Visa/Master
+                                Carte</a></li>
+                        <li><a class="dropdown-item {{ $route == 'web.transactions_pushs' ||  $route == 'web.transactions_pushs' ? 'active' : '' }}" href="{{ route('web.transactions_pushs') }}">Carte PUSH</a></li>
                     </ul>
-                </nav>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-white {{ $route == 'web.transactions_deposits' ? 'active' : '' }}"
+                        href="{{ route('web.transactions_deposits') }}">Transfert et paiment de
+                        credit</a>
+                </li>
 
-            </div>
-
-            <div class="toggle-button d-inline-block d-lg-none"><a href="#"
-                    class="site-menu-toggle py-5 js-menu-toggle text-black"><span class="icon-menu h3"></span></a>
-            </div>
-
+                <li class="nav-item"><a class="nav-link text-white {{ $route == 'web.transactions_robus' ? 'active' : '' }}"
+                        href="{{ route('web.transactions_robus') }}">Récharger mon compte ROBUS</a></li>
+                <li class="nav-item"><a class="nav-link  text-white {{ $route == 'web.transactions_xbets' ? 'active' : '' }}"
+                        href="{{ route('web.transactions_xbets') }}">Récharger mon compte 1XBET</a></li>
+                <li class="nav-item">
+                    <a class="nav-link text-white " href="https://robus.africa/#contacts">Contact</a>
+                </li>
+            </ul>
         </div>
     </div>
-
-</header>
+</nav>

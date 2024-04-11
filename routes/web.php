@@ -187,6 +187,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/show/{id}', [TransactionController::class, 'show'])->name('transactions.show');
             Route::get('/read/{id}/delete', [TransactionController::class, 'delete'])->name('transactions.delete');
             Route::get('/historiques', [TransactionController::class, 'browse_historique'])->name('transactions.historiques');
+            Route::get('/historiques/visitors', [TransactionController::class, 'browse_historique'])->name('transactions.historiques.visitors');
         });
 
 
@@ -219,9 +220,12 @@ Route::group(['prefix' => ''], function () {
         // Countries Modify
         Route::group(['prefix' => 'list_countries'], function () {
             Route::get('/browse',  [CountrieController::class, 'browse'])->name('countries.browse');
-            Route::get('/visitors',  [CountrieController::class, 'browse_visitors'])->name('countries.visitors');
             Route::get('/cities',  [CountrieController::class, 'cities'])->name('cities.browse');
             Route::get('/currencies',  [CountrieController::class, 'currencies'])->name('currencies.browse');
+        });
+
+        Route::group(['prefix' => 'visitors'], function () {
+            Route::get('/countries',  [CountrieController::class, 'browse_visitors'])->name('countries.visitors');
         });
 
         //   Costs Commissions

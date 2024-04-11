@@ -10,60 +10,40 @@
 
 
     @include('layouts.shared_web.styles')
+
     @stack('styles')
 
     @livewireStyles
-    <title>Website Menu #4</title>
+    <title>@yield('title') - ROBUS</title>
+
 </head>
 
-<body class="bg-color">
+<body>
 
+    <main>
+        <div class="page-robus">
 
-    <div class="site-mobile-menu site-navbar-target">
-        <div class="site-mobile-menu-header">
-            <div class="site-mobile-menu-close mt-3">
-                <span class="icon-close2 js-menu-toggle"></span>
-            </div>
-        </div>
-        <div class="site-mobile-menu-body"></div>
-    </div>
-
-
-    <div class="top-bar">
-        <div class="container">
-            <div class="row">
-                <div class="col-12">
-                    <a href="#" class=""><span class="mr-2  icon-envelope-open-o"></span> <span
-                            class="d-none d-md-inline-block">info@robus.com</span></a>
-                    <span class="mx-md-2 d-inline-block"></span>
-                    <a href="#" class=""><span class="mr-2  icon-phone"></span> <span
-                            class="d-none d-md-inline-block">1+ (234) 5678 9101</span></a>
-
-
-                    <div class="float-right">
-
-                        <a href="#" class=""><span class="mr-2  icon-twitter"></span> <span
-                                class="d-none d-md-inline-block">Twitter</span></a>
-                        <span class="mx-md-2 d-inline-block"></span>
-                        <a href="#" class=""><span class="mr-2  icon-facebook"></span> <span
-                                class="d-none d-md-inline-block">Facebook</span></a>
-
+            <div class="site-mobile-menu site-navbar-target">
+                <div class="site-mobile-menu-header">
+                    <div class="site-mobile-menu-close mt-3">
+                        <span class="icon-close2 js-menu-toggle"></span>
                     </div>
-
                 </div>
-
+                <div class="site-mobile-menu-body"></div>
             </div>
 
+            @include('layouts.shared_web.header')
+
+
+            @yield('content')
+
+
+            @include('layouts.shared_web.footer')
         </div>
-    </div>
-
-    @include('layouts.shared_web.header')
+    </main>
 
 
-    @yield('content')
 
-
-    @include('layouts.shared_web.footer')
 
     @include('layouts.shared_web.scripts')
 

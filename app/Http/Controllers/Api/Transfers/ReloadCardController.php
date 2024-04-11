@@ -21,7 +21,7 @@ class ReloadCardController extends Controller
 {
 
     /** @var  ReloadCardRepository */
-    private $reloadCardRepository;
+    protected $reloadCardRepository;
     protected $deletedService;
     protected $percentRobus;
     protected $validatedamountDays;

@@ -18,6 +18,7 @@ class CountriVisitors extends Component
     public $countireName;
     public $countireCode;
     public $countrieStatus;
+    public $countrieVisitors;
     public $countrieId;
     public $countrie_indic;
     public $currencie;
@@ -47,6 +48,7 @@ class CountriVisitors extends Component
         $this->countrie_indic = $check->indecative;
         $this->currencie = $check->currencie->id ?? 1;
         $this->countrieStatus = $check->robus;
+        $this->countrieVisitors = $check->is_web;
         $this->silver_no_identity = $check->silver_ceiling_no_identity;
         $this->ceiling = $check->silver_ceiling;
         $this->name_groupe = $check->name_groupe;
@@ -88,10 +90,10 @@ class CountriVisitors extends Component
     {
         $check = Country::find($this->countrieId);
         if (!empty($check)) {
-            if ($check->robus == 0) $check->update(['robus' => 1]);
-            else $check->update(['robus' => 0]);
+            if ($check->is_web == 0) $check->update(['is_web' => 1]);
+            else $check->update(['is_web' => 0]);
             $this->emit('modal-hide', 'hide');
-            $this->emit('success', $check->robus == 1 ? 'Pays activée !' : 'Pays désactivée !');
+            $this->emit('success', $check->is_web == 1 ? 'Pays activée !' : 'Pays désactivée !');
         }
     }
 
@@ -99,7 +101,7 @@ class CountriVisitors extends Component
     public function render()
     {
 
-        $countrie = Country::query();
+        $countrie = Country::whereRobus(true);
 
         if ($this->search != "") {
 

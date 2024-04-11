@@ -53,27 +53,16 @@
             @if (Auth::guard('web')->user()->hasPermissionTo('transferts'))
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('transactions*') || request()->is('historicals*') ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('transactions*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i> </div>
                         <div class="side-menu__title">
                             Transactions
                             <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
                         </div>
                     </a>
-                    <ul
-                        class="{{ request()->is('transactions*') || request()->is('historicals*') ? 'side-menu__sub-open' : '' }}">
+                    <ul class="{{ request()->is('transactions*') ? 'side-menu__sub-open' : '' }}">
 
 
-                        @if (Auth::guard('web')->user()->hasPermissionTo('voir-historiques'))
-                            <li>
-                                <a href="{{ route('transactions.historiques') }}"
-                                    class="side-menu {{ $route == 'transactions.historiques' || $route == 'relaods.historical' || $route == 'transfers.historical' || $route == 'paiements.historical' || $route == 'virements.historical' || $route == 'inters.historical' || $route == 'cartes.historical' || $route == 'phones.historical' ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                                    </div>
-                                    <div class="side-menu__title"> Historique </div>
-                                </a>
-                            </li>
-                        @endif
                         @if (Auth::guard('web')->user()->hasPermissionTo('achat-uv'))
                             <li>
                                 <a href="{{ route('transactions.uv.browse') }}"
@@ -92,10 +81,58 @@
                                 <div class="side-menu__title"> Transferts d'argent </div>
                             </a>
                         </li>
+                        @if (Auth::guard('web')->user()->hasPermissionTo('voir-transaction-visiteurs'))
+                            <li>
+                                <a href="{{ route('transactions.uv.browse') }}"
+                                    class="side-menu {{ $route == 'transactions.uv.browse' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title">Transactions Visiteurs </div>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             @endif
 
+            <li class="side-nav__devider my-4"></li>
+            @if (Auth::guard('web')->user()->hasPermissionTo('historiques'))
+                <li>
+                    <a href="javascript:;"
+                        class="side-menu {{ request()->is('historicals*') ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="clipboard" data-lucide="clipboard" class="lucide lucide-clipboard block mx-auto"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        </div>
+                        <div class="side-menu__title">
+                            Historiques
+                            <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
+                        </div>
+                    </a>
+                    <ul class="{{ request()->is('historicals*') ? 'side-menu__sub-open' : '' }}">
+
+
+                        @if (Auth::guard('web')->user()->hasPermissionTo('voir-historique-transfers'))
+                            <li>
+                                <a href="{{ route('transactions.historiques') }}"
+                                    class="side-menu {{ $route == 'transactions.historiques' || $route == 'relaods.historical' || $route == 'transfers.historical' || $route == 'paiements.historical' || $route == 'virements.historical' || $route == 'inters.historical' || $route == 'cartes.historical' || $route == 'phones.historical' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Historique transactions </div>
+                                </a>
+                            </li>
+                        @endif
+                        @if (Auth::guard('web')->user()->hasPermissionTo('voir-historique-transfers'))
+                            <li>
+                                <a href="{{ route('transactions.historiques.visitors') }}"
+                                    class="side-menu {{ $route == 'transactions.historiques.visitors'  || $route == 'transfers.historical' || $route == 'paiements.historical' || $route == 'virements.historical' || $route == 'inters.historical' || $route == 'cartes.historical' || $route == 'phones.historical' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Historique visiteurs </div>
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
+            @endif
             <li class="side-nav__devider my-4"></li>
             @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
                 <li>
@@ -418,7 +455,7 @@
 
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('application*') || request()->is('operators*') || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*') || request()->is('close_app*') ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('application*') || request()->is('operators*') || request()->is('faqs.browse*') || request()->is('list_countries*') || request()->is('admin*') || request()->is('features*') || request()->is('admin*') || request()->is('roles*') || request()->is('permissions*') || request()->is('close_app*') || request()->is('visitors*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-feather="users" class="block mx-auto"></i> </div>
                         <div class="side-menu__title">
                             Administrateur
@@ -433,7 +470,7 @@
                             Auth::guard('web')->user()->hasPermissionTo('Faqs'))
 
                         <ul
-                            class="{{ request()->is('application*') || request()->is('admin*') || request()->is('operators*') || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') || request()->is('close_app*') ? 'side-menu__sub-open' : '' }}">
+                            class="{{ request()->is('application*') || request()->is('admin*') || request()->is('operators*') || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') || request()->is('close_app*') || request()->is('visitors*') ? 'side-menu__sub-open' : '' }}">
 
 
                             <li>
@@ -521,8 +558,8 @@
 
                             @if (Auth::guard('web')->user()->hasPermissionTo('active-pays'))
                                 <li>
-                                    <a href="{{ route('countries.browse') }}"
-                                        class="side-menu {{ $route == 'countries.browse' ? 'side-menu--active' : '' }}">
+                                    <a href="{{ route('countries.visitors') }}"
+                                        class="side-menu {{ $route == 'countries.visitors' ? 'side-menu--active' : '' }}">
                                         <div class="side-menu__icon"> <i data-feather="globe"
                                                 class="block mx-auto"></i>
                                         </div>
