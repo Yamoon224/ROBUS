@@ -1,6 +1,6 @@
 <div class="col-md-4 col-sm-2 col-xs-12">
         <div class="card text-white bg-primary mb-3 style_info">
-            <div class="card-header text-center" style="font-weight: bold;">A savoir</div>
+            <div class="card-header text-center" style="font-weight: bold;     background-color: darkslategrey;">Information</div>
             <div class="card-body">
                 <p class="card-text text-white" style="font-weight: 450;">
                     Rechargez vos cartes prépayées visa par mobile, Rechargez vos comptes mobiles money avec votre carte

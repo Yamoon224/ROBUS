@@ -141,6 +141,7 @@ class MobileWalletTransactionService
             $valeur_single = $admin_valeur_convertion / $nmbre_admin;
 
             foreach ($admin_civ as $user) {
+
                 $admin_single = SidUser::find($user->id);
 
                 AdminsCom::create([
@@ -160,13 +161,6 @@ class MobileWalletTransactionService
                     'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ]);
 
-                // $admin_single->wallet->update([
-                //     'reload_by' => robus()->firstname .
-                //         ' ' .
-                //         robus()->lastname,
-                //     'sid_user_relod' => robus()->id,
-                //     'amount' => DB::raw('amount+' . $valeur_single),
-                // ]);
             }
         }
 

@@ -16,6 +16,7 @@ class PhoneCredit extends Component
     public $phonePercent;
     public $orderCardMerchant;
     public $comission_master;
+    public $comission_admin;
 
 
     protected $rules = [
@@ -62,6 +63,7 @@ class PhoneCredit extends Component
         $this->phonePercent = $check->percent * 100;
         $this->orderCardMerchant = $check->percent_merchands * 100;
         $this->comission_master = $check->percent_masters * 100;
+        $this->comission_admin = $check->percent_banque  * 100;
         $this->phoneStatus = $check->status;
         $this->emit($state);
     }
@@ -70,9 +72,28 @@ class PhoneCredit extends Component
     {
         $this->validate();
         $check = PhoneCreditCost::whereId($this->phoneId)->first();
-        if ($this->orderCardMerchant > $this->phonePercent) {
-            $this->emit('modal-hide', 'hide');
-            $this->emit('error', 'Svp verifier les comissions !');
+        if ($check->id != 3) {
+            
+            if ($this->orderCardMerchant > $this->phonePercent) {
+                $this->emit('modal-hide', 'hide');
+                $this->emit('error', 'Svp verifier les comissions !');
+            } else {
+
+                $check->update([
+                    'name' => $this->phoneName,
+                    'percent' => $this->phonePercent,
+                    'percent_merchands'  => $this->orderCardMerchant,
+                    'percent_masters'  => $this->comission_master,
+                    'percent_banque'  => $this->comission_admin,
+                    'status' => 1,
+                    'created_by' => Auth::guard('web')->user()->id,
+                ]);
+
+                $this->resetField();
+                $this->emit('modal-hide', 'hide');
+                $this->emit('success', 'Commission  modifié !');
+            }
+
         } else {
 
             $check->update([
@@ -80,6 +101,7 @@ class PhoneCredit extends Component
                 'percent' => $this->phonePercent,
                 'percent_merchands'  => $this->orderCardMerchant,
                 'percent_masters'  => $this->comission_master,
+                'percent_banque'  => $this->comission_admin,
                 'status' => 1,
                 'created_by' => Auth::guard('web')->user()->id,
             ]);
@@ -96,6 +118,7 @@ class PhoneCredit extends Component
         $this->phonePercent = '';
         $this->orderCardMerchant = '';
         $this->comission_master = '';
+        $this->comission_admin = '';
         $this->emit('modal-hide', 'hide');
     }
 

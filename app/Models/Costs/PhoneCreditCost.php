@@ -29,6 +29,7 @@ class PhoneCreditCost extends Model
         'name',
         'percent',
         'percent_merchands',
+        'percent_banque',
         'status',
         'created_by',
     ];
@@ -92,6 +93,11 @@ class PhoneCreditCost extends Model
     public function setPercentMastersAttribute($value)
     {
         $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
+    }
+
+    public function setPercentBanqueAttribute($value)
+    {
+        $this->attributes['percent_banque'] = ($value / 100) ? json_encode($value / 100) : null;
     }
 
     public function WalletPhoneCredit()

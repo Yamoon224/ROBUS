@@ -14,9 +14,13 @@ use Illuminate\Support\Facades\Auth;
 
 function reloadCardPercent()
 {
-   
-    return DepositCost::whereId(2)->first();
 
+    return DepositCost::whereId(2)->first();
+}
+
+function SearchWalletRobus($num_wallet)
+{
+    return   Wallet::where('wallet_id',  $num_wallet)->first();
 }
 
 function provideId($id)
@@ -77,28 +81,25 @@ function getCountriesForUser($user)
 
 function getOperators($userId)
 {
- 
-    return OperatorService::where('sid_user_id', $userId)
-                            ->pluck('operator_id')
-                            ->toArray();
 
+    return OperatorService::where('sid_user_id', $userId)
+        ->pluck('operator_id')
+        ->toArray();
 }
 
 function getReloadCartes()
 {
- 
-    return Provider::whereStatus(true)->where('provider_type_id',  5)
-    ->orderBy('name', 'asc')->get();
 
+    return Provider::whereStatus(true)->where('provider_type_id',  5)
+        ->orderBy('name', 'asc')->get();
 }
 
 
 function getReloadPaiements()
 {
- 
-    return Provider::whereStatus(true)->where('provider_type_id',  1)
-    ->orderBy('name', 'asc')->get();
 
+    return Provider::whereStatus(true)->where('provider_type_id',  1)
+        ->orderBy('name', 'asc')->get();
 }
 
 function sabdyWebVerify()

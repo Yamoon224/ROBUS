@@ -100,7 +100,13 @@
                 <li>
                     <a href="javascript:;"
                         class="side-menu {{ request()->is('historicals*') ? 'side-menu--active' : '' }}">
-                        <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="clipboard" data-lucide="clipboard" class="lucide lucide-clipboard block mx-auto"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                        <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="clipboard"
+                                data-lucide="clipboard" class="lucide lucide-clipboard block mx-auto">
+                                <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+                            </svg>
                         </div>
                         <div class="side-menu__title">
                             Historiques
@@ -123,7 +129,7 @@
                         @if (Auth::guard('web')->user()->hasPermissionTo('voir-historique-transfers'))
                             <li>
                                 <a href="{{ route('transactions.historiques.visitors') }}"
-                                    class="side-menu {{ $route == 'transactions.historiques.visitors'  || $route == 'transfers.historical' || $route == 'paiements.historical' || $route == 'virements.historical' || $route == 'inters.historical' || $route == 'cartes.historical' || $route == 'phones.historical' ? 'side-menu--active' : '' }}">
+                                    class="side-menu {{ $route == 'transactions.historiques.visitors' || $route == 'transfers.historical' || $route == 'paiements.historical' || $route == 'virements.historical' || $route == 'inters.historical' || $route == 'cartes.historical' || $route == 'phones.historical' ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
                                     </div>
                                     <div class="side-menu__title"> Historique visiteurs </div>
@@ -259,15 +265,53 @@
                     </a>
                 </li>
             @endif
+
             <li class="side-nav__devider my-4"></li>
             @if (Auth::guard('web')->user()->hasPermissionTo('operateurs'))
                 <li>
-
-                    <a href="{{ route('services.browse') }}"
-                        class="side-menu {{ $route == 'services.browse' || $route == 'services.offers.browse' ? 'side-menu--active' : '' }}">
-                        <div class="side-menu__icon"><i data-feather="package" class="block mx-auto"></i> </div>
-                        <div class="side-menu__title"> Services </div>
+                    <a href="javascript:;"
+                        class="side-menu {{ request()->is('services*') ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                icon-name="clipboard" data-lucide="clipboard"
+                                class="lucide lucide-clipboard block mx-auto">
+                                <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1">
+                                </rect>
+                            </svg>
+                        </div>
+                        <div class="side-menu__title">
+                            Services
+                            <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
+                        </div>
                     </a>
+                    <ul class="{{ request()->is('services*') ? 'side-menu__sub-open' : '' }}">
+
+
+                        @if (Auth::guard('web')->user()->hasPermissionTo('operateurs'))
+                            <li>
+
+                                <a href="{{ route('services.browse') }}"
+                                    class="side-menu {{ $route == 'services.browse' || $route == 'services.offers.browse' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"><i data-feather="package" class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Services mobile </div>
+                                </a>
+                            </li>
+                        @endif
+                        @if (Auth::guard('web')->user()->hasPermissionTo('operateurs'))
+                        <li>
+
+                            <a href="{{ route('services.browse_visitores') }}"
+                                class="side-menu {{ $route == 'services.browse_visitores' || $route == 'services.edit_visitors' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"><i data-feather="package" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title"> Services web </div>
+                            </a>
+                        </li>
+                        @endif
+                    </ul>
                 </li>
             @endif
 

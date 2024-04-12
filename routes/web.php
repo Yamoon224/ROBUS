@@ -213,8 +213,11 @@ Route::group(['prefix' => ''], function () {
             Route::get('/add',  [ServiceController::class, 'add'])->name('services.add');
             Route::post('/store',  [ServiceController::class, 'store'])->name('services.store');
             Route::get('/browse',  [ServiceController::class, 'browse'])->name('services.browse');
+            Route::get('/visitors',  [ServiceController::class, 'browse_visitores'])->name('services.browse_visitores');
             Route::get('/show/{id}',  [ServiceController::class, 'edit'])->name('services.edit');
+            Route::get('/showVisitors/{id}',  [ServiceController::class, 'edit_visitors'])->name('services.edit_visitors');
             Route::post('/update/{id}',  [ServiceController::class, 'update'])->name('services.update');
+            Route::post('/update_web/{id}',  [ServiceController::class, 'updateWeb'])->name('services.update.web');
             Route::get('/offers',  [ServiceController::class, 'browse_offers'])->name('services.offers.browse');
         });
         // Countries Modify

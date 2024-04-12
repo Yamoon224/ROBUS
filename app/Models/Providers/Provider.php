@@ -9,6 +9,7 @@ use App\Models\ProviderType;
 use App\Models\Banks\BankCard;
 use App\Models\Costs\OrderCardCost;
 use App\Models\CountryService;
+use App\Models\CountryWeb;
 use App\Models\Custumers\Country;
 use App\Models\Wallets\WalletBank;
 use Spatie\Activitylog\LogOptions;
@@ -51,6 +52,11 @@ class Provider extends Model
     public function country_services()
     {
         return $this->hasMany(CountryService::class, 'provider_id', 'id', 'country_id');
+    }
+
+    public function country_service_web()
+    {
+        return $this->hasMany(CountryWeb::class, 'provider_id', 'id', 'country_id');
     }
 
     public function order_cost()

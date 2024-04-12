@@ -55,6 +55,98 @@ class NotificationWebService
         ], 200);
     }
 
+    public function sendNotificationTransactiobWeb($walletTransaction)
+    {
+
+
+        $admins = $this->getAdminCIVProperty();
+        event(new CreateReloadWebEvent($walletTransaction));
+        Notification::send($admins, new AdminNotification('Demande de transaction  de Visiteurs' . ' ' . $walletTransaction->name_complet));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+        // if (robus()->email != null) {
+
+        //     $notify = new MailController;
+        //     $notify->newReload($walletRelaodCard);
+        // }
+        return response()->json([
+            'success' => true,
+            'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
+        ], 200);
+    }
+
+
+    public function sendNotificationTransactionXBetWeb($walletXbet)
+    {
+
+
+        $admins = $this->getAdminCIVProperty();
+        event(new CreateReloadWebEvent($walletXbet));
+        Notification::send($admins, new AdminNotification('Demande de depot 1xbet  de Visiteurs' . ' ' . $walletXbet->full_name));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+        // if (robus()->email != null) {
+
+        //     $notify = new MailController;
+        //     $notify->newReload($walletRelaodCard);
+        // }
+        return response()->json([
+            'success' => true,
+            'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
+        ], 200);
+    }
+
+
+    public function sendNotificationTransactionPhoneCreditWeb($walletPhone)
+    {
+
+
+        $admins = $this->getAdminCIVProperty();
+        event(new CreateReloadWebEvent($walletPhone));
+        Notification::send($admins, new AdminNotification('Demande de credit téléphonique de Visiteurs' . ' ' . $walletPhone->full_name));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+        // if (robus()->email != null) {
+
+        //     $notify = new MailController;
+        //     $notify->newReload($walletRelaodCard);
+        // }
+        return response()->json([
+            'success' => true,
+            'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
+        ], 200);
+    }
+
     public function sendNotification1xbets($walletXbet)
     {
 

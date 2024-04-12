@@ -49,6 +49,10 @@ class PercentRobusAuthService
         }
     }
 
+    public function getRobusPercentageWeb()
+    {
+        return TransactionCost::whereId(42)->first();
+    }
 
     public function getRobusPercentageCustumers()
     {
@@ -133,6 +137,11 @@ class PercentRobusAuthService
         }
     }
 
+    public function getRobusPercentageOnexbetWeb()
+    {
+        return Onexbet::whereId(3)->first();
+    }
+
     public function getRobusPercentageVirement()
     {
 
@@ -153,6 +162,14 @@ class PercentRobusAuthService
         })->first();
     }
 
+
+    public function getRobusPercentagePhoneCreditWeb()
+    {
+
+        return  PhoneCreditCost::whereId(3)->first();
+    }
+
+
     public function getRobusPercentageMobileTwo()
     {
         $countryNameGroup = robus()->country->name_groupe;
@@ -163,6 +180,12 @@ class PercentRobusAuthService
             default:
                 return null;
         }
+    }
+
+
+    public function getRobusPercentageMobileWeb()
+    {
+        return TransactionCost::whereId(43)->first();
     }
 
     public function getRobusPercentageCardOrder($id)
@@ -210,7 +233,7 @@ class PercentRobusAuthService
     public function getRobusPercentageInter($countrie, $provider_valeur)
     {
 
-          $levelValeur = 0;
+        $levelValeur = 0;
 
         if (robus()->country->name_groupe == 'AFL') {
 
@@ -973,7 +996,6 @@ class PercentRobusAuthService
 
             if ($specificCountry) {
                 $levelValeur = $specificCountry;
-         
             } else {
                 return null; // La levelValeur pour $provider_valeur n'est pas définie pour $countrie
             }

@@ -73,14 +73,58 @@ body {
 	-ms-transition:all 0.5s ease;
 	-o-transition:all 0.5s ease;
 }
+.main-header{
+	position:relative;
+	left:0px;
+	top:0px;
+	z-index:999;
+	width:100%;
+	transition:all 500ms ease;
+	-moz-transition:all 500ms ease;
+	-webkit-transition:all 500ms ease;
+	-ms-transition:all 500ms ease;
+	-o-transition:all 500ms ease;
+}
 
+.main-header .header-top{
+	position:relative;
+	font-size:16px;
+	padding:17px 0px;
+	background:#ffffff;
+	color:#ffffff;
+	border-bottom:1px solid #e7e7e7;
+}
 .footer-upper .links-widget li{
 	position:relative;
 	margin-bottom:15px;
 	padding-left: 20px;
 }
-
-
+.scroll-to-top:hover {
+  color: #ffffff;
+  background: #fbca00;
+}
+.scroll-to-top {
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  width: 40px;
+  height: 40px;
+  color: #ffffff;
+  font-size: 13px;
+  text-transform: uppercase;
+  line-height: 38px;
+  text-align: center;
+  z-index: 100;
+  cursor: pointer;
+  border-radius: 50%;
+  background: #1c1c1c;
+  display: none;
+  -webkit-transition: all 300ms ease;
+  -ms-transition: all 300ms ease;
+  -o-transition: all 300ms ease;
+  -moz-transition: all 300ms ease;
+  transition: all 300ms ease;
+}
 
 .footer-upper .links-widget li a:hover{
 	color: #ff9a00;	
@@ -481,7 +525,7 @@ body {
 
 body {
   font-family: "Open Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  font-size: 16px;
+  font-size: 15px;
   background-color: #fff;
   color: black;
   line-height: 1.8em;

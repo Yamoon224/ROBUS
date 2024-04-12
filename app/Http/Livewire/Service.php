@@ -7,7 +7,6 @@ use App\Models\ProviderType;
 use Livewire\WithPagination;
 use Livewire\WithFileUploads;
 use App\Models\CountryService;
-use Illuminate\Support\Carbon;
 use App\Models\Custumers\Country;
 use App\Models\Providers\Provider;
 use Illuminate\Support\Facades\Auth;
@@ -43,52 +42,6 @@ class Service extends Component
     ];
 
 
-    public function add()
-    {
-        $this->validate();
-        $check = Provider::whereId($this->providerId)->first();
-        // $country = Country::whereId($this->countrys)->first();
-        $providerType = ProviderType::whereId($this->providerType)->first();
-        // $filenameWithExt = $this->image->getClientOriginalName();
-        // $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
-        // $extension = $this->image->getClientOriginalExtension();
-        // $filenameWithTime = $filename . '_' . time();
-        // $fileNameToStore = $filenameWithTime . '.' . $extension;
-
-        if (!$check) {
-            $provider = Provider::create(
-                [
-                    'name' => $this->providerName,
-                    'description'  => $this->providerDescription,
-                    'created_by' => Auth::guard('web')->user()->id,
-                    'status'  => 1,
-                    // 'country_id' => $country->id,
-                    // 'image' => env('APP_URL') . "/storage/"  . $this->image->storeAs('operateurs', $fileNameToStore),
-                    'company_id' => Auth::guard('web')->user()->company->id,
-                    'created_by' => Auth::guard('web')->user()->id,
-                    'provider_type_id' => $providerType->id,
-                ]
-            );
-
-            foreach ($this->countrys as $key => $country_s_id) {
-
-                $country_service = new CountryService;
-                $country_service->provider_id = $provider->id;
-                $country_service->country_id = $country_s_id;
-                $root_countrie = Country::findOrFail($country_s_id);
-
-                $country_service->save();
-
-                $root_countrie->save();
-            }
-
-            $root_countrie->save();
-
-            $this->resetField();
-            $this->emit('modal-hide', 'hide');
-            $this->emit('success', 'Operateur  ajouté !');
-        } else $this->emit('error', 'Operateur  existante !');
-    }
 
     public function edit($id, $state)
     {
@@ -204,6 +157,7 @@ class Service extends Component
                 ->orWhere("name", "like",  "%" . $this->search . "%");
 
         }
+
         return view('livewire.service', [
             "providers" => $provider->orderBy('name', 'asc')->latest()->paginate(10),
             "countries" => Country::where('robus', true)->orderBy('name', 'asc')->get(),

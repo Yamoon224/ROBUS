@@ -20,15 +20,16 @@
                 <li class="nav-item dropdown ">
                     <a class="nav-link dropdown-toggle text-white {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'show' : '' }}" href="#" id="dropdown10"
                         data-bs-toggle="dropdown" aria-expanded="{{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'true' : 'false' }}">Récharger ma carte</a>
-                    <ul class="dropdown-menu {{ $route == 'web.transactions_reloads' ? 'show' : '' }}" aria-labelledby="dropdown10" data-bs-popper="{{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'none' : '' }}">
-                        <li><a class="dropdown-item {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'active' : '' }}" href="{{ route('web.transactions_reloads') }}">Carte Visa/Master
+                    <ul class="dropdown-menu {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'show' : '' }}" aria-labelledby="dropdown10" data-bs-popper="{{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'none' : '' }}">
+                        <li>
+                            <a class="dropdown-item {{ $route == 'web.transactions_reloads' ? 'active' : '' }}" href="{{ route('web.transactions_reloads') }}">Carte Visa/Master
                                 Carte</a></li>
-                        <li><a class="dropdown-item {{ $route == 'web.transactions_pushs' ||  $route == 'web.transactions_pushs' ? 'active' : '' }}" href="{{ route('web.transactions_pushs') }}">Carte PUSH</a></li>
+                        <li><a class="dropdown-item {{  $route == 'web.transactions_pushs' ? 'active' : '' }}" href="{{ route('web.transactions_pushs') }}">Carte PUSH</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ $route == 'web.transactions_deposits' ? 'active' : '' }}"
-                        href="{{ route('web.transactions_deposits') }}">Transfert et paiment de
+                    <a class="nav-link text-white {{ $route == 'web.transactions_transactions' ? 'active' : '' }}"
+                        href="{{ route('web.transactions_transactions') }}">Transfert et paiment de
                         credit</a>
                 </li>
 
@@ -36,6 +37,9 @@
                         href="{{ route('web.transactions_robus') }}">Récharger mon compte ROBUS</a></li>
                 <li class="nav-item"><a class="nav-link  text-white {{ $route == 'web.transactions_xbets' ? 'active' : '' }}"
                         href="{{ route('web.transactions_xbets') }}">Récharger mon compte 1XBET</a></li>
+
+                        <li class="nav-item"><a class="nav-link  text-white {{ $route == 'web.transactions_inters' ? 'active' : '' }}"
+                            href="{{ route('web.transactions_inters') }}">Transfert a l'international</a></li>
                 <li class="nav-item">
                     <a class="nav-link text-white " href="https://robus.africa/#contacts">Contact</a>
                 </li>
