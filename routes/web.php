@@ -279,6 +279,12 @@ Route::group(['prefix' => ''], function () {
             Route::get('/asie', [CommissionController::class, 'browse_asie'])->name('commissions.asie');
         });
 
+        // New version
+
+        Route::prefix('pays_visitors')->group(function () {
+            Route::get('/visitors', [CommissionController::class, 'browse_visitors'])->name('commissions.browse_visitors');
+        });
+
         //contacts
         Route::prefix('contacts')->group(function () {
             Route::get('/lists/brawse', [ContactListController::class, 'browse'])->name('contacts.list.browse');

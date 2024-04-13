@@ -1,6 +1,10 @@
 <input type="hidden" id="app_url" value="{{ env('APP_URL') }}">
-
+{{-- <script>
+    var searchCountryUrl = "{{ url('transactions/robus/search-countrie') }}";
+    var searchPercentUrl = "{{ url('transactions/robus/search-percent') }}";
+</script> --}}
 <script src=" {{ asset_url('web/js/percent.js') }}"></script>
+{{-- <script src=" {{ asset_url('web/js/percentInter.js') }}"></script> --}}
 <script src="{{ asset_url('web/js/jquery-3.3.1.min.js') }}"></script>
 <script src="{{ asset_url('web/js/popper.min.js') }}"></script>
 {{-- <script src=" {{ asset_url('web/js/bootstrap.min.js') }}"></script> --}}

@@ -34,6 +34,11 @@
 
                                     <input type="text" name="name_expeditor" maxlength="80" class="form-control"
                                         placeholder="Ex: Loren Marck ..." required="">
+                                    @error('name_expeditor')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                     <label class="mb-2 font-14 bold black" for="name_benef">Nom et prénom bénéficiaire
@@ -41,23 +46,16 @@
 
                                     <input type="text" name="name_benef" maxlength="80" class="form-control"
                                         placeholder="Ex: Loren Marck ..." required="">
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <label class="mb-2 font-14 bold black" for="phone_benef">N° Tel du bénéficiaire <span
-                                            class="text-danger"> *</span></label>
-                                    <input type="text" maxlength="10" name="phone_benef" class="form-control"
-                                        placeholder="Ex: 0909090909 ..." required="">
+                                    @error('name_benef')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
                                 <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black" for="my_phone">N° Téléphone expéditeur <span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input type="text" name="my_phone" maxlength="10" class="form-control"
-                                        placeholder="Ex: 0101010101" required="">
-                                </div>
 
-                                <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black" for="country_id">Pays <span class="text-danger">
+                                    <label class="mb-2 font-14 bold black" for="country_id">Pays du bénéficiaire<span
+                                            class="text-danger">
                                             *</span></label>
                                     <select required id="country_id" name="country_id" aria-label="Selectionnez la carte "
                                         class="form-select @error('country_id') is-invalid @enderror">
@@ -67,20 +65,60 @@
                                                 {{ $countrie->name ?? null }}</option>
                                         @endforeach
                                     </select>
+                                    @error('country_id')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
                                 </div>
-                                {{-- <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black" for="provider">Réseau <span class="text-danger">
+                                <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
+                                    <label class="mb-2 font-14 bold black" for="phone_benef">N° Tel du bénéficiaire <span
+                                            class="text-danger"> *</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">
+                                            <span class="badge bg-info text-dark style_span text-white"
+                                                id="indice-countrie"></span>
+                                        </span>
+                                        <input type="text" maxlength="10" name="phone_benef" class="form-control"
+                                            placeholder="Ex: 0909090909 ..." required="">
+                                    
+                                    </div>
+                                    @error('phone_benef')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+
+                                <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
+                                    <label class="mb-2 font-14 bold black" for="my_phone">N° Téléphone expéditeur <span
+                                            class="text-danger">
+                                            *</span></label>
+                                    <input type="text" name="my_phone" maxlength="10" class="form-control"
+                                        placeholder="Ex: 0101010101" required="">
+                                    @error('my_phone')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+
+
+                                <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
+                                    <label class="mb-2 font-14 bold black" for="provider">Réseau opérateur <span
+                                            class="text-danger">
                                             *</span></label>
                                     <select required id="provider" name="provider" aria-label="Selectionnez la carte "
                                         class="form-select @error('provider') is-invalid @enderror">
-                                        <option disabled selected>Selectionnez le reseau </option>
-                                        @foreach ($countries as $provider)
-                                            <option value="{{ $provider->id }}">
-                                                {{ $provider->name ?? null }}</option>
-                                        @endforeach
-                                    </select>
-                                </div> --}}
 
+                                    </select>
+                                    @error('provider')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
 
                                 <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
                                     <label class="mb-2 font-14 bold black">Montant(min : 2000Fcfa / max : 500.000Fcfa )
@@ -90,7 +128,7 @@
                                 </div>
 
 
-                                @include('layouts.shared_web.frais_transfert')
+                                @include('layouts.shared_web.frais_inter')
 
 
                                 <div class=" col-md-12 col-sm-12 col-xs-12 mt-3"><button type="submit"
@@ -102,7 +140,7 @@
                     </div>
                     <!--End Contact Form -->
                 </div>
-                @include('layouts.shared_web.info-open-transfert')
+                @include('layouts.shared_web.info-open-inter')
 
             </div>
 
@@ -114,27 +152,100 @@
 
 @push('scripts')
     <script type="text/javascript">
-        // Sélection de l'élément <select> par son attribut name
-        const selectElement = document.querySelector('select[name="operators"]');
+        $(document).ready(function() {
 
-        const elementToToggle = document.querySelector('.active_phone');
-        const elementToToggle2 = document.querySelector('.active_transfert');
+            const amountInput = document.querySelector('input[name="amount"]');
+            var totalPercent;
 
-        selectElement.addEventListener('change', function() {
-            const selectedValue = selectElement.value;
-            if (selectedValue === '1') {
-                // Si la valeur sélectionnée est "1", supprimer la classe d-none
-                elementToToggle2.classList.remove('d-none');
-                elementToToggle.classList.add('d-none');
 
-            } else if (selectedValue === '2') {
-                elementToToggle.classList.remove('d-none');
-                elementToToggle2.classList.add('d-none');
+            amountInput.addEventListener('input', function() {
+                updateResult();
+            });
 
-            } else {
-                // Sinon, ajouter la classe d-none
-                elementToToggle.classList.add('d-none');
-                elementToToggle2.classList.add('d-none');
+            $('#country_id').on('change', function() {
+                var country_id = $('#country_id').val();
+                provider_id = false;
+                ProviderUpdate(country_id);
+                ProviderPercent(country_id);
+                CountrieIndice(country_id);
+            });
+
+            // Requête Ajax pour les villes
+            function ProviderUpdate(countryId) {
+                $.get('{{ url('transactions/robus/search-countrie') }}/' + countryId + "'", function(data) {
+                    $('#provider').empty();
+                    $.each(data, function(index, providers) {
+                        $('#provider').append($('<option>', {
+                            value: providers,
+                            text: providers
+                        }));
+                    });
+                    if (provider_id) {
+                        $('#provider').val(provider_id).prop('selected', true);
+                    }
+                });
+            }
+
+            // Requête Ajax pour les percents
+            function ProviderPercent(countryId) {
+                $.get('{{ url('transactions/robus/search-percent') }}/' + countryId, function(data) {
+
+                    // Vérifier si l'objet data n'est pas vide
+                    if (data) {
+
+                        var percentValue = data.percent * 100;
+
+                        var adminPercentValue = data.percent_admin * 100;
+
+                        totalPercent = percentValue + adminPercentValue;
+
+                        var totalPercentElement = document.getElementById('total-percent-inters');
+
+                        if (totalPercentElement) {
+                            totalPercentElement.textContent = totalPercent;
+                        }
+
+                        // Mettre à jour le contenu du span avec les informations récupérées
+                        $('#total-percent-inters').text('Frais Total : ' + totalPercent + ' % ');
+                        $('#total-percent-wave').text(percentValue + "%");
+                        $('#total-percent-robus').text(adminPercentValue + "%");
+
+                    } else {
+                        // Afficher un message si aucune donnée n'est retournée
+                        $('#total-percent-inters').text('Aucune information disponible');
+                        $('#total-percent-wave').text('Aucune information disponible');
+                        $('#total-percent-robus').text('Aucune information disponible');
+                    }
+                });
+            }
+
+
+            function CountrieIndice(countryId) {
+                $.get('{{ url('transactions/robus/search-indice') }}/' + countryId, function(data) {
+
+                    // Vérifier si l'objet data n'est pas vide
+                    if (data) {
+
+                        var indicative = data.indecative;
+
+                        $('#indice-countrie').text(indicative);
+
+                    } else {
+                        // Afficher un message si aucune donnée n'est retournée
+                        $('#indice-countrie').text('Aucune information disponible');
+                    }
+                });
+            }
+
+
+            function updateResult() {
+                const montantSaisi = parseFloat(amountInput.value);
+                if (!isNaN(montantSaisi)) {
+                    const montantCalcule = montantSaisi * (totalPercent / 100);
+                    $('#total-percent-cumuls').text(montantCalcule.toFixed(2) + " FCFA");
+                } else {
+                    $('#total-percent-cumuls').text('Aucune information disponible');
+                }
             }
         });
     </script>

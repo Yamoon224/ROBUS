@@ -21,7 +21,9 @@ Route::group(['prefix' => 'robus'], function () {
     Route::post('inters/store',  [TransactionWebController::class, 'transactions_inters_store'])->name('web.transactions_inters_store.stores');
 
     // Search wallets
-    Route::get('search-wallet',  [TransactionWebController::class, 'searchWallet'])->name('search.wallets');
-
+    Route::get('search-wallet',  [TransactionWebController::class, 'searchWallet']);
+    Route::get('search-countrie/{id}',  [TransactionWebController::class, 'searchCountries']);
+    Route::get('search-percent/{country_id}',  [TransactionWebController::class, 'searchProviderPercent']);
+    Route::get('search-indice/{country_id}',  [TransactionWebController::class, 'searchCountrieName']);
 
 });

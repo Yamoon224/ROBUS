@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Http\Services\NotificationWebService;
 use App\Http\Services\PercentRobusAuthService;
+use App\Http\Services\ProvidersService;
 use App\Http\Services\TransactionWebService;
 use App\Http\Services\ValidateDailyLimitService;
 use App\Models\Costs\DepositCost;
@@ -30,6 +31,7 @@ class TransactionWebController extends Controller
     protected $validatedamountDays;
     protected $notificationOrderCard;
     protected $reloadCardService;
+    protected $providersService;
 
     public function __construct(
         ReloadCardRepository $reload_cardReposi,
@@ -37,6 +39,7 @@ class TransactionWebController extends Controller
         TransactionWebService $reloadCardService,
         PercentRobusAuthService $percentRobus,
         ValidateDailyLimitService $validatedamountDays,
+        ProvidersService $providersService,
 
     ) {
         $this->reloadCardRepository = $reload_cardReposi;
@@ -44,6 +47,7 @@ class TransactionWebController extends Controller
         $this->reloadCardService = $reloadCardService;
         $this->percentRobus = $percentRobus;
         $this->validatedamountDays = $validatedamountDays;
+        $this->providersService = $providersService;
     }
 
     /**
@@ -170,9 +174,26 @@ class TransactionWebController extends Controller
         $countries = Country::whereIsWeb(true)->where('indecative', '!=', null)
             ->orderBy('name', 'asc')
             ->get();
-    
 
-        return view('pages.transactionWeb.browse_inters' , compact('countries'));
+
+        return view('pages.transactionWeb.browse_inters', compact('countries'));
+    }
+
+    public function searchCountries($countryId)
+    {
+
+        return $this->providersService->getProvidersWebByType(new Provider, $countryId, 8);
+    }
+
+    public function searchCountrieName($countryId)
+    {
+        return Country::whereId($countryId)->select('indecative')->first();
+    }
+
+    public function searchProviderPercent($countryId)
+    {
+        // return $this->percentRobus->getRobusPercentageInterWeb($countryId , $provider); 
+        return $this->percentRobus->getRobusPercentageInterWeb($countryId);
     }
 
     public function transactions_xbets()
@@ -671,5 +692,82 @@ class TransactionWebController extends Controller
         }
     }
 
+    public function transactions_inters_store(Request $request)
+    {
+        $admin_civ = $this->validatedamountDays->adminCiv();
 
+        try {
+
+
+            $validator = Validator::make(
+
+                $request->all(),
+                [
+                    'phone_benef' => 'required',
+                    'my_phone' => 'required',
+                    'amount' => 'required',
+                    'name_expeditor' => 'required',
+                    'name_benef' => 'required',
+                    'country_id' => 'required',
+                    'provider' => 'required',
+                ],
+                [
+
+                    'amount.required' => 'Votre montant est obligatoire',
+                    'phone_benef.required' => 'Votre numero est obligatoire',
+                    'my_phone.required' => 'Votre numero est obligatoire',
+                    'name_expeditor.required' => 'Nom expediteur',
+                    'name_benef.required' => 'Nom beneficiare',
+                    'country_id.required' => 'Votre pas est obligatoire',
+                    'provider.required' => 'Provider est obligatoire',
+                ]
+            );
+
+            if ($validator->fails()) {
+                return back()
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Champ requise')
+                    ->withInput();
+            }
+
+
+          $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
+           $percentRobus = $this->percentRobus->getRobusPercentageInterWeb($request->num_robus);
+           
+           if (!$percentRobus) {
+                return back()->with('color', 'danger')->with('status', 'Erreur de pourcentage')->withInput();
+            }
+
+            $amountProvider = $percentRobus->percent * $reel_amount;
+            $amountAdmin =  $percentRobus->percent_admin * $reel_amount;
+            $amountCost = $amountProvider + $amountAdmin;
+            $amountReceived = $reel_amount - $amountCost;
+            $amountDrawal =  $amountCost;
+
+            $walletTransaction =  $this->reloadCardService->createRobusWalletTransactionWeb($request->amount, $percentRobus, $amountCost, $request->num_robus, $nameUser, $request->my_phone, $amountReceived, $amountDrawal);
+
+            if (!$walletTransaction) {
+                return back()->with('color', 'danger')->with('status', 'Erreur de création de transfert du montant!')->withInput();
+            }
+
+            $response =  $this->reloadCardService->updateamountTransactionReceveid($admin_civ, $amountAdmin, $walletTransaction);
+
+            if (!$response['success']) {
+                return back()->with('color', 'danger')->with('status', 'Erreur du montant Admin !')->withInput();
+            }
+
+            $this->notificationOrderCard->sendNotificationTransactiobWeb($walletTransaction);
+
+            return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/')->with('color', 'success')->with('status', 'Votre demande a été créée avec succès');
+        } catch (\Exception $exception) {
+
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de la demande')
+                ->withInput();
+        }
+    }
 }

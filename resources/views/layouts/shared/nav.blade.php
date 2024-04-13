@@ -495,6 +495,17 @@
                 </li>
             @endif
             <li class="side-nav__devider my-4"></li>
+            @if (Auth::guard('web')->user()->hasPermissionTo('cautions'))
+            <li>
+                <a href="{{ route('commissions.browse_visitors') }}"
+                    class="side-menu {{ $route == 'commissions.browse_visitors' ? 'side-menu--active' : '' }}">
+                    <div class="side-menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i>
+                    </div>
+                    <div class="side-menu__title">Pays Inters visiteurs </div>
+                </a>
+            </li>
+            @endif
+            <li class="side-nav__devider my-4"></li>
             @if (Auth::guard('web')->user()->hasPermissionTo('administrateurs'))
 
                 <li>

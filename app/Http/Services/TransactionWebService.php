@@ -5,12 +5,13 @@ namespace App\Http\Services;
 
 use App\Models\AdminsCom;
 use App\Models\Sid\SidUser;
-use Illuminate\Support\Facades\DB;
-use App\Repositories\TransactionRepository;
-use App\Repositories\ReloadCardRepository;
-use App\Repositories\OnexbetRepository;
+use App\Models\Wallets\WalletInter;
 use App\Repositories\IntersRepository;
+use App\Repositories\OnexbetRepository;
 use App\Repositories\PhoneCreditRepository;
+use App\Repositories\ReloadCardRepository;
+use App\Repositories\TransactionRepository;
+use Illuminate\Support\Facades\DB;
 
 
 class TransactionWebService
@@ -295,6 +296,58 @@ class TransactionWebService
                                         'amount' =>   $valeur_single,
                                         'sid_user_id' =>   $admin_single->id,
                                         'wallet_xbet_id' => $walletxbet->id,
+                                        'description' => 'Commission administrateur',
+                                ]);
+                        }
+                }
+
+                return ['success' => true, 'admin' => $admin_civ];
+        }
+
+        // Tranactions Inters
+        public function createMobileWalletInter($amount_transaction, $percent_robus, $country_robus, $provider_payment, $phone, $name_sender, $name_custumers, $amount_cost, $date_piece)
+        {
+
+
+                return WalletInter::create([
+                        'wallet_id' => 0,
+                        'amount' => $amount_transaction,
+                        'description' => null,
+                        'inter_cost_id' => null,
+                        'transaction_cost_id' => $percent_robus->id,
+                        'phone' => '+255' . $phone ?? null,
+                        'phone_benef' => $country_robus->indecative . $phone ?? null,
+                        'number_compte' => $name_sender,
+                        'created_by' => 1,
+                        'provider_id' => $provider_payment,
+                        'name_complet' => $name_custumers ?? null,
+                        'name_benef' => $name_visitors ?? null,
+                        'costs_amount' => $amount_cost,
+                        'provider_type' => 1,
+                        'status' => 'PENDING',
+                        'country_id' => $country_robus->id,
+                        'choose_type_transaction' => 1,
+                        'amount_solde' => 0.0 ?? null
+                ]);
+        }
+
+
+        public function updateamountInterReceveid($admin_civ, $admin_valeur, $walletInter)
+        {
+
+                if ($admin_civ->count() > 0) {
+
+                        $count_admin = $admin_civ->count();
+                        $valeur_single = $admin_valeur / $count_admin;
+
+                        foreach ($admin_civ as $user) {
+
+                                $admin_single = SidUser::find($user->id);
+
+                                AdminsCom::create([
+                                        'amount' =>   $valeur_single,
+                                        'sid_user_id' =>   $admin_single->id,
+                                        'wallet_inter_id' =>  $walletInter->id,
                                         'description' => 'Commission administrateur',
                                 ]);
                         }

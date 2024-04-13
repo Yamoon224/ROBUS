@@ -2113,6 +2113,14 @@ class CommissionController extends Controller
         return view('pages.commissions.browse_centre_africa');
     }
 
+
+    public function browse_visitors()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+        return view('pages.commissions.browse_visitors');
+    }
     public function browse_europe()
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {

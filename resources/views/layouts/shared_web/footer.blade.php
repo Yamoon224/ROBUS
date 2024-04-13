@@ -4,8 +4,8 @@
 
     <!--Footer Upper-->
     <div class="footer-upper">
-        <div class="container">
-            <div class="row">
+        <div class="auto-container">
+            <div class="row clearfix">
                 <!--Two 4th column-->
                 <div class="col-md-4 col-sm-12 col-xs-12">
                     <div class="sec-title">

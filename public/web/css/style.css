@@ -5,6 +5,28 @@
 	font-family:'Roboto',sans-serif;	
 }
 
+.robus-footer .footer-upper {
+  position: relative;
+  z-index: 1;
+}
+
+.footer-bottom {
+  position: relative;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  padding: 18px 10px;
+  font-size: 14px;
+  color: #bcbcbc;
+  font-weight: 300;
+  font-family: 'Roboto', sans-serif;
+}
+
+.auto-container {
+  position: static;
+  max-width: 1200px;
+  padding: 0px 15px;
+  margin: 0 auto;
+}
+
 body {
   padding-bottom: 20px;
 }
@@ -400,7 +422,7 @@ body {
 
 .contact-info-section{
 	position:relative;
-	padding:160px 0px 10px;
+	padding:185px 0px 10px;
 }
 
 

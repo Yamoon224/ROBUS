@@ -41,7 +41,7 @@
                         @foreach ($centres_africa->where('is_central_africa', true) as $item)
                             <tr class="intro-x">
                                 <td class="w-65">
-                                    {{ $item->id ?? null }}
+                                    {{ $item->name ?? null }}
                                 </td>
                                 <td class="text-center">
                                     <p class="font-medium whitespace-nowrap">

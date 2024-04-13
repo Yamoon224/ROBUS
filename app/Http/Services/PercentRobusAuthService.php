@@ -1005,4 +1005,50 @@ class PercentRobusAuthService
 
         return  LevelCountry::whereId($levelValeur)->first();
     }
+
+    public function getRobusPercentageInterWeb($countrie)
+    {
+
+
+        $countriesLevels = [
+
+            // Web Visitors
+            25 =>  605 ?? null, // BENIN
+            36 =>  606 ?? null, // BF
+            133 =>  607 ?? null, // Mali
+            188 =>  608 ?? null, // Senegal
+            214 =>  609 ?? null, // Togo
+            39 =>  610 ?? null, // Cameroun
+            91 =>  611 ?? null, // Guinne conakry
+            157 =>  612 ?? null, // Niger
+            57 =>  613 ?? null, // RDC
+            50 =>  614 ?? null, // Congo Braza
+            122 =>  615 ?? null, // Liberia
+            83 =>  616 ?? null, // Ghana
+            42 =>  617 ?? null, // Afrique centrale
+            79 =>  618 ?? null, // Gabon
+            43 =>  619 ?? null, // Thacd
+            66 =>  620 ?? null, // Guinne Equa
+            69 =>  621 ?? null, // Ethiopie
+            223 =>  622 ?? null, // Ouganda
+            191 =>  623 ?? null, // Serria Lionne
+            180 =>  624 ?? null, // Rwanda
+            112 =>  625 ?? null, // Keneya
+            92 =>  626 ?? null, // Guinnéé Bissau
+            80 =>  627 ?? null, // Gambie
+            137 =>  628 ?? null, // Mauritanie
+            37 =>  629 ?? null, // Burundi
+            8 =>  630 ?? null, // Angola
+            212 =>  631 ?? null, // Tanzanie
+
+        ];
+
+        if (isset($countriesLevels[$countrie])) {
+            $levelValeur = $countriesLevels[$countrie];
+        } else {
+            return null; // Aucune correspondance pour $countrie
+        }
+
+        return  LevelCountry::whereId($levelValeur)->select('percent' , 'percent_admin')->first();
+    }
 }

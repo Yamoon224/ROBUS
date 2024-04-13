@@ -168,6 +168,7 @@ class CountrieController extends Controller
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
             ];
+            
         } elseif (robus()->is_under_distributer && robus()->country->id == 107) {
 
             $walletsData['Transfert international'] = [
