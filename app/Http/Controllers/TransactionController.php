@@ -22,7 +22,17 @@ class TransactionController extends Controller
             abort(403);
         }
     }
+    
+    public function browse_visitors()
+    {
 
+        if (sabdyWebVerify()) {
+            return view('pages.transfers.browse_visitors');
+        } else {
+            abort(403);
+        }
+
+    }
     /**
      * Display a listing of the resource.
      *

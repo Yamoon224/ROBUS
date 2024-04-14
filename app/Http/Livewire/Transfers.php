@@ -9972,25 +9972,25 @@ class Transfers extends Component
             ->get();
 
 
-        $transaction = WalletTransaction::query();
+        $transaction = WalletTransaction::whereIsWeb(false);
 
-        $paiement = WalletPayment::query();
+        $paiement = WalletPayment::whereIsWeb(false);
 
         $wallet = Wallet::query();
 
         $sid_search = SidUser::query();
 
-        $virement_bank = WalletBank::query();
+        $virement_bank = WalletBank::whereIsWeb(false);
 
-        $inter_search = WalletInter::query();
+        $inter_search = WalletInter::whereIsWeb(false);
 
-        $reload_card = WalletDeposit::query();
+        $reload_card = WalletDeposit::whereIsWeb(false);
 
-        $xbet = WalletXbet::query();
+        $xbet = WalletXbet::whereIsWeb(false);
 
-        $wave = WalletWave::query();
+        $wave = WalletWave::whereIsWeb(false);
 
-        $phone_credit = WalletPhoneCredit::query();
+        $phone_credit = WalletPhoneCredit::whereIsWeb(false);
 
         $walletUser = Auth::guard('web')->user();
 
@@ -10852,56 +10852,56 @@ class Transfers extends Component
 
 
             // Account valeurs transactions User
-            $payment_error = $this->getTransactionCountValidated(WalletPayment::class, 'ERROR', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status');
-            $payment_padding = $this->getTransactionCountValidated(WalletPayment::class, 'PENDING', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status');
-            $payment_success = $this->getTransactionCountValidated(WalletPayment::class, 'SUCCESS', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status');
+            $payment_error = $this->getTransactionCountValidated(WalletPayment::class, 'ERROR', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status' ,  'wallet_payments.is_web' , false);
+            $payment_padding = $this->getTransactionCountValidated(WalletPayment::class, 'PENDING', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status' ,  'wallet_payments.is_web' , false);
+            $payment_success = $this->getTransactionCountValidated(WalletPayment::class, 'SUCCESS', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status',  'wallet_payments.is_web' , false);
 
-            $transaction_error = $this->getTransactionCountValidated(WalletTransaction::class, 'ERROR', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
-            $transaction_padding = $this->getTransactionCountValidated(WalletTransaction::class, 'PENDING', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
-            $transaction_success = $this->getTransactionCountValidated(WalletTransaction::class, 'SUCCESS', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
+            $transaction_error = $this->getTransactionCountValidated(WalletTransaction::class, 'ERROR', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status',  'wallet_transactions.is_web' , false);
+            $transaction_padding = $this->getTransactionCountValidated(WalletTransaction::class, 'PENDING', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status',  'wallet_transactions.is_web' , false);
+            $transaction_success = $this->getTransactionCountValidated(WalletTransaction::class, 'SUCCESS', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status',  'wallet_transactions.is_web' , false);
 
-            $bank_error = $this->getTransactionCountValidated(WalletBank::class, 'ERROR', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status');
-            $bank_padding = $this->getTransactionCountValidated(WalletBank::class, 'PENDING', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status');
-            $bank_success = $this->getTransactionCountValidated(WalletBank::class, 'SUCCESS', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status');
+            $bank_error = $this->getTransactionCountValidated(WalletBank::class, 'ERROR', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status',  'wallet_banks.is_web' , false);
+            $bank_padding = $this->getTransactionCountValidated(WalletBank::class, 'PENDING', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status',  'wallet_banks.is_web' , false);
+            $bank_success = $this->getTransactionCountValidated(WalletBank::class, 'SUCCESS', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status',  'wallet_banks.is_web' , false);
 
-            $deposit_error = $this->getTransactionCountValidated(WalletDeposit::class, 'ERROR', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status');
-            $deposit_padding = $this->getTransactionCountValidated(WalletDeposit::class, 'PENDING', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status');
-            $deposit_success = $this->getTransactionCountValidated(WalletDeposit::class, 'SUCCESS', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status');
+            $deposit_error = $this->getTransactionCountValidated(WalletDeposit::class, 'ERROR', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status',  'wallet_deposits.is_web' , false);
+            $deposit_padding = $this->getTransactionCountValidated(WalletDeposit::class, 'PENDING', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status',  'wallet_deposits.is_web' , false);
+            $deposit_success = $this->getTransactionCountValidated(WalletDeposit::class, 'SUCCESS', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status',  'wallet_deposits.is_web' , false);
 
-            $phone_credit_error = $this->getTransactionCountValidated(WalletPhoneCredit::class, 'ERROR',  'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status');
-            $phone_credit_padding = $this->getTransactionCountValidated(WalletPhoneCredit::class, 'PENDING', 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status');
-            $phone_credit_success = $this->getTransactionCountValidated(WalletPhoneCredit::class, 'SUCCESS',  'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status');
+            $phone_credit_error = $this->getTransactionCountValidated(WalletPhoneCredit::class, 'ERROR',  'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status',  'wallet_phone_credits.is_web' , false);
+            $phone_credit_padding = $this->getTransactionCountValidated(WalletPhoneCredit::class, 'PENDING', 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status',  'wallet_phone_credits.is_web' , false);
+            $phone_credit_success = $this->getTransactionCountValidated(WalletPhoneCredit::class, 'SUCCESS',  'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status',  'wallet_phone_credits.is_web' , false);
 
-            $inter_error = $this->getTransactionCountValidated(WalletInter::class, 'ERROR',  'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status');
-            $inter_padding = $this->getTransactionCountValidated(WalletInter::class, 'PENDING', 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status');
-            $inter_success = $this->getTransactionCountValidated(WalletInter::class, 'SUCCESS',  'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status');
+            $inter_error = $this->getTransactionCountValidated(WalletInter::class, 'ERROR',  'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status',  'wallet_inters.is_web' , false);
+            $inter_padding = $this->getTransactionCountValidated(WalletInter::class, 'PENDING', 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status',  'wallet_inters.is_web' , false);
+            $inter_success = $this->getTransactionCountValidated(WalletInter::class, 'SUCCESS',  'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status',  'wallet_inters.is_web' , false);
 
-            $xbet_error = $this->getTransactionCountValidated(WalletXbet::class, 'ERROR',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
-            $xbet_padding = $this->getTransactionCountValidated(WalletXbet::class, 'PENDING', 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
-            $xbet_success = $this->getTransactionCountValidated(WalletXbet::class, 'SUCCESS',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
+            $xbet_error = $this->getTransactionCountValidated(WalletXbet::class, 'ERROR',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status',  'wallet_xbets.is_web' , false);
+            $xbet_padding = $this->getTransactionCountValidated(WalletXbet::class, 'PENDING', 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status',  'wallet_xbets.is_web' , false);
+            $xbet_success = $this->getTransactionCountValidated(WalletXbet::class, 'SUCCESS',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status',  'wallet_xbets.is_web' , false);
 
-            $wave_error = $this->getTransactionCountValidated(WalletWave::class, 'ERROR',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
-            $wave_padding = $this->getTransactionCountValidated(WalletWave::class, 'PENDING', 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
-            $wave_success = $this->getTransactionCountValidated(WalletWave::class, 'SUCCESS',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+            $wave_error = $this->getTransactionCountValidated(WalletWave::class, 'ERROR',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web' , false);
+            $wave_padding = $this->getTransactionCountValidated(WalletWave::class, 'PENDING', 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web' , false);
+            $wave_success = $this->getTransactionCountValidated(WalletWave::class, 'SUCCESS',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web' , false);
 
             // Amount transactions days Error
-            $payement_amount_error = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at',  'wallet_payments.status', 'ERROR', 'wallet_payments.updated_by', 'wallet_payments.amount');
-            $transaction_amount_error  = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at',  'wallet_transactions.status', 'ERROR', 'wallet_transactions.updated_by',  'wallet_transactions.amount');
-            $phonecredit_amount_error  = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at',  'wallet_phone_credits.status', 'ERROR', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.amount');
-            $inter_amount_error  = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at',  'wallet_inters.status', 'ERROR', 'wallet_inters.updated_by',  'wallet_inters.amount');
-            $bank_amount_error  = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at',  'wallet_banks.status', 'ERROR', 'wallet_banks.updated_by',  'wallet_banks.amount');
-            $deposit_amount_error  = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at',  'wallet_deposits.status', 'ERROR', 'wallet_deposits.updated_by',  'wallet_deposits.amount');
-            $xbet_amount_error  = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at',  'wallet_xbets.status', 'ERROR', 'wallet_xbets.updated_by',  'wallet_xbets.amount');
+            $payement_amount_error = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at',  'wallet_payments.status', 'ERROR', 'wallet_payments.updated_by', 'wallet_payments.amount',  'wallet_payments.is_web' , false);
+            $transaction_amount_error  = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at',  'wallet_transactions.status', 'ERROR', 'wallet_transactions.updated_by',  'wallet_transactions.amount',  'wallet_transactions.is_web' , false);
+            $phonecredit_amount_error  = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at',  'wallet_phone_credits.status', 'ERROR', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.amount',  'wallet_phone_credits.is_web' , false);
+            $inter_amount_error  = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at',  'wallet_inters.status', 'ERROR', 'wallet_inters.updated_by',  'wallet_inters.amount',  'wallet_inters.is_web' , false);
+            $bank_amount_error  = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at',  'wallet_banks.status', 'ERROR', 'wallet_banks.updated_by',  'wallet_banks.amount',  'wallet_banks.is_web' , false);
+            $deposit_amount_error  = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at',  'wallet_deposits.status', 'ERROR', 'wallet_deposits.updated_by',  'wallet_deposits.amount',  'wallet_deposits.is_web' , false);
+            $xbet_amount_error  = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at',  'wallet_xbets.status', 'ERROR', 'wallet_xbets.updated_by',  'wallet_xbets.amount',  'wallet_xbets.is_web' , false);
 
             // Amount transactions days Success
-            $payement_amount_success = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at',  'wallet_payments.status', 'SUCCESS', 'wallet_payments.updated_by', 'wallet_payments.amount');
-            $transaction_amount_success  = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at',  'wallet_transactions.status', 'SUCCESS', 'wallet_transactions.updated_by',  'wallet_transactions.amount');
-            $phonecredit_amount_success  = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at',  'wallet_phone_credits.status', 'SUCCESS', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.amount');
-            $inter_amount_success  = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at',  'wallet_inters.status', 'SUCCESS', 'wallet_inters.updated_by',  'wallet_inters.amount');
-            $bank_amount_success  = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at',  'wallet_banks.status', 'SUCCESS', 'wallet_banks.updated_by',  'wallet_banks.amount');
-            $deposit_amount_success  = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at',  'wallet_deposits.status', 'SUCCESS', 'wallet_deposits.updated_by',  'wallet_deposits.amount');
-            $xbet_amount_success  = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at',  'wallet_xbets.status', 'SUCCESS', 'wallet_xbets.updated_by',  'wallet_xbets.amount');
-            $wave_amount_success  = $this->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at',  'wallet_waves.status', 'SUCCESS', 'wallet_waves.updated_by',  'wallet_waves.amount');
+            $payement_amount_success = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at',  'wallet_payments.status', 'SUCCESS', 'wallet_payments.updated_by', 'wallet_payments.amount',  'wallet_payments.is_web' , false);
+            $transaction_amount_success  = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at',  'wallet_transactions.status', 'SUCCESS', 'wallet_transactions.updated_by',  'wallet_transactions.amount',  'wallet_transactions.is_web' , false);
+            $phonecredit_amount_success  = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at',  'wallet_phone_credits.status', 'SUCCESS', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.amount',  'wallet_phone_credits.is_web' , false);
+            $inter_amount_success  = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at',  'wallet_inters.status', 'SUCCESS', 'wallet_inters.updated_by',  'wallet_inters.amount',  'wallet_inters.is_web' , false);
+            $bank_amount_success  = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at',  'wallet_banks.status', 'SUCCESS', 'wallet_banks.updated_by',  'wallet_banks.amount',  'wallet_banks.is_web' , false);
+            $deposit_amount_success  = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at',  'wallet_deposits.status', 'SUCCESS', 'wallet_deposits.updated_by',  'wallet_deposits.amount',  'wallet_deposits.is_web' , false);
+            $xbet_amount_success  = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at',  'wallet_xbets.status', 'SUCCESS', 'wallet_xbets.updated_by',  'wallet_xbets.amount',  'wallet_xbets.is_web' , false);
+            $wave_amount_success  = $this->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at',  'wallet_waves.status', 'SUCCESS', 'wallet_waves.updated_by',  'wallet_waves.amount',  'wallet_waves.is_web' , false);
 
 
             $search_ = $wallet->where('wallet_id', 'like', '%' . $this->account_number_inter . '%')
@@ -10917,6 +10917,7 @@ class Transfers extends Component
                     ->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
                     ->where('wallets.country_id', $walletUser->country->id)
                     ->where('wallet_transactions.status', 'PENDING')
+                    ->where('wallet_transactions.is_web', false)
                     // ->where('wallet_transactions.type_transaction' , 'Depot')
                     ->select('wallet_transactions.*')
                     ->orderBy('wallet_transactions.created_at', 'desc')
@@ -10925,6 +10926,7 @@ class Transfers extends Component
                     ->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
                     ->where('wallets.country_id', $walletUser->country->id)
                     ->where('wallet_payments.status', 'PENDING')
+                    ->where('wallet_payments.is_web', false)
                     ->select('wallet_payments.*')
                     ->orderBy('wallet_payments.created_at', 'desc')
                     ->paginate(15),
@@ -10932,6 +10934,7 @@ class Transfers extends Component
                     ->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
                     ->where('wallets.country_id', $walletUser->country->id)
                     ->where('wallet_banks.status', 'PENDING')
+                    ->where('wallet_banks.is_web', false)
                     ->select('wallet_banks.*')
                     ->orderBy('wallet_banks.created_at', 'desc')
                     ->paginate(15),
@@ -10939,6 +10942,7 @@ class Transfers extends Component
                     ->join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
                     // ->where('wallet_inters.country_id', '=', $walletUser->country->id)
                     ->where('wallet_inters.status', 'PENDING')
+                    ->where('wallet_inters.is_web', false)
                     ->select('wallet_inters.*')
                     ->orderBy('wallet_inters.created_at', 'desc')
                     ->paginate(15),
@@ -10946,6 +10950,7 @@ class Transfers extends Component
                     ->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
                     ->where('wallets.country_id', $walletUser->country->id)
                     ->where('wallet_deposits.status', 'PENDING')
+                    ->where('wallet_deposits.is_web', false)
                     ->select('wallet_deposits.*')
                     ->orderBy('wallet_deposits.created_at', 'desc')
                     ->paginate(15),
@@ -10953,6 +10958,7 @@ class Transfers extends Component
                     ->join('wallets', 'wallet_xbets.wallet_id', 'wallets.id')
                     ->where('wallets.country_id', $walletUser->country->id)
                     ->where('wallet_xbets.status', 'PENDING')
+                    ->where('wallet_xbets.is_web', false)
                     ->select('wallet_xbets.*')
                     ->orderBy('wallet_xbets.created_at', 'desc')
                     ->paginate(15),
@@ -10971,6 +10977,7 @@ class Transfers extends Component
                     )
                     ->where('wallets.country_id', $walletUser->country->id)
                     ->where('wallet_phone_credits.status', 'PENDING')
+                    ->where('wallet_phone_credits.is_web', false)
                     ->select('wallet_phone_credits.*')
                     ->orderBy('wallet_phone_credits.created_at', 'desc')
                     ->paginate(15),
@@ -11631,7 +11638,7 @@ class Transfers extends Component
 
     // Transactions All
 
-    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $transaction_status, $status, $walletMy, $wallet_amount)
+    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $transaction_status, $status, $walletMy, $wallet_amount , $IswebStatus , $isWeb)
     {
 
         return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
@@ -11646,6 +11653,7 @@ class Transfers extends Component
             })
             ->whereDate($transaction_days, Carbon::today())
             ->where($transaction_status, $status)
+            ->where($IswebStatus, $isWeb)
             ->sum($wallet_amount);
     }
 
@@ -11654,7 +11662,7 @@ class Transfers extends Component
 
     // Transaction account
 
-    public function getTransactionCountValidated($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status)
+    public function getTransactionCountValidated($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status , $IswebStatus , $isWeb)
     {
         return $walletModel::join('wallets', $wallet_transactions, '=', 'wallets.id')
             ->where('wallets.country_id', sabdy()->country->id)
@@ -11668,6 +11676,7 @@ class Transfers extends Component
             })
             ->whereDate($transaction_days, Carbon::today())
             ->where($wallet_status, $status)
+            ->where($IswebStatus, $isWeb)
             ->count();
     }
 }

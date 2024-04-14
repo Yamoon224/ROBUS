@@ -1028,7 +1028,7 @@
             $('#xbet-nav').removeClass('active');
             $('xbet-nav').attr('aria-selected', false);
             $('#xbet').removeClass('active');
-            
+
             $('#inter').removeClass('active');
             $('#carte-nav').removeClass('active');
             $('carte-nav').attr('aria-selected', false);
@@ -1385,7 +1385,7 @@
         });
 
 
-        // Active menu
+        // Active menu Mobile Robus
         Livewire.on('menu-virement-active', () => {
 
             // Virement Bank
@@ -1701,6 +1701,112 @@
             $('#phone').removeClass('active');
         });
 
+        // Active Menu Visitors Robus
+
+        Livewire.on('menu-transaction-vis-active', () => {
+            $('#transfert-visitors-nav').addClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', true);
+            $('#transfert-visitors').addClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+        });
+
+        Livewire.on('menu-phoneCredit-vis-active', () => {
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').addClass('active');
+            $('phone-visitors-nav').attr('aria-selected', true);
+            $('#phone-visitors').addClass('active');
+
+        });
+
+        Livewire.on('menu-xbet-vis-active', () => {
+
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('#xbet-visitors').addClass('active');
+            $('#xbet-visitors-nav').addClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', true);
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+
+        });
+
+
+        Livewire.on('menu-reloadCarte-vis-active', () => {
+
+            // realod cards
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#carte-visitors-nav').addClass('active');
+            $('carte-visitors-nav').attr('aria-selected', true);
+            $('#carte-visitors').addClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+
+        });
+
+
+        Livewire.on('menu-inters-vis-active', () => {
+
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+
+            $('#inter-visitors-nav').addClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').addClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', true);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+        });
 
         // Levels inter
 

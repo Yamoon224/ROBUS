@@ -83,8 +83,8 @@
                         </li>
                         @if (Auth::guard('web')->user()->hasPermissionTo('voir-transaction-visiteurs'))
                             <li>
-                                <a href="{{ route('transactions.uv.browse') }}"
-                                    class="side-menu {{ $route == 'transactions.uv.browse' ? 'side-menu--active' : '' }}">
+                                <a href="{{ route('transactions.visitors') }}"
+                                    class="side-menu {{ $route == 'transactions.visitors' ? 'side-menu--active' : '' }}">
                                     <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
                                     </div>
                                     <div class="side-menu__title">Transactions Visiteurs </div>

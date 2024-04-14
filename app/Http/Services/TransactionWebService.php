@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 
 use App\Models\AdminsCom;
+use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletInter;
 use App\Repositories\IntersRepository;
@@ -104,7 +105,8 @@ class TransactionWebService
                                         'wallet_deposit_id' =>  $walletOrderCard->id,
                                         'description' => 'Commission administrateur',
                                         'amount_under' =>  0,
-                                        'description_underdistributer' =>   null
+                                        'description_underdistributer' =>   null,
+                                        'is_web' => true,
                                 ]);
                         }
                 }
@@ -133,7 +135,6 @@ class TransactionWebService
                                 'num_piece' =>  null,
                                 'validated_date' =>  null,
                                 'choose_type_transaction' => 1,
-                                'amount_received'  => 0,
                                 'type_transaction' => 'Depot',
                                 'status'  => "PENDING",
                                 'is_web'  => true,
@@ -163,7 +164,8 @@ class TransactionWebService
                                         'wallet_transaction_id' => $walletTransaction->id,
                                         'description' => 'Commission administrateur',
                                         'amount_under' =>  0,
-                                        'description_underdistributer' =>   null
+                                        'description_underdistributer' =>   null ,
+                                        'is_web' => true,
                                 ]);
                         }
                 }
@@ -215,6 +217,7 @@ class TransactionWebService
                                         'sid_user_id' =>   $admin_single->id,
                                         'wallet_phone_credit_id' => $walletPhone->id,
                                         'description' => 'Commission administrateur',
+                                        'is_web' => true,
                                 ]);
                         }
                 }
@@ -297,6 +300,7 @@ class TransactionWebService
                                         'sid_user_id' =>   $admin_single->id,
                                         'wallet_xbet_id' => $walletxbet->id,
                                         'description' => 'Commission administrateur',
+                                        'is_web' => true,
                                 ]);
                         }
                 }
@@ -305,9 +309,10 @@ class TransactionWebService
         }
 
         // Tranactions Inters
-        public function createMobileWalletInter($amount_transaction, $percent_robus, $country_robus, $provider_payment, $phone, $name_sender, $name_custumers, $amount_cost, $date_piece)
+        public function createMobileWalletInter($amount_transaction, $percent_robus, $country_robus, $provider_payment, $phone , $phone_benef , $name_custumers ,  $name_visitors, $amount_cost , $amountReceved)
         {
 
+                $provider = Provider::whereName($provider_payment)->first();
 
                 return WalletInter::create([
                         'wallet_id' => 0,
@@ -316,10 +321,10 @@ class TransactionWebService
                         'inter_cost_id' => null,
                         'transaction_cost_id' => $percent_robus->id,
                         'phone' => '+255' . $phone ?? null,
-                        'phone_benef' => $country_robus->indecative . $phone ?? null,
-                        'number_compte' => $name_sender,
+                        'phone_benef' => $country_robus->indecative . $phone_benef ?? null,
+                        'number_compte' => null,
                         'created_by' => 1,
-                        'provider_id' => $provider_payment,
+                        'provider_id' => $provider->id,
                         'name_complet' => $name_custumers ?? null,
                         'name_benef' => $name_visitors ?? null,
                         'costs_amount' => $amount_cost,
@@ -327,7 +332,9 @@ class TransactionWebService
                         'status' => 'PENDING',
                         'country_id' => $country_robus->id,
                         'choose_type_transaction' => 1,
-                        'amount_solde' => 0.0 ?? null
+                        'amount_solde' => 0.0 ?? null,
+                        'is_web'  => true,
+                        'amount_received'  =>  $amountReceved ?? 0.0,
                 ]);
         }
 
@@ -349,6 +356,7 @@ class TransactionWebService
                                         'sid_user_id' =>   $admin_single->id,
                                         'wallet_inter_id' =>  $walletInter->id,
                                         'description' => 'Commission administrateur',
+                                        'is_web' => true,
                                 ]);
                         }
                 }

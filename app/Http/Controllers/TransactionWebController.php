@@ -696,8 +696,10 @@ class TransactionWebController extends Controller
     {
         $admin_civ = $this->validatedamountDays->adminCiv();
 
-        try {
+         try {
 
+
+            
 
             $validator = Validator::make(
 
@@ -731,10 +733,11 @@ class TransactionWebController extends Controller
                     ->withInput();
             }
 
+          $country_robus = Country::whereId($request->country_id)->first();
 
           $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-           $percentRobus = $this->percentRobus->getRobusPercentageInterWeb($request->num_robus);
+           $percentRobus = $this->percentRobus->getRobusPercentageInterWeb($request->country_id);
            
            if (!$percentRobus) {
                 return back()->with('color', 'danger')->with('status', 'Erreur de pourcentage')->withInput();
@@ -744,21 +747,20 @@ class TransactionWebController extends Controller
             $amountAdmin =  $percentRobus->percent_admin * $reel_amount;
             $amountCost = $amountProvider + $amountAdmin;
             $amountReceived = $reel_amount - $amountCost;
-            $amountDrawal =  $amountCost;
 
-            $walletTransaction =  $this->reloadCardService->createRobusWalletTransactionWeb($request->amount, $percentRobus, $amountCost, $request->num_robus, $nameUser, $request->my_phone, $amountReceived, $amountDrawal);
+            $walletInter =  $this->reloadCardService->createMobileWalletInter($request->amount, $percentRobus , $country_robus, $request->provider , $request->my_phone , $request->phone_benef ,  $request->name_expeditor  , $request->name_benef , $amountCost  , $amountReceived);
 
-            if (!$walletTransaction) {
+            if (!$walletInter) {
                 return back()->with('color', 'danger')->with('status', 'Erreur de création de transfert du montant!')->withInput();
             }
 
-            $response =  $this->reloadCardService->updateamountTransactionReceveid($admin_civ, $amountAdmin, $walletTransaction);
+            $response =  $this->reloadCardService->updateamountInterReceveid($admin_civ, $amountAdmin, $walletInter);
 
             if (!$response['success']) {
                 return back()->with('color', 'danger')->with('status', 'Erreur du montant Admin !')->withInput();
             }
 
-            $this->notificationOrderCard->sendNotificationTransactiobWeb($walletTransaction);
+            $this->notificationOrderCard->sendNotificationTransactionInterWeb($walletInter);
 
             return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/')->with('color', 'success')->with('status', 'Votre demande a été créée avec succès');
         } catch (\Exception $exception) {

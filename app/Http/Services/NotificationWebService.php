@@ -60,7 +60,7 @@ class NotificationWebService
 
 
         $admins = $this->getAdminCIVProperty();
-        event(new CreateReloadWebEvent($walletTransaction));
+        // event(new CreateReloadWebEvent($walletTransaction));
         Notification::send($admins, new AdminNotification('Demande de transaction  de Visiteurs' . ' ' . $walletTransaction->name_complet));
 
         if ($admins->count() > 0) {
@@ -84,6 +84,37 @@ class NotificationWebService
             'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
         ], 200);
     }
+
+    public function sendNotificationTransactionInterWeb($walletInter)
+    {
+
+
+        $admins = $this->getAdminCIVProperty();
+        event(new CreateReloadWebEvent($walletInter));
+        Notification::send($admins, new AdminNotification('Demande de transaction international  de Visiteurs' . ' ' . $walletInter->name_complet));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+        // if (robus()->email != null) {
+
+        //     $notify = new MailController;
+        //     $notify->newReload($walletRelaodCard);
+        // }
+        return response()->json([
+            'success' => true,
+            'message' => ('Votre demande a bien été prise en compte.')
+        ], 200);
+    }
+
 
 
     public function sendNotificationTransactionXBetWeb($walletXbet)

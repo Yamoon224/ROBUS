@@ -183,6 +183,7 @@ Route::group(['prefix' => ''], function () {
         //   Transactions
         Route::prefix('transactions')->group(function () {
             Route::get('/browse', [TransactionController::class, 'browse'])->name('transactions.browse');
+            Route::get('/visitors', [TransactionController::class, 'browse_visitors'])->name('transactions.visitors');
             Route::get('/uv', [TransactionController::class, 'browse_uv'])->name('transactions.uv.browse');
             Route::get('/show/{id}', [TransactionController::class, 'show'])->name('transactions.show');
             Route::get('/read/{id}/delete', [TransactionController::class, 'delete'])->name('transactions.delete');
