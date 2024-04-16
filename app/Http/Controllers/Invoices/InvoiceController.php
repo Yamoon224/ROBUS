@@ -55,9 +55,16 @@ class InvoiceController extends Controller
 
         $walletTransfers = WalletTransaction::find($id);
 
+        if (!$walletTransfers) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
 
-        if ($walletTransfers != null) {
+        if ($walletTransfers->is_web == 0) {
             return view('pages.invoices.invoice_transfers_print', compact('walletTransfers', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        } else {
+
+            return view('pages.invoices.visitors.invoice_transfers_print', compact('walletTransfers', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         }
     }
 
@@ -74,8 +81,12 @@ class InvoiceController extends Controller
 
         $walletTransfers = WalletTransaction::find($id);
 
+        if (!$walletTransfers) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
 
-        if ($walletTransfers != null) {
+        if ($walletTransfers->is_web == 0) {
             return view('pages.invoices.invoice_transfers_print', compact('walletTransfers', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         }
     }
@@ -147,9 +158,15 @@ class InvoiceController extends Controller
 
         $walletxbet = WalletXbet::find($id);
 
+        if (!$walletxbet) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
 
-        if ($walletxbet != null) {
+        if ($walletxbet->is_web == 0) {
             return view('pages.invoices.invoice_xbets_print', compact('walletxbet', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        } else {
+            return view('pages.invoices.visitors.invoice_xbets_print', compact('walletxbet', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         }
     }
 
@@ -166,9 +183,15 @@ class InvoiceController extends Controller
 
         $walletInters = WalletInter::find($id);
 
+        if (!$walletInters) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
 
-        if ($walletInters != null) {
+        if ($walletInters->is_web == 0) {
             return view('pages.invoices.invoice_inters_print', compact('walletInters', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        } else {
+            return view('pages.invoices.visitors.invoice_inters_print', compact('walletInters', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         }
     }
 
@@ -183,8 +206,16 @@ class InvoiceController extends Controller
 
 
         $walletDeposits = WalletDeposit::find($id);
-        if ($walletDeposits != null) {
+
+        if (!$walletDeposits) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
+
+        if ($walletDeposits->is_web == 0) {
             return view('pages.invoices.invoice_deposit_print', compact('walletDeposits', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        } else {
+            return view('pages.invoices.visitors.invoice_deposit_print', compact('walletDeposits', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         }
     }
 
@@ -200,8 +231,16 @@ class InvoiceController extends Controller
 
 
         $walletPhoneCredit = WalletPhoneCredit::find($id);
-        if ($walletPhoneCredit != null) {
+
+        if (!$walletPhoneCredit) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
+
+        if ($walletPhoneCredit->is_web == 0) {
             return view('pages.invoices.invoice_phone_credit_print', compact('walletPhoneCredit', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        } else {
+            return view('pages.invoices.visitors.invoice_phone_credit_print', compact('walletPhoneCredit', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         }
     }
 }

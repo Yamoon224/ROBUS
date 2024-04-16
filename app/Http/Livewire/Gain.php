@@ -30,7 +30,8 @@ class Gain extends Component
 
     public function render()
     {
-        $gains = AdminsCom::query();
+        $gains = AdminsCom::where('is_web', false);
+
 
         if ($this->startDate && $this->endDate) {
 
@@ -95,6 +96,7 @@ class Gain extends Component
 
         $walletTransactions = AdminsCom::join('wallet_transactions', 'admins_coms.wallet_transaction_id', '=', 'wallet_transactions.id')
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -127,6 +129,7 @@ class Gain extends Component
         $walletTransactions = AdminsCom::join('wallet_transactions', 'admins_coms.wallet_transaction_id', '=', 'wallet_transactions.id')
             ->whereBetween('admins_coms.created_at', [$this->startDate, $this->endDate])
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -158,6 +161,7 @@ class Gain extends Component
 
         $walletTransactions = AdminsCom::join('wallet_transactions', 'admins_coms.wallet_transaction_id', '=', 'wallet_transactions.id')
             ->where("admins_coms.status", $this->statusTransferFilter)
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -190,6 +194,7 @@ class Gain extends Component
 
         $walletPhoneCredits = AdminsCom::join('wallet_phone_credits', 'admins_coms.wallet_phone_credit_id', '=', 'wallet_phone_credits.id')
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -221,6 +226,7 @@ class Gain extends Component
         $walletPhoneCredits = AdminsCom::join('wallet_phone_credits', 'admins_coms.wallet_phone_credit_id', '=', 'wallet_phone_credits.id')
             ->whereBetween('admins_coms.created_at', [$this->startDate, $this->endDate])
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -251,6 +257,7 @@ class Gain extends Component
 
         $walletPhoneCredits = AdminsCom::join('wallet_phone_credits', 'admins_coms.wallet_phone_credit_id', '=', 'wallet_phone_credits.id')
             ->where("admins_coms.status", $this->statusTransferFilter)
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -284,6 +291,7 @@ class Gain extends Component
 
         $walletPayments = AdminsCom::join('wallet_payments', 'admins_coms.wallet_payment_id', '=', 'wallet_payments.id')
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -317,6 +325,7 @@ class Gain extends Component
         $walletPayments = AdminsCom::join('wallet_payments', 'admins_coms.wallet_payment_id', '=', 'wallet_payments.id')
             ->whereBetween('admins_coms.created_at', [$this->startDate, $this->endDate])
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -349,6 +358,7 @@ class Gain extends Component
 
         $walletPayments = AdminsCom::join('wallet_payments', 'admins_coms.wallet_payment_id', '=', 'wallet_payments.id')
             ->where("admins_coms.status", $this->statusTransferFilter)
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -381,6 +391,7 @@ class Gain extends Component
 
         $walletDeposits = AdminsCom::join('wallet_deposits', 'admins_coms.wallet_deposit_id', '=', 'wallet_deposits.id')
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -414,6 +425,7 @@ class Gain extends Component
         $walletDeposits = AdminsCom::join('wallet_deposits', 'admins_coms.wallet_deposit_id', '=', 'wallet_deposits.id')
             ->whereBetween('admins_coms.created_at', [$this->startDate, $this->endDate])
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -446,6 +458,7 @@ class Gain extends Component
 
         $walletDeposits = AdminsCom::join('wallet_deposits', 'admins_coms.wallet_deposit_id', '=', 'wallet_deposits.id')
             ->where("admins_coms.status", $this->statusTransferFilter)
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -479,6 +492,7 @@ class Gain extends Component
 
         $walletBanks = AdminsCom::join('wallet_banks', 'admins_coms.wallet_bank_id', '=', 'wallet_banks.id')
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -513,6 +527,7 @@ class Gain extends Component
         $walletBanks = AdminsCom::join('wallet_banks', 'admins_coms.wallet_bank_id', '=', 'wallet_banks.id')
             ->whereBetween('admins_coms.created_at', [$this->startDate, $this->endDate])
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -546,6 +561,7 @@ class Gain extends Component
 
         $walletBanks = AdminsCom::join('wallet_banks', 'admins_coms.wallet_bank_id', '=', 'wallet_banks.id')
             ->where("admins_coms.status", $this->statusTransferFilter)
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -584,6 +600,7 @@ class Gain extends Component
         $walletBanks = AdminsCom::join('wallet_inters', 'admins_coms.wallet_inter_id', '=', 'wallet_inters.id')
             ->whereDate('admins_coms.created_at', $convertions)
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -609,6 +626,7 @@ class Gain extends Component
         $walletBanks = AdminsCom::join('wallet_inters', 'admins_coms.wallet_inter_id', '=', 'wallet_inters.id')
             ->whereBetween('admins_coms.created_at', [$this->startDate, $this->endDate])
             ->where('admins_coms.status', 'SUCCESS')
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -634,6 +652,7 @@ class Gain extends Component
     {
         $walletBanks = AdminsCom::join('wallet_inters', 'admins_coms.wallet_inter_id', '=', 'wallet_inters.id')
             ->where("admins_coms.status", $this->statusTransferFilter)
+            ->where('admins_coms.is_web', false)
             ->select('admins_coms.*')
             ->get();
 
@@ -1557,7 +1576,7 @@ class Gain extends Component
     public function getGainAdminsProperty()
     {
         $data = [];
-        foreach (AdminsCom::get() as $bank) {
+        foreach (AdminsCom::whereIsWeb(false)->get() as $bank) {
             $data[] = $bank->amount;
         }
 
@@ -1601,7 +1620,7 @@ class Gain extends Component
         $data = [];
 
 
-        $admins = AdminsCom::whereBetween('created_at', [$this->startDate, $this->endDate])->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->get();
+        $admins = AdminsCom::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->get();
 
         foreach ($admins as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -1618,7 +1637,7 @@ class Gain extends Component
         $data = [];
 
 
-        $admins = AdminsCom::where("status", $this->statusTransferFilter)->where('description', 'Commission administrateur')->get();
+        $admins = AdminsCom::where('is_web',false)->where("status", $this->statusTransferFilter)->where('description', 'Commission administrateur')->get();
 
         foreach ($admins as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -1636,7 +1655,7 @@ class Gain extends Component
 
         $data = [];
 
-        foreach (AdminsCom::where('description', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
+        foreach (AdminsCom::whereIsWeb(false)->where('description', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
 
             $data[] = $bank->amount;
         }
@@ -1652,7 +1671,7 @@ class Gain extends Component
 
         $data = [];
 
-        foreach (AdminsCom::where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
+        foreach (AdminsCom::whereIsWeb(false)->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
 
             $data[] = $bank->amount_under;
         }
@@ -1666,7 +1685,7 @@ class Gain extends Component
 
         $data = [];
 
-        $admins = AdminsCom::whereBetween('created_at', [$this->startDate, $this->endDate])->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->get();
+        $admins = AdminsCom::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('description_underdistributer', 'Paiement commission sous-distributer')->whereStatus('SUCCESS')->get();
 
         foreach ($admins as $bank) {
             // Accédez à la propriété amount sur chaque objet

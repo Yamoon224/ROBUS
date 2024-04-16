@@ -793,7 +793,6 @@
 
         });
 
-
         Livewire.on('modal-hide-transfers-histo', () => {
             // Transfers Histo
             $('#update-transfersHisto-modal').removeClass('show');
@@ -1382,6 +1381,161 @@
             $('#phone').removeClass('active');
 
             // $('body').css('overflow', 'auto');
+        });
+
+        // Hide modals Visitors
+
+        Livewire.on('modal-hide-transfers-visitors-validated', () => {
+
+            // Transfers
+
+            $('#validated-transfers-visitors-modal').removeClass('show');
+            $('#validated-transfers-visitors-modal').addClass('hide');
+
+            $('#update-transfers-visitors-modal').removeClass('show');
+            $('#update-transfers-visitors-modal').addClass('hide');
+
+            $('#transfert-visitors-nav').addClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', true);
+            $('#transfert-visitors').addClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+
+
+            // $('body').css('overflow', 'auto');
+        });
+
+        Livewire.on('modal-hide-reloadCard-visitors-validated', () => {
+
+            // Relaod cards
+
+            $('#update-reloadCards-visitors-modal').removeClass('show');
+            $('#update-reloadCards-visitors-modal').addClass('hide');
+
+            $('#validated-reloadCards-visitors-modal').removeClass('show');
+            $('#validated-reloadCards-visitors-modal').addClass('hide');
+
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#carte-visitors-nav').addClass('active');
+            $('carte-visitors-nav').attr('aria-selected', true);
+            $('#carte-visitors').addClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+
+            // $('body').css('overflow', 'hidden');
+        });
+
+        Livewire.on('modal-hide-phoneCredit-visitors-validated', () => {
+
+            // Relaod cards
+
+            $('#update-phoneCredit-visitors-modal').removeClass('show');
+            $('#update-phoneCredit-visitors-modal').addClass('hide');
+
+            $('#validated-phoneCredit-visitors-modal').removeClass('show');
+            $('#validated-phoneCredit-visitors-modal').addClass('hide');
+
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').addClass('active');
+            $('phone-visitors-nav').attr('aria-selected', true);
+            $('#phone-visitors').addClass('active');
+
+            // $('body').css('overflow', 'hidden');
+        });
+
+
+        Livewire.on('modal-hide-xbet-visitors-validated', () => {
+
+            // Relaod cards
+
+            $('#update-xbet-visitors-modal').removeClass('show');
+            $('#update-xbet-visitors-modal').addClass('hide');
+
+            $('#validated-xbet-visitors-modal').removeClass('show');
+            $('#validated-xbet-visitors-modal').addClass('hide');
+
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('#xbet-visitors').addClass('active');
+            $('#xbet-visitors-nav').addClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', true);
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+
+            // $('body').css('overflow', 'hidden');
+        });
+
+
+        Livewire.on('modal-hide-inters-visitors-validated', () => {
+
+            // Relaod cards
+            $('#update-inters-visitors-modal').removeClass('show');
+            $('#update-inters-visitors-modal').addClass('hide');
+
+            $('#validated-inters-visitors-modal').removeClass('show');
+            $('#validated-inters-visitors-modal').addClass('hide');
+
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+
+            $('#inter-visitors-nav').addClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').addClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', true);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+
+            // $('body').css('overflow', 'hidden');
         });
 
 
@@ -2589,51 +2743,34 @@
             $('#update-paiementHisto-modal').removeClass('hide');
             $('#update-paiementHisto-modal').addClass('show');
         });
-        // Transfers UV
 
+        // Transfers UV Show validated Password
+        
         Livewire.on('modal-transfers-validted-show', () => {
             $('#validated-transfersUV-modal').removeClass('hide');
-            // $('#update-transfersUV-modal').addClass('hide');
-            // $('#modal-hide-transfers').addClass('hide');
             $('#validated-transfersUV-modal').addClass('show');
             // $('body').removeClass('overflow');
         });
 
         Livewire.on('modal-inter-validted-show', () => {
             $('#validated-inter-modal').removeClass('hide');
-            // $('#update-transfersUV-modal').addClass('hide');
-            // $('#modal-hide-transfers').addClass('hide');
             $('#validated-inter-modal').addClass('show');
             // $('body').removeClass('overflow');
         });
 
         Livewire.on('modal-phoneCredit-validted-show', () => {
             $('#validated-phoneCredit-modal').removeClass('hide');
-            // $('#update-transfersUV-modal').addClass('hide');
-            // $('#modal-hide-transfers').addClass('hide');
             $('#validated-phoneCredit-modal').addClass('show');
-            // $('body').removeClass('overflow');
         });
 
         Livewire.on('modal-reloadCards-validted-show', () => {
             $('#validated-reloadCards-modal').removeClass('hide');
             $('#validated-reloadCards-modal').addClass('show');
-            // $('body').removeClass('overflow');
         });
 
         Livewire.on('modal-paiement-validted-show', () => {
             $('#validated-paiementInvoice-modal').removeClass('hide');
-            // $('#update-transfersUV-modal').addClass('hide');
-            // $('#modal-hide-transfers').addClass('hide');
             $('#validated-paiementInvoice-modal').addClass('show');
-            // $('body').removeClass('overflow');
-        });
-
-        Livewire.on('modal-virement-validted-show', () => {
-            $('#validated-virement-modal').removeClass('hide');
-            // $('#update-transfersUV-modal').addClass('hide');
-            // $('#modal-hide-transfers').addClass('hide');
-            $('#validated-virement-modal').addClass('show');
             // $('body').removeClass('overflow');
         });
 
@@ -2642,12 +2779,36 @@
             $('#validated-xbet-modal').addClass('show');
             // $('body').removeClass('overflow');
         });
-
-        Livewire.on('modal-wave-validted-show', () => {
-            $('#validated-wave-modal').removeClass('hide');
-            $('#validated-wave-modal').addClass('show');
-            // $('body').removeClass('overflow');
+      
+        // Validated Show Visitors
+        
+        Livewire.on('modal-transfers-visitors-validted-show', () => {
+            $('#validated-transfers-visitors-modal').removeClass('hide');
+            $('#validated-transfers-visitors-modal').addClass('show');
         });
+
+        Livewire.on('modal-inter-visitors-validted-show', () => {
+            $('#validated-inters-visitors-modal').removeClass('hide');
+            $('#validated-inters-visitors-modal').addClass('show');
+        });
+
+        Livewire.on('modal-phoneCredit-visitors-validted-show', () => {
+            $('#validated-phoneCredit-visitors-modal').removeClass('hide');
+            $('#validated-phoneCredit-visitors-modal').addClass('show');
+        });
+
+        Livewire.on('modal-reloadCards-visitors-validted-show', () => {
+            $('#validated-reloadCards-visitors-modal').removeClass('hide');
+            $('#validated-reloadCards-visitors-modal').addClass('show');
+        });
+
+
+        Livewire.on('modal-xbet-visitors-validted-show', () => {
+            $('#validated-xbet-visitors-modal').removeClass('hide');
+            $('#validated-xbet-visitors-modal').addClass('show');
+        });
+
+        // Update informations Mobile
 
         Livewire.on('modal-transfers-show', () => {
             $('#create-transfersUV-modal').removeClass('hide');
@@ -2700,7 +2861,6 @@
             // $('body').removeClass('overflow');
 
         });
-
 
         Livewire.on('update-transfersUV-modal', () => {
             $('#update-transfersUV-modal').removeClass('hide');
@@ -2760,6 +2920,110 @@
         Livewire.on('update-transfersInterHisto-modal', () => {
             $('#update-transfersinterHisto-modal').removeClass('hide');
             $('#update-transfersInterHisto-modal').addClass('show');
+        });
+
+        // Update details valeurs visitors
+        Livewire.on('update-transfers-visitors-modal', () => {
+            $('#update-transfers-visitors-modal').removeClass('hide');
+            $('#update-transfers-visitors-modal').addClass('show');
+            $('#transfert-visitors-nav').addClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', true);
+            $('#transfert-visitors').addClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+        });
+
+
+        Livewire.on('update-phoneCredit-visitors-modal', () => {
+            $('#update-phoneCredit-visitors-modal').removeClass('hide');
+            $('#update-phoneCredit-visitors-modal').addClass('show');
+            $('#transfert-visitors-nav').addClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', true);
+            $('#transfert-visitors').addClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+        });
+
+        Livewire.on('update-xbet-visitors-modal', () => {
+            $('#update-xbet-visitors-modal').removeClass('hide');
+            $('#update-xbet-visitors-modal').addClass('show');
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('#xbet-visitors').addClass('active');
+            $('#xbet-visitors-nav').addClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', true);
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+        });
+
+        Livewire.on('update-inters-visitors-modal', () => {
+            $('#update-inters-visitors-modal').removeClass('hide');
+            $('#update-inters-visitors-modal').addClass('show');
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#carte-visitors-nav').removeClass('active');
+            $('carte-visitors-nav').attr('aria-selected', false);
+            $('#carte-visitors').removeClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('#xbet-visitors').addClass('active');
+            $('#xbet-visitors-nav').addClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', true);
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
+        });
+
+        Livewire.on('update-reloadCarte-visitors-modal', () => {
+            $('#update-reloadCards-visitors-modal').removeClass('hide');
+            $('#update-reloadCards-visitors-modal').addClass('show');
+            $('#transfert-visitors-nav').removeClass('active');
+            $('transfert-visitors-nav').attr('aria-selected', false);
+            $('#transfert-visitors').removeClass('active');
+            $('#inter-visitors-nav').removeClass('active');
+
+            $('#xbet-visitors-nav').removeClass('active');
+            $('xbet-visitors-nav').attr('aria-selected', false);
+            $('#xbet-visitors').removeClass('active');
+
+            $('inter-visitors-nav').attr('aria-selected', false);
+            $('#inter-visitors').removeClass('active');
+            $('#carte-visitors-nav').addClass('active');
+            $('carte-visitors-nav').attr('aria-selected', true);
+            $('#carte-visitors').addClass('active');
+            $('#phone-visitors-nav').removeClass('active');
+            $('phone-visitors-nav').attr('aria-selected', false);
+            $('#phone-visitors').removeClass('active');
         });
 
         // Inters Transfers

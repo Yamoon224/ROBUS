@@ -48,6 +48,15 @@ class TransactionController extends Controller
         }
     }
 
+
+    public function browse_historique_visitors()
+    {
+        if (sabdyWebVerify()) {
+            return view('pages.transfers.browse_visitors');
+        } else {
+            abort(403);
+        }
+    }
     /**
      * Display a listing of the resource.
      *

@@ -1,5 +1,5 @@
 <!-- BEGIN: Disable Confirmation Modal -->
-<div wire:ignore.self id="validated-phoneCredit-modal" class="modal hide" data-tw-backdrop="static"
+<div wire:ignore.self id="validated-phoneCredit-visitors-modal" class="modal hide" data-tw-backdrop="static"
     style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000; display: block;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">

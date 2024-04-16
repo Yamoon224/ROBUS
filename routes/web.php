@@ -92,6 +92,7 @@ Route::group(['prefix' => ''], function () {
             Route::post('/updateProfil',  [AdminController::class, 'updateProfil'])->name('account.update');
             Route::post('update-password', [AdminController::class, 'UpdatePassword'])->name('account.security.update');
             Route::get('gains/comissions', [AdminController::class, 'browse_gain'])->name('admin.browse_gain');
+            Route::get('gains/comissions_visitors', [AdminController::class, 'browse_gain_visitors'])->name('visitors.admin.browse_gain');
             Route::get('gains/distributers', [AdminController::class, 'browse_gain_distributer'])->name('admin.browse_gain_distributer');
             Route::get('gains/under_distributers', [AdminController::class, 'browse_gain_under_distributer'])->name('admin.browse_gain_under_distributer');
 
@@ -187,8 +188,11 @@ Route::group(['prefix' => ''], function () {
             Route::get('/uv', [TransactionController::class, 'browse_uv'])->name('transactions.uv.browse');
             Route::get('/show/{id}', [TransactionController::class, 'show'])->name('transactions.show');
             Route::get('/read/{id}/delete', [TransactionController::class, 'delete'])->name('transactions.delete');
-            Route::get('/historiques', [TransactionController::class, 'browse_historique'])->name('transactions.historiques');
-            Route::get('/historiques/visitors', [TransactionController::class, 'browse_historique'])->name('transactions.historiques.visitors');
+        });
+
+        Route::prefix('historiques')->group(function () {
+            Route::get('/historicals/browse', [TransactionController::class, 'browse_historique'])->name('transactions.historiques');
+            Route::get('/historicals/visitors', [TransactionController::class, 'browse_historique_visitors'])->name('transactions.historiques.visitors');
         });
 
 
@@ -348,6 +352,14 @@ Route::group(['prefix' => ''], function () {
             Route::get('/xbet_historical', [HistoricalController::class, 'browse_xbets'])->name('xbets.historical');
             Route::get('/wave_historical', [HistoricalController::class, 'browse_waves'])->name('waves.historical');
             Route::get('/drawer_historical', [HistoricalController::class, 'browse_drawer'])->name('drawers.historical');
+
+            // Visitors Historicals
+            Route::get('visitors/inters_historical', [HistoricalController::class, 'browse_inter_visitors'])->name('visitors.inters.historical');
+            Route::get('visitors/cartes_historical', [HistoricalController::class, 'browse_carte_visitors'])->name('visitors.cartes.historical');
+            Route::get('visitors/phone_historical', [HistoricalController::class, 'browse_phone_visitors'])->name('visitors.phones.historical');
+            Route::get('visitors/xbet_historical', [HistoricalController::class, 'browse_xbets_visitors'])->name('visitors.xbets.historical');
+            Route::get('visitors/transfers_historical', [HistoricalController::class, 'browse_transfert_visitors'])->name('visitors.transfers.historical');
+
         });
 
         // Historique Sous distributer

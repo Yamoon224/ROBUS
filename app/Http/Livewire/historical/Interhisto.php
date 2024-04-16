@@ -494,7 +494,7 @@ class Interhisto extends Component
     public function render()
     {
 
-        $inters =  WalletInter::query();
+        $inters =  WalletInter::whereIsWeb(false);
 
         $walletUser = Auth::guard('web')->user();
 
@@ -573,7 +573,7 @@ class Interhisto extends Component
 
         $data = [];
 
-        $wallets = WalletInter::orderBy('wallet_inters.created_at', 'desc')->get();
+        $wallets = WalletInter::where('wallet_inters.is_web' ,false)->orderBy('wallet_inters.created_at', 'desc')->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -593,7 +593,7 @@ class Interhisto extends Component
 
         $data = [];
 
-        $wallets = WalletInter::whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletInter::where('wallet_inters.is_web' ,false)->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -611,7 +611,7 @@ class Interhisto extends Component
 
         $data = [];
 
-        $wallets = WalletInter::where("wallet_inters.status", $this->statusInterFilter)->get();
+        $wallets = WalletInter::where('wallet_inters.is_web' ,false)->where("wallet_inters.status", $this->statusInterFilter)->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -630,7 +630,7 @@ class Interhisto extends Component
 
         $data = [];
 
-        $wallets = WalletInter::whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletInter::where('wallet_inters.is_web' ,false)->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -660,7 +660,7 @@ class Interhisto extends Component
     {
 
         $data = [];
-        foreach (WalletInter::where("wallet_inters.status", $this->statusPhoneFilter)->where('wallet_inters.status', 'SUCCESS')->select('wallet_inters.*')->get() as $bank) {
+        foreach (WalletInter::where('wallet_inters.is_web' ,false)->where("wallet_inters.status", $this->statusPhoneFilter)->where('wallet_inters.status', 'SUCCESS')->select('wallet_inters.*')->get() as $bank) {
             $data[] = $bank->commissions;
         }
 

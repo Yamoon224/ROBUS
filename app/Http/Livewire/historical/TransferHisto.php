@@ -69,12 +69,12 @@ class TransferHisto extends Component
 
     protected function getTransactionsDays()
     {
-        return WalletTransaction::whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
+        return WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
     }
 
     protected function getTransactionCount($status)
     {
-        return WalletTransaction::whereBetween('created_at', [$this->beginDate, $this->endDateT])->where('status', $status)->count();
+        return WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->where('status', $status)->count();
     }
 
     public function updateTransactionHisto()
@@ -466,7 +466,7 @@ class TransferHisto extends Component
     public function render()
     {
 
-        $transfers =  WalletTransaction::query();
+        $transfers =  WalletTransaction::whereIsWeb(false);
 
         $walletUser = Auth::guard('web')->user();
 
@@ -544,7 +544,7 @@ class TransferHisto extends Component
 
         $data = [];
 
-        $wallets = WalletTransaction::where("wallet_transactions.status", $this->statusTransferFilter)->get();
+        $wallets = WalletTransaction::where('wallet_transactions.is_web' ,false)->where("wallet_transactions.status", $this->statusTransferFilter)->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -560,7 +560,7 @@ class TransferHisto extends Component
 
         $data = [];
 
-        $wallets = WalletTransaction::get();
+        $wallets = WalletTransaction::where('wallet_transactions.is_web' ,false)->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -577,7 +577,7 @@ class TransferHisto extends Component
 
         $data = [];
 
-        $wallets = WalletTransaction::whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
+        $wallets = WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -592,7 +592,7 @@ class TransferHisto extends Component
     {
 
 
-        $wallets = WalletTransaction::whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
+        $wallets = WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
 
         return $wallets;
     }

@@ -189,7 +189,7 @@ class Cartehisto extends Component
     public function render()
     {
 
-        $cartes =  WalletDeposit::query();
+        $cartes =  WalletDeposit::whereIsWeb(false);
 
         $walletUser = Auth::guard('web')->user();
 
@@ -286,7 +286,7 @@ class Cartehisto extends Component
 
         $data = [];
 
-        $wallets = WalletDeposit::where("wallet_deposits.status", $this->statusFilter)->get();
+        $wallets = WalletDeposit::where('wallet_deposits.is_web' ,false)->where("wallet_deposits.status", $this->statusFilter)->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -302,7 +302,7 @@ class Cartehisto extends Component
 
         $data = [];
 
-        $wallets = WalletDeposit::get();
+        $wallets = WalletDeposit::where('wallet_deposits.is_web' ,false)->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -318,7 +318,7 @@ class Cartehisto extends Component
         $data = [];
 
         $wallets = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-        ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
+        ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_deposits.is_web' ,false)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
 
         foreach ($wallets as $bank) {
             $data[] = $bank->amount;
@@ -335,7 +335,7 @@ class Cartehisto extends Component
 
        // Exécutez la requête pour obtenir une collection d'objets
        $walletdeposits = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-       ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
+       ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_deposits.is_web' ,false)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
        
 
        foreach ($walletdeposits as $wallet) {

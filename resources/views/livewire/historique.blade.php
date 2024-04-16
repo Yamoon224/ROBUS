@@ -10,13 +10,12 @@
                 </div>
                 <div class="intro-y box p-5 mt-12 sm:mt-5">
                     <div class="intro-y box p-5 mt-12 sm:mt-5">
-                        {{-- <div class="report-chart"> --}}
+
                         <canvas id="sum" virement="{{ json_encode($sum_bank) }}"
                             deposit="{{ json_encode($sum_deposit) }}" payment="{{ json_encode($sum_payment) }}"
                             reload="{{ json_encode($sum_reload) }}" transaction="{{ json_encode($sum_transaction) }}"
                             inter="{{ json_encode($sum_inter) }}" phone="{{ json_encode($sum_phoneCredit) }}"></canvas>
 
-                        {{-- </div> --}}
                     </div>
                 </div>
             </div>

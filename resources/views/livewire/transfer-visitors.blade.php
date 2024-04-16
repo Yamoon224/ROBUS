@@ -1,7 +1,7 @@
 <div>
     <!-- inject:js -->
-    <script src="{{ asset('public/dist/js/app.js') }}"></script>
-    <script src="{{ asset('public/css/app.css') }}"></script>
+    {{-- <script src="{{ asset('public/dist/js/app.js') }}"></script>
+    <script src="{{ asset('public/css/app.css') }}"></script> --}}
     <h2 class="text-lg font-medium truncate mr-6 mt-6">
 
         <span
@@ -304,22 +304,11 @@
         </div>
 
     </div>
-    {{-- @include('livewire.commissions.modals.transactions.updatePhoneCredit')
-    @include('livewire.commissions.modals.transactions.updateVirementBank')
-    @include('livewire.commissions.modals.transactions.updateInterTransfer')
-    @include('livewire.commissions.modals.transactions.updateRelaodCards')
-    @include('livewire.commissions.modals.transactions.updateTransfersUV')
-    @include('livewire.commissions.modals.transactions.updateWave')
-    @include('livewire.commissions.modals.transactions.updateXbet')
-    @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
-    @include('livewire.commissions.modals.transactions.addPhoneCredit')
-    @include('livewire.commissions.modals.transactions.addReloadCards')
-    @include('livewire.commissions.modals.transactions.addInterTransfer')
-    @include('livewire.commissions.modals.transactions.addInterCivTransfer')
-    @include('livewire.commissions.modals.transactions.addTransfersUV')
-    @include('livewire.commissions.modals.transactions.addPaiementInvoice')
-    @include('livewire.commissions.modals.transactions.addVirementBank')
-    @include('livewire.commissions.modals.transactions.reloadModalPage') --}}
+    @include('livewire.commissions.modals.transactions.visitors.updatePhoneCredit')
+    @include('livewire.commissions.modals.transactions.visitors.updateInterTransfer')
+    @include('livewire.commissions.modals.transactions.visitors.updateRelaodCards')
+    @include('livewire.commissions.modals.transactions.visitors.updateTransfersUV')
+    @include('livewire.commissions.modals.transactions.visitors.updateXbet')
 
 </div>
 

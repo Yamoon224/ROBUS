@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\Visitors\CreateWalletInterVisEvent;
+use App\Events\Visitors\CreateWalletOneXbetVisEvent;
+use App\Events\Visitors\CreateWalletReloadCardVisEvent;
+use App\Events\Visitors\CreateWalletTransfersVisEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Services\NotificationWebService;
 use App\Http\Services\PercentRobusAuthService;
@@ -296,6 +300,8 @@ class TransactionWebController extends Controller
                     $msg = "Votre demande a crée avec succès";
                     $color = 'success';
 
+            event(new CreateWalletReloadCardVisEvent($walletReloadCard));
+
                     if ($response['success']) {
 
                         $this->notificationOrderCard->sendNotificationReloadCard($walletReloadCard);
@@ -393,6 +399,9 @@ class TransactionWebController extends Controller
 
                     $msg = "Votre demande a crée avec succès";
                     $color = 'success';
+
+                    event(new CreateWalletReloadCardVisEvent($walletTransaction));
+
 
                     if ($response['success']) {
 
@@ -492,6 +501,9 @@ class TransactionWebController extends Controller
                     $msg = "Votre demande a crée avec succès";
                     $color = 'success';
 
+            event(new CreateWalletOneXbetVisEvent($walletTransaction));
+
+
                     if ($response['success']) {
 
                         $this->notificationOrderCard->sendNotificationTransactionXBetWeb($walletTransaction);
@@ -534,7 +546,7 @@ class TransactionWebController extends Controller
     {
         $admin_civ = $this->validatedamountDays->adminCiv();
 
-        try {
+         try {
 
 
             $validator = Validator::make(
@@ -592,6 +604,9 @@ class TransactionWebController extends Controller
             if (!$walletTransaction) {
                 return back()->with('color', 'danger')->with('status', 'Erreur de création de transfert du montant!')->withInput();
             }
+
+
+            event(new CreateWalletTransfersVisEvent($walletTransaction));
 
             $response = $request->operators == 1 ?
                 $this->reloadCardService->updateamountTransactionReceveid($admin_civ, $amountAdmin, $walletTransaction) :
@@ -673,6 +688,8 @@ class TransactionWebController extends Controller
                 return back()->with('color', 'danger')->with('status', 'Erreur de création de transfert du montant!')->withInput();
             }
 
+            event(new CreateWalletTransfersVisEvent($walletTransaction));
+
             $response =  $this->reloadCardService->updateamountTransactionReceveid($admin_civ, $amountAdmin, $walletTransaction);
 
             if (!$response['success']) {
@@ -753,6 +770,8 @@ class TransactionWebController extends Controller
             if (!$walletInter) {
                 return back()->with('color', 'danger')->with('status', 'Erreur de création de transfert du montant!')->withInput();
             }
+
+            event(new CreateWalletInterVisEvent($walletInter));
 
             $response =  $this->reloadCardService->updateamountInterReceveid($admin_civ, $amountAdmin, $walletInter);
 

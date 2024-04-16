@@ -180,7 +180,7 @@ class PhoneCredithisto extends Component
     public function render()
     {
 
-        $phones =  WalletPhoneCredit::query();
+        $phones =  WalletPhoneCredit::whereIsWeb(false);
 
         $walletUser = Auth::guard('web')->user();
 
@@ -200,7 +200,7 @@ class PhoneCredithisto extends Component
                     [
                         'user' => $this->WalletPhoneCreditsDays,
                         'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                            ->where('wallets.country_id', $walletUser->country->id)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
+                            ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web' ,false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
                         'usersCountry' =>   $walletUser->country->currencie->name,
                         'provider_credits' => $this->PhoneCreditTransaction,
     
@@ -233,7 +233,7 @@ class PhoneCredithisto extends Component
                     [
                         'user' => $this->PhoneCreditsAllStatus,
                         'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                            ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_phone_credits.created_at', 'desc')->where("wallet_phone_credits.status", $this->statusPhoneFilter)->select('wallet_phone_credits.*')->paginate(15),
+                            ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web' ,false)->orderBy('wallet_phone_credits.created_at', 'desc')->where("wallet_phone_credits.status", $this->statusPhoneFilter)->select('wallet_phone_credits.*')->paginate(15),
                         'usersCountry' =>   $walletUser->country->currencie->name,
                         'provider_credits' => $this->PhoneCreditTransaction,
     
@@ -246,7 +246,7 @@ class PhoneCredithisto extends Component
                 [
                     'user' => $this->PhoneCreditsAllDays,
                     'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
+                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web' ,false)->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
                     'provider_credits' => $this->PhoneCreditTransaction,
 
@@ -263,7 +263,7 @@ class PhoneCredithisto extends Component
 
         $data = [];
 
-        $wallets = WalletPhoneCredit::whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web' ,false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -281,7 +281,7 @@ class PhoneCredithisto extends Component
 
         $data = [];
 
-        $wallets = WalletPhoneCredit::where("wallet_phone_credits.status", $this->statusPhoneFilter)->get();
+        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web' ,false)->where("wallet_phone_credits.status", $this->statusPhoneFilter)->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -298,7 +298,7 @@ class PhoneCredithisto extends Component
 
         $data = [];
 
-        $wallets = WalletPhoneCredit::get();
+        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web' ,false)->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -315,7 +315,7 @@ class PhoneCredithisto extends Component
 
         $data = [];
 
-        $wallets = WalletPhoneCredit::whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web' ,false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -351,7 +351,7 @@ class PhoneCredithisto extends Component
         // Exécutez la requête pour obtenir une collection d'objets
         $wallettransactions = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
         ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
-        ->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->where('wallet_phone_credits.status', 'SUCCESS')->select('wallet_phone_credits.*')->get();
+        ->where('wallet_phone_credits.is_web' ,false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->where('wallet_phone_credits.status', 'SUCCESS')->select('wallet_phone_credits.*')->get();
 
         foreach ($wallettransactions as $wallet) {
             // Accédez à la propriété amount sur chaque objet

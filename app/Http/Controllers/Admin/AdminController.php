@@ -154,6 +154,16 @@ class AdminController extends Controller
         return view('pages.admin.gains');
     }
 
+    public function browse_gain_visitors()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-administrateur')) {
+            abort(403);
+        }
+
+
+        return view('pages.admin.gain_visitors');
+    }
+
     public function browse_gain_distributer(Request $request)
     {
 
