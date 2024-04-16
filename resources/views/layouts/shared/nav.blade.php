@@ -2,6 +2,7 @@
     $prefix = Request::route()->getPrefix();
     $route = Route::current()->getName();
     $countries = getCountriesForUser(Auth::guard('web')->user());
+    $countrie_civ = getCountriesForVisitorsUser(Auth::guard('web')->user());
 @endphp
 <!-- BEGIN: Side Menu -->
 
@@ -99,7 +100,7 @@
             @if (Auth::guard('web')->user()->hasPermissionTo('historiques'))
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('historiques*') || request()->is('historicals*')  ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('historiques*') || request()->is('historicals*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                 height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" icon-name="clipboard"
@@ -113,7 +114,8 @@
                             <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
                         </div>
                     </a>
-                    <ul class="{{ request()->is('historiques*') || request()->is('historicals*') ? 'side-menu__sub-open' : '' }}">
+                    <ul
+                        class="{{ request()->is('historiques*') || request()->is('historicals*') ? 'side-menu__sub-open' : '' }}">
 
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('voir-historique-transfers'))
@@ -301,15 +303,15 @@
                             </li>
                         @endif
                         @if (Auth::guard('web')->user()->hasPermissionTo('operateurs'))
-                        <li>
+                            <li>
 
-                            <a href="{{ route('services.browse_visitores') }}"
-                                class="side-menu {{ $route == 'services.browse_visitores' || $route == 'services.edit_visitors' ? 'side-menu--active' : '' }}">
-                                <div class="side-menu__icon"><i data-feather="package" class="block mx-auto"></i>
-                                </div>
-                                <div class="side-menu__title"> Services web </div>
-                            </a>
-                        </li>
+                                <a href="{{ route('services.browse_visitores') }}"
+                                    class="side-menu {{ $route == 'services.browse_visitores' || $route == 'services.edit_visitors' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"><i data-feather="package" class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Services web </div>
+                                </a>
+                            </li>
                         @endif
                     </ul>
                 </li>
@@ -496,14 +498,14 @@
             @endif
             <li class="side-nav__devider my-4"></li>
             @if (Auth::guard('web')->user()->hasPermissionTo('cautions'))
-            <li>
-                <a href="{{ route('commissions.browse_visitors') }}"
-                    class="side-menu {{ $route == 'commissions.browse_visitors' ? 'side-menu--active' : '' }}">
-                    <div class="side-menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i>
-                    </div>
-                    <div class="side-menu__title">Pays Inters visiteurs </div>
-                </a>
-            </li>
+                <li>
+                    <a href="{{ route('commissions.browse_visitors') }}"
+                        class="side-menu {{ $route == 'commissions.browse_visitors' ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i>
+                        </div>
+                        <div class="side-menu__title">Commissions pays visiteurs </div>
+                    </a>
+                </li>
             @endif
             <li class="side-nav__devider my-4"></li>
             @if (Auth::guard('web')->user()->hasPermissionTo('administrateurs'))
@@ -666,48 +668,53 @@
             <li class="side-nav__devider my-4"></li>
 
             @if (Auth::guard('web')->user()->hasPermissionTo('devises'))
-            <li>
-                <a href="javascript:;"
-                    class="side-menu {{ request()->is('account/gains/comissions*') || request()->is('account/gains/comissions_visitors*')  ? 'side-menu--active' : '' }}">
-                    <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" stroke-linejoin="round" icon-name="clipboard"
-                            data-lucide="clipboard" class="lucide lucide-clipboard block mx-auto">
-                            <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path>
-                            <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
-                        </svg>
-                    </div>
-                    <div class="side-menu__title">
-                        Gains admin
-                        <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
-                    </div>
-                </a>
-                <ul class="{{ request()->is('account/gains/comissions*') || request()->is('account/gains/comissions_visitors*') ? 'side-menu__sub-open' : '' }}">
+                <li>
+                    <a href="javascript:;"
+                        class="side-menu {{ request()->is('account/gains/comissions*') || request()->is('account/gains/comissions_visitors*') ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24"
+                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                icon-name="clipboard" data-lucide="clipboard"
+                                class="lucide lucide-clipboard block mx-auto">
+                                <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path>
+                                <rect x="8" y="2" width="8" height="4" rx="1" ry="1">
+                                </rect>
+                            </svg>
+                        </div>
+                        <div class="side-menu__title">
+                            Gains admin
+                            <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
+                        </div>
+                    </a>
+                    <ul
+                        class="{{ request()->is('account/gains/comissions*') || request()->is('account/gains/comissions_visitors*') ? 'side-menu__sub-open' : '' }}">
 
 
-                    @if (Auth::guard('web')->user()->hasPermissionTo('devises'))
-                    <li>
-                        <a href="{{ route('admin.browse_gain') }}"
-                            class="side-menu {{ $route == 'admin.browse_gain' ? 'side-menu--active' : '' }}">
-                            <div class="side-menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i>
-                            </div>
-                            <div class="side-menu__title"> Gains commissions </div>
-                        </a>
-                    </li>
-                    @endif
-                    @if (Auth::guard('web')->user()->hasPermissionTo('devises'))
-                    <li>
-                        <a href="{{ route('visitors.admin.browse_gain') }}"
-                            class="side-menu {{ $route == 'visitors.admin.browse_gain' ? 'side-menu--active' : '' }}">
-                            <div class="side-menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i>
-                            </div>
-                            <div class="side-menu__title"> Gains admin visiteurs </div>
-                        </a>
-                    </li>
-                    @endif
-                </ul>
-            </li>
-        @endif
+                        @if (Auth::guard('web')->user()->hasPermissionTo('devises'))
+                            <li>
+                                <a href="{{ route('admin.browse_gain') }}"
+                                    class="side-menu {{ $route == 'admin.browse_gain' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="credit-card"
+                                            class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Gains commissions </div>
+                                </a>
+                            </li>
+                        @endif
+                        @if (Auth::guard('web')->user()->hasPermissionTo('devises'))
+                            <li>
+                                <a href="{{ route('visitors.admin.browse_gain') }}"
+                                    class="side-menu {{ $route == 'visitors.admin.browse_gain' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="credit-card"
+                                            class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Gains admin visiteurs </div>
+                                </a>
+                            </li>
+                        @endif
+                    </ul>
+                </li>
+            @endif
             <li class="side-nav__devider my-4"></li>
             @if (Auth::guard('web')->user()->hasPermissionTo('voir-s-distibuteurs'))
                 <li>
@@ -760,7 +767,7 @@
                             </svg>
                         </div>
                         <div class="side-menu__title">
-                            Operatrices
+                            Operatrices mobile
                             <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
                         </div>
                     </a>
@@ -782,6 +789,17 @@
                 </li>
             @endif
 
+            <li class="side-nav__devider my-4"></li>
+            @if (Auth::guard('web')->user()->hasPermissionTo('voir-distributeurs'))
+                <li>
+                    <a href="{{route('visitors.countries.Show_distri_distributer', ['key' => $countrie_civ->name]) }}"
+                        class="side-menu {{ $route == 'visitors.countries.Show_distri_distributer' ? 'side-menu--active' : '' }}">
+                        <div class="side-menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i>
+                        </div>
+                        <div class="side-menu__title">Operatrices visiteurs</div>
+                    </a>
+                </li>
+            @endif
             <li class="side-nav__devider my-4"></li>
 
             <li>

@@ -390,7 +390,6 @@ Route::group(['prefix' => ''], function () {
         // Historique  distributer
         Route::prefix('distributer_commissions')->group(function () {
 
-
             Route::get('/wallet_payments/{key}', [CountrieController::class, 'show_distri_payment'])->name('countries.payments.Show_distri_distributer');
             Route::get('/wallet_transactions/{key}', [CountrieController::class, 'show_distri_transaction'])->name('countries.transactions.Show_distri_distributer');
             Route::get('/wallet_banks/{key}', [CountrieController::class, 'show_distri_bank'])->name('countries.banks.Show_distri_distributer');
@@ -461,6 +460,20 @@ Route::group(['prefix' => ''], function () {
             Route::get('transfers/reporting_transfer_historical_received/{id}', [AdminHistoriqueController::class, 'reporting_transfer_received_historical'])->name('transfers.historical.received.reporting_transfer_historical.admins');
             Route::get('echecs/reporting_echecs_historical_echecs/{id}', [AdminHistoriqueController::class, 'reporting_transfer_echecs_historical'])->name('echecs.historical.reporting_transfer_historical.admins');
             Route::get('drawer_under_distributer/reporting_drawer_historical/{id}', [AdminHistoriqueController::class, 'reporting_drawer_historical'])->name('transfers.historical.reporting_drawer_historical.admins');
+        });
+
+        // New web Visitors
+        Route::prefix('distributers_visitors')->group(function () {
+
+            Route::get('/wallet_transactions/{key}', [CountrieController::class, 'show_visitors_transaction'])->name('visitors.countries.transactions.Show_visitors_distributer');
+            Route::get('/wallet_deposits/{key}', [CountrieController::class, 'show_visitors_deposit'])->name('visitors.countries.deposits.Show_visitors_distributer');
+            Route::get('/wallet_inters/{key}', [CountrieController::class, 'show_visitors_inter'])->name('visitors.countries.inters.Show_visitors_distributer');
+            Route::get('/wallet_phones/{key}', [CountrieController::class, 'show_visitors_phone'])->name('visitors.countries.phones.Show_visitors_distributer');
+            Route::get('/wallet_xbest/{key}', [CountrieController::class, 'show_visitors_xbets'])->name('visitors.countries.xbets.Show_visitors_distributer');
+    
+    
+            Route::get('/view/{key}', [CountrieController::class, 'Show_distri_visitors_distributer'])->name('visitors.countries.Show_distri_distributer');
+    
         });
     });
 });

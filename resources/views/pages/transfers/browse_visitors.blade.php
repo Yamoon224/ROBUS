@@ -1,10 +1,10 @@
 @extends('layouts.master')
 
-@section('title', 'Historique des  visiteurs')
+@section('title', 'Transferts des  visiteurs')
 
 @section('content')
     <div>
-        <livewire:historique-visitorss>
+        <livewire:transfer-visitors>
     </div>
 
 @endsection

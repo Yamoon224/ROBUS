@@ -52,7 +52,7 @@ class TransactionController extends Controller
     public function browse_historique_visitors()
     {
         if (sabdyWebVerify()) {
-            return view('pages.transfers.browse_visitors');
+            return view('pages.transfers.browse_histo_visitors');
         } else {
             abort(403);
         }

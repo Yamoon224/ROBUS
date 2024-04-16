@@ -78,6 +78,18 @@ function getCountriesForUser($user)
     return $countries->get();
 }
 
+function getCountriesForVisitorsUser($user)
+{
+    $isDistributor = $user->wallet->sidUser->is_distributor;
+
+    $countries = Country::whereRobus(true)->whereId(107)->first();
+
+    if ($isDistributor) {
+        $countries->where('id', $user->wallet->country->id);
+    }
+
+    return $countries;
+}
 
 function getOperators($userId)
 {
