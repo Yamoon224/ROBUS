@@ -6,13 +6,13 @@
     <section class="page-title animate__animated animate__slideInDown"
         style="background-image:url(https://robus.home.ci/public/dist/images/transaction_money.jpeg);">
         <div class="container text-center text-white">
-            <h1 class="text-black">TRANSFERT MOBILE MONEY ET PAIEMENT DE CREDIT</h1>
+            <h1 class="text-black" style="color: black">TRANSFERT MOBILE MONEY ET PAIEMENT DE CREDIT</h1>
         </div>
 
     </section>
 
 
-    <section class="contact-info-section" style="margin-top:-8%">
+    <section class="contact-info-section style_percent">
 
         <div class="container">
             <div class="row ">
@@ -63,11 +63,11 @@
 
                                 <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
                                     <label class="mb-2 font-14 bold black" for="operators">Quelle opération souhaitez-vous
-                                        effectuer<span class="text-danger">
+                                        effectuer ?<span class="text-danger">
                                             *</span></label>
                                     <select required name="operators" aria-label="Selectionnez operation "
                                         class="form-select @error('operators') is-invalid @enderror">
-                                        <option disabled selected>Selectionnez le type d'operation</option>
+                                        <option disabled selected>Sélectionnez le type d'operation</option>
                                         <option value="1">Transfert mobile money</option>
                                         <option value="2">Rechargement téléphonique</option>
                                     </select>
@@ -75,7 +75,7 @@
 
 
                                 <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black">Montant(min : 2000Fcfa / max : 500.000Fcfa )
+                                    <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
                                         <span class="text-danger"> *</span></label>
                                     <input type="number" class="form-control" maxlength="10" name="amount"
                                         placeholder="Ex: 2400" required="">

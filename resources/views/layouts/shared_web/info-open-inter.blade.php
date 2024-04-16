@@ -3,7 +3,7 @@
         <div class="card-header text-center" style="font-weight: bold;background-color: darkslategrey;">Information</div>
         <div class="card-body">
             <p class="card-text text-white" style="font-weight: 450;">
-               Transferts international . Service de paiement disponible de
+               Transferts international. Service de paiement disponible de
                 8h à 21h. Si vous faites l'opération avant 8h, vous recevrez votre rechargement à partir de 8h. Si c'est
                 après 21h, vous recevrez le lendemain à partir de 8h. </p>
             <p class="card-text text-white" style="font-weight: 450;">

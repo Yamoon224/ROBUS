@@ -4,7 +4,7 @@
             <div class="card-body">
                 <p class="card-text text-white" style="font-weight: 450;">
                    Transfert vers Robus . Service de transfert disponible de
-                    8h à 21h. Si vous faites l'opération avant 8h, vous recevrez votre rechargement à partir de 8h. Si c'est
+                    8h à 21h. Si vous faites l'opération avant 8h, vous recevrez votre réchargement à partir de 8h. Si c'est
                     après 21h, vous recevrez le lendemain à partir de 8h. </p>
                 <p class="card-text text-white" style="font-weight: 450;">
                     Tarif :<span class="badge bg-info text-dark style_span text-white">{{ $transaction_percent ?? null }}%</span> frais de paiement

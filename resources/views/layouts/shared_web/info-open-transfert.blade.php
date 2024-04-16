@@ -3,7 +3,7 @@
         <div class="card-header text-center" style="font-weight: bold;background-color: darkslategrey;">Information</div>
         <div class="card-body">
             <p class="card-text text-white" style="font-weight: 450;">
-               Transfert et paiement de credit . Service de paiement disponible de
+               Transfert et paiement de credit. Service de paiement disponible de
                 8h à 21h. Si vous faites l'opération avant 8h, vous recevrez votre rechargement à partir de 8h. Si c'est
                 après 21h, vous recevrez le lendemain à partir de 8h. </p>
             <p class="card-text text-white" style="font-weight: 450;">
@@ -15,7 +15,7 @@
             <p class="card-text text-white" style="font-weight: 450;">
                 Tarif paiement de credit telephonique :<span class="badge bg-info text-dark style_span text-white">{{ $phone_percent ?? null }}%</span> frais de paiement
                 en ligne + <span class="badge bg-info text-dark style_span text-white">{{ $robus_percent_phone ?? null }}%</span>frais de
-                l'opérateur(Credit telephonique)
+                l'opérateur(Crédit téléphonique)
             </p>
         </div>
     </div>

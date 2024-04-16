@@ -35,7 +35,7 @@ class EventServiceProvider extends ServiceProvider
             'App\Listeners\TransactionChoose',
         ],
         'App\Events\ChooseVirementEvent' => [
-            'App\Listeners\VirementChoose', 
+            'App\Listeners\VirementChoose',
         ],
         'App\Events\ChooseXbetEvent' => [
             'App\Listeners\XbetChoose',
@@ -67,6 +67,44 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\CreateReloadEvent' => [
             'App\Listeners\ReloadAccompte',
         ],
+
+        // Events Visitors
+
+        // Create Wallet Transactions
+        'App\Events\Visitors\CreateWalletInterVisEvent' => [
+            'App\Listeners\Visitors\CreateInterVis',
+        ],
+        'App\Events\Visitors\CreateWalletPhoneCreditVisEvent' => [
+            'App\Listeners\Visitors\CreatePhoneCreditVis',
+        ],
+        'App\Events\Visitors\CreateWalletReloadCardVisEvent' => [
+            'App\Listeners\Visitors\CreateReloadCardVis',
+        ],
+        'App\Events\Visitors\CreateWalletTransfersVisEvent' => [
+            'App\Listeners\Visitors\CreateTransfertVis',
+        ],
+        'App\Events\Visitors\CreateWalletPhoneCreditVisEvent' => [
+            'App\Listeners\Visitors\CreateXbetVis',
+        ],
+
+        // Choose valeurs
+
+        'App\Events\Visitors\ChoosePhoneVisEvent' => [
+            'App\Listeners\Visitors\PhoneCreditChooseVis',
+        ],
+        'App\Events\Visitors\ChooseCardVisEvent' => [
+            'App\Listeners\Visitors\ReloadCardChooseVis',
+        ],
+        'App\Events\Visitors\ChooseTransactionVisEvent' => [
+            'App\Listeners\Visitors\TransactionChooseVis',
+        ],
+        'App\Events\Visitors\ChooseXbetVisEvent' => [
+            'App\Listeners\Visitors\XbetChooseVis',
+        ],
+        'App\Events\Visitors\ChooseInterVisEvent' => [
+            'App\Listeners\Visitors\InterChooseVis',
+        ],
+
         // Ajoutez d'autres événements et leurs listeners ici...
     ];
 

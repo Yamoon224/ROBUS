@@ -376,7 +376,7 @@ class TransferVisitors extends Component
         $this->amount_inter_ = $check->amount ?? null;
         $this->account_number_inter_ = $check->number_compte ?? null;
         $this->phone_inter_ = $check->phone ?? null;
-        $this->name_sender_inter_ = $check->name_complet ?? null; 
+        $this->name_sender_inter_ = $check->name_complet ?? null;
         $this->name_benef_inter = $check->name_benef ?? null;
         $this->phone_benef_inters = $check->phone_benef ?? null;
         $this->amount_receved_inter = $check->amount_received  ?? null;
@@ -912,8 +912,7 @@ class TransferVisitors extends Component
                 $this->cancelReloadCardField();
                 $this->ReloadCardHide();
                 $this->emit('info', 'Vous avez cliquez deux fois de suite le boutton !!');
-            }
-         else {
+            } else {
                 $this->cancelReloadCardField();
                 $this->ReloadCardHide();
                 $this->emit('error', 'Aucune donnée ou Vous avez cliquez deux fois de suite !');
@@ -1179,7 +1178,7 @@ class TransferVisitors extends Component
             ->whereIsAdmin(true)
             ->where('country_id', 107)
             ->get();
-            
+
         try {
 
             if ($check) {
@@ -1408,235 +1407,235 @@ class TransferVisitors extends Component
         // try {
 
 
-            if ($check) {
+        if ($check) {
 
-                $this->validate(
-                    [
-                        'interStatus' => 'required',
-                        'password_transaction' => 'required',
-                    ],
-                    [
+            $this->validate(
+                [
+                    'interStatus' => 'required',
+                    'password_transaction' => 'required',
+                ],
+                [
 
-                        'password_transaction.required' =>
-                        'Mot de passe obligatoire',
-                        'interStatus.required' =>
-                        'Statut obligatoire',
-                    ]
-                );
+                    'password_transaction.required' =>
+                    'Mot de passe obligatoire',
+                    'interStatus.required' =>
+                    'Statut obligatoire',
+                ]
+            );
 
 
-                if (Hash::check($this->password_transaction, $user_auth->password)) {
+            if (Hash::check($this->password_transaction, $user_auth->password)) {
 
-                    $check->update([
-                        'description'  => $this->inter_description_robus,
-                        'updated_by' => sabdy()->id,
-                        'status' => $this->interStatus,
-                    ]);
+                $check->update([
+                    'description'  => $this->inter_description_robus,
+                    'updated_by' => sabdy()->id,
+                    'status' => $this->interStatus,
+                ]);
 
-                    $this->password_transaction = "";
-                    $this->interStatus = "";
-                    $this->interId = "";
+                $this->password_transaction = "";
+                $this->interStatus = "";
+                $this->interId = "";
 
-                    if ($check->updated_by == sabdy()->id) {
+                if ($check->updated_by == sabdy()->id) {
 
-                        if ($check->status == 'SUCCESS') {
+                    if ($check->status == 'SUCCESS') {
 
-                            $transaction_inter = TransactionInter::create([
-                                'wallet_inter_id' => $check->id,
+                        $transaction_inter = TransactionInter::create([
+                            'wallet_inter_id' => $check->id,
+                            'sid_user_id' => sabdy()->id,
+                            'transaction_id' => 'RB_' . $check->provider->name .
+                                '_' . $transactionCode,
+                            'operator_transaction_name' =>
+                            $check->provider->name,
+                            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+                            'pay_amount' => $check->amount,
+                            'fee_amount' => $check->costs_amount,
+                            'received_amount' => $check->amount,
+                            'status' => $check->status,
+                        ]);
+
+                        InvoiceInter::create([
+                            'title' => "Transfers d'argent",
+                            // 'transaction_inter_id' => $check->id,
+                            'transaction_inter_id' => $transaction_inter->id,
+                            // 'company_id' => sabdy()->company->id,
+                            'description' => $check->description,
+                            'status' => $check->status,
+                            'created_by' => sabdy()->id,
+                        ]);
+
+
+                        $commission_transaction = $check->amount_received;
+
+
+                        if (sabdy()->is_distributer == 1) {
+
+                            // Send valeur historique distributer
+                            $check->adminCom->update([
+                                // 'amount' => $valeur_single,
+                                'amount_distributer' => $commission_transaction,
                                 'sid_user_id' => sabdy()->id,
-                                'transaction_id' => 'RB_' . $check->provider->name .
-                                    '_' . $transactionCode,
-                                'operator_transaction_name' =>
-                                $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $check->amount,
-                                'fee_amount' => $check->costs_amount,
-                                'received_amount' => $check->amount,
-                                'status' => $check->status,
+                                'description_distributer' => 'Validation distributeur',
                             ]);
+                        }
 
-                            InvoiceInter::create([
-                                'title' => "Transfers d'argent",
-                                // 'transaction_inter_id' => $check->id,
-                                'transaction_inter_id' => $transaction_inter->id,
-                                // 'company_id' => sabdy()->company->id,
-                                'description' => $check->description,
-                                'status' => $check->status,
-                                'created_by' => sabdy()->id,
-                            ]);
+                        $message =
+                            'Votre demande de paiement de ' .
+                            $check->amount . ' FCFA' .
+                            ' ' .
+                            'par ' .
+                            $check->provider->name .
+                            ' le ' .
+                            $check->updated_at .
+                            ' a été validé avec success \n' .
+                            'Robus vous remercie';
+
+                        $encode = substr($check->phone_benef, -10);
+
+                        Http::get(
+                            "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                        );
+
+                        $valeur_amount_com = $check->adminCom->amount;
+
+                        Notification::send(
+                            $admins,
+                            new AdminNotification(
+                                'Demande de tarnsfers inter Validé'
+                            )
+                        );
+
+                        if ($admins->count() > 0) {
+
+                            foreach ($admins  as $user) {
+
+                                $admin_single = SidUser::find($user->id);
+
+                                $notifs = $admin_single->unreadNotifications;
+
+                                event(new AdminNotifEvent($notifs));
+                            }
+                        }
+
+                        $this->cancelInterField();
+                        $this->InterHide();
+                        $this->emit('success', 'Transfers Accepte !');
+                    } elseif ($check->status == 'ERROR') {
 
 
-                            $commission_transaction = $check->amount_received;
+                        // Update commission
+                        $check->update([
+                            'commissions' => 0,
+                            'commissions_admin' => 0,
+                            'amount_solde' => 0.0,
+                        ]);
 
+                        // Valeur amount commission distributeur
+                        $valeur_amount_com = $check->adminCom->amount;
 
-                            if (sabdy()->is_distributer == 1) {
+                        //  Send valeur in Admin
+                        if ($admin_civ->count() > 0) {
 
-                                // Send valeur historique distributer
+                            foreach ($admin_civ as $user) {
+                                $admin_single = SidUser::find($user->id);
                                 $check->adminCom->update([
-                                    // 'amount' => $valeur_single,
-                                    'amount_distributer' => $commission_transaction,
-                                    'sid_user_id' => sabdy()->id,
-                                    'description_distributer' => 'Validation distributeur',
+                                    'amount' =>   $valeur_amount_com,
+                                    'sid_user_id' =>   $admin_single->id,
+                                    'status'  => "ERROR",
+                                    'description' => 'Remboursement de la commission client',
                                 ]);
                             }
-
-                            $message =
-                                'Votre demande de paiement de ' .
-                                $check->amount . ' FCFA' .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été validé avec success \n' .
-                                'Robus vous remercie';
-
-                            $encode = substr($check->phone_benef, -10);
-
-                            Http::get(
-                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            );
-
-                            $valeur_amount_com = $check->adminCom->amount;
-
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de tarnsfers inter Validé'
-                                )
-                            );
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-                            }
-
-                            $this->cancelInterField();
-                            $this->InterHide();
-                            $this->emit('success', 'Transfers Accepte !');
-                        } elseif ($check->status == 'ERROR') {
-
-
-                            // Update commission
-                            $check->update([
-                                'commissions' => 0,
-                                'commissions_admin' => 0,
-                                'amount_solde' => 0.0,
-                            ]);
-
-                            // Valeur amount commission distributeur
-                            $valeur_amount_com = $check->adminCom->amount;
-
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
-
-                                foreach ($admin_civ as $user) {
-                                    $admin_single = SidUser::find($user->id);
-                                    $check->adminCom->update([
-                                        'amount' =>   $valeur_amount_com,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'status'  => "ERROR",
-                                        'description' => 'Remboursement de la commission client',
-                                    ]);
-                                }
-                            }
-
-                            $transaction_inter = TransactionInter::create([
-                                'wallet_inter_id' => $check->id,
-                                'sid_user_id' => sabdy()->id,
-                                'transaction_id' => 'RB_' . $check->provider->name .
-                                    '_' . $transactionCode,
-                                'operator_transaction_name' =>
-                                $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $check->amount,
-                                'fee_amount' => $check->costs_amount,
-                                'received_amount' => $check->amount,
-                                'status' => $check->status,
-                            ]);
-
-                            InvoiceInter::create([
-                                'title' => "Transfers d'argent",
-                                // 'transaction_inter_id' => $check->id,
-                                'transaction_inter_id' => $transaction_inter->id,
-                                // 'company_id' => sabdy()->company->id,
-                                'description' => $check->description,
-                                'status' => $check->status,
-                                'created_by' => sabdy()->id,
-                            ]);
-
-
-
-                            $message = 'Votre demande de paiement de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' a ' .
-                                $check->updated_at .
-                                ' a été refusé  ' .
-                                'Robus vous remercie';
-
-                            $encode = substr(
-                                $check->phone_benef,
-                                -10
-                            );
-
-
-                            Http::get(
-                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            );
-
-
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de transfers refusé'
-                                )
-                            );
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-                            }
-                            $this->cancelInterField();
-                            $this->InterHide();
-                            $this->emit('error', 'Transfers refusé !');
-                        } else {
-                            $this->cancelInterField();
-                            $this->InterHide();
-                            $this->emit('error', 'Selectionnez le choix du traitement de la demande SVP !');
                         }
+
+                        $transaction_inter = TransactionInter::create([
+                            'wallet_inter_id' => $check->id,
+                            'sid_user_id' => sabdy()->id,
+                            'transaction_id' => 'RB_' . $check->provider->name .
+                                '_' . $transactionCode,
+                            'operator_transaction_name' =>
+                            $check->provider->name,
+                            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+                            'pay_amount' => $check->amount,
+                            'fee_amount' => $check->costs_amount,
+                            'received_amount' => $check->amount,
+                            'status' => $check->status,
+                        ]);
+
+                        InvoiceInter::create([
+                            'title' => "Transfers d'argent",
+                            // 'transaction_inter_id' => $check->id,
+                            'transaction_inter_id' => $transaction_inter->id,
+                            // 'company_id' => sabdy()->company->id,
+                            'description' => $check->description,
+                            'status' => $check->status,
+                            'created_by' => sabdy()->id,
+                        ]);
+
+
+
+                        $message = 'Votre demande de paiement de ' .
+                            $check->amount .
+                            $check->wallet->currencie->code .
+                            ' ' .
+                            'par ' .
+                            $check->provider->name .
+                            ' a ' .
+                            $check->updated_at .
+                            ' a été refusé  ' .
+                            'Robus vous remercie';
+
+                        $encode = substr(
+                            $check->phone_benef,
+                            -10
+                        );
+
+
+                        Http::get(
+                            "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                        );
+
+
+                        Notification::send(
+                            $admins,
+                            new AdminNotification(
+                                'Demande de transfers refusé'
+                            )
+                        );
+
+                        if ($admins->count() > 0) {
+
+                            foreach ($admins  as $user) {
+
+                                $admin_single = SidUser::find($user->id);
+
+                                $notifs = $admin_single->unreadNotifications;
+
+                                event(new AdminNotifEvent($notifs));
+                            }
+                        }
+                        $this->cancelInterField();
+                        $this->InterHide();
+                        $this->emit('error', 'Transfers refusé !');
                     } else {
                         $this->cancelInterField();
                         $this->InterHide();
-                        $this->emit('error', 'Pas le valideur !');
+                        $this->emit('error', 'Selectionnez le choix du traitement de la demande SVP !');
                     }
                 } else {
                     $this->cancelInterField();
                     $this->InterHide();
-                    $this->emit('error', 'Mot de passe Incorrect !');
+                    $this->emit('error', 'Pas le valideur !');
                 }
-            } elseif ($this->password_transaction = "" ||  $this->interStatus = "") {
+            } else {
                 $this->cancelInterField();
                 $this->InterHide();
-                $this->emit('info', 'Vous avez cliquez deux fois de suite !');
+                $this->emit('error', 'Mot de passe Incorrect !');
             }
+        } elseif ($this->password_transaction = "" ||  $this->interStatus = "") {
+            $this->cancelInterField();
+            $this->InterHide();
+            $this->emit('info', 'Vous avez cliquez deux fois de suite !');
+        }
         // } catch (\Exception $exception) {
         //     $this->cancelInterField();
         //     $this->InterHide();
@@ -1734,7 +1733,7 @@ class TransferVisitors extends Component
     public function phoneCreditHide()
     {
         $this->emit('modal-hide-phoneCredit-visitors-validated');
-        
+
         $this->phoneCreditActiveMenu();
     }
 
@@ -1742,7 +1741,6 @@ class TransferVisitors extends Component
     {
         $this->emit('modal-hide-xbet-visitors-validated');
         $this->XbetActiveMenu();
-
     }
 
     public function ReloadCardHide()
@@ -1755,14 +1753,12 @@ class TransferVisitors extends Component
     {
         $this->emit('modal-hide-inters-visitors-validated');
         $this->InterActiveMenu();
-
     }
 
     public function TransactionHide()
     {
         $this->emit('modal-hide-transfers-visitors-validated');
         $this->TransactionActiveMenu();
-
     }
 
 
@@ -1850,208 +1846,156 @@ class TransferVisitors extends Component
         if ($this->searchTransaction != '') {
             $this->resetPage();
 
-            $transaction
-                ->orwhereHas('transaction', function ($query) {
-                    $query->where(
-                        'operator_transaction_name',
-                        'like',
-                        '%' . $this->searchTransaction . '%'
-                    )
-                        ->orWhere(
-                            'transaction_id',
-                            'like',
-                            '%' . $this->searchTransaction . '%'
-                        )
-                        ->orWhere(
-                            'trans_comp_id',
-                            'like',
-                            '%' . $this->searchTransaction . '%'
-                        );
-                })
+            $transaction->where(
+                'amount',
+                'like',
+                '%' . $this->searchTransaction . '%'
+            )
                 ->orWhere(
-                    'wallet_transactions.amount',
+                    'num_wallet',
                     'like',
                     '%' . $this->searchTransaction . '%'
                 )
                 ->orWhere(
-                    'wallet_transactions.num_wallet',
+                    'phone',
+                    'like',
+                    '%' . $this->searchTransaction . '%'
+                )->orWhere(
+                    'name_complet',
+                    'like',
+                    '%' . $this->searchTransaction . '%'
+                )->orWhere(
+                    'phone_benef',
                     'like',
                     '%' . $this->searchTransaction . '%'
                 )
-                ->orWhere(
-                    'wallet_transactions.phone',
-                    'like',
-                    '%' . $this->searchTransaction . '%'
-                )
-                ->where('wallet_transactions.status', 'PENDING');
 
-            $this->emit('menu-transaction-active');
+                ->where('status', 'PENDING');
+
+            $this->TransactionActiveMenu();
         }
 
 
         if ($this->seachXbet != '') {
             $this->resetPage();
 
-            $xbet
-                ->orwhereHas('one_bet_transactions', function ($query) {
-                    $query->where(
-                        'operator_transaction_name',
-                        'like',
-                        '%' . $this->seachXbet . '%'
-                    )
-                        ->orWhere(
-                            'transaction_id',
-                            'like',
-                            '%' . $this->seachXbet . '%'
-                        )
-                        ->orWhere(
-                            'trans_comp_id',
-                            'like',
-                            '%' . $this->seachXbet . '%'
-                        );
-                })
+            $xbet->where(
+                'amount',
+                'like',
+                '%' . $this->seachXbet . '%'
+            )
                 ->orWhere(
-                    'wallet_xbets.amount',
+                    'code_drawal',
                     'like',
                     '%' . $this->seachXbet . '%'
                 )
                 ->orWhere(
-                    'wallet_xbets.code_drawal',
+                    'number_compte',
                     'like',
                     '%' . $this->seachXbet . '%'
                 )
                 ->orWhere(
-                    'wallet_xbets.number_compte',
+                    'full_name',
+                    'like',
+                    '%' . $this->seachXbet . '%'
+                )->orWhere(
+                    'phone',
                     'like',
                     '%' . $this->seachXbet . '%'
                 )
-                ->orWhere(
-                    'wallet_xbets.full_name',
-                    'like',
-                    '%' . $this->seachXbet . '%'
-                )
-                ->where('wallet_xbets.status', 'PENDING');
+                ->where('status', 'PENDING');
 
-            $this->emit('menu-xbet-active');
+            $this->XbetActiveMenu();
         }
 
         if ($this->searchInter != '') {
             $this->resetPage();
 
-            $inter_search
-                ->orwhereHas('transactionInter', function ($query) {
-                    $query
-                        ->where(
-                            'operator_transaction_name',
-                            'like',
-                            '%' . $this->searchInter . '%'
-                        )
-                        ->orWhere(
-                            'transaction_id',
-                            'like',
-                            '%' . $this->searchInter . '%'
-                        )
-                        ->orWhere(
-                            'trans_comp_id',
-                            'like',
-                            '%' . $this->searchInter . '%'
-                        );
-                })
+            $inter_search->where(
+                'amount',
+                'like',
+                '%' . $this->searchInter . '%'
+            )
                 ->orWhere(
-                    'wallet_inters.amount',
+                    'number_compte',
                     'like',
                     '%' . $this->searchInter . '%'
                 )
                 ->orWhere(
-                    'wallet_inters.number_compte',
+                    'phone',
+                    'like',
+                    '%' . $this->searchInter . '%'
+                )->orWhere(
+                    'name_benef',
+                    'like',
+                    '%' . $this->searchInter . '%'
+                )->orWhere(
+                    'phone_benef',
                     'like',
                     '%' . $this->searchInter . '%'
                 )
-                ->orWhere(
-                    'wallet_inters.phone',
-                    'like',
-                    '%' . $this->searchInter . '%'
-                )
-                ->where('wallet_inters.status', 'PENDING');
+                ->where('status', 'PENDING');
 
-            $this->emit('menu-inters-active');
+            $this->InterActiveMenu();
         }
 
         if ($this->searchReloadCard != '') {
+
             $this->resetPage();
 
-            $reload_card
-                ->orwhereHas('deposit', function ($query) {
-                    $query->where(
-                        'operator_transaction_name',
-                        'like',
-                        '%' . $this->searchReloadCard . '%'
-                    )
-                        ->orWhere(
-                            'transaction_id',
-                            'like',
-                            '%' . $this->searchReloadCard . '%'
-                        )
-                        ->orWhere(
-                            'trans_comp_id',
-                            'like',
-                            '%' . $this->searchReloadCard . '%'
-                        );
-                })
+            $reload_card->where(
+                'amount',
+                'like',
+                '%' . $this->searchReloadCard . '%'
+            )
                 ->orWhere(
-                    'wallet_deposits.amount',
+                    'num_carte',
                     'like',
                     '%' . $this->searchReloadCard . '%'
                 )
                 ->orWhere(
-                    'wallet_deposits.num_carte',
+                    'name',
+                    'like',
+                    '%' . $this->searchReloadCard . '%'
+                )->orWhere(
+                    'phone',
                     'like',
                     '%' . $this->searchReloadCard . '%'
                 )
                 ->orWhere(
-                    'wallet_deposits.name',
+                    'last_digits',
                     'like',
                     '%' . $this->searchReloadCard . '%'
                 )
-                ->where('wallet_deposits.status', 'PENDING');
+                ->where('status', 'PENDING');
 
-            $this->emit('menu-reloadCarte-active');
+            $this->ReloadCardActiveMenu();
         }
 
         if ($this->searchPhoneCredit != '') {
             $this->resetPage();
 
-            $phone_credit
-                ->orwhereHas('paymentPhone', function ($query) {
-                    $query->where(
-                        'operator_transaction_name',
-                        'like',
-                        '%' . $this->searchPhoneCredit . '%'
-                    )
-                        ->orWhere(
-                            'transaction_id',
-                            'like',
-                            '%' . $this->searchPhoneCredit . '%'
-                        )
-                        ->orWhere(
-                            'trans_comp_id',
-                            'like',
-                            '%' . $this->searchPhoneCredit . '%'
-                        );
-                })
+            $phone_credit->where(
+                'amount',
+                'like',
+                '%' . $this->searchPhoneCredit . '%'
+            )
                 ->orWhere(
-                    'wallet_phone_credits.amount',
+                    'phone',
+                    'like',
+                    '%' . $this->searchPhoneCredit . '%'
+                )->orWhere(
+                    'phone_benef',
+                    'like',
+                    '%' . $this->searchPhoneCredit . '%'
+                )->orWhere(
+                    'name_benef',
                     'like',
                     '%' . $this->searchPhoneCredit . '%'
                 )
-                ->orWhere(
-                    'wallet_phone_credits.phone',
-                    'like',
-                    '%' . $this->searchPhoneCredit . '%'
-                )
-                ->where('wallet_phone_credits.status', 'PENDING');
+                ->where('status', 'PENDING');
 
-            $this->emit('menu-phoneCredit-active');
+            $this->phoneCreditActiveMenu();
         }
 
 

@@ -13,11 +13,11 @@
                     </div>
                     <div class="footer-widget links-widget ">
                         <ul>
-                            <li><a href="#" class="style_footer" >Recharger une carte Visa/Master Carte</a></li>
-                            <li><a href="#" class="style_footer" >Recharger une carte Push</a></li>
-                            <li><a href="#" class="style_footer" >Transfert et paiment de credit</a></li>
-                            <li><a href="#" class="style_footer" >Récharger mon compte ROBUS</a></li>
-                            <li><a href="#" class="style_footer" >Récharger mon compte 1XBET</a></li>
+                            <li><a href="{{ route('web.transactions_reloads') }}" class="style_footer" >Récharger une carte Visa/Master Card</a></li>
+                            <li><a href="{{ route('web.transactions_pushs') }}" class="style_footer" >Récharger une carte Push</a></li>
+                            <li><a href="{{ route('web.transactions_transactions') }}" class="style_footer" >Transfert et paiement de crédit</a></li>
+                            <li><a href="{{ route('web.transactions_robus') }}" class="style_footer" >Récharger mon compte ROBUS</a></li>
+                            <li><a href="{{ route('web.transactions_xbets') }}" class="style_footer" >Récharger mon compte 1XBET</a></li>
                         </ul>
 
                     </div>
@@ -104,5 +104,4 @@
     </div>
 
 </footer>
-</div>
 <!--End pagewrapper-->

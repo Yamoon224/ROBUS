@@ -9,7 +9,8 @@
 <script src="{{ asset_url('web/js/popper.min.js') }}"></script>
 {{-- <script src=" {{ asset_url('web/js/bootstrap.min.js') }}"></script> --}}
 <script src=" {{ asset_url('web/js/bootstrap.bundle.min.js') }}"></script>
-
+<script src="{{ asset_url('dist/plugins/toastr/js/toastr.min.js') }}"></script>
+<script src="{{ asset_url('dist/plugins/toastr/js/toastr.init.js') }}"></script>
 <script>
     $.ajaxSetup({
         headers: {

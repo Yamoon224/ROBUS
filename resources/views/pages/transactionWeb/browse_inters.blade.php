@@ -6,13 +6,13 @@
     <section class="page-title animate__animated animate__slideInDown"
         style="background-image:url(https://robus.home.ci/public/dist/images/transaction_money.jpeg);">
         <div class="container text-center text-white">
-            <h1 class="text-black">TRANSFERT A L'INTERNATIONAL</h1>
+            <h1 class="text-black" style="color: black">TRANSFERT A L'INTERNATIONAL</h1>
         </div>
 
     </section>
 
 
-    <section class="contact-info-section" style="margin-top:-8%">
+    <section class="contact-info-section style_percent">
 
         <div class="container">
             <div class="row ">
@@ -121,7 +121,7 @@
                                 </div>
 
                                 <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black">Montant(min : 2000Fcfa / max : 500.000Fcfa )
+                                    <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
                                         <span class="text-danger"> *</span></label>
                                     <input type="number" class="form-control" maxlength="10" name="amount"
                                         placeholder="Ex: 2400" required="">

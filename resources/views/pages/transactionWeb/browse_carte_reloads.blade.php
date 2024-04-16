@@ -12,7 +12,7 @@
     </section>
 
 
-    <section class="contact-info-section" style="margin-top:-8%">
+    <section class="contact-info-section style_percent" >
 
         <div class="container">
             <div class="row ">
@@ -35,7 +35,7 @@
                                         placeholder="Ex: 12345566776 ..." required="">
                                 </div>
                                 <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <label class="mb-2 font-14 bold black" for="all_name">Nom et prenom sur la carte <span
+                                    <label class="mb-2 font-14 bold black" for="all_name">Nom et prénom sur la carte <span
                                             class="text-danger"> *</span></label>
                                     <input type="text" name="all_name" class="form-control"
                                         placeholder="Ex: KONAN Franck ..." required="">
@@ -56,7 +56,7 @@
                                 </div>
 
                                 <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black" for="provider">Carte a recharger <span
+                                    <label class="mb-2 font-14 bold black" for="provider">Carte a récharger <span
                                             class="text-danger">
                                             *</span></label>
 
@@ -71,7 +71,7 @@
                                 </div>
 
                                 <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black">Montant(min : 2000Fcfa / max : 500.000Fcfa )
+                                    <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
                                         <span class="text-danger"> *</span></label>
                                     <input type="number" class="form-control" maxlength="10" name="amount"
                                         placeholder="Ex: 2400" required="">

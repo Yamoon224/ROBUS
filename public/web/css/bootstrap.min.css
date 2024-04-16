@@ -4536,8 +4536,8 @@ fieldset:disabled .btn {
   padding: .25rem .75rem;
   font-size: 1.25rem;
   line-height: 1;
-  background-color: transparent;
-  border: 1px solid transparent;
+  background-color: #f8a21f;
+  border: 1px solid #f8a21f;
   border-radius: .25rem;
   transition: box-shadow .15s ease-in-out
 }
@@ -4825,22 +4825,29 @@ fieldset:disabled .btn {
 }
 
 .navbar-dark .navbar-nav .nav-link {
-  color: rgba(255, 255, 255, .55)
+  color: black;
+  font-weight: bold;
 }
 
-.navbar-dark .navbar-nav .nav-link:focus,
-.navbar-dark .navbar-nav .nav-link:hover {
-  color: rgba(255, 255, 255, .75)
+.navbar-dark .navbar-nav .nav-link:focus, .navbar-dark .navbar-nav .nav-link:hover {
+  color: white;
+  background-color: #f8a11e;
+  font-weight: 400;
+  height: 160% !important;
+  margin-left: 1px !important;
+  margin-right: 1px !important;
 }
 
 .navbar-dark .navbar-nav .nav-link.disabled {
-  color: rgba(255, 255, 255, .25)
+  color: rgba(255, 255, 255, .25);
+  font-weight: 400;
 }
 
 .navbar-dark .navbar-nav .nav-link.active,
 .navbar-dark .navbar-nav .show>.nav-link {
   color: #fff ;
-  background-color: #f8a11e;
+  background-color: #a30071;
+  height: 160%;
 }
 
 .navbar-dark .navbar-toggler {

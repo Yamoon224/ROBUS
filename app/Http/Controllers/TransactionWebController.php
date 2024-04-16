@@ -297,16 +297,13 @@ class TransactionWebController extends Controller
 
                     $response = $this->reloadCardService->updateamountReloadCardReceveid($admin_civ, $amount_admin, $walletReloadCard);
 
-                    $msg = "Votre demande a crée avec succès";
-                    $color = 'success';
-
-            event(new CreateWalletReloadCardVisEvent($walletReloadCard));
+                    event(new CreateWalletReloadCardVisEvent($walletReloadCard));
 
                     if ($response['success']) {
 
                         $this->notificationOrderCard->sendNotificationReloadCard($walletReloadCard);
 
-                        return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/')->with('color', $color)->with('status', $msg);
+                        return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
                     } else {
 
                         return back()
@@ -347,6 +344,10 @@ class TransactionWebController extends Controller
         try {
 
 
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Error du montant Admin !')
+                ->withInput();
             $validator = Validator::make(
 
                 $request->all(),
@@ -407,7 +408,7 @@ class TransactionWebController extends Controller
 
                         $this->notificationOrderCard->sendNotificationTransactiobWeb($walletTransaction);
 
-                        return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/')->with('color', $color)->with('status', $msg);
+                        return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
                     } else {
 
                         return back()
@@ -434,7 +435,6 @@ class TransactionWebController extends Controller
         } catch (\Exception $exception) {
 
             return back()
-                ->withErrors($validator)
                 ->with('color', 'danger')
                 ->with('status', 'Erreur de la demande')
                 ->withInput();
@@ -501,14 +501,14 @@ class TransactionWebController extends Controller
                     $msg = "Votre demande a crée avec succès";
                     $color = 'success';
 
-            event(new CreateWalletOneXbetVisEvent($walletTransaction));
+                    event(new CreateWalletOneXbetVisEvent($walletTransaction));
 
 
                     if ($response['success']) {
 
                         $this->notificationOrderCard->sendNotificationTransactionXBetWeb($walletTransaction);
 
-                        return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/')->with('color', $color)->with('status', $msg);
+                        return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
                     } else {
 
                         return back()
@@ -546,7 +546,7 @@ class TransactionWebController extends Controller
     {
         $admin_civ = $this->validatedamountDays->adminCiv();
 
-         try {
+        try {
 
 
             $validator = Validator::make(
@@ -621,7 +621,7 @@ class TransactionWebController extends Controller
                 'sendNotificationTransactionPhoneCreditWeb';
 
             $this->notificationOrderCard->$notificationMethod($walletTransaction);
-            return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/')->with('color', 'success')->with('status', 'Votre demande a été créée avec succès');
+            return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
         } catch (\Exception $exception) {
 
             return back()
@@ -698,7 +698,7 @@ class TransactionWebController extends Controller
 
             $this->notificationOrderCard->sendNotificationTransactiobWeb($walletTransaction);
 
-            return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/')->with('color', 'success')->with('status', 'Votre demande a été créée avec succès');
+            return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
         } catch (\Exception $exception) {
 
             return back()
@@ -713,10 +713,10 @@ class TransactionWebController extends Controller
     {
         $admin_civ = $this->validatedamountDays->adminCiv();
 
-         try {
+        try {
 
 
-            
+
 
             $validator = Validator::make(
 
@@ -750,13 +750,13 @@ class TransactionWebController extends Controller
                     ->withInput();
             }
 
-          $country_robus = Country::whereId($request->country_id)->first();
+            $country_robus = Country::whereId($request->country_id)->first();
 
-          $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+            $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-           $percentRobus = $this->percentRobus->getRobusPercentageInterWeb($request->country_id);
-           
-           if (!$percentRobus) {
+            $percentRobus = $this->percentRobus->getRobusPercentageInterWeb($request->country_id);
+
+            if (!$percentRobus) {
                 return back()->with('color', 'danger')->with('status', 'Erreur de pourcentage')->withInput();
             }
 
@@ -765,7 +765,7 @@ class TransactionWebController extends Controller
             $amountCost = $amountProvider + $amountAdmin;
             $amountReceived = $reel_amount - $amountCost;
 
-            $walletInter =  $this->reloadCardService->createMobileWalletInter($request->amount, $percentRobus , $country_robus, $request->provider , $request->my_phone , $request->phone_benef ,  $request->name_expeditor  , $request->name_benef , $amountCost  , $amountReceived);
+            $walletInter =  $this->reloadCardService->createMobileWalletInter($request->amount, $percentRobus, $country_robus, $request->provider, $request->my_phone, $request->phone_benef,  $request->name_expeditor, $request->name_benef, $amountCost, $amountReceived);
 
             if (!$walletInter) {
                 return back()->with('color', 'danger')->with('status', 'Erreur de création de transfert du montant!')->withInput();
@@ -781,7 +781,7 @@ class TransactionWebController extends Controller
 
             $this->notificationOrderCard->sendNotificationTransactionInterWeb($walletInter);
 
-            return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/')->with('color', 'success')->with('status', 'Votre demande a été créée avec succès');
+            return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
         } catch (\Exception $exception) {
 
             return back()

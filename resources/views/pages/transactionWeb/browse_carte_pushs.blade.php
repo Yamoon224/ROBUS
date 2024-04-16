@@ -12,7 +12,7 @@
     </section>
 
 
-    <section class="contact-info-section" style="margin-top:-8%">
+    <section class="contact-info-section style_percent">
 
         <div class="container">
             <div class="row ">
@@ -28,7 +28,7 @@
 
                             <div class="row g-2">
                                 <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black" for="provider">Carte a recharger : <span
+                                    <label class="mb-2 font-14 bold black" for="provider">Carte a récharger : <span
                                             class="badge bg-info text-dark style_span text-white">{{ $carte_reloads->name ?? null }}</span></label>
 
                                 </div>
@@ -54,7 +54,7 @@
                                 </div>
 
                                 <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black">Montant(min : 2000Fcfa / max : 500.000Fcfa )
+                                    <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
                                         <span class="text-danger"> *</span></label>
                                     <input type="number" class="form-control" maxlength="10" name="amount"
                                         placeholder="Ex: 2400" required="">

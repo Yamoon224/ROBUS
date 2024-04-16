@@ -15,33 +15,33 @@
         <div class="collapse navbar-collapse margin-menu" id="navbarCollapse">
             <ul class="navbar-nav me-auto mb-2 mb-md-0">
                 <li class="nav-item">
-                    <a class="nav-link text-white" aria-current="page" href="https://robus.africa/">Acceuil</a>
+                    <a class="nav-link " aria-current="page" href="https://robus.africa/">Acceuil</a>
                 </li>
                 <li class="nav-item dropdown ">
-                    <a class="nav-link dropdown-toggle text-white {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'show' : '' }}" href="#" id="dropdown10"
+                    <a class="nav-link dropdown-toggle  {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'show' : '' }}" href="#" id="dropdown10"
                         data-bs-toggle="dropdown" aria-expanded="{{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'true' : 'false' }}">Récharger ma carte</a>
                     <ul class="dropdown-menu {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'show' : '' }}" aria-labelledby="dropdown10" data-bs-popper="{{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'none' : '' }}">
                         <li>
                             <a class="dropdown-item {{ $route == 'web.transactions_reloads' ? 'active' : '' }}" href="{{ route('web.transactions_reloads') }}">Carte Visa/Master
-                                Carte</a></li>
+                                Card</a></li>
                         <li><a class="dropdown-item {{  $route == 'web.transactions_pushs' ? 'active' : '' }}" href="{{ route('web.transactions_pushs') }}">Carte PUSH</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-white {{ $route == 'web.transactions_transactions' ? 'active' : '' }}"
-                        href="{{ route('web.transactions_transactions') }}">Transfert et paiment de
-                        credit</a>
+                    <a class="nav-link  {{ $route == 'web.transactions_transactions' ? 'active' : '' }}"
+                        href="{{ route('web.transactions_transactions') }}">Transfert et paiement de
+                        crédit</a>
                 </li>
 
-                <li class="nav-item"><a class="nav-link text-white {{ $route == 'web.transactions_robus' ? 'active' : '' }}"
+                <li class="nav-item"><a class="nav-link  {{ $route == 'web.transactions_robus' ? 'active' : '' }}"
                         href="{{ route('web.transactions_robus') }}">Récharger mon compte ROBUS</a></li>
-                <li class="nav-item"><a class="nav-link  text-white {{ $route == 'web.transactions_xbets' ? 'active' : '' }}"
+                <li class="nav-item"><a class="nav-link   {{ $route == 'web.transactions_xbets' ? 'active' : '' }}"
                         href="{{ route('web.transactions_xbets') }}">Récharger mon compte 1XBET</a></li>
 
-                        <li class="nav-item"><a class="nav-link  text-white {{ $route == 'web.transactions_inters' ? 'active' : '' }}"
+                        <li class="nav-item"><a class="nav-link   {{ $route == 'web.transactions_inters' ? 'active' : '' }}"
                             href="{{ route('web.transactions_inters') }}">Transfert a l'international</a></li>
                 <li class="nav-item">
-                    <a class="nav-link text-white " href="https://robus.africa/#contacts">Contact</a>
+                    <a class="nav-link  " href="https://robus.africa/#contacts">Contact</a>
                 </li>
             </ul>
         </div>
