@@ -13,8 +13,6 @@
 <link rel="stylesheet" href="{{ asset_url('web/css/bootstrap.min.css') }}">
 
 <link href="{{ asset_url('dist/plugins/toastr/css/toastr.min.css') }}" rel="stylesheet">
-
-
 <link rel="stylesheet" href="{{ asset_url('web/css/style.css') }}">
 <link rel="stylesheet" href="{{ asset_url('web/css/animation.css') }}">
 <link rel="stylesheet" href="{{ asset_url('web/css/font-awesome.css') }}">

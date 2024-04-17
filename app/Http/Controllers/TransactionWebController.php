@@ -2,16 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Console\Commands\CheckAppWeb;
 use App\Events\Visitors\CreateWalletInterVisEvent;
 use App\Events\Visitors\CreateWalletOneXbetVisEvent;
 use App\Events\Visitors\CreateWalletReloadCardVisEvent;
 use App\Events\Visitors\CreateWalletTransfersVisEvent;
 use App\Http\Controllers\Controller;
+use App\Http\Services\AuthenticationService;
 use App\Http\Services\NotificationWebService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\ProvidersService;
 use App\Http\Services\TransactionWebService;
 use App\Http\Services\ValidateDailyLimitService;
+use App\Models\AppWebStatus;
 use App\Models\Costs\DepositCost;
 use App\Models\Costs\PhoneCreditCost;
 use App\Models\Costs\TransactionCost;
@@ -21,6 +24,8 @@ use App\Models\Providers\Provider;
 use App\Models\Wallets\Wallet;
 use App\Repositories\ReloadCardRepository;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Validator;
 
 
@@ -36,6 +41,8 @@ class TransactionWebController extends Controller
     protected $notificationOrderCard;
     protected $reloadCardService;
     protected $providersService;
+    private $authService;
+    protected $appStatusResult;
 
     public function __construct(
         ReloadCardRepository $reload_cardReposi,
@@ -44,6 +51,7 @@ class TransactionWebController extends Controller
         PercentRobusAuthService $percentRobus,
         ValidateDailyLimitService $validatedamountDays,
         ProvidersService $providersService,
+        AuthenticationService $authService
 
     ) {
         $this->reloadCardRepository = $reload_cardReposi;
@@ -52,6 +60,13 @@ class TransactionWebController extends Controller
         $this->percentRobus = $percentRobus;
         $this->validatedamountDays = $validatedamountDays;
         $this->providersService = $providersService;
+        $this->authService = $authService;
+        $this->appStatusResult = Cache::get('app_status_result');
+   
+        if (!$this->appStatusResult) {
+            $this->appStatusResult = $this->authService->appDispoWebRobus(AppWebStatus::class);
+            Cache::put('app_status_result', $this->appStatusResult, now()->addMinutes(20)); // Mettre en cache pendant 60 minutes
+        }
     }
 
     /**
@@ -61,6 +76,8 @@ class TransactionWebController extends Controller
      */
     public function transactions_reloads()
     {
+
+        // Artisan::queue(CheckAppWeb::class);
 
         $deposit_cost = DepositCost::whereIsWeb(true)->first();
 
@@ -75,7 +92,14 @@ class TransactionWebController extends Controller
 
         $calcul_valeurs = (float) $total_percent  / 100;
 
-        return view('pages.transactionWeb.browse_carte_reloads', compact('carte_percent', 'robus_percent', 'carte_reloads', 'total_percent', 'calcul_valeurs'));
+        return view('pages.transactionWeb.browse_carte_reloads', [
+            'appStatusResult' => $this->appStatusResult,
+            'carte_percent' => $carte_percent,
+            'robus_percent' => $robus_percent,
+            'carte_reloads' => $carte_reloads,
+            'total_percent' => $total_percent,
+            'calcul_valeurs' => $calcul_valeurs,
+        ]);
     }
 
 
@@ -111,7 +135,14 @@ class TransactionWebController extends Controller
 
         $calcul_valeurs = (float) $total_percent  / 100;
 
-        return view('pages.transactionWeb.browse_carte_pushs', compact('carte_percent', 'robus_percent', 'carte_reloads', 'total_percent', 'calcul_valeurs'));
+        return view('pages.transactionWeb.browse_carte_pushs', [
+            'appStatusResult' => $this->appStatusResult,
+            'carte_percent' => $carte_percent,
+            'robus_percent' => $robus_percent,
+            'carte_reloads' => $carte_reloads,
+            'total_percent' => $total_percent,
+            'calcul_valeurs' => $calcul_valeurs,
+        ]);
     }
 
 
@@ -128,8 +159,13 @@ class TransactionWebController extends Controller
 
         $calcul_valeurs = (float) $total_percent  / 100;
 
-
-        return view('pages.transactionWeb.browse_robus', compact('transaction_percent', 'robus_percent', 'total_percent', 'calcul_valeurs'));
+        return view('pages.transactionWeb.browse_robus', [
+            'appStatusResult' => $this->appStatusResult,
+            'robus_percent' => $robus_percent,
+            'total_percent' => $total_percent,
+            'calcul_valeurs' => $calcul_valeurs,
+            'transaction_percent' => $transaction_percent,
+        ]);
     }
 
     public function transactions_transactions()
@@ -162,7 +198,18 @@ class TransactionWebController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
-        return view('pages.transactionWeb.browse_deposits', compact('transaction_percent', 'robus_percent', 'total_percent', 'calcul_valeurs', 'providers', 'robus_percent_phone', 'total_percent_phone', 'calcul_valeur_phone', 'phone_percent'));
+        return view('pages.transactionWeb.browse_deposits', [
+            'appStatusResult' => $this->appStatusResult,
+            'robus_percent' => $robus_percent,
+            'total_percent' => $total_percent_phone,
+            'calcul_valeurs' => $calcul_valeurs,
+            'transaction_percent' => $transaction_percent,
+            'providers' => $providers,
+            'robus_percent_phone'  => $robus_percent_phone,
+            'total_percent_phone'  => $total_percent_phone,
+            'calcul_valeur_phone'  => $calcul_valeur_phone,
+            'phone_percent'  => $phone_percent,
+        ]);
     }
 
     /**
@@ -179,8 +226,10 @@ class TransactionWebController extends Controller
             ->orderBy('name', 'asc')
             ->get();
 
-
-        return view('pages.transactionWeb.browse_inters', compact('countries'));
+            return view('pages.transactionWeb.browse_inters', [
+                'appStatusResult' => $this->appStatusResult,
+                'countries' => $countries,
+            ]);
     }
 
     public function searchCountries($countryId)
@@ -214,7 +263,14 @@ class TransactionWebController extends Controller
 
         $calcul_valeurs = (float) $total_percent  / 100;
 
-        return view('pages.transactionWeb.browse_xbets', compact('transaction_percent', 'robus_percent', 'total_percent', 'calcul_valeurs'));
+
+        return view('pages.transactionWeb.browse_xbets', [
+            'appStatusResult' => $this->appStatusResult,
+            'robus_percent' => $robus_percent,
+            'total_percent' => $total_percent,
+            'calcul_valeurs' => $calcul_valeurs,
+            'transaction_percent' => $transaction_percent
+        ]);
     }
 
     public function transactions_payments()
@@ -344,10 +400,7 @@ class TransactionWebController extends Controller
         try {
 
 
-            return back()
-                ->with('color', 'danger')
-                ->with('status', 'Error du montant Admin !')
-                ->withInput();
+
             $validator = Validator::make(
 
                 $request->all(),
@@ -392,14 +445,11 @@ class TransactionWebController extends Controller
 
                 $amountReceved = $reel_amount - (float)$amount_cost;
 
-                $walletTransaction =  $this->reloadCardService->createRobusWalletTransactionMoneys($percent_robus, $request->provider, $request->amount, $request->all_name, $amount_cost, $request->my_phone,  $request->phone_benef, $amountReceved);
+                $walletTransaction =  $this->reloadCardService->createRobusWalletReloadPushCard($request->amount, $percent_robus, $amount_cost,  $request->num_carte, $request->all_name, $request->my_phone, $amountReceved);
 
                 if ($walletTransaction != null) {
 
-                    $response = $this->reloadCardService->updateamountTransactionReceveid($admin_civ, $amount_admin, $walletTransaction);
-
-                    $msg = "Votre demande a crée avec succès";
-                    $color = 'success';
+                    $response = $this->reloadCardService->updateamountReloadCardReceveid($admin_civ, $amount_admin, $walletTransaction);
 
                     event(new CreateWalletReloadCardVisEvent($walletTransaction));
 
@@ -498,8 +548,7 @@ class TransactionWebController extends Controller
 
                     $response = $this->reloadCardService->updateamount1XbetReceveid($admin_civ, $amount_admin, $walletTransaction);
 
-                    $msg = "Votre demande a crée avec succès";
-                    $color = 'success';
+                    $msg = "Votre demande a bien été reçue. Vous allez être redirigé vers l'appli Wave pour le paiement de " . $request->amount  .  " FCFA";
 
                     event(new CreateWalletOneXbetVisEvent($walletTransaction));
 
@@ -507,6 +556,8 @@ class TransactionWebController extends Controller
                     if ($response['success']) {
 
                         $this->notificationOrderCard->sendNotificationTransactionXBetWeb($walletTransaction);
+
+                        session()->flash('status', $msg);
 
                         return redirect('https://pay.wave.com/m/M_6A8Cl-gaA1Z7/c/ci/');
                     } else {

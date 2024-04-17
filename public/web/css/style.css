@@ -1,8 +1,119 @@
+    
+    /* Media query Mobile */
+    
+    /* Media query pour les appareils mobiles */
+@media screen and (max-width:  991.98px) {
+  .contact-info-section {
+      padding: 70px 0px 0px!important
+  }
+
+  .image_mobile {
+    width: 45% !important;
+    height: auto;
+}
+
+.w-100 {
+  width: 40% !important;
+  height: auto;
+}
+
+
+.btn-style-three {
+  position: relative;
+  padding: 7px 32px;
+  line-height: 24px;
+  text-transform: uppercase;
+  background: #a30071;
+  color: #ffffff !important;
+  font-size: 13px;
+  font-weight: 700;
+  border: 2px solid #a30071 !important;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 8px;
+  width: 100%;
+}
+
+.style_frais {
+  width: 70% !important;
+  margin-top: 10px !important;
+}
+
+.page-title {
+  position: relative !important;
+  background-attachment: fixed !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+  padding: 30% 0px 6% !important;
+}
+}
+
+
+.style_frais{
+  width: 30%; 
+  margin-top: 25px;
+}
+
+    .syle_logo_providers
+    {
+      object-fit: cover;
+       width: 25% !important ;
+    }
+
+    .w-70{
+      width: 70% !important;
+    }
+    
+    /* Style pour le bouton désactivé */
+    #submitButton:disabled {
+      background-color: #cccccc; /* Couleur de fond grise */
+      color: #666666; /* Couleur de texte grise */
+      cursor: not-allowed; /* Curseur non autorisé */
+  }
+
+  #submitButtonDeposit:disabled {
+      background-color: #cccccc; /* Couleur de fond grise */
+      color: #666666; /* Couleur de texte grise */
+      cursor: not-allowed; /* Curseur non autorisé */
+  }
+
+  #submitButtonPush:disabled {
+      background-color: #cccccc; /* Couleur de fond grise */
+      color: #666666; /* Couleur de texte grise */
+      cursor: not-allowed; /* Curseur non autorisé */
+  }
+
+  #submitButtonCard:disabled {
+      background-color: #cccccc; /* Couleur de fond grise */
+      color: #666666; /* Couleur de texte grise */
+      cursor: not-allowed; /* Curseur non autorisé */
+  }
+
+  #submitButtonRobus:disabled {
+      background-color: #cccccc; /* Couleur de fond grise */
+      color: #666666; /* Couleur de texte grise */
+      cursor: not-allowed; /* Curseur non autorisé */
+  }
+
+  #submitButtonInter:disabled {
+      background-color: #cccccc; /* Couleur de fond grise */
+      color: #666666; /* Couleur de texte grise */
+      cursor: not-allowed; /* Curseur non autorisé */
+  }
+
 .robus-footer{
 	position:relative;
 	color:#c9c9c9;
 	background-color:#a30071;
 	font-family:'Roboto',sans-serif;	
+}
+
+.fixe_percent {
+  display: none;
+}
+
+.fixe_percent_ {
+  display: none;
 }
 
 .style_percent{

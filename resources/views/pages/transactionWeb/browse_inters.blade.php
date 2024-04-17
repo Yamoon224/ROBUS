@@ -26,7 +26,21 @@
 
                             @csrf
 
-                            <div class="row g-2">
+                            
+                            <div class="row justify-content-center ">
+                                @foreach (getProviderInters() as $interProvider)
+                                    <div class="col-lg-2 col-md-12 mb-4 mb-lg-0 mb-3 mt-3">
+                                        <div class="bg-image hover-overlay image_mobile ripple shadow-1-strong rounded"
+                                            data-ripple-color="light">
+                                            <img src="{{ $interProvider->image ?? null }}" class="w-70" />
+                                           
+                                        </div>
+                                    </div>
+                                @endforeach
+
+                            </div>
+
+                            <div class="row g-2 mt-3">
 
                                 <div class="col-md-6 col-sm-6 col-xs-12">
                                     <label class="mb-2 font-14 bold black" for="name_expeditor">Nom et prénom expéditeur
@@ -123,8 +137,14 @@
                                 <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
                                     <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
                                         <span class="text-danger"> *</span></label>
-                                    <input type="number" class="form-control" maxlength="10" name="amount"
-                                        placeholder="Ex: 2400" required="">
+                                    <input type="number" class="form-control" id="montant_inter" maxlength="10"
+                                        name="amount" placeholder="Ex: 2400" required="">
+
+                                    <div class="mt-3">
+                                        <span class="badge bg-info text-dark style_span text-white mt-3 fixe_percent"
+                                             id="montantInfoInter">Montant (min : 2000Fcfa / max :
+                                            500.000Fcfa)</span>
+                                    </div>
                                 </div>
 
 
@@ -132,7 +152,7 @@
 
 
                                 <div class=" col-md-12 col-sm-12 col-xs-12 mt-3"><button type="submit"
-                                        class="theme-btn btn-style-three">Valider</button></div>
+                                        class="theme-btn btn-style-three" id="submitButtonInter" disabled >Valider</button></div>
 
                             </div>
                         </form>

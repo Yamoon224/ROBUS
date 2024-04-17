@@ -6,6 +6,7 @@ use App\Models\CloseApp;
 use Livewire\Component;
 use Livewire\WithPagination;
 
+
 class CloseRobus extends Component
 {
 

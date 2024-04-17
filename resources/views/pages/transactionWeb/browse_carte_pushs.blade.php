@@ -15,20 +15,34 @@
     <section class="contact-info-section style_percent">
 
         <div class="container">
+
             <div class="row ">
+
+
                 <div class="col-md-8 col-sm-10 col-xs-12">
+
                     <!-- Contact Form -->
                     <div class="contact-form">
+                       
 
                         <form method="POST" action="{{ route('web.transactions_push.stores') }}" method="post"
                             enctype="multipart/form-data" style="margin-bottom:5% ; background-color: #f0fcff !important;"
                             class="p-4 p-md-5 border rounded-3 bg-light">
 
                             @csrf
-
-                            <div class="row g-2">
+                            <div class="row justify-content-center">
+                                <div class="col-lg-4 col-md-12 mb-4 mb-lg-0 mb-3">
+                                    <div class="bg-image hover-overlay image_mobile ripple shadow-1-strong rounded"
+                                        data-ripple-color="light">
+                                        <img src="https://robus.home.ci/public/dist/providers/push.png" class="w-50 rounded-3 syle_logo_providers" />
+                                      
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-2 mt-3">
                                 <div class="col-md-12 col-sm-12 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black" for="provider">Carte a récharger : <span
+                                    <label class="mb-2 font-14 bold black" for="provider">Carte a récharger :
+                                        <span
                                             class="badge bg-info text-dark style_span text-white">{{ $carte_reloads->name ?? null }}</span></label>
 
                                 </div>
@@ -56,15 +70,22 @@
                                 <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
                                     <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
                                         <span class="text-danger"> *</span></label>
-                                    <input type="number" class="form-control" maxlength="10" name="amount"
-                                        placeholder="Ex: 2400" required="">
+                                    <input type="number" class="form-control" id="montant_push" maxlength="10"
+                                        name="amount" placeholder="Ex: 2400" required="">
+
+                                    <div class="mt-3">
+                                        <span class="badge bg-info text-dark style_span text-white mt-3 fixe_percent"
+                                            id="montantInfoPush">Montant (min : 2000Fcfa / max :
+                                            500.000Fcfa)</span>
+                                    </div>
                                 </div>
 
                                 @include('layouts.shared_web.frais')
 
 
                                 <div class=" col-md-12 col-sm-12 col-xs-12 mt-3"><button type="submit"
-                                        class="theme-btn btn-style-three">Valider</button></div>
+                                        class="theme-btn btn-style-three" id="submitButtonPush" disabled>Valider</button>
+                                </div>
 
                             </div>
                         </form>

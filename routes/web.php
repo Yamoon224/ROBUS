@@ -92,7 +92,6 @@ Route::group(['prefix' => ''], function () {
             Route::post('/updateProfil',  [AdminController::class, 'updateProfil'])->name('account.update');
             Route::post('update-password', [AdminController::class, 'UpdatePassword'])->name('account.security.update');
             Route::get('gains/comissions', [AdminController::class, 'browse_gain'])->name('admin.browse_gain');
-            Route::get('gains/comissions_visitors', [AdminController::class, 'browse_gain_visitors'])->name('visitors.admin.browse_gain');
             Route::get('gains/distributers', [AdminController::class, 'browse_gain_distributer'])->name('admin.browse_gain_distributer');
             Route::get('gains/under_distributers', [AdminController::class, 'browse_gain_under_distributer'])->name('admin.browse_gain_under_distributer');
 
@@ -184,7 +183,6 @@ Route::group(['prefix' => ''], function () {
         //   Transactions
         Route::prefix('transactions')->group(function () {
             Route::get('/browse', [TransactionController::class, 'browse'])->name('transactions.browse');
-            Route::get('/visitors', [TransactionController::class, 'browse_visitors'])->name('transactions.visitors');
             Route::get('/uv', [TransactionController::class, 'browse_uv'])->name('transactions.uv.browse');
             Route::get('/show/{id}', [TransactionController::class, 'show'])->name('transactions.show');
             Route::get('/read/{id}/delete', [TransactionController::class, 'delete'])->name('transactions.delete');
@@ -192,7 +190,6 @@ Route::group(['prefix' => ''], function () {
 
         Route::prefix('historiques')->group(function () {
             Route::get('/historicals/browse', [TransactionController::class, 'browse_historique'])->name('transactions.historiques');
-            Route::get('/historicals/visitors', [TransactionController::class, 'browse_historique_visitors'])->name('transactions.historiques.visitors');
         });
 
 
@@ -218,11 +215,8 @@ Route::group(['prefix' => ''], function () {
             Route::get('/add',  [ServiceController::class, 'add'])->name('services.add');
             Route::post('/store',  [ServiceController::class, 'store'])->name('services.store');
             Route::get('/browse',  [ServiceController::class, 'browse'])->name('services.browse');
-            Route::get('/visitors',  [ServiceController::class, 'browse_visitores'])->name('services.browse_visitores');
             Route::get('/show/{id}',  [ServiceController::class, 'edit'])->name('services.edit');
-            Route::get('/showVisitors/{id}',  [ServiceController::class, 'edit_visitors'])->name('services.edit_visitors');
             Route::post('/update/{id}',  [ServiceController::class, 'update'])->name('services.update');
-            Route::post('/update_web/{id}',  [ServiceController::class, 'updateWeb'])->name('services.update.web');
             Route::get('/offers',  [ServiceController::class, 'browse_offers'])->name('services.offers.browse');
         });
         // Countries Modify
@@ -232,9 +226,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/currencies',  [CountrieController::class, 'currencies'])->name('currencies.browse');
         });
 
-        Route::group(['prefix' => 'visitors'], function () {
-            Route::get('/countries',  [CountrieController::class, 'browse_visitors'])->name('countries.visitors');
-        });
+    
 
         //   Costs Commissions
         Route::prefix('commissions')->group(function () {
@@ -284,11 +276,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/asie', [CommissionController::class, 'browse_asie'])->name('commissions.asie');
         });
 
-        // New version
 
-        Route::prefix('pays_visitors')->group(function () {
-            Route::get('/visitors', [CommissionController::class, 'browse_visitors'])->name('commissions.browse_visitors');
-        });
 
         //contacts
         Route::prefix('contacts')->group(function () {
@@ -314,6 +302,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/browse',  [ServiceController::class, 'browse_close_app'])->name('close_app.browse');
             Route::get('/browse_masters',  [ServiceController::class, 'browse_close_app_masters'])->name('browse_close_app_masters.browse');
             Route::get('/browse_comzones',  [ServiceController::class, 'browse_close_app_comzones'])->name('browse_close_app_comzones.browse');
+            Route::get('/browse_visitors',  [ServiceController::class, 'browse_close_app_visitors'])->name('browse_close_app_visitors.browse');
         });
 
         //Invoices
@@ -331,6 +320,7 @@ Route::group(['prefix' => ''], function () {
 
         //Historical
         Route::prefix('historicals')->group(function () {
+
             Route::get('/reloads_historical', [HistoricalController::class, 'browse_reload'])->name('relaods.historical');
             Route::get('/transfers_historical', [HistoricalController::class, 'browse_transferfirm'])->name('transfers.historical');
             Route::get('/paiements_historical', [HistoricalController::class, 'browse_paiement'])->name('paiements.historical');
@@ -352,13 +342,6 @@ Route::group(['prefix' => ''], function () {
             Route::get('/xbet_historical', [HistoricalController::class, 'browse_xbets'])->name('xbets.historical');
             Route::get('/wave_historical', [HistoricalController::class, 'browse_waves'])->name('waves.historical');
             Route::get('/drawer_historical', [HistoricalController::class, 'browse_drawer'])->name('drawers.historical');
-
-            // Visitors Historicals
-            Route::get('visitors/inters_historical', [HistoricalController::class, 'browse_inter_visitors'])->name('visitors.inters.historical');
-            Route::get('visitors/cartes_historical', [HistoricalController::class, 'browse_carte_visitors'])->name('visitors.cartes.historical');
-            Route::get('visitors/phone_historical', [HistoricalController::class, 'browse_phone_visitors'])->name('visitors.phones.historical');
-            Route::get('visitors/xbet_historical', [HistoricalController::class, 'browse_xbets_visitors'])->name('visitors.xbets.historical');
-            Route::get('visitors/transfers_historical', [HistoricalController::class, 'browse_transfert_visitors'])->name('visitors.transfers.historical');
 
         });
 
@@ -446,6 +429,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('waves/reporting_wave_historical/{id}', [AdminHistoriqueController::class, 'reporting_wa ve_historical'])->name('waves.historical.reporting_wave_historical.admins');
             Route::get('inters/reporting_inter_historical/{id}', [AdminHistoriqueController::class, 'reporting_inter_historical'])->name('inters.historical.reporting_inter_historical.admins');
             // Reporting in date transactions
+          
             Route::get('inter_days/reporting_inter_days_historical', [AdminHistoriqueController::class, 'searchByIntersDate'])->name('inters.historical.reporting_inter_days_historical.admins');
             Route::get('transactions_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByTransactionsDate'])->name('inters.historical.reporting_transaction_days_historical.admins');
             Route::get('payment_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByPaymentsDate'])->name('inters.historical.reporting_payment_days_historical.admins');
@@ -462,19 +446,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('drawer_under_distributer/reporting_drawer_historical/{id}', [AdminHistoriqueController::class, 'reporting_drawer_historical'])->name('transfers.historical.reporting_drawer_historical.admins');
         });
 
-        // New web Visitors
-        Route::prefix('distributers_visitors')->group(function () {
-
-            Route::get('/wallet_transactions/{key}', [CountrieController::class, 'show_visitors_transaction'])->name('visitors.countries.transactions.Show_visitors_distributer');
-            Route::get('/wallet_deposits/{key}', [CountrieController::class, 'show_visitors_deposit'])->name('visitors.countries.deposits.Show_visitors_distributer');
-            Route::get('/wallet_inters/{key}', [CountrieController::class, 'show_visitors_inter'])->name('visitors.countries.inters.Show_visitors_distributer');
-            Route::get('/wallet_phones/{key}', [CountrieController::class, 'show_visitors_phone'])->name('visitors.countries.phones.Show_visitors_distributer');
-            Route::get('/wallet_xbest/{key}', [CountrieController::class, 'show_visitors_xbets'])->name('visitors.countries.xbets.Show_visitors_distributer');
-    
-    
-            Route::get('/view/{key}', [CountrieController::class, 'Show_distri_visitors_distributer'])->name('visitors.countries.Show_distri_distributer');
-    
-        });
+       
     });
 });
 
@@ -533,6 +505,14 @@ Route::get('/reads_applications', function () {
     Artisan::call('app:close-status');
     Artisan::call('close-comzone-status');
     Artisan::call('app:master-status');
+
+
+    return 'Artisan commands executed successfully.';
+});
+
+Route::get('/reads_application_web', function () {
+
+    Artisan::call('app:close-web-status');
 
 
     return 'Artisan commands executed successfully.';

@@ -46,7 +46,6 @@ class CloseAppMasters extends Component
     }
 
 
-
     public function updateApp()
     {
         $this->validate();

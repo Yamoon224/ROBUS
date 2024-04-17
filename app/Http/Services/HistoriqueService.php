@@ -61,7 +61,7 @@ class HistoriqueService
 
     public function getCountWalletCountSuccess($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type, $wallet_id, $countrie, $wallet_success, $status)
     {
-       
+
         $results =  AdminsCom::join($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
             ->join('wallets', 'wallets.id', $wallet_id)
             ->where('wallets.country_id', $countrie)
@@ -76,7 +76,7 @@ class HistoriqueService
 
     public function getCountWalletVisitorsCountSuccess($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type, $wallet_success, $status)
     {
-       
+
         $results =  AdminsCom::join($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
             ->where($wallet_success, $status)
             ->where('admins_coms.is_web', true)
@@ -94,7 +94,7 @@ class HistoriqueService
             ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
             ->where('sid_users.is_under_distributer', true)
             ->where('wallets.country_id', $countryId)
-            ->where($wallet_commission, '!=', 0)
+            ->where($wallet_commission, '>', 0) // Condition modifiée pour exclure les montants nuls
             ->where($wallet_success, 'SUCCESS')
             ->groupBy($wallet_created)
             ->sum($wallet_commission);

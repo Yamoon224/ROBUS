@@ -106,8 +106,36 @@ function getReloadCartes()
         ->orderBy('name', 'asc')->get();
 }
 
+function getReloadMasterCards()
+{
+
+    return Provider::whereStatus(true)->where('provider_type_id',  5)->where('id' ,'!=' , 91)
+        ->orderBy('name', 'asc')->get();
+}
+
+function getProviderInters()
+{
+
+    return Provider::whereStatus(true)->where('provider_type_id',  8)->where('id' ,'!=' , 51)
+        ->orderBy('name', 'asc')->get();
+}
+
+function getReloadPushs()
+{
+
+    return Provider::whereStatus(true)->whereId(92)->first();
+}
+
 
 function getReloadPaiements()
+{
+
+    return Provider::whereStatus(true)->where('provider_type_id',  1)->where('id' ,'!=' , 9)
+        ->orderBy('name', 'asc')->get();
+}
+
+
+function getReloadMoneysPaiements()
 {
 
     return Provider::whereStatus(true)->where('provider_type_id',  1)

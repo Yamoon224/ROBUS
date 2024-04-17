@@ -6,6 +6,7 @@ use App\Models\Sid\SidUser;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 
 
@@ -157,6 +158,44 @@ class AuthenticationService
                 return ['success' => true];
         }
 
+
+        public function appDispoWebRobus($model)
+        {
+            // Vérifier d'abord si les données sont en cache
+            $cachedResult = Cache::get('app_status_result');
+        
+            if ($cachedResult) {
+                return $cachedResult;
+            }
+        
+            // Si les données ne sont pas en cache, exécuter la requête
+            Artisan::call('app:close-web-status');
+        
+            // Récupérer le statut de l'application
+            $appStatus = $model::latest()->first();
+        
+            // Vérifier si l'application est fermée
+            if ($appStatus && $appStatus->status_app === 'closed') {
+
+                $robus_hour_begin = $appStatus->time_start;
+                $robus_hour_end = $appStatus->time_end;
+                $robus_hour_description = $appStatus->description;
+        
+                // Mettre à jour la mise en cache avec le résultat
+                $result = [
+                    'success' => false,
+                    'message' => "L'application ROBUS Web était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour cause de {$robus_hour_description}.",
+                ];
+                
+                Cache::put('app_status_result', $result, now()->addMinutes(20)); // Mettre en cache pendant 60 minutes
+                return $result;
+            }
+        
+            // Mettre à jour la mise en cache avec le résultat
+            $result = ['success' => true];
+            Cache::put('app_status_result', $result, now()->addMinutes(20)); // Mettre en cache pendant 60 minutes
+            return $result;
+        }
         public function appDispoMasterRobus($model)
         {
 
