@@ -23,7 +23,7 @@ use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTransaction;
 use Illuminate\Database\Eloquent\Collection;
 
-class CountrieController extends Controller
+class AncienCountrieController extends Controller
 {
 
 

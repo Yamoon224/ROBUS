@@ -499,6 +499,11 @@ class TransferVisitors extends Component
         $this->emit($state);
     }
 
+    public function sendSms()
+    {
+        return  'Votre opération a été traitée avec succès. Vous recevrez une confirmation de l\'opérateur. 
+        ROBUS vous remercie.';
+    }
 
     // Update Phone
     public function updatePhoneCredit()
@@ -514,7 +519,7 @@ class TransferVisitors extends Component
             ->whereIsAdmin(true)
             ->where('country_id', 107)
             ->get();
-
+   
         try {
             if ($check) {
 
@@ -598,15 +603,7 @@ class TransferVisitors extends Component
                                     }
                                 }
 
-                                $message = 'Votre demande de credit de ' .
-                                    $check->amount . ' FCFA ' .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' le ' .
-                                    $check->updated_at .
-                                    ' a été acceptée avec succès ' .
-                                    'Robus vous remercie';
+                                $message = $this->sendSms();
 
                                 $encode = substr($check->phone_benef, -10);
 
@@ -775,7 +772,7 @@ class TransferVisitors extends Component
             ->whereIsAdmin(true)
             ->where('country_id', 107)
             ->get();
-
+            
         try {
 
             if ($check) {
@@ -861,23 +858,13 @@ class TransferVisitors extends Component
                                 }
                             }
 
-                            $message =
-                                'Votre demande de rechargement de carte de ' .
-                                $check->amount . 'FCFA' .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = $this->sendSms();
 
                             $encode = substr($check->phone, -10);
 
-                            // Http::get(
-                            //     "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            // );
-
+                            Http::get(
+                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            );
 
                             Notification::send(
                                 $admins,
@@ -947,17 +934,7 @@ class TransferVisitors extends Component
                                 'status' => $check->status,
                             ]);
 
-
-                            $message =
-                                'Votre demande de rechargement de carte de ' .
-                                $check->amount . 'FCFA' .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = $this->sendSms();
 
                             $encode = substr($check->phone, -10);
 
@@ -1101,22 +1078,13 @@ class TransferVisitors extends Component
 
                             $valeur_amount_com = $check->adminCom->amount;
 
-                            $message =
-                                'Vous demande de transaction de ' .
-                                $check->amount . ' FCFA' .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                            $message = $this->sendSms();
 
-                            // $encode = substr($check->phone_benef, -10);
+                            $encode = substr($check->phone_benef, -10);
 
-                            // Http::get(
-                            //     "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            // );
+                            Http::get(
+                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            );
                             //  Send valeur in Admin
                             if ($admin_civ->count() > 0) {
 
@@ -1177,22 +1145,13 @@ class TransferVisitors extends Component
                                 }
                             }
 
-                            $message =
-                                'Vous demande de transaction de ' .
-                                $check->amount . ' FCFA' .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                            $message = $this->sendSms();
 
                             $encode = substr($check->phone, -10);
 
-                            // Http::get(
-                            //     "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            // );
+                            Http::get(
+                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            );
 
                             Transaction::create([
                                 'wallet_transaction_id' => $check->id,
@@ -1346,14 +1305,13 @@ class TransferVisitors extends Component
 
                             $date = $check->updated_at;
 
-                            $message = 'Votre ' . $messageType . $amount . ' par ' . $provider . ' a été validée avec succès le ' . $date . '. Robus vous remercie.';
-
+                            $message = $this->sendSms();
 
                             $encode = substr($check->phone, -10);
 
-                            // Http::get(
-                            //     "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            // );
+                            Http::get(
+                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            );
 
 
                             Notification::send(
@@ -1398,12 +1356,8 @@ class TransferVisitors extends Component
                                 }
                             }
 
-                            $messageType = $check->choose_type_transaction == 1 ? 'demande de dépôt de ' : 'demande de retrait de ';
-                            $amount = $check->amount . ' ' . ' FCFA';
-                            $provider = $check->provider->name;
-                            $date = $check->updated_at;
 
-                            $message = 'Votre ' . $messageType . $amount . ' par ' . $provider . ' a été refusée le ' . $date . '. Robus vous remercie.';
+                            $message = $this->sendSms();
 
                             $encode = substr($check->phone, -10);
 
@@ -1499,243 +1453,224 @@ class TransferVisitors extends Component
             ->where('country_id', 107)
             ->get();
 
-        // try {
+        try {
 
 
-        if ($check) {
+            if ($check) {
 
-            $this->validate(
-                [
-                    'interStatus' => 'required',
-                    'password_transaction' => 'required',
-                ],
-                [
+                $this->validate(
+                    [
+                        'interStatus' => 'required',
+                        'password_transaction' => 'required',
+                    ],
+                    [
 
-                    'password_transaction.required' =>
-                    'Mot de passe obligatoire',
-                    'interStatus.required' =>
-                    'Statut obligatoire',
-                ]
-            );
-
-
-            if (Hash::check($this->password_transaction, $user_auth->password)) {
-
-                $check->update([
-                    'description'  => $this->inter_description_robus,
-                    'updated_by' => sabdy()->id,
-                    'status' => $this->interStatus,
-                ]);
-
-                $this->password_transaction = "";
-                $this->interStatus = "";
-                $this->interId = "";
-
-                if ($check->updated_by == sabdy()->id) {
-
-                    if ($check->status == 'SUCCESS') {
-
-                        $transaction_inter = TransactionInter::create([
-                            'wallet_inter_id' => $check->id,
-                            'sid_user_id' => sabdy()->id,
-                            'transaction_id' => 'RB_' . $check->provider->name .
-                                '_' . $transactionCode,
-                            'operator_transaction_name' =>
-                            $check->provider->name,
-                            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                            'pay_amount' => $check->amount,
-                            'fee_amount' => $check->costs_amount,
-                            'received_amount' => $check->amount,
-                            'status' => $check->status,
-                        ]);
-
-                        InvoiceInter::create([
-                            'title' => "Transfers d'argent",
-                            // 'transaction_inter_id' => $check->id,
-                            'transaction_inter_id' => $transaction_inter->id,
-                            // 'company_id' => sabdy()->company->id,
-                            'description' => $check->description,
-                            'status' => $check->status,
-                            'created_by' => sabdy()->id,
-                        ]);
+                        'password_transaction.required' =>
+                        'Mot de passe obligatoire',
+                        'interStatus.required' =>
+                        'Statut obligatoire',
+                    ]
+                );
 
 
-                        $commission_transaction = $check->amount_received;
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
 
+                    $check->update([
+                        'description'  => $this->inter_description_robus,
+                        'updated_by' => sabdy()->id,
+                        'status' => $this->interStatus,
+                    ]);
 
-                        if (sabdy()->is_distributer == 1) {
+                    $this->password_transaction = "";
+                    $this->interStatus = "";
+                    $this->interId = "";
 
-                            // Send valeur historique distributer
-                            $check->adminCom->update([
-                                // 'amount' => $valeur_single,
-                                'amount_distributer' => $commission_transaction,
+                    if ($check->updated_by == sabdy()->id) {
+
+                        if ($check->status == 'SUCCESS') {
+
+                            $transaction_inter = TransactionInter::create([
+                                'wallet_inter_id' => $check->id,
                                 'sid_user_id' => sabdy()->id,
-                                'description_distributer' => 'Validation distributeur',
+                                'transaction_id' => 'RB_' . $check->provider->name .
+                                    '_' . $transactionCode,
+                                'operator_transaction_name' =>
+                                $check->provider->name,
+                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
+                                'pay_amount' => $check->amount,
+                                'fee_amount' => $check->costs_amount,
+                                'received_amount' => $check->amount,
+                                'status' => $check->status,
                             ]);
-                        }
 
-                        $message =
-                            'Votre demande de paiement de ' .
-                            $check->amount . ' FCFA' .
-                            ' ' .
-                            'par ' .
-                            $check->provider->name .
-                            ' le ' .
-                            $check->updated_at .
-                            ' a été validé avec success \n' .
-                            'Robus vous remercie';
-
-                        $encode = substr($check->phone_benef, -10);
-
-                        Http::get(
-                            "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                        );
-
-                        $valeur_amount_com = $check->adminCom->amount;
-
-                        Notification::send(
-                            $admins,
-                            new AdminNotification(
-                                'Demande de tarnsfers inter Validé'
-                            )
-                        );
-
-                        if ($admins->count() > 0) {
-
-                            foreach ($admins  as $user) {
-
-                                $admin_single = SidUser::find($user->id);
-
-                                $notifs = $admin_single->unreadNotifications;
-
-                                event(new AdminNotifEvent($notifs));
-                            }
-                        }
-
-                        $this->cancelInterField();
-                        $this->InterHide();
-                        $this->emit('success', 'Transfers Accepte !');
-                    } elseif ($check->status == 'ERROR') {
+                            InvoiceInter::create([
+                                'title' => "Transfers d'argent",
+                                // 'transaction_inter_id' => $check->id,
+                                'transaction_inter_id' => $transaction_inter->id,
+                                // 'company_id' => sabdy()->company->id,
+                                'description' => $check->description,
+                                'status' => $check->status,
+                                'created_by' => sabdy()->id,
+                            ]);
 
 
-                        // Update commission
-                        $check->update([
-                            'commissions' => 0,
-                            'commissions_admin' => 0,
-                            'amount_solde' => 0.0,
-                        ]);
+                            $commission_transaction = $check->amount_received;
 
-                        // Valeur amount commission distributeur
-                        $valeur_amount_com = $check->adminCom->amount;
 
-                        //  Send valeur in Admin
-                        if ($admin_civ->count() > 0) {
+                            if (sabdy()->is_distributer == 1) {
 
-                            foreach ($admin_civ as $user) {
-                                $admin_single = SidUser::find($user->id);
+                                // Send valeur historique distributer
                                 $check->adminCom->update([
-                                    'amount' =>   $valeur_amount_com,
-                                    'sid_user_id' =>   $admin_single->id,
-                                    'status'  => "ERROR",
-                                    'description' => 'Remboursement de la commission client',
+                                    // 'amount' => $valeur_single,
+                                    'amount_distributer' => $commission_transaction,
+                                    'sid_user_id' => sabdy()->id,
+                                    'description_distributer' => 'Validation distributeur',
                                 ]);
                             }
-                        }
 
-                        $transaction_inter = TransactionInter::create([
-                            'wallet_inter_id' => $check->id,
-                            'sid_user_id' => sabdy()->id,
-                            'transaction_id' => 'RB_' . $check->provider->name .
-                                '_' . $transactionCode,
-                            'operator_transaction_name' =>
-                            $check->provider->name,
-                            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                            'pay_amount' => $check->amount,
-                            'fee_amount' => $check->costs_amount,
-                            'received_amount' => $check->amount,
-                            'status' => $check->status,
-                        ]);
+                            $message = $this->sendSms();
 
-                        InvoiceInter::create([
-                            'title' => "Transfers d'argent",
-                            // 'transaction_inter_id' => $check->id,
-                            'transaction_inter_id' => $transaction_inter->id,
-                            // 'company_id' => sabdy()->company->id,
-                            'description' => $check->description,
-                            'status' => $check->status,
-                            'created_by' => sabdy()->id,
-                        ]);
+                            $encode = substr($check->phone_benef, -10);
 
+                            Http::get(
+                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            );
 
+                            $valeur_amount_com = $check->adminCom->amount;
 
-                        $message = 'Votre demande de paiement de ' .
-                            $check->amount .
-                            $check->wallet->currencie->code .
-                            ' ' .
-                            'par ' .
-                            $check->provider->name .
-                            ' a ' .
-                            $check->updated_at .
-                            ' a été refusé  ' .
-                            'Robus vous remercie';
+                            Notification::send(
+                                $admins,
+                                new AdminNotification(
+                                    'Demande de tarnsfers inter Validé'
+                                )
+                            );
 
-                        $encode = substr(
-                            $check->phone_benef,
-                            -10
-                        );
+                            if ($admins->count() > 0) {
 
+                                foreach ($admins  as $user) {
 
-                        Http::get(
-                            "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                        );
+                                    $admin_single = SidUser::find($user->id);
 
+                                    $notifs = $admin_single->unreadNotifications;
 
-                        Notification::send(
-                            $admins,
-                            new AdminNotification(
-                                'Demande de transfers refusé'
-                            )
-                        );
-
-                        if ($admins->count() > 0) {
-
-                            foreach ($admins  as $user) {
-
-                                $admin_single = SidUser::find($user->id);
-
-                                $notifs = $admin_single->unreadNotifications;
-
-                                event(new AdminNotifEvent($notifs));
+                                    event(new AdminNotifEvent($notifs));
+                                }
                             }
+
+                            $this->cancelInterField();
+                            $this->InterHide();
+                            $this->emit('success', 'Transfers Accepte !');
+                        } elseif ($check->status == 'ERROR') {
+
+
+                            // Update commission
+                            $check->update([
+                                'commissions' => 0,
+                                'commissions_admin' => 0,
+                                'amount_solde' => 0.0,
+                            ]);
+
+                            // Valeur amount commission distributeur
+                            $valeur_amount_com = $check->adminCom->amount;
+
+                            //  Send valeur in Admin
+                            if ($admin_civ->count() > 0) {
+
+                                foreach ($admin_civ as $user) {
+                                    $admin_single = SidUser::find($user->id);
+                                    $check->adminCom->update([
+                                        'amount' =>   $valeur_amount_com,
+                                        'sid_user_id' =>   $admin_single->id,
+                                        'status'  => "ERROR",
+                                        'description' => 'Remboursement de la commission client',
+                                    ]);
+                                }
+                            }
+
+                            $transaction_inter = TransactionInter::create([
+                                'wallet_inter_id' => $check->id,
+                                'sid_user_id' => sabdy()->id,
+                                'transaction_id' => 'RB_' . $check->provider->name .
+                                    '_' . $transactionCode,
+                                'operator_transaction_name' =>
+                                $check->provider->name,
+                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
+                                'pay_amount' => $check->amount,
+                                'fee_amount' => $check->costs_amount,
+                                'received_amount' => $check->amount,
+                                'status' => $check->status,
+                            ]);
+
+                            InvoiceInter::create([
+                                'title' => "Transfers d'argent",
+                                // 'transaction_inter_id' => $check->id,
+                                'transaction_inter_id' => $transaction_inter->id,
+                                // 'company_id' => sabdy()->company->id,
+                                'description' => $check->description,
+                                'status' => $check->status,
+                                'created_by' => sabdy()->id,
+                            ]);
+
+
+                            $message = $this->sendSms();
+
+                            $encode = substr(
+                                $check->phone_benef,
+                                -10
+                            );
+
+
+                            Http::get(
+                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            );
+
+
+                            Notification::send(
+                                $admins,
+                                new AdminNotification(
+                                    'Demande de transfers refusé'
+                                )
+                            );
+
+                            if ($admins->count() > 0) {
+
+                                foreach ($admins  as $user) {
+
+                                    $admin_single = SidUser::find($user->id);
+
+                                    $notifs = $admin_single->unreadNotifications;
+
+                                    event(new AdminNotifEvent($notifs));
+                                }
+                            }
+                            $this->cancelInterField();
+                            $this->InterHide();
+                            $this->emit('error', 'Transfers refusé !');
+                        } else {
+                            $this->cancelInterField();
+                            $this->InterHide();
+                            $this->emit('error', 'Selectionnez le choix du traitement de la demande SVP !');
                         }
-                        $this->cancelInterField();
-                        $this->InterHide();
-                        $this->emit('error', 'Transfers refusé !');
                     } else {
                         $this->cancelInterField();
                         $this->InterHide();
-                        $this->emit('error', 'Selectionnez le choix du traitement de la demande SVP !');
+                        $this->emit('error', 'Pas le valideur !');
                     }
                 } else {
                     $this->cancelInterField();
                     $this->InterHide();
-                    $this->emit('error', 'Pas le valideur !');
+                    $this->emit('error', 'Mot de passe Incorrect !');
                 }
-            } else {
+            } elseif ($this->password_transaction = "" ||  $this->interStatus = "") {
                 $this->cancelInterField();
                 $this->InterHide();
-                $this->emit('error', 'Mot de passe Incorrect !');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite !');
             }
-        } elseif ($this->password_transaction = "" ||  $this->interStatus = "") {
+        } catch (\Exception $exception) {
             $this->cancelInterField();
             $this->InterHide();
-            $this->emit('info', 'Vous avez cliquez deux fois de suite !');
+            $this->emit('error', 'Vous avez cliquez deux fois Ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
-        // } catch (\Exception $exception) {
-        //     $this->cancelInterField();
-        //     $this->InterHide();
-        //     $this->emit('error', 'Vous avez cliquez deux fois Ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        // }
     }
 
     // Cancel valeurs transactions
