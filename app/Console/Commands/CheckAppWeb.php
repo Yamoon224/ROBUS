@@ -50,8 +50,7 @@ class CheckAppWeb extends  Command implements ShouldQueue
                 $currentHour = Carbon::now()->format('H:i:s');
                 $robus_hour_description = $robus_app->description;
                 $robus_day = $robus_app->id;
-
-     
+    
 
                 if ($currentHour >= $robus_hour_begin && $currentHour <= $robus_hour_end) {
                     // Utilisation de la classe DB

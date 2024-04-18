@@ -7,13 +7,6 @@ namespace App\Http\Services;
 use App\Http\Services\ConvertionService;
 use App\Models\AdminsCom;
 use App\Models\Wallets\Wallet;
-use App\Models\Wallets\WalletBank;
-use App\Models\Wallets\WalletDeposit;
-use App\Models\Wallets\WalletInter;
-use App\Models\Wallets\WalletPayment;
-use App\Models\Wallets\WalletPhoneCredit;
-use App\Models\Wallets\WalletReload;
-use App\Models\Wallets\WalletTransaction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -88,7 +81,7 @@ class HistoriqueService
     }
 
 
-    public function getCumulsWalletTransactions($wallet, $wallet_transaction, $countryId, $wallet_commission, $wallet_success, $wallet_created)
+    public function getCumulsWalletTransactions($wallet, $wallet_transaction, $countryId, $wallet_commission, $wallet_success)
     {
         $cumulAmountComissions = $wallet::join('wallets', 'wallets.id', $wallet_transaction)
             ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
@@ -96,7 +89,7 @@ class HistoriqueService
             ->where('wallets.country_id', $countryId)
             ->where($wallet_commission, '>', 0) // Condition modifiée pour exclure les montants nuls
             ->where($wallet_success, 'SUCCESS')
-            ->groupBy($wallet_created)
+            // ->groupBy($wallet_created)
             ->sum($wallet_commission);
 
 

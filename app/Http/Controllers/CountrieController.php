@@ -184,7 +184,7 @@ class CountrieController extends Controller
 
     // Show Distributors Visitors
 
- 
+
     public function show_visitors_transaction(Request $request, String $code)
     {
         $countrie = Country::where('name', $code)->first();
@@ -294,7 +294,7 @@ class CountrieController extends Controller
             ->paginate(20);
     }
 
- 
+
 
     public function show_under_payment(Request $request, String $code)
     {
@@ -585,6 +585,8 @@ class CountrieController extends Controller
 
         if (Auth::guard('web')->user()->wallet->sidUser->is_admin == true ||  Auth::guard('web')->user()->wallet->sidUser->is_supervisor == true) {
 
+
+
             $countrie = Country::where('name', $code)->first();
 
             $users_distri_Countries = SidUser::Where('country_id', $countrie->id)->Where('is_under_distributer', true)->count();
@@ -595,13 +597,14 @@ class CountrieController extends Controller
 
 
             // Admin
-            $sum_bank =  $this->historiqueService->getCumulsWalletTransactions(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.commissions', 'wallet_banks.status',  'wallet_banks.created_at');
-            $sum_deposit =  $this->historiqueService->getCumulsWalletTransactions(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.commissions', 'wallet_deposits.status',  'wallet_deposits.created_at');
-            $sum_payment =  $this->historiqueService->getCumulsWalletTransactions(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.commissions', 'wallet_payments.status',  'wallet_payments.created_at');
-            $sum_transaction =  $this->historiqueService->getCumulsWalletTransactions(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.commissions', 'wallet_transactions.status',  'wallet_transactions.created_at');
-            $sum_inter =  $this->historiqueService->getCumulsWalletTransactions(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.commissions', 'wallet_inters.status',  'wallet_inters.created_at');
-            $sum_phoneCredit =  $this->historiqueService->getCumulsWalletTransactions(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.commissions', 'wallet_phone_credits.status',  'wallet_phone_credits.created_at');
-            $sum_xbet =  $this->historiqueService->getCumulsWalletTransactions(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.commissions', 'wallet_xbets.status',  'wallet_xbets.created_at');
+            $sum_bank =  $this->historiqueService->getCumulsWalletTransactions(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.commissions', 'wallet_banks.status');
+
+            $sum_deposit =  $this->historiqueService->getCumulsWalletTransactions(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.commissions', 'wallet_deposits.status');
+            $sum_payment =  $this->historiqueService->getCumulsWalletTransactions(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.commissions', 'wallet_payments.status');
+            $sum_transaction =  $this->historiqueService->getCumulsWalletTransactions(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.commissions', 'wallet_transactions.status');
+            $sum_inter =  $this->historiqueService->getCumulsWalletTransactions(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.commissions', 'wallet_inters.status');
+            $sum_phoneCredit =  $this->historiqueService->getCumulsWalletTransactions(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.commissions', 'wallet_phone_credits.status');
+            $sum_xbet =  $this->historiqueService->getCumulsWalletTransactions(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.commissions', 'wallet_xbets.status');
 
 
             $sum_amount_distributer =  $this->historiqueService->getSDistributeurSumCountryAdmin($countrie->id);
@@ -821,25 +824,35 @@ class CountrieController extends Controller
 
     public function getWalletWithMerchantSumUserDaysProperty($countrie)
     {
-
-
-        $data = [];
-
-        $withMerchant = WithMerchant::join('sid_users', 'sid_users.id', 'with_merchants.sid_user_id')
+        return WithMerchant::join('sid_users', 'sid_users.id', 'with_merchants.sid_user_id')
             ->where('sid_users.country_id', $countrie)
             ->where('with_merchants.date_removed', '!=', null)
             ->whereDate('with_merchants.date_removed', Carbon::now())
-            ->orderBy('with_merchants.created_at', 'desc')
-            ->select('with_merchants.*')
-            ->distinct()
-            ->get();
-
-        foreach ($withMerchant  as $bank) {
-            $data[] = $bank->amount_with_draw;
-        }
-
-        return array_sum($data);
+            ->sum('with_merchants.amount_with_draw');
     }
+
+
+    // public function getWalletWithMerchantSumUserDaysProperty($countrie)
+    // {
+
+
+    //     $data = [];
+
+    //     $withMerchant = WithMerchant::join('sid_users', 'sid_users.id', 'with_merchants.sid_user_id')
+    //         ->where('sid_users.country_id', $countrie)
+    //         ->where('with_merchants.date_removed', '!=', null)
+    //         ->whereDate('with_merchants.date_removed', Carbon::now())
+    //         ->orderBy('with_merchants.created_at', 'desc')
+    //         ->select('with_merchants.*')
+    //         ->distinct()
+    //         ->get();
+
+    //     foreach ($withMerchant  as $bank) {
+    //         $data[] = $bank->amount_with_draw;
+    //     }
+
+    //     return array_sum($data);
+    // }
 
     public function getWalletWithMerchantSumUserDaygetProperty($countrie)
     {

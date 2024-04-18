@@ -11,162 +11,188 @@
 
     </section>
 
+    @if ($appStatusResult['success'])
+        <section class="contact-info-section style_percent">
 
-    <section class="contact-info-section style_percent">
+            <div class="container">
+                <div class="row ">
+                    <div class="col-md-8 col-sm-10 col-xs-12">
+                        <!-- Contact Form -->
+                        <div class="contact-form">
 
-        <div class="container">
-            <div class="row ">
-                <div class="col-md-8 col-sm-10 col-xs-12">
-                    <!-- Contact Form -->
-                    <div class="contact-form">
+                            <form method="POST" action="{{ route('web.transactions_inters_store.stores') }}" method="post"
+                                enctype="multipart/form-data"
+                                style="margin-bottom:5% ; background-color: #f0fcff !important;"
+                                class="p-4 p-md-5 border  rounded-3 bg-light">
 
-                        <form method="POST" action="{{ route('web.transactions_inters_store.stores') }}" method="post"
-                            enctype="multipart/form-data" style="margin-bottom:5% ; background-color: #f0fcff !important;"
-                            class="p-4 p-md-5 border  rounded-3 bg-light">
+                                @csrf
 
-                            @csrf
 
-                            
-                            <div class="row justify-content-center ">
-                                @foreach (getProviderInters() as $interProvider)
-                                    <div class="col-lg-2 col-md-12 mb-4 mb-lg-0 mb-3 mt-3">
-                                        <div class="bg-image hover-overlay image_mobile ripple shadow-1-strong rounded"
-                                            data-ripple-color="light">
-                                            <img src="{{ $interProvider->image ?? null }}" class="w-70" />
-                                           
+                                <div class="row justify-content-center ">
+                                    @foreach (getProviderInters() as $interProvider)
+                                        <div class="col-lg-2 col-md-12 mb-4 mb-lg-0 mb-3 mt-3">
+                                            <div class="bg-image hover-overlay image_mobile ripple shadow-1-strong rounded"
+                                                data-ripple-color="light">
+                                                <img src="{{ $interProvider->image ?? null }}" class="w-70" />
+
+                                            </div>
+                                        </div>
+                                    @endforeach
+
+                                </div>
+
+                                <div class="row g-2 mt-3">
+
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <label class="mb-2 font-14 bold black" for="name_expeditor">Nom et prénom expéditeur
+                                            <span class="text-danger"> *</span></label>
+
+                                        <input type="text" name="name_expeditor" maxlength="80" class="form-control"
+                                            placeholder="Ex: Loren Marck ..." required="">
+                                        @error('name_expeditor')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <label class="mb-2 font-14 bold black" for="name_benef">Nom et prénom bénéficiaire
+                                            <span class="text-danger"> *</span></label>
+
+                                        <input type="text" name="name_benef" maxlength="80" class="form-control"
+                                            placeholder="Ex: Loren Marck ..." required="">
+                                        @error('name_benef')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
+
+                                        <label class="mb-2 font-14 bold black" for="country_id">Pays du bénéficiaire<span
+                                                class="text-danger">
+                                                *</span></label>
+                                        <select required id="country_id" name="country_id"
+                                            aria-label="Selectionnez la carte "
+                                            class="form-select @error('country_id') is-invalid @enderror">
+                                            <option disabled selected>Selectionnez le reseau </option>
+                                            @foreach ($countries as $countrie)
+                                                <option value="{{ $countrie->id }}">
+                                                    {{ $countrie->name ?? null }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error('country_id')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
+                                        <label class="mb-2 font-14 bold black" for="phone_benef">N° Tel du bénéficiaire
+                                            <span class="text-danger"> *</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-text">
+                                                <span class="badge bg-info text-dark style_span text-white"
+                                                    id="indice-countrie"></span>
+                                            </span>
+                                            <input type="text" maxlength="10" name="phone_benef" class="form-control"
+                                                placeholder="Ex: 0909090909 ..." required="">
+
+                                        </div>
+                                        @error('phone_benef')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+
+
+                                    <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
+                                        <label class="mb-2 font-14 bold black" for="my_phone">N° Téléphone expéditeur <span
+                                                class="text-danger">
+                                                *</span></label>
+                                        <input type="text" name="my_phone" maxlength="10" class="form-control"
+                                            placeholder="Ex: 0101010101" required="">
+                                        @error('my_phone')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+
+
+                                    <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
+                                        <label class="mb-2 font-14 bold black" for="provider">Réseau opérateur <span
+                                                class="text-danger">
+                                                *</span></label>
+                                        <select required id="provider" name="provider" aria-label="Selectionnez la carte "
+                                            class="form-select @error('provider') is-invalid @enderror">
+
+                                        </select>
+                                        @error('provider')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                    </div>
+
+                                    <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
+                                        <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
+                                            <span class="text-danger"> *</span></label>
+                                        <input type="number" class="form-control" id="montant_inter" maxlength="10"
+                                            name="amount" placeholder="Ex: 2400" required="">
+
+                                        <div class="mt-3">
+                                            <span class="badge bg-info text-dark style_span text-white mt-3 fixe_percent"
+                                                id="montantInfoInter">Montant (min : 2000Fcfa / max :
+                                                500.000Fcfa)</span>
                                         </div>
                                     </div>
-                                @endforeach
 
-                            </div>
 
-                            <div class="row g-2 mt-3">
+                                    @include('layouts.shared_web.frais_inter')
 
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <label class="mb-2 font-14 bold black" for="name_expeditor">Nom et prénom expéditeur
-                                        <span class="text-danger"> *</span></label>
 
-                                    <input type="text" name="name_expeditor" maxlength="80" class="form-control"
-                                        placeholder="Ex: Loren Marck ..." required="">
-                                    @error('name_expeditor')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
+                                    <div class=" col-md-12 col-sm-12 col-xs-12 mt-3"><button type="submit"
+                                            class="theme-btn btn-style-three" id="submitButtonInter"
+                                            disabled>Valider</button></div>
+
                                 </div>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                    <label class="mb-2 font-14 bold black" for="name_benef">Nom et prénom bénéficiaire
-                                        <span class="text-danger"> *</span></label>
+                            </form>
 
-                                    <input type="text" name="name_benef" maxlength="80" class="form-control"
-                                        placeholder="Ex: Loren Marck ..." required="">
-                                    @error('name_benef')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
-
-                                    <label class="mb-2 font-14 bold black" for="country_id">Pays du bénéficiaire<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <select required id="country_id" name="country_id" aria-label="Selectionnez la carte "
-                                        class="form-select @error('country_id') is-invalid @enderror">
-                                        <option disabled selected>Selectionnez le reseau </option>
-                                        @foreach ($countries as $countrie)
-                                            <option value="{{ $countrie->id }}">
-                                                {{ $countrie->name ?? null }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('country_id')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                                <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black" for="phone_benef">N° Tel du bénéficiaire <span
-                                            class="text-danger"> *</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <span class="badge bg-info text-dark style_span text-white"
-                                                id="indice-countrie"></span>
-                                        </span>
-                                        <input type="text" maxlength="10" name="phone_benef" class="form-control"
-                                            placeholder="Ex: 0909090909 ..." required="">
-                                    
-                                    </div>
-                                    @error('phone_benef')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-
-
-                                <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black" for="my_phone">N° Téléphone expéditeur <span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input type="text" name="my_phone" maxlength="10" class="form-control"
-                                        placeholder="Ex: 0101010101" required="">
-                                    @error('my_phone')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-
-
-                                <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black" for="provider">Réseau opérateur <span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <select required id="provider" name="provider" aria-label="Selectionnez la carte "
-                                        class="form-select @error('provider') is-invalid @enderror">
-
-                                    </select>
-                                    @error('provider')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-
-                                <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
-                                    <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
-                                        <span class="text-danger"> *</span></label>
-                                    <input type="number" class="form-control" id="montant_inter" maxlength="10"
-                                        name="amount" placeholder="Ex: 2400" required="">
-
-                                    <div class="mt-3">
-                                        <span class="badge bg-info text-dark style_span text-white mt-3 fixe_percent"
-                                             id="montantInfoInter">Montant (min : 2000Fcfa / max :
-                                            500.000Fcfa)</span>
-                                    </div>
-                                </div>
-
-
-                                @include('layouts.shared_web.frais_inter')
-
-
-                                <div class=" col-md-12 col-sm-12 col-xs-12 mt-3"><button type="submit"
-                                        class="theme-btn btn-style-three" id="submitButtonInter" disabled >Valider</button></div>
-
-                            </div>
-                        </form>
-
+                        </div>
+                        <!--End Contact Form -->
                     </div>
-                    <!--End Contact Form -->
+                    @include('layouts.shared_web.info-open-inter')
+
                 </div>
-                @include('layouts.shared_web.info-open-inter')
 
             </div>
+        </section>
+    @else
+        <section class="contact-info-section style_percent">
 
-        </div>
-    </section>
 
+            <div class="container">
+                <div class="row ">
+                    <div class="col-md-3 col-sm-10 col-xs-12">
+
+                    </div>
+
+                    <div class="col-md-6 col-sm-10 col-xs-12">
+                        @include('layouts.shared_web.close_app')
+
+                    </div>
+
+                    <div class="col-md-3 col-sm-10 col-xs-12">
+
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+    @endif
 
 @endsection
 

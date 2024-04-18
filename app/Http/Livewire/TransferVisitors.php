@@ -207,6 +207,101 @@ class TransferVisitors extends Component
         $this->XbetActiveMenu();
     }
 
+    // Goto pagninated
+
+    //    Paginated
+    public function gotoPageTrans($page)
+    {
+        $this->setPage($page);
+        $this->TransactionActiveMenu();
+    }
+
+    public function nextPageTrans()
+    {
+        $this->setPage($this->page + 1);
+        $this->TransactionActiveMenu();
+    }
+
+    public function previousPageTrans()
+    {
+        $this->setPage(max($this->page - 1, 1));
+        $this->TransactionActiveMenu();
+    }
+
+    public function gotoPageInter($page)
+    {
+        $this->setPage($page);
+        $this->InterActiveMenu();
+    }
+
+    public function nextPageInter()
+    {
+        $this->setPage($this->page + 1);
+        $this->InterActiveMenu();
+    }
+
+    public function previousPageInter()
+    {
+        $this->setPage(max($this->page - 1, 1));
+        $this->InterActiveMenu();
+    }
+
+    public function previousPageReload()
+    {
+        $this->setPage(max($this->page - 1, 1));
+        $this->ReloadCardActiveMenu();
+    }
+
+    public function gotoPageReload($page)
+    {
+        $this->setPage($page);
+        $this->ReloadCardActiveMenu();
+    }
+
+    public function nextPageReload()
+    {
+        $this->setPage($this->page + 1);
+        $this->ReloadCardActiveMenu();
+    }
+
+    public function previousPagePhone()
+    {
+        $this->setPage(max($this->page - 1, 1));
+        $this->phoneCreditActiveMenu();
+    }
+
+    public function gotoPagePhone($page)
+    {
+        $this->setPage($page);
+        $this->phoneCreditActiveMenu();
+    }
+
+
+    public function previousPageXbet()
+    {
+        $this->setPage(max($this->page - 1, 1));
+        $this->phoneCreditActiveMenu();
+    }
+
+    public function gotoPageXbet($page)
+    {
+        $this->setPage($page);
+        $this->XbetActiveMenu();
+    }
+
+    public function nextPageXbet()
+    {
+        $this->setPage($this->page + 1);
+        $this->XbetActiveMenu();
+    }
+
+
+    public function nextPagePhone()
+    {
+        $this->setPage($this->page + 1);
+        $this->XbetActiveMenu();
+    }
+
     // Choose Transactions
     public function ChooseUpdatePhoneCredit($id)
     {

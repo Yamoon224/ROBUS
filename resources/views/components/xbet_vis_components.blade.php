@@ -339,7 +339,7 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-6">
             <nav class="w-full sm:w-auto sm:mr-auto">
                 <ul class="pagination">
-                    {{ $xbets->links('vendor.livewire.tailwind-paiements') }}
+                    {{ $xbets->links('vendor.livewire.tailwind-xbets') }}
                 </ul>
             </nav>
         </div>

@@ -10,6 +10,7 @@
         </div>
 
     </section>
+    
 
     @if ($appStatusResult['success'])
         <section class="contact-info-section style_percent">
@@ -121,7 +122,7 @@
         </section>
     @else
         <section class="contact-info-section style_percent">
-
+ 
  
             <div class="container">
                 <div class="row ">

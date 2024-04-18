@@ -11,7 +11,7 @@
                 @foreach ($open_apps as $index => $open)
                     <div class="col-span-12 xl:col-span-6 ml-3 mr-3 mb-3">
                         @if ($currentDayOfWeek == $open->id)
-                            <h2 class="text-lg font-medium truncate items-center text-xs mt-3 mr-6 ml-6 text-center whitespace-nowrap blinking style_app text-white"
+                            <h2 class="text-lg font-medium truncate items-center text-xs mt-3 mr-6 ml-6 text-center whitespace-nowrap"
                                 id="box_{{ $index }}">
                                App Robus Distributeur est ouvert ce {{ $open->day_of_week ?? null }} de :
                                 {{ $open->time_start ?? null }} a {{ $open->time_end ?? null }}
@@ -772,7 +772,7 @@
         setInterval(function() {
             const boxes = document.querySelectorAll('.style_app');
             boxes.forEach((box, index) => {
-                const colors = ['red', 'blue', 'green',
+                const colors = ['grey', 'blue', 'green',
                     '#6C0277', '#34C924', '#6600FF', '#F9429E'
                 ]; // Ajoutez d'autres couleurs si nécessaire
                 const color = colors[index % colors.length];

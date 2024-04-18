@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\CloseApp;
+use App\Models\CloseAppWeb;
 use App\Models\Costs\DepositCost;
 use App\Models\Custumers\Country;
 use App\Models\OperatorService;
@@ -8,7 +9,10 @@ use App\Models\Payments\PaymentReload;
 use App\Models\Providers\Provider;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletReload;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+
+
 
 
 
@@ -109,14 +113,14 @@ function getReloadCartes()
 function getReloadMasterCards()
 {
 
-    return Provider::whereStatus(true)->where('provider_type_id',  5)->where('id' ,'!=' , 91)
+    return Provider::whereStatus(true)->where('provider_type_id',  5)->where('id', '!=', 91)
         ->orderBy('name', 'asc')->get();
 }
 
 function getProviderInters()
 {
 
-    return Provider::whereStatus(true)->where('provider_type_id',  8)->where('id' ,'!=' , 51)
+    return Provider::whereStatus(true)->where('provider_type_id',  8)->where('id', '!=', 51)
         ->orderBy('name', 'asc')->get();
 }
 
@@ -126,11 +130,19 @@ function getReloadPushs()
     return Provider::whereStatus(true)->whereId(92)->first();
 }
 
+function getAppCloseWeb()
+{
+
+    $currentDayOfWeek = Carbon::now()->dayOfWeek;
+
+    return CloseAppWeb::whereStatus(true)->whereId($currentDayOfWeek)->first();
+}
+
 
 function getReloadPaiements()
 {
 
-    return Provider::whereStatus(true)->where('provider_type_id',  1)->where('id' ,'!=' , 9)
+    return Provider::whereStatus(true)->where('provider_type_id',  1)->where('id', '!=', 9)
         ->orderBy('name', 'asc')->get();
 }
 

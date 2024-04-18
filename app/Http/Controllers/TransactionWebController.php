@@ -77,7 +77,6 @@ class TransactionWebController extends Controller
     public function transactions_reloads()
     {
 
-        // Artisan::queue(CheckAppWeb::class);
 
         $deposit_cost = DepositCost::whereIsWeb(true)->first();
 
