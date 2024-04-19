@@ -25,7 +25,6 @@
                     <tr>
                         <th class="whitespace-nowrap text-center">Code</th>
                         <th class="text-center whitespace-nowrap text-center">Name</th>
-                        <th class="text-center whitespace-nowrap text-center">Robus</th>
                         <th class="text-center whitespace-nowrap text-center">Devise</th>
                         <th class="text-center whitespace-nowrap text-center">Plafond</th>
                         <th class="text-center whitespace-nowrap text-center">Montant Maxi a envoyé</th>
@@ -44,34 +43,6 @@
                                 <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">{{ $item->name ?? null }}</div>
 
-                                </td>
-                                <td class="w-40 ">
-                                    @if ($item->robus == '1')
-                                        @if (Auth::guard('web')->user()->hasPermissionTo('active-caution'))
-                                            <div class="flex items-center justify-center text-success">
-
-                                                <a wire:click="edit({{ $item->id }}, 'show-visitors-modal'); $emit('show-visitors-modal')"
-                                                    class="flex items-center mr-3 @if ($item->robus == 1) @else @endif"
-                                                    href="javascript:;"
-                                                    title="@if ($item->robus == 1) Désactiver @else Activer @endif">
-                                                    <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
-                                                </a>
-
-                                            </div>
-                                        @endif
-                                    @else
-                                        @if (Auth::guard('web')->user()->hasPermissionTo('desactive-caution'))
-                                            <div class="flex items-center justify-center text-danger">
-                                                <a wire:click="edit({{ $item->id }}, 'show-visitors-modal'); $emit('show-visitors-modal')"
-                                                    class="flex items-center mr-3 @if ($item->robus == 1) @else @endif"
-                                                    href="javascript:;"
-                                                    title="@if ($item->robus == 1) Désactiver @else Activer @endif">
-                                                    <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
-                                                </a>
-
-                                            </div>
-                                        @endif
-                                    @endif
                                 </td>
                                 <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">

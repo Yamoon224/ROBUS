@@ -41,11 +41,6 @@
                                             <div class="bg-image hover-overlay ripple shadow-1-strong rounded"
                                                 data-ripple-color="light">
                                                 <img src="{{ $carteReloads->image ?? null }}" class="w-100" />
-                                                <a href="#!" data-mdb-modal-init
-                                                    data-mdb-target="#exampleModal1">
-                                                    <div class="mask"
-                                                        style="background-color: rgba(251, 251, 251, 0.2);"></div>
-                                                </a>
                                             </div>
                                         </div>
                                     @endforeach

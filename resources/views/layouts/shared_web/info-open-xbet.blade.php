@@ -2,10 +2,17 @@
     <div class="card text-white bg-primary mb-3 style_info animate__animated animate__backInRight">
         <div class="card-header text-center" style="font-weight: bold;   background-color: darkslategrey;">Information</div>
         <div class="card-body">
+ 
             <p class="card-text text-white" style="font-weight: 450;">
-                Rechargez vos comptes 1Xbet . Service de rechargement disponible de
-                8h à 21h. Si vous faites l'opération avant 8h, vous recevrez votre rechargement à partir de 8h. Si c'est
-                après 21h, vous recevrez le lendemain à partir de 8h.
+                Rechargez vos comptes 1Xbet . Service de rechargement disponible ce
+
+                <span class="badge bg-success text-dark style_span text-white">{{ getAppCloseWeb()->day_of_week ?? null}} </span>  de
+                <span class="badge bg-success text-dark style_span text-white">
+                    {{ \Carbon\Carbon::createFromFormat('H:i:s', getAppCloseWeb()->time_start ?? null)->format('H:i') }}
+                </span>
+                MIN a <span class="badge bg-success text-dark style_span text-white">
+                    {{ \Carbon\Carbon::createFromFormat('H:i:s', getAppCloseWeb()->time_end ?? null)->format('H:i') }}
+                </span> MIN . </span>  MIN .
             </p>
             <p class="card-text text-white" style="font-weight: 450;">
                 Tarif :<span class="badge bg-info text-dark style_span text-white">{{ $transaction_percent ?? null }}%</span> frais de paiement

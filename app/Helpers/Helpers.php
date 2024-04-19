@@ -139,6 +139,18 @@ function getAppCloseWeb()
 }
 
 
+function getAppCloseTomorowWeb()
+{
+
+    $currentDayOfWeek = Carbon::now()->dayOfWeek;
+
+    $add_days =   $currentDayOfWeek + 1 ;
+
+    return CloseAppWeb::whereStatus(true)->whereId($add_days)->first();
+}
+
+
+
 function getReloadPaiements()
 {
 

@@ -10,6 +10,7 @@
         </div>
 
     </section>
+    @include('layouts.shared_web.open_days')
 
     @if ($appStatusResult['success'])
     

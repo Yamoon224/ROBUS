@@ -85,7 +85,7 @@ class TransactionWebController extends Controller
         $robus_percent = $deposit_cost->percent_admin * 100;
 
         $carte_reloads = Provider::whereStatus(true)->where('provider_type_id',  5)
-            ->orderBy('name', 'asc')->get();
+            ->orderBy('name', 'asc')->where('id' , '!=' , 91)->get();
 
         $total_percent =  $carte_percent +  $robus_percent;
 

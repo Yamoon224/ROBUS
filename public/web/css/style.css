@@ -46,6 +46,49 @@
   background-size: cover !important;
   padding: 30% 0px 6% !important;
 }
+
+ /* Pour les écrans de taille moyenne et plus petits que lg (992px) */
+ .col-lg-4 {
+  flex: 0 0 100% !important; /* Réinitialiser la largeur à 100% */
+  max-width: 100% !important; /* Assurer que la colonne occupe toute la largeur */
+}
+
+.col-md-12 {
+  flex: 0 0 100% !important; /* Réinitialiser la largeur à 100% */
+  max-width: 50% !important; /* Assurer que la colonne occupe toute la largeur */
+  margin-bottom: 1rem !important; /* Ajouter un espacement entre les colonnes */
+}
+
+.footer-bottom {
+  position: relative !important;
+  border-top: 1px solid rgba(255,255,255,0.10) !important;
+  padding: 18px 10px !important;
+  font-size: 14px !important;
+  color: #bcbcbc !important;
+  font-weight: 300 !important;
+  font-family: 'Roboto', sans-serif;
+}
+
+}
+
+.scrolling-text {
+  white-space: nowrap; /* Empêcher le texte de passer à la ligne */
+  overflow: hidden; /* Masquer tout ce qui dépasse de la zone de défilement */
+  animation: scroll 40s linear infinite; /* Utiliser l'animation 'scroll' pour faire défiler le texte */
+}
+
+@keyframes scroll {
+  0% {
+      transform: translateX(100%); /* Déplacer le texte complètement à droite */
+  }
+  100% {
+      transform: translateX(-100%); /* Déplacer le texte complètement à gauche */
+  }
+}
+
+
+.mt-6 {
+  margin-top: 12px !important;
 }
 
 

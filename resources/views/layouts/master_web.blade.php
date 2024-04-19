@@ -31,7 +31,7 @@
             </div>
 
             @include('layouts.shared_web.header')
-
+        
 
             @yield('content')
 
