@@ -228,7 +228,7 @@ class Paymenthisto extends Component
                         'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
                             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->whereBetween('wallet_payments.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
                         'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
-                        'sum_commissions' => $this->WalletPaymentDays,
+                        // 'sum_commissions' => $this->WalletPaymentDays,
                         'provider_paiements' => $this->PaiementTransaction,
                         'offers_canal' => $offers,
     
@@ -270,7 +270,7 @@ class Paymenthisto extends Component
                         'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
                             ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where("wallet_payments.status", $this->statusFilter)->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
                         'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
-                        'sum_commissions' => $this->WalletPaymentStatus,
+                        // 'sum_commissions' => $this->WalletPaymentStatus,
                         'provider_paiements' => $this->PaiementTransaction,
                         'offers_canal' => $offers,
                     ]
@@ -284,7 +284,6 @@ class Paymenthisto extends Component
                     'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
                     'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
-                    'sum_commissions' => $this->WalletPayment,
                     'provider_paiements' => $this->PaiementTransaction,
                     'offers_canal' => $offers,
 

@@ -25,14 +25,8 @@ class PhoneCreditCost extends Model
         'updated_at',
     ];
     
-    protected $fillable = [
-        'name',
-        'percent',
-        'percent_merchands',
-        'percent_banque',
-        'status',
-        'created_by',
-    ];
+    protected $guarded = [];
+
 
     protected $casts = [
         'percent' => 'double',

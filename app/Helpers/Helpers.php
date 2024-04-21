@@ -15,7 +15,6 @@ use Illuminate\Support\Facades\Auth;
 
 
 
-
 function reloadCardPercent()
 {
 
@@ -135,7 +134,9 @@ function getAppCloseWeb()
 
     $currentDayOfWeek = Carbon::now()->dayOfWeek;
 
-    return CloseAppWeb::whereStatus(true)->whereId($currentDayOfWeek)->first();
+    $currentDaySearch = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek;
+
+    return CloseAppWeb::whereStatus(true)->whereId($currentDaySearch)->first();
 }
 
 
@@ -144,9 +145,14 @@ function getAppCloseTomorowWeb()
 
     $currentDayOfWeek = Carbon::now()->dayOfWeek;
 
-    $add_days =   $currentDayOfWeek + 1 ;
+    $currentDaySearch = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek;
 
-    return CloseAppWeb::whereStatus(true)->whereId($add_days)->first();
+    
+    $add_days =   $currentDaySearch + 1  ;
+  
+    $days_decremente =   $add_days == 8 ? 1 : $add_days ;
+
+    return CloseAppWeb::whereStatus(true)->whereId($days_decremente)->first();
 }
 
 

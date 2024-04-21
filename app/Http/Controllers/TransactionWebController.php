@@ -396,7 +396,7 @@ class TransactionWebController extends Controller
     {
         $admin_civ = $this->validatedamountDays->adminCiv();
 
-        try {
+        // try {
 
 
 
@@ -481,13 +481,13 @@ class TransactionWebController extends Controller
                     ->with('status', 'Erreur de pourcentage')
                     ->withInput();
             }
-        } catch (\Exception $exception) {
+        // } catch (\Exception $exception) {
 
-            return back()
-                ->with('color', 'danger')
-                ->with('status', 'Erreur de la demande')
-                ->withInput();
-        }
+        //     return back()
+        //         ->with('color', 'danger')
+        //         ->with('status', 'Erreur de la demande')
+        //         ->withInput();
+        // }
     }
 
     public function transactions_xbets_store(Request $request)

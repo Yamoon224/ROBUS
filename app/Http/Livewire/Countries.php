@@ -88,8 +88,17 @@ class Countries extends Component
     {
         $check = Country::find($this->countrieId);
         if (!empty($check)) {
-            if ($check->robus == 0) $check->update(['robus' => 1]);
-            else $check->update(['robus' => 0]);
+            if ($check->robus == 0) $check->update(
+                [
+                    'robus' => 1,
+                    'status' => 1
+
+                ]
+            );
+            else $check->update([
+                'robus' => 0,
+                'status' => 0
+            ]);
             $this->emit('modal-hide', 'hide');
             $this->emit('success', $check->robus == 1 ? 'Pays activée !' : 'Pays désactivée !');
         }

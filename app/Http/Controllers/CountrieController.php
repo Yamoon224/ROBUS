@@ -239,7 +239,7 @@ class CountrieController extends Controller
         $valeur_error = $this->getCountWalletInterError();
 
 
-        return view('pages.historicals.under_distributer.visitors.browse_inter_distri', compact('wallet_payments', 'valeur_payments', 'countrie', 'valeur_success', 'valeur_pending', 'valeur_error'));
+        return view('pages.historicals.under_distributer.visitors.browse_inter_distri', compact('wallet_payments', 'valeur_payments',  'valeur_success', 'valeur_pending', 'valeur_error'));
     }
 
     public function show_visitors_phone(Request $request, String $code)

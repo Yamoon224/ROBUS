@@ -11,7 +11,7 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
-use App\Models\Wallets\WalletWave;
+// use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -68,10 +68,10 @@ class AdminsCom extends Model
         return $this->belongsTo(WalletXbet::class, 'wallet_xbet_id', 'id')->withTrashed();
     }
 
-    public function walletWave()
-    {
-        return $this->belongsTo(WalletWave::class, 'wallet_wave_id', 'id')->withTrashed();
-    }
+    // public function walletWave()
+    // {
+    //     return $this->belongsTo(WalletWave::class, 'wallet_wave_id', 'id')->withTrashed();
+    // }
 
 
     public function sidUser()

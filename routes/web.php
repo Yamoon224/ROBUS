@@ -512,10 +512,8 @@ Route::get('/reads_applications', function () {
 
 Route::get('/reads_application_web', function () {
 
-    Artisan::call('app:close-web-status');
+  return  Artisan::call('app:close-web-status');
 
-
-    return 'Artisan commands executed successfully.';
 });
 
 

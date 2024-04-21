@@ -312,7 +312,7 @@ class TransactionWebService
         public function createMobileWalletInter($amount_transaction, $percent_robus, $country_robus, $provider_payment, $phone , $phone_benef , $name_custumers ,  $name_visitors, $amount_cost , $amountReceved)
         {
 
-                $provider = Provider::whereName($provider_payment)->first();
+                $provider = Provider::where('provider_type_id', 8)->whereName($provider_payment)->first();
 
                 return WalletInter::create([
                         'wallet_id' => 0,

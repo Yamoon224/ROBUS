@@ -1,9 +1,7 @@
 <div wire:ignore.self id="update-phone-modal" class="modal hide" data-tw-backdrop="static"
     style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000; display: block;">
     <div class="modal-dialog">
-        @php
-            $idCredit = $phoneId;
-        @endphp
+     
 
         <div class="modal-content">
             <div class="modal-header">
@@ -27,37 +25,33 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                @if ($idCredit != 3)
-                    <div class="col-span-6">
-                        <label for="modal-form-1" class="form-label">Pourcentage marchants<span class="text-danger">
-                                *</span></label>
-                        <input wire:model.defer="orderCardMerchant" id="modal-form-1" type="number"
-                            class="form-control" placeholder="Pourcentage marchant">
-                        @error('orderCardMerchant')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="col-span-12">
-                        <label for="modal-form-1" class="form-label">Pourcentage MASTERS<span class="text-danger">
-                                *</span></label>
-                        <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
-                            placeholder="Pourcentage marchant">
-                        @error('comission_master')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                @else
-                    <div class="col-span-6">
-                        <label for="modal-form-1" class="form-label">Pourcentage admin<span class="text-danger">
-                                *</span></label>
-                        <input wire:model.defer="comission_admin" id="modal-form-1" type="number"
-                            class="form-control" placeholder="Pourcentage admin">
-                        @error('comission_admin')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                @endif
-
+                <div class="col-span-6">
+                    <label for="modal-form-1" class="form-label">Pourcentage marchants<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.defer="orderCardMerchant" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage marchant">
+                    @error('orderCardMerchant')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="col-span-6">
+                    <label for="modal-form-1" class="form-label">Pourcentage MASTERS<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage marchant">
+                    @error('comission_master')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+                <div class="col-span-6">
+                    <label for="modal-form-1" class="form-label">Pourcentage admin<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.defer="comission_admin" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage admin">
+                    @error('comission_admin')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
 
             </div>
             <div class="modal-footer">

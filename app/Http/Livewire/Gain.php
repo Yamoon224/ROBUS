@@ -1588,7 +1588,7 @@ class Gain extends Component
         $data = [];
 
         // Exécutez la requête pour obtenir une collection d'objets
-        $admins = AdminsCom::whereBetween('created_at', [$this->startDate, $this->endDate])->get();
+        $admins = AdminsCom::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->get();
 
         foreach ($admins as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -1606,7 +1606,7 @@ class Gain extends Component
 
         $data = [];
 
-        foreach (AdminsCom::where('description', 'Commission administrateur')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
+        foreach (AdminsCom::whereIsWeb(false)->where('description', 'Commission administrateur')->whereStatus('SUCCESS')->whereDate('created_at', $convertions)->get() as $bank) {
 
             $data[] = $bank->amount;
         }

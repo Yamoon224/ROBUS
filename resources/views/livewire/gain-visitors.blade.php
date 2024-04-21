@@ -1,17 +1,17 @@
 <div>
 
     <div class="intro-y block sm:flex items-center h-10 mt-3">
-        <h2 class="text-lg font-medium truncate mr-5">   Liste des gains de l'adminmistrateur</h2>
+        <h2 class="text-lg font-medium truncate mr-5"> Liste des gains de l'adminmistrateur</h2>
         <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
 
             <a class="btn btn-primary shadow-md" href="{{ route('admin.browse_gain_distributer') }}">Validation
                 distributeur </a>
-           
+
         </div>
     </div>
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
-        
-        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_3">
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-4 box p-5 cursor-pointer zoom-in style_3">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-trending-down font-medium-5">
@@ -24,20 +24,7 @@
                 {{ number_format($sum_gain_days, 2, ',', ' ') ?? null }} FCFA
             </div>
         </div>
-        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_3">
-            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
-                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
-                    <polyline points="17 18 23 18 23 12"></polyline>
-                </svg>
-            </div>
-            <div class="font-medium text-historique mt-6">Paiements sous distributeur et retraits</div>
-            <div class="text-slate-500 mt-3">
-                {{ number_format($sum_gain_drawal_days, 2, ',', ' ') ?? null }} FCFA
-            </div>
-        </div>
-        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-4 box p-5 cursor-pointer zoom-in style_table_factures">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                     stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
@@ -51,17 +38,19 @@
             </div>
         </div>
 
-        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
-            
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-4 box p-5 cursor-pointer zoom-in ">
+
             <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
-                  </svg>
-                  
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                </svg>
+
             </div>
             <div class="font-medium text-historique mt-6">Montant Banque journalier</div>
             <div class="text-slate-500 mt-3">
-                {{ $sum_gain_banques  ?? null }} FCFA
+                {{ $sum_gain_banques ?? null }} FCFA
             </div>
         </div>
     </div>
@@ -228,6 +217,21 @@
                                                 montant : {{ $item->walletPhoneCredit->costs_amount ?? null }}
                                             </span>
                                         </div>
+                                    @elseif($item->wallet_xbet_id != null)
+                                        <div class="flex items-center justify-center text-success">
+
+                                            <a class="flex items-center mr-3">
+                                               Service 1xbet
+                                            </a>
+
+                                        </div>
+                                        <div class="text-slate-500 items-center mt-0.5">
+                                            <span
+                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                {{ $item->walletXbet->wallet->country->name ?? null }} <br> <br>
+                                                montant : {{ $item->walletXbet->costs_amount ?? null }}
+                                            </span>
+                                        </div>
                                     @elseif($item->wallet_reload_id != null)
                                         <div class="flex items-center justify-center text-success">
 
@@ -271,8 +275,7 @@
                                         </div>
                                     @elseif ($item->status == 'ERROR')
                                         <div class="flex items-center justify-center text-danger">
-                                            <div
-                                                class="flex items-center justify-center text-pending">
+                                            <div class="flex items-center justify-center text-pending">
                                                 <span
                                                     class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                     Refusé
@@ -292,8 +295,7 @@
                                         </div>
                                     @elseif($item->status == 'REFUND')
                                         <div class="flex items-center justify-center text-primary">
-                                            <div
-                                                class="flex items-center justify-center text-pending">
+                                            <div class="flex items-center justify-center text-pending">
                                                 <span
                                                     class="alert alert-primary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                                     Remboursé
@@ -312,8 +314,7 @@
                                         </div>
                                     @else
                                         <div class="flex items-center justify-center text-success">
-                                            <div
-                                                class="flex items-center justify-center text-pending">
+                                            <div class="flex items-center justify-center text-pending">
                                                 <span
                                                     class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
                                               text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"

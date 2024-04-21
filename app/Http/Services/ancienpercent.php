@@ -14,6 +14,8 @@ use App\Models\Wallets\WalletPayment;
 use App\Http\Services\ConvertionService;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\AdminsCom;
+use Illuminate\Support\Facades\DB;
 
 class HistoriqueService
 {
@@ -210,6 +212,35 @@ class HistoriqueService
         return array_sum($data);
     }
 
+   public function getWalletBankVisitorsDistributersLimitViews($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
+    {
+
+        $result =  AdminsCom::join($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
+            ->where('admins_coms.is_web', true)
+            ->where('admins_coms.description_distributer', 'Validation distributeur')
+            ->groupBy('admins_coms.created_at')
+            ->limit(5)
+            ->get();
+
+
+        return   $result;
+    }
+    
+    public function getCumulsWalletDepositVisitorsDistributers($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
+    {
+
+
+        $result =  AdminsCom::join($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
+            ->where('admins_coms.is_web', true)
+            ->where('admins_coms.description_distributer', 'Validation distributeur')
+            ->select(DB::raw('sum(admins_coms.amount) as cumul_amount_chiffre'))
+            ->groupBy('admins_coms.created_at')
+            ->get();
+
+
+        return $result->sum('cumul_amount_chiffre');
+    }
+    
     public function getWalletReloadSumAdmin()
     {
 

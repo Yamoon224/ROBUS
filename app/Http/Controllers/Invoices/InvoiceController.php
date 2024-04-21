@@ -60,6 +60,7 @@ class InvoiceController extends Controller
             return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
         }
 
+   
         if ($walletTransfers->is_web == 0) {
             return view('pages.invoices.invoice_transfers_print', compact('walletTransfers', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         } else {

@@ -2,6 +2,7 @@
     $prefix = Request::route()->getPrefix();
     $route = Route::current()->getName();
     $countries = getCountriesForUser(Auth::guard('web')->user());
+    $countrie_civ = getCountriesForVisitorsUser(Auth::guard('web')->user());
 
 @endphp
 <div class="mobile-menu-bar">
@@ -189,6 +190,104 @@
             </a>
         </li>
     @endif
+    <li class="nav__devider my-4"></li>
+    @if (Auth::guard('web')->user()->hasPermissionTo('visiteurs'))
+        <li>
+            <a href="javascript:;"
+                class="menu {{ request()->is('visitors*') ? 'menu--active' : '' }}">
+                <div class="menu__icon">
+                    <i data-feather="package" class="block mx-auto"></i>
+                </div>
+                <div class="menu__title">
+                    Visiteurs
+                    <div class="menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
+                </div>
+            </a>
+            <ul class="{{ request()->is('visitors*') ? 'menu__sub-open' : '' }}">
+
+
+                @if (Auth::guard('web')->user()->hasPermissionTo('voir-transaction-visiteurs'))
+                    <li>
+                        <a href="{{ route('transactions.visitors') }}"
+                            class="menu {{ $route == 'transactions.visitors' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="activity"
+                                    class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title">Transactions Visiteurs </div>
+                        </a>
+                    </li>
+                @endif
+                @if (Auth::guard('web')->user()->hasPermissionTo('voir-historique-transfers'))
+                    <li>
+                        <a href="{{ route('transactions.historiques.visitors') }}"
+                            class="menu {{ $route == 'transactions.historiques.visitors' || $route == 'transfers.historical' || $route == 'paiements.historical' || $route == 'virements.historical' || $route == 'inters.historical' || $route == 'cartes.historical' || $route == 'phones.historical' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="activity"
+                                    class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title"> Historique visiteurs </div>
+                        </a>
+                    </li>
+                @endif
+                @if (Auth::guard('web')->user()->hasPermissionTo('voir-service-visiteurs'))
+                    <li>
+
+                        <a href="{{ route('services.browse_visitores') }}"
+                            class="menu {{ $route == 'services.browse_visitores' || $route == 'services.edit_visitors' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"><i data-feather="package" class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title"> Services web </div>
+                        </a>
+                    </li>
+                @endif
+
+                @if (Auth::guard('web')->user()->hasPermissionTo('gain-admin'))
+                    <li>
+                        <a href="{{ route('visitors.admin.browse_gain') }}"
+                            class="menu {{ $route == 'visitors.admin.browse_gain' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="credit-card"
+                                    class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title"> Gains admin visiteurs </div>
+                        </a>
+                    </li>
+                @endif
+
+                @if (Auth::guard('web')->user()->hasPermissionTo('cautions'))
+                    <li>
+                        <a href="{{ route('commissions.browse_visitors') }}"
+                            class="menu {{ $route == 'commissions.browse_visitors' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="credit-card"
+                                    class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title">Commissions pays visiteurs </div>
+                        </a>
+                    </li>
+                @endif
+                @if (Auth::guard('web')->user()->hasPermissionTo('voir-distributeurs'))
+                    <li>
+                        <a href="{{ route('visitors.countries.Show_distri_distributer', ['key' => $countrie_civ->name]) }}"
+                            class="menu {{ $route == 'visitors.countries.Show_distri_distributer' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="credit-card"
+                                    class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title">Validations visiteurs</div>
+                        </a>
+                    </li>
+                @endif
+
+                @if (Auth::guard('web')->user()->hasPermissionTo('active-pays'))
+                    <li>
+                        <a href="{{ route('countries.visitors') }}"
+                            class="menu {{ $route == 'countries.visitors' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="globe" class="block mx-auto"></i>
+                            </div>
+                            <div class="menu__title"> Pays visiteurs </div>
+                        </a>
+                    </li>
+                @endif
+            </ul>
+        </li>
+    @endif
 
     <li class="menu__devider my-4"></li>
     @if (Auth::guard('web')->user()->hasPermissionTo('cautions'))
@@ -361,10 +460,10 @@
                     @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
                         <li>
                             <a href="{{ route('close_app.browse') }}"
-                                class="side-menu {{ $route == 'close_app.browse' ? 'side-menu--active' : '' }}">
-                                <div class="side-menu__icon"> <i data-feather="package" class="block mx-auto"></i>
+                                class="menu {{ $route == 'close_app.browse' ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-feather="package" class="block mx-auto"></i>
                                 </div>
-                                <div class="side-menu__title"> App S-distributeurs </div>
+                                <div class="menu__title"> App S-distributeurs </div>
                             </a>
                         </li>
                     @endif
@@ -372,20 +471,20 @@
                     @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
                         <li>
                             <a href="{{ route('browse_close_app_masters.browse') }}"
-                                class="side-menu {{ $route == 'browse_close_app_masters.browse' ? 'side-menu--active' : '' }}">
-                                <div class="side-menu__icon"> <i data-feather="package" class="block mx-auto"></i>
+                                class="menu {{ $route == 'browse_close_app_masters.browse' ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-feather="package" class="block mx-auto"></i>
                                 </div>
-                                <div class="side-menu__title"> App Masters </div>
+                                <div class="menu__title"> App Masters </div>
                             </a>
                         </li>
                     @endif
                     @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
                         <li>
                             <a href="{{ route('browse_close_app_comzones.browse') }}"
-                                class="side-menu {{ $route == 'browse_close_app_comzones.browse' ? 'side-menu--active' : '' }}">
-                                <div class="side-menu__icon"> <i data-feather="package" class="block mx-auto"></i>
+                                class="menu {{ $route == 'browse_close_app_comzones.browse' ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i data-feather="package" class="block mx-auto"></i>
                                 </div>
-                                <div class="side-menu__title"> App Com zones </div>
+                                <div class="menu__title"> App Com zones </div>
                             </a>
                         </li>
                     @endif
@@ -400,6 +499,16 @@
                         </li>
                     @endif
 
+                    @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                    <li>
+                        <a href="{{ route('browse_close_app_visitors.browse') }}"
+                            class="menu {{ $route == 'browse_close_app_visitors.browse' ? 'menu--active' : '' }}">
+                            <div class="menu__icon"> <i data-feather="package"
+                                    class="block mx-auto"></i></div>
+                            <div class="menu__title">App web Visiteurs </div>
+                        </a>
+                    </li>
+                @endif
 
                     @if (Auth::guard('web')->user()->hasPermissionTo('roles'))
                         <li>
