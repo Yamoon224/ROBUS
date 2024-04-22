@@ -71,7 +71,7 @@ function updateButtonState() {
     const montant = parseFloat(montantInput.value);
 
     // Vérifiez si le montant est compris entre 2000 et 500 000
-    if (montant >= 2000 && montant <= 500000) {
+    if (montant >= 500 && montant <= 500000) {
 
         // Si oui, activez le bouton
         submitButtons.disabled = false;
@@ -136,7 +136,7 @@ function displaySwalError(message) {
 if (submitButtons) {
     submitButtons.addEventListener('click', function() {
         const montant = parseFloat(montantInput.value);
-        if (montant >= 2000 && montant <= 500000) {
+        if (montant >= 500 && montant <= 500000) {
             displaySwalSuccess(`Vous allez être redirigé vers l'application Wave pour le paiement de ${montant} FCFA`);
         }else {
             displaySwalError(`Vous devez verifiez le montant  ${montant} saisie`);
@@ -159,7 +159,7 @@ if (submitButtonPushs) {
 if (submitButtonDeposits) {
     submitButtonDeposits.addEventListener('click', function() {
         const montantDeposit = parseFloat(montantInputDeposit.value);
-        if (montantDeposit >= 2000 && montantDeposit <= 500000) {
+        if (montantDeposit >= 500 && montantDeposit <= 500000) {
             displaySwalSuccess(`Vous allez être redirigé vers l'application Wave pour le paiement de ${montantDeposit} FCFA`);
         }else {
             displaySwalError(`Vous devez verifiez le montant  ${montantDeposit} saisie`);
@@ -211,7 +211,7 @@ function updateButtonDepositState() {
     // Récupérez la valeur du montant de dépôt saisi et convertissez-la en nombre
     const montantDeposit = parseFloat(montantInputDeposit.value);
     // Vérifiez si le montant de dépôt est compris entre 2000 et 500 000
-    if (montantDeposit >= 2000 && montantDeposit <= 500000) {
+    if (montantDeposit >= 500 && montantDeposit <= 500000) {
         // Si oui, activez le bouton
         submitButtonDeposits.disabled = false;
         montantInfoDeposits.style.display = 'none';

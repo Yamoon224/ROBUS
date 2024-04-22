@@ -10,70 +10,7 @@
             Solde : {{ $walletSolde ?? null }} {{ $usersCountry }}
         </span>
     </h2>
-    <div class="intro-y grid grid-cols-12 gap-5 mt-5">
-
-        @if (sabdy()->is_distributer == true)
-
-            <h2 class="text-lg font-medium truncate mr-5 mt-6">Telechargé les differents raports d'activités</h2>
-
-            @if (sabdy()->hasPermissionTo('transfers-argent'))
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-                    <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                        href="{{ route('transfers.historical.reporting_transfer_historical.admins', ['id' => sabdy()->wallet->id]) }}"
-                        style="color: white;">
-                        Rapport transferts
-                    </a>
-                </div>
-            @endif
-            @if (sabdy()->hasPermissionTo('rechargement-carte'))
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-                    <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                        href="{{ route('cards.historical.reporting_card_historical.admins', ['id' => sabdy()->wallet->id]) }}"
-                        style="color: white;">
-                        Rapport rechargement carte
-                    </a>
-                </div>
-            @endif
-            @if (sabdy()->hasPermissionTo('rechargement-credit'))
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-2 ">
-                    <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary "
-                        href="{{ route('phones.historical.reporting_phone_historical.admins', ['id' => sabdy()->wallet->id]) }}"
-                        style="color: white;">
-                        Rapport credits
-                    </a>
-                </div>
-            @endif
-            @if (sabdy()->hasPermissionTo('rechargement-carte'))
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-                    <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                        href="{{ route('xbets.historical.reporting_xbet_historical.admins', ['id' => sabdy()->wallet->id]) }}"
-                        style="color: white;">
-                        Rapport 1xbet
-                    </a>
-                </div>
-            @endif
-            @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-                    <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                        href="{{ route('inters.historical.reporting_inter_historical.admins', ['id' => sabdy()->wallet->id]) }}"
-                        style="color: white;">
-                        Rapport inter
-                    </a>
-                </div>
-
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-2 " style="background-color: red">
-                    <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary text-white"
-                        style="background-color: red"
-                        href="{{ route('echecs.historical.reporting_transfer_historical.admins', ['id' => sabdy()->wallet->id]) }}"
-                        style="color: white;">
-                        Rapport des échecs
-                    </a>
-                </div>
-            @endif
-
-        @endif
-
-    </div>
+   
     <div class="intro-y box px-5 pt-1 mt-1 ">
         <div class="grid grid-cols-12 gap-6 mt-6">
 

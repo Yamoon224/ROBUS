@@ -128,7 +128,7 @@
                                                 *</span></label>
                                         <select required id="provider" name="provider" aria-label="Selectionnez la carte "
                                             class="form-select @error('provider') is-invalid @enderror">
-
+                                            <option value="null"> Séléctionnez un reseau </option>
                                         </select>
                                         @error('provider')
                                             <span class="invalid-feedback" role="alert">
@@ -220,7 +220,11 @@
             // Requête Ajax pour les villes
             function ProviderUpdate(countryId) {
                 $.get('{{ url('transactions/robus/search-countrie') }}/' + countryId + "'", function(data) {
-                    $('#provider').empty();
+                    $('#provider').empty().append($('<option>', {
+                        value: '',
+                        text: 'Sélectionnez un réseau',
+                        disabled: false // Vous pouvez mettre à true pour le rendre non-sélectionnable
+                    }));
                     $.each(data, function(index, providers) {
                         $('#provider').append($('<option>', {
                             value: providers,

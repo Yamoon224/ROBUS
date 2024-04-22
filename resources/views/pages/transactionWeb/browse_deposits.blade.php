@@ -96,14 +96,14 @@
 
 
                                     <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
-                                        <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
+                                        <label class="mb-2 font-14 bold black">Montant (min : 500Fcfa / max : 500.000Fcfa )
                                             <span class="text-danger"> *</span></label>
                                         <input type="number" class="form-control" id="montant_deposit" maxlength="10"
                                             name="amount" placeholder="Ex: 2400" required="">
 
                                         <div class="mt-3">
                                             <span class="badge bg-info text-dark style_span text-white mt-3 fixe_percent"
-                                                id="montantInfoDeposit">Montant (min : 2000Fcfa / max :
+                                                id="montantInfoDeposit">Montant (min : 500Fcfa / max :
                                                 500.000Fcfa)</span>
                                         </div>
                                     </div>

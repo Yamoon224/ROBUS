@@ -67,10 +67,34 @@ class TransactionCost extends Model
         return $val;
     }
 
+
+    private function formatPercentage($value)
+    {
+        return is_numeric($value) ? $value / 100 : null;
+    }
+
     public function setPercentAttribute($value)
     {
-        $this->attributes['percent'] = $value / 100 ? json_encode($value / 100) : null;
+        $this->attributes['percent'] = json_encode($this->formatPercentage($value));
     }
+
+
+    public function setPercentAdminAttribute($value)
+    {
+        $this->attributes['percent_admin'] = json_encode($this->formatPercentage($value));
+    }
+
+    public function setPercentMerchandsAttribute($value)
+    {
+        $this->attributes['percent_merchands'] = json_encode($this->formatPercentage($value));
+    }
+
+    public function setPercentMastersAttribute($value)
+    {
+        $this->attributes['percent_masters'] = json_encode($this->formatPercentage($value));
+    }
+
+
 
     public function getPercentAdminAttribute($value)
     {
@@ -78,10 +102,6 @@ class TransactionCost extends Model
         return $val;
     }
 
-    public function setPercentAdminAttribute($value)
-    {
-        $this->attributes['percent_admin'] = $value / 100 ? json_encode($value / 100) : null;
-    }
 
     public function getPercentDepositAttribute($value)
     {
@@ -91,7 +111,7 @@ class TransactionCost extends Model
 
     public function setPercentDepositAttribute($value)
     {
-        $this->attributes['percent_deposit'] = $value / 100 ? json_encode($value / 100) : null;
+        $this->attributes['percent_deposit'] = json_encode($this->formatPercentage($value));
     }
 
     public function getPercentWithDrawalAttribute($value)
@@ -102,20 +122,16 @@ class TransactionCost extends Model
 
     public function setPercentWithDrawalAttribute($value)
     {
-        $this->attributes['percent_with_drawal'] = $value / 100 ? json_encode($value / 100) : null;
+        $this->attributes['percent_with_drawal'] = json_encode($this->formatPercentage($value));
     }
 
-    public function setPercentMastersAttribute($value)
-    {
-        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
-    }
 
     public function setPercentWebAttribute($value)
     {
-        $this->attributes['percent_web'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent_web'] = json_encode($this->formatPercentage($value));
     }
 
-    
+
     public function WalletTransaction()
     {
         return $this->hasOne(WalletTransaction::class)->withTrashed();

@@ -160,7 +160,7 @@ function getAppCloseTomorowWeb()
 function getReloadPaiements()
 {
 
-    return Provider::whereStatus(true)->where('provider_type_id',  1)->where('id', '!=', 9)
+    return Provider::whereStatus(true)->where('provider_type_id',  8)->where('id', '!=', 51)
         ->orderBy('name', 'asc')->get();
 }
 

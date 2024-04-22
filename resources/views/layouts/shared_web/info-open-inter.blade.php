@@ -16,13 +16,11 @@
                 </span> MIN .
             </p>
             <p class="card-text text-white" style="font-weight: 450;">
-                Tarif selon le pays : <span class="badge bg-info text-dark style_span text-white"
+                Tarif de l'opérateur : <span class="badge bg-info text-dark style_span text-white"
                     id="total-percent-wave">%</span> frais de paiement
                 en ligne + <span class="badge bg-info text-dark style_span text-white"
-                    id="total-percent-robus">%</span>frais de
-                l'opérateur(Transactions)
+                    id="total-percent-robus">%</span>frais de la transactions
             </p>
-
 
         </div>
     </div>

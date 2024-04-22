@@ -68,30 +68,44 @@ class PhoneCreditCost extends Model
         return $val;
     }
     
-    public function setPercentAttribute($value)
-    {
-        $this->attributes['percent'] = $value / 100 ? json_encode($value / 100) : null;
-    }
-
     public function getPercentMerchandsAttribute($value)
     {
         $val = isset($value) ? json_decode($value, true) : null;
         return $val;
     }
 
+    private function formatPercentage($value)
+    {
+        return is_numeric($value) ? $value / 100 : null;
+    }
+
+    public function setPercentAttribute($value)
+    {
+        $this->attributes['percent'] = json_encode($this->formatPercentage($value));
+
+    }
+
+    // public function setPercentAdminAttribute($value)
+    // {
+    //     $this->attributes['percent_admin'] = json_encode($this->formatPercentage($value));
+    // }
+
     public function setPercentMerchandsAttribute($value)
     {
-        $this->attributes['percent_merchands'] = $value / 100 ? json_encode($value / 100) : null;
+        $this->attributes['percent_merchands'] = json_encode($this->formatPercentage($value));
+
     }
 
     public function setPercentMastersAttribute($value)
     {
-        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent_masters'] = json_encode($this->formatPercentage($value));
     }
+
+
 
     public function setPercentBanqueAttribute($value)
     {
-        $this->attributes['percent_banque'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent_banque'] = json_encode($this->formatPercentage($value));
     }
 
     public function WalletPhoneCredit()

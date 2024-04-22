@@ -1,4 +1,4 @@
-<link rel="shortcut icon" type="image/x-icon" href="{{ asset('brand/favicon.png') }}">
+<link rel="shortcut icon" type="image/x-icon" href="https://robus.africa/wp-content/uploads/2023/07/LOGO_ROBUS-web.png">
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500;1,600"
     rel="stylesheet">
 

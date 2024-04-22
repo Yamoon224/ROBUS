@@ -52,9 +52,14 @@ class LevelCountry extends Model
         return $val;
     }
 
+    private function formatPercentage($value)
+    {
+        return is_numeric($value) ? $value / 100 : null;
+    }
+
     public function setPercentAttribute($value)
     {
-        $this->attributes['percent'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent'] = json_encode($this->formatPercentage($value));
     }
 
     public function getPercentMerchandsAttribute($value)
@@ -65,119 +70,70 @@ class LevelCountry extends Model
 
     public function setPercentMerchandsAttribute($value)
     {
-        $this->attributes['percent_merchands'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent_merchands'] = json_encode($this->formatPercentage($value));
     }
 
     public function setPercentAdminAttribute($value)
     {
-        $this->attributes['percent_admin'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent_admin'] = json_encode($this->formatPercentage($value));
+
     }
 
     public function setPercentWithDrawalAttribute($value)
     {
-        // Vérifier si $value est un nombre
-        if (is_numeric($value)) {
-            // Diviser la valeur par 100 et l'encoder en JSON
-            $this->attributes['percent_with_drawal'] = json_encode($value / 100);
-        } else {
-            // Si $value n'est pas un nombre, définir la valeur sur null
-            $this->attributes['percent_with_drawal'] = null;
-        }
+
+        $this->attributes['percent_with_drawal'] = json_encode($this->formatPercentage($value));
+
     }
 
     public function setPercentDepositAttribute($value)
     {
-        // Vérifier si $value est un nombre
-        if (is_numeric($value)) {
-            // Diviser la valeur par 100 et l'encoder en JSON
-            $this->attributes['percent_deposit'] = json_encode($value / 100);
-        } else {
-            // Si $value n'est pas un nombre, définir la valeur sur null
-            $this->attributes['percent_deposit'] = null;
-        }
+
+        $this->attributes['percent_deposit'] = json_encode($this->formatPercentage($value));
+
     }
 
     public function setPercentUnderDistributerAttribute($value)
     {
 
-        $valueAsNumber = floatval($value);
-
-        // Vérifier si $value est un nombre
-        if ($valueAsNumber != 0) {
-            // Diviser la valeur par 100 et l'encoder en JSON
-            $this->attributes['percent_under_distributer'] = json_encode($valueAsNumber / 100);
-        } else {
-            // Si $value n'est pas un nombre, définir la valeur sur null
-            $this->attributes['percent_under_distributer'] = null;
-        }
+        $this->attributes['percent_under_distributer'] = json_encode($this->formatPercentage($value));
     }
 
     public function setPercentAdminUnderDistributerAttribute($value)
     {
-       
-        $valueAsNumber = floatval($value);
 
-        // Vérifier si $value est un nombre
-        if ($valueAsNumber != 0) {
-            // Diviser la valeur par 100 et l'encoder en JSON
-            $this->attributes['percent_admin_under_distributer'] = json_encode($valueAsNumber / 100);
-        } else {
-            // Si $value n'est pas un nombre, définir la valeur sur null
-            $this->attributes['percent_admin_under_distributer'] = null;
-        }
+        $this->attributes['percent_admin_under_distributer'] = json_encode($this->formatPercentage($value));
     }
 
 
     public function setPercentDepositUnderDistributerAttribute($value)
     {
 
-        $valueAsNumber = floatval($value);
+        $this->attributes['percent_deposit_under_distributer'] = json_encode($this->formatPercentage($value));
 
-        // Vérifier si $value est un nombre
-        if ($valueAsNumber != 0) {
-            // Diviser la valeur par 100 et l'encoder en JSON
-            $this->attributes['percent_deposit_under_distributer'] = json_encode($valueAsNumber / 100);
-        } else {
-            // Si $value n'est pas un nombre, définir la valeur sur null
-            $this->attributes['percent_deposit_under_distributer'] = null;
-        }
+    
     }
 
     public function setPercentWithDrawalUnderDistributerAttribute($value)
     {
 
-        $valueAsNumber = floatval($value);
+        $this->attributes['percent_with_drawal_under_distributer'] = json_encode($this->formatPercentage($value));
 
-        // Vérifier si $value est un nombre
-        if ($valueAsNumber != 0) {
-            // Diviser la valeur par 100 et l'encoder en JSON
-            $this->attributes['percent_with_drawal_under_distributer'] = json_encode($valueAsNumber / 100);
-        } else {
-            // Si $value n'est pas un nombre, définir la valeur sur null
-            $this->attributes['percent_with_drawal_under_distributer'] = null;
-        }
 
     }
 
     public function setPercentBanqueAttribute($value)
     {
-        $valueAsNumber = floatval($value);
+        $this->attributes['percent_banque'] = json_encode($this->formatPercentage($value));
 
-        // Vérifier si $value est un nombre
-        if ($valueAsNumber != 0) {
-            // Diviser la valeur par 100 et l'encoder en JSON
-            $this->attributes['percent_banque'] = json_encode($valueAsNumber / 100);
-        } else {
-            // Si $value n'est pas un nombre, définir la valeur sur null
-            $this->attributes['percent_banque'] = null;
-        }
-
+      
     }
 
 
     public function setPercentMastersAttribute($value)
     {
-        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
+
+        $this->attributes['percent_masters'] = json_encode($this->formatPercentage($value));
     }
 
 

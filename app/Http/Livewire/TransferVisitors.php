@@ -683,22 +683,22 @@ class TransferVisitors extends Component
                                 }
 
 
-                                $message =
-                                    'Votre demande de crédit de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' le ' .
-                                    $check->updated_at .
-                                    ' a été refusé ' .
-                                    'Robus vous remercie';
+                                // $message =
+                                //     'Votre demande de crédit de ' .
+                                //     $check->amount .
+                                //     $check->wallet->currencie->code .
+                                //     ' ' .
+                                //     'par ' .
+                                //     $check->provider->name .
+                                //     ' le ' .
+                                //     $check->updated_at .
+                                //     ' a été refusé ' .
+                                //     'Robus vous remercie';
 
 
-                                $encode = substr($check->phone_benef, -10);
+                                // $encode = substr($check->phone_benef, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
 
 
 
@@ -934,13 +934,13 @@ class TransferVisitors extends Component
                                 'status' => $check->status,
                             ]);
 
-                            $message = $this->sendSms();
+                            // $message = $this->sendSms();
 
-                            $encode = substr($check->phone, -10);
+                            // $encode = substr($check->phone, -10);
 
-                            Http::get(
-                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            );
+                            // Http::get(
+                            //     "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            // );
 
 
                             Notification::send(
@@ -1145,13 +1145,13 @@ class TransferVisitors extends Component
                                 }
                             }
 
-                            $message = $this->sendSms();
+                            // $message = $this->sendSms();
 
-                            $encode = substr($check->phone, -10);
+                            // $encode = substr($check->phone, -10);
 
-                            Http::get(
-                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            );
+                            // Http::get(
+                            //     "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            // );
 
                             Transaction::create([
                                 'wallet_transaction_id' => $check->id,
@@ -1357,13 +1357,13 @@ class TransferVisitors extends Component
                             }
 
 
-                            $message = $this->sendSms();
+                            // $message = $this->sendSms();
 
-                            $encode = substr($check->phone, -10);
+                            // $encode = substr($check->phone, -10);
 
-                            Http::get(
-                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            );
+                            // Http::get(
+                            //     "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            // );
 
                             $transaction = OneBetTransaction::create([
                                 'wallet_xbet_id' => $check->id,
@@ -1612,17 +1612,17 @@ class TransferVisitors extends Component
                             ]);
 
 
-                            $message = $this->sendSms();
+                            // $message = $this->sendSms();
 
-                            $encode = substr(
-                                $check->phone_benef,
-                                -10
-                            );
+                            // $encode = substr(
+                            //     $check->phone_benef,
+                            //     -10
+                            // );
 
 
-                            Http::get(
-                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            );
+                            // Http::get(
+                            //     "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                            // );
 
 
                             Notification::send(

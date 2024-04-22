@@ -64,6 +64,13 @@ class BankCost extends Model
         $this->attributes['name'] = isset($value) ? json_encode($value) : null;
     }
 
+
+    private function formatPercentage($value)
+    {
+        return is_numeric($value) ? $value / 100 : null;
+    }
+
+
     public function getPercentAttribute($value)
     {
         $val = isset($value) ? json_decode($value, true) : null;
@@ -72,7 +79,7 @@ class BankCost extends Model
 
     public function setPercentAttribute($value)
     {
-        $this->attributes['percent'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent'] = json_encode($this->formatPercentage($value));
     }
 
     public function getPercentMerchandsAttribute($value)
@@ -83,12 +90,13 @@ class BankCost extends Model
 
     public function setPercentMerchandsAttribute($value)
     {
-        $this->attributes['percent_merchands'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent_merchands'] = json_encode($this->formatPercentage($value));
+
     }
 
     public function setPercentMastersAttribute($value)
     {
-        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent_masters'] = json_encode($this->formatPercentage($value));
     }
 
     public function walletBank()

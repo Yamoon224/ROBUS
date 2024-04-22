@@ -77,14 +77,27 @@ class InterCost extends Model
         return $val;
     }
 
+
+    private function formatPercentage($value)
+    {
+        return is_numeric($value) ? $value / 100 : null;
+    }
+
+
+    // public function setPercentAdminAttribute($value)
+    // {
+    //     $this->attributes['percent_admin'] = json_encode($this->formatPercentage($value));
+    // }
+
     public function setPercentMerchandsAttribute($value)
     {
-        $this->attributes['percent_merchands'] = $value / 100 ? json_encode($value / 100) : null;
+        $this->attributes['percent_merchands'] = json_encode($this->formatPercentage($value));
+
     }
 
     public function setPercentMastersAttribute($value)
     {
-        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
+        $this->attributes['percent_masters'] = json_encode($this->formatPercentage($value));
     }
 
     
