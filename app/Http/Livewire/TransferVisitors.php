@@ -1185,7 +1185,7 @@ class TransferVisitors extends Component
                                 }
                             }
 
-                            $this->resetTransactionField();
+                            $this->cancelTransactionField();
                             $this->TransactionHide();
                             $this->emit('warning', 'Transfers Refusé !');
                         } else {
@@ -1204,16 +1204,16 @@ class TransferVisitors extends Component
                     $this->emit('error', 'Vérifier votre mot de passe !');
                 }
             } elseif ($this->password_transaction = "") {
-                $this->resetTransactionField();
+                $this->cancelTransactionField();
                 $this->TransactionHide();
                 $this->emit('info', 'Vous avez cliquez dexu fois le boutton !!');
             } else {
-                $this->resetTransactionField();
+                $this->cancelTransactionField();
                 $this->TransactionHide();
                 $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite !');
             }
         } catch (\Exception $exception) {
-            $this->resetTransactionField();
+            $this->cancelTransactionField();
             $this->TransactionHide();
             $this->emit('error', 'Vous avez cliquez deux fois sur le button ou une erreur veuillez informer Support client ROBUS !');
         }
