@@ -174,7 +174,6 @@ class HomeRobusAncien extends Component
     }
 
 
-
     public function getTransactionAllCount($walletModel, $transaction_days)
     {
 
