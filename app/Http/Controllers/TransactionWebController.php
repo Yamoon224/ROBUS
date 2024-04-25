@@ -180,6 +180,7 @@ class TransactionWebController extends Controller
 
         $total_percent =  $transaction_percent +  $robus_percent;
 
+       
         $calcul_valeurs = (float) $total_percent  / 100;
 
         // Phone Credits
@@ -200,7 +201,7 @@ class TransactionWebController extends Controller
         return view('pages.transactionWeb.browse_deposits', [
             'appStatusResult' => $this->appStatusResult,
             'robus_percent' => $robus_percent,
-            'total_percent' => $total_percent_phone,
+            'total_percent' => $total_percent,
             'calcul_valeurs' => $calcul_valeurs,
             'transaction_percent' => $transaction_percent,
             'providers' => $providers,

@@ -168,7 +168,7 @@ function getReloadPaiements()
 function getReloadMoneysPaiements()
 {
 
-    return Provider::whereStatus(true)->where('provider_type_id',  1)
+    return Provider::whereStatus(true)->where('provider_type_id',  1)->where('id', '!=', 9)->where('id', '!=', 6)
         ->orderBy('name', 'asc')->get();
 }
 

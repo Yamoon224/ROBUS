@@ -2,22 +2,23 @@
 
 namespace App\Models\Wallets;
 
-use App\Models\Offer;
 use App\Models\AdminsCom;
 use App\Models\Costs\BankCost;
-use App\Models\Wallets\Wallet;
-use App\Models\Costs\InterCost;
 use App\Models\Costs\DepositCost;
-use App\Models\Custumers\Country;
-use App\Models\Providers\Provider;
-use Spatie\Activitylog\LogOptions;
+use App\Models\Costs\InterCost;
+use App\Models\Costs\PhoneCreditCost;
 use App\Models\Costs\TransactionCost;
+use App\Models\Custumers\Country;
 use App\Models\Invoices\InvoiceInter;
-use Illuminate\Database\Eloquent\Model;
+use App\Models\Offer;
 use App\Models\Payments\TransactionInter;
-use Spatie\Activitylog\Traits\LogsActivity;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Providers\Provider;
+use App\Models\Wallets\Wallet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\LogOptions;
+use Spatie\Activitylog\Traits\LogsActivity;
 
 class WalletInter extends Model
 {
@@ -70,7 +71,7 @@ class WalletInter extends Model
     }
     public function phoneCost()
     {
-        return $this->belongsTo(PhoneCost::class, 'phone_credit_cost_id', 'id')->withTrashed();
+        return $this->belongsTo(PhoneCreditCost::class, 'phone_credit_cost_id', 'id')->withTrashed();
     }
 
     public function transactionCost()

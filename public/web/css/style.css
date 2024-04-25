@@ -1,4 +1,39 @@
-    
+.overflow-auto {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: nowrap; /* Keep all items in a single horizontal line */
+}
+
+#scroll-container {
+  overflow-x: hidden !important;
+}
+
+
+.card {
+  display: inline-block; /* Display cards in line */
+  width: auto; /* Width of each card depends on content, adjust as needed */
+  margin-right: 15px; /* Space between cards, adjust as needed */
+}
+
+.card-img-top {
+  width: 100%; /* Makes image responsive within the card */
+  height: auto; /* Maintain aspect ratio */
+}
+
+
+@keyframes scrollRightToLeft {
+  from {
+      transform: translateX(100%);
+  }
+  to {
+      transform: translateX(-100%);
+  }
+}
+
+.scroll-container {
+  animation: scrollRightToLeft 60s linear infinite;
+}
+
+  
     /* Media query Mobile */
     
     /* Media query pour les appareils mobiles */

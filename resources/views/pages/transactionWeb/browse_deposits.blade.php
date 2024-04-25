@@ -11,7 +11,7 @@
 
     </section>
 
-    @include('layouts.shared_web.open_days')
+    {{-- @include('layouts.shared_web.open_days') --}}
 
     @if ($appStatusResult['success'])
         <section class="contact-info-section style_percent">
@@ -30,7 +30,7 @@
                                 @csrf
 
                                 <div class="row justify-content-center ">
-                                    @foreach (getReloadPaiements() as $carteReloads)
+                                    @foreach (getReloadMoneysPaiements() as $carteReloads)
                                         <div class="col-lg-2 col-md-12 mb-4 mb-lg-0 mb-3">
                                             <div class="bg-image hover-overlay image_mobile ripple shadow-1-strong rounded"
                                                 data-ripple-color="light">

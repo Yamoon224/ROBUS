@@ -10,6 +10,7 @@
         </div>
 
     </section>
+
     @include('layouts.shared_web.open_days')
 
     @if ($appStatusResult['success'])
@@ -28,19 +29,22 @@
 
                                 @csrf
 
-
-                                <div class="row justify-content-center ">
-                                    @foreach (getProviderInters() as $interProvider)
-                                        <div class="col-lg-2 col-md-12 mb-4 mb-lg-0 mb-3 mt-3">
-                                            <div class="bg-image hover-overlay image_mobile ripple shadow-1-strong rounded"
-                                                data-ripple-color="light">
-                                                <img src="{{ $interProvider->image ?? null }}" class="w-70" />
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-12">
+                                            <div id="scroll-container" class="d-flex flex-row flex-nowrap overflow-auto">
+                                                @foreach (getProviderInters() as $carteReloads)
+                                                    <div class="card  mr-2">
+                                                        <img src="{{ $carteReloads->image ?? null }}" class="card-img-top"
+                                                            alt="Image 1">
+                                                    </div>
+                                                @endforeach
 
                                             </div>
                                         </div>
-                                    @endforeach
-
+                                    </div>
                                 </div>
+
 
                                 <div class="row g-2 mt-3">
 
@@ -109,8 +113,8 @@
 
 
                                     <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
-                                        <label class="mb-2 font-14 bold black" for="my_phone">N° Téléphone expéditeur <span
-                                                class="text-danger">
+                                        <label class="mb-2 font-14 bold black" for="my_phone">N° Téléphone expéditeur
+                                            <span class="text-danger">
                                                 *</span></label>
                                         <input type="text" name="my_phone" maxlength="10" class="form-control"
                                             placeholder="Ex: 0101010101" required="">
@@ -126,7 +130,8 @@
                                         <label class="mb-2 font-14 bold black" for="provider">Réseau opérateur <span
                                                 class="text-danger">
                                                 *</span></label>
-                                        <select required id="provider" name="provider" aria-label="Selectionnez la carte "
+                                        <select required id="provider" name="provider"
+                                            aria-label="Selectionnez la carte "
                                             class="form-select @error('provider') is-invalid @enderror">
                                             <option value="null"> Séléctionnez un reseau </option>
                                         </select>
@@ -138,7 +143,8 @@
                                     </div>
 
                                     <div class=" col-md-6 col-sm-6 col-xs-12 mt-3">
-                                        <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa )
+                                        <label class="mb-2 font-14 bold black">Montant (min : 2000Fcfa / max : 500.000Fcfa
+                                            )
                                             <span class="text-danger"> *</span></label>
                                         <input type="number" class="form-control" id="montant_inter" maxlength="10"
                                             name="amount" placeholder="Ex: 2400" required="">
@@ -198,7 +204,31 @@
 @endsection
 
 @push('scripts')
+
     <script type="text/javascript">
+
+        function autoScroll() {
+            const scrollContainer = document.getElementById('scroll-container');
+            let scrollAmount = 0;
+
+            // Set interval to adjust the scroll position
+            const step = 1; // Amount to scroll on each interval
+            const speed = 20; // Interval in milliseconds
+            let scrollInterval = setInterval(function() {
+                scrollContainer.scrollLeft += step;
+                scrollAmount += step;
+                if (scrollAmount >= scrollContainer.scrollWidth) {
+                    scrollAmount = 0;
+                    scrollContainer.scrollLeft = 0; // Reset scroll to start
+                }
+            }, speed);
+        }
+
+        // Call the function to start scrolling
+        window.onload = function() {
+            autoScroll();
+        };
+        
         $(document).ready(function() {
 
             const amountInput = document.querySelector('input[name="amount"]');

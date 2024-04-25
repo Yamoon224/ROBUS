@@ -47,7 +47,8 @@
                                         Numero bénéficiaire
                                     </th>
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                                        Statut </th>
+                                        Statut
+                                    </th>
                                     @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                         <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                             Actions
@@ -140,6 +141,11 @@
                                             </td>
 
                                             <td class="w-40">
+                                                <div class="flex items-center justify-center text-success">
+                                                    <span class="alert alert-success text-white inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                       Pays : {{ $item->country->name ?? null }} 
+                                                    </span>
+                                                </div>
                                                 @if ($item->updated_by == null)
                                                     <div
                                                         class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">

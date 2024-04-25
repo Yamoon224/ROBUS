@@ -31,7 +31,7 @@ class Home extends Component
     {
         $walletUser = sabdy();
 
-        $currencie = comzone()->wallet->currencie->name;
+        $currencie = sabdy()->wallet->currencie->name;
 
         // Account valeurs transactions
         $payment_error = $this->getTransactionCount(WalletPayment::class, 'ERROR', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status');
