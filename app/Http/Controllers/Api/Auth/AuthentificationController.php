@@ -586,7 +586,6 @@ class AuthentificationController extends Controller
                 if ($result['success']) {
 
                     return $this->loginSuccess($result['token'], $result['user']);
-                    
                 } else {
                     return response()->json(
                         ['success' => false, 'message' => $result['message']],
@@ -613,14 +612,15 @@ class AuthentificationController extends Controller
             $email = $request->input('email');
             $password = $request->input('password');
             $device_meta_data = $request->input('device_meta_data');
+            $active_code = $request->input('code');
 
-            $result = $this->authService->$loginMethod($email, $password , $device_meta_data);
+            $result = $this->authService->$loginMethod($email, $password, $active_code, $device_meta_data);
 
             if ($result['success']) {
                 return $this->loginSuccess($result['token'], $result['user']);
             } else {
                 return response()->json(
-                    ['success' => false, 'message' => $result['message']],
+                    ['success' => false, 'message' => $result['message'], 'catch' => true],
                     301
                 );
             }
@@ -687,6 +687,7 @@ class AuthentificationController extends Controller
     {
 
         $user = SidUser::where('email', $request->email)->first();
+        
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -700,6 +701,7 @@ class AuthentificationController extends Controller
             ], 215);
         } else {
             $user->email_verified_at = date('Y-m-d H:m:s');
+            $user->activation_code = null;
             $user->save();
             $tokenResult = $user->createToken('auth_token');
             return $this->loginSuccess($tokenResult, $user);
@@ -760,47 +762,44 @@ class AuthentificationController extends Controller
 
         $rt = rand(40, 5000) * time();
         $activation_code = sprintf("%0.4s", str_shuffle($rt));
-        $phone = $request->phone;
-        $email = $request->email;
-        $resend_user =  SidUser::wherePhone($phone)->first();
-        $resend_user_email =  SidUser::wherePhone($email)->first();
+        // $resend_user =  SidUser::wherePhone($phone)->first() ?? SidUser::whereEmail($email)->first();
+        // $resend_user_email =  SidUser::whereEmail($email)->first();
+        $resend_user = SidUser::where('phone', $request->phone)->orWhere('email', $request->phone)->first();
 
 
-        // if ($resend_user != null) {
         try {
 
 
-            if ($resend_user != null || $resend_user_email  != null) {
-
-                if ($resend_user->country->code == "CI") {
-
-                    $resend_user->update([
-                        'activation_code' =>  $activation_code
-                    ]);
-
-                    $message = 'Code activation ' . $resend_user->activation_code;
-
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$resend_user->phone&from=ROBUS&sms=$message");
-                } else {
-
-                    $resend_user_email->update([
-                        'activation_code' =>  $activation_code
-                    ]);
-
-                    $notify = new MailController;
-                    $notify->newOtp($resend_user);
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Votre code d\actualisation a ete envoyer.'
-                ], 200);
-            } else {
+            if (!$resend_user) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Votre code doit être validé.'
-                ], 220);
+                    'message' => 'Aucun utilisateur trouvé avec ces informations.'
+                ], 404);
             }
+
+            // Mise à jour de l'utilisateur avec le nouveau code
+            $resend_user->activation_code = $activation_code;
+            $resend_user->save();
+
+            // Envoi du code par SMS ou email selon le pays
+            if ($resend_user->country->code == "CI") {
+
+                $message = "Votre code d'activation est: {$activation_code}";
+
+                $phone_user = substr($resend_user->phone, -10);
+
+                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$phone_user&from=ROBUS&sms=$message");
+              
+            } else {
+                $notify = new MailController;
+                $notify->newOtp($resend_user);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Votre code d\actualisation a ete envoyer.'
+            ], 200);
+
         } catch (\Throwable $th) {
 
             return response()->json(
@@ -962,7 +961,8 @@ class AuthentificationController extends Controller
                 'email' => $user->email,
                 'phone' => $user->phone,
                 'wallet_id' => $user->wallet_id,
-            ]
+            ],
+            'catch' => false
         ]);
     }
 }
