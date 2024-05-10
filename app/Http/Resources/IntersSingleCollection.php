@@ -63,12 +63,12 @@ class IntersSingleCollection extends JsonResource
             ],
             'country_send'  =>  optional($this->wallet->country)->name ?? null,
             'country_desti'  =>  optional($this->country)->name ?? null,
-            'devise'  => optional($this->wallet->currencie)->code ?? null,
+           'devise'  =>  optional(optional($this->wallet)->currencie)->code ?? "CFA",
             'frais' => number_format((float)$this->costs_amount, 2, '.', ' '),
             'status'  =>  $this->status,
             // 'amount_received'  => $this->amount_received ?? null,
-            'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
-            'amount_solde_drawal' =>  $this->amount_solde_drawal .  ' ' . optional($this->country->currencie)->code ?? null
+            'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+            'amount_solde_drawal' =>  $this->amount_solde_drawal .  ' ' . (optional(optional($this->country->currencie))->code ?? "CFA"),
         ];
     }
 }

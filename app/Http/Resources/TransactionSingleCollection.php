@@ -15,7 +15,7 @@ class TransactionSingleCollection extends JsonResource
      */
     public function toArray($request)
     {
-        $wallet_send = Wallet::where('wallet_id',  $this->num_wallet)->first();
+        $wallet_send = $this->wallet_id == 0 ? Wallet::where('wallet_id',  $this->num_wallet)->first() :  Wallet::where('wallet_id',  $this->num_wallet)->first();
 
         if($wallet_send != null)
         {
@@ -57,11 +57,12 @@ class TransactionSingleCollection extends JsonResource
             'paiementChoix_phone' =>  $this->paiementChoix_phone,
             'factureChoix_type' =>  $this->factureChoix_type,
             'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ,
-            'devise'  => optional($this->wallet->currencie)->code,
+            'devise'  =>  optional(optional($this->wallet)->currencie)->code ?? "CFA",
             // optional($this->currencie)->code
             'status'  =>  $this->status,
-            'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
-            'amount_solde_drawal' =>  $this->amount_solde_drawal .  ' ' . optional($this->wallet->currencie)->code ?? null
+            'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+            'amount_solde_drawal' => $this->amount_solde_drawal . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")
+            
         ];
     }
 }

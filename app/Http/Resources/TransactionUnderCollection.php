@@ -56,10 +56,10 @@ class TransactionUnderCollection extends ResourceCollection
                                         'paiementChoix_phone' =>  $data->paiementChoix_phone,
                                         'factureChoix_type' =>  $data->factureChoix_type,
                                         'frais' => number_format((float)$data->costs_amount, 2, '.', ' '),
-                                        'devise'  => optional($data->wallet->currencie)->code,
+                                        'devise'  =>  optional(optional($this->wallet)->currencie)->code ?? "CFA",
                                         'status'  =>  $data->status,
-                                        'solde_account'  => $data->amount_solde .  ' ' . optional($data->wallet->currencie)->code ?? null,
-                                        'amount_solde_drawal' =>  $data->amount_solde_drawal .  ' ' . optional($data->wallet->currencie)->code ?? null
+                                        'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+                                        'amount_solde_drawal' => $this->amount_solde_drawal . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")                                        
                                 ];
                         })
                 ];

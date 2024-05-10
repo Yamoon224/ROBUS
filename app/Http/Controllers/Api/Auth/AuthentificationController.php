@@ -612,8 +612,9 @@ class AuthentificationController extends Controller
 
             $email = $request->input('email');
             $password = $request->input('password');
+            $device_meta_data = $request->input('device_meta_data');
 
-            $result = $this->authService->$loginMethod($email, $password);
+            $result = $this->authService->$loginMethod($email, $password , $device_meta_data);
 
             if ($result['success']) {
                 return $this->loginSuccess($result['token'], $result['user']);

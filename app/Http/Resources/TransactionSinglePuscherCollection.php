@@ -26,7 +26,7 @@ class TransactionSinglePuscherCollection extends JsonResource
             'Reference'  => optional($this->transaction)->transaction_id,
             'name' =>  $this->name,
             'description'  =>  $this->description,
-            'payment_cost_percent' =>   number_format((double)$this->commissions, 2, '.', '') ?? null,
+            'payment_cost_percent' =>   number_format((float)$this->commissions, 2, '.', '') ?? null,
             'number_decoder' =>  $this->number_decoder,
             'id_invoice' =>  $this->id_invoice,
             'number_decoder' =>  $this->number_decoder,
@@ -36,8 +36,9 @@ class TransactionSinglePuscherCollection extends JsonResource
             'paiementChoix_phone' =>  $this->paiementChoix_phone,
             'factureChoix_type' =>  $this->factureChoix_type,
             'status'  =>  $this->status,
-            'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
-            'amount_solde_drawal' =>  $this->amount_solde_drawal .  ' ' . optional($this->wallet->currencie)->code ?? null
+            'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+            'amount_solde_drawal' => $this->amount_solde_drawal . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")
+
 
         ];
     }

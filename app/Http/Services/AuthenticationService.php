@@ -72,7 +72,7 @@ class AuthenticationService
                 }
         }
 
-        public function underDistributorLogin($email, $password)
+        public function underDistributorLogin($email, $password , $device_meta_data)
         {
 
                 try {
@@ -87,9 +87,22 @@ class AuthenticationService
                                 }
 
                                 if ($user->is_under_distributer && Hash::check($password, $user->password)) {
-                                        Auth::user()->update(['last_login' => Carbon::now()->toDateTimeString(), 'last_logout' => null]);
-                                        $token = $user->createToken('auth_token');
-                                        return ['success' => true, 'token' => $token, 'user' => $user];
+
+                                        if ($user->device_meta_data === null || $user->device_meta_data === $device_meta_data) {
+                                                
+                                                $user->update([
+                                                    'last_login' => Carbon::now()->toDateTimeString(),
+                                                    'last_logout' => null,
+                                                    'device_meta_data' => $device_meta_data
+                                                ]);
+                                
+                                                $token = $user->createToken('auth_token');
+                                                
+                                                return ['success' => true, 'token' => $token, 'user' => $user];
+
+                                            } else {
+                                                return ['success' => false, 'message' => 'Changement de dispositif détecté ou données du téléphone incorrectes.' , 'catch' =>false];
+                                        }
                                 } else {
                                         return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée'];
                                 }

@@ -69,12 +69,12 @@ class InterTransactionUnderCollection extends ResourceCollection
                                         ],
                                         'country_send'  =>  optional($data->wallet->country)->name ?? null,
                                         'country_desti'  =>  optional($data->country)->name ?? null,
-                                        'devise'  => optional($data->wallet->currencie)->code ?? null,
+                                        'devise'  =>  optional(optional($this->wallet)->currencie)->code ?? "CFA",
                                         'frais' => number_format((float)$data->costs_amount, 2, '.', ' '),
                                         'status'  =>  $data->status,
                                         // 'amount_received'  => $data->amount_received ?? null,
-                                        'solde_account'  => $data->amount_solde .  ' ' . optional($data->wallet->currencie)->code ?? null,
-                                        'amount_solde_drawal' =>  $data->amount_solde_drawal .  ' ' . optional($data->country->currencie)->code ?? null
+                                        'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+                                        'amount_solde_drawal' => $this->amount_solde_drawal . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") 
                                 ];
                         })
                 ];

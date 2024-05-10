@@ -1,7 +1,5 @@
-import _ from 'lodash';
-window._ = _;
-
 import 'bootstrap';
+window._ = _;
 
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
@@ -12,11 +10,7 @@ import 'bootstrap';
 import axios from 'axios';
 window.axios = axios;
 
-try {
-    window.Popper = require('@popperjs/core').default;
-    window.$ = window.jQuery = require('jquery');
-
-} catch (e) {}
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
 let token = document.head.querySelector('meta[name="csrf-token"]');
 if (token) {
