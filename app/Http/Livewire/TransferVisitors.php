@@ -607,7 +607,7 @@ class TransferVisitors extends Component
 
                                 $encode = substr($check->phone_benef, -10);
 
-                                // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
 
 
                                 Notification::send(

@@ -191,7 +191,7 @@ class IntersPaymentController extends Controller
                         'amount.required' => 'Votre montant est obligatoire',
                         'country.required' => 'Votre pays est obligatoire',
                     ];
-                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78])) {
+                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78 , 93, 94 , 95 , 96 , 97])) {
 
                     if (robus()->is_under_distributer) {
 
