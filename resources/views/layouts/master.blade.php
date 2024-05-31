@@ -2744,6 +2744,12 @@
             $('#update-paiementHisto-modal').addClass('show');
         });
 
+        Livewire.on('modal-virement-validted-show', () => {
+            $('#validated-virement-modal').removeClass('hide');
+            $('#validated-virement-modal').addClass('show');
+            // $('body').removeClass('overflow');
+        });
+
         // Transfers UV Show validated Password
         
         Livewire.on('modal-transfers-validted-show', () => {

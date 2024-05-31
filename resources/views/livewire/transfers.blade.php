@@ -371,7 +371,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+            {{-- <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
                 <div class="report-box zoom-in ">
                     <div class="box p-wallet style_table1">
                         <div class="flex mb-transactions">
@@ -454,7 +454,7 @@
                         <div class="text-base text-slate-500 mt-1">Achat UV Waves {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
+            </div> --}}
         </div>
 
 
@@ -541,8 +541,8 @@
             @include('components.carte_compo')
             @include('components.credit_compo')
             @include('components.inter_compo')
-            @include('components.xbetTransaction')
-            @include('components.waveTransaction')
+            {{-- @include('components.xbetTransaction') --}}
+            {{-- @include('components.waveTransaction') --}}
         </div>
 
     </div>
@@ -551,8 +551,8 @@
     @include('livewire.commissions.modals.transactions.updateInterTransfer')
     @include('livewire.commissions.modals.transactions.updateRelaodCards')
     @include('livewire.commissions.modals.transactions.updateTransfersUV')
-    @include('livewire.commissions.modals.transactions.updateWave')
-    @include('livewire.commissions.modals.transactions.updateXbet')
+    {{-- @include('livewire.commissions.modals.transactions.updateWave') --}}
+    {{-- @include('livewire.commissions.modals.transactions.updateXbet') --}}
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
     @include('livewire.commissions.modals.transactions.addPhoneCredit')
     @include('livewire.commissions.modals.transactions.addReloadCards')

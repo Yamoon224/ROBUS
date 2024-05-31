@@ -334,7 +334,7 @@ class IntersPaymentController extends Controller
                     } else {
                         return   json_message_response(false, "veuillez selectionnez le pays de destination ou le  Numero ne correspond pas au pays SVP !", 300);
                     }
-                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78])) {
+                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94 , 95 , 96 , 97])) {
 
                     if ($this->interServices->validatePhone($request->phone)) {
 

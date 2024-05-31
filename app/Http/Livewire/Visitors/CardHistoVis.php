@@ -25,7 +25,7 @@ class CardHistoVis extends Component
     public function render()
     {
 
-        $cartes =  WalletDeposit::whereIsWeb(false);
+        $cartes =  WalletDeposit::whereIsWeb(true);
 
         $walletUser = sabdy();
 
@@ -121,7 +121,7 @@ class CardHistoVis extends Component
 
         $data = [];
 
-        $wallets = WalletDeposit::whereIsWeb(false)->get();
+        $wallets = WalletDeposit::whereIsWeb(true)->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -136,7 +136,7 @@ class CardHistoVis extends Component
     {
         $data = [];
 
-        $wallets = WalletDeposit::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
+        $wallets = WalletDeposit::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
 
         foreach ($wallets as $bank) {
             $data[] = $bank->amount;
@@ -152,7 +152,7 @@ class CardHistoVis extends Component
        $data = [];
 
        // Exécutez la requête pour obtenir une collection d'objets
-       $walletdeposits = WalletDeposit::whereIsWeb(false)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
+       $walletdeposits = WalletDeposit::whereIsWeb(true)->whereBetween('created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
        
 
        foreach ($walletdeposits as $wallet) {

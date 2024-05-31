@@ -335,7 +335,7 @@
                                         <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                             {{ 'Montant recu' }}</td>
                                         <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->transactionInter->received_amount ?? null }}
+                                            {{ $walletInters->amount_received ?? null }}
                                             {{ $walletInters->country->currencie->name ?? null }}</td>
                                     </tr>
 
@@ -391,7 +391,7 @@
                                         <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                             {{ 'Montant recu' }}</td>
                                         <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->transactionInter->received_amount ?? null }}
+                                            {{ $walletInters->amount_received ?? null }}
                                             {{ $walletInters->country->currencie->name ?? null }}</td>
                                     </tr>
 
@@ -449,7 +449,7 @@
                                         <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                             {{ 'Montant recu' }}</td>
                                         <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->transactionInter->received_amount ?? null }}
+                                            {{ $walletInters->amount_received ?? null }}
                                             {{ $walletInters->country->currencie->name ?? null }}</td>
                                     </tr>
 
@@ -499,7 +499,7 @@
                                         <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                             {{ 'Montant recu' }}</td>
                                         <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                            {{ $walletInters->transactionInter->received_amount ?? null }}
+                                            {{ $walletInters->amount_received ?? null }}
                                             {{ $walletInters->country->currencie->name ?? null }}</td>
                                     </tr>
 
@@ -550,7 +550,7 @@
                                     <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                         {{ 'Montant recu' }}</td>
                                     <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->transactionInter->received_amount ?? null }}
+                                        {{ $walletInters->amount_received ?? null }}
                                         {{ $walletInters->country->currencie->name ?? null }}</td>
                                 </tr>
                                 <tr>
@@ -600,7 +600,7 @@
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant recu' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->transactionInter->received_amount ?? null }}
+                                    {{ $walletInters->amount_received ?? null }}
                                     {{ $walletInters->country->currencie->name ?? null }}</td>
                             </tr>
 
@@ -652,7 +652,7 @@
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant recu' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->transactionInter->received_amount ?? null }}
+                                    {{ $walletInters->amount_received ?? null }}
                                     {{ $walletInters->country->currencie->name ?? null }}</td>
                             </tr>
 
@@ -709,7 +709,7 @@
                                 <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                     {{ 'Montant recu' }}</td>
                                 <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                    {{ $walletInters->transactionInter->received_amount ?? null }}
+                                    {{ $walletInters->amount_received ?? null }}
                                     {{ $walletInters->country->currencie->name ?? null }}</td>
                             </tr>
 
