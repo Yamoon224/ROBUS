@@ -3,10 +3,10 @@
     "city": "Amsterdam", 
     "lat": "52.3728", 
     "lng": "4.8936", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "primary", 
+     
     "population": "1459402", 
     "population_proper": "917923"
   }, 
@@ -14,10 +14,10 @@
     "city": "Rotterdam", 
     "lat": "51.9167", 
     "lng": "4.5000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "631155", 
     "population_proper": "592105"
   }, 
@@ -25,10 +25,10 @@
     "city": "The Hague", 
     "lat": "52.0800", 
     "lng": "4.3100", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "primary", 
+     
     "population": "548320", 
     "population_proper": "548320"
   }, 
@@ -36,10 +36,10 @@
     "city": "Utrecht", 
     "lat": "52.0833", 
     "lng": "5.1167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "admin", 
+     
     "population": "359370", 
     "population_proper": "359370"
   }, 
@@ -47,10 +47,10 @@
     "city": "Maastricht", 
     "lat": "50.8500", 
     "lng": "5.6833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "admin", 
+     
     "population": "277721", 
     "population_proper": "120227"
   }, 
@@ -58,10 +58,10 @@
     "city": "Eindhoven", 
     "lat": "51.4333", 
     "lng": "5.4833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "235691", 
     "population_proper": "235691"
   }, 
@@ -69,10 +69,10 @@
     "city": "Groningen", 
     "lat": "53.2167", 
     "lng": "6.5667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Groningen", 
-    "capital": "admin", 
+     
     "population": "233273", 
     "population_proper": "233273"
   }, 
@@ -80,10 +80,10 @@
     "city": "Tilburg", 
     "lat": "51.5500", 
     "lng": "5.0833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "221947", 
     "population_proper": "221947"
   }, 
@@ -91,10 +91,10 @@
     "city": "Almere", 
     "lat": "52.3667", 
     "lng": "5.2167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Flevoland", 
-    "capital": "minor", 
+     
     "population": "214715", 
     "population_proper": "214715"
   }, 
@@ -102,10 +102,10 @@
     "city": "Breda", 
     "lat": "51.5889", 
     "lng": "4.7758", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "184126", 
     "population_proper": "184126"
   }, 
@@ -113,10 +113,10 @@
     "city": "Nijmegen", 
     "lat": "51.8475", 
     "lng": "5.8625", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "177659", 
     "population_proper": "177359"
   }, 
@@ -124,10 +124,10 @@
     "city": "Arnhem", 
     "lat": "51.9833", 
     "lng": "5.9167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "admin", 
+     
     "population": "164096", 
     "population_proper": "164096"
   }, 
@@ -135,10 +135,10 @@
     "city": "Haarlem", 
     "lat": "52.3833", 
     "lng": "4.6333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "admin", 
+     
     "population": "162902", 
     "population_proper": "162543"
   }, 
@@ -146,10 +146,10 @@
     "city": "Apeldoorn", 
     "lat": "52.2167", 
     "lng": "5.9667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "161156", 
     "population_proper": "138945"
   }, 
@@ -157,10 +157,10 @@
     "city": "Enschede", 
     "lat": "52.2167", 
     "lng": "6.9000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "minor", 
+     
     "population": "159703", 
     "population_proper": "159703"
   }, 
@@ -168,10 +168,10 @@
     "city": "Hoofddorp", 
     "lat": "52.3061", 
     "lng": "4.6907", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "157789", 
     "population_proper": "157789"
   }, 
@@ -179,10 +179,10 @@
     "city": "’s-Hertogenbosch", 
     "lat": "51.6833", 
     "lng": "5.3000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "admin", 
+     
     "population": "157486", 
     "population_proper": "157486"
   }, 
@@ -190,10 +190,10 @@
     "city": "Amersfoort", 
     "lat": "52.1500", 
     "lng": "5.3833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "157462", 
     "population_proper": "157462"
   }, 
@@ -201,10 +201,10 @@
     "city": "Zaanstad", 
     "lat": "52.4697", 
     "lng": "4.7767", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "156901", 
     "population_proper": "156901"
   }, 
@@ -212,10 +212,10 @@
     "city": "Zwolle", 
     "lat": "52.5167", 
     "lng": "6.1000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "admin", 
+     
     "population": "129840", 
     "population_proper": "129840"
   }, 
@@ -223,10 +223,10 @@
     "city": "Zoetermeer", 
     "lat": "52.0667", 
     "lng": "4.5000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "125267", 
     "population_proper": "125267"
   }, 
@@ -234,10 +234,10 @@
     "city": "Leiden", 
     "lat": "52.1600", 
     "lng": "4.4900", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "124899", 
     "population_proper": "124093"
   }, 
@@ -245,10 +245,10 @@
     "city": "Leeuwarden", 
     "lat": "53.2000", 
     "lng": "5.7833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Fryslân", 
-    "capital": "admin", 
+     
     "population": "124481", 
     "population_proper": "124481"
   }, 
@@ -256,10 +256,10 @@
     "city": "Dordrecht", 
     "lat": "51.7958", 
     "lng": "4.6783", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "119115", 
     "population_proper": "119115"
   }, 
@@ -267,10 +267,10 @@
     "city": "Alphen aan den Rijn", 
     "lat": "52.1333", 
     "lng": "4.6667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "112587", 
     "population_proper": "112587"
   }, 
@@ -278,10 +278,10 @@
     "city": "Alkmaar", 
     "lat": "52.6333", 
     "lng": "4.7500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "109896", 
     "population_proper": "109896"
   }, 
@@ -289,10 +289,10 @@
     "city": "Emmen", 
     "lat": "52.7833", 
     "lng": "6.9000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Drenthe", 
-    "capital": "minor", 
+     
     "population": "107471", 
     "population_proper": "107024"
   }, 
@@ -300,10 +300,10 @@
     "city": "Delft", 
     "lat": "52.0117", 
     "lng": "4.3592", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "103581", 
     "population_proper": "103581"
   }, 
@@ -311,10 +311,10 @@
     "city": "Deventer", 
     "lat": "52.2500", 
     "lng": "6.1500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "minor", 
+     
     "population": "101236", 
     "population_proper": "101236"
   }, 
@@ -322,10 +322,10 @@
     "city": "Helmond", 
     "lat": "51.4833", 
     "lng": "5.6500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "92627", 
     "population_proper": "92627"
   }, 
@@ -333,10 +333,10 @@
     "city": "Amstelveen", 
     "lat": "52.3000", 
     "lng": "4.8500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "91675", 
     "population_proper": "90829"
   }, 
@@ -344,10 +344,10 @@
     "city": "Hilversum", 
     "lat": "52.2333", 
     "lng": "5.1667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "91235", 
     "population_proper": "91235"
   }, 
@@ -355,10 +355,10 @@
     "city": "Heerlen", 
     "lat": "50.8833", 
     "lng": "5.9833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "minor", 
+     
     "population": "86936", 
     "population_proper": "86936"
   }, 
@@ -366,10 +366,10 @@
     "city": "Purmerend", 
     "lat": "52.5000", 
     "lng": "4.9500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "81515", 
     "population_proper": "81515"
   }, 
@@ -377,10 +377,10 @@
     "city": "Hengelo", 
     "lat": "52.2656", 
     "lng": "6.7931", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "minor", 
+     
     "population": "81049", 
     "population_proper": "81049"
   }, 
@@ -388,10 +388,10 @@
     "city": "Lelystad", 
     "lat": "52.5000", 
     "lng": "5.4833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Flevoland", 
-    "capital": "admin", 
+     
     "population": "79811", 
     "population_proper": "79811"
   }, 
@@ -399,10 +399,10 @@
     "city": "Schiedam", 
     "lat": "51.9167", 
     "lng": "4.4000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "79279", 
     "population_proper": "79279"
   }, 
@@ -410,10 +410,10 @@
     "city": "Zaandam", 
     "lat": "52.4333", 
     "lng": "4.8333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "78682", 
     "population_proper": "78682"
   }, 
@@ -421,10 +421,10 @@
     "city": "Vlaardingen", 
     "lat": "51.9000", 
     "lng": "4.3500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "73924", 
     "population_proper": "73924"
   }, 
@@ -432,10 +432,10 @@
     "city": "Gouda", 
     "lat": "52.0111", 
     "lng": "4.7111", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "73681", 
     "population_proper": "73681"
   }, 
@@ -443,10 +443,10 @@
     "city": "Hoorn", 
     "lat": "52.6500", 
     "lng": "5.0667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "73619", 
     "population_proper": "73619"
   }, 
@@ -454,10 +454,10 @@
     "city": "Almelo", 
     "lat": "52.3500", 
     "lng": "6.6667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "minor", 
+     
     "population": "73132", 
     "population_proper": "73132"
   }, 
@@ -465,10 +465,10 @@
     "city": "Spijkenisse", 
     "lat": "51.8500", 
     "lng": "4.3333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "72740", 
     "population_proper": "72740"
   }, 
@@ -476,10 +476,10 @@
     "city": "Assen", 
     "lat": "53.0000", 
     "lng": "6.5667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Drenthe", 
-    "capital": "admin", 
+     
     "population": "68836", 
     "population_proper": "68836"
   }, 
@@ -487,10 +487,10 @@
     "city": "Velsen-Zuid", 
     "lat": "52.4667", 
     "lng": "4.6167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "68617", 
     "population_proper": "68617"
   }, 
@@ -498,10 +498,10 @@
     "city": "Capelle aan den IJssel", 
     "lat": "51.9333", 
     "lng": "4.5833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "67319", 
     "population_proper": "67319"
   }, 
@@ -509,10 +509,10 @@
     "city": "Veenendaal", 
     "lat": "52.0167", 
     "lng": "5.5500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "66912", 
     "population_proper": "66912"
   }, 
@@ -520,10 +520,10 @@
     "city": "Katwijk", 
     "lat": "52.2000", 
     "lng": "4.4167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "65995", 
     "population_proper": "65995"
   }, 
@@ -531,10 +531,10 @@
     "city": "Zeist", 
     "lat": "52.0906", 
     "lng": "5.2331", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "65043", 
     "population_proper": "65043"
   }, 
@@ -542,10 +542,10 @@
     "city": "Nieuwegein", 
     "lat": "52.0333", 
     "lng": "5.0833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "63866", 
     "population_proper": "63866"
   }, 
@@ -553,10 +553,10 @@
     "city": "Scheveningen", 
     "lat": "52.1081", 
     "lng": "4.2731", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "58850", 
     "population_proper": "58850"
   }, 
@@ -564,10 +564,10 @@
     "city": "Heerhugowaard", 
     "lat": "52.6667", 
     "lng": "4.8333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "58387", 
     "population_proper": "58387"
   }, 
@@ -575,10 +575,10 @@
     "city": "Roermond", 
     "lat": "51.2000", 
     "lng": "5.9833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "minor", 
+     
     "population": "57308", 
     "population_proper": "57308"
   }, 
@@ -586,10 +586,10 @@
     "city": "Oosterhout", 
     "lat": "51.6431", 
     "lng": "4.8569", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "56206", 
     "population_proper": "56206"
   }, 
@@ -597,10 +597,10 @@
     "city": "Rijswijk", 
     "lat": "52.0456", 
     "lng": "4.3300", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "55220", 
     "population_proper": "55220"
   }, 
@@ -608,10 +608,10 @@
     "city": "Houten", 
     "lat": "52.0333", 
     "lng": "5.1667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "50223", 
     "population_proper": "50223"
   }, 
@@ -619,10 +619,10 @@
     "city": "Sittard", 
     "lat": "51.0000", 
     "lng": "5.8667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "minor", 
+     
     "population": "49483", 
     "population_proper": "49483"
   }, 
@@ -630,10 +630,10 @@
     "city": "Harderwijk", 
     "lat": "52.3500", 
     "lng": "5.6167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "48726", 
     "population_proper": "48726"
   }, 
@@ -641,10 +641,10 @@
     "city": "Barendrecht", 
     "lat": "51.8500", 
     "lng": "4.5333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "48673", 
     "population_proper": "48643"
   }, 
@@ -652,10 +652,10 @@
     "city": "IJmuiden", 
     "lat": "52.4586", 
     "lng": "4.6194", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "48320", 
     "population_proper": "48320"
   }, 
@@ -663,10 +663,10 @@
     "city": "Middelburg", 
     "lat": "51.5000", 
     "lng": "3.6167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zeeland", 
-    "capital": "admin", 
+     
     "population": "47939", 
     "population_proper": "47939"
   }, 
@@ -674,10 +674,10 @@
     "city": "Zutphen", 
     "lat": "52.1400", 
     "lng": "6.1950", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "47423", 
     "population_proper": "47423"
   }, 
@@ -685,10 +685,10 @@
     "city": "Soest", 
     "lat": "52.1833", 
     "lng": "5.3000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "46906", 
     "population_proper": "46906"
   }, 
@@ -696,10 +696,10 @@
     "city": "Ridderkerk", 
     "lat": "51.8667", 
     "lng": "4.6000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "46671", 
     "population_proper": "46671"
   }, 
@@ -707,10 +707,10 @@
     "city": "Schagen", 
     "lat": "52.7833", 
     "lng": "4.8000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "46553", 
     "population_proper": "46532"
   }, 
@@ -718,10 +718,10 @@
     "city": "Kerkrade", 
     "lat": "50.8667", 
     "lng": "6.0667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "minor", 
+     
     "population": "45642", 
     "population_proper": "45442"
   }, 
@@ -729,10 +729,10 @@
     "city": "Veldhoven", 
     "lat": "51.4200", 
     "lng": "5.4050", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "45500", 
     "population_proper": "45500"
   }, 
@@ -740,10 +740,10 @@
     "city": "Zwijndrecht", 
     "lat": "51.8167", 
     "lng": "4.6500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "44775", 
     "population_proper": "44775"
   }, 
@@ -751,10 +751,10 @@
     "city": "Zevenaar", 
     "lat": "51.9167", 
     "lng": "6.0667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "44096", 
     "population_proper": "44096"
   }, 
@@ -762,10 +762,10 @@
     "city": "Noordwijk", 
     "lat": "52.2333", 
     "lng": "4.4333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "44062", 
     "population_proper": "44062"
   }, 
@@ -773,10 +773,10 @@
     "city": "Etten-Leur", 
     "lat": "51.5667", 
     "lng": "4.6333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "43869", 
     "population_proper": "43869"
   }, 
@@ -784,10 +784,10 @@
     "city": "Tiel", 
     "lat": "51.8833", 
     "lng": "5.4333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "41978", 
     "population_proper": "41920"
   }, 
@@ -795,10 +795,10 @@
     "city": "Beverwijk", 
     "lat": "52.4833", 
     "lng": "4.6500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "41863", 
     "population_proper": "41863"
   }, 
@@ -806,10 +806,10 @@
     "city": "Huizen", 
     "lat": "52.3000", 
     "lng": "5.2500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "41090", 
     "population_proper": "41090"
   }, 
@@ -817,10 +817,10 @@
     "city": "Hellevoetsluis", 
     "lat": "51.8167", 
     "lng": "4.1333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "40312", 
     "population_proper": "40312"
   }, 
@@ -828,10 +828,10 @@
     "city": "Maarssen", 
     "lat": "52.1351", 
     "lng": "5.0413", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "39752", 
     "population_proper": "39752"
   }, 
@@ -839,10 +839,10 @@
     "city": "Wageningen", 
     "lat": "51.9667", 
     "lng": "5.6667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "39635", 
     "population_proper": "39635"
   }, 
@@ -850,10 +850,10 @@
     "city": "Heemskerk", 
     "lat": "52.5167", 
     "lng": "4.6667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "39191", 
     "population_proper": "39191"
   }, 
@@ -861,10 +861,10 @@
     "city": "Veghel", 
     "lat": "51.6167", 
     "lng": "5.5500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "38077", 
     "population_proper": "38077"
   }, 
@@ -872,10 +872,10 @@
     "city": "Teijlingen", 
     "lat": "52.2150", 
     "lng": "4.5103", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "37791", 
     "population_proper": "37791"
   }, 
@@ -883,10 +883,10 @@
     "city": "Landgraaf", 
     "lat": "50.9083", 
     "lng": "6.0297", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "minor", 
+     
     "population": "37591", 
     "population_proper": "37262"
   }, 
@@ -894,10 +894,10 @@
     "city": "Gorinchem", 
     "lat": "51.8306", 
     "lng": "4.9742", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "37410", 
     "population_proper": "37410"
   }, 
@@ -905,10 +905,10 @@
     "city": "Hoogvliet", 
     "lat": "51.8667", 
     "lng": "4.3500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "35575", 
     "population_proper": "35575"
   }, 
@@ -916,10 +916,10 @@
     "city": "Berg en Dal", 
     "lat": "51.8167", 
     "lng": "5.9167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "", 
+     
     "population": "35010", 
     "population_proper": "35010"
   }, 
@@ -927,10 +927,10 @@
     "city": "Maassluis", 
     "lat": "51.9333", 
     "lng": "4.2333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "33567", 
     "population_proper": "33567"
   }, 
@@ -938,10 +938,10 @@
     "city": "Bussum", 
     "lat": "52.2833", 
     "lng": "5.1667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "32410", 
     "population_proper": "32410"
   }, 
@@ -949,10 +949,10 @@
     "city": "Papendrecht", 
     "lat": "51.8333", 
     "lng": "4.6833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "32290", 
     "population_proper": "32171"
   }, 
@@ -960,10 +960,10 @@
     "city": "Aalsmeer", 
     "lat": "52.2667", 
     "lng": "4.7500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "31991", 
     "population_proper": "31991"
   }, 
@@ -971,10 +971,10 @@
     "city": "Oldenzaal", 
     "lat": "52.3167", 
     "lng": "6.9333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "minor", 
+     
     "population": "31840", 
     "population_proper": "31701"
   }, 
@@ -982,10 +982,10 @@
     "city": "Vught", 
     "lat": "51.6500", 
     "lng": "5.3000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "31669", 
     "population_proper": "31669"
   }, 
@@ -993,10 +993,10 @@
     "city": "Nieuw-Vennep", 
     "lat": "52.2644", 
     "lng": "4.6347", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "31415", 
     "population_proper": "31415"
   }, 
@@ -1004,10 +1004,10 @@
     "city": "Waddinxveen", 
     "lat": "52.0500", 
     "lng": "4.6500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "31342", 
     "population_proper": "31342"
   }, 
@@ -1015,10 +1015,10 @@
     "city": "Diemen", 
     "lat": "52.3333", 
     "lng": "4.9667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "31334", 
     "population_proper": "31334"
   }, 
@@ -1026,10 +1026,10 @@
     "city": "Hendrik-Ido-Ambacht", 
     "lat": "51.8500", 
     "lng": "4.6333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "31258", 
     "population_proper": "31258"
   }, 
@@ -1037,10 +1037,10 @@
     "city": "Rosmalen", 
     "lat": "51.7167", 
     "lng": "5.3667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "", 
+     
     "population": "31219", 
     "population_proper": "31219"
   }, 
@@ -1048,10 +1048,10 @@
     "city": "Best", 
     "lat": "51.5167", 
     "lng": "5.4000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "30216", 
     "population_proper": "30216"
   }, 
@@ -1059,10 +1059,10 @@
     "city": "Uithoorn", 
     "lat": "52.2333", 
     "lng": "4.8333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "30206", 
     "population_proper": "30206"
   }, 
@@ -1070,10 +1070,10 @@
     "city": "Krimpen aan den IJssel", 
     "lat": "51.9167", 
     "lng": "4.5833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "29410", 
     "population_proper": "29410"
   }, 
@@ -1081,10 +1081,10 @@
     "city": "Culemborg", 
     "lat": "51.9500", 
     "lng": "5.2333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "29121", 
     "population_proper": "29121"
   }, 
@@ -1092,10 +1092,10 @@
     "city": "Brunssum", 
     "lat": "50.9500", 
     "lng": "5.9667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "minor", 
+     
     "population": "28103", 
     "population_proper": "27670"
   }, 
@@ -1103,10 +1103,10 @@
     "city": "Geldrop", 
     "lat": "51.4222", 
     "lng": "5.5578", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "28001", 
     "population_proper": "28001"
   }, 
@@ -1114,10 +1114,10 @@
     "city": "Langedijk", 
     "lat": "52.6936", 
     "lng": "4.7944", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "27992", 
     "population_proper": "27992"
   }, 
@@ -1125,10 +1125,10 @@
     "city": "Vleuten", 
     "lat": "52.1081", 
     "lng": "5.0150", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "", 
+     
     "population": "27815", 
     "population_proper": "27815"
   }, 
@@ -1136,10 +1136,10 @@
     "city": "Heemstede", 
     "lat": "52.3500", 
     "lng": "4.6167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "27545", 
     "population_proper": "27545"
   }, 
@@ -1147,10 +1147,10 @@
     "city": "Leiderdorp", 
     "lat": "52.1667", 
     "lng": "4.5333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "27377", 
     "population_proper": "27377"
   }, 
@@ -1158,10 +1158,10 @@
     "city": "Blerick", 
     "lat": "51.3667", 
     "lng": "6.1500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "27330", 
     "population_proper": "27330"
   }, 
@@ -1169,10 +1169,10 @@
     "city": "Pijnacker", 
     "lat": "52.0167", 
     "lng": "4.4333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "27130", 
     "population_proper": "27130"
   }, 
@@ -1180,10 +1180,10 @@
     "city": "Dongen", 
     "lat": "51.6333", 
     "lng": "4.9333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "26368", 
     "population_proper": "26368"
   }, 
@@ -1191,10 +1191,10 @@
     "city": "Voorschoten", 
     "lat": "52.1333", 
     "lng": "4.4500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "25650", 
     "population_proper": "25650"
   }, 
@@ -1202,10 +1202,10 @@
     "city": "Sliedrecht", 
     "lat": "51.8167", 
     "lng": "4.7667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "25597", 
     "population_proper": "25597"
   }, 
@@ -1213,10 +1213,10 @@
     "city": "Oegstgeest", 
     "lat": "52.1833", 
     "lng": "4.4667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "25064", 
     "population_proper": "25064"
   }, 
@@ -1224,10 +1224,10 @@
     "city": "Stein", 
     "lat": "50.9667", 
     "lng": "5.7667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "minor", 
+     
     "population": "24961", 
     "population_proper": "24875"
   }, 
@@ -1235,10 +1235,10 @@
     "city": "Baarn", 
     "lat": "52.2167", 
     "lng": "5.2833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "24792", 
     "population_proper": "24792"
   }, 
@@ -1246,10 +1246,10 @@
     "city": "Oud-Beijerland", 
     "lat": "51.8167", 
     "lng": "4.4000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "24301", 
     "population_proper": "24301"
   }, 
@@ -1257,10 +1257,10 @@
     "city": "Heiloo", 
     "lat": "52.6000", 
     "lng": "4.7167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "24144", 
     "population_proper": "24144"
   }, 
@@ -1268,10 +1268,10 @@
     "city": "Borne", 
     "lat": "52.3000", 
     "lng": "6.7500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "minor", 
+     
     "population": "23668", 
     "population_proper": "23668"
   }, 
@@ -1279,10 +1279,10 @@
     "city": "Lisse", 
     "lat": "52.2500", 
     "lng": "4.5500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "22982", 
     "population_proper": "22982"
   }, 
@@ -1290,10 +1290,10 @@
     "city": "Volendam", 
     "lat": "52.4994", 
     "lng": "5.0675", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "22715", 
     "population_proper": "22715"
   }, 
@@ -1301,10 +1301,10 @@
     "city": "Hillegom", 
     "lat": "52.2833", 
     "lng": "4.5833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "22197", 
     "population_proper": "22197"
   }, 
@@ -1312,10 +1312,10 @@
     "city": "’s-Gravenzande", 
     "lat": "52.0000", 
     "lng": "4.1667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "22190", 
     "population_proper": "22190"
   }, 
@@ -1323,10 +1323,10 @@
     "city": "De Meern", 
     "lat": "52.0781", 
     "lng": "5.0281", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "", 
+     
     "population": "21815", 
     "population_proper": "21815"
   }, 
@@ -1334,10 +1334,10 @@
     "city": "Nuenen", 
     "lat": "51.4733", 
     "lng": "5.5467", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "20580", 
     "population_proper": "20580"
   }, 
@@ -1345,10 +1345,10 @@
     "city": "Alblasserdam", 
     "lat": "51.8702", 
     "lng": "4.6667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "20136", 
     "population_proper": "20136"
   }, 
@@ -1356,10 +1356,10 @@
     "city": "Weesp", 
     "lat": "52.3000", 
     "lng": "5.0500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "19334", 
     "population_proper": "19334"
   }, 
@@ -1367,10 +1367,10 @@
     "city": "Nootdorp", 
     "lat": "52.0333", 
     "lng": "4.4000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "19000", 
     "population_proper": "19000"
   }, 
@@ -1378,10 +1378,10 @@
     "city": "Krommenie", 
     "lat": "52.5000", 
     "lng": "4.7667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "18955", 
     "population_proper": "18955"
   }, 
@@ -1389,10 +1389,10 @@
     "city": "Naaldwijk", 
     "lat": "51.9931", 
     "lng": "4.2050", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "18858", 
     "population_proper": "18858"
   }, 
@@ -1400,10 +1400,10 @@
     "city": "Edam", 
     "lat": "52.5167", 
     "lng": "5.0500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "18828", 
     "population_proper": "18828"
   }, 
@@ -1411,10 +1411,10 @@
     "city": "Enkhuizen", 
     "lat": "52.7000", 
     "lng": "5.3000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "18637", 
     "population_proper": "18637"
   }, 
@@ -1422,10 +1422,10 @@
     "city": "Hardinxveld-Giessendam", 
     "lat": "51.8167", 
     "lng": "4.8333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "18413", 
     "population_proper": "18413"
   }, 
@@ -1433,10 +1433,10 @@
     "city": "Naarden", 
     "lat": "52.2953", 
     "lng": "5.1622", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "17555", 
     "population_proper": "17555"
   }, 
@@ -1444,10 +1444,10 @@
     "city": "Waalre", 
     "lat": "51.4000", 
     "lng": "5.4667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "17544", 
     "population_proper": "17544"
   }, 
@@ -1455,10 +1455,10 @@
     "city": "Rijen", 
     "lat": "51.5833", 
     "lng": "4.9500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "16800", 
     "population_proper": "16800"
   }, 
@@ -1466,10 +1466,10 @@
     "city": "Glanerbrug", 
     "lat": "52.2150", 
     "lng": "6.9742", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "", 
+     
     "population": "16715", 
     "population_proper": "16715"
   }, 
@@ -1477,10 +1477,10 @@
     "city": "Beek", 
     "lat": "50.9333", 
     "lng": "5.8000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "minor", 
+     
     "population": "15929", 
     "population_proper": "15875"
   }, 
@@ -1488,10 +1488,10 @@
     "city": "Schaesberg", 
     "lat": "50.9000", 
     "lng": "6.0167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "15900", 
     "population_proper": "15900"
   }, 
@@ -1499,10 +1499,10 @@
     "city": "Boskoop", 
     "lat": "52.0667", 
     "lng": "4.6500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "15045", 
     "population_proper": "15045"
   }, 
@@ -1510,10 +1510,10 @@
     "city": "Westervoort", 
     "lat": "51.9667", 
     "lng": "5.9667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "15014", 
     "population_proper": "15014"
   }, 
@@ -1521,10 +1521,10 @@
     "city": "Sassenheim", 
     "lat": "52.2258", 
     "lng": "4.5225", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "14886", 
     "population_proper": "14886"
   }, 
@@ -1532,10 +1532,10 @@
     "city": "Julianadorp", 
     "lat": "52.8833", 
     "lng": "4.7333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "13925", 
     "population_proper": "13925"
   }, 
@@ -1543,10 +1543,10 @@
     "city": "Badhoevedorp", 
     "lat": "52.3333", 
     "lng": "4.7833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "13290", 
     "population_proper": "13290"
   }, 
@@ -1554,10 +1554,10 @@
     "city": "Raamsdonksveer", 
     "lat": "51.6833", 
     "lng": "4.8667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "12470", 
     "population_proper": "12470"
   }, 
@@ -1565,10 +1565,10 @@
     "city": "Rozenburg", 
     "lat": "51.9058", 
     "lng": "4.2486", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "12455", 
     "population_proper": "12455"
   }, 
@@ -1576,10 +1576,10 @@
     "city": "Blaricum", 
     "lat": "52.2667", 
     "lng": "5.2500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "11952", 
     "population_proper": "11952"
   }, 
@@ -1587,10 +1587,10 @@
     "city": "Schoonhoven", 
     "lat": "51.9500", 
     "lng": "4.8500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "11922", 
     "population_proper": "11922"
   }, 
@@ -1598,10 +1598,10 @@
     "city": "Laren", 
     "lat": "52.2500", 
     "lng": "5.2333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "11400", 
     "population_proper": "11400"
   }, 
@@ -1609,10 +1609,10 @@
     "city": "Koog aan de Zaan", 
     "lat": "52.4667", 
     "lng": "4.8000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "11225", 
     "population_proper": "11225"
   }, 
@@ -1620,10 +1620,10 @@
     "city": "Doesburg", 
     "lat": "52.0167", 
     "lng": "6.1333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "11148", 
     "population_proper": "11064"
   }, 
@@ -1631,10 +1631,10 @@
     "city": "Leidschendam", 
     "lat": "52.0833", 
     "lng": "4.4000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "10482", 
     "population_proper": "10482"
   }, 
@@ -1642,10 +1642,10 @@
     "city": "Heerlerbaan", 
     "lat": "50.8692", 
     "lng": "6.0103", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "9872", 
     "population_proper": "9872"
   }, 
@@ -1653,10 +1653,10 @@
     "city": "Nieuw-Lekkerland", 
     "lat": "51.8833", 
     "lng": "4.6833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "9541", 
     "population_proper": "9541"
   }, 
@@ -1664,10 +1664,10 @@
     "city": "Kudelstaart", 
     "lat": "52.2339", 
     "lng": "4.7483", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "9250", 
     "population_proper": "9250"
   }, 
@@ -1675,10 +1675,10 @@
     "city": "Zaandijk", 
     "lat": "52.4667", 
     "lng": "4.8000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "8600", 
     "population_proper": "8600"
   }, 
@@ -1686,10 +1686,10 @@
     "city": "Zwanenburg", 
     "lat": "52.3833", 
     "lng": "4.7500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "7935", 
     "population_proper": "7935"
   }, 
@@ -1697,10 +1697,10 @@
     "city": "Limmen", 
     "lat": "52.5667", 
     "lng": "4.7000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "7635", 
     "population_proper": "7635"
   }, 
@@ -1708,10 +1708,10 @@
     "city": "Bolnes", 
     "lat": "51.8947", 
     "lng": "4.5788", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "7300", 
     "population_proper": "7300"
   }, 
@@ -1719,10 +1719,10 @@
     "city": "Santpoort-Noord", 
     "lat": "52.4225", 
     "lng": "4.6261", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "7240", 
     "population_proper": "7240"
   }, 
@@ -1730,10 +1730,10 @@
     "city": "Soesterberg", 
     "lat": "52.1194", 
     "lng": "5.2831", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "", 
+     
     "population": "7210", 
     "population_proper": "7210"
   }, 
@@ -1741,10 +1741,10 @@
     "city": "Reuver", 
     "lat": "51.2850", 
     "lng": "6.0792", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "minor", 
+     
     "population": "6120", 
     "population_proper": "6120"
   }, 
@@ -1752,10 +1752,10 @@
     "city": "Surhuisterveen", 
     "lat": "53.1833", 
     "lng": "6.1667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Fryslân", 
-    "capital": "", 
+     
     "population": "6050", 
     "population_proper": "6050"
   }, 
@@ -1763,10 +1763,10 @@
     "city": "Susteren", 
     "lat": "51.0667", 
     "lng": "5.8667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "5965", 
     "population_proper": "5965"
   }, 
@@ -1774,10 +1774,10 @@
     "city": "Hintham", 
     "lat": "51.7000", 
     "lng": "5.3500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "", 
+     
     "population": "5910", 
     "population_proper": "5910"
   }, 
@@ -1785,10 +1785,10 @@
     "city": "Meteren", 
     "lat": "51.8639", 
     "lng": "5.2825", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "", 
+     
     "population": "5398", 
     "population_proper": "5398"
   }, 
@@ -1796,10 +1796,10 @@
     "city": "Teteringen", 
     "lat": "51.6167", 
     "lng": "4.8333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "", 
+     
     "population": "5371", 
     "population_proper": "991"
   }, 
@@ -1807,10 +1807,10 @@
     "city": "Duivendrecht", 
     "lat": "52.3333", 
     "lng": "4.9333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "5300", 
     "population_proper": "5300"
   }, 
@@ -1818,10 +1818,10 @@
     "city": "Empel", 
     "lat": "51.7311", 
     "lng": "5.3272", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "", 
+     
     "population": "5160", 
     "population_proper": "5160"
   }, 
@@ -1829,10 +1829,10 @@
     "city": "Arnemuiden", 
     "lat": "51.5000", 
     "lng": "3.6667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zeeland", 
-    "capital": "", 
+     
     "population": "5055", 
     "population_proper": "5055"
   }, 
@@ -1840,10 +1840,10 @@
     "city": "Pernis", 
     "lat": "51.8833", 
     "lng": "4.3833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "4860", 
     "population_proper": "4860"
   }, 
@@ -1851,10 +1851,10 @@
     "city": "Soestdijk", 
     "lat": "52.1908", 
     "lng": "5.2822", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "", 
+     
     "population": "4830", 
     "population_proper": "4830"
   }, 
@@ -1862,10 +1862,10 @@
     "city": "Aerdenhout", 
     "lat": "52.3644", 
     "lng": "4.5972", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "4730", 
     "population_proper": "4730"
   }, 
@@ -1873,10 +1873,10 @@
     "city": "Munstergeleen", 
     "lat": "50.9747", 
     "lng": "5.8667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "4610", 
     "population_proper": "4610"
   }, 
@@ -1884,10 +1884,10 @@
     "city": "Den Dolder", 
     "lat": "52.1064", 
     "lng": "5.2403", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "", 
+     
     "population": "4420", 
     "population_proper": "4420"
   }, 
@@ -1895,10 +1895,10 @@
     "city": "Rijsenhout", 
     "lat": "52.2667", 
     "lng": "4.7000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "4103", 
     "population_proper": "4103"
   }, 
@@ -1906,10 +1906,10 @@
     "city": "Overveen", 
     "lat": "52.3922", 
     "lng": "4.6175", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "4040", 
     "population_proper": "4040"
   }, 
@@ -1917,10 +1917,10 @@
     "city": "Molenhoek", 
     "lat": "51.7661", 
     "lng": "5.8739", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "3930", 
     "population_proper": "3930"
   }, 
@@ -1928,10 +1928,10 @@
     "city": "De Kwakel", 
     "lat": "52.2408", 
     "lng": "4.7908", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "3880", 
     "population_proper": "3880"
   }, 
@@ -1939,10 +1939,10 @@
     "city": "Kwintsheul", 
     "lat": "52.0167", 
     "lng": "4.2500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "3560", 
     "population_proper": "3560"
   }, 
@@ -1950,10 +1950,10 @@
     "city": "Heelsum", 
     "lat": "51.9822", 
     "lng": "5.7525", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "", 
+     
     "population": "3540", 
     "population_proper": "3540"
   }, 
@@ -1961,10 +1961,10 @@
     "city": "Nijkerkerveen", 
     "lat": "52.1950", 
     "lng": "5.4667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "", 
+     
     "population": "3530", 
     "population_proper": "3530"
   }, 
@@ -1972,10 +1972,10 @@
     "city": "Santpoort-Zuid", 
     "lat": "52.4167", 
     "lng": "4.6333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "3370", 
     "population_proper": "3370"
   }, 
@@ -1983,10 +1983,10 @@
     "city": "Goutum", 
     "lat": "53.1786", 
     "lng": "5.8064", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Fryslân", 
-    "capital": "", 
+     
     "population": "3310", 
     "population_proper": "3310"
   }, 
@@ -1994,10 +1994,10 @@
     "city": "Nieuwstadt", 
     "lat": "51.0333", 
     "lng": "5.8667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "3260", 
     "population_proper": "3260"
   }, 
@@ -2005,10 +2005,10 @@
     "city": "Zwaag", 
     "lat": "52.6679", 
     "lng": "5.0757", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "3155", 
     "population_proper": "3155"
   }, 
@@ -2016,10 +2016,10 @@
     "city": "Oerle", 
     "lat": "51.4222", 
     "lng": "5.3706", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "", 
+     
     "population": "2940", 
     "population_proper": "2940"
   }, 
@@ -2027,10 +2027,10 @@
     "city": "Elden", 
     "lat": "51.9667", 
     "lng": "5.8833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "", 
+     
     "population": "2865", 
     "population_proper": "2865"
   }, 
@@ -2038,10 +2038,10 @@
     "city": "Giesbeek", 
     "lat": "51.9944", 
     "lng": "6.0694", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "", 
+     
     "population": "2695", 
     "population_proper": "2695"
   }, 
@@ -2049,10 +2049,10 @@
     "city": "Boekelo", 
     "lat": "52.2044", 
     "lng": "6.8019", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "", 
+     
     "population": "2595", 
     "population_proper": "2595"
   }, 
@@ -2060,10 +2060,10 @@
     "city": "Vlijmen", 
     "lat": "51.6953", 
     "lng": "5.2119", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "minor", 
+     
     "population": "2577", 
     "population_proper": "2577"
   }, 
@@ -2071,10 +2071,10 @@
     "city": "Bemmel", 
     "lat": "51.8917", 
     "lng": "5.8958", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "minor", 
+     
     "population": "2532", 
     "population_proper": "2532"
   }, 
@@ -2082,10 +2082,10 @@
     "city": "Kralingse Veer", 
     "lat": "51.9249", 
     "lng": "4.5071", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "2411", 
     "population_proper": "2411"
   }, 
@@ -2093,10 +2093,10 @@
     "city": "Born", 
     "lat": "51.0333", 
     "lng": "5.8111", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "2405", 
     "population_proper": "2405"
   }, 
@@ -2104,10 +2104,10 @@
     "city": "Neerbeek", 
     "lat": "50.9506", 
     "lng": "5.8153", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "2370", 
     "population_proper": "2370"
   }, 
@@ -2115,10 +2115,10 @@
     "city": "Boven-Hardinxveld", 
     "lat": "51.8256", 
     "lng": "4.8381", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "2227", 
     "population_proper": "2227"
   }, 
@@ -2126,10 +2126,10 @@
     "city": "Huissen", 
     "lat": "51.9333", 
     "lng": "5.9333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "", 
+     
     "population": "2116", 
     "population_proper": "2116"
   }, 
@@ -2137,10 +2137,10 @@
     "city": "Geleen", 
     "lat": "50.9667", 
     "lng": "5.8333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "2106", 
     "population_proper": "2106"
   }, 
@@ -2148,10 +2148,10 @@
     "city": "Lutjebroek", 
     "lat": "52.6992", 
     "lng": "5.2067", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "2105", 
     "population_proper": "2105"
   }, 
@@ -2159,10 +2159,10 @@
     "city": "Diepenveen", 
     "lat": "52.2894", 
     "lng": "6.1500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "", 
+     
     "population": "2101", 
     "population_proper": "2101"
   }, 
@@ -2170,10 +2170,10 @@
     "city": "Haalderen", 
     "lat": "51.8867", 
     "lng": "5.9300", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "", 
+     
     "population": "2061", 
     "population_proper": "2061"
   }, 
@@ -2181,10 +2181,10 @@
     "city": "Helden", 
     "lat": "51.3167", 
     "lng": "6.0000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "2015", 
     "population_proper": "2015"
   }, 
@@ -2192,10 +2192,10 @@
     "city": "West-Souburg", 
     "lat": "51.4650", 
     "lng": "3.5908", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zeeland", 
-    "capital": "", 
+     
     "population": "1960", 
     "population_proper": "1960"
   }, 
@@ -2203,10 +2203,10 @@
     "city": "Mijdrecht", 
     "lat": "52.2000", 
     "lng": "4.8667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "1960", 
     "population_proper": "1960"
   }, 
@@ -2214,10 +2214,10 @@
     "city": "Assendelft", 
     "lat": "52.4667", 
     "lng": "4.7500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "1946", 
     "population_proper": "1946"
   }, 
@@ -2225,10 +2225,10 @@
     "city": "Ilpendam", 
     "lat": "52.4667", 
     "lng": "4.9500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "1845", 
     "population_proper": "1845"
   }, 
@@ -2236,10 +2236,10 @@
     "city": "Lonneker", 
     "lat": "52.2506", 
     "lng": "6.9119", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "", 
+     
     "population": "1770", 
     "population_proper": "1770"
   }, 
@@ -2247,10 +2247,10 @@
     "city": "Rijpwetering", 
     "lat": "52.2000", 
     "lng": "4.5833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "1640", 
     "population_proper": "1640"
   }, 
@@ -2258,10 +2258,10 @@
     "city": "Halsteren", 
     "lat": "51.5167", 
     "lng": "4.2667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "", 
+     
     "population": "1555", 
     "population_proper": "1555"
   }, 
@@ -2269,10 +2269,10 @@
     "city": "Berghem", 
     "lat": "51.7700", 
     "lng": "5.5747", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Brabant", 
-    "capital": "", 
+     
     "population": "1550", 
     "population_proper": "1550"
   }, 
@@ -2280,10 +2280,10 @@
     "city": "Aadorp", 
     "lat": "52.3786", 
     "lng": "6.6272", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Overijssel", 
-    "capital": "", 
+     
     "population": "1525", 
     "population_proper": "1525"
   }, 
@@ -2291,10 +2291,10 @@
     "city": "Hooglanderveen", 
     "lat": "52.1889", 
     "lng": "5.4292", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "", 
+     
     "population": "1515", 
     "population_proper": "1515"
   }, 
@@ -2302,10 +2302,10 @@
     "city": "Grootebroek", 
     "lat": "52.7000", 
     "lng": "5.2167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "1454", 
     "population_proper": "1454"
   }, 
@@ -2313,10 +2313,10 @@
     "city": "IJsselmonde", 
     "lat": "51.9000", 
     "lng": "4.5500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "1437", 
     "population_proper": "1437"
   }, 
@@ -2324,10 +2324,10 @@
     "city": "Oudshoorn", 
     "lat": "52.1333", 
     "lng": "4.6667", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "1262", 
     "population_proper": "1262"
   }, 
@@ -2335,10 +2335,10 @@
     "city": "Oud-Vroenhoven", 
     "lat": "50.8478", 
     "lng": "5.6514", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "1220", 
     "population_proper": "1220"
   }, 
@@ -2346,10 +2346,10 @@
     "city": "Rijnsburg", 
     "lat": "52.1833", 
     "lng": "4.4333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "1171", 
     "population_proper": "1171"
   }, 
@@ -2357,10 +2357,10 @@
     "city": "Heer", 
     "lat": "50.8406", 
     "lng": "5.7269", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "1152", 
     "population_proper": "1152"
   }, 
@@ -2368,10 +2368,10 @@
     "city": "Nieuwendam", 
     "lat": "52.3917", 
     "lng": "4.9406", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "1120", 
     "population_proper": "1120"
   }, 
@@ -2379,10 +2379,10 @@
     "city": "Ubach over Worms", 
     "lat": "50.9167", 
     "lng": "6.0500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "1100", 
     "population_proper": "1100"
   }, 
@@ -2390,10 +2390,10 @@
     "city": "Limbricht", 
     "lat": "51.0117", 
     "lng": "5.8369", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "1100", 
     "population_proper": "1100"
   }, 
@@ -2401,10 +2401,10 @@
     "city": "Driehuis", 
     "lat": "52.4472", 
     "lng": "4.6367", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "1080", 
     "population_proper": "1080"
   }, 
@@ -2412,10 +2412,10 @@
     "city": "Zwammerdam", 
     "lat": "52.1058", 
     "lng": "4.7272", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "", 
+     
     "population": "1052", 
     "population_proper": "1052"
   }, 
@@ -2423,10 +2423,10 @@
     "city": "Hoensbroek", 
     "lat": "50.9208", 
     "lng": "5.9267", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "1043", 
     "population_proper": "1043"
   }, 
@@ -2434,10 +2434,10 @@
     "city": "Ellecom", 
     "lat": "52.0333", 
     "lng": "6.0833", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Gelderland", 
-    "capital": "", 
+     
     "population": "1035", 
     "population_proper": "1035"
   }, 
@@ -2445,10 +2445,10 @@
     "city": "Bentveld", 
     "lat": "52.3658", 
     "lng": "4.5717", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "", 
+     
     "population": "1025", 
     "population_proper": "1025"
   }, 
@@ -2456,10 +2456,10 @@
     "city": "Boukoul", 
     "lat": "51.2167", 
     "lng": "6.0500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Limburg", 
-    "capital": "", 
+     
     "population": "1010", 
     "population_proper": "1010"
   }, 
@@ -2467,10 +2467,10 @@
     "city": "Hoogkarspel", 
     "lat": "52.6947", 
     "lng": "5.1778", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "884", 
     "population_proper": "884"
   }, 
@@ -2478,10 +2478,10 @@
     "city": "Bovenkarspel", 
     "lat": "52.7000", 
     "lng": "5.2500", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "773", 
     "population_proper": "773"
   }, 
@@ -2489,10 +2489,10 @@
     "city": "Zuid-Scharwoude", 
     "lat": "52.6833", 
     "lng": "4.8167", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Noord-Holland", 
-    "capital": "minor", 
+     
     "population": "642", 
     "population_proper": "642"
   }, 
@@ -2500,10 +2500,10 @@
     "city": "Poortugaal", 
     "lat": "51.8667", 
     "lng": "4.4000", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Zuid-Holland", 
-    "capital": "minor", 
+     
     "population": "640", 
     "population_proper": "640"
   }, 
@@ -2511,10 +2511,10 @@
     "city": "Odijk", 
     "lat": "52.0503", 
     "lng": "5.2333", 
-    "country": "Netherlands", 
-    "iso2": "NL", 
+     "country_id":152, 
+    
     "admin_name": "Utrecht", 
-    "capital": "minor", 
+     
     "population": "339", 
     "population_proper": "339"
   }

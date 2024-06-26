@@ -44,6 +44,10 @@ class PercentRobusAuthService
                 return TransactionCost::whereId(35)->first();
             case 'MAG':
                 return TransactionCost::whereId(36)->first();
+            case 'ASIE':
+                return TransactionCost::whereId(44)->first();
+            case 'AFE':
+                return TransactionCost::whereId(45)->first();
             default:
                 return null; // Handle the default case as needed
         }
@@ -277,6 +281,27 @@ class PercentRobusAuthService
                     122 => ($provider_valeur != 51) ? 133 : 182, // Liberia
                     43 => ($provider_valeur != 51) ? 134 : 183, // Thacd
                     42 => ($provider_valeur != 51) ? 135 : 184, // Afrique centrale
+                    // New countries
+                    92 => ($provider_valeur != 51) ? 1754 : 1799, // Guinnée Buisso
+                    223 => ($provider_valeur != 51) ? 718 : 677, // Ouganda
+                    158 => ($provider_valeur != 51) ? 1934 : 1979, // Nigeria
+                    191 => ($provider_valeur != 51) ? 1844 : 1889, // Sierria Leone
+                    116 => ($provider_valeur != 51) ? 2609 : 2564, // Koweit
+                    212 => ($provider_valeur != 51) ? 1304 : 1349, // Tanzanie
+                    175 => ($provider_valeur != 51) ? 2654 : 2699, // Quatar
+                    241 => ($provider_valeur != 51) ? 1574 : 1619, // Zambie
+                    100 => ($provider_valeur != 51) ? 2924 : 2969, // Inde
+                    69 => ($provider_valeur != 51) ? 1394 : 1439, // Ethiopie
+                    66 => ($provider_valeur != 51) ? 2069 : 2024, // Guinnée Equatoriale
+                    8 => ($provider_valeur != 51) ? 1664 : 1709, // Angola
+                    225 => ($provider_valeur != 51) ? 2744 : 2789, // Dubai
+                    112 => ($provider_valeur != 51) ? 1484 : 1529, // Keneya
+                    45 => ($provider_valeur != 51) ? 2834 : 2879, // China
+                    208 => ($provider_valeur != 51) ? 2114 : 2159, // Suisse
+                    23 => ($provider_valeur != 51) ? 2204 : 2249, // Belgique
+                    173 => ($provider_valeur != 51) ? 2294 : 2339, // Portugal
+                    219 => ($provider_valeur != 51) ? 2384 : 2429, // Turquie
+                    152 => ($provider_valeur != 51) ? 2474 : 2519, // Hollande
                 ],
                 // Is BF
                 36 =>  [
@@ -304,6 +329,27 @@ class PercentRobusAuthService
                     122 => ($provider_valeur != 51) ? 140 : 189, // Liberia
                     43 => ($provider_valeur != 51) ? 141 : 190, // Thacd
                     42 => ($provider_valeur != 51) ? 142 : 191, // Afrique centrale
+                      // New countries
+                    92 => ($provider_valeur != 51) ? 1755 : 1800, // Guinnée Buisso
+                    223 => ($provider_valeur != 51) ? 719 : 678, // Ouganda
+                    158 => ($provider_valeur != 51) ? 1935 : 1980, // Nigeria
+                    191 => ($provider_valeur != 51) ? 1845 : 1890, // Sierria Leone
+                    116 => ($provider_valeur != 51) ? 2610 : 2565, // Koweit
+                    212 => ($provider_valeur != 51) ? 1305 : 1350, // Tanzanie
+                    175 => ($provider_valeur != 51) ? 2655 : 2700, // Quatar
+                    241 => ($provider_valeur != 51) ? 1575 : 1620, // Zambie
+                    100 => ($provider_valeur != 51) ? 2925 : 2970, // Inde
+                    69 => ($provider_valeur != 51) ? 1395 : 1440, // Ethiopie
+                    66 => ($provider_valeur != 51) ? 2070 : 2025, // Guinnée Equatoriale
+                    8 => ($provider_valeur != 51) ? 1665 : 1710, // Angola
+                    225 => ($provider_valeur != 51) ? 2745 : 2790, // Dubai
+                    112 => ($provider_valeur != 51) ? 1485 : 1530, // Keneya
+                    45 => ($provider_valeur != 51) ? 2835 : 2880, // China
+                    208 => ($provider_valeur != 51) ? 2115 : 2160, // Suisse
+                    23 => ($provider_valeur != 51) ? 2205 : 2250, // Belgique
+                    173 => ($provider_valeur != 51) ? 2295 : 2340, // Portugal
+                    219 => ($provider_valeur != 51) ? 2385 : 2430, // Turquie
+                    152 => ($provider_valeur != 51) ? 2475 : 2520, // Hollande
                 ],
                 // Mali
                 133 =>  [
@@ -331,6 +377,28 @@ class PercentRobusAuthService
                     122 => ($provider_valeur != 51) ? 147 : 196, // Liberia
                     43 => ($provider_valeur != 51) ? 148 : 197, // Thacd
                     42 => ($provider_valeur != 51) ? 149 : 198, // Afrique centrale
+                         // New countries
+                    92 => ($provider_valeur != 51) ? 1777 : 1822, // Guinnée Buisso
+                    223 => ($provider_valeur != 51) ? 700 : 728, // Ouganda
+                    158 => ($provider_valeur != 51) ? 1957 : 2002, // Nigeria
+                    // CONTINUE
+                    191 => ($provider_valeur != 51) ? 1845 : 1890, // Sierria Leone
+                    116 => ($provider_valeur != 51) ? 2610 : 2565, // Koweit
+                    212 => ($provider_valeur != 51) ? 1305 : 1350, // Tanzanie
+                    175 => ($provider_valeur != 51) ? 2655 : 2700, // Quatar
+                    241 => ($provider_valeur != 51) ? 1575 : 1620, // Zambie
+                    100 => ($provider_valeur != 51) ? 2925 : 2970, // Inde
+                    69 => ($provider_valeur != 51) ? 1395 : 1440, // Ethiopie
+                    66 => ($provider_valeur != 51) ? 2070 : 2025, // Guinnée Equatoriale
+                    8 => ($provider_valeur != 51) ? 1665 : 1710, // Angola
+                    225 => ($provider_valeur != 51) ? 2745 : 2790, // Dubai
+                    112 => ($provider_valeur != 51) ? 1485 : 1530, // Keneya
+                    45 => ($provider_valeur != 51) ? 2835 : 2880, // China
+                    208 => ($provider_valeur != 51) ? 2115 : 2160, // Suisse
+                    23 => ($provider_valeur != 51) ? 2205 : 2250, // Belgique
+                    173 => ($provider_valeur != 51) ? 2295 : 2340, // Portugal
+                    219 => ($provider_valeur != 51) ? 2385 : 2430, // Turquie
+                    152 => ($provider_valeur != 51) ? 2475 : 2520, // Hollande
                 ],
                 // Togo
                 214 =>  [

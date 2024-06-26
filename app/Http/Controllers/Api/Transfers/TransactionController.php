@@ -592,11 +592,6 @@ class TransactionController extends Controller
                     }
 
                     // Seach wallet User
-                    // $wallet_search = Wallet::where('wallet_id',  $request->num_wallet)
-                    //     ->where('country_id',  $wallet_user->country->id)
-                    //     ->whereStatus(true)
-                    //     ->first();
-
                     $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
 
                     // Wallet verify
