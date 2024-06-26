@@ -83,6 +83,8 @@ class SearchTransactionService
 
         if ($countryGroup == 'CIV') {
             $commissionTransaction = ($underDistributer == true) ? TransactionCost::whereId(27)->first() :  TransactionCost::whereId(29)->first();
+        }elseif($countryGroup == 'MAG') {
+            $commissionTransaction = ($underDistributer == true) ? TransactionCost::whereId(44)->first() :  null;
         } else {
 
             return response()->json(

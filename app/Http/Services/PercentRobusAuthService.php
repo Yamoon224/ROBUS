@@ -111,6 +111,19 @@ class PercentRobusAuthService
         }
     }
 
+    public function getRobusPercentageMobileMaroc()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'MAG':
+                return TransactionCost::whereId(44)->first();
+            default:
+                return null;
+        }
+    }
+
+
     public function getRobusPercentageMobileWave()
     {
         $countryNameGroup = robus()->country->name_groupe;
@@ -1049,6 +1062,6 @@ class PercentRobusAuthService
             return null; // Aucune correspondance pour $countrie
         }
 
-        return  LevelCountry::whereId($levelValeur)->select('percent' , 'percent_admin')->first();
+        return  LevelCountry::whereId($levelValeur)->select('percent', 'percent_admin')->first();
     }
 }

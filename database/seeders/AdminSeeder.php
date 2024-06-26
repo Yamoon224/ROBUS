@@ -21,6 +21,7 @@ class AdminSeeder extends Seeder
         $time = Carbon::now()->toDateTimeString();
 
 
+
         DB::table('sid_users')->insert([
             'firstname' => 'Sabdy',
             'lastname' => 'Dev',

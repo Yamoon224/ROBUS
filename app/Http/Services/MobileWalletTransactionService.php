@@ -97,7 +97,7 @@ class MobileWalletTransactionService
             // 20%
 
 
-            if ($country_civ->currencie->value >robus()->country->currencie->value) {
+            if ($country_civ->currencie->value > robus()->country->currencie->value) {
 
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
@@ -141,7 +141,6 @@ class MobileWalletTransactionService
             $valeur_single = $admin_valeur_convertion / $nmbre_admin;
 
             foreach ($admin_civ as $user) {
-
                 $admin_single = SidUser::find($user->id);
 
                 AdminsCom::create([
@@ -160,7 +159,6 @@ class MobileWalletTransactionService
                     'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
                     'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ]);
-
             }
         }
 
@@ -202,12 +200,19 @@ class MobileWalletTransactionService
 
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
+
+                $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
+
             } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit;
+
+                $percent_valeur_convertion =   (float)  $valuer_admin;
             } else {
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
+
+                $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
             }
 
 
@@ -218,8 +223,8 @@ class MobileWalletTransactionService
             if ($admin_civ->count() > 0) {
 
                 $nmbre_admin = $admin_civ->count();
-
-                $valeur_single = $admin_valeur_convertion / $nmbre_admin;
+               
+                $valeur_single = robus()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $admin_valeur_convertion / $nmbre_admin;
 
                 foreach ($admin_civ as $user) {
                     $admin_single = SidUser::find($user->id);
@@ -236,18 +241,11 @@ class MobileWalletTransactionService
                         'wallet_phone_credit_id' => null,
                         'wallet_reload_id' => null,
                         'bank_card_id' => null,
-                        'description' => 'Paiement commission sous-distributer',
+                        'description' => robus()->country->name_groupe == 'MAG' ? 'Paiement commission sous-distributer' : 'Commission administrateur',
                         'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
                         'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                     ]);
 
-                    // $admin_single->wallet->update([
-                    //     'reload_by' => robus()->firstname .
-                    //         ' ' .
-                    //         robus()->lastname,
-                    //     'sid_user_relod' => robus()->id,
-                    //     'amount' => DB::raw('amount-' . $valeur_single),
-                    // ]);
                 }
             }
         }

@@ -1,0 +1,376 @@
+[
+  {
+    "city": "Kuwait City", 
+    "lat": "29.3697", 
+    "lng": "47.9783", 
+    "country_id":116, 
+    
+    "admin_name": "Al ‘Āşimah", 
+     
+    "population": "3000000", 
+    "population_proper": "2989000"
+  }, 
+  {
+    "city": "Al Jahrā’", 
+    "lat": "29.3500", 
+    "lng": "47.6833", 
+    "country_id":116, 
+     
+    "admin_name": "Al Jahrā’", 
+     
+    "population": "393432", 
+    "population_proper": "393432"
+  }, 
+  {
+    "city": "Abū Ḩulayfah", 
+    "lat": "29.1322", 
+    "lng": "48.1261", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "164212", 
+    "population_proper": "164212"
+  }, 
+  {
+    "city": "Al Aḩmadī", 
+    "lat": "29.0769", 
+    "lng": "48.0838", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "68763", 
+    "population_proper": "68763"
+  }, 
+  {
+    "city": "Ar Riqqah", 
+    "lat": "29.1489", 
+    "lng": "48.1057", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "56554", 
+    "population_proper": "56554"
+  }, 
+  {
+    "city": "Al Bida‘", 
+    "lat": "29.3025", 
+    "lng": "48.0869", 
+    "country_id":116, 
+     
+    "admin_name": "Mubārak al Kabīr", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Farwānīyah", 
+    "lat": "29.2770", 
+    "lng": "47.9590", 
+    "country_id":116, 
+     
+    "admin_name": "Al Farwānīyah", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al ‘Udaylīyah", 
+    "lat": "29.3000", 
+    "lng": "47.9667", 
+    "country_id":116, 
+     
+    "admin_name": "Al Farwānīyah", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Abraq Khayţān", 
+    "lat": "29.2925", 
+    "lng": "47.9689", 
+    "country_id":116, 
+     
+    "admin_name": "Al Farwānīyah", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al ‘Abbāsīyah", 
+    "lat": "29.2503", 
+    "lng": "47.9311", 
+    "country_id":116, 
+     
+    "admin_name": "Al Farwānīyah", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Ash Shadādīyah", 
+    "lat": "29.2681", 
+    "lng": "47.8456", 
+    "country_id":116, 
+     
+    "admin_name": "Al Farwānīyah", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "An Nijfah", 
+    "lat": "29.2464", 
+    "lng": "48.0758", 
+    "country_id":116, 
+     
+    "admin_name": "Mubārak al Kabīr", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Quşūr", 
+    "lat": "29.2175", 
+    "lng": "48.0726", 
+    "country_id":116, 
+     
+    "admin_name": "Mubārak al Kabīr", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Mishrif", 
+    "lat": "29.2892", 
+    "lng": "48.0500", 
+    "country_id":116, 
+     
+    "admin_name": "Mubārak al Kabīr", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Massīlah", 
+    "lat": "29.2619", 
+    "lng": "48.0797", 
+    "country_id":116, 
+     
+    "admin_name": "Mubārak al Kabīr", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Funayţīs", 
+    "lat": "29.2253", 
+    "lng": "48.1017", 
+    "country_id":116, 
+     
+    "admin_name": "Mubārak al Kabīr", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Aş Şabāḩīyah", 
+    "lat": "29.1058", 
+    "lng": "48.1081", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Duwaydāt", 
+    "lat": "28.5828", 
+    "lng": "48.3992", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Ju‘aydān", 
+    "lat": "28.9667", 
+    "lng": "47.9672", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Aţ Ţawīl", 
+    "lat": "28.9786", 
+    "lng": "47.9072", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "‘Urayfijān", 
+    "lat": "28.9000", 
+    "lng": "48.1833", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Qurayn", 
+    "lat": "29.2043", 
+    "lng": "48.0757", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Aḑ Ḑibā‘īyah", 
+    "lat": "28.9333", 
+    "lng": "48.1667", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Maqwa‘", 
+    "lat": "29.1667", 
+    "lng": "47.9833", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al ‘Uqaylah", 
+    "lat": "29.1778", 
+    "lng": "48.0947", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "An Nuqayyāt", 
+    "lat": "28.9431", 
+    "lng": "48.1986", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Az Zawr", 
+    "lat": "28.7375", 
+    "lng": "48.3728", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Manqaf", 
+    "lat": "29.0961", 
+    "lng": "48.1328", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Manīfah", 
+    "lat": "29.1608", 
+    "lng": "48.0811", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Mubārak al Kabīr", 
+    "lat": "29.1898", 
+    "lng": "48.0872", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Şubayḩīyah", 
+    "lat": "28.8794", 
+    "lng": "47.9139", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Khīrān", 
+    "lat": "28.6511", 
+    "lng": "48.3903", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Mahbūlah", 
+    "lat": "29.1450", 
+    "lng": "48.1303", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }, 
+  {
+    "city": "Al Wafrah", 
+    "lat": "28.6392", 
+    "lng": "47.9306", 
+    "country_id":116, 
+     
+    "admin_name": "Al Aḩmadī", 
+     
+    "population": "", 
+    "population_proper": ""
+  }
+]

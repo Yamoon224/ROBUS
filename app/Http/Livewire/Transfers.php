@@ -8856,37 +8856,29 @@ class Transfers extends Component
         $sidAuth = Auth::guard('web')->user();
         try {
 
-            if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
-                if (Auth::guard('web')->user()->is_distributer == 1) {
+            if (Auth::guard('web')->user()->is_distributer == 1) {
 
-                    $walletUpdate->update([
-                        'updated_by' => Auth::guard('web')->user()->id,
-                    ]);
+                $walletUpdate->update([
+                    'updated_by' => Auth::guard('web')->user()->id,
+                ]);
 
-                    event(new ChooseTransactionEvent($walletUpdate));
-                    // $this->emit('modal-hide-transfers');
-                    $this->emit('menu-transaction-active');
-                    $this->emit('info', 'Vous avez choisi transaction');
-                } else {
-
-                    $walletUpdate->update([
-                        'updated_by' => Auth::guard('web')->user()->id,
-                    ]);
-
-                    event(new ChooseTransactionEvent($walletUpdate));
-                    // $this->emit('modal-hide-transfers');
-                    $this->emit('menu-transaction-active');
-                    $this->emit('info', 'Vous avez choisi transaction');
-                }
-            } else {
+                event(new ChooseTransactionEvent($walletUpdate));
                 // $this->emit('modal-hide-transfers');
                 $this->emit('menu-transaction-active');
-                $this->emit(
-                    'error',
-                    'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                );
+                $this->emit('info', 'Vous avez choisi transaction');
+            } else {
+
+                $walletUpdate->update([
+                    'updated_by' => Auth::guard('web')->user()->id,
+                ]);
+
+                event(new ChooseTransactionEvent($walletUpdate));
+                // $this->emit('modal-hide-transfers');
+                $this->emit('menu-transaction-active');
+                $this->emit('info', 'Vous avez choisi transaction');
             }
+          
         } catch (\Exception $exception) {
             $this->emit('menu-transaction-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
@@ -14100,9 +14092,9 @@ class Transfers extends Component
                 )->sum('amount'),
                 'transactions' => $transaction
                     ->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $walletUser->country->id)
+                    // ->where('wallets.country_id', $walletUser->country->id)
                     ->where('wallet_transactions.status', 'PENDING')
-                    // ->where('wallet_transactions.type_transaction' , 'Depot')
+                    ->where('wallet_transactions.phone' , '!=' , null)
                     ->select('wallet_transactions.*')
                     ->orderBy('wallet_transactions.created_at', 'desc')
                     ->paginate(15),
