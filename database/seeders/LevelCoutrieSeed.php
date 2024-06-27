@@ -180,7 +180,7 @@ class LevelCoutrieSeed extends Seeder
                 'is_euro' => '1',
             ],
             [
-                'name' => 'Ruissie vers la Burundi Mobile Money',
+                'name' => 'INDE vers la Burundi Mobile Money',
                 'percent' => '0.015',
                 'percent_merchands' => '0',
                 'deleted_by' => null,
