@@ -38,9 +38,10 @@
                 <tbody>
 
                     @if ($asies->count() > 0)
-                        @foreach ($asies->where('is_euro', true) as $item)
+                        @foreach ($asies->where('is_asie', true) as $item)
                             <tr class="intro-x">
-                              
+                                
+                                
                                 <td class="w-65">
                                     {{ $item->name ?? null }}
                                 </td>

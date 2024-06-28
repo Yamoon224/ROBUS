@@ -2154,4 +2154,14 @@ class CommissionController extends Controller
         }
         return view('pages.commissions.browse_asie');
     }
+
+    public function browse_east()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+        return view('pages.commissions.browse_east');
+
+    }
 }

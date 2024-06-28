@@ -505,8 +505,8 @@
                             </a>
                         </li>
                         <li>
-                            <a href="{{ route('commissions.usa') }}"
-                                class="side-menu {{ $route == 'commissions.usa' ? 'side-menu--active' : '' }}">
+                            <a href="{{ route('commissions.east') }}"
+                                class="side-menu {{ $route == 'commissions.east' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
                                 </div>
                                 <div class="side-menu__title">Afrique de l'EST</div>
@@ -518,22 +518,6 @@
                                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
                                 </div>
                                 <div class="side-menu__title">Afrique centrale</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('commissions.usa') }}"
-                                class="side-menu {{ $route == 'commissions.usa' ? 'side-menu--active' : '' }}">
-                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                                </div>
-                                <div class="side-menu__title">Afrique Orientale</div>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('commissions.usa') }}"
-                                class="side-menu {{ $route == 'commissions.usa' ? 'side-menu--active' : '' }}">
-                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                                </div>
-                                <div class="side-menu__title">Asie</div>
                             </a>
                         </li>
                     </ul>
