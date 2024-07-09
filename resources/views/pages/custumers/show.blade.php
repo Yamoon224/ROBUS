@@ -110,7 +110,6 @@
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg> Toujours connecté
                             </div>
-                            
                         @else
                             <div class="truncate sm:whitespace-normal flex items-center mt-3"> <svg
                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -139,6 +138,47 @@
             </div>
 
         </div>
+
+
+        @if ($user->password == null)
+            <div class="grid grid-cols-12 gap-6 mt-3">
+
+                <div class="intro-y col-span-12 lg:col-span-12">
+                    <!-- BEGIN: Form Validation -->
+                    <div class="intro-y box">
+
+                        <div class="p-5">
+                            <div class="" id="step-2">
+                                @include('components.update_password_form')
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- END: Form Validation -->
+                </div>
+            </div>
+        @else
+            <div class="grid grid-cols-12 gap-6 mt-3">
+
+                <div class="intro-y col-span-12 lg:col-span-12">
+                    <!-- BEGIN: Form Validation -->
+                    <div class="intro-y box">
+
+
+                        <div class="p-3">
+                            <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Modification du mot passe</h2>
+                            <div class="">
+                                @include('components.update_password_form')
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <!-- END: Form Validation -->
+                </div>
+            </div>
+        @endif
         <div class="ml-5">
             @if ($user->is_active == true)
                 <div class="sm:w-40 truncate sm:whitespace-normal font-medium text-lg mt-3 text-success">
@@ -1048,80 +1088,80 @@
                                             </td> --}}
                                                     <td class="w-40">
                                                         @if ($item->provider_type == 8)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Rechargement carte</div>
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Rechargement carte</div>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        {{ $item->number_card ?? null }}
-                                                    @elseif($item->provider_type == 5)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Paiement Facture</div>
+                                                            {{ $item->number_card ?? null }}
+                                                        @elseif($item->provider_type == 5)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Paiement Facture</div>
 
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        @if ($item->factureChoix_type == 1)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Facture
-                                                                prépayée</div>
-                                                            {{ $item->id_invoice ?? null }}
-                                                        @elseif($item->factureChoix_type == 2)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Facture
-                                                                Normale</div>
-                                                            {{ $item->id_invoice ?? null }}
-                                                        @elseif($item->paiementChoix_phone == 1)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Numero de telephone</div>
-                                                            {{ $item->number_phone ?? null }}
-                                                        @elseif ($item->paiementChoix_phone == 2)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Numero du decodeur</div>
-                                                            {{ $item->number_decoder ?? null }}
-                                                        @elseif($item->paiementChoix_phone == null && $item->factureChoix_type == null)
-                                                            <div class="alert alert-dark show mb-2" role="alert">
-                                                                Numero du contrat</div>
-                                                            {{ $item->number_contract ?? null}}
+                                                            @if ($item->factureChoix_type == 1)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Facture
+                                                                    prépayée</div>
+                                                                {{ $item->id_invoice ?? null }}
+                                                            @elseif($item->factureChoix_type == 2)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Facture
+                                                                    Normale</div>
+                                                                {{ $item->id_invoice ?? null }}
+                                                            @elseif($item->paiementChoix_phone == 1)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Numero de telephone</div>
+                                                                {{ $item->number_phone ?? null }}
+                                                            @elseif ($item->paiementChoix_phone == 2)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Numero du decodeur</div>
+                                                                {{ $item->number_decoder ?? null }}
+                                                            @elseif($item->paiementChoix_phone == null && $item->factureChoix_type == null)
+                                                                <div class="alert alert-dark show mb-2" role="alert">
+                                                                    Numero du contrat</div>
+                                                                {{ $item->number_contract ?? null }}
+                                                            @endif
+                                                        @elseif ($item->provider_type == 1)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Paiement Mooney</div>
+                                                                </div>
+                                                            </div>
+                                                            {{ $item->phone ?? null }}
+                                                            {{ $item->number_compte ?? null }}
+                                                        @elseif ($item->provider_type == 6)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Credit telephonique</div>
+                                                                </div>
+                                                            </div>
+                                                            {{ $item->phone ?? null }}
+                                                        @elseif ($item->provider_type == 7)
+                                                            <div
+                                                                class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Versement bancaire</div>
+                                                                </div>
+                                                            </div>
+                                                            {{ $item->number_compte ?? null }}
                                                         @endif
-                                                    @elseif ($item->provider_type == 1)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Paiement Mooney</div>
-                                                            </div>
-                                                        </div>
-                                                        {{ $item->phone ?? null }}
-                                                        {{ $item->number_compte ?? null }}
-                                                    @elseif ($item->provider_type == 6)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Credit telephonique</div>
-                                                            </div>
-                                                        </div>
-                                                        {{ $item->phone ?? null }}
-                                                    @elseif ($item->provider_type == 7)
-                                                        <div
-                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
-                                                                <div class="fc-event-title fc-sticky">
-                                                                    Versement bancaire</div>
-                                                            </div>
-                                                        </div>
-                                                        {{ $item->number_compte ?? null}}
-                                                    @endif
                                                     </td>
                                                     <td class="w-40">
                                                         @if ($item->status == 'PENDING')
@@ -1371,7 +1411,8 @@
 
                                                                 {{ $item->number_phone ?? null }}
                                                             @elseif($item->paiementChoix_phone == 2)
-                                                                <div class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div
+                                                                    class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
                                                                     <div class="fc-event-title-container"
                                                                         style="color: white;">
                                                                         <div class="fc-event-title fc-sticky">
@@ -1379,8 +1420,7 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                {{ ($item->number_decoder) }}
-
+                                                                {{ $item->number_decoder }}
                                                             @else
                                                                 {{ $item->number_contract ?? null }}
                                                             @endif
@@ -1563,7 +1603,8 @@
                                                         <div class="text-slate-500  mt-0.5">
                                                             <span
                                                                 class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                {{ $item->wallet->sidUser->country->name ?? null }} ville :
+                                                                {{ $item->wallet->sidUser->country->name ?? null }} ville
+                                                                :
                                                                 {{ $item->wallet->sidUser->city->name ?? null }}
                                                             </span>
                                                         </div>
@@ -1622,29 +1663,27 @@
                                                             </p>
                                                             {{ number_format($item->amount, 2, ',', ' ') ?? null }}
                                                             {{ $item->wallet->currencie->code ?? null }}
-                                                    
-                                                        
                                                         @endif
-                                                    
-                                                        
+
+
                                                     </td>
                                                     <td class="w-40">
-                                                    
-                                                    @if ($item->wallet && $item->wallet->wallet_id !== $item->num_wallet)
-                                                        <span
-                                                            class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
+
+                                                        @if ($item->wallet && $item->wallet->wallet_id !== $item->num_wallet)
+                                                            <span
+                                                                class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                                                         text-indigo-100 bg-indigo-700 rounded"
-                                                            style="color: white;">
-                                                            Transfers d'argent {{ $item->wallet->wallet_id ?? null }}
-                                                        </span> 
-                                                    @else
-                                                        <span
-                                                            class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
+                                                                style="color: white;">
+                                                                Transfers d'argent {{ $item->wallet->wallet_id ?? null }}
+                                                            </span>
+                                                        @else
+                                                            <span
+                                                                class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                                                             text-indigo-100 bg-indigo-700 rounded"
-                                                            style="color: white;">
-                                                            Depot d'argent
-                                                        </span>
-                                                    @endif
+                                                                style="color: white;">
+                                                                Depot d'argent
+                                                            </span>
+                                                        @endif
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ $item->created_at ?? null }}</p>
                                                     </td>
@@ -1654,7 +1693,8 @@
                                                     </td>
                                                     <td class="w-40">
                                                         <p class="font-medium whitespace-nowrap">
-                                                            {{ $item->phone ?? null }} {{ $item->num_wallet ?? null }}</p>
+                                                            {{ $item->phone ?? null }} {{ $item->num_wallet ?? null }}
+                                                        </p>
                                                     </td>
                                                     <td class="w-40">
                                                         @if ($item->status == 'PENDING')

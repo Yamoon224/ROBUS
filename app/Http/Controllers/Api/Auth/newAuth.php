@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
-class AuthentificationController extends Controller
+class AuthentificationControllerNew extends Controller
 {
 
     /** @var  RegisterRepository */
@@ -658,6 +658,8 @@ class AuthentificationController extends Controller
 
     public function loginUnderDistributor(Request $request)
     {
+        return false;
+
 
         // Vérifier l'état de l'application
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);

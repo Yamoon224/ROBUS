@@ -4,37 +4,40 @@
 
 namespace App\Http\Controllers\Api\Auth;
 
-use Carbon\Carbon;
-use App\Models\Sid\SidUser;
-use App\Mail\UpdatePassword;
-use Illuminate\Http\Request;
 use App\Events\CustumersEvent;
-use App\Models\Custumers\City;
-use App\Models\Wallets\Wallet;
-use App\Models\Custumers\Country;
-use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
+use App\Http\Services\AuthenticationService;
+use App\Mail\UpdatePassword;
+use App\Models\AppComZoneStatus;
+use App\Models\AppMasterStatus;
+use App\Models\AppStatus;
+use App\Models\Custumers\City;
+use App\Models\Custumers\Country;
+use App\Models\Sid\SidUser;
+use App\Models\Wallets\Wallet;
 use App\Notifications\UserNotification;
 use App\Repositories\RegisterRepository;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Validator;
-use App\Http\Controllers\Admin\MailController;
-use App\Notifications\EmailVerificationNotification;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
 
 class AuthentificationController extends Controller
 {
 
     /** @var  RegisterRepository */
     private $registerRepository;
+    private $authService;
 
-    public function __construct(RegisterRepository $registerReposi)
+    public function __construct(RegisterRepository $registerReposi, AuthenticationService $authService)
     {
         $this->registerRepository = $registerReposi;
+        $this->authService = $authService;
     }
 
     /**
@@ -110,9 +113,6 @@ class AuthentificationController extends Controller
 
         try {
 
-
-
-            // if ($country->code == "CI") {
             $validator = Validator::make(
 
                 $request->all(),
@@ -142,7 +142,7 @@ class AuthentificationController extends Controller
                 );
             }
 
-            $verify_phone =  SidUser::wherePhone($country->indecative . $request->phone)->first();
+            $verify_phone =  SidUser::wherePhone($country->indecative . $request->phone)->withTrashed()->first();
 
             if ($request->has('phone') ||  $request->has('email')) {
 
@@ -162,8 +162,6 @@ class AuthentificationController extends Controller
                     ], 401);
                 }
 
-
-                // if ($user->country->code = "CI") {
 
                 $user = $this->registerRepository->create([
                     'country_id'  => $country->id,
@@ -375,142 +373,80 @@ class AuthentificationController extends Controller
                     ]);
 
 
-                    if ($user->country->code == "CI") {
+                    if ($user->status == true) {
+                        // retrieve callsign
 
-                        if ($user->status == true) {
-                            // retrieve callsign
+                        $encode = substr($user->phone, 0, 1);
 
-                            $encode = substr($user->phone, 0, 1);
+                        if ($encode == '+') {
 
-                            if ($encode == '+') {
+                            return response()->json(
+                                [
+                                    'success' => false,
+                                    'message' => 'Le compte a été deja creer ',
+                                ],
+                                401
+                            );
+                        }
 
-                                return response()->json(
-                                    [
-                                        'success' => false,
-                                        'message' => 'Le compte a été deja creer test',
-                                    ],
-                                    401
-                                );
-                            } else {
+                        if ($user->country->code == "CI") {
 
-
-                                if ($user_email != null) {
-
-                                    return response()->json([
-                                        'success' => false,
-                                        'message' => 'Adresse email exists.',
-                                        'data' => null
-                                    ]);
-                                } else {
-
-                                    $wallet_user = Wallet::create([
-                                        'company_id' =>  1,
-                                        'wallet_id' =>   $user->country->code . $walletCode,
-                                        'country_id' =>  $user->country->id,
-                                        'created_by' =>  $user->id,
-                                        'sid_user_id' =>  $user->id,
-                                        'currencie_id' =>  $user->country->currencie->id,
-                                        'amount' => 0.0,
-                                        'reload_by' => $user->firstname . ' ' . $user->lastname,
-                                        'status' => true
-                                    ]);
-
-
-                                    $user->update([
-                                        'firstname'  => $request->firstname,
-                                        'lastname'  => $request->lastname,
-                                        'email' =>  $user->email,
-                                        'password' =>  bcrypt($request->password),
-                                        'zone'  =>  $request->zone ?? null,
-                                        'wallet_id'  => $wallet_user->wallet_id,
-                                        'phone'  =>   $user->country->indecative . $user->phone,
-                                        'created_by' => $user->id,
-                                        'activation_code' => null,
-                                        'is_active' => false,
-                                    ]);
-
-
-                                    $tokenResult = $user->createToken('auth_token');
-
-                                    $msg_title = 'Inscriptions chez Robus';
-                                    $msg = 'Votre compte a ete cree avec succès, veuillez attendre la validation de votre compte.';
-                                    $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                                    $notifs = $user->unreadNotifications;
-                                    event(new CustumersEvent($notifs));
-
-                                    return $this->loginSuccess($tokenResult, $user);
-                                }
+                            if ($user_email != null) {
+                                return response()->json([
+                                    'success' => false,
+                                    'message' => 'Adresse email existe déjà.',
+                                    'data' => null,
+                                ]);
                             }
                         }
+
+
+                        $wallet_user = Wallet::create([
+                            'company_id' =>  1,
+                            'wallet_id' =>   $user->country->code . $walletCode,
+                            'country_id' =>  $user->country->id,
+                            'created_by' =>  $user->id,
+                            'sid_user_id' =>  $user->id,
+                            'currencie_id' =>  $user->country->currencie->id,
+                            'amount' => 0.0,
+                            'reload_by' => $user->firstname . ' ' . $user->lastname,
+                            'status' => true,
+                        ]);
+
+
+                        $user->update([
+                            'firstname'  => $request->firstname,
+                            'lastname'  => $request->lastname,
+                            'email' =>  $user->email,
+                            'password' =>  bcrypt($request->password),
+                            'zone'  =>  $request->zone ?? null,
+                            'wallet_id'  => $wallet_user->wallet_id,
+                            'phone'  =>   $user->country->indecative . $user->phone,
+                            'created_by' => $user->id,
+                            'activation_code' => null,
+                            'is_active' => false,
+                            'activation_code' => null,
+                        ]);
+
+
+
+                        $tokenResult = $user->createToken('auth_token');
+
+                        $msg_title = 'Inscriptions chez Robus';
+                        $msg = 'Votre compte a ete cree avec succès, veuillez attendre la validation de votre compte.';
+                        $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                        $notifs = $user->unreadNotifications;
+                        event(new CustumersEvent($notifs));
+
+                        return $this->loginSuccess($tokenResult, $user);
                     } else {
-
-                        if ($user->status == true) {
-
-
-                            $encode = substr($user->phone, 0, 1);
-
-                            if ($encode == '+') {
-
-                                return response()->json(
-                                    [
-                                        'success' => false,
-                                        'message' => 'Le compte a été deja creer test',
-                                    ],
-                                    401
-                                );
-                            } else {
-
-                                if ($user_phone != null) {
-
-                                    return response()->json(
-                                        [
-                                            'success' => false,
-                                            'message' => 'Numero existe deja',
-                                        ],
-                                        401
-                                    );
-                                } else {
-
-
-                                    $wallet_user = Wallet::create([
-                                        'company_id' =>  1,
-                                        'wallet_id' =>   $user->country->code . $walletCode,
-                                        'country_id' =>  $user->country->id,
-                                        'created_by' =>  $user->id,
-                                        'sid_user_id' =>  $user->id,
-                                        'currencie_id' =>  $user->country->currencie->id,
-                                        'amount' => 0.0,
-                                        'reload_by' => $user->firstname . ' ' . $user->lastname,
-                                        'status' => true
-                                    ]);
-
-
-                                    $user->update([
-                                        'firstname'  => $request->firstname,
-                                        'lastname'  => $request->lastname,
-                                        'email' =>   $user->email,
-                                        'password' =>  bcrypt($request->password),
-                                        'zone'  =>  $request->zone ?? null,
-                                        'wallet_id'  => $wallet_user->wallet_id,
-                                        'phone'  =>   $user->country->indecative . $user->phone ?? null,
-                                        'created_by' => $user->id,
-                                        'is_active' => false,
-                                        'activation_code' => null,
-                                    ]);
-
-
-                                    $tokenResult = $user->createToken('auth_token');
-
-                                    $msg_title = 'Inscriptions chez Robus';
-                                    $msg = 'Votre compte a ete cree avec succès, veuillez attendre la validation de votre compte.';
-                                    $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                                    $notifs = $user->unreadNotifications;
-                                    event(new CustumersEvent($notifs));
-
-                                    return $this->loginSuccess($tokenResult, $user);
-                                }
-                            }
-                        }
+                        return response()->json(
+                            [
+                                'success' => false,
+                                'message' => 'Erreur d\'inscription sur ROBUS',
+                            ],
+                            301
+                        );
                     }
                 }
             } else return response()->json(
@@ -590,123 +526,69 @@ class AuthentificationController extends Controller
      *   ),
      *  ),
      */
-    public function login(Request $request)
+    public function loginCustumers(Request $request)
     {
         $user = SidUser::wherePhone($request->phone)->first();
 
         try {
 
+            // Vérifier l'état de l'application
+            $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+
+            if (!$appStatusResult['success']) {
+                return response()->json($appStatusResult, 301);
+            }
+
             if (!empty($user->forget_password)) {
 
-                if (SidUser::wherePhone($request->phone)->whereForgetPassword($request->password)->first()) {
+                $credentials = $request->only(['phone', 'password']);
 
-                    $data = $request->all();
+                if ($sidUser = SidUser::where($credentials)->first()) {
 
-                    $user_data = $this->registerRepository->whereStatus(true)->where('is_custumers', true)->wherePhone($data['phone'])->first();
+                    $user = $sidUser;
+                    $user->fcm_token = $request->input('fcm_token'); // Utilisation de la fonction input() avec une valeur par défaut
+                    $user->last_login = Carbon::now(); // Mise à jour de la dernière connexion
+                    $user->last_logout = null; // Réinitialisation de la dernière déconnexion
+                    $user->save();
 
-                    if (request('fcm_token') != null) {
-                        $user->fcm_token = request('fcm_token');
-                    }
-
-
-                    if (!$user_data) {
-
-                        return response()->json(
-                            [
-                                'success' => false,
-                                'message' => 'Mauvais identifiants ! Authentification échouée',
-                                'data' => 'ne pas couper:' . $request->phone
-                            ],
-                            301
-                        );
-                    } else {
-
-
-                        $tokenResult = $user_data->createToken('auth_token');
-
-                        if ($user->country->code == "CI") {
-                            // $user = Auth::user();
-                            $message = 'Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil';
-                            $encode = substr($user->phone,  -10);
-                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                            $user->last_login  = Carbon::now()->toDateTimeString();
-                            $user->last_logout  = null;
-                            $user->save();
-                            return $this->loginSuccess($tokenResult, $user_data);
-                        } else {
-                            // $user = Auth::user();
-                            Mail::to($user->email)->send(new UpdatePassword('Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil'));
-                            $user->last_login  = Carbon::now()->toDateTimeString();
-                            $user->last_logout  = null;
-                            $user->save();
-                            return $this->loginSuccess($tokenResult, $user_data);
-                        }
-                    }
-                } else {
-
-                    return response()->json(
-                        [
+                    if (!$user_data = $this->registerRepository->whereStatus(true)->where('is_custumers', true)->wherePhone($credentials['phone'])->first()) {
+                        return response()->json([
                             'success' => false,
-                            'message' => 'Numéro de téléphone ou mot de passe incorrect.',
-                            'data' => 'ne pas couper'
-                        ],
-                        301
-                    );
+                            'message' => 'Mauvais identifiants ! Authentification échouée',
+                            'data' => 'ne pas couper:' . $credentials['phone']
+                        ], 301);
+                    }
+
+                    $tokenResult = $user_data->createToken('auth_token');
+                    $message = 'Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil';
+                    $recipient = $user->country->code == 'CI' ? '225' . substr($user->phone, -10) : $user->email;
+
+                    if ($user->country->code == 'CI') {
+                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=$recipient&from=ROBUS&sms=$message");
+                    } else {
+                        Mail::to($recipient)->send(new UpdatePassword($message));
+                    }
+
+                    return $this->loginSuccess($tokenResult, $user_data);
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Numéro de téléphone ou mot de passe incorrect.',
+                        'data' => 'ne pas couper'
+                    ], 301);
                 }
             } else {
 
-                if (Auth::attempt(['phone' => request('phone'), 'password' => request('password')])) {
+                $credentials = request(['phone', 'password']);
 
+                $result = $this->authService->custumerLogin($credentials['phone'], $credentials['password']);
 
-                    $user = Auth::user();
+                if ($result['success']) {
 
-                    $data = $request->all();
-
-                    $user_data = $this->registerRepository->whereStatus(true)->where('is_custumers', true)->wherePhone($data['phone'])->first();
-
-                    if (request('fcm_token') != null) {
-                        $user->fcm_token = request('fcm_token');
-                    }
-
-
-                    if (!$user_data) {
-
-                        return response()->json(
-                            [
-                                'success' => false,
-                                'message' => 'Mauvais identifiants ! Authentification échouée',
-                                'data' => 'ne pas couper:' . $request->phone
-                            ],
-                            301
-                        );
-                    } else {
-
-                        if (Hash::check($data['password'], $user_data->password)) {
-                            Auth::user()->last_login  = Carbon::now()->toDateTimeString();
-                            Auth::user()->last_logout  = null;
-                            Auth::user()->save();
-                            $tokenResult = $user_data->createToken('auth_token');
-                            return $this->loginSuccess($tokenResult, $user_data);
-                        } else {
-                            return response()->json(
-                                [
-                                    'success' => false,
-                                    'message' => 'Mauvais identifiants ! Authentification échouée',
-                                    'data' => 'phone do not exist:' . $request->phone
-                                ],
-                                301
-                            );
-                        }
-                    }
+                    return $this->loginSuccess($result['token'], $result['user']);
                 } else {
-                    // $message = "Numéro de téléphone ou mot de passe incorrect.";
-                    // return json_message_response($message, 200);
                     return response()->json(
-                        [
-                            'success' => false,
-                            'message' => 'Numéro de téléphone ou mot de passe incorrect.',
-                            'data' => 'ne pas couper'
-                        ],
+                        ['success' => false, 'message' => $result['message']],
                         301
                     );
                 }
@@ -723,170 +605,70 @@ class AuthentificationController extends Controller
         }
     }
 
-    public function loginAdmin(Request $request)
+    public function loginAll(Request $request, $loginMethod)
     {
+        try {
 
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+            $email = $request->input('email');
+            $password = $request->input('password');
+            $device_meta_data = $request->input('device_meta_data');
+            $active_code = $request->input('code');
 
-            try {
+            $result = $this->authService->$loginMethod($email, $password, $active_code, $device_meta_data);
 
-
-                $user_data = SidUser::whereStatus(true)->where('is_under_distributer', true)->whereEmail($request->email)->first();
-
-                if (!$user_data) {
-
-                    return response()->json(
-                        [
-                            'success' => false,
-                            'catch' => true,
-                            'message' => 'Mauvais identifiants ! Authentification échouée',
-                            'data' => 'Verifier vos identifiants :' . $request->email
-                        ],
-                        301
-                    );
-                }
-
-                if (!Hash::check($request->password, $user_data->password)) {
-                    return response()->json([
-                        'success' => false,
-                        'catch' => true,
-                        'message' => 'Mauvais identifiants ! Authentification échouée',
-                        'data' => 'Email do not exist: ' . $request->email
-                    ], 301);
-                }
-
-                if (!empty($user_data->activation_code)) {
-                    return $this->attemptActiveCodeLogin($user_data, $request);
-                }
-
-                return $this->attemptDeviceLogin($user_data, $request);
-
-             
-            } catch (\Throwable $th) {
-
+            if ($result['success']) {
+                return $this->loginSuccess($result['token'], $result['user']);
+            } else {
                 return response()->json(
-                    [
-                        'success' => false,
-                        'message' => 'Mauvais identifiants ! Authentification échouée',
-                        'data' => 'Verifier vos identifiants :' . $request->email
-                    ],
+                    ['success' => false, 'message' => $result['message'], 'catch' => true],
                     301
                 );
             }
-        } else {
-
+        } catch (\Throwable $th) {
             return response()->json(
-                [
-                    'catch' => true,
-                    'success' => false,
-                    'message' => 'Email ou mot de passe incorrect.',
-                    'data' => 'ne pas couper'
-                ],
+                ['success' => false, 'message' => 'Une erreur s\'est produite lors de l\'authentification.'],
                 301
             );
         }
     }
 
-    private function attemptActiveCodeLogin($user, Request $request)
+
+    public function loginMaster(Request $request)
     {
-        if ($user->activation_code !== $request->code) {
-            return response()->json([
-                'success' => false,
-                'catch' => true,
-                'message' => 'Votre code OTP d\'activation est incorrecte.'
-            ], 301);
+        // Vérifier l'état de l'application
+        $appStatusResult = $this->authService->appDispoMasterRobus(AppMasterStatus::class);
+
+        if (!$appStatusResult['success']) {
+            return response()->json($appStatusResult, 200);
         }
 
-        return $this->updateUserAndGenerateToken($user, $request->device_meta_data);
+        return $this->loginAll($request, 'masterLogin');
     }
 
-    private function attemptDeviceLogin($user, Request $request)
+    public function loginComZone(Request $request)
     {
-        // if ($user->device_meta_data !== null && $user->device_meta_data !== $request->device_meta_data) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'catch' => true,
-        //         'message' => 'Changement de dispositif détecté ou données du téléphone incorrectes.'
-        //     ], 301);
-        // }
+        $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
 
-        return $this->updateUserAndGenerateToken($user, $request->device_meta_data);
+        if (!$appStatusResult['success']) {
+            return response()->json($appStatusResult, 200);
+        }
+
+        return $this->loginAll($request, 'comZoneLogin');
     }
 
-    private function updateUserAndGenerateToken($user, $deviceMetaData)
+    public function loginUnderDistributor(Request $request)
     {
-        $user->update([
-            'last_login' => Carbon::now()->toDateTimeString(),
-            'last_logout' => null,
-            'activation_code' => null,
-            'device_meta_data' => $deviceMetaData
-        ]);
 
-        $token = $user->createToken('auth_token');
+        // Vérifier l'état de l'application
+        $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
-        return $this->loginSuccess($token, $user);
+        if (!$appStatusResult['success']) {
+            return response()->json($appStatusResult, 200);
+        }
+
+        return $this->loginAll($request, 'underDistributorLogin');
     }
 
-
-    // private function attemptActiveCodeLogin($user, $email, $password, $device_meta_data, $code_active)
-    // {
-    //     if (Auth::attempt(['email' => $email, 'password' => $password])) {
-
-
-    //         if ($user->is_under_distributer && Hash::check($password, $user->password)) {
-
-    //             if ($user->activation_code === $code_active) {
-
-    //                 $user->update([
-    //                     'last_login' => Carbon::now()->toDateTimeString(),
-    //                     'last_logout' => null,
-    //                     'activation_code' => null,
-    //                     'device_meta_data' => $device_meta_data
-    //                 ]);
-
-    //                 $token = $user->createToken('auth_token');
-
-    //                 return $this->loginSuccess($token, $user);
-    //             } else {
-    //                 return ['success' => false, 'message' => 'Votre code OTP d\'activation est incorrecte .', 'catch' => true];
-    //             }
-    //         } else {
-    //             return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée', 'catch' => true];
-    //         }
-    //     } else {
-    //         return ['success' => false, 'catch' => true, 'message' => 'L\'ecriture du Email ou mot de passe incorrect.', 'catch' => true];
-    //     }
-    // }
-
-    // private function attemptDeviceLogin($user, $email, $password, $device_meta_data)
-    // {
-    //     if (Auth::attempt(['email' => $email, 'password' => $password])) {
-
-
-    //         if ($user->is_under_distributer && Hash::check($password, $user->password)) {
-
-    //             // Vérifier l'activation_code
-    //             if ($user->device_meta_data === null || $user->device_meta_data === $device_meta_data) {
-
-    //                 $user->update([
-    //                     'last_login' => Carbon::now()->toDateTimeString(),
-    //                     'last_logout' => null,
-    //                     'activation_code' => null,
-    //                     'device_meta_data' => $device_meta_data
-    //                 ]);
-
-    //                 $token = $user->createToken('auth_token');
-    //                 return $this->loginSuccess($token, $user);
-    //             } else {
-    //                 return ['success' => false, 'message' => 'Changement de dispositif détecté ou données du téléphone incorrectes.', 'catch' => false];
-    //             }
-    //         } else {
-    //             return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée', 'catch' => true];
-    //         }
-    //     } else {
-    //         return ['success' => false, 'message' => 'L\'ecriture du Email ou mot de passe incorrect.', 'catch' => true];
-    //     }
-    // }
 
 
     /**
@@ -905,6 +687,7 @@ class AuthentificationController extends Controller
     {
 
         $user = SidUser::where('email', $request->email)->first();
+        
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -918,6 +701,7 @@ class AuthentificationController extends Controller
             ], 215);
         } else {
             $user->email_verified_at = date('Y-m-d H:m:s');
+            $user->activation_code = null;
             $user->save();
             $tokenResult = $user->createToken('auth_token');
             return $this->loginSuccess($tokenResult, $user);
@@ -978,47 +762,44 @@ class AuthentificationController extends Controller
 
         $rt = rand(40, 5000) * time();
         $activation_code = sprintf("%0.4s", str_shuffle($rt));
-        $phone = $request->phone;
-        $email = $request->email;
-        $resend_user =  SidUser::wherePhone($phone)->first();
-        $resend_user_email =  SidUser::wherePhone($email)->first();
+        // $resend_user =  SidUser::wherePhone($phone)->first() ?? SidUser::whereEmail($email)->first();
+        // $resend_user_email =  SidUser::whereEmail($email)->first();
+        $resend_user = SidUser::where('phone', $request->phone)->orWhere('email', $request->phone)->first();
 
 
-        // if ($resend_user != null) {
         try {
 
 
-            if ($resend_user != null || $resend_user_email  != null) {
-
-                if ($resend_user->country->code == "CI") {
-
-                    $resend_user->update([
-                        'activation_code' =>  $activation_code
-                    ]);
-
-                    $message = 'Code activation ' . $resend_user->activation_code;
-
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$resend_user->phone&from=ROBUS&sms=$message");
-                } else {
-
-                    $resend_user_email->update([
-                        'activation_code' =>  $activation_code
-                    ]);
-
-                    $notify = new MailController;
-                    $notify->newOtp($resend_user);
-                }
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Votre code d\actualisation a ete envoyer.'
-                ], 200);
-            } else {
+            if (!$resend_user) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Votre code doit être validé.'
-                ], 220);
+                    'message' => 'Aucun utilisateur trouvé avec ces informations.'
+                ], 404);
             }
+
+            // Mise à jour de l'utilisateur avec le nouveau code
+            $resend_user->activation_code = $activation_code;
+            $resend_user->save();
+
+            // Envoi du code par SMS ou email selon le pays
+            if ($resend_user->country->code == "CI") {
+
+                $message = "Votre code d'activation est: {$activation_code}";
+
+                $phone_user = substr($resend_user->phone, -10);
+
+                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$phone_user&from=ROBUS&sms=$message");
+              
+            } else {
+                $notify = new MailController;
+                $notify->newOtp($resend_user);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Votre code d\actualisation a ete envoyer.'
+            ], 200);
+
         } catch (\Throwable $th) {
 
             return response()->json(

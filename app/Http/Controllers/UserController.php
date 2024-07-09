@@ -137,6 +137,24 @@ class UserController extends Controller
 
             $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
 
+            $transactions =  $this->transactionAccountService->getTransactionUserWallet(WalletTransaction::class, $wallet_solde->id, 'num_wallet',  $wallet_solde->wallet_id);
+
+            $paiements =  $this->transactionAccountService->getTransactionsWallet(WalletPayment::class, $wallet_solde->id);
+    
+            $virements =  $this->transactionAccountService->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
+    
+            $phoneCredits =  $this->transactionAccountService->getTransactionsWallet(WalletPhoneCredit::class, $wallet_solde->id);
+    
+            $reloadCards =  $this->transactionAccountService->getTransactionsWallet(WalletDeposit::class, $wallet_solde->id);
+    
+            $walletOrderCarte =  $this->transactionAccountService->getTransactionsWallet(BankCard::class, $wallet_solde->id);
+    
+            $walletxbet =  $this->transactionAccountService->getTransactionsWallet(WalletXbet::class, $wallet_solde->id);
+    
+            $reaload_uv =  $this->transactionAccountService->getTransactionUserWallet(WalletReload::class, $wallet_solde->id, 'account_wallet',  $wallet_solde->wallet_id);
+    
+            $Internationals =  $this->transactionAccountService->getTransactionUserWallet(WalletInter::class, $wallet_solde->id, 'number_compte',  $wallet_solde->wallet_id);
+
             // Wallet Error and other
             $sum_error    = $this->getCountWalletTransaction($wallet_solde->id, 'ERROR');
             $sum_success    = $this->getCountWalletTransaction($wallet_solde->id, 'SUCCESS');
@@ -145,14 +163,50 @@ class UserController extends Controller
 
             $usersCountry = Auth::guard('web')->user()->country->currencie->name;
 
+            $sum_wallet_transaction = $this->transactionAccountService->getTransactionsTypeAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
+
+            $sum_wallet_bank = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $wallet_solde->id);
+    
+            $sum_wallet_deposit = $this->transactionAccountService->getTransactionAmount(WalletDeposit::class, $wallet_solde->id);
+    
+            $sum_wallet_payment = $this->transactionAccountService->getTransactionAmount(WalletPayment::class, $wallet_solde->id);
+    
+            $sum_wallet_phone = $this->transactionAccountService->getTransactionAmount(WalletPhoneCredit::class, $wallet_solde->id);
+    
+            $sum_wallet_xbet = $this->transactionAccountService->getTransactionAmount(WalletXbet::class, $wallet_solde->id);
+    
+            $sum_wallet_Inter = $this->transactionAccountService->getTransactionsTypeAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
+    
+      
+    
+            $sum_wallet_transaction_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
+    
+            $sum_wallet_Inter_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
+
             return view('pages.custumers.show', compact(
+                'totalSumAmounts',
+                'kycs',
                 'user',
                 'sum_error',
                 'sum_success',
                 'pending_success',
+                'sum_wallet_deposit',
+                'sum_wallet_bank',
+                'sum_wallet_payment',
+                'sum_wallet_transaction',
+                'sum_wallet_transaction_received',
+                'sum_wallet_phone',
+                'sum_wallet_Inter',
+                'sum_wallet_Inter_received',
+                'virements',
+                'reaload_uv',
+                'reloadCards',
+                'paiements',
+                'Internationals',
+                'transactions',
+                'phoneCredits',
                 'usersCountry',
-                'totalSumAmounts',
-                'kycs'
+                'walletOrderCarte',
             ));
         } else {
             abort(403);

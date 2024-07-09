@@ -424,6 +424,22 @@
                         <div class="menu__title">Etat-Unis</div>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('commissions.asie') }}"
+                        class="menu {{ $route == 'commissions.asie' ? 'menu--active' : '' }}">
+                        <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                        </div>
+                        <div class="menu__title">Asie</div>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('commissions.east') }}"
+                        class="menu {{ $route == 'commissions.east' ? 'menu--active' : '' }}">
+                        <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                        </div>
+                        <div class="menu__title">Afrique de l'EST</div>
+                    </a>
+                </li>
             </ul>
         </li>
     @endif

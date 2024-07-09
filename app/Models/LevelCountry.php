@@ -35,16 +35,16 @@ class LevelCountry extends Model
         return $query->where('status', true)->get();
     }
 
-    public function getNameAttribute($value)
-    {
-        $val = isset($value) ? json_decode($value, true) : null;
-        return $val;
-    }
+    // public function getNameAttribute($value)
+    // {
+    //     $val = isset($value) ? json_decode($value, true) : null;
+    //     return $val;
+    // }
 
-    public function setNameAttribute($value)
-    {
-        $this->attributes['name'] = isset($value) ? json_encode($value) : null;
-    }
+    // public function setNameAttribute($value)
+    // {
+    //     $this->attributes['name'] = isset($value) ? json_encode($value) : null;
+    // }
 
     public function getPercentAttribute($value)
     {

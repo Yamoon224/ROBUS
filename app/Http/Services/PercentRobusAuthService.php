@@ -75,6 +75,10 @@ class PercentRobusAuthService
                 return TransactionCost::whereId(40)->first();
             case 'MAG':
                 return TransactionCost::whereId(41)->first();
+            case 'ASIE':
+                    return TransactionCost::whereId(46)->first();
+            case 'AFE':
+                    return TransactionCost::whereId(48)->first();
             default:
                 return null;
         }
@@ -249,7 +253,6 @@ class PercentRobusAuthService
 
     public function getRobusPercentageInter($countrie, $provider_valeur)
     {
-
         $levelValeur = 0;
 
         if (robus()->country->name_groupe == 'AFL') {
