@@ -126,7 +126,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
             </div>
             <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
               
-                <div class="font-medium text-historique mt-6">Telephone :   {{ env('PHONE_USE') }}</div>
+                <div class="font-medium text-historique mt-6">Téléphone :   {{ env('PHONE_USE') }}</div>
                
             </div>
         </div>
@@ -138,7 +138,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                 <div class="intro-y col-span-12 lg:col-span-12">
                     <div class="intro-y block sm:flex items-center h-10">
                         <h2 class="text-lg font-medium truncate mr-5">
-                                Toutes les Activites des virements  de :
+                                Toutes les Activités des virements  de :
                                 {{ $wallet_user->sidUser->lastname ?? null }}
                                 {{ $wallet_user->sidUser->firstname ?? null }}
                            
