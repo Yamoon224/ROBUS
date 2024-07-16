@@ -607,7 +607,7 @@ class TransferVisitors extends Component
 
                                 $encode = substr($check->phone_benef, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
 
 
                                 Notification::send(
@@ -698,7 +698,7 @@ class TransferVisitors extends Component
 
                                 // $encode = substr($check->phone_benef, -10);
 
-                                // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                // http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
 
 
 
@@ -1082,9 +1082,7 @@ class TransferVisitors extends Component
 
                             $encode = substr($check->phone_benef, -10);
 
-                            Http::get(
-                                "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
-                            );
+                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             //  Send valeur in Admin
                             if ($admin_civ->count() > 0) {
 

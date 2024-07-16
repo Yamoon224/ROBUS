@@ -20,6 +20,58 @@ class AdminSeeder extends Seeder
 
         $time = Carbon::now()->toDateTimeString();
 
+    
+
+            // -USA
+            // -Algerie
+            // - Angola
+            // - Benin
+            // - BF
+            // - Burundi
+            // - Cameroun
+            // - Afrique centrale
+            // - Thacd
+            // - China
+            // - COngo Braza
+            // - RDC
+            // - Egypte
+            // - Guinnée Equatoriale
+            // - Ethiopie
+            // - France
+            // - Gabon
+            // - Gambie
+            // - Allemagne
+            // - Ghana
+            // - Inde
+            // - Italie
+            // - CIV
+            // - Keneya 
+            // -Koweit 
+            // - Liban 
+            // - Liberia 
+            // - Mali 
+            // - Mauritanie 
+            // - Maroc
+            // - Hollande 
+            // - Niger 
+            // - Nigeria 
+            // - Portugal 
+            // - Quatar 
+            // - RWanda 
+            // - Senegal 
+            // - Sierria Leone
+            // - ESPAGNE
+            // - Suisse 
+            // - Tanzanie 
+            // - Togo 
+            // - Turquie
+            // - Ouganda
+            // - Dubai 
+            // - Royaume Unie
+            // - Tunisia
+            // - Russie 
+            // - Zambie
+            // - Belgique
 
 
         DB::table('sid_users')->insert([

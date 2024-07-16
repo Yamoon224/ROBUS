@@ -181,7 +181,9 @@ class AuthentificationController extends Controller
 
                     $message = 'Code activation ' . $user->activation_code;
 
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$user->phone&from=ROBUS&sms=$message");
+                    // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$user->phone&from=ROBUS&sms=$message");
+                    http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$user->phone&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
                 }
 
                 $notify = new MailController;

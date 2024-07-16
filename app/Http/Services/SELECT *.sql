@@ -1,0 +1,3 @@
+SELECT * 
+FROM level_countries
+WHERE id BETWEEN 4552 AND 4599;

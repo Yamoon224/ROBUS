@@ -275,6 +275,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/usa', [CommissionController::class, 'browse_usa'])->name('commissions.usa');
             Route::get('/asie', [CommissionController::class, 'browse_asie'])->name('commissions.asie');
             Route::get('/east', [CommissionController::class, 'browse_east'])->name('commissions.east');
+            Route::get('/civ', [CommissionController::class, 'browse_civ'])->name('commissions.civ');
         });
 
 

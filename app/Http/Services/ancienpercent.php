@@ -3,259 +3,360 @@
 namespace App\Http\Services;
 
 
+use App\Events\AdminNotifEvent;
+use App\Events\CreateCardBankEvent;
+use App\Events\CreateWalletBankEvent;
+use App\Events\CreateWalletOneXbet;
+use App\Events\CreateWalletPaiementEvent;
+use App\Events\CreateWalletPhoneCreditEvent;
+use App\Events\CreateReloadWebEvent;
+use App\Events\CreateWalletTransfersEvent;
+use App\Events\CreateWaveEvent;
+use App\Http\Controllers\Admin\MailController;
+use App\Models\Sid\SidUser;
+use App\Notifications\AdminNotification;
+use App\Notifications\UserNotification;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Notification;
 
-use App\Models\Wallets\Wallet;
-use Illuminate\Support\Carbon;
-use App\Models\Wallets\WalletBank;
-use App\Models\Wallets\WalletInter;
-use App\Models\Wallets\WalletReload;
-use App\Models\Wallets\WalletDeposit;
-use App\Models\Wallets\WalletPayment;
-use App\Http\Services\ConvertionService;
-use App\Models\Wallets\WalletPhoneCredit;
-use App\Models\Wallets\WalletTransaction;
-use App\Models\AdminsCom;
-use Illuminate\Support\Facades\DB;
 
-class HistoriqueService
+class NotificationWebService
 {
 
-    protected $convertionService;
-    
-    public function mount(ConvertionService $convertionService)
+
+
+    public function sendNotificationReloadCard($walletRelaodCard)
     {
-        $this->convertionService = $convertionService;
+
+
+        $admins = $this->getAdminCIVProperty();
+        event(new CreateReloadWebEvent($walletRelaodCard));
+        Notification::send($admins, new AdminNotification('Demande de rechargement de carte de Visiteurs' . ' ' . $walletRelaodCard->name));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+        // if (robus()->email != null) {
+
+        //     $notify = new MailController;
+        //     $notify->newReload($walletRelaodCard);
+        // }
+        return response()->json([
+            'success' => true,
+            'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
+        ], 200);
     }
 
- 
-
-    // Sum Admin
-    public function getWalletBankSumAdmin()
+    public function sendNotificationTransactiobWeb($walletTransaction)
     {
 
 
-        $data = [];
+        $admins = $this->getAdminCIVProperty();
+        // event(new CreateReloadWebEvent($walletTransaction));
+        Notification::send($admins, new AdminNotification('Demande de transaction  de Visiteurs' . ' ' . $walletTransaction->name_complet));
 
-        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->whereDate('wallet_banks.created_at', Carbon::today())->select('wallet_banks.*')->where('wallet_banks.status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+        // if (robus()->email != null) {
+
+        //     $notify = new MailController;
+        //     $notify->newReload($walletRelaodCard);
+        // }
+        return response()->json([
+            'success' => true,
+            'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
+        ], 200);
+    }
+
+    public function sendNotificationTransactionInterWeb($walletInter)
+    {
+
+
+        $admins = $this->getAdminCIVProperty();
+        event(new CreateReloadWebEvent($walletInter));
+        Notification::send($admins, new AdminNotification('Demande de transaction international  de Visiteurs' . ' ' . $walletInter->name_complet));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+        // if (robus()->email != null) {
+
+        //     $notify = new MailController;
+        //     $notify->newReload($walletRelaodCard);
+        // }
+        return response()->json([
+            'success' => true,
+            'message' => ('Votre demande a bien été prise en compte.')
+        ], 200);
+    }
+
+
+
+    public function sendNotificationTransactionXBetWeb($walletXbet)
+    {
+
+
+        $admins = $this->getAdminCIVProperty();
+        event(new CreateReloadWebEvent($walletXbet));
+        Notification::send($admins, new AdminNotification('Demande de depot 1xbet  de Visiteurs' . ' ' . $walletXbet->full_name));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+        // if (robus()->email != null) {
+
+        //     $notify = new MailController;
+        //     $notify->newReload($walletRelaodCard);
+        // }
+        return response()->json([
+            'success' => true,
+            'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
+        ], 200);
+    }
+
+
+    public function sendNotificationTransactionPhoneCreditWeb($walletPhone)
+    {
+
+
+        $admins = $this->getAdminCIVProperty();
+        event(new CreateReloadWebEvent($walletPhone));
+        Notification::send($admins, new AdminNotification('Demande de credit téléphonique de Visiteurs' . ' ' . $walletPhone->full_name));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+        // if (robus()->email != null) {
+
+        //     $notify = new MailController;
+        //     $notify->newReload($walletRelaodCard);
+        // }
+        return response()->json([
+            'success' => true,
+            'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
+        ], 200);
+    }
+
+    public function sendNotification1xbets($walletXbet)
+    {
+
+
+        if (robus()->is_custumers) {
+            if (robus()->country->code == "CI") {
+
+                $message = 'Votre demande de ' . $walletXbet->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                    . $walletXbet->provider->name  .  ' le '
+                    . $walletXbet->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+                $encode = substr(robus()->phone,  -10);
+
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            }
+        }
+        $admins = $this->getAdminCIVProperty();
+        $msg = 'Demande en cours de validation';
+        $msg_title =  $walletXbet->choose_type_transaction == 1 ? 'Réchargement 1Xbet' : 'Retrait 1Xbet';
+        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletOneXbet($walletXbet));
+        Notification::send($admins, new AdminNotification($walletXbet->choose_type_transaction == 1 ? 'Demande de rechargement 1xbet de ' : 'Demande de retrait 1xbet de '  . ' ' . $walletXbet->wallet->sidUser->firstname));
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
         }
 
-        return array_sum($data);
+        if (robus()->email != null) {
+
+            $notify = new MailController;
+            $notify->newPhoneCredit($walletXbet);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id'      => $walletXbet->id,
+                'amount' => $walletXbet->amount,
+                'status' => $walletXbet->status,
+            ],
+            'message' => ('Votre demande ce retrait 1xbet est en cours de traitement .')
+        ], 200);
     }
 
-
-    
-
-    public function getSDistributeurSumAdmin()
+    public function sendNotification($walletTransaction)
     {
 
+        if (robus()->is_custumers) {
+            if (robus()->country->code == "CI") {
 
-        $data = [];
+                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   ' par '
+                    . $walletTransaction->provider->name  .  ' le '
+                    . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
-        foreach (Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', 107)
-            ->select('wallets.*')
-            ->get() as $wallet) {
-            $data[] = $wallet->amount;
+                $encode = substr(robus()->phone,  -10);
+
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            }
         }
 
-        return array_sum($data);
-    }
+        $msg_title = 'Transfert National Robus';
+        $msg = 'Vous avez effectué un transfert vers Robus avec succes';
+        robus()->notify(
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg,
+            ])
+        );
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletTransfersEvent($walletTransaction));
+        $admins = $this->getAdminCIVProperty();
+        Notification::send(
+            $admins,
+            new AdminNotification(
+                'Transfert Robus vers Client ' .
+                    ' ' . $walletTransaction->wallet->sidUser->firstname
+            )
+        );
+        Notification::send($admins, new AdminNotification('Transfert d\'argent Robus vers ' .
+            ' ' . $walletTransaction->wallet->sidUser->firstname));
 
-    public function getSDistributeurSumCountryAdmin($countrie)
-    {
+        if ($admins->count() > 0) {
 
+            foreach ($admins  as $user) {
 
-        $data = [];
+                $admin_single = SidUser::find($user->id);
 
-        foreach (Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countrie)
-            ->select('wallets.*')
-            ->get() as $wallet) {
-            $data[] = $wallet->amount;
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
         }
 
-        return array_sum($data);
-    }
-
-    public function getCustumersSumCountrieAdmin($countrie)
-    {
-
-
-        $data = [];
-
-        foreach (Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_custumers', true)
-            ->where('wallets.country_id', $countrie)
-            ->select('wallets.*')
-            ->get() as $wallet) {
-            $data[] = $wallet->amount;
+        if (robus()->email != null) {
+            $notify = new MailController();
+            $notify->newTransaction($walletTransaction);
         }
 
-        return array_sum($data);
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id'      => $walletTransaction->id,
+                // 'provider' => $walletTransaction->provider->name,
+                'amount' => $walletTransaction->amount,
+                // 'phone' => $walletTransaction->phone,
+                // 'num_wallet' => $walletTransaction->num_wallet,
+                'status' => $walletTransaction->status,
+            ],
+            'message' => ('La transaction a été effectuée avec succès.')
+        ], 200);
     }
-    public function getCustumersSumAdmin()
+
+    public function sendNotificationMobile($walletTransaction)
     {
+        if (robus()->is_custumers) {
+            if (robus()->country->code == "CI") {
 
+                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                    . $walletTransaction->provider->name  .  ' le '
+                    . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
 
-        $data = [];
+                $encode = substr(robus()->phone,  -10);
 
-        foreach (Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_custumers', true)
-            ->where('wallets.country_id', 107)
-            ->select('wallets.*')
-            ->get() as $wallet) {
-            $data[] = $wallet->amount;
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            }
         }
 
-        return array_sum($data);
-    }
+        $msg_title = 'Transfert Mobile money';
+        $msg = 'Vous avez effectué un transfert vers Mobile Money ';
+        robus()->notify(
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg,
+            ])
+        );
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletTransfersEvent($walletTransaction));
+        // $this->emit('transaction_inter_sends', $walletTransaction->id);
+        $admins = $this->getAdminCIVProperty();
+        Notification::send(
+            $admins,
+            new AdminNotification(
+                'Transfert Robus vers le client ' .
+                    ' ' . $walletTransaction->wallet->sidUser->firstname
+            )
+        );
+        Notification::send($admins, new AdminNotification('Transfert d\'argent Mobile Money vers ' .
+            ' ' . $walletTransaction->wallet->sidUser->firstname));
 
-    public function getWalletDepositSumAdmin()
-    {
 
+        if ($admins->count() > 0) {
 
-        $data = [];
+            foreach ($admins  as $user) {
 
-        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_deposits.*')
-            ->whereDate('wallet_deposits.created_at', Carbon::today())->where('wallet_deposits.status', 'SUCCESS')->get() as $deposit) {
-            $data[] = $deposit->amount;
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
         }
-
-        return array_sum($data);
+        return true;
     }
 
-
-    public function getWalletPaymentSumAdmin()
+    public function getAdminCIVProperty()
     {
 
-
-        $data = [];
-
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_payments.*')
-            ->whereDate('wallet_payments.created_at', Carbon::today())->where('wallet_payments.status', 'SUCCESS')->get() as $payment) {
-            $data[] = $payment->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionSumAdmin()
-    {
-
-
-        $data = [];
-
-        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_transactions.*')
-            ->whereDate('wallet_transactions.created_at', Carbon::today())->where('wallet_transactions.status', 'SUCCESS')->get() as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletInterSumAdmin()
-    {
-
-
-        $data = [];
-
-        foreach (WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_inters.*')
-            ->whereDate('wallet_inters.created_at', Carbon::today())->where('wallet_inters.status', 'SUCCESS')->get() as $inter) {
-            $data[] = $inter->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getCumulsWalletTransactions($wallet, $wallet_transaction, $countryId, $wallet_commission, $wallet_success)
-    {
-        $cumulAmountComissions = $wallet::join('wallets', 'wallets.id', $wallet_transaction)
-            ->join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_under_distributer', true)
-            ->where('wallets.country_id', $countryId)
-            ->where($wallet_commission, '>', 0) // Condition modifiée pour exclure les montants nuls
-            ->where($wallet_success, 'SUCCESS')
-            ->sum($wallet_commission);
-
-
-        return $cumulAmountComissions;
-    }
-
-    
-    
-    public function getWalletPhoneCreditSumAdmin()
-    {
-
-
-        $data = [];
-
-        foreach (WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_phone_credits.*')
-            ->whereDate('wallet_phone_credits.created_at', Carbon::today())->where('wallet_phone_credits.status', 'SUCCESS')->get() as $phone) {
-            $data[] = $phone->amount;
-        }
-
-        return array_sum($data);
-    }
-
-   public function getWalletBankVisitorsDistributersLimitViews($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
-    {
-
-        $result =  AdminsCom::join($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
-            ->where('admins_coms.is_web', true)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->groupBy('admins_coms.created_at')
-            ->limit(5)
+        $admin_civ =  SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->where('country_id', 107)
             ->get();
 
-
-        return   $result;
+        return  $admin_civ;
     }
-    
-    public function getCumulsWalletDepositVisitorsDistributers($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
-    {
-
-
-        $result =  AdminsCom::join($wallet_transactions, $wallet_transaction_id, $wallet_transaction_type)
-            ->where('admins_coms.is_web', true)
-            ->where('admins_coms.description_distributer', 'Validation distributeur')
-            ->select(DB::raw('sum(admins_coms.amount) as cumul_amount_chiffre'))
-            ->groupBy('admins_coms.created_at')
-            ->get();
-
-
-        return $result->sum('cumul_amount_chiffre');
-    }
-    
-    public function getWalletReloadSumAdmin()
-    {
-
-
-
-        $data = [];
-
-        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', sabdy()->country->id)
-            ->select('wallet_reloads.*')
-            ->whereDate('wallet_reloads.created_at', Carbon::today())->where('wallet_reloads.status', 'SUCCESS')->get() as $reload) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
-    }
-  
 }

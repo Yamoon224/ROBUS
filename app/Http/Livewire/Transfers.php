@@ -660,7 +660,7 @@ class Transfers extends Component
 
                                         $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                     }
 
 
@@ -1871,7 +1871,7 @@ class Transfers extends Component
 
                                 $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notifications
                             $msg_title = 'Transactions';
@@ -2009,7 +2009,7 @@ class Transfers extends Component
                                     'Robus vous remercie';
                                 $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notify And User an Admins
                             $msg_title = 'Transactions';
@@ -2103,7 +2103,7 @@ class Transfers extends Component
 
                                 $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notifications
                             $msg_title = 'Transactions';
@@ -2241,7 +2241,7 @@ class Transfers extends Component
                                     'Robus vous remercie';
                                 $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notify And User an Admins
                             $msg_title = 'Transactions';
@@ -2324,7 +2324,7 @@ class Transfers extends Component
 
                                 $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notifications
                             $msg_title = 'Transactions';
@@ -2462,7 +2462,7 @@ class Transfers extends Component
                                     'Robus vous remercie';
                                 $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notify And User an Admins
                             $msg_title = 'Transactions';
@@ -2544,7 +2544,7 @@ class Transfers extends Component
 
                                 $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notifications
                             $msg_title = 'Transactions';
@@ -2681,7 +2681,7 @@ class Transfers extends Component
                                     'Robus vous remercie';
                                 $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notify And User an Admins
                             $msg_title = 'Transactions';
@@ -2763,7 +2763,7 @@ class Transfers extends Component
 
                                 $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notifications
                             $msg_title = 'Transactions';
@@ -2897,7 +2897,7 @@ class Transfers extends Component
                                     ' a ' . $verify_code->created_at .
                                     'Robus vous remercie';
                                 $encode = substr($wallet_user->sidUser->phone, -10);
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notify And User an Admins
                             $msg_title = 'Transactions';
@@ -2979,7 +2979,7 @@ class Transfers extends Component
 
                                 $encode = substr($verify_code->wallet->sidUser->phone, -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
                             // Notifications
                             $msg_title = 'Transactions';
@@ -3248,7 +3248,7 @@ class Transfers extends Component
 
                                             $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                         }
 
                                         $walletPayment->update(['is_send' => 1,]);
@@ -3508,7 +3508,7 @@ class Transfers extends Component
 
                                             $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                         }
                                         // Commission admin
                                         $admin_valeur =  $percent_robus->amount_auther;
@@ -3770,7 +3770,7 @@ class Transfers extends Component
 
                                         $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                     }
 
                                     // Commission admin
@@ -4033,7 +4033,7 @@ class Transfers extends Component
 
                                             $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                         }
                                         // Commission admin
                                         $admin_valeur =  $percent_robus->amount_canal;
@@ -4286,7 +4286,7 @@ class Transfers extends Component
 
                                             $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                         }
 
                                         // Commission admin
@@ -4517,7 +4517,7 @@ class Transfers extends Component
 
                                                         $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                                     }
 
                                                     if ($walletUser->is_under_distributer == 1) {
@@ -4806,7 +4806,7 @@ class Transfers extends Component
 
                                                         $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                                     }
 
                                                     if ($walletUser->is_under_distributer == 1) {
@@ -5124,7 +5124,7 @@ class Transfers extends Component
 
                                                     $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                                 }
 
                                                 if ($walletUser->is_under_distributer == 1) {
@@ -5406,7 +5406,7 @@ class Transfers extends Component
 
                                                     $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                                 }
 
                                                 if ($walletUser->is_under_distributer == 1) {
@@ -5793,7 +5793,7 @@ class Transfers extends Component
 
                                         $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                     }
 
                                     $msg_title = 'Credit téléphonique';
@@ -5947,7 +5947,7 @@ class Transfers extends Component
 
                                         $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                     }
 
                                     $msg_title = 'Credit téléphonique';
@@ -6106,7 +6106,7 @@ class Transfers extends Component
 
                                         $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                     }
 
                                     $msg_title = 'Credit téléphonique';
@@ -6260,7 +6260,7 @@ class Transfers extends Component
 
                                     $encode = substr(Auth::guard('web')->user()->phone, -10);
 
-                                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                 }
 
                                 $msg_title = 'Credit téléphonique';
@@ -6687,7 +6687,7 @@ class Transfers extends Component
 
                                         $encode = substr($check->wallet->sidUser->phone, -10);
 
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
 
                                         $msg_title = 'Credit téléphonique';
                                         $msg = 'Demande de paiement de crédit a été validé';
@@ -6900,7 +6900,7 @@ class Transfers extends Component
 
                                         $encode = substr($check->wallet->sidUser->phone, -10);
 
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
 
                                         $msg_title = 'Credit téléphonique';
                                         $msg = 'Demande de paiement de crédit a été refusée';
@@ -7118,7 +7118,7 @@ class Transfers extends Component
 
                                         $encode = substr($check->wallet->sidUser->phone, -10);
 
-                                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
 
                                         $msg_title = 'Credit téléphonique';
                                         $msg = 'Demande de paiement de crédit a été Remboursé';
@@ -8756,7 +8756,7 @@ class Transfers extends Component
 
                                     $encode = substr($check->wallet->sidUser->phone, -10);
 
-                                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                 }
                             }
 
