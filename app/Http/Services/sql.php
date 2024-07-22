@@ -12,6 +12,7 @@ Ghana vers Algerie  Robus
 SET name = REPLACE(REPLACE(name, ' la ', ' '), ' le ', ' ')
 WHERE id BETWEEN 5666 AND 5686;
 
+SELECT * FROM `level_countries` WHERE id BETWEEN 6546 and 6554
 
 
 DELETE FROM level_countries
