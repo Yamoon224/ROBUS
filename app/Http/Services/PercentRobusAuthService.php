@@ -1001,7 +1001,7 @@ class PercentRobusAuthService
 
                     1 => ($provider_valeur != 51) ? 5068 : 5536, // USA
                     2 => ($provider_valeur != 51) ? 6552 : 6624, // Algerie
-                    8 => ($provider_valeur != 51) ? 5070 : 5538, // Angola
+                    8 => ($provider_valeur != 51) ? 3105 : 3126, // Angola
                     25 => ($provider_valeur != 51) ? 4520 : 3993, // Benin
                     36 => ($provider_valeur != 51) ? 4616 : 4088, // BF
                     37 => ($provider_valeur != 51) ? 5071 : 5539, // Burundi
@@ -2052,6 +2052,7 @@ class PercentRobusAuthService
                     208 => ($provider_valeur != 51) ? 6898 : 6903, // Suisse
                     // 173 => ($provider_valeur != 51) ? 6862 : 6874, // Portugal
                 ],
+
                 //Is PORTUGAL
                 173 =>  [
 
@@ -2094,26 +2095,18 @@ class PercentRobusAuthService
                     225 => ($provider_valeur != 51) ? 3666 : 3686, // Dubai
                     112 => ($provider_valeur != 51) ? 3667 : 3687, // Keneya
                     45 => ($provider_valeur != 51) ? 3668 : 3688, // China
-                    // UPdate Id send
-                    208 => ($provider_valeur != 51) ? 3669 : 3609, // Suisse
-                    23 => ($provider_valeur != 51) ?  3670 : 3609, // Belgique
-                    219 => ($provider_valeur != 51) ? 3671 : 3691, // Turquie
-                    152 => ($provider_valeur != 51) ? 3672 : 3692, // Hollande
-
                     100 => ($provider_valeur != 51) ? 3673 : 3693, // Inde
                     69 => ($provider_valeur != 51) ? 3674 : 3694, // Ethiopie
-
-                    133 => ($provider_valeur != 51) ? 6894 : 6899, // Mauritanie
-                    // 80 => ($provider_valeur != 51) ? 6853 : 6864, // Gambie
+                    133 => ($provider_valeur != 51) ? 6904 : 6913, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 6905 : 6914, // Gambie
                     // 241 => ($provider_valeur != 51) ? 6854 : 6865, // Zambie
-                    // 23 => ($provider_valeur != 51) ? 6855 : 6867, // Belgique
-                    1 => ($provider_valeur != 51) ? 6895 : 6900, // Algerie
-                    8 => ($provider_valeur != 51) ? 6896 : 6901, // Égypte
-                    37 => ($provider_valeur != 51) ? 6897 : 6902, // Burundi
-                    // 219 => ($provider_valeur != 51) ? 6859 : 6871, // Turquie
-                    // 152 => ($provider_valeur != 51) ? 6860 : 6872, // Hollande
-                    208 => ($provider_valeur != 51) ? 6898 : 6903, // Suisse
-                    // 173 => ($provider_valeur != 51) ? 6862 : 6874, // Portugal
+                    23 => ($provider_valeur != 51) ? 6906 : 6915, // Belgique
+                    1 => ($provider_valeur != 51) ? 6907 : 6916, // Algerie
+                    8 => ($provider_valeur != 51) ? 6908 : 6917, // Égypte
+                    37 => ($provider_valeur != 51) ? 6909 : 6918, // Burundi
+                    219 => ($provider_valeur != 51) ? 6910 : 6919, // Turquie
+                    152 => ($provider_valeur != 51) ? 6911 : 6920, // Hollande
+                    208 => ($provider_valeur != 51) ? 6912 : 6921, // Suisse
                 ],
                 //Is TURQUIE
                 219 =>  [
@@ -2126,17 +2119,12 @@ class PercentRobusAuthService
                     83 => ($provider_valeur != 51) ? 2398 : 2443, // Ghana
                     157 => ($provider_valeur != 51) ? 2411 : 2456, // Niger
                     91 => ($provider_valeur != 51) ? 2399 : 2444, // Guinne conakry
-                    // Update id send
                     107 => ($provider_valeur != 51) ? 666 : 650, // CIV
-
                     1 => ($provider_valeur == 51) ? 2425 : null, // USA
                     218 => ($provider_valeur == 51) ? 6330 : 6329, // Tunisia
                     146 => ($provider_valeur == 51) ? 2454 : null, // Maroc
                     199 => ($provider_valeur == 51) ? 2418 : 2463, // ESPAGNE
                     74 => ($provider_valeur  != 51) ? 2418 : 2439, // France
-
-                    // Update Id send
-                    179 => ($provider_valeur == 51) ? 3047 : null, // Russie
                     226 => ($provider_valeur == 51) ? 2469 : null, // Royaume Unie
                     106 => ($provider_valeur == 51) ? 2447 : 2402, // Italie
                     82 => ($provider_valeur != 51) ? 2421 : 2466, // Allemagne
@@ -2147,11 +2135,8 @@ class PercentRobusAuthService
                     122 => ($provider_valeur != 51) ? 2406 : 2451, // Liberia
                     43 => ($provider_valeur != 51) ? 2389 : 2434, // Thacd
                     42 => ($provider_valeur != 51) ? 2405 : 2450, // Afrique centrale
-
-                    // New countries
                     92 => ($provider_valeur != 51) ? 3695 : 3715, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3696 : 3716, // Ouganda 
-                    // Voir rwanda
                     180 => ($provider_valeur != 51) ? 3697 : 3717, // Rwanda 
                     158 => ($provider_valeur != 51) ? 3698 : 3718, // Nigeria
                     191 => ($provider_valeur != 51) ? 3699 : 3719, // Sierria Leone
@@ -2170,6 +2155,12 @@ class PercentRobusAuthService
                     152 => ($provider_valeur != 51) ? 3712 : 3732, // Hollande
                     100 => ($provider_valeur != 51) ? 3713 : 3733, // Inde
                     69 => ($provider_valeur != 51) ? 3714 : 3734, // Ethiopie
+                    179 => ($provider_valeur != 51) ? 6927 : 6933, // Ruissie
+                    133 => ($provider_valeur != 51) ? 6922 : 6928, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 6923 : 6929, // Gambie
+                    1 => ($provider_valeur != 51) ? 6924 : 6930, // Algerie
+                    8 => ($provider_valeur != 51) ? 6925 : 6931, // Égypte
+                    37 => ($provider_valeur != 51) ? 6926 : 6932, // Burundi
                 ],
 
                 // Is PAYS BAS(HOLLANDE)
@@ -2196,16 +2187,11 @@ class PercentRobusAuthService
                     122 => ($provider_valeur != 51) ?  2496 : 2541, // Liberia
                     43 => ($provider_valeur != 51) ? 2479 : 2524, // Thacd
                     42 => ($provider_valeur != 51) ? 2388 : 2433, // Afrique centrale
-
-                    // New countries
                     92 => ($provider_valeur != 51) ? 3735 : 3755, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3736 : 3756, // Ouganda 
-                    // Update Id send
-                    179 => ($provider_valeur == 51) ? 3048 : null, // Ruissie
                     226 => ($provider_valeur == 51) ? 2469 : null, // Royaume Unie
                     106 => ($provider_valeur == 51) ? 2447 : null, // Italie
                     82 => ($provider_valeur == 51) ? 2442 : null, // Allemagne
-                    // Voir rwanda
                     180 => ($provider_valeur != 51) ? 3737 : 3757, // Rwanda 
                     158 => ($provider_valeur != 51) ? 3738 : 3758, // Nigeria
                     191 => ($provider_valeur != 51) ? 3739 : 3759, // Sierria Leone
@@ -2218,14 +2204,17 @@ class PercentRobusAuthService
                     225 => ($provider_valeur != 51) ? 3746 : 3766, // Dubai
                     112 => ($provider_valeur != 51) ? 3747 : 3767, // Keneya
                     45 => ($provider_valeur != 51) ? 3748 : 3768, // China
-                    // Update info arretes 
-                    208 => ($provider_valeur != 51) ? 2509 : 2554, // Suisse
                     23 => ($provider_valeur != 51) ?  3750 : 3770, // Belgique
                     173 => ($provider_valeur != 51) ?  3751 : 3771, // Portugal
                     219 => ($provider_valeur != 51) ? 3752 : 3772, // Turquie
-
                     100 => ($provider_valeur != 51) ? 3753 : 3773, // Inde
                     69 => ($provider_valeur != 51) ? 3754 : 3774, // Ethiopie
+                    179 => ($provider_valeur != 51) ? 6939 : 6945, // Ruissie
+                    133 => ($provider_valeur != 51) ? 6934 : 6940, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 6935 : 6941, // Gambie
+                    1 => ($provider_valeur != 51) ? 6936 : 6942, // Algerie
+                    8 => ($provider_valeur != 51) ? 6937 : 6943, // Égypte
+                    37 => ($provider_valeur != 51) ? 6938 : 6944, // Burundi
                 ],
                 // Ajoutez d'autres identifiants de pays et leurs valeurs associées selon vos besoins
             ];
@@ -2258,15 +2247,8 @@ class PercentRobusAuthService
                     57 => ($provider_valeur != 51) ? 258 : 237, // RDC
                     122 => ($provider_valeur != 51) ? 238 : 259, // Liberia
                     43 => ($provider_valeur != 51) ? 260 : 239, // Thacd
-                    // 43 => ($provider_valeur != 51) ? 77 : 105, // Thacd
                     42 => ($provider_valeur != 51) ? 261 : 240, // Afrique centrale
-
-                    // New countries
                     92 => ($provider_valeur != 51) ? 4888 : 4360, // Guinnée Buisso 
-                    223 => ($provider_valeur != 51) ? 731 : 673, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 837 : 792, // Rwanda 
-
                     158 => ($provider_valeur != 51) ? 4984 : 4456, // Nigeria
                     191 => ($provider_valeur != 51) ? 4936 : 4408, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 2604 : 2560, // Koweit
@@ -2276,17 +2258,23 @@ class PercentRobusAuthService
                     100 => ($provider_valeur != 51) ? 2920 : 2965, // Inde
                     69 => ($provider_valeur != 51) ? 1390 : 1435, // Ethiopie
                     66 => ($provider_valeur != 51) ? 5284 : 5320, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ? 1660 : 1705, // Angola
                     225 => ($provider_valeur != 51) ? 2740 : 2785, // Dubai
                     112 => ($provider_valeur != 51) ? 1480 : 1525, // Keneya
                     45 => ($provider_valeur != 51) ? 2830 : 2875, // China
-                    //uPDATE ID send
-                    208 => ($provider_valeur != 51) ? 2110 : 2155, // Suisse
                     23 => ($provider_valeur != 51) ? 5792 : 5939, // Belgique
-
                     173 => ($provider_valeur != 51) ? 5918 : 5813, // Portugal
                     219 => ($provider_valeur != 51) ? 5897 : 5834, // Turquie
                     152 => ($provider_valeur != 51) ? 5855 : 5876, // Hollande
+                    208 => ($provider_valeur != 51) ? 6951 : 6964, // Suisse
+                    180 => ($provider_valeur != 51) ? 6952 : 6963, // Rwanda 
+                    223 => ($provider_valeur != 51) ? 6953 : 6962, // Ouganda 
+                    8 => ($provider_valeur != 51) ? 6954 : 6961, // Angola
+                    133 => ($provider_valeur != 51) ? 6946 : 6955, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 6947 : 6956, // Gambie
+                    179 => ($provider_valeur != 51) ? 6939 : 6957, // Ruissie
+                    1 => ($provider_valeur != 51) ? 6948 : 6958, // Algerie
+                    8 => ($provider_valeur != 51) ? 6949 : 6959, // Égypte
+                    37 => ($provider_valeur != 51) ? 6950 : 6960, // Burundi
                 ],
                 // Ajoutez d'autres identifiants de pays et leurs valeurs associées selon vos besoins
             ];
@@ -2298,19 +2286,15 @@ class PercentRobusAuthService
 
                     25 => ($provider_valeur != 51) ? 264 : 292, // Benin
                     36 => ($provider_valeur != 51) ? 265 : 293, // BF
-                    // Ajouter Tunisie
                     133 => ($provider_valeur != 51) ? 574 : 294, // Mali
                     214 => ($provider_valeur != 51) ? 266 : 295, // Togo
                     188 => ($provider_valeur != 51) ? 267 : 296, // Senegal
                     83 => ($provider_valeur != 51) ? 268 : 297, // Ghana
                     157 => ($provider_valeur != 51) ? 269 : 298, // Niger
                     91 => ($provider_valeur != 51) ? 270 : 299, // Guinne conakry
-                    // Update Id Send
                     107 => ($provider_valeur != 51) ? 310 : 300, // CIV
-                    // UPdate Id send
                     1 => ($provider_valeur != 51) ? 6107 : 6124, // USA
                     146 => ($provider_valeur == 51) ? 583 : null, // Maroc
-
                     199 => ($provider_valeur == 51) ? 556 : null, // ESPAGNE
                     74 => ($provider_valeur == 51) ? 557 : null, // France
                     179 => ($provider_valeur == 51) ? 562 : null, // Ruissie
@@ -2327,13 +2311,9 @@ class PercentRobusAuthService
                     158 => ($provider_valeur != 51) ? 3052 : 3071, // Nigeria
                     191 => ($provider_valeur != 51) ? 3053 : 3072, // Sierria Leone
                     66 => ($provider_valeur != 51) ?  3058 : 3077, // Guinnée Equatoriale
-                    // New countries
                     92 => ($provider_valeur != 51) ? 3049 : 3068, // Guinnée Buisso 
-
                     223 => ($provider_valeur != 51) ? 3050 : 3069, // Ouganda 
-                    // Voir rwanda
                     180 => ($provider_valeur != 51) ? 3051 : 3070, // Rwanda 
-                    // Upodate ID send
                     116 => ($provider_valeur != 51) ? 3054 : 3073, // Koweit
                     212 => ($provider_valeur != 51) ? 3055 : 3074, // Tanzanie
                     175 => ($provider_valeur != 51) ? 3056 : 3075, // Quatar
@@ -2343,14 +2323,17 @@ class PercentRobusAuthService
                     112 => ($provider_valeur != 51) ? 3061 : 3080, // Keneya
                     45 => ($provider_valeur != 51) ? 3062 : 3081, // China
                     208 => ($provider_valeur != 51) ? 3063 : 3082, // Suisse
-
                     23 => ($provider_valeur != 51) ?  3064 : 3083, // Belgique
                     173 => ($provider_valeur != 51) ? 3065 : 3084, // Portugal
                     219 => ($provider_valeur != 51) ? 5853 : 5916, // Turquie
-                    // Update send Id
                     152 => ($provider_valeur != 51) ? 5874 : 3086, // Hollande
                     100 => ($provider_valeur != 51) ? 3087 : 3088, // Inde
                     69 => ($provider_valeur != 51) ? 3089 : 3090, // Ethiopie
+                    133 => ($provider_valeur != 51) ? 6970 : 6975, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 6971 : 6976, // Gambie
+                    1 => ($provider_valeur != 51) ? 6972 : 6977, // Algerie
+                    8 => ($provider_valeur != 51) ? 6973 : 6978, // Égypte
+                    37 => ($provider_valeur != 51) ? 6974 : 6979, // Burundi
                 ],
                 // Is Maroc
                 146 => [
@@ -2363,11 +2346,8 @@ class PercentRobusAuthService
                     83 => ($provider_valeur != 51) ? 282 : 306, // Ghana
                     157 => ($provider_valeur != 51) ? 283 : 307, // Niger
                     91 => ($provider_valeur != 51) ? 284 : 308, // Guinne conakry
-
-                    // Update Send Id
                     107 => ($provider_valeur != 51) ? 311 : 309, // CIV
-                    1 => ($provider_valeur == 51) ? 555 : null, // USA
-
+                    1 => ($provider_valeur == 51) ? 6125 : 6108, // USA
                     218 => ($provider_valeur == 51) ? 6331 : 6332, // Tunisia
                     199 => ($provider_valeur == 51) ? 563 : null, // ESPAGNE
                     74 => ($provider_valeur == 51) ? 564 : null, // France
@@ -2380,36 +2360,37 @@ class PercentRobusAuthService
                     50 => ($provider_valeur != 51) ? 5128 : 5524, // COngo Braza
                     57 => ($provider_valeur != 51) ? 288 : 335, // RDC
                     122 => ($provider_valeur != 51) ? 336 : 289, // Liberia
-                    43 => ($provider_valeur != 51) ? 290 : 337, // Thacd
-                    // 43 => ($provider_valeur != 51) ? 77 : 105, // Thacd
+                    43 => ($provider_valeur != 51) ? 290 : 337, // Thad
                     42 => ($provider_valeur != 51) ?  291 : 338, // Afrique centrale
-
-                    // New countries
                     92 => ($provider_valeur != 51) ? 4919 : 4391, // Guinnée Buisso 
-                    223 => ($provider_valeur != 51) ? 730 : 702, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 836 : 791, // Rwanda 
-
                     158 => ($provider_valeur != 51) ? 5015 : 4487, // Nigeria
                     191 => ($provider_valeur != 51) ? 4967 : 4439, // Sierria Leone
-
-                    // UPdate Id send
-                    116 => ($provider_valeur != 51) ? 2633 : 2589, // Koweit
-                    212 => ($provider_valeur != 51) ? 1329 : 1374, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 2679 : 2724, // Quatar
-                    241 => ($provider_valeur != 51) ? 1599 : 1644, // Zambie
-                    100 => ($provider_valeur != 51) ? 2949 : 2994, // Inde
-                    69 => ($provider_valeur != 51) ? 1419 : 1464, // Ethiopie
-                    66 => ($provider_valeur != 51) ? 5308 : 5339, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ? 1689 : 1734, // Angola
-                    225 => ($provider_valeur != 51) ? 2769 : 2814, // Dubai
-                    112 => ($provider_valeur != 51) ? 1509 : 1554, // Keneya
-                    45 => ($provider_valeur != 51) ? 2859 : 2904, // China
-                    208 => ($provider_valeur != 51) ? 2139 : 2184, // Suisse
-                    23 => ($provider_valeur != 51) ? 2229 : 2274, // Belgique
                     173 => ($provider_valeur != 51) ? 5825 : 5930, // Portugal
-                    219 => ($provider_valeur != 51) ? 2409 : 2454, // Turquie
                     152 => ($provider_valeur != 51) ? 5867 : 5888, // Hollande
+                    23 => ($provider_valeur != 51) ? 5804 : 5951, // Belgique
+                    219 => ($provider_valeur != 51) ? 5846 : 5909, // Turquie
+                    208 => ($provider_valeur != 51) ? 2139 : 5972, // Suisse
+                    116 => ($provider_valeur != 51) ? 6986 : 7002, // Koweit
+                    212 => ($provider_valeur != 51) ? 6987 : 7003, // Tanzanie
+                    175 => ($provider_valeur != 51) ? 6989 : 7004, // Quatar
+                    241 => ($provider_valeur != 51) ? 7015 : 6998, // Zambie
+                    100 => ($provider_valeur != 51) ? 7014 : 7005, // Inde
+                    69 => ($provider_valeur != 51) ? 6988 : 7006, // Ethiopie
+                    66 => ($provider_valeur != 51) ? 6990 : 7008, // Guinnée Equatoriale
+                    8 => ($provider_valeur != 51) ? 6991 : 7007, // Angola
+                    225 => ($provider_valeur != 51) ? 6992 : 7011, // Dubai
+                    112 => ($provider_valeur != 51) ? 6993 : 7009, // Keneya
+                    45 => ($provider_valeur != 51) ? 6985 : 7010, // China
+                    // 208 => ($provider_valeur != 51) ? 6951 : 6964, // Suisse
+                    180 => ($provider_valeur != 51) ? 6994 : 7013, // Rwanda 
+                    223 => ($provider_valeur != 51) ? 6995 : 7012, // Ouganda 
+                    // 8 => ($provider_valeur != 51) ? 6954 : 6961, // Angola
+                    133 => ($provider_valeur != 51) ? 6980 : 6996, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 6981 : 6997, // Gambie
+                    // 179 => ($provider_valeur != 51) ? 6939 : 6957, // Ruissie
+                    1 => ($provider_valeur != 51) ? 6982 : 6999, // Algerie
+                    8 => ($provider_valeur != 51) ? 6983 : 7000, // Égypte
+                    37 => ($provider_valeur != 51) ? 6984 : 7001, // Burundi
                 ],
 
                 // Is Algerie
@@ -2423,44 +2404,49 @@ class PercentRobusAuthService
                     157 => ($provider_valeur != 51) ? 4793 : 4265, // Niger
                     91 => ($provider_valeur != 51) ? 4841 : 4313, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 5609 : 5638, // CIV
-                    1 => ($provider_valeur == 51) ? 555 : null, // USA
-                    218 => ($provider_valeur == 51) ? 593 : null, // Tunisia
-                    199 => ($provider_valeur == 51) ? 563 : null, // ESPAGNE
-                    74 => ($provider_valeur == 51) ? 564 : null, // France
-                    179 => ($provider_valeur == 51) ? 569 : null, // Russie
-                    226 => ($provider_valeur == 51) ? 567 : null, // Royaume Unie
-                    106 => ($provider_valeur == 51) ? 568 : null, // Italie
-                    82 => ($provider_valeur == 51) ? 566 : null, // Allemagne
+                    199 => ($provider_valeur == 51) ? 6066 : 5667, // ESPAGNE
+                    74 => ($provider_valeur == 51) ? 6045 : 5688, // France
+                    179 => ($provider_valeur == 51) ? 6087 : 5772, // Ruissie
+                    226 => ($provider_valeur == 51) ? 5982 : 5751, // Royaume Unie
+                    106 => ($provider_valeur == 51) ? 6003 : 5730, // Italie
+                    82 => ($provider_valeur == 51) ? 6024 : 5709, // Allemagne
                     39 => ($provider_valeur != 51) ? 5033 : 5573, // Cameroun
                     79 => ($provider_valeur != 51) ? 5069 : 5537, // Gabon
-                    50 => ($provider_valeur != 51) ? 5105 : 5501, // COngo Braza
-                    57 => ($provider_valeur != 51) ? 288 : 335, // RDC
-                    122 => ($provider_valeur != 51) ? 336 : 289, // Liberia
-                    43 => ($provider_valeur != 51) ? 290 : 337, // Thacd
-                    42 => ($provider_valeur != 51) ?  291 : 338, // Afrique centrale
-                    // New countries 
+                    50 => ($provider_valeur != 51) ? 5105 :  5501, // COngo Braza
+                    57 => ($provider_valeur != 51) ? 5141 : 5465, // RDC
+                    122 => ($provider_valeur != 51) ? 5177 : 5429, // Liberia
+                    43 => ($provider_valeur != 51) ? 5393 : 5213, // Thacd
+                    42 => ($provider_valeur != 51) ?  5249 : 5357, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 4889 : 4361, // Guinnée Buisso 
-                    223 => ($provider_valeur != 51) ? 730 : 702, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 836 : 791, // Rwanda 
                     158 => ($provider_valeur != 51) ? 4985 : 4457, // Nigeria
                     191 => ($provider_valeur != 51) ? 4937 : 4409, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 2633 : 2589, // Koweit
-                    212 => ($provider_valeur != 51) ? 1329 : 1374, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 2679 : 2724, // Quatar
-                    241 => ($provider_valeur != 51) ? 1599 : 1644, // Zambie
-                    100 => ($provider_valeur != 51) ? 2949 : 2994, // Inde
-                    69 => ($provider_valeur != 51) ? 1419 : 1464, // Ethiopie
-                    66 => ($provider_valeur != 51) ? 2065 : 2020, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ? 1689 : 1734, // Angola
-                    225 => ($provider_valeur != 51) ? 2769 : 2814, // Dubai
-                    112 => ($provider_valeur != 51) ? 1509 : 1554, // Keneya
-                    45 => ($provider_valeur != 51) ? 2859 : 2904, // China
-                    208 => ($provider_valeur != 51) ? 2139 : 2184, // Suisse
-                    23 => ($provider_valeur != 51) ? 2229 : 2274, // Belgique
-                    173 => ($provider_valeur != 51) ? 2319 : 2364, // Portugal
-                    219 => ($provider_valeur != 51) ? 2409 : 2454, // Turquie
-                    152 => ($provider_valeur != 51) ? 2499 : 2544, // Hollande
+                    122 => ($provider_valeur != 51) ? 5177 : 5429, // Liberia
+                    66 => ($provider_valeur != 51) ? 5285 : 5321, // Guinnée Equatoriale
+                    208 => ($provider_valeur != 51) ? 5772 : 5961, // Suisse
+                    23 => ($provider_valeur != 51) ? 5793 : 5940, // Belgique
+                    173 => ($provider_valeur != 51) ? 5814 : 5919, // Portugal
+                    219 => ($provider_valeur != 51) ? 5835 : 5898, // Turquie
+                    152 => ($provider_valeur != 51) ? 5856 : 5877, // Hollande
+                    116 => ($provider_valeur != 51) ? 7022 : 7037, // Koweit
+                    212 => ($provider_valeur != 51) ? 7023 : 1374, // Tanzanie
+                    175 => ($provider_valeur != 51) ? 7025 : 7039, // Quatar
+                    241 => ($provider_valeur != 51) ? 7050 : 7033, // Zambie
+                    100 => ($provider_valeur != 51) ? 7051 : 7040, // Inde
+                    69 => ($provider_valeur != 51) ? 7024 : 7041, // Ethiopie
+                    8 => ($provider_valeur != 51) ? 7027 : 7042, // Angola
+                    225 => ($provider_valeur != 51) ? 7028 : 7046, // Dubai
+                    112 => ($provider_valeur != 51) ? 7029 : 7044, // Keneya
+                    45 => ($provider_valeur != 51) ? 7021 : 7045, // China
+                    1 => ($provider_valeur == 51) ? 7047 : 7026, // USA
+                    218 => ($provider_valeur == 51) ? 7043 : 7030, // Tunisia
+                    180 => ($provider_valeur != 51) ? 6994 : 7049, // Rwanda 
+                    223 => ($provider_valeur != 51) ? 6995 : 7048, // Ouganda 
+                    // 8 => ($provider_valeur != 51) ? 6954 : 6961, // Angola
+                    133 => ($provider_valeur != 51) ? 7016 : 7031, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 7017 : 7032, // Gambie
+                    // 1 => ($provider_valeur != 51) ? 6982 : 6999, // Algerie
+                    8 => ($provider_valeur != 51) ? 7019 : 7035, // Égypte
+                    37 => ($provider_valeur != 51) ? 7020 : 7036, // Burundi
                 ],
 
                 // Is Egypte
@@ -2470,50 +2456,52 @@ class PercentRobusAuthService
                     36 => ($provider_valeur != 51) ? 4612 : 4084, // BF
                     133 => ($provider_valeur != 51) ? 4564 : 4037, // Mali
                     214 => ($provider_valeur != 51) ?  4660 : 4132, // Togo
-                    188 => ($provider_valeur != 51) ? 281 : 305, // Senegal
                     83 => ($provider_valeur != 51) ? 4756 : 4228, // Ghana
                     157 => ($provider_valeur != 51) ? 4804 : 4276, // Niger
                     91 => ($provider_valeur != 51) ? 4852 : 4324, // Guinne conakry
-                    107 => ($provider_valeur != 51) ? 311 : 309, // CIV
-                    1 => ($provider_valeur == 51) ? 555 : null, // USA
-                    218 => ($provider_valeur == 51) ? 593 : null, // Tunisia
-                    199 => ($provider_valeur == 51) ? 563 : null, // ESPAGNE
-                    74 => ($provider_valeur == 51) ? 564 : null, // France
-                    179 => ($provider_valeur == 51) ? 569 : null, // Russie
-                    226 => ($provider_valeur == 51) ? 567 : null, // Royaume Unie
-                    106 => ($provider_valeur == 51) ? 568 : null, // Italie
-                    82 => ($provider_valeur == 51) ? 566 : null, // Allemagne
                     39 => ($provider_valeur != 51) ? 5041 : 5581, // Cameroun
                     79 => ($provider_valeur != 51) ? 5076 : 5545, // Gabon
                     50 => ($provider_valeur != 51) ? 5113 : 5509, // COngo Braza
-                    57 => ($provider_valeur != 51) ? 5256 : 53625, // RDC
-                    122 => ($provider_valeur != 51) ? 336 : 289, // Liberia
-                    43 => ($provider_valeur != 51) ? 290 : 337, // Thacd
-                    42 => ($provider_valeur != 51) ?  291 : 338, // Afrique centrale
+                    57 => ($provider_valeur != 51) ? 5149 : 5473, // RDC
+                    188 => ($provider_valeur != 51) ? 4708 : 4180, // Senegal
+                    107 => ($provider_valeur != 51) ? 6140 : 5665, // CIV
+                    1 => ($provider_valeur == 51) ? 6123 : 6123, // USA
                     92 => ($provider_valeur != 51) ? 4900 : 4372, // Guinnée Buisso 
-
-                    // New countries
-                    223 => ($provider_valeur != 51) ? 730 : 702, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 836 : 791, // Rwanda 
+                    122 => ($provider_valeur != 51) ? 5185 : 5437, // Liberia
+                    42 => ($provider_valeur != 51) ?  5257 : 5365, // Afrique centrale
+                    66 => ($provider_valeur != 51) ? 5293 : 5329, // Guinnée Equatoriale
+                    43 => ($provider_valeur != 51) ? 5221 : 5401, // Thad
+                    82 => ($provider_valeur == 51) ? 6043 : 5728, // Allemagne
+                    106 => ($provider_valeur == 51) ? 6022 : 5749, // Italie
+                    199 => ($provider_valeur == 51) ? 6085 : 5686, // ESPAGNE
+                    226 => ($provider_valeur == 51) ? 6001 : 5770, // Royaume Unie
+                    179 => ($provider_valeur == 51) ? 6106 : 5791, // Russie
+                    74 => ($provider_valeur == 51) ? 6064 : 5707, // France
+                    23 => ($provider_valeur != 51) ? 5812 : 5959, // Belgique
+                    173 => ($provider_valeur != 51) ? 5833 : 5938, // Portugal
+                    219 => ($provider_valeur != 51) ? 5854 : 5917, // Turquie
+                    152 => ($provider_valeur != 51) ? 5875 : 5896, // Hollande
+                    223 => ($provider_valeur != 51) ? 6206 : 6310, // Ouganda 
+                    180 => ($provider_valeur != 51) ? 6214 : 6302, // Rwanda 
                     158 => ($provider_valeur != 51) ?  4996 : 4468, // Nigeria
                     191 => ($provider_valeur != 51) ? 4948 : 4420, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 2633 : 2589, // Koweit
-                    212 => ($provider_valeur != 51) ? 1329 : 1374, // Tanzanie
+                    212 => ($provider_valeur != 51) ? 6222 : 6294, // Tanzanie
                     175 => ($provider_valeur != 51) ? 2679 : 2724, // Quatar
-                    241 => ($provider_valeur != 51) ? 1599 : 1644, // Zambie
-                    100 => ($provider_valeur != 51) ? 2949 : 2994, // Inde
-                    69 => ($provider_valeur != 51) ? 1419 : 1464, // Ethiopie
-                    66 => ($provider_valeur != 51) ? 2065 : 2020, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ? 1689 : 1734, // Angola
-                    225 => ($provider_valeur != 51) ? 2769 : 2814, // Dubai
-                    112 => ($provider_valeur != 51) ? 1509 : 1554, // Keneya
-                    45 => ($provider_valeur != 51) ? 2859 : 2904, // China
-                    208 => ($provider_valeur != 51) ? 2139 : 2184, // Suisse
-                    23 => ($provider_valeur != 51) ? 2229 : 2274, // Belgique
-                    173 => ($provider_valeur != 51) ? 2319 : 2364, // Portugal
-                    219 => ($provider_valeur != 51) ? 2409 : 2454, // Turquie
-                    152 => ($provider_valeur != 51) ? 2499 : 2544, // Hollande
+                    241 => ($provider_valeur != 51) ? 6246 : 6270, // Zambie
+                    69 => ($provider_valeur != 51) ? 6230 : 6286, // Ethiopie
+                    112 => ($provider_valeur != 51) ? 6238 : 6278, // Keneya
+                    8 => ($provider_valeur != 51) ? 6254 : 6262, // Angola
+                    208 => ($provider_valeur != 51) ? 5980 : 5980, // Suisse
+                    116 => ($provider_valeur != 51) ? 6317 : 7052, // Koweit
+                    100 => ($provider_valeur != 51) ? 7061 : 7067, // Inde
+                    175 => ($provider_valeur != 51) ? 7058 : 7066, // Quatar
+                    225 => ($provider_valeur != 51) ? 7059 : 7070, // Dubai
+                    45 => ($provider_valeur != 51) ? 7057 : 7069, // China
+                    218 => ($provider_valeur == 51) ? 7060 : 7068, // Tunisia
+                    133 => ($provider_valeur != 51) ? 7053 : 7062, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 7054 : 7063, // Gambie
+                    1 => ($provider_valeur != 51) ? 7055 : 7064, // Algerie
+                    37 => ($provider_valeur != 51) ? 7056 : 7065, // Burundi
 
                 ],
 
@@ -2535,110 +2523,110 @@ class PercentRobusAuthService
                     91 => ($provider_valeur != 51) ? 697 : 750, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 633 : 655, // CIV
                     1 => ($provider_valeur != 51) ? 731 : 673, // USA
-                    // Update Id Send
-                    218 => ($provider_valeur == 51) ? 3069 : null, // Tunisia
-
                     146 => ($provider_valeur == 51) ? 702 : null, // Maroc
-                    199 => ($provider_valeur == 51) ? 711 : null, // ESPAGNE
-                    74 => ($provider_valeur == 51) ? 687 : null, // France
+                    199 => ($provider_valeur == 51) ? 711 : 743, // ESPAGNE
+                    74 => ($provider_valeur == 51) ?  687 : 745, // France
                     179 => ($provider_valeur == 51) ? 6102 : 5787, // Russie
                     226 => ($provider_valeur == 51) ? 717 : 761, // Royaume Unie
-                    106 => ($provider_valeur == 51) ? 694 : null, // Italie
-                    82 => ($provider_valeur == 51) ? 690 : null, // Allemagne
+                    106 => ($provider_valeur == 51) ? 694 : 753, // Italie
+                    82 => ($provider_valeur == 51) ?  748 : 690, // Allemagne
                     39 => ($provider_valeur != 51) ?  721 : 680, // Cameroun
-                    79 => ($provider_valeur != 51) ?   5101 : 5569, // Gabon
+                    79 => ($provider_valeur != 51) ?  5101 : 5569, // Gabon
                     50 => ($provider_valeur != 51) ? 684 : 724, // COngo Braza
                     57 => ($provider_valeur != 51) ? 685 : 725, // RDC
                     122 => ($provider_valeur != 51) ? 699 : 727, // Liberia
-                    43 => ($provider_valeur != 51) ? 699 : 727, // Thacd
-                    // 43 => ($provider_valeur != 51) ? 77 : 105, // Thacd
-                    42 => ($provider_valeur != 51) ? 681 : 721, // Afrique centrale
-
-                    // New countries
-                    92 => ($provider_valeur != 51) ? 3255 : 3275, // Guinnée Buisso 
-                    // 223 => ($provider_valeur != 51) ? 3256 : 3756, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 3256 : 3276, // Rwanda 
-                    158 => ($provider_valeur != 51) ? 3257 : 3277, // Nigeria
-                    191 => ($provider_valeur != 51) ? 3258 : 3278, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 3259 : 3279, // Koweit
-                    212 => ($provider_valeur != 51) ?  3260 : 3280, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 3261 : 3281, // Quatar
+                    43 => ($provider_valeur != 51) ? 723 : 682, // Thad
+                    42 => ($provider_valeur != 51) ? 722 : 681, // Afrique centrale
+                    92 => ($provider_valeur != 51) ? 751 : 692 ,  // Guinnée Buisso 
+                    1 => ($provider_valeur != 51) ?  732 : 674, // Algerie
+                    180 => ($provider_valeur != 51) ?  3256 : 3276, // Rwanda 
+                    158 => ($provider_valeur != 51) ? 737 : 705, // Nigeria
+                    191 => ($provider_valeur != 51) ? 3258 : 710, // Sierria Leone
+                    116 => ($provider_valeur != 51) ? 755 : 696, // Koweit
+                    212 => ($provider_valeur != 51) ?  757 : 713, // Tanzanie
+                    175 => ($provider_valeur != 51) ? 3261 : 707, // Quatar
                     241 => ($provider_valeur != 51) ? 3262 : 3282, // Zambie
                     66 => ($provider_valeur != 51) ?  3263 : 3283, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ?  3264 : 3284, // Angola
+                    8 => ($provider_valeur != 51) ? 733 : 675 , // Angola
                     225 => ($provider_valeur != 51) ? 3265 : 3285, // Dubai
-                    112 => ($provider_valeur != 51) ? 3266 : 3286, // Keneya
-                    45 => ($provider_valeur != 51) ? 3267 : 3287, // China
-                    208 => ($provider_valeur != 51) ? 3268 : 3288, // Suisse
-                    23 => ($provider_valeur != 51) ?  3269 : 3289, // Belgique
-                    173 => ($provider_valeur != 51) ?  3270 : 3290, // Portugal
+                    112 => ($provider_valeur != 51) ? 754 : 695 , // Keneya
+                    45 => ($provider_valeur != 51) ?  3267 : 683, // China
+                    208 => ($provider_valeur != 51) ? 756 : 712, // Suisse
+                    23 => ($provider_valeur != 51) ?  734 : 676, // Belgique
+                    173 => ($provider_valeur != 51) ? 3270 : 706 , // Portugal
                     219 => ($provider_valeur != 51) ? 3271 : 3291, // Turquie
-                    152 => ($provider_valeur != 51) ? 3272 : 3292, // Hollande
-                    100 => ($provider_valeur != 51) ? 3273 : 3293, // Inde
+                    152 => ($provider_valeur != 51) ?  735 : 703 , // Hollande
+                    100 => ($provider_valeur != 51) ? 752 : 693, // Inde
                     69 => ($provider_valeur != 51) ? 3274 : 3294, // Ethiopie
+                    120 => ($provider_valeur != 51) ?  726 : 698, // Liban
+                    37 => ($provider_valeur != 51) ? 720 : 679, // Burundi
+                    218 => ($provider_valeur == 51) ? 7073 : 7071, // Tunisia
+                    133 => ($provider_valeur != 51) ? 7074 : 7072, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 747 : 689, // Gambie
+                    
+             
                 ],
                 // Is RWANDA
                 180 => [
 
                     25 => ($provider_valeur != 51) ? 811 : 766, // RWanda
-
                     36 => ($provider_valeur != 51) ? 812 : 767, // BF
                     133 => ($provider_valeur != 51) ? 4589 : 4062, // Mali
                     214 => ($provider_valeur != 51) ? 847 : 803, // Togo
                     188 => ($provider_valeur != 51) ? 742 : 798, // Senegal
                     83 => ($provider_valeur != 51) ? 4781 : 4253, // Ghana
-                    157 => ($provider_valeur != 51) ? 1330 : 1376, // Niger
+                    157 => ($provider_valeur != 51) ?  838 : 793, // Niger
                     91 => ($provider_valeur != 51) ? 826 : 781, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 634 : 656, // CIV
-                    1 => ($provider_valeur == 51) ? 555 : null, // USA
+                    1 => ($provider_valeur == 51) ? 762 : 807, // USA
                     218 => ($provider_valeur == 51) ? 6333 : 6334, // Tunisia
-                    146 => ($provider_valeur == 51) ? 791 : null, // Maroc
-                    199 => ($provider_valeur == 51) ? 800 : null, // ESPAGNE
-                    74 => ($provider_valeur == 51) ? 776 : null, // France
+                    146 => ($provider_valeur == 51) ?  791 : 836, // Maroc
+                    199 => ($provider_valeur == 51) ? 800 : 844, // ESPAGNE
+                    74 => ($provider_valeur == 51) ?  776 : 5701, // France
                     179 => ($provider_valeur == 51) ? 3032 : null, // Russie
                     226 => ($provider_valeur == 51) ? 806 : 850, // Royaume Unie
                     106 => ($provider_valeur == 51) ? 784 : 829, // Italie
-                    82 => ($provider_valeur == 51) ? 779 : null, // Allemagne
+                    82 => ($provider_valeur == 51) ?  779 : 824, // Allemagne
                     39 => ($provider_valeur != 51) ? 814 : 769, // Cameroun
-                    79 => ($provider_valeur != 51) ? 5096 : 5564, // Gabon
+                    79 => ($provider_valeur != 51) ? 777 : 822, // Gabon
                     50 => ($provider_valeur != 51) ? 818 : 773, // COngo Braza
                     57 => ($provider_valeur != 51) ? 819 : 774, // RDC
                     122 => ($provider_valeur != 51) ? 833 : 788, // Liberia
-                    43 => ($provider_valeur != 51) ? 816 : 771, // Thacd
-                    // 43 => ($provider_valeur != 51) ? 77 : 105, // Thacd
+                    43 => ($provider_valeur != 51) ? 816 : 771, // Thad
                     42 => ($provider_valeur != 51) ?  815 : 770, // Afrique centrale
-
-                    // New countries
-                    92 => ($provider_valeur != 51) ? 3295 : 3315, // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ? 827 : 782, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3296 : 3316, // Ouganda 
-                    // Voir rwanda
-                    // 180 => ($provider_valeur != 51) ? 3256 : 3276, // Rwanda 
-                    158 => ($provider_valeur != 51) ? 3297 : 3317, // Nigeria
-                    191 => ($provider_valeur != 51) ? 3298 : 3318, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 3299 : 3319, // Koweit
-                    212 => ($provider_valeur != 51) ?  3300 : 3320, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 3301 : 3321, // Quatar
+                    158 => ($provider_valeur != 51) ? 839 : 794, // Nigeria
+                    191 => ($provider_valeur != 51) ? 843 : 799 , // Sierria Leone
+                    116 => ($provider_valeur != 51) ?  831 : 786, // Koweit
+                    212 => ($provider_valeur != 51) ?  846 :  802, // Tanzanie
+                    175 => ($provider_valeur != 51) ? 841 :  796 , // Quatar
                     241 => ($provider_valeur != 51) ? 3302 : 3322, // Zambie
                     66 => ($provider_valeur != 51) ?  3303 : 3323, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ?  3304 : 3324, // Angola
+                    8 => ($provider_valeur != 51) ?  809 : 764, // Angola
                     225 => ($provider_valeur != 51) ? 3305 : 3325, // Dubai
-                    112 => ($provider_valeur != 51) ?  3306 : 3326, // Keneya
-                    45 => ($provider_valeur != 51) ? 3307 : 3327, // China
-                    208 => ($provider_valeur != 51) ? 3308 : 3328, // Suisse
-                    23 => ($provider_valeur != 51) ?  3309 : 3329, // Belgique
-                    173 => ($provider_valeur != 51) ?  3310 : 3330, // Portugal
-                    219 => ($provider_valeur != 51) ?  3311 : 3331, // Turquie
-                    152 => ($provider_valeur != 51) ? 3312 : 3332, // Hollande
-
-                    100 => ($provider_valeur != 51) ? 3313 : 3333, // Inde
+                    112 => ($provider_valeur != 51) ?  830 : 785, // Keneya
+                    45 => ($provider_valeur != 51) ?  817 : 772  , // China
+                    208 => ($provider_valeur != 51) ? 845 : 801, // Suisse
+                    23 => ($provider_valeur != 51) ?  810 : 765, // Belgique
+                    173 => ($provider_valeur != 51) ? 3310  : 795 , // Portugal
+                    219 => ($provider_valeur != 51) ?  848 : 804, // Turquie
+                    152 => ($provider_valeur != 51) ? 837 : 792, // Hollande
+                    100 => ($provider_valeur != 51) ? 828 : 783, // Inde
+                    100 => ($provider_valeur != 51) ? 849 : 805, // Doubai
                     69 => ($provider_valeur != 51) ? 3314 : 3334, // Ethiopie
+                    64 => ($provider_valeur != 51) ? 820 : 775, // Egypte
+                    120 => ($provider_valeur != 51) ?  832 : 787, // Liban
+                    37 => ($provider_valeur != 51) ?  813 : 768, // Burundi
+                    133 => ($provider_valeur != 51) ? 835 : 790, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 823 : 778, // Gambie
+                    1 => ($provider_valeur != 51) ?  808 : 763, // Algerie
+
                 ],
                 // Is TANZANIE
                 212 => [
 
                     25 => ($provider_valeur != 51) ? 1304 : 1349, // Benin
-
                     36 => ($provider_valeur != 51) ? 1305 : 1350, // BF
                     133 => ($provider_valeur != 51) ? 1327 : 1372, // Mali
                     214 => ($provider_valeur != 51) ? 1341 : 1386, // Togo
@@ -2647,49 +2635,49 @@ class PercentRobusAuthService
                     157 => ($provider_valeur != 51) ? 1331 : 1376, // Niger
                     91 => ($provider_valeur != 51) ? 1319 : 1364, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 639 : 657, // CIV
-                    1 => ($provider_valeur == 51) ? 1345 : null, // USA
-                    // Update Id send
-                    218 => ($provider_valeur == 51) ? 3074 : null, // Tunisia
-                    146 => ($provider_valeur == 51) ? 1374 : null, // Maroc
+                    1 => ($provider_valeur == 51) ? 1345 : 851, // USA
+                    218 => ($provider_valeur == 51) ? 7076 : 7075, // Tunisia
+                    146 => ($provider_valeur == 51) ? 1374 : 1329, // Maroc
                     199 => ($provider_valeur == 51) ? 1338 : 1383, // ESPAGNE
-                    74 => ($provider_valeur == 51) ? 1359 : null, // France
+                    74 => ($provider_valeur == 51) ? 1359 : 1314, // France
                     179 => ($provider_valeur == 51) ? 6101 : 5786, // Russie
-                    226 => ($provider_valeur == 51) ? 1389 : 1344, // Royaume Unie
-                    106 => ($provider_valeur == 51) ? 1367 : 1322, // Italie
-                    82 => ($provider_valeur != 51) ? 1317 : 6038, // Allemagne
+                    226 => ($provider_valeur == 51) ?  1389 : 1344, // Royaume Unie
+                    106 => ($provider_valeur == 51) ?  1367 : 1322, // Italie
+                    82 => ($provider_valeur != 51) ?  1317 : 1362 , // Allemagne
                     39 => ($provider_valeur != 51) ? 1307 : 1352, // Cameroun
-                    79 => ($provider_valeur != 51) ? 5099 : 5567, // Gabon
-                    50 => ($provider_valeur != 51) ? 1311 : 1356, // COngo Braza
+                    79 => ($provider_valeur != 51) ?  1315 : 1360, // Gabon
+                    50 => ($provider_valeur != 51) ?  1311 : 1356, // COngo Braza
                     57 => ($provider_valeur != 51) ? 1312 : 1357, // RDC
-                    122 => ($provider_valeur != 51) ? 1326 : 1371, // Liberia
+                    122 => ($provider_valeur != 51) ?  1326 : 1371, // Liberia
                     43 => ($provider_valeur != 51) ? 1309 : 1354, // Thacd
-                    // 43 => ($provider_valeur != 51) ? 77 : 105, // Thacd
                     42 => ($provider_valeur != 51) ?  1308 : 1353, // Afrique centrale
-
-                    // New countries
-                    92 => ($provider_valeur != 51) ? 3335 : 3355, // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ?  1320  : 1365 , // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3336 : 3356, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 3337 : 3357, // Rwanda 
-                    158 => ($provider_valeur != 51) ? 3338 : 3358, // Nigeria
-                    191 => ($provider_valeur != 51) ? 3339 : 3359, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 3340 : 3360, // Koweit
-                    // 212 => ($provider_valeur != 51) ?  3300 : 3320, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 3341 : 3361, // Quatar
+                    180 => ($provider_valeur != 51) ? 1335 : 1380, // Rwanda 
+                    158 => ($provider_valeur != 51) ? 1332 : 1377, // Nigeria
+                    191 => ($provider_valeur != 51) ? 1337 : 1382, // Sierria Leone
+                    116 => ($provider_valeur != 51) ? 1324 : 1369, // Koweit
+                    175 => ($provider_valeur != 51) ? 1334 : 1379, // Quatar
                     241 => ($provider_valeur != 51) ? 3342 : 3362, // Zambie
                     66 => ($provider_valeur != 51) ?  3343 : 3363, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ?  3344 : 3364, // Angola
-                    225 => ($provider_valeur != 51) ? 3345 : 3365, // Dubai
-                    112 => ($provider_valeur != 51) ?  3346 : 3366, // Keneya
-                    45 => ($provider_valeur != 51) ? 3347 : 3367, // China
-                    208 => ($provider_valeur != 51) ? 3348 : 3368, // Suisse
-                    23 => ($provider_valeur != 51) ?  3349 : 3369, // Belgique
-                    173 => ($provider_valeur != 51) ?  3350 : 3370, // Portugal
-                    219 => ($provider_valeur != 51) ?  3351 : 3371, // Turquie
-                    152 => ($provider_valeur != 51) ? 3352 : 3372, // Hollande
-
-                    100 => ($provider_valeur != 51) ? 3353 : 3373, // Inde
+                    8 => ($provider_valeur != 51) ?  1302 : 1347, // Angola
+                    225 => ($provider_valeur != 51) ? 1343  : 1388, // Dubai
+                    112 => ($provider_valeur != 51) ?  1323 : 1368, // Keneya
+                    45 => ($provider_valeur != 51) ? 1310 : 1355, // China
+                    208 => ($provider_valeur != 51) ? 1339 : 1384, // Suisse
+                    23 => ($provider_valeur != 51) ?  1303 : 1348, // Belgique
+                    173 => ($provider_valeur != 51) ?  1333 : 1378, // Portugal
+                    219 => ($provider_valeur != 51) ?  1342 : 1387, // Turquie
+                    152 => ($provider_valeur != 51) ? 1330 : 1375, // Hollande
+                    100 => ($provider_valeur != 51) ?  1321 : 1366, // Inde
                     69 => ($provider_valeur != 51) ? 3354 : 3374, // Ethiopie
+                    64 => ($provider_valeur != 51) ? 1313 : 1358, // Egypte
+                    120 => ($provider_valeur != 51) ?  1325 : 1370, // Liban
+                    37 => ($provider_valeur != 51) ?  1306 : 1351, // Burundi
+                    133 => ($provider_valeur != 51) ? 1328 : 1373, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 1316 : 1361, // Gambie
+                    1 => ($provider_valeur != 51) ?  1301 : 1346, // Algerie
+
                 ],
                 // Is ETHIOPIE
                 69 => [
@@ -2697,17 +2685,17 @@ class PercentRobusAuthService
                     36 => ($provider_valeur != 51) ? 1395 : 1440, // BF
                     133 => ($provider_valeur != 51) ? 4566 : 4039, // Mali
                     214 => ($provider_valeur != 51) ? 1431 : 1476, // Togo
-                    188 => ($provider_valeur != 51) ? 4710 : 4182, // Senegal
+                    188 => ($provider_valeur != 51) ? 1426 : 1471, // Senegal
                     83 => ($provider_valeur != 51) ? 1408 : 1453, // Ghana
                     157 => ($provider_valeur != 51) ? 1421 : 1466, // Niger
                     91 => ($provider_valeur != 51) ? 1409 : 1454, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 641 : 658, // CIV
-                    1 => ($provider_valeur == 51) ? 1435 : null, // USA
-                    218 => ($provider_valeur == 51) ? 3090 : null, // Tunisia
-                    146 => ($provider_valeur == 51) ? 1464 : null, // Maroc
+                    1 => ($provider_valeur == 51) ? 1435 : 1390, // USA
+                    218 => ($provider_valeur == 51) ? 7077 : 7078, // Tunisia
+                    146 => ($provider_valeur == 51) ? 1464 : 1419, // Maroc
                     199 => ($provider_valeur == 51) ? 1473 : 1428, // ESPAGNE
                     74 => ($provider_valeur == 51) ? 1449 : 1404, // France
-                    179 => ($provider_valeur == 51) ? 6091 : 5776, // Russie
+                    179 => ($provider_valeur == 51) ? 6091 : 5776, // Ruissie
                     226 => ($provider_valeur == 51) ? 1479 : 1434, // Royaume Unie
                     106 => ($provider_valeur == 51) ? 1457 : 1412, // Italie
                     82 => ($provider_valeur != 51) ? 1407 : 1452, // Allemagne
@@ -2716,34 +2704,34 @@ class PercentRobusAuthService
                     50 => ($provider_valeur != 51) ? 1401 : 1446, // COngo Braza
                     57 => ($provider_valeur != 51) ? 1402 : 1447, // RDC
                     122 => ($provider_valeur != 51) ? 1416 : 1461, // Liberia
-                    43 => ($provider_valeur != 51) ? 1399 : 1444, // Thacd
-                    // 43 => ($provider_valeur != 51) ? 77 : 105, // Thacd
+                    43 => ($provider_valeur != 51) ? 1399 : 1444, // Thad
                     42 => ($provider_valeur != 51) ?  1398 : 1443, // Afrique centrale
-
-                    // New countries
-                    92 => ($provider_valeur != 51) ? 3375 : 3395, // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ? 1410 : 1455, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3376 : 3396, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 3377 : 3397, // Rwanda 
-                    158 => ($provider_valeur != 51) ? 3378 : 3398, // Nigeria
-                    191 => ($provider_valeur != 51) ? 3379 : 3399, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 3380 : 3400, // Koweit
+                    180 => ($provider_valeur != 51) ?  1425 : 1470 , // Rwanda 
+                    158 => ($provider_valeur != 51) ? 1422 : 1467, // Nigeria
+                    191 => ($provider_valeur != 51) ? 1427 : 1472, // Sierria Leone
+                    116 => ($provider_valeur != 51) ? 1414 : 1459, // Koweit
                     212 => ($provider_valeur != 51) ?  3381 : 3401, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 3382 : 3402, // Quatar
+                    175 => ($provider_valeur != 51) ? 1424 : 1469, // Quatar
                     241 => ($provider_valeur != 51) ? 3383 : 3403, // Zambie
                     66 => ($provider_valeur != 51) ?  3384 : 3404, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ?   3385 : 3405, // Angola
-                    225 => ($provider_valeur != 51) ? 3386 : 3406, // Dubai
-                    112 => ($provider_valeur != 51) ?  3387 : 3407, // Keneya
-                    45 => ($provider_valeur != 51) ? 3388 : 3408, // China
-                    208 => ($provider_valeur != 51) ? 3389 : 3409, // Suisse
-                    23 => ($provider_valeur != 51) ?  3390 : 3410, // Belgique
-                    173 => ($provider_valeur != 51) ?  3391 : 3411, // Portugal
-                    219 => ($provider_valeur != 51) ?  3392 : 3412, // Turquie
-                    152 => ($provider_valeur != 51) ? 3393 : 3413, // Hollande
-
-                    100 => ($provider_valeur != 51) ? 3394 : 3414, // Inde
-                    // 69 => ($provider_valeur != 51) ? 3354 : 3374, // Ethiopie
+                    8 => ($provider_valeur != 51) ?   1392 : 1437, // Angola
+                    225 => ($provider_valeur != 51) ? 1433 : 1478, // Dubai
+                    112 => ($provider_valeur != 51) ?  1413 : 1458, // Keneya
+                    45 => ($provider_valeur != 51) ?  1400  : 1445, // China
+                    208 => ($provider_valeur != 51) ? 1429 : 1474, // Suisse
+                    23 => ($provider_valeur != 51) ?  1393 : 1438, // Belgique
+                    173 => ($provider_valeur != 51) ?  1423 : 1468, // Portugal
+                    219 => ($provider_valeur != 51) ?  1432 : 1477, // Turquie
+                    152 => ($provider_valeur != 51) ? 1420 : 1465, // Hollande
+                    100 => ($provider_valeur != 51) ? 1411 : 1456, // Inde
+                    64 => ($provider_valeur != 51) ? 1403 : 1448, // Egypte
+                    120 => ($provider_valeur != 51) ?  1415 : 1460, // Liban
+                    37 => ($provider_valeur != 51) ?  1396 : 1441, // Burundi
+                    133 => ($provider_valeur != 51) ? 1418 : 1463, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 1406 : 1451, // Gambie
+                    1 => ($provider_valeur != 51) ?  1301 : 1346, // Algerie
                 ],
                 // Is KENEYA
                 146 => [
@@ -2756,102 +2744,102 @@ class PercentRobusAuthService
                     157 => ($provider_valeur != 51) ? 1511 : 1556, // Niger
                     91 => ($provider_valeur != 51) ? 1499 : 1544, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 645 : 659, // CIV
-                    1 => ($provider_valeur == 51) ? 1525 : null, // USA
-                    218 => ($provider_valeur == 51) ? 3080 : null, // Tunisia
-                    146 => ($provider_valeur == 51) ? 1554 : null, // Maroc
-                    199 => ($provider_valeur == 51) ? 1508 : 1563, // ESPAGNE
+                    1 => ($provider_valeur == 51) ? 1525 : 1480, // USA
+                    218 => ($provider_valeur == 51) ? 7079 : 7080, // Tunisia
+                    146 => ($provider_valeur == 51) ? 1554 : 1509, // Maroc
+                    199 => ($provider_valeur == 51) ? 1518 : 1563, // ESPAGNE
                     74 => ($provider_valeur != 51) ?  1494 : 1539, // France
                     179 => ($provider_valeur == 51) ? 6094 : 5779, // Russie
                     226 => ($provider_valeur == 51) ? 1569 : 1524, // Royaume Unie
                     106 => ($provider_valeur == 51) ? 1547 : 1502, // Italie
                     82 => ($provider_valeur != 51) ? 1497 : 1542, // Allemagne
                     39 => ($provider_valeur != 51) ? 1487 : 1532, // Cameroun
-                    79 => ($provider_valeur != 51) ? 5087 : 5555, // Gabon
+                    79 => ($provider_valeur != 51) ? 1495 : 1540, // Gabon
                     50 => ($provider_valeur != 51) ? 1491 : 1536, // COngo Braza
                     57 => ($provider_valeur != 51) ? 1492 : 1537, // RDC
                     122 => ($provider_valeur != 51) ? 1506 : 1551, // Liberia
                     43 => ($provider_valeur != 51) ? 1489 : 1534, // Thacd
-                    // 43 => ($provider_valeur != 51) ? 77 : 105, // Thacd
                     42 => ($provider_valeur != 51) ?  1488 : 1533, // Afrique centrale
-
-                    // New countries
-                    92 => ($provider_valeur != 51) ? 3415 : 3435, // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ? 1500 : 1545, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3416 : 3436, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 3417 : 3437, // Rwanda 
-                    158 => ($provider_valeur != 51) ?  3418 : 3438, // Nigeria
-                    191 => ($provider_valeur != 51) ? 3419 : 3439, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 3420 : 3440, // Koweit
+                    180 => ($provider_valeur != 51) ? 1515 : 1560 , // Rwanda 
+                    158 => ($provider_valeur != 51) ?  1512 : 1557, // Nigeria
+                    191 => ($provider_valeur != 51) ?  1517 :  1562 , // Sierria Leone
+                    116 => ($provider_valeur != 51) ? 1504 : 1549, // Koweit
                     212 => ($provider_valeur != 51) ?  3421 : 3441, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 3422 : 3442, // Quatar
+                    175 => ($provider_valeur != 51) ? 1514 : 1559, // Quatar
                     241 => ($provider_valeur != 51) ? 3423 : 3443, // Zambie
                     66 => ($provider_valeur != 51) ?  3424 : 3444, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ?   3425 : 3445, // Angola
+                    8 => ($provider_valeur != 51) ?   1482 : 1527, // Angola
                     225 => ($provider_valeur != 51) ? 3426 : 3446, // Dubai
-                    45 => ($provider_valeur != 51) ? 3427 : 3447, // China
-                    208 => ($provider_valeur != 51) ? 3428 : 3448, // Suisse
-                    23 => ($provider_valeur != 51) ?  3429 : 3449, // Belgique
-                    173 => ($provider_valeur != 51) ?  3430 : 3450, // Portugal
-                    219 => ($provider_valeur != 51) ?  3431 : 3451, // Turquie
-                    152 => ($provider_valeur != 51) ? 3432 : 3452, // Hollande
-
-                    100 => ($provider_valeur != 51) ? 3433 : 3453, // Inde
+                    45 => ($provider_valeur != 51) ? 1490 : 1535, // China
+                    208 => ($provider_valeur != 51) ? 1519 : 1564, // Suisse
+                    23 => ($provider_valeur != 51) ?  1483 : 1528, // Belgique
+                    173 => ($provider_valeur != 51) ?  1513 : 1558, // Portugal
+                    219 => ($provider_valeur != 51) ?  1522 : 1567, // Turquie
+                    152 => ($provider_valeur != 51) ? 1510 : 1555, // Hollande
+                    100 => ($provider_valeur != 51) ? 1501 : 1546, // Inde
                     69 => ($provider_valeur != 51) ? 3434 : 3454, // Ethiopie
+                    64 => ($provider_valeur != 51) ? 1493 : 1538, // Egypte
+                    120 => ($provider_valeur != 51) ?  1505 : 1550, // Liban
+                    37 => ($provider_valeur != 51) ?  1486 : 1531, // Burundi
+                    133 => ($provider_valeur != 51) ? 1508 : 1553, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 1496 : 1541, // Gambie
+                    1 => ($provider_valeur != 51) ?  1481 : 1526, // Algerie
                 ],
                 // Is ZAMBIE
                 241 => [
                     25 => ($provider_valeur != 51) ? 1574 : 1619, // Benin
                     36 => ($provider_valeur != 51) ? 1575 : 1620, // BF
-                    // Ajouter vise versa
-                    133 => ($provider_valeur != 51) ? 1597 : 1620, // Mali
-                    214 => ($provider_valeur != 51) ? 1611 : 1634, // Togo
+                    133 => ($provider_valeur != 51) ? 1597 : 1642, // Mali
+                    214 => ($provider_valeur != 51) ? 1611 : 1656, // Togo
                     188 => ($provider_valeur != 51) ? 1606 : 1651, // Senegal
                     83 => ($provider_valeur != 51) ? 1588 : 1633, // Ghana
                     157 => ($provider_valeur != 51) ? 1601 : 1646, // Niger
                     91 => ($provider_valeur != 51) ? 1589 : 1634, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 637 : 660, // CIV
-                    1 => ($provider_valeur == 51) ? 1615 : null, // USA
+                    1 => ($provider_valeur == 51) ? 1615 : 1570, // USA
                     218 => ($provider_valeur == 51) ? 3076 : null, // Tunisia
-                    146 => ($provider_valeur == 51) ? 1644 : null, // Maroc
-                    199 => ($provider_valeur == 51) ? 1653 : null, // ESPAGNE
-                    74 => ($provider_valeur == 51) ? 1629 : null, // France
-                    // Update Id send
+                    146 => ($provider_valeur == 51) ? 1644 : 1599, // Maroc
+                    199 => ($provider_valeur == 51) ? 1653 : 1608, // ESPAGNE
+                    74 => ($provider_valeur == 51) ? 1629 : 1584, // France
                     179 => ($provider_valeur == 51) ? 3038 : null, // Ruissie
-                    226 => ($provider_valeur == 51) ? 1695 : null, // Royaume Unie
+                    226 => ($provider_valeur == 51) ? 1659 : 1614, // Royaume Unie
                     106 => ($provider_valeur == 51) ? 1637 : 1592, // Italie
-                    82 => ($provider_valeur == 51) ? 1632 : null, // Allemagne
+                    82 => ($provider_valeur == 51) ? 1632 : 1587, // Allemagne
                     39 => ($provider_valeur != 51) ? 1577 : 1622, // Cameroun
-                    79 => ($provider_valeur != 51) ? 3103 : 3124, // Gabon
+                    79 => ($provider_valeur != 51) ? 1585  :  1630  , // Gabon
                     50 => ($provider_valeur != 51) ? 1581 : 1626, // COngo Braza
                     57 => ($provider_valeur != 51) ? 1582 : 1627, // RDC
                     122 => ($provider_valeur != 51) ? 1596 : 1641, // Liberia
                     43 => ($provider_valeur != 51) ? 1579 : 1624, // Thacd
-                    // 43 => ($provider_valeur != 51) ? 77 : 105, // Thacd
                     42 => ($provider_valeur != 51) ?  1578 : 1623, // Afrique centrale
-
-                    // New countries
-                    92 => ($provider_valeur != 51) ? 3455 : 3475, // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ? 1590 : 1635, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3456 : 3476, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 3457 : 3477, // Rwanda 
-                    158 => ($provider_valeur != 51) ?  3458 : 3478, // Nigeria
+                    180 => ($provider_valeur != 51) ? 1605 :  1650  , // Rwanda 
+                    158 => ($provider_valeur != 51) ?  1602 : 1647, // Nigeria
                     191 => ($provider_valeur != 51) ? 3459 : 3479, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 3460 : 3480, // Koweit
+                    116 => ($provider_valeur != 51) ? 1594 : 1639, // Koweit
                     212 => ($provider_valeur != 51) ?  3461 : 3481, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 3462 : 3482, // Quatar
+                    175 => ($provider_valeur != 51) ? 1604 : 1649, // Quatar
                     66 => ($provider_valeur != 51) ?  3463 : 3483, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ?   3464 : 3484, // Angola
-                    225 => ($provider_valeur != 51) ? 3465 : 3485, // Dubai
+                    8 => ($provider_valeur != 51) ?   1572 : 1617, // Angola
+                    225 => ($provider_valeur != 51) ? 1613 : 1658, // Dubai
                     112 => ($provider_valeur != 51) ?  3466 : 3486, // Keneya
-                    45 => ($provider_valeur != 51) ? 3467 : 3487, // China
-                    208 => ($provider_valeur != 51) ? 3468 : 3488, // Suisse
-                    23 => ($provider_valeur != 51) ?  3469 : 3489, // Belgique
-                    173 => ($provider_valeur != 51) ?  3470 : 3490, // Portugal
-                    219 => ($provider_valeur != 51) ?  3471 : 3491, // Turquie
-                    152 => ($provider_valeur != 51) ? 3472 : 3492, // Hollande
-
-                    100 => ($provider_valeur != 51) ? 3473 : 3493, // Inde
+                    45 => ($provider_valeur != 51) ? 1580 : 1625, // China
+                    208 => ($provider_valeur != 51) ? 1609 : 1654, // Suisse
+                    23 => ($provider_valeur != 51) ?  1573 : 1618, // Belgique
+                    173 => ($provider_valeur != 51) ?  1603 : 1648, // Portugal
+                    219 => ($provider_valeur != 51) ?  1612 : 1657, // Turquie
+                    152 => ($provider_valeur != 51) ? 1600 : 1645, // Hollande
+                    100 => ($provider_valeur != 51) ? 1591 : 1636, // Inde
                     69 => ($provider_valeur != 51) ? 3474 : 3494, // Ethiopie
+                    64 => ($provider_valeur != 51) ? 1583 : 1628, // Egypte
+                    120 => ($provider_valeur != 51) ?  1595 : 1640, // Liban
+                    37 => ($provider_valeur != 51) ?  1576 : 1621, // Burundi
+                    133 => ($provider_valeur != 51) ? 1598 : 1643, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 1586 : 1631, // Gambie
+                    1 => ($provider_valeur != 51) ?  1571 : 1616, // Algerie
                 ],
                 // Is ANGOLA
                 8 => [
@@ -2859,53 +2847,54 @@ class PercentRobusAuthService
                     25 => ($provider_valeur != 51) ? 1664 : 1709, // Benin
                     36 => ($provider_valeur != 51) ? 1665 : 1710, // BF
                     133 => ($provider_valeur != 51) ? 4554 : 4027, // Mali
-                    214 => ($provider_valeur != 51) ? 1679 : 1724, // Togo
-                    188 => ($provider_valeur != 51) ? 1674 : 1719, // Senegal
-                    83 => ($provider_valeur != 51) ? 1656 : 1701, // Ghana
-                    157 => ($provider_valeur != 51) ? 1669 : 1714, // Niger
+                    214 => ($provider_valeur != 51) ? 1701 : 1746, // Togo
+                    188 => ($provider_valeur != 51) ? 1741 : 1696, // Senegal
+                    83 => ($provider_valeur != 51) ? 1678 :  1723 , // Ghana
+                    157 => ($provider_valeur != 51) ? 1691 :  1736 , // Niger
                     91 => ($provider_valeur != 51) ? 1679 : 1724, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 643 : 661, // CIV
-                    1 => ($provider_valeur == 51) ? 1705 : null, // USA
-                    218 => ($provider_valeur == 51) ? 3078 : null, // Tunisia
-                    146 => ($provider_valeur == 51) ? 1734 : null, // Maroc
-                    199 => ($provider_valeur == 51) ? 1743 : null, // ESPAGNE
+                    1 => ($provider_valeur == 51) ? 1705 : 1660, // USA
+                    218 => ($provider_valeur == 51) ? 7081 : 7082, // Tunisia
+                    146 => ($provider_valeur == 51) ? 1734 : 1689, // Maroc
+                    199 => ($provider_valeur == 51) ? 1743 : 1698, // ESPAGNE
                     74 => ($provider_valeur != 51) ? 1674 : 1719, // France
                     179 => ($provider_valeur == 51) ? 6088 : 5773, // Russie
                     226 => ($provider_valeur == 51) ? 1749 : 1704, // Royaume Unie
                     106 => ($provider_valeur == 51) ? 1727 : 1682, // Italie
                     82 => ($provider_valeur != 51) ? 1677 : 1722, // Allemagne
                     39 => ($provider_valeur != 51) ? 1667 : 1712, // Cameroun
-                    79 => ($provider_valeur != 51) ? 3105 : 3126, // Gabon
+                    79 => ($provider_valeur != 51) ? 1675 : 1720, // Gabon
                     50 => ($provider_valeur != 51) ? 1671 : 1716, // COngo Braza
                     57 => ($provider_valeur != 51) ? 1672 : 1717, // RDC
                     122 => ($provider_valeur != 51) ? 1686 : 1731, // Liberia
                     43 => ($provider_valeur != 51) ? 1669 : 1714, // Thacd
                     42 => ($provider_valeur != 51) ?  1668 : 1713, // Afrique centrale
-
-                    // New countries
-                    92 => ($provider_valeur != 51) ? 3495 : 3515, // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ? 680 :1725 , // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3496 : 3516, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 3497 : 3517, // Rwanda 
-                    158 => ($provider_valeur != 51) ?  3498 : 3518, // Nigeria
+                    180 => ($provider_valeur != 51) ? 1695 : 1740, // Rwanda 
+                    158 => ($provider_valeur != 51) ?  1692 : 1737, // Nigeria
                     191 => ($provider_valeur != 51) ? 3499 : 3519, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 3500 : 3520, // Koweit
+                    116 => ($provider_valeur != 51) ? 1684 : 1729, // Koweit
                     212 => ($provider_valeur != 51) ?  3501 : 3521, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 3502 : 3522, // Quatar
+                    175 => ($provider_valeur != 51) ? 1694 : 1739, // Quatar
                     241 => ($provider_valeur != 51) ? 3503 : 3523, // Zambie
                     66 => ($provider_valeur != 51) ?  3504 : 3524, // Guinnée Equatoriale
-                    // 8 => ($provider_valeur != 51) ?   3464 : 3484, // Angola
-                    225 => ($provider_valeur != 51) ? 3505 : 3525, // Dubai
+                    225 => ($provider_valeur != 51) ? 1703 : 1748, // Dubai
                     112 => ($provider_valeur != 51) ?  3506 : 3526, // Keneya
-                    45 => ($provider_valeur != 51) ? 3507 : 3527, // China
-                    208 => ($provider_valeur != 51) ? 3508 : 3528, // Suisse
-                    23 => ($provider_valeur != 51) ?  3509 : 3529, // Belgique
-                    173 => ($provider_valeur != 51) ?  3510 : 3530, // Portugal
-                    219 => ($provider_valeur != 51) ?  3511 : 3531, // Turquie
-                    152 => ($provider_valeur != 51) ? 3512 : 3532, // Hollande
-
-                    100 => ($provider_valeur != 51) ? 3513 : 3533, // Inde
+                    45 => ($provider_valeur != 51) ? 1670 : 1715, // China
+                    208 => ($provider_valeur != 51) ? 1699 : 1744, // Suisse
+                    23 => ($provider_valeur != 51) ?  1663 : 1708, // Belgique
+                    173 => ($provider_valeur != 51) ? 1693 : 1738, // Portugal
+                    219 => ($provider_valeur != 51) ? 1747 : 1702, // Turquie
+                    152 => ($provider_valeur != 51) ? 1690 : 1735, // Hollande
+                    100 => ($provider_valeur != 51) ? 1726 : 1681, // Inde
                     69 => ($provider_valeur != 51) ? 3514 : 3534, // Ethiopie
+                    64 => ($provider_valeur != 51) ? 1673 : 1718, // Egypte
+                    120 => ($provider_valeur != 51) ?  1685 : 1730, // Liban
+                    37 => ($provider_valeur != 51) ?  1666 : 1711, // Burundi
+                    133 => ($provider_valeur != 51) ? 1688 : 1733, // Mauritanie
+                    80 => ($provider_valeur != 51) ? 1676 : 1721, // Gambie
+                    1 => ($provider_valeur != 51) ?  1661 : 1706, // Algerie
                 ],
                 // Is Mauritanie
                 8 => [
@@ -2913,52 +2902,59 @@ class PercentRobusAuthService
                     25 => ($provider_valeur != 51) ?  4534 : 4007, // Benin
                     36 => ($provider_valeur != 51) ? 4630 : 4102, // BF
                     133 => ($provider_valeur != 51) ? 4582 : 4055, // Mali
-                    214 => ($provider_valeur != 51) ? 1679 : 1724, // Togo
-                    188 => ($provider_valeur != 51) ? 1674 : 1719, // Senegal
-                    83 => ($provider_valeur != 51) ? 1656 : 1701, // Ghana
-                    157 => ($provider_valeur != 51) ? 1669 : 1714, // Niger
-                    91 => ($provider_valeur != 51) ? 1679 : 1724, // Guinne conakry
-                    107 => ($provider_valeur != 51) ? 643 : 661, // CIV
-                    1 => ($provider_valeur == 51) ? 1705 : null, // USA
-                    218 => ($provider_valeur == 51) ? 3078 : null, // Tunisia
-                    146 => ($provider_valeur == 51) ? 1734 : null, // Maroc
-                    199 => ($provider_valeur == 51) ? 1743 : null, // ESPAGNE
-                    74 => ($provider_valeur == 51) ? 1719 : null, // France
-                    179 => ($provider_valeur == 51) ? 3040 : null, // Russie
-                    226 => ($provider_valeur == 51) ? 1749 : null, // Royaume Unie
-                    106 => ($provider_valeur == 51) ? 1727 : null, // Italie
-                    82 => ($provider_valeur == 51) ? 1722 : null, // Allemagne
-                    39 => ($provider_valeur != 51) ? 1667 : 1712, // Cameroun
+                    214 => ($provider_valeur != 51) ? 4678 : 4150, // Togo
+                    188 => ($provider_valeur != 51) ? 4726 : 4198, // Senegal
+                    83 => ($provider_valeur != 51) ? 4774 : 4246, // Ghana
+                    157 => ($provider_valeur != 51) ? 4822 : 4294, // Niger
+                    91 => ($provider_valeur != 51) ? 4870 : 4342, // Guinne conakry
+                    107 => ($provider_valeur != 51) ? 5622 : 5651, // CIV
+                    1 => ($provider_valeur == 51) ? 7083 : 6121, // USA
+                    218 => ($provider_valeur == 51) ? 7087 : 7085, // Tunisia
+                    146 => ($provider_valeur == 51) ? 7086 : 7084, // Maroc
+                    199 => ($provider_valeur == 51) ? 6076 : 5677, // ESPAGNE
+                    74 => ($provider_valeur == 51) ? 6055 : 5698, // France
+                    179 => ($provider_valeur == 51) ? 6097 : 5782, // Russie
+                    226 => ($provider_valeur == 51) ? 5992 : 5761, // Royaume Unie
+                    106 => ($provider_valeur == 51) ? 6013 : 5740, // Italie
+                    82 => ($provider_valeur == 51) ? 6034 : 5719, // Allemagne
+                    39 => ($provider_valeur != 51) ? 5055  : 5595, // Cameroun
                     79 => ($provider_valeur != 51) ? 5091 : 5559, // Gabon
                     50 => ($provider_valeur != 51) ?  5127 : 5523, // COngo Braza
-                    57 => ($provider_valeur != 51) ? 1672 : 1717, // RDC
-                    122 => ($provider_valeur != 51) ? 1686 : 1731, // Liberia
-                    43 => ($provider_valeur != 51) ? 5235 : 5415, // Thacd
-                    42 => ($provider_valeur != 51) ?  1668 : 1713, // Afrique centrale
+                    57 => ($provider_valeur != 51) ? 5163 : 5487, // RDC
+                    122 => ($provider_valeur != 51) ? 5199 : 5451, // Liberia
+                    43 => ($provider_valeur != 51) ?  5235 : 5415, // Thacd
+                    42 => ($provider_valeur != 51) ?  5379 : 5271, // Afrique centrale
 
                     // New countries
-                    92 => ($provider_valeur != 51) ? 3495 : 3515, // Guinnée Buisso 
-                    223 => ($provider_valeur != 51) ? 3496 : 3516, // Ouganda 
+                    92 => ($provider_valeur != 51) ?  4918 : 4390, // Guinnée Buisso 
+                    223 => ($provider_valeur != 51) ? 6207 : 6311, // Ouganda 
                     // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 3497 : 3517, // Rwanda 
-                    158 => ($provider_valeur != 51) ?  3498 : 3518, // Nigeria
-                    191 => ($provider_valeur != 51) ? 3499 : 3519, // Sierria Leone
-                    116 => ($provider_valeur != 51) ? 3500 : 3520, // Koweit
-                    212 => ($provider_valeur != 51) ?  3501 : 3521, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 3502 : 3522, // Quatar
-                    241 => ($provider_valeur != 51) ? 3503 : 3523, // Zambie
-                    66 => ($provider_valeur != 51) ?  3504 : 3524, // Guinnée Equatoriale
-                    225 => ($provider_valeur != 51) ? 3505 : 3525, // Dubai
-                    112 => ($provider_valeur != 51) ?  3506 : 3526, // Keneya
-                    45 => ($provider_valeur != 51) ? 3507 : 3527, // China
-                    208 => ($provider_valeur != 51) ? 3508 : 3528, // Suisse
-                    23 => ($provider_valeur != 51) ?  3509 : 3529, // Belgique
-                    173 => ($provider_valeur != 51) ?  3510 : 3530, // Portugal
-                    219 => ($provider_valeur != 51) ?  3511 : 3531, // Turquie
-                    152 => ($provider_valeur != 51) ? 3512 : 3532, // Hollande
+                    180 => ($provider_valeur != 51) ? 6215 : 6303, // Rwanda 
+                    158 => ($provider_valeur != 51) ?  5014 : 4486, // Nigeria
+                    191 => ($provider_valeur != 51) ? 4966 : 4438, // Sierria Leone
+                    116 => ($provider_valeur != 51) ? 7089 : 7088, // Koweit
+                    212 => ($provider_valeur != 51) ?  6223 : 7090, // Tanzanie
 
-                    100 => ($provider_valeur != 51) ? 3513 : 3533, // Inde
-                    69 => ($provider_valeur != 51) ? 3514 : 3534, // Ethiopie
+                    //  UPdate sid
+                    175 => ($provider_valeur != 51) ? 7092 : 7091, // Quatar
+                    241 => ($provider_valeur != 51) ? 6247 : 6271, // Zambie
+                    66 => ($provider_valeur != 51) ?  5307 : 5343, // Guinnée Equatoriale
+                    225 => ($provider_valeur != 51) ? 7094 : 7093, // Dubai
+                    112 => ($provider_valeur != 51) ?  6239 : 6279, // Keneya
+                    45 => ($provider_valeur != 51) ? 7095 : 7096, // China
+                    208 => ($provider_valeur != 51) ? 7097 : 5971, // Suisse
+                    23 => ($provider_valeur != 51) ?  5803 : 5950, // Belgique
+                    173 => ($provider_valeur != 51) ?  5824 : 5929, // Portugal
+                    219 => ($provider_valeur != 51) ?  5845 : 5908, // Turquie
+                    152 => ($provider_valeur != 51) ? 5866 : 5887, // Hollande
+
+                    100 => ($provider_valeur != 51) ? 7098 : 7099, // Inde
+                    69 => ($provider_valeur != 51) ? 6231 : 6287, // Ethiopie
+                    64 => ($provider_valeur != 51) ? 7100 : 7101, // Egypte
+                    120 => ($provider_valeur != 51) ?  7102 : 7103, // Liban
+                    37 => ($provider_valeur != 51) ?  7104 : 7105, // Burundi
+                    80 => ($provider_valeur != 51) ? 7107 : 7106, // Gambie
+                    1 => ($provider_valeur != 51) ?  7108 : 7109, // Algerie
                 ],
                 // Ajoutez d'autres identifiants de pays et leurs valeurs associées selon vos besoins
             ];
@@ -2970,7 +2966,6 @@ class PercentRobusAuthService
 
 
                     25 => ($provider_valeur != 51) ? 2609 : 2564, // Benin
-
                     36 => ($provider_valeur != 51) ? 2610 : 2565, // BF
                     133 => ($provider_valeur != 51) ? 4578 : 4051, // Mali
                     214 => ($provider_valeur != 51) ? 2646 : 2601, // Togo
@@ -2979,12 +2974,11 @@ class PercentRobusAuthService
                     157 => ($provider_valeur != 51) ? 2636 : 2591, // Niger
                     91 => ($provider_valeur != 51) ? 2624 : 2579, // Guinne conakry
                     107 => ($provider_valeur != 51) ?  638 : 668, // CIV
-                    1 => ($provider_valeur != 51) ? 731 : 2560, // USA
-                    // Upodate ID send
-                    218 => ($provider_valeur == 51) ? 3073 : null, // Tunisia
-                    146 => ($provider_valeur == 51) ? 2589 : null, // Maroc
+                    1 => ($provider_valeur != 51) ? 2605 : 2560, // USA
+                    218 => ($provider_valeur == 51) ? 7110 : 7111, // Tunisia
+                    146 => ($provider_valeur == 51) ? 2589 : 2634, // Maroc
                     199 => ($provider_valeur == 51) ?  2642 : 2598, // ESPAGNE
-                    74 => ($provider_valeur == 51) ? 2574 : null, // France
+                    74 => ($provider_valeur == 51) ? 2574 : 2619, // France
                     179 => ($provider_valeur == 51) ? 6095 : 5780, // Russie
                     226 => ($provider_valeur == 51) ? 2604 : 2649, // Royaume Unie
                     106 => ($provider_valeur == 51) ? 2582 : 2626, // Italie
@@ -2994,32 +2988,33 @@ class PercentRobusAuthService
                     50 => ($provider_valeur != 51) ? 2616 : 2571, // COngo Braza
                     57 => ($provider_valeur != 51) ? 2617 : 2572, // RDC
                     122 => ($provider_valeur != 51) ? 2630 : 2586, // Liberia
-                    43 => ($provider_valeur != 51) ? 2613 : 2569, // Thacd
-                    42 => ($provider_valeur != 51) ? 2612 : 2568, // Afrique centrale
-
-                    // New countries
-                    92 => ($provider_valeur != 51) ? 3775 : 3795, // Guinnée Buisso 
+                    43 => ($provider_valeur != 51) ? 2614 : 2569, // Thacd
+                    42 => ($provider_valeur != 51) ? 2613 : 2568, // Afrique centrale
+                    92 => ($provider_valeur != 51) ? 2625 : 2580, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3776 : 3796, // Ouganda 
-                    // Voir rwanda
-                    180 => ($provider_valeur != 51) ? 3777 : 3797, // Rwanda 
-                    158 => ($provider_valeur != 51) ?  3778 : 3798, // Nigeria
+                    180 => ($provider_valeur != 51) ?  2640 : 2595 , // Rwanda 
+                    158 => ($provider_valeur != 51) ?  2645 : 2592, // Nigeria
                     191 => ($provider_valeur != 51) ? 3779 : 3799, // Sierria Leone
-                    // 116 => ($provider_valeur != 51) ? 3500 : 3520, // Koweit
                     212 => ($provider_valeur != 51) ?  3780 : 3800, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 3781 : 3801, // Quatar
+                    175 => ($provider_valeur != 51) ? 2639 : 2594, // Quatar
                     241 => ($provider_valeur != 51) ? 3782 : 3802, // Zambie
                     66 => ($provider_valeur != 51) ?  3783 : 3803, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ?   3784 : 3804, // Angola
-                    225 => ($provider_valeur != 51) ? 3785 : 3805, // Dubai
+                    8 => ($provider_valeur != 51) ?   2607 : 2562, // Angola
+                    225 => ($provider_valeur != 51) ? 2648 : 2603, // Dubai
                     112 => ($provider_valeur != 51) ?  3786 : 3806, // Keneya
-                    45 => ($provider_valeur != 51) ? 3787 : 3807, // China
-                    208 => ($provider_valeur != 51) ? 3788 : 3808, // Suisse
-                    23 => ($provider_valeur != 51) ?  3789 : 3809, // Belgique
-                    173 => ($provider_valeur != 51) ?  3790 : 3810, // Portugal
-                    219 => ($provider_valeur != 51) ?  3791 : 3811, // Turquie
+                    45 => ($provider_valeur != 51) ? 2615 : 2570, // China
+                    208 => ($provider_valeur != 51) ? 5969 : 2599, // Suisse
+                    23 => ($provider_valeur != 51) ?  2608 : 2563, // Belgique
+                    173 => ($provider_valeur != 51) ?  2638 : 2593, // Portugal
+                    219 => ($provider_valeur != 51) ?  2647 : 2602, // Turquie
                     152 => ($provider_valeur != 51) ? 2635 : 2590, // Hollande
-                    100 => ($provider_valeur != 51) ? 3793 : 3813, // Inde
+                    100 => ($provider_valeur != 51) ? 2626 : 2581, // Inde
                     69 => ($provider_valeur != 51) ? 3794 : 3814, // Ethiopie
+                    64 => ($provider_valeur != 51) ? 2618 : 2573, // Egypte
+                    120 => ($provider_valeur != 51) ?  2630 : 2585, // Liban
+                    37 => ($provider_valeur != 51) ?  2611 : 2566, // Burundi
+                    80 => ($provider_valeur != 51) ? 2621 : 2576, // Gambie
+                    1 => ($provider_valeur != 51) ?  2606 : 2561, // Algerie
                 ],
                 // Is QATAR
                 175 => [
