@@ -202,18 +202,18 @@ class ProvidersService
 
         if ($isUnderDistributer) {
             if ($countryNameGroup == "CIV") {
-                $providerMap = ['AFL', 'AFC'];
+                $providerMap = ['AFL', 'AFC', 'ASIE' , 'AFE'];
             } else {
-                $providerMap = ['AFL', 'CIV', 'AFC'];
+                $providerMap = ['AFL', 'CIV', 'AFC', 'ASIE' , 'AFE'];
             }
         } else {
             $providerMaps = [
-                "CIV" => ['AFL', 'AFC', 'USA', 'MAG', 'URP'],
-                "USA" => ['AFL', 'AFC', 'URP', 'MAG', 'CIV'],
-                "AFL" => ['AFL', 'AFC', 'URP', 'CIV', 'USA', 'MAG'],
-                "AFC" => ['CIV', 'AFC', 'URP', 'USA', 'MAG', 'AFL'],
-                "URP" => ['CIV', 'AFC', 'AFL', 'USA', 'MAG'],
-                "MAG" => ['CIV', 'AFC', 'URP', 'AFL', 'USA', 'MAG'],
+                "CIV" => ['AFL', 'AFC', 'USA', 'MAG', 'URP' , 'ASIE', 'AFE'],
+                "USA" => ['AFL', 'AFC', 'URP', 'MAG', 'CIV' , 'ASIE', 'AFE'],
+                "AFL" => ['AFL', 'AFC', 'URP', 'CIV', 'USA', 'MAG' , 'ASIE' , 'AFE'],
+                "AFC" => ['CIV', 'AFC', 'URP', 'USA', 'MAG', 'AFL' , 'ASIE' , 'AFE'],
+                "URP" => ['CIV', 'AFC', 'AFL', 'USA', 'MAG' , 'ASIE' , 'AFE'],
+                "MAG" => ['CIV', 'AFC', 'URP', 'AFL', 'USA', 'MAG' , 'ASIE', 'AFE'],
             ];
 
             $providerMap = $providerMaps[$countryNameGroup] ?? [];
@@ -221,7 +221,7 @@ class ProvidersService
 
 
         return Country::whereIn('name_groupe', $providerMap)
-            ->whereStatus(true)
+            ->whereRobus(true)
             ->where('id', '!=', robus()->country->id)
             ->orderBy('name', 'asc')
             ->get();

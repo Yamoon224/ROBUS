@@ -440,6 +440,14 @@
                         <div class="menu__title">Afrique de l'EST</div>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('commissions.civ') }}"
+                        class="menu {{ $route == 'commissions.civ' ? 'menu--active' : '' }}">
+                        <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                        </div>
+                        <div class="menu__title">Cote d'Ivoire</div>
+                    </a>
+                </li>
             </ul>
         </li>
     @endif
