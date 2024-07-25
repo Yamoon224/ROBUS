@@ -54,7 +54,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
-class UserController extends Controller
+class UserControllerDemoli extends Controller
 {
 
 

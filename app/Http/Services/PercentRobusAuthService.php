@@ -1534,9 +1534,9 @@ class PercentRobusAuthService
                     100 => ($provider_valeur != 51) ? 640 : 672, // Inde
                     69 => ($provider_valeur != 51) ? 641 : 658, // Ethiopie
                     66 => ($provider_valeur != 51) ? 5302 : 5338, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ? 643 : 661, // Angola
+                    8 => ($provider_valeur != 51) ? 7117 : 7119, // Angola
                     225 => ($provider_valeur != 51) ? 644 : 670, // Dubai
-                    112 => ($provider_valeur != 51) ? 645 : 659, // Keneya
+                    112 => ($provider_valeur != 51) ? 7116 : 7118, // Keneya
                     45 => ($provider_valeur != 51) ? 646 : 671, // China
                     208 => ($provider_valeur != 51) ? 647 : 683, // Suisse voir
                     23 => ($provider_valeur != 51) ? 664 : 648, // Belgique
@@ -1546,6 +1546,7 @@ class PercentRobusAuthService
                     5 => ($provider_valeur != 51) ? 6399 : 6408, // Algerie
                     133 => ($provider_valeur != 51) ? 6715 : 6716, // Mauritanie
                     37 => ($provider_valeur != 51) ? 6717 : 6718, // Burundi
+
 
                 ]
             ];

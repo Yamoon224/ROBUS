@@ -10145,6 +10145,7 @@ class Transfers extends Component
                                 || $check->provider->id == 49
                                 || $check->provider->id == 50
                                 || $check->provider->id == 55
+                                || $check->provider->id == 98
                             ) {
 
                                 $commission_transaction = $valeur_amount_receveid;
@@ -10358,6 +10359,8 @@ class Transfers extends Component
                                     || $check->provider->id == 95
                                     || $check->provider->id == 96
                                     || $check->provider->id == 97
+                                    || $check->provider->id == 98
+
                                 ) 
                                 {
 
@@ -10421,6 +10424,8 @@ class Transfers extends Component
                                     || $check->provider->id == 95
                                     || $check->provider->id == 96
                                     || $check->provider->id == 97
+                                    || $check->provider->id == 98
+
                                 ) {
 
                                     $commission =  $check->amount;
@@ -10601,6 +10606,8 @@ class Transfers extends Component
                                     || $check->provider->id == 95
                                     || $check->provider->id == 96
                                     || $check->provider->id == 97
+                                    || $check->provider->id == 98
+
                                 ) {
 
                                     $commission =  $check->amount;
@@ -10661,6 +10668,8 @@ class Transfers extends Component
                                     || $check->provider->id == 95
                                     || $check->provider->id == 96
                                     || $check->provider->id == 97
+                                || $check->provider->id == 98
+
                                 ) {
 
                                     $commission =  $check->amount;

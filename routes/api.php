@@ -75,6 +75,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         Route::prefix('user')->group(function () {
 
             Route::get('dashboard', [UserController::class, 'dashboard']);
+            Route::get('historicals', [UserController::class, 'dashboard_historique']);
             Route::get('info', [UserController::class, 'info']);
             Route::get('info/kyc', [UserController::class, 'kyc']);
             Route::post('info/update', [UserController::class, 'updateInfo']);
