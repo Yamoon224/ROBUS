@@ -351,6 +351,7 @@ class IntersPaymentController extends Controller
                                         if (robus()->is_under_distributer) {
 
                                             $valeur_received = $request->amount - ($percent_robus->percent_under_distributer * $request->amount);
+                                            
                                         } else {
 
                                             $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
@@ -1198,6 +1199,7 @@ class IntersPaymentController extends Controller
     {
 
         $countrie = Country::whereName($countrie_id)->first();
+
         $default_valeur = 2000000;
         $valeur_max_send  =  $countrie->amount_max_send;
 
@@ -1206,6 +1208,8 @@ class IntersPaymentController extends Controller
             if ($amount_paiement_robus) {
 
                 $commission_inter =  $this->percentRobus->getRobusPercentageInter($countrie, $provider_inter_out_civ);
+
+                // dd($commission_inter);
                 $commission_transaction_val_percent_pay = 0;
                 $commission_transaction_val_inter_pay = 0;
                 $commission_transaction_val_inter_pay_after = 0;
@@ -1228,16 +1232,6 @@ class IntersPaymentController extends Controller
 
 
                             if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-                                // Verify amount send maxi
-                                // $convertion_transaction_val_inter_receive = (float)   $default_valeur  /   (float) $countrie->currencie->value;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
 
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
@@ -1586,6 +1580,7 @@ class IntersPaymentController extends Controller
                             if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
                                 $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $amount_paiement_robus;
+
                             } else {
 
                                 $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;

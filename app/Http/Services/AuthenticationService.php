@@ -78,6 +78,7 @@ class AuthenticationService
                 try {
                         $user = SidUser::whereStatus(true)->whereEmail($email)->first();
 
+                        // dd($user);
 
                         if (!$user) {
                                 return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée', 'catch' => true ];

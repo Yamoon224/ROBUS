@@ -7,8 +7,6 @@ WHERE id BETWEEN 5666 AND 5686;
 
 <!-- UPdate replace -->
 UPDATE `level_countries`
-Ghana vers Belgique Robus
-Ghana vers Algerie  Robus
 SET name = REPLACE(REPLACE(name, ' la ', ' '), ' le ', ' ')
 WHERE id BETWEEN 5666 AND 5686;
 
