@@ -7,19 +7,13 @@ use Livewire\Component;
 use App\Models\AdminsCom;
 use App\Mail\CodeValidated;
 use App\Models\Sid\SidUser;
-use App\Models\WalletDrawal;
 use Livewire\WithPagination;
-use App\Services\DataService;
-use App\Events\UserNotifEvent;
 use App\Models\Banks\BankCard;
 use App\Models\Costs\BankCost;
 use App\Models\Wallets\Wallet;
 use Illuminate\Support\Carbon;
 use App\Events\AdminNotifEvent;
-use App\Events\UpdateBankEvent;
-use App\Models\Costs\InterCost;
 use App\Events\ChooseInterEvent;
-use App\Events\UpdateInterEvent;
 use App\Models\Payments\Deposit;
 use App\Models\Payments\Payment;
 use App\Models\Costs\DepositCost;
@@ -31,22 +25,17 @@ use App\Models\Providers\Provider;
 use App\Models\Wallets\WalletBank;
 use Illuminate\Support\Facades\DB;
 use App\Events\ChooseVirementEvent;
-use App\Events\UpdatePaiementEvent;
-use App\Events\UpdateTransferEvent;
 use App\Models\Wallets\WalletInter;
-use App\Events\UpdateAllWalletEvent;
 use App\Models\Invoices\InvoiceBank;
 use App\Models\Payments\PaymentBank;
 use App\Models\Payments\Transaction;
 use App\Models\Wallets\WalletReload;
-use App\Services\PhoneCreditService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Events\ChooseReloadCardEvent;
 use App\Events\CreateWalletBankEvent;
-use App\Events\UpdateReloadCardEvent;
 use App\Models\Costs\PhoneCreditCost;
 use App\Models\Costs\TransactionCost;
 use App\Models\Invoices\InvoiceInter;
@@ -54,8 +43,6 @@ use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletPayment;
 use App\Events\ChoosePhoneCreditEvent;
 use App\Events\ChooseTransactionEvent;
-use App\Events\CreateWalletInterEvent;
-use App\Events\UpdatePhoneCreditEvent;
 use App\Models\Invoices\InvoiceDeposit;
 use App\Models\Invoices\InvoicePayment;
 use App\Notifications\UserNotification;
@@ -2720,7 +2707,7 @@ class Transfers extends Component
         $this->currentStep = $step;
     }
 
-  // Begin add Transactions
+    // Begin add Transactions
     // Add Paiment
     public function addPaiement()
     {
@@ -6331,9 +6318,9 @@ class Transfers extends Component
         }
     }
 
-//     End add Transactions
+    //     End add Transactions
 
-// Begin Edit informations
+    // Begin Edit informations
     public function editReloadCard($id, $state)
     {
         $check = WalletDeposit::whereId($id)->first();
@@ -6509,9 +6496,9 @@ class Transfers extends Component
         $this->emit($state);
     }
 
-// End edit Information
+    // End edit Information
 
-//     Begin Update informations
+    //     Begin Update informations
 
     // Update Phone
     public function updatePhoneCredit()
@@ -6524,7 +6511,7 @@ class Transfers extends Component
         $admins = $transactionData['admins'];
         $admin_civ = $transactionData['admin_civ'];
         $percent_robus = PhoneCreditCost::whereId(1)->first();
-       
+
 
         try {
             if ($check) {
@@ -6556,46 +6543,45 @@ class Transfers extends Component
                                 $commission_transaction = $check->amount;
 
                                 $paymentPhoneCredit = $this->createPhoneCredit($check, $transactionCode, $transactionCompiCode);
-                                
+
                                 $this->createInvoicePhoneCredit($check, $paymentPhoneCredit);
-    
+
                                 $this->updateUserWallet($commission_transaction);
-                              
+
                                 if (Auth::guard('web')->user()->is_distributer == 1) {
-    
+
                                     $this->updateAdminCom($check, $commission_transaction);
-                                } 
-                                   
+                                }
+
                                 $this->handleAdminCommission($check, $admin_civ);
-    
+
                                 $this->notifyUsers($check, $admins, 'Credit téléphonique', 'Demande de paiement de crédit a été validé', 'Demande de paiement de crédit validé');
-                                
-        
+
+
                                 $message = 'Votre demande de credit de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été acceptée avec succès ' .
+                                    'Robus vous remercie';
 
                                 if ($this->shouldNotifyCI($check)) {
 
-                                    $this->sendSuccessMessageNotification($check , $message);
+                                    $this->sendSuccessMessageNotification($check, $message);
                                 }
-    
+
                                 $this->resetPhoneCreditField();
                                 $this->emit('modal-hide-phoneCredit-validated');
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('success', 'Achat de credit accepté !');
                                 if ($admins->count() > 0) {
                                     $this->notifyAdmins($admins);
-                                }   
+                                }
                                 $this->sendMailPhoneCreditNotification($check);
-
                             } else {
 
                                 $this->resetPhoneCreditField();
@@ -6610,34 +6596,33 @@ class Transfers extends Component
 
                                 $commission = $check->amount + $check->costs_amount;
 
+                                $this->updateReloadWallet($check, $commission);
 
-                                $this->updateReloadWallet($check ,$commission);
+                                $this->updateWalletNull($check, $commission);
 
-                                $this->updateWalletNull($check ,$commission);
-                               
 
                                 $this->handleReloadClientCommission($check, $admin_civ);
 
-                                $paymentPhoneCredit = $this->createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode);
+                                $paymentPhoneCredit  = $this->createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode);
 
                                 $this->createInvoicePhoneCredit($check, $paymentPhoneCredit);
 
                                 $this->notifyUsers($check, $admins, 'Credit téléphonique', 'Demande de crédit a été refusé', 'Demande de crédit refusé');
 
                                 $message = 'Votre demande de crédit de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été refusée ' .
+                                    'Robus vous remercie';
 
                                 if ($this->shouldNotifyCI($check)) {
 
-                                    $this->sendSuccessMessageNotification($check , $message);
+                                    $this->sendSuccessMessageNotification($check, $message);
                                 }
 
                                 if ($admins->count() > 0) {
@@ -6649,7 +6634,6 @@ class Transfers extends Component
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Achat de credit refusé !');
                                 $this->sendMailPhoneCreditNotification($check);
-                                
                             } else {
                                 $this->resetPhoneCreditField();
                                 $this->emit('modal-hide-phoneCredit-validated');
@@ -6662,11 +6646,11 @@ class Transfers extends Component
 
                                 $commission = $check->amount +  $check->costs_amount;
 
-                                
-                                $this->updateReloadWallet($check ,$commission);
 
-                                $this->updateWalletNull($check ,$commission);
-                               
+                                $this->updateReloadWallet($check, $commission);
+
+                                $this->updateWalletNull($check, $commission);
+
 
                                 $this->handleReloadClientCommission($check, $admin_civ);
 
@@ -6677,19 +6661,19 @@ class Transfers extends Component
                                 $this->notifyUsers($check, $admins, 'Credit téléphonique', 'Demande de crédit a été remboursée', 'Demande de crédit remboursée');
 
                                 $message = 'Votre demande de crédit de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été remboursée ' .
-                                'Robus vous remercie';
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été remboursée ' .
+                                    'Robus vous remercie';
 
                                 if ($this->shouldNotifyCI($check)) {
 
-                                    $this->sendSuccessMessageNotification($check , $message);
+                                    $this->sendSuccessMessageNotification($check, $message);
                                 }
 
                                 if ($admins->count() > 0) {
@@ -6701,7 +6685,6 @@ class Transfers extends Component
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Achat de crédit remboursée !');
                                 $this->sendMailPhoneCreditNotification($check);
-                              
                             } else {
                                 $this->resetPhoneCreditField();
                                 $this->emit('modal-hide-phoneCredit-validated');
@@ -6745,7 +6728,7 @@ class Transfers extends Component
         }
     }
 
- 
+
     public function updateReloadCard()
     {
         $check = WalletDeposit::whereId($this->reloadcardId)->first();
@@ -6784,25 +6767,25 @@ class Transfers extends Component
                         if ($check->status == 'SUCCESS') {
 
 
-                                $commission_transaction =  $check->amount_received;
+                            $commission_transaction =  $check->amount_received;
 
 
-                                $depositWallet = $this->createDeposit($check, $transactionCode, $transactionCompiCode);
-                                
-                                $this->createInvoiceReloadCard($check, $depositWallet);
+                            $depositWallet = $this->createDeposit($check, $transactionCode, $transactionCompiCode);
 
-                                $this->updateUserWallet($commission_transaction);
-                                
-                                if (Auth::guard('web')->user()->is_distributer == 1) {
+                            $this->createInvoiceReloadCard($check, $depositWallet);
 
-                                        $this->updateAdminCom($check, $commission_transaction);
-                                } 
-                                        
+                            $this->updateUserWallet($commission_transaction);
 
-                                $this->notifyUsers($check, $admins, 'Réchargement de carte', 'Demande de réchargement de carte a été validé', 'Demande de rechargement de carte validé');
-                                
+                            if (Auth::guard('web')->user()->is_distributer == 1) {
 
-                                $message = 'Votre demande de rechargement de carte de ' .
+                                $this->updateAdminCom($check, $commission_transaction);
+                            }
+
+
+                            $this->notifyUsers($check, $admins, 'Réchargement de carte', 'Demande de réchargement de carte a été validé', 'Demande de rechargement de carte validé');
+
+
+                            $message = 'Votre demande de rechargement de carte de ' .
                                 $check->amount .
                                 $check->wallet->currencie->code .
                                 ' ' .
@@ -6813,10 +6796,10 @@ class Transfers extends Component
                                 ' a été acceptée avec succès ' .
                                 'Robus vous remercie';
 
-                                if ($this->shouldNotifyCI($check)) {
+                            if ($this->shouldNotifyCI($check)) {
 
-                                        $this->sendSuccessMessageNotification($check , $message);
-                                }
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
 
                             $valeur_amount_com = $check->adminCom->amount;
 
@@ -6824,7 +6807,7 @@ class Transfers extends Component
 
                                 if ($valeur_amount_com != null) {
 
-                                     $this->handleUnderDistributorCommission($check, $admin_civ);
+                                    $this->handleUnderDistributorCommission($check, $admin_civ);
                                 } else {
                                     $this->resetReloadCardField();
                                     $this->emit('modal-hide-reloadCard');
@@ -6834,7 +6817,6 @@ class Transfers extends Component
                             } else {
 
                                 $this->handleAdminCommission($check, $admin_civ);
-
                             }
 
                             $this->resetReloadCardField();
@@ -6843,35 +6825,30 @@ class Transfers extends Component
                             $this->emit('success', 'Rechargement acceptée !');
 
                             if ($admins->count() > 0) {
-                                    $this->notifyAdmins($admins);
-                            }   
+                                $this->notifyAdmins($admins);
+                            }
 
                             $this->sendMailReloadCardNotification($check);
-
-                         
                         } elseif ($check->status == 'ERROR') {
 
-                                if ($check->wallet->sidUser->is_under_distributer == 1)
-                                {
-                                        $commission =  $check->amount;
+                            if ($check->wallet->sidUser->is_under_distributer == 1) {
+                                $commission =  $check->amount;
+                            } else {
+                                $commission =  $check->amount + $check->costs_amount;
+                            }
 
-                                }else {
-                                        $commission =  $check->amount + $check->costs_amount;
+                            $this->updateReloadWallet($check, $commission);
 
-                                }
+                            $this->updateWalletNull($check, $commission);
 
-                                $this->updateReloadWallet($check ,$commission);
+                            // Valeur amount commission distributeur
+                            $valeur_amount_com = $check->adminCom->amount;
 
-                                $this->updateWalletNull($check ,$commission);
+                            $this->handleReloadClientCommission($check, $admin_civ);
 
-                                // Valeur amount commission distributeur
-                                $valeur_amount_com = $check->adminCom->amount;
+                            $this->notifyUsers($check, $admins, 'Réchargement de carte', 'Demande de réchargement de carte a été refusée', 'Demande de rechargement de carte refusée');
 
-                                $this->handleReloadClientCommission($check, $admin_civ);
-
-                                $this->notifyUsers($check, $admins, 'Réchargement de carte', 'Demande de réchargement de carte a été refusée', 'Demande de rechargement de carte refusée');
-                                
-                                $message = 'Votre demande de rechargement de carte de ' .
+                            $message = 'Votre demande de rechargement de carte de ' .
                                 $check->amount .
                                 $check->wallet->currencie->code .
                                 ' ' .
@@ -6882,49 +6859,45 @@ class Transfers extends Component
                                 ' a été refusée ' .
                                 'Robus vous remercie';
 
-                                if ($this->shouldNotifyCI($check)) {
+                            if ($this->shouldNotifyCI($check)) {
 
-                                     $this->sendSuccessMessageNotification($check , $message);
-                                }
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
 
 
-                                $depositWallet = $this->createErrorDeposit($check, $transactionCode, $transactionCompiCode);
-                                
-                                $this->createInvoiceReloadCard($check, $depositWallet);
-                                $this->resetReloadCardField();
-                                $this->emit('modal-hide-reloadCard-validated');
-                                $this->emit('modal-hide-reloadCard');
-                                $this->emit('error', 'Rechargement refusé !');
+                            $depositWallet = $this->createErrorDeposit($check, $transactionCode, $transactionCompiCode);
 
-                                if ($admins->count() > 0) {
-                                        $this->notifyAdmins($admins);
-                                }   
-    
-                                $this->sendMailReloadCardNotification($check);
+                            $this->createInvoiceReloadCard($check, $depositWallet);
+                            $this->resetReloadCardField();
+                            $this->emit('modal-hide-reloadCard-validated');
+                            $this->emit('modal-hide-reloadCard');
+                            $this->emit('error', 'Rechargement refusé !');
 
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
+                            $this->sendMailReloadCardNotification($check);
                         } elseif ($check->status == 'REFUND') {
 
-                                if ($check->wallet->sidUser->is_under_distributer == 1)
-                                {
-                                        $commission =  $check->amount;
+                            if ($check->wallet->sidUser->is_under_distributer == 1) {
+                                $commission =  $check->amount;
+                            } else {
+                                $commission =  $check->amount + $check->costs_amount;
+                            }
 
-                                }else {
-                                        $commission =  $check->amount + $check->costs_amount;
+                            $this->updateReloadWallet($check, $commission);
 
-                                }
+                            $this->updateWalletNull($check, $commission);
 
-                                $this->updateReloadWallet($check ,$commission);
+                            // Valeur amount commission distributeur
+                            $valeur_amount_com = $check->adminCom->amount;
 
-                                $this->updateWalletNull($check ,$commission);
+                            $this->handleReloadClientCommission($check, $admin_civ);
 
-                                // Valeur amount commission distributeur
-                                $valeur_amount_com = $check->adminCom->amount;
+                            $this->notifyUsers($check, $admins, 'Réchargement de carte', 'Demande de réchargement de carte a été remboursée', 'Demande de rechargement de carte remboursée');
 
-                                $this->handleReloadClientCommission($check, $admin_civ);
-
-                                $this->notifyUsers($check, $admins, 'Réchargement de carte', 'Demande de réchargement de carte a été remboursée', 'Demande de rechargement de carte remboursée');
-                                
-                                $message = 'Votre demande de rechargement de carte de ' .
+                            $message = 'Votre demande de rechargement de carte de ' .
                                 $check->amount .
                                 $check->wallet->currencie->code .
                                 ' ' .
@@ -6935,25 +6908,25 @@ class Transfers extends Component
                                 ' a été remboursée ' .
                                 'Robus vous remercie';
 
-                                if ($this->shouldNotifyCI($check)) {
+                            if ($this->shouldNotifyCI($check)) {
 
-                                     $this->sendSuccessMessageNotification($check , $message);
-                                }
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
 
 
-                                $depositWallet = $this->createErrorDeposit($check, $transactionCode, $transactionCompiCode);
-                                
-                                $this->createInvoiceReloadCard($check, $depositWallet);
-                                $this->resetReloadCardField();
-                                $this->emit('modal-hide-reloadCard-validated');
-                                $this->emit('modal-hide-reloadCard');
-                                $this->emit('error', 'Rechargement remboursée !');
+                            $depositWallet = $this->createErrorDeposit($check, $transactionCode, $transactionCompiCode);
 
-                                if ($admins->count() > 0) {
-                                        $this->notifyAdmins($admins);
-                                }   
-    
-                                $this->sendMailReloadCardNotification($check);
+                            $this->createInvoiceReloadCard($check, $depositWallet);
+                            $this->resetReloadCardField();
+                            $this->emit('modal-hide-reloadCard-validated');
+                            $this->emit('modal-hide-reloadCard');
+                            $this->emit('error', 'Rechargement remboursée !');
+
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
+                            $this->sendMailReloadCardNotification($check);
                         } else {
                             $this->resetReloadCardField();
                             $this->emit('modal-hide-reloadCard-validated');
@@ -6990,7 +6963,7 @@ class Transfers extends Component
             $this->emit('error', 'Vous avez cliquez deux fois Ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
     }
-  
+
     public function updateTransaction()
     {
 
@@ -7027,50 +7000,45 @@ class Transfers extends Component
                     $this->transactionStatus = "";
                     $this->transactionId = "";
 
-                    if ($check->updated_by == Auth::guard('web')->user()->id) {     
+                    if ($check->updated_by == Auth::guard('web')->user()->id) {
 
                         if ($check->status == 'SUCCESS') {
 
 
                             $transaction = $this->createTransaction($check, $transactionCode, $transactionCompiCode);
                             $this->createInvoiceTransaction($check, $transaction);
-
                             $this->updateUserWallet($commission_transaction);
-                          
 
                             if (Auth::guard('web')->user()->is_distributer == 1) {
 
                                 $this->updateAdminCom($check, $commission_transaction);
-                            } 
-                               
+                            }
+
                             if ($this->shouldNotifyCI($check)) {
                                 $this->sendSuccessNotification($check);
-                             }
+                            }
 
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
                                 //  Send valeur in Admin
                                 $this->handleUnderDistributorCommission($check, $admin_civ);
-                          
                             } else {
 
                                 //  Send valeur in Admin
                                 $this->handleAdminCommission($check, $admin_civ);
-
                             }
 
                             $this->notifyUsers($check, $admins, 'Transfers', 'Demande de transfert a été validé', 'Demande de transfers validé');
-                            
+
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
-                            }                    
+                            }
                             $this->cancelTransactionField();
                             $this->emit('modal-hide-transfers-validated');
                             $this->emit('modal-hide-transfers');
                             $this->emit('success', 'Transfers accepte !');
                             $this->sendMailNotification($check);
-
                         } elseif ($check->status == 'ERROR') {
 
 
@@ -7082,23 +7050,21 @@ class Transfers extends Component
                                     $commission =  $check->amount;
 
 
-                                    $this->updateReloadWallet($check ,$commission);
+                                    $this->updateReloadWallet($check, $commission);
 
-                                    $this->updateWalletNull($check ,$commission);
-                                   
+                                    $this->updateWalletNull($check, $commission);
+
 
                                     $this->handleReloadCommission($check, $admin_civ);
-
                                 } else {
 
                                     $commission =  $check->amount + $check->costs_amount;
 
-                                    $this->updateReloadWallet($check ,$commission);
+                                    $this->updateReloadWallet($check, $commission);
 
-                                    $this->updateWalletNull($check ,$commission);
+                                    $this->updateWalletNull($check, $commission);
 
                                     $this->handleReloadClientCommission($check, $admin_civ);
-
                                 }
                             } else {
 
@@ -7110,12 +7076,11 @@ class Transfers extends Component
                                 }
 
 
-                                $this->updateReloadWallet($check ,$commission);
+                                $this->updateReloadWallet($check, $commission);
 
-                                $this->updateWalletNull($check ,$commission);
+                                $this->updateWalletNull($check, $commission);
 
                                 $this->handleReloadClientCommission($check, $admin_civ);
-
                             }
 
                             $transaction = $this->createErrorTransaction($check, $transactionCode, $transactionCompiCode);
@@ -7124,20 +7089,19 @@ class Transfers extends Component
                             $this->notifyUsers($check, $admins, 'Transfers', 'Demande de transfert a été refusé', 'Demande de transfers refusé');
 
                             if ($this->shouldNotifyCI($check)) {
-                                 $this->sendErrorNotification($check);
+                                $this->sendErrorNotification($check);
                             }
-                        
+
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
-                          
+
                             $this->resetTransactionField();
                             $this->emit('modal-hide-transfers-validated');
                             $this->emit('modal-hide-transfers');
                             $this->emit('warning', 'Transfers Refusé !');
 
                             $this->sendMailNotification($check);
-
                         } elseif ($check->status == 'REFUND') {
 
                             if ($check->wallet->sidUser->is_under_distributer == 1) {
@@ -7147,13 +7111,12 @@ class Transfers extends Component
 
                                     $commission =  $check->amount;
 
-                                    $this->updateReloadWallet($check ,$commission);
+                                    $this->updateReloadWallet($check, $commission);
 
-                                    $this->updateWalletNull($check ,$commission);
-                                   
+                                    $this->updateWalletNull($check, $commission);
+
 
                                     $this->handleReloadCommission($check, $admin_civ);
-
                                 } else {
 
 
@@ -7165,25 +7128,23 @@ class Transfers extends Component
                                         $commission =  $check->amount + $check->costs_amount;
                                     }
 
-                                    $this->updateReloadWallet($check ,$commission);
+                                    $this->updateReloadWallet($check, $commission);
 
-                                    $this->updateWalletNull($check ,$commission);
+                                    $this->updateWalletNull($check, $commission);
 
                                     $this->handleReloadClientCommission($check, $admin_civ);
-                               
                                 }
                             } else {
 
-                                if ($check->provider->id != 9) 
-                                {
-                                     $commission =  $check->amount;
+                                if ($check->provider->id != 9) {
+                                    $commission =  $check->amount;
                                 } else {
                                     $commission =  $check->amount + $check->costs_amount;
                                 }
 
-                                $this->updateReloadWallet($check ,$commission);
+                                $this->updateReloadWallet($check, $commission);
 
-                                $this->updateWalletNull($check ,$commission);
+                                $this->updateWalletNull($check, $commission);
 
                                 $this->handleReloadClientCommission($check, $admin_civ);
                             }
@@ -7195,9 +7156,9 @@ class Transfers extends Component
                             $this->notifyUsers($check, $admins, 'Transfers', 'Demande de transfert a été remboursée', 'Demande de transfers remboursée');
 
                             if ($this->shouldNotifyCI($check)) {
-                                 $this->sendRefundNotification($check);
-                             }
-                        
+                                $this->sendRefundNotification($check);
+                            }
+
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
@@ -7207,9 +7168,7 @@ class Transfers extends Component
                             $this->emit('modal-hide-transfers');
                             $this->emit('warning', 'Transfers Refusé !');
                             $this->sendMailNotification($check);
-
                         }
-
                     } else {
                         $this->cancelTransactionField();
                         $this->emit('modal-hide-transfers-validated');
@@ -7270,7 +7229,6 @@ class Transfers extends Component
                 $this->emit('menu-transaction-active');
                 $this->emit('info', 'Vous avez choisi transaction');
             }
-          
         } catch (\Exception $exception) {
             $this->emit('menu-transaction-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
@@ -7314,22 +7272,22 @@ class Transfers extends Component
                         if ($check->status == 'SUCCESS') {
 
 
-                                $commission_transaction =  $check->amount;
+                            $commission_transaction =  $check->amount;
 
-                                $paymentCreated = $this->createPayment($check, $transactionCode, $transactionCompiCode);
-                                
-                                $this->createInvoicePayment($check, $paymentCreated);
+                            $paymentCreated = $this->createPayment($check, $transactionCode, $transactionCompiCode);
 
-                                $this->updateUserWallet($commission_transaction);
-                                
-                                if (Auth::guard('web')->user()->is_distributer == 1) {
+                            $this->createInvoicePayment($check, $paymentCreated);
 
-                                     $this->updateAdminCom($check, $commission_transaction);
-                                } 
-                                        
-                                $this->notifyUsers($check, $admins, 'Paiement de facture', 'Demande de paiement de facture a été validé', 'Demande de paiement de facture validé');
-                                
-                                $message = 'Votre demande de paiement de facture de ' .
+                            $this->updateUserWallet($commission_transaction);
+
+                            if (Auth::guard('web')->user()->is_distributer == 1) {
+
+                                $this->updateAdminCom($check, $commission_transaction);
+                            }
+
+                            $this->notifyUsers($check, $admins, 'Paiement de facture', 'Demande de paiement de facture a été validé', 'Demande de paiement de facture validé');
+
+                            $message = 'Votre demande de paiement de facture de ' .
                                 $check->amount .
                                 $check->wallet->currencie->code .
                                 ' ' .
@@ -7340,278 +7298,124 @@ class Transfers extends Component
                                 ' a été acceptée avec succès ' .
                                 'Robus vous remercie';
 
-                                if ($this->shouldNotifyCI($check)) {
+                            if ($this->shouldNotifyCI($check)) {
 
-                                    $this->sendSuccessMessageNotification($check , $message);
-                                }
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
 
-                                 $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom->amount;
 
-                                if ($check->wallet->sidUser->is_under_distributer == true) {
+                            if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                        if ($valeur_amount_com != null) {
+                                if ($valeur_amount_com != null) {
 
-                                            $this->handleUnderDistributorCommission($check, $admin_civ);
-                                        } else {
-                                        $this->resetPaiementField();
-                                        $this->emit('modal-hide-paiement');
-                                        $this->emit('success', 'Paiement Accepté !');
-                                        $this->emit('success', 'Paiement Acceptée sans commission sous-distibuteur !');
-                                        }
+                                    $this->handleUnderDistributorCommission($check, $admin_civ);
                                 } else {
-
-                                        $this->handleAdminCommission($check, $admin_civ);
-
+                                    $this->resetPaiementField();
+                                    $this->emit('modal-hide-paiement');
+                                    $this->emit('success', 'Paiement Accepté !');
+                                    $this->emit('success', 'Paiement Acceptée sans commission sous-distibuteur !');
                                 }
+                            } else {
 
-                          $this->resetPaiementField();
-                          $this->emit('modal-hide-paiement');
-                           $this->emit('success', 'Paiement Accepté !');
+                                $this->handleAdminCommission($check, $admin_civ);
+                            }
+
+                            $this->resetPaiementField();
+                            $this->emit('modal-hide-paiement');
+                            $this->emit('success', 'Paiement Accepté !');
 
                             if ($admins->count() > 0) {
-                                    $this->notifyAdmins($admins);
-                            }   
+                                $this->notifyAdmins($admins);
+                            }
 
                             $this->sendMailPaiementNotification($check);
-
                         } elseif ($check->status == 'ERROR') {
 
 
                             $commission =  $check->amount + $check->costs_amount;
 
-                            $check->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+' . $commission),
-                            ]);
+                            $this->updateReloadWallet($check, $commission);
 
-                            $wallet_received =  $check->amount_solde;
+                            $this->updateWalletNull($check, $commission);
 
-                            $amount_solde = (float)$wallet_received  +   (float)$commission;
 
-                            // Update commission
-                            $check->update([
-                                'commissions' => 0,
-                                'commissions_admin' => 0,
-                                'amount_solde' => $amount_solde,
-                            ]);
+                            $this->handleReloadClientCommission($check, $admin_civ);
 
-                            // Valeur amount commission distributeur
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $paymentCreated = $this->createErrorPayment($check, $transactionCode, $transactionCompiCode);
 
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
+                            $this->createInvoicePayment($check, $paymentCreated);
 
-                                $count_admin = $admin_civ->count();
+                            $this->notifyUsers($check, $admins, 'Paiement de facture', 'Demande de paiement de facture a été refusé', 'Demande de paiement de facture refusé');
 
-                                $valeur_single = $valeur_amount_com / $count_admin;
+                            $message = 'Votre demande de paiement de facture de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' le ' .
+                                $check->updated_at .
+                                ' a été refusé ' .
+                                'Robus vous remercie';
 
-                                foreach ($admin_civ as $user) {
-                                    $admin_single = SidUser::find($user->id);
-                                    $check->adminCom->update([
-                                        'amount' =>   0,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'description' => 'Remboursement de la commission client',
-                                        'status'  => "ERROR",
-                                    ]);
-                                    // $admin_single->wallet->update([
-                                    //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    //     'amount' => DB::raw('amount-' . $valeur_single),
-                                    // ]);
-                                }
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
                             }
-
-                            Payment::create([
-                                'wallet_payment_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' =>
-                                'RB_' .
-                                    $check->provider->name .
-                                    '_' .
-                                    $transactionCode,
-                                'operator_transaction_name' => $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => 0.0,
-                                'fee_amount' => 0.0,
-                                'received_amount' => $check->amount + $check->costs_amount,
-                                'status' => $check->status,
-                            ]);
-
-                            if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
-
-                                $message = 'Votre demande de paiement de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' le ' .
-                                    $check->updated_at .
-                                    ' a été refusée' .
-                                    ' Robus vous remercie';
-
-                                $encode = substr($check->wallet->sidUser->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-
-                            $msg_title = 'Paiement de facture';
-                            $msg = 'Demande de paiement a été refusé';
-                            $check->wallet->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // event(new UpdatePaiementEvent($check));
-                            // event(new UserNotifEvent($notifs));
-                            Notification::send(
-                                $admins,
-                                new AdminNotification('Demande de transfers refusé')
-                            );
 
                             if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                    $this->resetPaiementField();
-                                    $this->emit('modal-hide-paiement-validated');
-                                    $this->emit('modal-hide-paiement');
-                                    $this->emit('error', 'Payment Refusé !');
-                                }
+                                $this->notifyAdmins($admins);
                             }
 
                             $this->resetPaiementField();
                             $this->emit('modal-hide-paiement-validated');
                             $this->emit('modal-hide-paiement');
                             $this->emit('error', 'Payment Refusé !');
-                            $notify = new MailController;
-                            $notify->newPaiement($check);
+                            $this->sendMailPaiementNotification($check);
                         } elseif ($check->status == 'REFUND') {
+
 
                             $commission =  $check->amount + $check->costs_amount;
 
-                            $check->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+' . $commission),
-                            ]);
+                            $this->updateReloadWallet($check, $commission);
 
-                            $wallet_received =  $check->amount_solde;
+                            $this->updateWalletNull($check, $commission);
 
-                            $amount_solde = (float)$wallet_received  +   (float)$commission;
 
-                            // Update commission
-                            $check->update([
-                                'commissions' => 0,
-                                'commissions_admin' => 0,
-                                'amount_solde' => $amount_solde,
-                            ]);
+                            $this->handleReloadClientCommission($check, $admin_civ);
 
-                            // Valeur amount commission distributeur
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $paymentCreated = $this->createErrorPayment($check, $transactionCode, $transactionCompiCode);
 
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
+                            $this->createInvoicePayment($check, $paymentCreated);
 
-                                $count_admin = $admin_civ->count();
+                            $this->notifyUsers($check, $admins, 'Paiement de facture', 'Demande de paiement de facture a été remboursée', 'Demande de paiement de facture remboursée');
 
-                                $valeur_single = $valeur_amount_com / $count_admin;
+                            $message = 'Votre demande de paiement de facture de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' le ' .
+                                $check->updated_at .
+                                ' a été remboursée ' .
+                                'Robus vous remercie';
 
-                                foreach ($admin_civ as $user) {
-                                    $admin_single = SidUser::find($user->id);
-                                    $valeur_decrement = $check->adminCom->update([
-                                        'amount' =>   0,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'status'  => "ERROR",
-                                        'description' => 'Remboursement de la commission client',
-                                    ]);
-                                    // $admin_single->wallet->update([
-                                    //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                    //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    //     'amount' => DB::raw('amount-' . $valeur_single),
-                                    // ]);
-                                }
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
                             }
-                            Payment::create([
-                                'wallet_payment_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' =>
-                                'RB_' .
-                                    $check->provider->name .
-                                    '_' .
-                                    $transactionCode,
-                                'operator_transaction_name' => $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => 0.0,
-                                'fee_amount' => 0.0,
-                                'received_amount' => $check->amount + $check->costs_amount,
-                                'status' => $check->status,
-                            ]);
-
-                            if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
-
-                                $message =
-                                    'Votre demande de paiement de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' a ' .
-                                    $check->updated_at .
-                                    ' a été remboursée avec succès ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr($check->wallet->sidUser->phone, -10);
-
-                                 http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-
-                            }
-
-                            $msg_title = 'Paiement de facture';
-                            $msg = 'Demande de paiement a été remboursé';
-                            $check->wallet->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // event(new UpdatePaiementEvent($check));
-                            // event(new UserNotifEvent($notifs));
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de transfers remboursé'
-                                )
-                            );
 
                             if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
+                                $this->notifyAdmins($admins);
                             }
 
                             $this->resetPaiementField();
-                            $this->emit('modal-hide-paiement');
                             $this->emit('modal-hide-paiement-validated');
-                            $this->emit('info', 'Payment remboursé !');
-                            $notify = new MailController;
-                            $notify->newPaiement($check);
+                            $this->emit('modal-hide-paiement');
+                            $this->emit('error', 'Payment Refusé !');
+                            $this->sendMailPaiementNotification($check);
                         } else {
                             $this->resetPaiementField();
                             $this->emit('modal-hide-paiement');
@@ -7694,7 +7498,7 @@ class Transfers extends Component
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
     }
-  
+
     public function ChooseUpdateInter($id)
     {
         $walletUpdate = WalletInter::findOrFail($id);
@@ -7847,10 +7651,10 @@ class Transfers extends Component
         }
     }
 
-   // End Choose   
-   
-   public function updateVirement()
-   {
+    // End Choose   
+
+    public function updateVirement()
+    {
         $check = WalletBank::whereId($this->virementId)->first();
         $transactionData = $this->generateTransactionData();
         $transactionCode = $transactionData['transactionCode'];
@@ -7858,556 +7662,235 @@ class Transfers extends Component
         $user_auth = $transactionData['user_auth'];
         $admins = $transactionData['admins'];
         $admin_civ = $transactionData['admin_civ'];
-       try {
-
-           if ($check) {
-
-               $this->validate([
-                   'virementStatus' => 'required',
-                   'password_transaction' => 'required',
-               ]);
-
-
-               if (Hash::check($this->password_transaction, $user_auth->password)) {
-
-                   $check->update([
-                       'description' => $this->virementDescription_edit ?? null,
-                       'updated_by' => Auth::guard('web')->user()->id,
-                       'status' => $this->virementStatus,
-                   ]);
-
-                   $this->password_transaction = "";
-                   $this->virementStatus = "";
-                   $this->virementId = "";
-
-                   if ($check->updated_by == Auth::guard('web')->user()->id) {
-
-
-                       if ($check->status == 'SUCCESS') {
-
-                           $paymentBank = PaymentBank::create([
-                               'wallet_bank_id' => $check->id,
-                               'sid_user_id' => Auth::guard('web')->user()->id,
-                               'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
-                               'operator_transaction_name' => $check->provider->name,
-                               'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                               'pay_amount' => $check->amount,
-                               'fee_amount' => $check->costs_amount,
-                               'received_amount' =>  $check->amount,
-                               'status' => $check->status,
-                           ]);
-
-                           InvoiceBank::create([
-                               'title' => 'Virement bancaire',
-                               'wallet_bank_id' => $check->id,
-                               'payment_bank_id' => $paymentBank->id,
-                               'company_id' => Auth::guard('web')->user()->company->id,
-                               'status' => $check->status,
-                               'created_by' => Auth::guard('web')->user()->id,
-                           ]);
-
-                           $commission_transaction = $check->amount_received;
-
-                           if (Auth::guard('web')->user()->is_distributer == 1) {
-
-
-                               Auth::guard('web')->user()->wallet->update([
-                                   'reload_by' => Auth::guard('web')->user()->firstname .
-                                       ' ' . Auth::guard('web')->user()->lastname,
-                                   'sid_user_relod' => Auth::guard('web')->user()->id,
-                                   'amount' => DB::raw('amount+' . $commission_transaction),
-                               ]);
-
-                               // Send valeur historique distributer
-                               $check->adminCom->update([
-                                   // 'amount' => $valeur_single,
-                                   'amount_distributer' => $commission_transaction,
-                                   'sid_user_id' => Auth::guard('web')->user()->id,
-                                   'description_distributer' => 'Validation distributeur',
-                               ]);
-                           } else {
-
-                               Auth::guard('web')->user()->wallet->update([
-                                   'reload_by' => Auth::guard('web')->user()->firstname .
-                                       ' ' . Auth::guard('web')->user()->lastname,
-                                   'sid_user_relod' => Auth::guard('web')->user()->id,
-                                   'amount' => DB::raw('amount+' . $commission_transaction),
-                               ]);
-                           }
-
-
-                           if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
-
-                               $message =
-                                   'Votre demande de paiement de ' .
-                                   $check->amount .
-                                   $check->wallet->currencie->code .
-                                   ' ' .
-                                   'par ' .
-                                   $check->provider->name .
-                                   ' a ' .
-                                   $check->updated_at .
-                                   ' a été validée avec succès ' .
-                                   'Robus vous remercie';
-
-                               $encode = substr($check->wallet->sidUser->phone, -10);
-
-                               http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-
-                           }
-
-                           $msg_title = 'Versement banquaire';
-                           $msg = 'Votre versement a été validé';
-                           $check->wallet->sidUser->notify(
-                               new UserNotification([
-                                   'title' => $msg_title,
-                                   'message' => $msg,
-                               ])
-                           );
-                           // $notifs = $check->wallet->sidUser->unreadNotifications;
-                           // event(new UserNotifEvent($notifs));
-                           // event(new UpdateBankEvent($check));
-                           Notification::send(
-                               $admins,
-                               new AdminNotification(
-                                   'Demande de virement a été validée'
-                               )
-                           );
-
-                           $valeur_amount_com = $check->adminCom->amount;
-
-                           if ($check->wallet->sidUser->is_under_distributer == true) {
-                               //  Send valeur in Admin
-                               if ($admin_civ->count() > 0) {
-
-                                   $count_admin = $admin_civ->count();
-
-                                   $valeur_single = $valeur_amount_com / $count_admin;
-
-                                   foreach ($admin_civ as $user) {
-                                       $admin_single = SidUser::find($user->id);
-                                       $check->adminCom->update([
-                                           'amount' =>   $valeur_amount_com,
-                                           'sid_user_id' =>   $admin_single->id,
-                                           'description' => 'Paiement commission sous-distributer',
-                                           'status'  => "SUCCESS",
-                                           'amount_under' =>  $valeur_amount_com,
-                                           'description_underdistributer' =>  'Paiement commission sous-distributer'
-                                       ]);
-
-                                       $admin_single->wallet->update([
-                                           'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                           'sid_user_relod' => Auth::guard('web')->user()->id,
-                                           'amount' => DB::raw('amount-' . $valeur_single),
-                                       ]);
-                                   }
-                               }
-                           } else {
-
-                               //  Send valeur in Admin
-                               if ($admin_civ->count() > 0) {
-
-                                   $count_admin = $admin_civ->count();
-
-                                   $valeur_single = $valeur_amount_com / $count_admin;
-
-                                   foreach ($admin_civ as $user) {
-                                       $admin_single = SidUser::find($user->id);
-                                       $check->adminCom->update([
-                                           'amount' =>   $valeur_amount_com,
-                                           'sid_user_id' =>   $admin_single->id,
-                                           'description' => 'Commission administrateur',
-                                           'status'  => "SUCCESS",
-                                       ]);
-                                       $admin_single->wallet->update([
-                                           'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                           'sid_user_relod' => Auth::guard('web')->user()->id,
-                                           'amount' => DB::raw('amount+' . $valeur_single),
-                                       ]);
-                                   }
-                               }
-                           }
-
-                           if ($admins->count() > 0) {
-
-
-                               foreach ($admins  as $user) {
-
-                                   $admin_single = SidUser::find($user->id);
-
-                                   $notifs = $admin_single->unreadNotifications;
-
-                                   event(new AdminNotifEvent($notifs));
-                               }
-                           }
-                           $this->resetVirementField();
-                           $this->emit('modal-hide-virement');
-                           $this->emit('modal-hide-virement-validated');
-                           $this->emit('success', 'Virement Accepté !');
-                           $notify = new MailController;
-                           $notify->newVirement($check);
-                       } elseif ($check->status == 'ERROR') {
-
-                           if ($check->wallet->sidUser->is_under_distributer == 1) {
-
-                               $commission =  $check->amount;
-
-                               $check->wallet->update([
-                                   'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                   'sid_user_relod' => Auth::guard('web')->user()->id,
-                                   'amount' => DB::raw('amount+' . $commission),
-                               ]);
-
-                               $wallet_received =  $check->amount_solde;
-
-                               $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                               // Update commission
-                               $check->update([
-                                   'commissions' => 0,
-                                   'commissions_admin' => 0,
-                                   'amount_solde' => $amount_solde,
-                               ]);
-                               // Valeur amount commission distributeur
-                               $valeur_amount_com = $check->adminCom->amount;
-                               //  Send valeur in Admin
-                               if ($admin_civ->count() > 0) {
-
-                                   $count_admin = $admin_civ->count();
-
-                                   $valeur_single = $valeur_amount_com / $count_admin;
-
-                                   foreach ($admin_civ as $user) {
-                                       $admin_single = SidUser::find($user->id);
-                                       $valeur_decrement = $check->adminCom->update([
-                                           'amount' =>   0,
-                                           'sid_user_id' =>   $admin_single->id,
-                                           'status'  => "ERROR",
-                                           'description' => 'Remboursement de la commission sous distributeur',
-                                       ]);
-                                       // $admin_single->wallet->update([
-                                       //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                       //     'sid_user_relod' => Auth::guard('web')->user()->id,
-                                       //     'amount' => DB::raw('amount+' . $valeur_single),
-                                       // ]);
-                                   }
-                               }
-                           } else {
-
-                               $commission =  $check->amount + $check->costs_amount;
-
-                               $check->wallet->update([
-                                   'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                   'sid_user_relod' => Auth::guard('web')->user()->id,
-                                   'amount' => DB::raw('amount+' . $commission),
-                               ]);
-
-                               $wallet_received =  $check->amount_solde;
-
-                               $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                               // Update commission
-                               $check->update([
-                                   'commissions' => 0,
-                                   'commissions_admin' => 0,
-                                   'amount_solde' => $amount_solde,
-                               ]);
-
-                               // Valeur amount commission distributeur
-                               $valeur_amount_com = $check->adminCom->amount;
-
-                               //  Send valeur in Admin
-                               if ($admin_civ->count() > 0) {
-
-                                   $count_admin = $admin_civ->count();
-
-                                   $valeur_single = $valeur_amount_com / $count_admin;
-
-                                   foreach ($admin_civ as $user) {
-                                       $admin_single = SidUser::find($user->id);
-                                       $check->adminCom->update([
-                                           'amount' =>   0,
-                                           'sid_user_id' =>   $admin_single->id,
-                                           'status'  => "ERROR",
-                                           'description' => 'Remboursement de la commission client',
-                                       ]);
-                                   }
-                               }
-
-
-                               if ($check->wallet->sidUser->country->code == 'CI') {
-                                   $message =
-                                       'Votre demande de virement de ' .
-                                       $check->amount .
-                                       $check->wallet->currencie->code .
-                                       ' ' .
-                                       'par ' .
-                                       $check->provider->name .
-                                       ' a ' .
-                                       $check->firstname .
-                                       ' ' .
-                                       $check->firstname .
-                                       ' a été refusée' .
-                                       'le ' .
-                                       $check->updated_at .
-                                       ' ' .
-                                       'Robus vous remercie';
-
-                                   $encode = substr($check->wallet->sidUser->phone, -10);
-
-                                   http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-
-                               }
-                           }
-
-                           PaymentBank::create([
-                               'wallet_bank_id' => $check->id,
-                               'sid_user_id' => Auth::guard('web')->user()->id,
-                               'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
-                               'operator_transaction_name' => $check->provider->name,
-                               'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                               'pay_amount' => 0.0,
-                               'fee_amount' => 0.0,
-                               'received_amount' => $commission,
-                               'status' => $check->status,
-                           ]);
-
-                           $msg_title = 'Versement banquaire';
-                           $msg = 'Demande de virement a été réfusée ';
-                           $check->wallet->sidUser->notify(
-                               new UserNotification([
-                                   'title' => $msg_title,
-                                   'message' => $msg,
-                               ])
-                           );
-                           $notifs = $check->wallet->sidUser->unreadNotifications;
-                           // event(new UpdateBankEvent($check));
-                           // event(new UserNotifEvent($notifs));
-                           Notification::send(
-                               $admins,
-                               new AdminNotification(
-                                   'Demande de virement a été refusée'
-                               )
-                           );
-                           if ($admins->count() > 0) {
-
-
-                               foreach ($admins  as $user) {
-
-                                   $admin_single = SidUser::find($user->id);
-
-                                   $notifs = $admin_single->unreadNotifications;
-
-                                   event(new AdminNotifEvent($notifs));
-                               }
-                           }
-
-                           $this->resetVirementField();
-                           $this->emit('modal-hide-virement-validated');
-                           $this->emit('modal-hide-virement');
-                           $this->emit('error', 'Virement refusée !');
-
-                           $notify = new MailController;
-                           $notify->newVirement($check);
-                       } elseif ($check->status == 'REFUND') {
-
-
-                           if ($check->wallet->sidUser->is_under_distributer == 1) {
-
-                               $commission =  $check->amount;
-
-                               $check->wallet->update([
-                                   'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                   'sid_user_relod' => Auth::guard('web')->user()->id,
-                                   'amount' => DB::raw('amount+' . $commission),
-                               ]);
-
-                               $wallet_received =  $check->amount_solde;
-
-                               $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                               // Update commission
-                               $check->update([
-                                   'commissions' => 0,
-                                   'commissions_admin' => 0,
-                                   'amount_solde' => $amount_solde,
-                               ]);
-
-                               // Valeur amount commission distributeur
-                               $valeur_amount_com = $check->adminCom->amount;
-                               //  Send valeur in Admin
-                               if ($admin_civ->count() > 0) {
-
-                                   $count_admin = $admin_civ->count();
-
-                                   $valeur_single = $valeur_amount_com / $count_admin;
-
-                                   foreach ($admin_civ as $user) {
-                                       $admin_single = SidUser::find($user->id);
-                                       $valeur_decrement = $check->adminCom->update([
-                                           'amount' =>   0,
-                                           'sid_user_id' =>   $admin_single->id,
-                                           'status'  => "ERROR",
-                                           'description' => 'Remboursement de la commission sous distributeur',
-                                       ]);
-                                   }
-                               }
-                           } else {
-
-                               $commission =  $check->amount + $check->costs_amount;
-
-                               $check->wallet->update([
-                                   'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                   'sid_user_relod' => Auth::guard('web')->user()->id,
-                                   'amount' => DB::raw('amount+' . $commission),
-                               ]);
-
-                               $wallet_received =  $check->amount_solde;
-
-                               $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                               // Update commission
-                               $check->update([
-                                   'commissions' => 0,
-                                   'commissions_admin' => 0,
-                                   'amount_solde' => $amount_solde,
-                               ]);
-
-                               // Valeur amount commission distributeur
-                               $valeur_amount_com = $check->adminCom->amount;
-
-                               //  Send valeur in Admin
-                               if ($admin_civ->count() > 0) {
-
-                                   $count_admin = $admin_civ->count();
-
-                                   $valeur_single = $valeur_amount_com / $count_admin;
-
-                                   foreach ($admin_civ as $user) {
-                                       $admin_single = SidUser::find($user->id);
-                                       $check->adminCom->update([
-                                           'amount' =>   0,
-                                           'sid_user_id' =>   $admin_single->id,
-                                           'status'  => "ERROR",
-                                           'description' => 'Remboursement de la commission client',
-                                       ]);
-                                   }
-                               }
-
-                               if ($check->wallet->sidUser->country->code == 'CI') {
-
-                                   $message =
-                                       'Votre demande de virement de ' .
-                                       $check->amount .
-                                       $check->wallet->currencie->code .
-                                       ' ' .
-                                       'par ' .
-                                       $check->provider->name .
-                                       ' a ' .
-                                       $check->firstname .
-                                       ' ' .
-                                       $check->firstname .
-                                       'a été remboursée' .
-                                       'le ' .
-                                       $check->updated_at .
-                                       ' ' .
-                                       'Robus vous remercie';
-
-                                   $encode = substr($check->wallet->sidUser->phone, -10);
-
-                                   http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-
-                               }
-                           }
-
-                           $msg_title = 'Versement banquaire';
-                           $msg = 'Demande de virement a été remboursée';
-                           $check->wallet->sidUser->notify(
-                               new UserNotification([
-                                   'title' => $msg_title,
-                                   'message' => $msg,
-                               ])
-                           );
-                           $notifs = $check->wallet->sidUser->unreadNotifications;
-                           // event(new UpdateBankEvent($check));
-                           event(new UserNotifEvent($notifs));
-                           Notification::send(
-                               $admins,
-                               new AdminNotification(
-                                   'Demande de virement a été remboursée'
-                               )
-                           );
-                           if ($admins->count() > 0) {
-
-                               foreach ($admins  as $user) {
-
-                                   $admin_single = SidUser::find($user->id);
-
-                                   $notifs = $admin_single->unreadNotifications;
-
-                                   event(new AdminNotifEvent($notifs));
-                               }
-                           }
-
-                           $this->resetVirementField();
-                           $this->emit('modal-hide-virement-validated');
-                           $this->emit('modal-hide-virement');
-                           $this->emit('error', 'Virement Remboursée !');
-
-                           $notify = new MailController;
-                           $notify->newVirement($check);
-
-                           PaymentBank::create([
-                               'wallet_bank_id' => $check->id,
-                               'sid_user_id' => Auth::guard('web')->user()->id,
-                               'transaction_id' =>
-                               'RB_' .
-                                   $check->provider->name .
-                                   '_' .
-                                   $transactionCode,
-                               'operator_transaction_name' => $check->provider->name,
-                               'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                               'pay_amount' => 0.0,
-                               'fee_amount' => 0.0,
-                               'received_amount' => $commission,
-                               'status' => $check->status,
-                           ]);
-                       } else {
-                           $this->resetVirementField();
-                           $this->emit('modal-hide-virement-validated');
-                           $this->emit('modal-hide-virement');
-                           $this->emit('success', 'Virement modifié !');
-                       }
-                   } else {
-                       $this->resetVirementField();
-                       $this->emit('modal-hide-virement');
-                       $this->emit('modal-hide-virement-validated');
-                       $this->emit('error', 'Pas vous le valideur !');
-                   }
-               } else {
-                   $this->resetVirementField();
-                   $this->emit('modal-hide-virement-validated');
-                   $this->emit('modal-hide-virement');
-                   $this->emit('error', 'Mot de passe Incorrect !');
-               }
-           } elseif ($this->password_transaction = "" ||  $this->virementStatus = "") {
-               $this->resetVirementField();
-               $this->emit('modal-hide-virement-validated');
-               $this->emit('modal-hide-virement');
-               $this->emit('info', 'Vous avez cliquez deux fois de suite !');
-           } else {
-               $this->resetVirementField();
-               $this->emit('modal-hide-virement-validated');
-               $this->emit('modal-hide-virement');
-               $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite!');
-           }
-       } catch (\Exception $exception) {
-           $this->resetVirementField();
-           $this->emit('modal-hide-virement');
-           $this->emit('modal-hide-virement-validated');
-           $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-       }
-   }
+        try {
+
+            if ($check) {
+
+                $this->validate([
+                    'virementStatus' => 'required',
+                    'password_transaction' => 'required',
+                ]);
+
+
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                    $check->update([
+                        'description' => $this->virementDescription_edit ?? null,
+                        'updated_by' => Auth::guard('web')->user()->id,
+                        'status' => $this->virementStatus,
+                    ]);
+
+                    $this->password_transaction = "";
+                    $this->virementStatus = "";
+                    $this->virementId = "";
+
+                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                        if ($check->status == 'SUCCESS') {
+
+                            $commission_transaction = $check->amount_received;
+
+                            $paymentCreated = $this->createVirement($check, $transactionCode, $transactionCompiCode);
+
+                            $this->createInvoiceVirement($check, $paymentCreated);
+
+                            $this->updateUserWallet($commission_transaction);
+
+                            if (Auth::guard('web')->user()->is_distributer == 1) {
+
+                                $this->updateAdminCom($check, $commission_transaction);
+                            }
+
+                            $this->notifyUsers($check, $admins, 'Versement bancaire', 'Demande de versement a été validé', 'Demande de versement a été validé');
+
+                            $message =
+                                'Votre demande de versement de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' a ' .
+                                $check->updated_at .
+                                ' a été validée avec succès ' .
+                                'Robus vous remercie';
+
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
+
+                            $valeur_amount_com = $check->adminCom->amount;
+
+                            if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                if ($valeur_amount_com != null) {
+
+                                    $this->handleUnderDistributorCommission($check, $admin_civ);
+                                } else {
+                                    $this->resetVirementField();
+                                    $this->emit('modal-hide-virement');
+                                    $this->emit('modal-hide-virement-validated');
+                                    $this->emit('success', 'Versement Acceptée sans commission sous-distibuteur !');
+                                }
+                            } else {
+
+                                $this->handleAdminCommission($check, $admin_civ);
+                            }
+
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
+                            $this->resetVirementField();
+                            $this->emit('modal-hide-virement');
+                            $this->emit('modal-hide-virement-validated');
+                            $this->emit('success', 'Virement Accepté !');
+                            $this->sendMailVersementNotification($check);
+                        } elseif ($check->status == 'ERROR') {
+
+                            if ($check->wallet->sidUser->is_under_distributer == 1) {
+
+                                $commission =  $check->amount;
+                            } else {
+
+                                $commission =  $check->amount + $check->costs_amount;
+                            }
+
+                            $this->updateReloadWallet($check, $commission);
+
+                            $this->updateWalletNull($check, $commission);
+
+
+                            $this->handleReloadClientCommission($check, $admin_civ);
+
+                            $virementWallet  = $this->createErrorVirement($check, $transactionCode, $transactionCompiCode, $commission);
+
+                            $this->createInvoiceVirement($check, $virementWallet);
+
+                            $this->notifyUsers($check, $admins, 'Versement bancaire', 'Demande de versement a été refusé', 'Demande de versement refusé');
+
+                            $message =
+                                'Votre demande de virement de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' a ' .
+                                $check->firstname .
+                                ' ' .
+                                $check->firstname .
+                                ' a été refusée' .
+                                'le ' .
+                                $check->updated_at .
+                                ' ' .
+                                'Robus vous remercie';
+
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
+
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
+                            $this->resetVirementField();
+                            $this->emit('modal-hide-virement-validated');
+                            $this->emit('modal-hide-virement');
+                            $this->emit('error', 'Virement refusée !');
+                            $this->sendMailVersementNotification($check);
+                        } elseif ($check->status == 'REFUND') {
+
+                            if ($check->wallet->sidUser->is_under_distributer == 1) {
+
+                                $commission =  $check->amount;
+                            } else {
+
+                                $commission =  $check->amount + $check->costs_amount;
+                            }
+
+                            $this->updateReloadWallet($check, $commission);
+
+                            $this->updateWalletNull($check, $commission);
+
+                            $this->handleReloadClientCommission($check, $admin_civ);
+
+                            $virementWallet  = $this->createErrorVirement($check, $transactionCode, $transactionCompiCode, $commission);
+
+                            $this->createInvoiceVirement($check, $virementWallet);
+
+                            $this->notifyUsers($check, $admins, 'Versement bancaire', 'Demande de versement a été rembousée', 'Demande de versement rembousée');
+
+                            $message =
+                                'Votre demande de virement de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' a ' .
+                                $check->firstname .
+                                ' ' .
+                                $check->firstname .
+                                ' a été rembousée' .
+                                'le ' .
+                                $check->updated_at .
+                                ' ' .
+                                'Robus vous remercie';
+
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
+
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
+                            $this->resetVirementField();
+                            $this->emit('modal-hide-virement-validated');
+                            $this->emit('modal-hide-virement');
+                            $this->emit('error', 'Virement rembousée !');
+                            $this->sendMailVersementNotification($check);
+                        } else {
+                            $this->resetVirementField();
+                            $this->emit('modal-hide-virement-validated');
+                            $this->emit('modal-hide-virement');
+                            $this->emit('success', 'Virement modifié !');
+                        }
+                    } else {
+                        $this->resetVirementField();
+                        $this->emit('modal-hide-virement');
+                        $this->emit('modal-hide-virement-validated');
+                        $this->emit('error', 'Pas vous le valideur !');
+                    }
+                } else {
+                    $this->resetVirementField();
+                    $this->emit('modal-hide-virement-validated');
+                    $this->emit('modal-hide-virement');
+                    $this->emit('error', 'Mot de passe Incorrect !');
+                }
+            } elseif ($this->password_transaction = "" ||  $this->virementStatus = "") {
+                $this->resetVirementField();
+                $this->emit('modal-hide-virement-validated');
+                $this->emit('modal-hide-virement');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite !');
+            } else {
+                $this->resetVirementField();
+                $this->emit('modal-hide-virement-validated');
+                $this->emit('modal-hide-virement');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite!');
+            }
+        } catch (\Exception $exception) {
+            $this->resetVirementField();
+            $this->emit('modal-hide-virement');
+            $this->emit('modal-hide-virement-validated');
+            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
 
     public function updateInter()
     {
@@ -8455,42 +7938,18 @@ class Transfers extends Component
 
                         if ($check->status == 'SUCCESS') {
 
-                            $transaction_inter = TransactionInter::create([
-                                'wallet_inter_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $check->provider->name .
-                                    '_' . $transactionCode,
-                                'operator_transaction_name' =>
-                                $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $check->amount,
-                                'fee_amount' => $check->costs_amount,
-                                'received_amount' => $check->amount,
-                                'status' => $check->status,
-                            ]);
 
-                            InvoiceInter::create([
-                                'title' => "Transfers d'argent",
-                                // 'transaction_inter_id' => $check->id,
-                                'transaction_inter_id' => $transaction_inter->id,
-                                // 'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $check->description,
-                                'status' => $check->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
+                            $transactionInter = $this->createInter($check, $transactionCode, $transactionCompiCode);
+                            $this->createInvoiceInter($check, $transactionInter);
 
                             if (sabdy()->country->currencie->value > $check->country->currencie->value) {
                                 //   Convertion  in CFA
                                 $valeur_amount_receveid = (float) $check->amount_received * (float) $check->country->currencie->value;
-
-                                $valeur_amount_send = (float) $check->amount * (float) $check->country->currencie->value;
                             } elseif (sabdy()->country->currencie->value == $check->country->currencie->value) {
                                 $valeur_amount_receveid = $check->amount_received;
-                                $valeur_amount_send = (float) $check->amount;
                             } elseif (sabdy()->country->currencie->value < $check->country->currencie->value) {
                                 //   Convertion in Country send
                                 $valeur_amount_receveid = (float) $check->amount_received  * (float) $check->country->currencie->value;
-                                $valeur_amount_send = (float) $check->amount * (float) $check->country->currencie->value;
                             }
 
                             if (
@@ -8521,56 +7980,30 @@ class Transfers extends Component
                                 $commission_transaction = $valeur_amount_receveid;
                             }
 
-
+                            $this->updateUserWallet($commission_transaction);
 
                             if (Auth::guard('web')->user()->is_distributer == 1) {
 
-
-                                Auth::guard('web')->user()->wallet->update([
-                                    'reload_by' => Auth::guard('web')->user()->firstname .
-                                        ' ' . Auth::guard('web')->user()->lastname,
-                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    'amount' => DB::raw('amount+' . $commission_transaction),
-                                ]);
-
-                                // Send valeur historique distributer
-                                $check->adminCom->update([
-                                    // 'amount' => $valeur_single,
-                                    'amount_distributer' => $commission_transaction,
-                                    'sid_user_id' => Auth::guard('web')->user()->id,
-                                    'description_distributer' => 'Validation distributeur',
-                                ]);
-                            } else {
-
-                                Auth::guard('web')->user()->wallet->update([
-                                    'reload_by' => Auth::guard('web')->user()->firstname .
-                                        ' ' . Auth::guard('web')->user()->lastname,
-                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                    'amount' => DB::raw('amount+' . $commission_transaction),
-                                ]);
+                                $this->updateAdminCom($check, $commission_transaction);
                             }
 
+                            $message =
+                                'Votre demande de paiement de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' le ' .
+                                $check->updated_at .
+                                ' a été validé avec success \n' .
+                                'Robus vous remercie';
 
-                            if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
+                            if ($this->shouldNotifyCI($check)) {
 
-                                $message =
-                                    'Votre demande de paiement de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' le ' .
-                                    $check->updated_at .
-                                    ' a été validé avec success \n' .
-                                    'Robus vous remercie';
-
-                                $encode = substr($check->wallet->sidUser->phone, -10);
-
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-
+                                $this->sendSuccessMessageNotification($check, $message);
                             }
+
 
                             $valeur_amount_com = $check->adminCom->amount;
 
@@ -8578,32 +8011,8 @@ class Transfers extends Component
 
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
-
                                     if ($valeur_amount_com != null) {
-                                        //  Send valeur in Admin
-                                        if ($admin_civ->count() > 0) {
-
-                                            $count_admin = $admin_civ->count();
-
-                                            $valeur_single = $valeur_amount_com / $count_admin;
-
-                                            foreach ($admin_civ as $user) {
-                                                $admin_single = SidUser::find($user->id);
-                                                $check->adminCom->update([
-                                                    'amount' =>   $valeur_amount_com,
-                                                    'sid_user_id' =>   $admin_single->id,
-                                                    'description' => 'Commission administrateur',
-                                                    'description_underdistributer' => 'Paiement commission sous-distributer',
-                                                    'status'  => "SUCCESS",
-                                                ]);
-
-                                                $admin_single->wallet->update([
-                                                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                    'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                    'amount' => DB::raw('amount+' . $valeur_amount_com),
-                                                ]);
-                                            }
-                                        }
+                                        $this->handleUnderDistributorInterCommission($check, $admin_civ);
                                     } else {
                                         $this->resetReloadCardField();
                                         $this->emit('modal-hide-reloadCard');
@@ -8613,582 +8022,121 @@ class Transfers extends Component
                                 } else {
 
                                     //  Send valeur in Admin
-                                    if ($admin_civ->count() > 0) {
-
-                                        $count_admin = $admin_civ->count();
-
-                                        $valeur_single = $valeur_amount_com / $count_admin;
-
-                                        foreach ($admin_civ as $user) {
-                                            $admin_single = SidUser::find($user->id);
-                                            $check->adminCom->update([
-                                                'amount' =>   $valeur_amount_com,
-                                                'sid_user_id' =>   $admin_single->id,
-                                                'description' => 'Commission administrateur',
-                                                'status'  => "SUCCESS",
-                                            ]);
-                                            $admin_single->wallet->update([
-                                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                                'amount' => DB::raw('amount+' . $valeur_single),
-                                            ]);
-                                        }
-                                    }
+                                    $this->handleAdminCommission($check, $admin_civ);
                                 }
                             } else {
 
-                                //  Send valeur in Admin
-                                if ($admin_civ->count() > 0) {
-
-                                    $count_admin = $admin_civ->count();
-
-                                    $valeur_single = $valeur_amount_com / $count_admin;
-
-                                    foreach ($admin_civ as $user) {
-                                        $admin_single = SidUser::find($user->id);
-                                        $check->adminCom->update([
-                                            'amount' =>   $valeur_amount_com,
-                                            'sid_user_id' =>   $admin_single->id,
-                                            'description' => 'Commission administrateur',
-                                            'status'  => "SUCCESS",
-                                        ]);
-                                        $admin_single->wallet->update([
-                                            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                            'sid_user_relod' => Auth::guard('web')->user()->id,
-                                            'amount' => DB::raw('amount+' . $valeur_single),
-                                        ]);
-                                    }
-                                }
+                                $this->handleAdminCommission($check, $admin_civ);
                             }
-                            $msg_title = 'Paiement internationnal';
-                            $msg = 'Demande de transfers inter été validé';
-                            $check->wallet->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
 
-                            $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // event(new UpdateInterEvent($check));
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de tarnsfers inter Validé'
-                                )
-                            );
+
+                            $this->notifyUsers($check, $admins, 'Paiement internationnal', 'Demande de  transfers internationnal a été validé', 'Demande de transfers internationnal validé');
 
                             if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
+                                $this->notifyAdmins($admins);
                             }
 
                             $this->resetInterField();
                             $this->emit('modal-hide-inters-validated');
                             $this->emit('modal-hide-inters');
                             $this->emit('success', 'Transfers Accepte !');
-                            $notify = new MailController;
-                            $notify->newPaiementInter($check);
+                            $this->sendMailInterNotification($check);
                         } elseif ($check->status == 'ERROR') {
 
+
+                            $isSpecialProvider = $this->isSpecialProvider($check->provider->id);
+
                             if ($check->wallet->sidUser->is_under_distributer == 1) {
-
-                                if (
-                                    $check->provider->id == 61
-                                    || $check->provider->id == 62
-                                    || $check->provider->id == 63
-                                    || $check->provider->id == 64
-                                    || $check->provider->id == 65
-                                    || $check->provider->id == 59
-                                    || $check->provider->id == 60
-                                    || $check->provider->id == 48
-                                    || $check->provider->id == 49
-                                    || $check->provider->id == 50
-                                    || $check->provider->id == 55
-                                    || $check->provider->id == 71
-                                    || $check->provider->id == 72
-                                    || $check->provider->id == 73
-                                    || $check->provider->id == 74
-                                    || $check->provider->id == 75
-                                    || $check->provider->id == 76
-                                    || $check->provider->id == 77
-                                    || $check->provider->id == 78
-                                    || $check->provider->id == 93
-                                    || $check->provider->id == 94
-                                    || $check->provider->id == 95
-                                    || $check->provider->id == 96
-                                    || $check->provider->id == 97
-                                    || $check->provider->id == 98
-
-                                ) 
-                                {
-
-                                    $commission =  $check->amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    // Update commission
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                } else {
-
-                                    $commission =  $check->amount + $check->costs_amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                }
+                                $commission = $isSpecialProvider ? $check->amount : $check->amount + $check->costs_amount;
                             } else {
-
-                                if (
-                                    $check->provider->id == 48
-                                    || $check->provider->id == 71
-                                    || $check->provider->id == 72
-                                    || $check->provider->id == 73
-                                    || $check->provider->id == 74
-                                    || $check->provider->id == 75
-                                    || $check->provider->id == 76
-                                    || $check->provider->id == 77
-                                    || $check->provider->id == 78
-                                    || $check->provider->id == 49
-                                    || $check->provider->id == 50
-                                    || $check->provider->id == 55
-                                    || $check->provider->id == 93
-                                    || $check->provider->id == 94
-                                    || $check->provider->id == 95
-                                    || $check->provider->id == 96
-                                    || $check->provider->id == 97
-                                    || $check->provider->id == 98
-
-                                ) {
-
-                                    $commission =  $check->amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                } else {
-
-                                    $commission =  $check->amount + $check->costs_amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                }
+                                $commission = $isSpecialProvider ? $check->amount : $check->amount + $check->costs_amount;
                             }
 
-                            // Valeur amount commission distributeur
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $this->updateReloadWallet($check, $commission);
 
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
+                            $this->updateWalletNull($check, $commission);
 
-                                $count_admin = $admin_civ->count();
+                            $this->handleReloadClientCommission($check, $admin_civ);
 
-                                $valeur_single = $valeur_amount_com / $count_admin;
+                            $interWallet  = $this->createErrorInter($check, $transactionCode, $transactionCompiCode);
 
-                                foreach ($admin_civ as $user) {
-                                    $admin_single = SidUser::find($user->id);
-                                    $check->adminCom->update([
-                                        'amount' =>   0,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'status'  => "ERROR",
-                                        'description' => 'Remboursement de la commission client',
-                                    ]);
-                                }
+                            $this->createInvoiceInter($check, $interWallet);
+
+                            $this->notifyUsers($check, $admins, 'Paiement interbational', 'Demande de paiement international a été refusé', 'Demande de paiement international refusé');
+
+                            $message = 'Votre demande de paiement de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' a ' .
+                                $check->updated_at .
+                                ' a été refusé  ' .
+                                'Robus vous remercie';
+
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
                             }
-                            $transaction_inter = TransactionInter::create([
-                                'wallet_inter_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $check->provider->name .
-                                    '_' . $transactionCode,
-                                'operator_transaction_name' =>
-                                $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $check->amount,
-                                'fee_amount' => $check->costs_amount,
-                                'received_amount' => $check->amount,
-                                'status' => $check->status,
-                            ]);
-
-                            InvoiceInter::create([
-                                'title' => "Transfers d'argent",
-                                // 'transaction_inter_id' => $check->id,
-                                'transaction_inter_id' => $transaction_inter->id,
-                                // 'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $check->description,
-                                'status' => $check->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-
-
-                            if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
-
-                                $message = 'Votre demande de paiement de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' a ' .
-                                    $check->updated_at .
-                                    ' a été refusé  ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr(
-                                    $check->wallet->sidUser->phone,
-                                    -10
-                                );
-
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-
-                            }
-
-                            $msg_title = 'Paiement internationnal';
-                            $msg = 'Demande de transfers inter été refusé';
-                            $check->wallet->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // $user_search->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                            // $notifs = $user_search->unreadNotifications;
-                            // event(new UpdateInterEvent($check));
-                            // event(new UserNotifEvent($notifs));
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de transfers refusé'
-                                )
-                            );
 
                             if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
+                                $this->notifyAdmins($admins);
                             }
+
                             $this->resetInterField();
                             $this->emit('modal-hide-inters-validated');
                             $this->emit('modal-hide-inters');
                             $this->emit('error', 'Transfers refusé !');
-                            $notify = new MailController;
-                            $notify->newPaiementInter($check);
-                        } elseif ($check->status == 'REFUND') {
+                            $this->sendMailInterNotification($check);
 
+                        } elseif ($check->status == 'REFUND') {
+                       
+                            $isSpecialProvider = $this->isSpecialProvider($check->provider->id);
 
                             if ($check->wallet->sidUser->is_under_distributer == 1) {
-
-                                if (
-                                    $check->provider->id == 61
-                                    || $check->provider->id == 62
-                                    || $check->provider->id == 63
-                                    || $check->provider->id == 64
-                                    || $check->provider->id == 65
-                                    || $check->provider->id == 59
-                                    || $check->provider->id == 60
-                                    || $check->provider->id == 48
-                                    || $check->provider->id == 49
-                                    || $check->provider->id == 50
-                                    || $check->provider->id == 55
-                                    || $check->provider->id == 71
-                                    || $check->provider->id == 72
-                                    || $check->provider->id == 73
-                                    || $check->provider->id == 74
-                                    || $check->provider->id == 75
-                                    || $check->provider->id == 76
-                                    || $check->provider->id == 77
-                                    || $check->provider->id == 78
-                                    || $check->provider->id == 93
-                                    || $check->provider->id == 94
-                                    || $check->provider->id == 95
-                                    || $check->provider->id == 96
-                                    || $check->provider->id == 97
-                                    || $check->provider->id == 98
-
-                                ) {
-
-                                    $commission =  $check->amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                } else {
-
-                                    $commission =  $check->amount + $check->costs_amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                }
+                                $commission = $isSpecialProvider ? $check->amount : $check->amount + $check->costs_amount;
                             } else {
-                                if (
-                                    $check->provider->id == 48 
-                                    || $check->provider->id == 71
-                                    || $check->provider->id == 72
-                                    || $check->provider->id == 73
-                                    || $check->provider->id == 74
-                                    || $check->provider->id == 75
-                                    || $check->provider->id == 76
-                                    || $check->provider->id == 77
-                                    || $check->provider->id == 78
-                                    || $check->provider->id == 49
-                                    || $check->provider->id == 50 
-                                    || $check->provider->id == 55
-                                    || $check->provider->id == 93
-                                    || $check->provider->id == 94
-                                    || $check->provider->id == 95
-                                    || $check->provider->id == 96
-                                    || $check->provider->id == 97
-                                    || $check->provider->id == 98
-
-                                ) {
-
-                                    $commission =  $check->amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                } else {
-
-                                    $commission =  $check->amount + $check->costs_amount;
-
-                                    $check->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $commission),
-                                    ]);
-
-                                    $wallet_received =  $check->amount_solde;
-
-                                    $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-                                    // Update commission
-                                    $check->update([
-                                        'commissions' => 0,
-                                        'commissions_admin' => 0,
-                                        'amount_solde' => $amount_solde,
-                                    ]);
-                                }
+                                $commission = $isSpecialProvider ? $check->amount : $check->amount + $check->costs_amount;
                             }
 
-                            $valeur_amount_com = $check->adminCom->amount;
+                            $this->updateReloadWallet($check, $commission);
 
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
+                            $this->updateWalletNull($check, $commission);
 
-                                $count_admin = $admin_civ->count();
+                            $this->handleReloadClientCommission($check, $admin_civ);
 
-                                $valeur_single = $valeur_amount_com / $count_admin;
+                            $interWallet  = $this->createErrorInter($check, $transactionCode, $transactionCompiCode);
 
-                                foreach ($admin_civ as $user) {
-                                    $admin_single = SidUser::find($user->id);
-                                    $check->adminCom->update([
-                                        'amount' =>   0,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'status'  => "ERROR",
-                                        'description' => 'Remboursement de la commission sous distributeur',
-                                    ]);
-                                    $admin_single->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $valeur_single),
-                                    ]);
-                                }
+                            $this->createInvoiceInter($check, $interWallet);
+
+                            $this->notifyUsers($check, $admins, 'Paiement interbational', 'Demande de paiement international a été remboursée', 'Demande de paiement international remboursée');
+
+                            $message = 'Votre demande de paiement de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' a ' .
+                                $check->updated_at .
+                                ' a été remboursée  ' .
+                                'Robus vous remercie';
+
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
                             }
 
-                            $transaction_inter = TransactionInter::create([
-                                'wallet_inter_id' => $check->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $check->provider->name .
-                                    '_' . $transactionCode,
-                                'operator_transaction_name' =>
-                                $check->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $check->amount,
-                                'fee_amount' => $check->costs_amount,
-                                'received_amount' => $check->amount,
-                                'status' => $check->status,
-                            ]);
-
-                            InvoiceInter::create([
-                                'title' => "Transfers d'argent",
-                                // 'transaction_inter_id' => $check->id,
-                                'transaction_inter_id' => $transaction_inter->id,
-                                // 'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $check->description,
-                                'status' => $check->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-
-                            if ($check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1) {
-                                $message =
-                                    'Votre demande de paiement de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' a ' .
-                                    $check->updated_at .
-                                    ' a été remboursé ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr(
-                                    $check->wallet->sidUser->phone,
-                                    -10
-                                );
-
-
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-
-                            }
-                            $msg_title = 'Paiement internationnal';
-                            $msg = 'Demande de transfers inter été Remboursé';
-                            $check->wallet->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $check->wallet->sidUser->unreadNotifications;
-                            // $user_search->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                            // $notifs = $user_search->unreadNotifications;
-                            // event(new UpdateInterEvent($check));
-                            // event(new UserNotifEvent($notifs));
-                            Notification::send(
-                                $admins,
-                                new AdminNotification(
-                                    'Demande de transfers Remboursé'
-                                )
-                            );
                             if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
+                                $this->notifyAdmins($admins);
                             }
 
                             $this->resetInterField();
                             $this->emit('modal-hide-inters-validated');
                             $this->emit('modal-hide-inters');
-                            $this->emit('info', 'Transfers remboursé !');
-
-                            $notify = new MailController;
-                            $notify->newPaiementInter($check);
+                            $this->emit('error', 'Transfers remboursée !');
+                            $this->sendMailInterNotification($check);
                         }
                     } else {
                         $this->resetInterField();
@@ -9742,12 +8690,12 @@ class Transfers extends Component
         $transaction = WalletTransaction::whereIsWeb(false);
 
         $paiement = WalletPayment::whereIsWeb(false);
-        
+
         $wallet = Wallet::query();
 
         $sid_search = SidUser::query();
 
-       
+
         $virement_bank = WalletBank::whereIsWeb(false);
 
         $inter_search = WalletInter::whereIsWeb(false);
@@ -9803,8 +8751,7 @@ class Transfers extends Component
         if ($walletUser->wallet->sidUser->is_under_distributer == true) {
             //UnderDistributer party
 
-             return false;
-
+            return false;
         } else {
 
             //Admin info
@@ -11467,7 +10414,7 @@ class Transfers extends Component
                     ->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
                     // ->where('wallets.country_id', $walletUser->country->id)
                     ->where('wallet_transactions.status', 'PENDING')
-                    ->where('wallet_transactions.phone' , '!=' , null)
+                    ->where('wallet_transactions.phone', '!=', null)
                     ->select('wallet_transactions.*')
                     ->orderBy('wallet_transactions.created_at', 'desc')
                     ->paginate(15),
@@ -11694,393 +10641,526 @@ class Transfers extends Component
         }
     }
 
-//    Service Update validated Transactions
+    //    Service Update validated Transactions
 
-protected function createTransaction($check, $transactionCode, $transactionCompiCode)
-{
+    protected function createTransaction($check, $transactionCode, $transactionCompiCode)
+    {
         return Transaction::create([
-                'wallet_transaction_id' => $check->id,
-                'sid_user_id' => Auth::guard('web')->user()->id,
-                'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
-                'operator_transaction_name' => $check->provider->name,
-                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                'pay_amount' => $check->amount,
-                'fee_amount' =>  $check->costs_amount,
-                'received_amount' => $check->amount,
-                'status' => $check->status,
+            'wallet_transaction_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' =>  $check->costs_amount,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
         ]);
-}
+    }
 
-protected function createPhoneCredit($check, $transactionCode, $transactionCompiCode)
-{
+    protected function createInter($check, $transactionCode, $transactionCompiCode)
+    {
+        return TransactionInter::create([
+            'wallet_inter_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name .
+                '_' . $transactionCode,
+            'operator_transaction_name' =>
+            $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    protected function createPhoneCredit($check, $transactionCode, $transactionCompiCode)
+    {
         return PaymentPhoneCredit::create([
-                'wallet_phone_credit_id' => $check->id,
-                'sid_user_id' => Auth::guard('web')->user()->id,
-                'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
-                'operator_transaction_name' => $check->provider->name,
-                'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
-                'pay_amount' => $check->amount,
-                'fee_amount' => $check->costs_amount ?? null,
-                'received_amount' => $check->amount,
-                'status' => $check->status,
-            ]);
-}
-
-protected function createDeposit($check, $transactionCode, $transactionCompiCode)
-{
-        return  Deposit::create([
-
-                'wallet_deposit_id' => $check->id,
-                'sid_user_id' => Auth::guard('web')->user()->id,
-                'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
-                'operator_transaction_name' => $check->provider->name,
-                'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
-                'pay_amount' => $check->amount,
-                'fee_amount' =>  $check->costs_amount,
-                'received_amount' => $check->amount,
-                'status' => $check->status,
-            ]);
-}
-
-
-protected function createPayment($check, $transactionCode, $transactionCompiCode)
-{
-        return Payment::create([
-                'wallet_payment_id' => $check->id,
-                'sid_user_id' => Auth::guard('web')->user()->id,
-                'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode ??  null,
-                'operator_transaction_name' => $check->provider->name,
-                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                'pay_amount' => $check->amount ?? null,
-                'fee_amount' =>  $check->costs_amount ?? null,
-                'received_amount' => $check->amount,
-                'status' => $check->status,
-            ]);
-
-}
-
-protected function createErrorDeposit($check, $transactionCode, $transactionCompiCode)
-{
-        return  Deposit::create([
-                'wallet_deposit_id' => $check->id,
-                'sid_user_id' => Auth::guard('web')->user()->id,
-                'transaction_id' => 'ROBUS_' . $check->provider->name .
-                    '_' .
-                    $transactionCode,
-                'operator_transaction_name' => $check->provider->name,
-                'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
-                'pay_amount' => 0.0,
-                'fee_amount' => 0.0,
-                'received_amount' => $check->amount + $check->costs_amount,
-                'status' => $check->status,
-            ]);
-}
-
-protected function createErrorTransaction($check, $transactionCode, $transactionCompiCode)
-{
-        return  Transaction::create([
-                'wallet_transaction_id' => $check->id,
-                'sid_user_id' => Auth::guard('web')->user()->id,
-                'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
-                'operator_transaction_name' => $check->provider->name,
-                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                'pay_amount' => 0.0,
-                'fee_amount' => 0.0,
-                'received_amount' => $check->amount + $check->costs_amount,
-                'status' => $check->status,
-         ]);
-}
-
-protected function createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode)
-{
-        return  PaymentPhoneCredit::create([
-                'wallet_phone_credit_id' => $check->id,
-                'sid_user_id' => Auth::guard('web')->user()->id,
-                'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
-                'operator_transaction_name' => $check->provider->name,
-                'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
-                'pay_amount' => 0.0,
-                'fee_amount' => 0.0,
-                'received_amount' => $check->amount + $check->costs_amount,
-                'status' => $check->status,
-            ]);
-}
-
-
-// End update Transactions
-
-
-// Begin CREATED invoices transactions 
-
-protected function createInvoiceTransaction($check, $transaction)
-{
-    InvoiceTransaction::create([
-        'title' => "Transfers d'argent",
-        'wallet_transaction_id' => $check->id,
-        'transactions_id' => $transaction->id,
-        'company_id' => Auth::guard('web')->user()->company->id,
-        'description' => $check->description,
-        'status' => $check->status,
-        'created_by' => Auth::guard('web')->user()->id,
-    ]);
-}
-
-protected function createInvoicePhoneCredit($check, $paymentPhoneCredit)
-{
-     return  InvoicePhoneCredit::create([
-                'title' => 'Achat de credit telephonique',
-                'wallet_phone_credit_id' => $check->id,
-                'payment_credit_id' => $paymentPhoneCredit->id,
-                'company_id' => Auth::guard('web')->user()->company->id,
-                'description' => $check->description ?? null,
-                'status' => $check->status,
-                'created_by' => Auth::guard('web')->user()->id,
-            ]);
-}
-
-protected function createInvoiceReloadCard($check, $depositWallet)
-{
-     return   InvoiceDeposit::create([
-                'title' => 'Rechargement de carte',
-                'wallet_deposit_id' => $check->id,
-                'deposit_id' => $depositWallet->id,
-                'company_id' => Auth::guard('web')->user()->company->id,
-                'description' => $check->description,
-                'status' => $check->status,
-                'created_by' => Auth::guard('web')->user()->id,
-    ]);
-}
-
-protected function createInvoicePayment($check, $payment)
-{
-     return  InvoicePayment::create([
-        'title' => 'Paiement de facture ',
-        'wallet_payment_id' => $check->id,
-        'payment_id' => $payment->id,
-        'company_id' => Auth::guard('web')->user()->company->id,
-        'description' => $check->description,
-        'status' => $check->status,
-        'created_by' => Auth::guard('web')->user()->id,
-    ]);
-}
-
-// End Invoice Transactions
-
-
-// Begin Update amount Wallet
-
-protected function updateUserWallet($commission_transaction)
-{
-    Auth::guard('web')->user()->wallet->update([
-        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-        'sid_user_relod' => Auth::guard('web')->user()->id,
-        'amount' => DB::raw('amount+' . $commission_transaction),
-    ]);
-}
-
-protected function updateReloadWallet($check ,$commission)
-{
-    
-     return $check->wallet->update([
-        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-        'sid_user_relod' => Auth::guard('web')->user()->id,
-        'amount' => DB::raw('amount+' . $commission),
+            'wallet_phone_credit_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
         ]);
-
-}
-
-protected function updateWalletNull($check ,$commission)
-{
-    
-     $wallet_received =  $check->amount_solde;
-
-     $amount_solde = (float)$wallet_received  +   (float)$commission;
-
-     return  $check->update([
-        'commissions' => 0,
-        'commissions_admin' => 0,
-        'amount_solde' => $amount_solde,
-    ]);
-
-}
-
-
-
-// End Update amount Wallet
-
-// Update Amount admins
-
-protected function updateAdminCom($check, $commission_transaction)
-{
-    $check->adminCom->update([
-        'amount_distributer' => $commission_transaction,
-        'sid_user_id' => Auth::guard('web')->user()->id,
-        'description_distributer' => 'Validation distributeur',
-    ]);
-}
-// End amount admins
-
-
-// Begin Nofitication CIV
-
-protected function shouldNotifyCI($check)
-{
-    return $check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1;
-}
-
-
-protected function sendSuccessNotification($check)
-{
-    $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été acceptée avec succès. Robus vous remercie';
-    $encode = substr($check->wallet->sidUser->phone, -10);
-
-    http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-}
-
-protected function sendSuccessMessageNotification($check , $message)
-{
-    $encode = substr($check->wallet->sidUser->phone, -10);
-    http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-}
-
-protected function sendErrorNotification($check)
-{
-    $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été refusée . Robus vous remercie';
-    $encode = substr($check->wallet->sidUser->phone, -10);
-
-    http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-}
-
-protected function sendRefundNotification($check)
-{
-    $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été remboursée . Robus vous remercie';
-    $encode = substr($check->wallet->sidUser->phone, -10);
-
-    http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-}
-
-protected function notifyUsers($check, $admins, $msg_title, $msg, $admin_msg)
-{
-    $check->wallet->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-
-    Notification::send($admins, new AdminNotification($admin_msg));
-}
-
-protected function notifyAdmins($admins)
-{
-    foreach ($admins as $user) {
-        $admin_single = SidUser::find($user->id);
-        $notifs = $admin_single->unreadNotifications;
-        event(new AdminNotifEvent($notifs));
     }
-}
 
-protected function sendMailNotification($check)
-{
-    $notify = new MailController;
-    $notify->newTransaction($check);
-}
+    protected function createDeposit($check, $transactionCode, $transactionCompiCode)
+    {
+        return  Deposit::create([
 
-protected function sendMailPhoneCreditNotification($check)
-{
-    $notify = new MailController;
-    $notify->newPhoneCredit($check);
-}
-
-protected function sendMailReloadCardNotification($check)
-{
-    $notify = new MailController;
-    $notify->newReload($check);
-}
-
-protected function sendMailPaiementNotification($check)
-{
-    $notify = new MailController;
-    $notify->newPaiement($check);
-}
-
-// ENd Nofification
+            'wallet_deposit_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' =>  $check->costs_amount,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
 
 
-// Update Commissions
-protected function handleAdminCommission($check, $admin_civ)
-{
-    $valeur_amount_com = $check->adminCom->amount;
+    protected function createPayment($check, $transactionCode, $transactionCompiCode)
+    {
+        return Payment::create([
+            'wallet_payment_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode ??  null,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount ?? null,
+            'fee_amount' =>  $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
 
-    if ($admin_civ->count() > 0) {
 
-        foreach ($admin_civ as $user) {
+
+    protected function createVirement($check, $transactionCode, $transactionCompiCode)
+    {
+        return PaymentBank::create([
+            'wallet_bank_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount,
+            'received_amount' =>  $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+
+    protected function createErrorPayment($check, $transactionCode, $transactionCompiCode)
+    {
+        return Payment::create([
+            'wallet_payment_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' =>
+            'RB_' .
+                $check->provider->name .
+                '_' .
+                $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $check->amount + $check->costs_amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    protected function createErrorDeposit($check, $transactionCode, $transactionCompiCode)
+    {
+        return  Deposit::create([
+            'wallet_deposit_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name .
+                '_' .
+                $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $check->amount + $check->costs_amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    protected function createErrorTransaction($check, $transactionCode, $transactionCompiCode)
+    {
+        return  Transaction::create([
+            'wallet_transaction_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $check->amount + $check->costs_amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    protected function createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode)
+    {
+        return  PaymentPhoneCredit::create([
+            'wallet_phone_credit_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $check->amount + $check->costs_amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    protected function createErrorVirement($check, $transactionCode, $transactionCompiCode, $commission)
+    {
+        return    PaymentBank::create([
+            'wallet_bank_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $commission,
+            'status' => $check->status,
+        ]);
+    }
+
+
+    protected function createErrorInter($check, $transactionCode, $transactionCompiCode)
+    {
+        return    TransactionInter::create([
+            'wallet_inter_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name .
+                '_' . $transactionCode,
+            'operator_transaction_name' =>
+            $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    // End update Transactions
+
+
+    // Begin CREATED invoices transactions 
+
+    protected function createInvoiceTransaction($check, $transaction)
+    {
+        return  InvoiceTransaction::create([
+            'title' => "Transfers d'argent",
+            'wallet_transaction_id' => $check->id,
+            'transactions_id' => $transaction->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+    protected function createInvoiceInter($check, $transaction_inter)
+    {
+        return  InvoiceInter::create([
+            'title' => "Transfers d'argent",
+            // 'transaction_inter_id' => $check->id,
+            'transaction_inter_id' => $transaction_inter->id,
+            // 'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+    protected function createInvoicePhoneCredit($check, $paymentPhoneCredit)
+    {
+        return  InvoicePhoneCredit::create([
+            'title' => 'Achat de credit telephonique',
+            'wallet_phone_credit_id' => $check->id,
+            'payment_credit_id' => $paymentPhoneCredit->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description ?? null,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+    protected function createInvoiceReloadCard($check, $depositWallet)
+    {
+        return   InvoiceDeposit::create([
+            'title' => 'Rechargement de carte',
+            'wallet_deposit_id' => $check->id,
+            'deposit_id' => $depositWallet->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+    protected function createInvoicePayment($check, $payment)
+    {
+        return  InvoicePayment::create([
+            'title' => 'Paiement de facture ',
+            'wallet_payment_id' => $check->id,
+            'payment_id' => $payment->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+    protected function createInvoiceVirement($check, $paymentBank)
+    {
+        return   InvoiceBank::create([
+            'title' => 'Virement bancaire',
+            'wallet_bank_id' => $check->id,
+            'payment_bank_id' => $paymentBank->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+    // End Invoice Transactions
+
+
+    // Begin Update amount Wallet
+
+    protected function updateUserWallet($commission_transaction)
+    {
+        return Auth::guard('web')->user()->wallet->update([
+            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+            'sid_user_relod' => Auth::guard('web')->user()->id,
+            'amount' => DB::raw('amount+' . $commission_transaction),
+        ]);
+    }
+
+    protected function updateReloadWallet($check, $commission)
+    {
+
+        return $check->wallet->update([
+            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+            'sid_user_relod' => Auth::guard('web')->user()->id,
+            'amount' => DB::raw('amount+' . $commission),
+        ]);
+    }
+
+    protected function updateWalletNull($check, $commission)
+    {
+
+        $wallet_received =  $check->amount_solde;
+
+        $amount_solde = (float)$wallet_received  +   (float)$commission;
+
+        return  $check->update([
+            'commissions' => 0,
+            'commissions_admin' => 0,
+            'amount_solde' => $amount_solde,
+        ]);
+    }
+
+
+
+    // End Update amount Wallet
+
+    // Update Amount admins
+
+    protected function updateAdminCom($check, $commission_transaction)
+    {
+        $check->adminCom->update([
+            'amount_distributer' => $commission_transaction,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'description_distributer' => 'Validation distributeur',
+        ]);
+    }
+    // End amount admins
+
+
+    // Begin Nofitication CIV
+
+    protected function shouldNotifyCI($check)
+    {
+        return $check->wallet->sidUser->country->code == 'CI' && $check->wallet->sidUser->is_custumers == 1;
+    }
+
+
+    protected function sendSuccessNotification($check)
+    {
+        $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été acceptée avec succès. Robus vous remercie';
+        $encode = substr($check->wallet->sidUser->phone, -10);
+
+        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+    }
+
+    protected function sendSuccessMessageNotification($check, $message)
+    {
+        $encode = substr($check->wallet->sidUser->phone, -10);
+        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+    }
+
+    protected function sendErrorNotification($check)
+    {
+        $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été refusée . Robus vous remercie';
+        $encode = substr($check->wallet->sidUser->phone, -10);
+
+        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+    }
+
+    protected function sendRefundNotification($check)
+    {
+        $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été remboursée . Robus vous remercie';
+        $encode = substr($check->wallet->sidUser->phone, -10);
+
+        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+    }
+
+    protected function notifyUsers($check, $admins, $msg_title, $msg, $admin_msg)
+    {
+        $check->wallet->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+
+        Notification::send($admins, new AdminNotification($admin_msg));
+    }
+
+    protected function notifyAdmins($admins)
+    {
+        foreach ($admins as $user) {
             $admin_single = SidUser::find($user->id);
-            $check->adminCom->update([
-                'amount' => $valeur_amount_com,
-                'sid_user_id' => $admin_single->id,
-                'description' => 'Commission administrateur',
-                'status' => "SUCCESS",
-            ]);
-            $admin_single->wallet->update([
-                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                'sid_user_relod' => Auth::guard('web')->user()->id,
-                'amount' => DB::raw('amount+' . $valeur_amount_com),
-            ]);
+            $notifs = $admin_single->unreadNotifications;
+            event(new AdminNotifEvent($notifs));
         }
     }
-}
 
-protected function handleReloadCommission($check, $admin_civ)
-{
-    $valeur_amount_com = $check->adminCom->amount;
+    protected function sendMailNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newTransaction($check);
+    }
 
-    if ($admin_civ->count() > 0) {
 
-        $count_admin = $admin_civ->count();
-        
-        $valeur_single = $valeur_amount_com / $count_admin;
+    protected function sendMailInterNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newPaiementInter($check);
+    }
 
-        foreach ($admin_civ as $user) {
-            $admin_single = SidUser::find($user->id);
-            $check->adminCom->update([
-                'amount' =>   $valeur_single,
-                'sid_user_id' =>   $admin_single->id,
-                'status'  => "ERROR",
-                'description' => 'Remboursement des commissions sous distributeur',
-            ]);
+    protected function sendMailPhoneCreditNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newPhoneCredit($check);
+    }
+
+    protected function sendMailReloadCardNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newReload($check);
+    }
+
+    protected function sendMailPaiementNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newPaiement($check);
+    }
+
+
+    protected function sendMailVersementNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newVirement($check);
+    }
+
+    // ENd Nofification
+
+
+    // Update Commissions
+    protected function handleAdminCommission($check, $admin_civ)
+    {
+        $valeur_amount_com = $check->adminCom->amount;
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' => $valeur_amount_com,
+                    'sid_user_id' => $admin_single->id,
+                    'description' => 'Commission administrateur',
+                    'status' => "SUCCESS",
+                ]);
+                $admin_single->wallet->update([
+                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                    'amount' => DB::raw('amount+' . $valeur_amount_com),
+                ]);
+            }
         }
     }
-}
 
-protected function handleReloadClientCommission($check, $admin_civ)
-{
+    protected function handleReloadCommission($check, $admin_civ)
+    {
+        $valeur_amount_com = $check->adminCom->amount;
 
-    if ($admin_civ->count() > 0) {
-        
-        foreach ($admin_civ as $user) {
-            $admin_single = SidUser::find($user->id);
-            $check->adminCom->update([
-                'amount' =>   0,
-                'status'  => "ERROR",
-                'sid_user_id' =>   $admin_single->id,
-                'description' => 'Remboursement de la commission client',
-            ]);
+        if ($admin_civ->count() > 0) {
+
+            $count_admin = $admin_civ->count();
+
+            $valeur_single = $valeur_amount_com / $count_admin;
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' =>   $valeur_single,
+                    'sid_user_id' =>   $admin_single->id,
+                    'status'  => "ERROR",
+                    'description' => 'Remboursement des commissions sous distributeur',
+                ]);
+            }
         }
     }
-}
 
-protected function handleUnderDistributorCommission($check, $admin_civ)
-{
-    $valeur_amount_com = $check->adminCom->amount;
+    protected function isSpecialProvider($providerId)
+    {
+        $specialProviders = [
+            61, 62, 63, 64, 65, 59, 60, 48, 49, 50,
+            55, 71, 72, 73, 74, 75, 76, 77, 78,
+            93, 94, 95, 96, 97, 98
+        ];
 
-    $under_amount_com = $check->adminCom->amount_under;
+        return in_array($providerId, $specialProviders);
+    }
 
-    if ($admin_civ->count() > 0) {
+    protected function handleReloadClientCommission($check, $admin_civ)
+    {
 
-        foreach ($admin_civ as $user) {
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' =>   0,
+                    'status'  => "ERROR",
+                    'sid_user_id' =>   $admin_single->id,
+                    'description' => 'Remboursement de la commission client',
+                ]);
+            }
+        }
+    }
+
+    protected function handleUnderDistributorCommission($check, $admin_civ)
+    {
+        $valeur_amount_com = $check->adminCom->amount;
+
+        $under_amount_com = $check->adminCom->amount_under;
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
                 $admin_single = SidUser::find($user->id);
                 $check->adminCom->update([
                     'amount' =>   $valeur_amount_com,
                     'sid_user_id' =>   $admin_single->id,
                     'description' => 'Paiement commission sous-distributer',
                     'status'  => "SUCCESS",
-                    'amount_under' =>  $under_amount_com,
+                    'amount_under' =>  $valeur_amount_com,
                     'description_underdistributer' =>  'Paiement commission sous-distributer'
                 ]);
 
@@ -12089,33 +11169,61 @@ protected function handleUnderDistributorCommission($check, $admin_civ)
                     'sid_user_relod' => Auth::guard('web')->user()->id,
                     'amount' => DB::raw('amount-' . $valeur_amount_com),
                 ]);
+            }
         }
     }
-}
 
-// Generatye data methode
+    protected function handleUnderDistributorInterCommission($check, $admin_civ)
+    {
+        $valeur_amount_com = $check->adminCom->amount;
 
-public function generateTransactionData()
-{
-    $rt = rand(40, 5000) * time();
-    $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-    $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
-    $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
-    $user_auth = Auth::guard('web')->user();
-    $admins = $this->getAdminValeurProperty();
-    $admin_civ = SidUser::whereStatus(true)
-        ->whereIsAdmin(true)
-        ->where('country_id', 107)
-        ->get();
+        $under_amount_com = $check->adminCom->amount_under;
 
-    return [
-        'transactionCode' => $transactionCode,
-        'transactionCompiCode' => $transactionCompiCode,
-        'user_auth' => $user_auth,
-        'admins' => $admins,
-        'admin_civ' => $admin_civ
-    ];
-}
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' =>   $valeur_amount_com,
+                    'sid_user_id' =>   $admin_single->id,
+                    'description' => 'Paiement commission sous-distributer',
+                    'status'  => "SUCCESS",
+                    'amount_under' =>  $valeur_amount_com,
+                    'description_underdistributer' =>  'Paiement commission sous-distributer'
+                ]);
+
+                $admin_single->wallet->update([
+                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                    'amount' => DB::raw('amount+' . $valeur_amount_com),
+                ]);
+            }
+        }
+    }
+
+    // Generatye data methode
+
+    public function generateTransactionData()
+    {
+        $rt = rand(40, 5000) * time();
+        $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
+        $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
+        $user_auth = Auth::guard('web')->user();
+        $admins = $this->getAdminValeurProperty();
+        $admin_civ = SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->where('country_id', 107)
+            ->get();
+
+        return [
+            'transactionCode' => $transactionCode,
+            'transactionCompiCode' => $transactionCompiCode,
+            'user_auth' => $user_auth,
+            'admins' => $admins,
+            'admin_civ' => $admin_civ
+        ];
+    }
 
 
     // Verify ceilling
@@ -12445,7 +11553,7 @@ public function generateTransactionData()
     {
         $walletUser = Auth::guard('web')->user();
 
-  
+
         $provider_inter = Provider::join(
             'country_services',
             'country_services.provider_id',

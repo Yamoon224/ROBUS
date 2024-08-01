@@ -89,6 +89,7 @@ class AdminSeeder extends Seeder
             'city_id' => 1,
             'remember_token' => null,   
             'created_at' => $time,
+            
             'updated_at' => $time
         ]);
     }

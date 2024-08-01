@@ -10730,11 +10730,11 @@ class Transfers extends Component
                                         'status'  => "ERROR",
                                         'description' => 'Remboursement de la commission sous distributeur',
                                     ]);
-                                    $admin_single->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $valeur_single),
-                                    ]);
+                                    // $admin_single->wallet->update([
+                                    //     'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                                    //     'sid_user_relod' => Auth::guard('web')->user()->id,
+                                    //     'amount' => DB::raw('amount+' . $valeur_single),
+                                    // ]);
                                 }
                             }
 
