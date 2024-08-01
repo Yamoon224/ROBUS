@@ -27,7 +27,7 @@ use App\Http\Services\PhoneCreditInterService;
 use App\Http\Services\SearchTransactionService;
 use App\Http\Services\ValidateDailyLimitService;
 
-class IntersPaymentControllerDEMO extends Controller
+class IntersPaymentController extends Controller
 {
 
     /** @var  IntersRepository */
@@ -260,6 +260,90 @@ class IntersPaymentControllerDEMO extends Controller
                             );
                         }
                     }
+                }elseif (in_array($request->provider, [99])) {
+
+                    if (robus()->is_under_distributer) {
+
+
+                        $validator = Validator::make(
+
+                            $request->all(),
+                            [
+                                "phone" => 'required',
+                                "amount" => 'required',
+                                "name_custumer" => 'required',
+                                "name_sender" => 'required',
+                                "num_piece_custumer" => 'required',
+                                "date_piece" => 'required',
+                                'country' => 'required',
+                                'account_number' => 'required',
+                                'name' => 'required',
+                            ],
+                            [
+    
+                                'phone.required' => 'Votre numero est obligatoire',
+                                'amount.required' => 'Votre montant est obligatoire',
+                                'name_custumer.required' => 'Nom est obligatoire',
+                                'name_sender.required' => 'Nom expediteur est obligatoire',
+                                'num_piece_custumer.required' => 'Numero piece est obligatoire',
+                                'date_piece.required' => 'date de validité est obligatoire',
+                                'country.required' => 'Votre pays est obligatoire',
+                                'account_number.required' => 'Numero de compte est obligatoire',
+                                'name.required' => 'Nom de la banque est obligatoire',
+    
+                            ]
+                        );
+    
+                        if ($validator->fails()) {
+                            return response()->json(
+                                [
+                                    'success' => false,
+                                    'message' => 'Verifiez les champs',
+                                    'data' => $validator->errors()
+                                ],
+                                333
+                            );
+                        }
+                    } else {
+
+                        $validator = Validator::make(
+
+                            $request->all(),
+                            [
+                                "phone" => 'required',
+                                "amount" => 'required',
+                                "name_custumer" => 'required',
+                                "num_piece_custumer" => 'required',
+                                "date_piece" => 'required',
+                                'country' => 'required',
+                                'account_number' => 'required',
+                                'name' => 'required',
+                            ],
+                            [
+    
+                                'phone.required' => 'Votre numero est obligatoire',
+                                'amount.required' => 'Votre montant est obligatoire',
+                                'name_custumer.required' => 'Nom est obligatoire',
+                                'num_piece_custumer.required' => 'Numero piece est obligatoire',
+                                'date_piece.required' => 'date de validité est obligatoire',
+                                'country.required' => 'Votre pays est obligatoire',
+                                'account_number.required' => 'Numero de compte est obligatoire',
+                                'name.required' => 'Nom de la banque est obligatoire',
+    
+                            ]
+                        );
+
+                        if ($validator->fails()) {
+                            return response()->json(
+                                [
+                                    'success' => false,
+                                    'message' => 'Verifiez les champs',
+                                    'data' => $validator->errors()
+                                ],
+                                333
+                            );
+                        }
+                    }
                 } else {
                     return   json_message_response(false, "Erreur de selection des providers !", 300);
                 }
@@ -334,7 +418,7 @@ class IntersPaymentControllerDEMO extends Controller
                     } else {
                         return   json_message_response(false, "veuillez selectionnez le pays de destination ou le  Numero ne correspond pas au pays SVP !", 300);
                     }
-                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78 , 93, 94 , 95 , 96 , 97 , 98])) {
+                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78 , 93, 94 , 95 , 96 , 97 , 98 , 99])) {
 
                     if ($this->interServices->validatePhone($request->phone)) {
 
@@ -356,8 +440,9 @@ class IntersPaymentControllerDEMO extends Controller
                                             $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
                                         }
 
-                                        $walletInter = $this->interServices->createMobileWalletInter($request->amount, $percent_robus, $country_robus, $request->provider, $request->phone,  $request->provider_type,  $request->name_custumer, $request->num_piece_custumer, $request->date_piece);
-
+                                        $walletInter = $this->interServices->createMobileWalletInter($request->amount, $percent_robus, $country_robus, $request->provider, $request->phone,  $request->provider_type,  $request->name_custumer
+                                        , $request->num_piece_custumer, $request->date_piece , $request->name , $request->name_sender , $request->account_number);
+                                        
                                         if ($walletInter != null) {
 
                                             if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {

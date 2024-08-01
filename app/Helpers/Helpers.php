@@ -11,7 +11,7 @@ use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletReload;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Http;
 
 
 
@@ -222,6 +222,16 @@ function sabdyCompanyVerify()
 function master()
 {
     return Auth::guard('master')->user();
+}
+
+if (!function_exists('sendOtpSms')) {
+    function sendOtpSms($phone_user, $otpSend)
+    {
+
+        $response = Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone_user&sender_id=Bonjour%20doc&message=$otpSend&api_token=21|cDXu8PK2lD3MaANrDc8qzeyMoG9ZohPVmSwphAQwe7e6eaac");
+
+        return $response;
+    }
 }
 
 

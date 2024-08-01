@@ -528,7 +528,8 @@ class InterPaymentService
     }
 
     // Validated WALLET mobile
-    public function createMobileWalletInter($amount_transaction, $percent_robus, $country_robus, $provider_payment, $phone, $provider_type, $name_custumers, $num_piece_custumers, $date_piece)
+    public function createMobileWalletInter($amount_transaction, $percent_robus, $country_robus, $provider_payment, $phone, $provider_type, 
+    $name_custumers, $num_piece_custumers, $date_piece , $name , $name_sender , $account_number)
     {
 
         $amount_solde = robus()->wallet->amount - $amount_transaction;
@@ -540,11 +541,13 @@ class InterPaymentService
             'inter_cost_id' => null,
             'transaction_cost_id' => $percent_robus->id,
             'phone' => $country_robus->indecative . $phone ?? null,
-            'number_compte' => null,
+            'number_compte' => $account_number,
             'created_by' => robus()->id,
             'provider_id' => $provider_payment,
             'name_complet' => $name_custumers ?? null,
+            'name' => $name ?? null,
             'num_piece' => $num_piece_custumers ?? null,
+            'name_benef' => $name_sender ?? null,
             'validated_date' => $date_piece ?? null,
             'costs_amount' => robus()->is_under_distributer ? ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
             'provider_type' => 1,
