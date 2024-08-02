@@ -4755,7 +4755,6 @@ class Transfers extends Component
                                                 if ($walletUser->is_under_distributer == 1) {
                                                     $amount_valeur = $this->amount_reloadcard;
                                                 } else {
-
                                                     $amount_valeur = $this->amount_reloadcard + $amount_user->amount;
                                                 }
 

@@ -545,6 +545,7 @@
                         <ul
                             class="{{ request()->is('application*') || request()->is('admin*') || request()->is('operators*') || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') || request()->is('close_app*') ? 'side-menu__sub-open' : '' }}">
 
+                            @if (Auth::guard('web')->user()->hasPermissionTo('utilisateurs'))
 
                             <li>
                                 <a href="{{ route('admin.browse') }}"
@@ -553,6 +554,7 @@
                                     <div class="side-menu__title"> Equipes </div>
                                 </a>
                             </li>
+                            @endif
 
                             @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
                                 <li>
