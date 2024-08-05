@@ -8,6 +8,8 @@
                     Activites d'aujourd'hui
                 </h2>
             </div>
+
+            495
             <div class="intro-y box p-5 mt-12 sm:mt-5">
                 <div class="intro-y box p-5 mt-12 sm:mt-5">
                     {{-- <div class="report-chart"> --}}

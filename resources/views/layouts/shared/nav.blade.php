@@ -547,13 +547,13 @@
 
                             @if (Auth::guard('web')->user()->hasPermissionTo('utilisateurs'))
 
-                            <li>
-                                <a href="{{ route('admin.browse') }}"
-                                    class="side-menu {{ $route == 'admin.browse' || $route == 'admin.show' || $route == 'admin.showUpdate' || $route == 'admin.add' || $route == 'admin.activate' ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i class="fas fa-user-friends"></i> </div>
-                                    <div class="side-menu__title"> Equipes </div>
-                                </a>
-                            </li>
+                                <li>
+                                    <a href="{{ route('admin.browse') }}"
+                                        class="side-menu {{ $route == 'admin.browse' || $route == 'admin.show' || $route == 'admin.showUpdate' || $route == 'admin.add' || $route == 'admin.activate' ? 'side-menu--active' : '' }}">
+                                        <div class="side-menu__icon"> <i class="fas fa-user-friends"></i> </div>
+                                        <div class="side-menu__title"> Equipes </div>
+                                    </a>
+                                </li>
                             @endif
 
                             @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))

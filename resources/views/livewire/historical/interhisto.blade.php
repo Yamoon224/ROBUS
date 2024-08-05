@@ -4,8 +4,7 @@
         <div class="intro-y col-span-12 grid grid-cols-12 gap-5 items-center mt-2">
 
             <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
-                <form method="GET"
-                    action="{{ route('inters.historical.reporting_inter_days_historical.admins') }}">
+                <form method="GET" action="{{ route('inters.historical.reporting_inter_days_historical.admins') }}">
                     <div class="relative text-slate-500 mt-3">
                         <label for="search_begin">Date de début</label>
                         <input type="date"
@@ -148,7 +147,7 @@
                     aria-placeholder="Rechercher par status">
                     <option selected value=" != null">Status</option>
                     <option value="SUCCESS">Success</option>
-                      <option value="ERROR">Erreur</option>
+                    <option value="ERROR">Erreur</option>
                     <option value="PENDING">En attente</option>
                 </select>
             </div>
@@ -423,6 +422,21 @@
                                                                 Date validité :
                                                                 {{ $item->validated_date ?? null }}
                                                             </p>
+                                                            @if ($item->provider_id == 99)
+                                                                <p class="font-medium whitespace-nowrap">
+                                                                    Nom du expéditeur : {{ $item->name_benef ?? null }}
+                                                                   
+                                                                </p>
+                                                                 <p class="font-medium whitespace-nowrap">
+                                                                    Numero Compte banque :
+                                                                    {{ $item->number_compte ?? null }}
+
+                                                                 </p>
+                                                                 <p class="font-medium whitespace-nowrap">
+                                                                    Nom banque : {{ $item->name ?? null }}
+
+                                                                 </p>
+                                                            @endif
                                                         @endif
                                                     </td>
                                                     <td class="w-40">

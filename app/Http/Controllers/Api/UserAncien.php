@@ -242,6 +242,7 @@ class UserController extends Controller
 
             
         $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
+
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
         $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
         $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);

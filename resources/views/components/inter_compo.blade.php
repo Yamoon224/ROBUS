@@ -150,53 +150,99 @@
                                             @php
                                                 if ($item->provider_type == 1) {
                                                     //  Convertion of amount valeur
-                                                    if (sabdy()->country->currencie->value > $item->country->currencie->value) {
+                                                    if (
+                                                        sabdy()->country->currencie->value >
+                                                        $item->country->currencie->value
+                                                    ) {
                                                         //   Convertion  in CFA
-                                                        $valeur_amount_receveid = (float) $item->amount_received * (float) $item->country->currencie->value;
+                                                        $valeur_amount_receveid =
+                                                            (float) $item->amount_received *
+                                                            (float) $item->country->currencie->value;
                                                         //   $valeur_amount_receveid =  * $item->wallet->currencie->value;
-                                                    } elseif (sabdy()->country->currencie->value == $item->country->currencie->value) {
+                                                    } elseif (
+                                                        sabdy()->country->currencie->value ==
+                                                        $item->country->currencie->value
+                                                    ) {
                                                         $valeur_amount_receveid = $item->amount_received;
-                                                    } elseif (sabdy()->country->currencie->value < $item->country->currencie->value) {
+                                                    } elseif (
+                                                        sabdy()->country->currencie->value <
+                                                        $item->country->currencie->value
+                                                    ) {
                                                         //   Convertion in Country send
-                                                        $valeur_amount_receveid = (float) $item->amount_received * (float) $item->country->currencie->value;
+                                                        $valeur_amount_receveid =
+                                                            (float) $item->amount_received *
+                                                            (float) $item->country->currencie->value;
                                                     }
                                                 } else {
-                                                  
                                                     if ($item->country->id == 107) {
                                                         //  Convertion of amount valeur
-                                                        if (sabdy()->country->currencie->value > $item->country->currencie->value) {
+                                                        if (
+                                                            sabdy()->country->currencie->value >
+                                                            $item->country->currencie->value
+                                                        ) {
                                                             //   Convertion  in CFA
-                                                            $valeur_amount_receveid = (float) $item->amount_received * (float) sabdy()->country->currencie->value;
+                                                            $valeur_amount_receveid =
+                                                                (float) $item->amount_received *
+                                                                (float) sabdy()->country->currencie->value;
 
                                                             //   $valeur_amount_receveid = (float) $commission_transaction_val_inter_convertion_cfa / (float) $item->country->currencie->value;
-                                                        } elseif (sabdy()->country->currencie->value == $item->country->currencie->value) {
+                                                        } elseif (
+                                                            sabdy()->country->currencie->value ==
+                                                            $item->country->currencie->value
+                                                        ) {
                                                             $valeur_amount_receveid = $item->amount_received;
-                                                        } elseif (sabdy()->country->currencie->value < $item->country->currencie->value) {
+                                                        } elseif (
+                                                            sabdy()->country->currencie->value <
+                                                            $item->country->currencie->value
+                                                        ) {
                                                             //   Convertion  in CFA
-                                                            $commission_transaction_val_inter_convertion_cfa = (float) $item->amount_received * (float) sabdy()->country->currencie->value;
+                                                            $commission_transaction_val_inter_convertion_cfa =
+                                                                (float) $item->amount_received *
+                                                                (float) sabdy()->country->currencie->value;
 
                                                             //   Convertion in Country send
-                                                            $valeur_amount_receveid = (float) $item->amount_received * (float) $item->country->currencie->value;
+                                                            $valeur_amount_receveid =
+                                                                (float) $item->amount_received *
+                                                                (float) $item->country->currencie->value;
                                                         }
                                                     } else {
                                                         //  Convertion of amount valeur
-                                                        if (sabdy()->country->currencie->value > $item->country->currencie->value) {
+                                                        if (
+                                                            sabdy()->country->currencie->value >
+                                                            $item->country->currencie->value
+                                                        ) {
                                                             //   Convertion  in CFA
-                                                            $valeur_amount_receveid = (float) $item->amount_received * (float) sabdy()->country->currencie->value;
+                                                            $valeur_amount_receveid =
+                                                                (float) $item->amount_received *
+                                                                (float) sabdy()->country->currencie->value;
                                                         } elseif ($item->country->id == 107) {
                                                             //   dd('ici');
-                                                            if (sabdy()->country->currencie->value > $item->country->currencie->value) {
+                                                            if (
+                                                                sabdy()->country->currencie->value >
+                                                                $item->country->currencie->value
+                                                            ) {
                                                                 //   Convertion  in CFA
-                                                                $valeur_amount_receveid = (float) $item->amount_received * (float) $item->wallet->country->currencie->value;
+                                                                $valeur_amount_receveid =
+                                                                    (float) $item->amount_received *
+                                                                    (float) $item->wallet->country->currencie->value;
                                                             } else {
-                                                                $valeur_amount_receveid = (float) $item->amount_received * (float) $item->wallet->country->currencie->value;
+                                                                $valeur_amount_receveid =
+                                                                    (float) $item->amount_received *
+                                                                    (float) $item->wallet->country->currencie->value;
                                                             }
-                                                        } elseif (sabdy()->country->currencie->value < $item->country->currencie->value) {
+                                                        } elseif (
+                                                            sabdy()->country->currencie->value <
+                                                            $item->country->currencie->value
+                                                        ) {
                                                             //   Convertion  in CFA
-                                                            $commission_transaction_val_inter_convertion_cfa = (float) $item->amount_received * (float) sabdy()->country->currencie->value;
+                                                            $commission_transaction_val_inter_convertion_cfa =
+                                                                (float) $item->amount_received *
+                                                                (float) sabdy()->country->currencie->value;
 
                                                             //   Convertion in Country send
-                                                            $valeur_amount_receveid = (float) $item->amount_received * (float) $item->country->currencie->value;
+                                                            $valeur_amount_receveid =
+                                                                (float) $item->amount_received *
+                                                                (float) $item->country->currencie->value;
                                                         }
                                                     }
                                                     //  Convertion of amount valeur
@@ -282,8 +328,7 @@
                                                     @if ($item->provider_type == 8)
                                                         <div
                                                             class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
+                                                            <div class="fc-event-title-container" style="color: white;">
                                                                 <div class="fc-event-title fc-sticky">
                                                                     Rechargement carte</div>
                                                             </div>
@@ -292,8 +337,7 @@
                                                     @elseif($item->provider_type == 5)
                                                         <div
                                                             class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container"
-                                                                style="color: white;">
+                                                            <div class="fc-event-title-container" style="color: white;">
                                                                 <div class="fc-event-title fc-sticky">
                                                                     Paiement Facture</div>
 
@@ -345,6 +389,15 @@
                                                             Date validité :
                                                             {{ $item->validated_date ?? null }}
                                                         </p>
+                                                        @if ($item->provider_id == 99)
+                                                            <p class="font-medium whitespace-nowrap">
+                                                                Nom du beneficiaire : {{ $item->name_benef ?? null }}
+                                                                Numero Compte banque :
+                                                                {{ $item->number_compte ?? null }}
+                                                                Nom banque : {{ $item->name ?? null }}
+
+                                                            </p>
+                                                        @endif
                                                     @elseif ($item->provider_type == 6)
                                                         <div
                                                             class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
@@ -372,8 +425,8 @@
                                                                 wire:click="ChooseUpdateInter({{ $item->id }})">
                                                                 {{-- <button class="btn btn-warning mr-1 mb-2"> --}}
                                                                 Je prends <svg width="25" viewBox="0 0 120 30"
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    fill="1a202c" class="w-4 h-4 ml-2">
+                                                                    xmlns="http://www.w3.org/2000/svg" fill="1a202c"
+                                                                    class="w-4 h-4 ml-2">
                                                                     <circle cx="15" cy="15" r="15">
                                                                         <animate attributeName="r" from="15"
                                                                             to="15" begin="0s"
@@ -490,6 +543,21 @@
                                                             Date validité :
                                                             {{ $item->validated_date ? date('d-M-y', strtotime($item->validated_date)) : null }}
                                                         </p>
+                                                        @if ($item->provider_id == 99)
+                                                            <p class="font-medium whitespace-nowrap">
+                                                                Nom du expéditeur : {{ $item->name_benef ?? null }}
+
+                                                            </p>
+                                                            <p class="font-medium whitespace-nowrap">
+                                                                Numero Compte banque :
+                                                                {{ $item->number_compte ?? null }}
+
+                                                            </p>
+                                                            <p class="font-medium whitespace-nowrap">
+                                                                Nom banque : {{ $item->name ?? null }}
+
+                                                            </p>
+                                                        @endif
                                                     @elseif ($item->provider_type == 6)
                                                         <div
                                                             class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
@@ -620,8 +688,7 @@
                                                         @endif
                                                     @else
                                                         <div class="flex items-center justify-center text-dark">
-                                                            <div
-                                                                class="flex items-center justify-center text-warring">
+                                                            <div class="flex items-center justify-center text-warring">
                                                                 <span
                                                                     class="alert alert-dark show mb-2 inline-flex items-center justify-center px-2 py-1 mb-3 
                                                                   text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
@@ -630,8 +697,7 @@
                                                                         width="24" height="24"
                                                                         viewBox="0 0 24 24" fill="none"
                                                                         stroke="currentColor" stroke-width="2"
-                                                                        stroke-linecap="round"
-                                                                        stroke-linejoin="round"
+                                                                        stroke-linecap="round" stroke-linejoin="round"
                                                                         icon-name="alert-octagon"
                                                                         data-lucide="alert-octagon"
                                                                         class="lucide lucide-alert-octagon w-6 h-6 mr-2">

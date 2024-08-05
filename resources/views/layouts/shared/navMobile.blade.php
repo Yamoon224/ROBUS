@@ -472,14 +472,16 @@
                 <ul
                     class="{{ request()->is('application*') || request()->is('admin*') || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') ? 'menu__sub-open' : '' }}">
 
+                    @if (Auth::guard('web')->user()->hasPermissionTo('utilisateurs'))
 
-                    <li>
-                        <a href="{{ route('admin.browse') }}"
-                            class="menu {{ $route == 'admin.browse' || $route == 'admin.show' || $route == 'admin.showUpdate' || $route == 'admin.add' || $route == 'admin.activate' ? 'menu--active' : '' }}">
-                            <div class="menu__icon"> <i class="fas fa-user-friends"></i> </div>
-                            <div class="menu__title"> Equipes </div>
-                        </a>
-                    </li>
+                        <li>
+                            <a href="{{ route('admin.browse') }}"
+                                class="menu {{ $route == 'admin.browse' || $route == 'admin.show' || $route == 'admin.showUpdate' || $route == 'admin.add' || $route == 'admin.activate' ? 'menu--active' : '' }}">
+                                <div class="menu__icon"> <i class="fas fa-user-friends"></i> </div>
+                                <div class="menu__title"> Equipes </div>
+                            </a>
+                        </li>
+                    @endif
 
                     @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
                         <li>

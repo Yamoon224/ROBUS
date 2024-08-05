@@ -600,398 +600,17 @@ class Transfers extends Component
                     );
 
 
-                    if (sabdy()->is_distributer == 1 || sabdy()->is_admin == 1) {
+                    if (sabdy()->is_distributer == 1 || sabdy()->is_supervisor == 1 || sabdy()->is_supervisor == 1) {
 
                         // Seach wallet User
                         $wallet_search = Wallet::where('wallet_id',  $this->compte_number_robus)
                             ->where('country_id', $walletUser->country->id)
-                            // ->where('status', true)
                             ->first();
-
-                        if ($som_transfers >= $valeur_ceiling) {
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('warning', 'Votre montant journier est atteint !');
-                            return;
-                        }
-
-                        if ($wallet_search == null &&  $this->compte_number_robus == $walletUser->wallet->wallet_id) {
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('error', 'Ce numero n\'existe pas dans cette base ou vous appartient !');
-                            return;
-                        }
-
-                        if (!$wallet_search->sidUser->is_under_distributer ||  !$wallet_search->sidUser->is_custumers || !$wallet_search->sidUser->is_distributer) {
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetTransactionField();
-                                $this->emit('modal-hide-transfers');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
-                                return;
-                            }
-
-                            $wallet_send = $wallet_search;
-
-                            $commission_receiveid =  $this->transaction_amount_robus;
-
-                            $wallet_receveid =  $walletUser->wallet;
-
-                            $commission_send =  $this->convertAdminCommissionInter($commission_receiveid, $wallet_send, $wallet_receveid);
-
-                            // Verify amount
-                            if ($commission_send > $wallet_search->amount) {
-                                $this->resetTransactionField();
-                                $this->emit('modal-hide-transfers');
-                                $this->emit('success', 'Verifier votre montant ! !');
-                                return;
-                            }
-
-                            $wallet = $wallet_search;
-
-                            $commission_valeur = $percent_robus_distri->percent * $this->transaction_amount_robus;
-
-                            $valeur_amount_com = $percent_robus_distri->percent_with_drawal * $commission_valeur;
-
-                            $valuer_with_drawal =  $this->convertAdminCommission($valeur_amount_com, $wallet);
-
-                            $walletAmountSend = DB::table('wallets')->select(DB::raw('SUM(amount) as total_amount'))->where('wallet_id',  $this->compte_number_robus)->first();
-
-                            $amount_solde_drawal = (float)$walletAmountSend->total_amount -  (float)$commission_send;
-
-                            $amount_drawal = $amount_solde_drawal;
-
-                            $this->updatePaiementWithdrawalWallet($wallet_search,  $commission_send);
-
-                            // $amount_solde = $check->wallet->amount +  $commission;
-                            $amount_solde = (float)sabdy()->wallet->amount +  (float) $this->transaction_amount_robus;
-
-                            $this->updatePaiementDrawalWallet($walletUser,  $this->transaction_amount_robus);
-
-                            $walletTransaction = $this->createDrawalTransaction(
-                                $walletUser,
-                                $this->transaction_amount_robus,
-                                $this->transaction_description_robus,
-                                $this->transaction_phone,
-                                $this->compte_number_robus,
-                                $provider,
-                                $commission_send,
-                                $this->choose_type_transaction,
-                                $amount_solde,
-                                $amount_drawal
-                            );
-
-                            $transaction = $this->createNewInvoiceTransaction($walletTransaction, $transactionCompiCode, $transactionCode);
-
-                            $this->createInvoiceTransactionDrawal($transaction, $walletTransaction);
-
-                            $this->TransactionDistributorDrawal(
-                                $valuer_with_drawal,
-                                $admin_civ,
-                                $walletTransaction
-                            );
-
-                            event(new CreateWalletTransfersEvent($walletTransaction));
-
-                            $this->notifyCreateUsers($walletUser, $admins, 'Transactions', 'Demande de transfert est en cours de validation', 'Demande de Retrait effectuer par  ' . ' ' . $walletTransaction->wallet->sidUser->firstname);
-
-                            if ($admins->count() > 0) {
-                                $this->notifyAdmins($admins);
-                            }
-
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Retrait effectué avec success !');
-
-                            // Send Email
-                            if ($wallet_search->sidUser->email != null) {
-
-                                Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
-                            }
-
-                            if ($walletUser->email != null) {
-                                $this->sendMailNotification($walletTransaction);
-                            }
-                        } else {
-
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('error', 'Pas de selection de providers !');
-                            return;
-                        }
                     } elseif (sabdy()->is_admin == 1) {
 
                         // Seach wallet User
                         $wallet_search = Wallet::where('wallet_id',  $this->compte_number_robus)
                             ->first();
-
-                        if ($wallet_search == null &&  $this->compte_number_robus == $walletUser->wallet->wallet_id) {
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('error', 'Ce numero n\'existe pas dans cette base ou vous appartient !');
-                           
-                            return;
-                        }
-                        
-                        if (!$wallet_search->sidUser->is_under_distributer
-                            || !$wallet_search->sidUser->is_custumers
-                            || !$wallet_search->sidUser->is_distributer
-                            || !$wallet_search->sidUser->is_supervisor)
-
-                        {
-
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetTransactionField();
-                                $this->emit('modal-hide-transfers');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
-                                return;
-                            }
-
-                            $wallet_send = $wallet_search;
-
-                            $commission_receiveid =  $this->transaction_amount_robus;
-
-                            $wallet_receveid =  $walletUser->wallet;
-
-                            $commission_send =  $this->convertAdminCommissionInter($commission_receiveid, $wallet_send, $wallet_receveid);
-
-                            // Verify amount
-                            if ($commission_send > $wallet_search->amount) {
-                                $this->resetTransactionField();
-                                $this->emit('modal-hide-transfers');
-                                $this->emit('success', 'Verifier votre montant !!');
-
-                                return;
-                            }
-
-                            $wallet = $wallet_search;
-
-                            $commission_valeur = $percent_robus_distri->percent * $this->transaction_amount_robus;
-
-                            $valeur_amount_com = $percent_robus_distri->percent_with_drawal * $commission_valeur;
-
-                            $valuer_with_drawal =  $this->convertAdminCommission($valeur_amount_com, $wallet);
-
-                            $walletAmountSend = DB::table('wallets')->select(DB::raw('SUM(amount) as total_amount'))->where('wallet_id',  $this->compte_number_robus)->first();
-
-                            $amount_solde_drawal = (float)$walletAmountSend->total_amount -  (float)$commission_send;
-
-                            $amount_drawal =      $amount_solde_drawal;
-
-                            $this->updatePaiementWithdrawalWallet($wallet_search,  $commission_send);
-
-                            // $amount_solde = $check->wallet->amount +  $commission;
-                            $amount_solde = (float)sabdy()->wallet->amount +  (float) $this->transaction_amount_robus;
-
-                            $this->updatePaiementDrawalWallet($walletUser,  $this->transaction_amount_robus);
-
-                            $walletTransaction = $this->createDrawalTransaction(
-                                $walletUser,
-                                $this->transaction_amount_robus,
-                                $this->transaction_description_robus,
-                                $this->transaction_phone,
-                                $this->compte_number_robus,
-                                $provider,
-                                $commission_send,
-                                $this->choose_type_transaction,
-                                $amount_solde,
-                                $amount_drawal
-                            );
-
-                            $transaction = $this->createNewInvoiceTransaction($walletTransaction, $transactionCompiCode, $transactionCode);
-
-                            $this->createInvoiceTransactionDrawal($transaction, $walletTransaction);
-
-                            $this->TransactionDistributorDrawal(
-                                $valuer_with_drawal,
-                                $admin_civ,
-                                $walletTransaction
-                            );
-
-                            event(new CreateWalletTransfersEvent($walletTransaction));
-
-                            $this->notifyCreateUsers($walletUser, $admins, 'Transactions', 'Demande de transfert est en cours de validation', 'Demande de Retrait effectuer par  ' . ' ' . $walletTransaction->wallet->sidUser->firstname);
-
-                            if ($admins->count() > 0) {
-                                $this->notifyAdmins($admins);
-                            }
-
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Retrait effectué avec success !');
-
-                            // Send Email
-                            if ($wallet_search->sidUser->email != null) {
-
-                                Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
-                            }
-
-                            if ($walletUser->email != null) {
-                                $this->sendMailNotification($walletTransaction);
-                            }
-                        } else {
-
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('error', 'Pas de selection de providers !');
-                        }
-                    } elseif (sabdy()->is_supervisor == 1) {
-
-                        // Seach wallet User
-                        $wallet_search = Wallet::where('wallet_id',  $this->compte_number_robus)
-                            // ->where('country_id', $walletUser->country->id)
-                            // ->where('status', true)
-                            ->first();
-
-                        if ($wallet_search == null &&  $this->compte_number_robus == $walletUser->wallet->wallet_id) {
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('error', 'Ce numero n\'existe pas dans cette base ou vous appartient !');
-                        } elseif (!$wallet_search->sidUser->is_under_distributer ||  !$wallet_search->sidUser->is_custumers || !$wallet_search->sidUser->is_distributer) {
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetTransactionField();
-                                $this->emit('modal-hide-transfers');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
-                            } else {
-
-
-                                $wallet_send = $wallet_search;
-
-                                $commission_receiveid =  $this->transaction_amount_robus;
-
-                                $wallet_receveid =  $walletUser->wallet;
-
-                                $commission_send =  $this->convertAdminCommissionInter($commission_receiveid, $wallet_send, $wallet_receveid);
-
-                                // Verify amount
-                                if ($commission_send > $wallet_search->amount) {
-                                    $this->resetTransactionField();
-                                    $this->emit('modal-hide-transfers');
-                                    $this->emit('success', 'Verifier votre montant ! !');
-                                } else {
-
-
-
-                                    $wallet = $wallet_search;
-
-                                    $commission_valeur = $percent_robus_distri->percent * $this->transaction_amount_robus;
-
-                                    $valeur_amount_com = $percent_robus_distri->percent_with_drawal * $commission_valeur;
-
-                                    $valuer_with_drawal =  $this->convertAdminCommission($valeur_amount_com, $wallet);
-
-                                    $walletAmountSend = DB::table('wallets')->select(DB::raw('SUM(amount) as total_amount'))->where('wallet_id',  $this->compte_number_robus)->first();
-
-                                    $amount_solde_drawal = (float)$walletAmountSend->total_amount -  (float)$commission_send;
-
-                                    $amount_drawal =      $amount_solde_drawal;
-
-                                    // Update decrement in compte Client
-                                    $wallet_search->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $commission_send),
-                                    ]);
-
-
-                                    // $amount_solde = $check->wallet->amount +  $commission;
-                                    $amount_solde = (float)sabdy()->wallet->amount +  (float) $this->transaction_amount_robus;
-
-                                    $walletUser->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+'  .  $this->transaction_amount_robus),
-                                    ]);
-
-
-
-                                    $walletTransaction = WalletTransaction::create(
-                                        [
-                                            'wallet_id' => $walletUser->wallet->id,
-                                            'amount' => $this->transaction_amount_robus,
-                                            'description' => $this->transaction_description_robus ?? null,
-                                            'transaction_cost_id' => 26,
-                                            'phone' => $this->transaction_phone ??  null,
-                                            'num_wallet' =>  $this->compte_number_robus,
-                                            'created_by' => Auth::guard('web')->user()->id,
-                                            'provider_id' => $provider->id,
-                                            'code_validated' => null,
-                                            'amount_received'  => $commission_send,
-                                            'choose_type_transaction' => $this->choose_type_transaction,
-                                            'type_transaction' => 'Compense',
-                                            'type_received' => 'Transfert',
-                                            'status' => 'SUCCESS',
-                                            'amount_solde' => $amount_solde ?? null,
-                                            'amount_solde_drawal' => $amount_drawal ?? null
-                                        ]
-                                    );
-                                    // Valeur receive
-
-
-                                    $transaction = Transaction::create([
-                                        'wallet_transaction_id' => $walletTransaction->id,
-                                        'sid_user_id' => Auth::guard('web')->user()->id,
-                                        'transaction_id' => 'RB_' . $walletTransaction->provider->name . '_' . $transactionCode,
-                                        'operator_transaction_name' => $walletTransaction->provider->name,
-                                        'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                        'pay_amount' => $walletTransaction->amount,
-                                        'fee_amount' => 0,
-                                        'received_amount' => $walletTransaction->amount,
-                                        'status' => $walletTransaction->status,
-                                    ]);
-
-                                    InvoiceTransaction::create([
-                                        'title' => "Transfers d'argent",
-                                        'wallet_transaction_id' => $walletTransaction->id,
-                                        'transactions_id' => $transaction->id,
-                                        'company_id' => Auth::guard('web')->user()->company->id,
-                                        'description' => $walletTransaction->description,
-                                        'status' => $walletTransaction->status,
-                                        'created_by' => Auth::guard('web')->user()->id,
-                                    ]);
-
-                                    // Commission Under_distributer
-
-
-
-                                    // Send Email
-                                    if ($wallet_search->sidUser->email != null) {
-
-                                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
-                                    }
-
-                                    if ($walletUser->email != null) {
-                                        $notify = new MailController();
-                                        $notify->newTransaction($walletTransaction);
-                                    }
-
-                                    // Notify And User an Admins
-                                    $msg_title = 'Transactions';
-                                    $msg = 'Demande de transfert est en cours de validation ';
-                                    $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                                    $notifs = $walletUser->unreadNotifications;
-                                    $wallet_search->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                                    $notifs = $wallet_search->sidUser->unreadNotifications;
-                                    event(new CreateWalletTransfersEvent($walletTransaction));
-                                    Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $walletTransaction->wallet->sidUser->firstname));
-                                    $admin = SidUser::where('status', true)
-                                        ->where('is_admin', true)
-                                        ->first();
-                                    $notifs = $admin->unreadNotifications;
-                                    event(new AdminNotifEvent($notifs));
-                                    $this->resetTransactionField();
-                                    $this->emit('modal-hide-transfers');
-                                    $this->emit('success', 'Retrait effectué avec success !');
-                                }
-                            }
-                        } else {
-
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('error', 'Pas de selection de providers !');
-                        }
                     } else {
 
                         $this->resetTransactionField();
@@ -999,11 +618,108 @@ class Transfers extends Component
                         $this->emit('error', 'Pas de selection de providers !');
                     }
 
+
+                    if ($wallet_search == null &&  $this->compte_number_robus == $walletUser->wallet->wallet_id) {
+                        $this->resetTransactionField();
+                        $this->emit('modal-hide-transfers');
+                        $this->emit('error', 'Ce numero n\'existe pas dans cette base ou vous appartient !');
+                        return;
+                    }
+
                     if ($this->isUserNotEligible($wallet_search)) {
                         $this->handleError('Pas de selection de providers !');
                         return;
                     }
 
+
+                    if ($som_transfers >= $valeur_ceiling) {
+                        $this->resetTransactionField();
+                        $this->emit('modal-hide-transfers');
+                        $this->emit('warning', 'Votre montant journier est atteint !');
+                        return;
+                    }
+
+                    $wallet_send = $wallet_search;
+
+                    $commission_receiveid =  $this->transaction_amount_robus;
+
+                    $wallet_receveid =  $walletUser->wallet;
+
+                    $commission_send =  $this->convertAdminCommissionInter($commission_receiveid, $wallet_send, $wallet_receveid);
+
+                    // Verify amount
+                    if ($commission_send > $wallet_search->amount) {
+                        $this->resetTransactionField();
+                        $this->emit('modal-hide-transfers');
+                        $this->emit('success', 'Verifier votre montant ! !');
+                        return;
+                    }
+
+                    $wallet = $wallet_search;
+
+                    $commission_valeur = $percent_robus_distri->percent * $this->transaction_amount_robus;
+
+                    $valeur_amount_com = $percent_robus_distri->percent_with_drawal * $commission_valeur;
+
+                    $valuer_with_drawal =  $this->convertAdminCommission($valeur_amount_com, $wallet);
+
+                    $walletAmountSend = DB::table('wallets')->select(DB::raw('SUM(amount) as total_amount'))->where('wallet_id',  $this->compte_number_robus)->first();
+
+                    $amount_solde_drawal = (float)$walletAmountSend->total_amount -  (float)$commission_send;
+
+                    $amount_drawal = $amount_solde_drawal;
+
+                    $this->updatePaiementWithdrawalWallet($wallet_search,  $commission_send);
+
+                    // $amount_solde = $check->wallet->amount +  $commission;
+                    $amount_solde = (float)sabdy()->wallet->amount +  (float) $this->transaction_amount_robus;
+
+                    $this->updatePaiementDrawalWallet($walletUser,  $this->transaction_amount_robus);
+
+                    $walletTransaction = $this->createDrawalTransaction(
+                        $walletUser,
+                        $this->transaction_amount_robus,
+                        $this->transaction_description_robus,
+                        $this->transaction_phone,
+                        $this->compte_number_robus,
+                        $provider,
+                        $commission_send,
+                        $this->choose_type_transaction,
+                        $amount_solde,
+                        $amount_drawal
+                    );
+
+                    $transaction = $this->createNewInvoiceTransaction($walletTransaction, $transactionCompiCode, $transactionCode);
+
+                    $this->createInvoiceTransactionDrawal($transaction, $walletTransaction);
+
+                    $this->TransactionDistributorDrawal(
+                        $valuer_with_drawal,
+                        $admin_civ,
+                        $walletTransaction
+                    );
+
+                    event(new CreateWalletTransfersEvent($walletTransaction));
+
+                    $this->notifyCreateUsers($walletUser, $admins, 'Transactions', 'Demande de transfert est en cours de validation', 'Demande de Retrait effectuer par  ' . ' ' . $walletTransaction->wallet->sidUser->firstname);
+
+                    if ($admins->count() > 0) {
+                        $this->notifyAdmins($admins);
+                    }
+
+                    $this->resetTransactionField();
+                    $this->emit('modal-hide-transfers');
+                    $this->emit('success', 'Retrait effectué avec success !');
+
+                    // Send Email
+                    if ($wallet_search->sidUser->email != null) {
+
+                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
+                    }
+
+                    if ($walletUser->email != null) {
+                        $this->sendMailNotification($walletTransaction);
+                    }
                 } else {
                     $this->resetTransactionField();
                     $this->emit('modal-hide-transfers');
@@ -1021,19 +737,21 @@ class Transfers extends Component
         }
     }
 
-    private function isUserNotEligible($wallet_search) {
-        return !$wallet_search->sidUser->is_under_distributer || 
-               !$wallet_search->sidUser->is_custumers || 
-               !$wallet_search->sidUser->is_distributer || 
-               (!$wallet_search->sidUser->is_supervisor && sabdy()->is_admin == 1);
+    private function isUserNotEligible($wallet_search)
+    {
+        return !$wallet_search->sidUser->is_under_distributer ||
+            !$wallet_search->sidUser->is_custumers ||
+            !$wallet_search->sidUser->is_distributer ||
+            (!$wallet_search->sidUser->is_supervisor && sabdy()->is_admin == 1);
     }
 
-    private function handleError($message) {
+    private function handleError($message)
+    {
         $this->resetTransactionField();
         $this->emit('modal-hide-transfers');
         $this->emit('error', $message);
     }
-    
+
     private function convertAdminCommissionInter($amount, $walletSend, $walletReceveid)
     {
 
@@ -1112,31 +830,47 @@ class Transfers extends Component
     }
 
     // Sted 2 Validated transaction
+    // Sted 2 Validated transaction
     public function addTransactionWithdrawal()
     {
+
         $walletUser = Auth::guard('web')->user();
         $rt = rand(40, 500000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
         $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
-        $percent_robus_distri = TransactionCost::whereId(1)->first();
-        $percent_robus_custumer = TransactionCost::whereId(2)->first();
-        $percent_robus_distri_gh = TransactionCost::whereId(11)->first();
-        $percent_robus_custumer_gh = TransactionCost::whereId(12)->first();
-        $percent_robus_distri_ma = TransactionCost::whereId(16)->first();
-        $percent_robus_custumer_ma = TransactionCost::whereId(17)->first();
-        $percent_robus_distri_tn = TransactionCost::whereId(21)->first();
-        $percent_robus_custumer_tn = TransactionCost::whereId(22)->first();
-        $percent_robus_distri_fr = TransactionCost::whereId(6)->first();
-        $percent_robus_custumer_fr = TransactionCost::whereId(7)->first();
-        $percent_robus_distri_ci = TransactionCost::whereId(26)->first();
-        $percent_robus_custumer_ci = TransactionCost::whereId(26)->first();
         $admins = $this->getAdminValeurProperty();
         $admin_civ_drawal = $this->getAdminDrawalCIVProperty();
         $admin_civ = SidUser::whereStatus(true)
             ->whereIsAdmin(true)
             ->where('country_id', 107)
             ->get();
+
+        if (sabdy()->country->name_groupe == 'CIV') {
+            $percent_robus_distri =  TransactionCost::whereId(26)->first();
+            $percent_robus_custumer =  TransactionCost::whereId(28)->first();
+        } elseif (sabdy()->country->name_groupe == 'AFL') {
+            $percent_robus_distri =  TransactionCost::whereId(32)->first();
+            $percent_robus_custumer =  TransactionCost::whereId(37)->first();
+        } elseif (sabdy()->country->name_groupe == 'AFC') {
+            $percent_robus_distri =  TransactionCost::whereId(33)->first();
+            $percent_robus_custumer =  TransactionCost::whereId(38)->first();
+        } elseif (sabdy()->country->name_groupe == 'USA') {
+            $percent_robus_distri =  TransactionCost::whereId(34)->first();
+            $percent_robus_custumer =  TransactionCost::whereId(39)->first();
+        } elseif (sabdy()->country->name_groupe == 'URP') {
+            $percent_robus_custumer =  TransactionCost::whereId(40)->first();
+            $percent_robus_distri =  TransactionCost::whereId(35)->first();
+        } elseif (sabdy()->country->name_groupe == 'MAG') {
+            $percent_robus_distri =  TransactionCost::whereId(36)->first();
+            $percent_robus_custumer =  TransactionCost::whereId(41)->first();
+        } elseif (sabdy()->country->name_groupe == 'ASIE') {
+            $percent_robus_distri =  TransactionCost::whereId(44)->first();
+            $percent_robus_custumer =  TransactionCost::whereId(46)->first();
+        } elseif (sabdy()->country->name_groupe == 'AFE') {
+            $percent_robus_distri =  TransactionCost::whereId(45)->first();
+            $percent_robus_custumer =  TransactionCost::whereId(47)->first();
+        }
 
         try {
 
@@ -1175,1344 +909,81 @@ class Transfers extends Component
                     $this->emit('error', 'Les 5 min son ecoule !');
                 } else {
 
-                    if ($walletUser->country->code == 'CF') {
 
-                        // If person use reaload acompte is distributer of s-distributer
-                        if ($walletUser->is_under_distributer == 1) {
+                    // If person use reaload acompte is distributer of s-distributer
+                    if ($walletUser->is_under_distributer == 1) {
 
-                            // Valur off commission
-                            $commission_valeur = $percent_robus_distri->percent * $verify_code->amount;
+                        // Valur off commission
+                        $commission_valeur = $percent_robus_distri->percent * $verify_code->amount;
+                        // 30% with drawal
+                        $valuer_with_drawal = $percent_robus_distri->percent_with_drawal * $commission_valeur;
+                    } else {
 
-                            // 30% with drawal
-                            $valuer_with_drawal = $percent_robus_distri->percent_with_drawal * $commission_valeur;
+                        // Valur off commission
+                        $commission_valeur = $percent_robus_custumer->percent * $verify_code->amount;
+                        // 30% with drawal
+                        $valuer_with_drawal = $percent_robus_custumer->percent_with_drawal * $commission_valeur;
+                    }
 
 
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
+                    $this->updateVerifyCodeWallet($verify_code);
 
-                            // Valeur receive
+                    $this->updatePaiementWithdrawalWallet($wallet_user, $verify_code->amount);
 
-                            // Update decrement in compte Client
-                            $wallet_user->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
+                    $transaction = $this->createNewInvoiceTransaction($verify_code, $transactionCompiCode, $transactionCode);
 
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
+                    $this->createInvoiceTransactionDrawal($transaction, $verify_code);
 
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
+                    $this->TransactionDistributorDrawal(
+                        $valuer_with_drawal,
+                        $admin_civ,
+                        $transaction
+                    );
 
-                            // Commission Under_distributer
+                    $this->updatePaiementDrawalWallet($walletUser,  $verify_code->amount);
 
-                            if ($admin_civ->count() > 0) {
+                    $this->updateWalletCommissions($verify_code,  $valuer_with_drawal);
 
-                                $nmbre_admin = $admin_civ->count();
+                    event(new CreateWalletTransfersEvent($transaction));
 
-                                $valeur_single = $valuer_with_drawal / $nmbre_admin;
+                    $message = 'Vous avez effectué un retrait de ' .
+                        $verify_code->amount . $walletUser->wallet->currencie->code .
+                        ' ' .
+                        'par ' . $verify_code->provider->name .
+                        ' a ' . $verify_code->created_at .
+                        'votre demande est en-cours de validation ' .
+                        'Robus vous remercie';
 
-                                foreach ($admin_civ as $user) {
+                    if ($this->shouldNotifyCI($verify_code)) {
 
-                                    $admin_single = SidUser::find($user->id);
+                        $this->sendSuccessMessageNotification($verify_code, $message);
+                    }
 
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => $verify_code->id,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' =>  null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' => null,
-                                        'description' => 'Retrait d\'argent',
-                                    ]);
+                    $this->notifyCreateUsers($walletUser, $admins, 'Transactions', 'Demande de transfert est en cours de validation', 'Demande de Retrait effectuer par  ' . ' ' . $verify_code->wallet->sidUser->firstname);
 
-                                    $admin_single->wallet->update([
-                                        'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                            ' ' .
-                                            Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' =>  Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $valeur_single),
-                                    ]);
-                                }
-                            }
+                    if ($admins->count() > 0) {
+                        $this->notifyAdmins($admins);
+                    }
 
+                    $message = 'Vous avez effectué un retrait de ' .
+                        $verify_code->amount . $walletUser->wallet->currencie->code .
+                        ' ' .
+                        'par ' . $verify_code->provider->name .
+                        ' a ' . $verify_code->created_at .
+                        'votre demande est en-cours de validation ' .
+                        'Robus vous remercie';
 
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
+                    if ($this->shouldNotifyCI($verify_code)) {
 
-                            $verify_code->update([
-                                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
-                            ]);
+                        $this->sendSuccessMessageNotification($verify_code, $message);
+                    }
 
-                            if ($walletUser->country->code == 'CI') {
+                    $this->resetTransactionField();
+                    $this->emit('modal-hide-transfers');
+                    $this->emit('success', 'Transfers effectué !');
 
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount . $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at .
-                                    'votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notify And User an Admins
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        } else {
-
-                            // If is not Distribiter or s-distributer
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            //valeur send
-                            $commission_valeur = $percent_robus_custumer->percent * $verify_code->amount;
-
-                            // 30% with drawal
-                            $valuer_with_drawal = $percent_robus_custumer->percent_with_drawal * $commission_valeur;
-
-                            // Valeur receive
-
-                            // Send in compte Client
-                            $wallet_user->update([
-                                'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                    ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-
-                            if ($walletUser->country->code == 'CI') {
-
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount .
-                                    $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at . ' votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notifications
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Demande de transfert de ' .
-                                ' ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        }
-                    } elseif ($walletUser->country->code == 'GH') {
-
-                        // If person use reaload acompte is distributer of s-distributer
-                        if ($walletUser->is_under_distributer == 1) {
-
-                            // Valur off commission
-                            $commission_valeur = $percent_robus_distri_gh->percent * $verify_code->amount;
-
-                            // 30% with drawal
-                            $valuer_with_drawal = $percent_robus_distri_gh->percent_with_drawal * $commission_valeur;
-
-                            $conver_drawal_amount =  $valuer_with_drawal * $walletUser->wallet->currencie->value;
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Valeur receive
-
-                            // Update decrement in compte Client
-                            $wallet_user->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Commission Under_distributer
-                            if ($admin_civ->count() > 0) {
-
-                                $nmbre_admin = $admin_civ->count();
-
-                                $valeur_single = $conver_drawal_amount / $nmbre_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => $verify_code->id,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' =>  null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' => null,
-                                        'description' => 'Retrait d\'argent',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                            ' ' .
-                                            Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' =>  Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-
-                            $verify_code->update([
-                                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
-                            ]);
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            if ($walletUser->country->code == 'CI') {
-
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount . $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at .
-                                    'votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notify And User an Admins
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        } else {
-
-                            // Valur off commission
-                            $commission_valeur = $percent_robus_distri_gh->percent * $verify_code->amount;
-
-                            // 30% with drawal
-                            $valuer_with_drawal = $percent_robus_distri_gh->percent_with_drawal * $commission_valeur;
-
-                            $conver_drawal_amount =  $valuer_with_drawal * $walletUser->wallet->currencie->value;
-
-                            // If is not Distribiter or s-distributer
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            //valeur send
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            // Valeur receive
-
-                            // Send in compte Client
-                            $wallet_user->update([
-                                'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                    ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-
-                            if ($walletUser->country->code == 'CI') {
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount .
-                                    $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at . ' votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notifications
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Demande de transfert de ' .
-                                ' ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        }
-                    } elseif ($walletUser->country->code == 'MA') {
-                        // If person use reaload acompte is d
-
-                        if ($walletUser->is_under_distributer == 1) {
-
-
-                            // Valeur off commission
-                            $commission_valeur = $percent_robus_distri_ma->percent * $verify_code->amount;
-
-                            // 30% with drawal
-                            $valuer_with_drawal = $percent_robus_distri_ma->percent_with_drawal * $commission_valeur;
-
-                            $conver_drawal_amount =  $valuer_with_drawal * $walletUser->wallet->currencie->value;
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Valeur receive
-
-                            // Update decrement in compte Client
-                            $wallet_user->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Commission Under_distributer
-                            if ($admin_civ->count() > 0) {
-
-                                $nmbre_admin = $admin_civ->count();
-
-                                $valeur_single = $conver_drawal_amount / $nmbre_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => $verify_code->id,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' =>  null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' => null,
-                                        'description' => 'Retrait d\'argent',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                            ' ' .
-                                            Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' =>  Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $verify_code->update([
-                                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
-                            ]);
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            if ($walletUser->country->code == 'CI') {
-
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount . $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at .
-                                    'votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notify And User an Admins
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        } else {
-
-                            // If is not Distribiter or s-distributer
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-
-                            // Send in compte Client
-                            $wallet_user->update([
-                                'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                    ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            if ($walletUser->country->code == 'CI') {
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount .
-                                    $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at . ' votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notifications
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Demande de transfert de ' .
-                                ' ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        }
-                    } elseif ($walletUser->country->code == 'TN') {
-                        // If person use reaload acompte is d
-                        if ($walletUser->is_under_distributer == 1) {
-
-
-                            // Valur off commission
-                            $commission_valeur = $percent_robus_distri_tn->percent * $verify_code->amount;
-
-                            // 30% with drawal
-                            $valuer_with_drawal = $percent_robus_distri_tn->percent_with_drawal * $commission_valeur;
-
-                            $conver_drawal_amount =  $valuer_with_drawal * $walletUser->wallet->currencie->value;
-
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Valeur receive
-
-                            // Update decrement in compte Client
-                            $wallet_user->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Commission Under_distributer
-                            if ($admin_civ->count() > 0) {
-
-                                $nmbre_admin = $admin_civ->count();
-
-                                $valeur_single = $conver_drawal_amount / $nmbre_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => $verify_code->id,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' =>  null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' => null,
-                                        'description' => 'Retrait d\'argent',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                            ' ' .
-                                            Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' =>  Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $verify_code->update([
-                                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
-                            ]);
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            if ($walletUser->country->code == 'CI') {
-
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount . $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at .
-                                    'votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notify And User an Admins
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        } else {
-
-                            // If is not Distribiter or s-distributer
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-
-                            // Send in compte Client
-                            $wallet_user->update([
-                                'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                    ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            if ($walletUser->country->code == 'CI') {
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount .
-                                    $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at . ' votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notifications
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Demande de transfert de ' .
-                                ' ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        }
-                    } elseif ($walletUser->country->code == 'FR') {
-                        // If person use reaload acompte is d
-                        if ($walletUser->is_under_distributer == 1) {
-
-
-                            // Valur off commission
-                            $commission_valeur = $percent_robus_distri_fr->percent * $verify_code->amount;
-
-                            // 30% with drawal
-                            $valuer_with_drawal = $percent_robus_distri_fr->percent_with_drawal * $commission_valeur;
-
-                            $conver_drawal_amount =  $valuer_with_drawal * $walletUser->wallet->currencie->value;
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Valeur receive
-
-                            // Update decrement in compte Client
-                            $wallet_user->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Commission Under_distributer
-                            if ($admin_civ->count() > 0) {
-
-                                $nmbre_admin = $admin_civ->count();
-
-                                $valeur_single = $conver_drawal_amount / $nmbre_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => $verify_code->id,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' =>  null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' => null,
-                                        'description' => 'Retrait d\'argent',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                            ' ' .
-                                            Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' =>  Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $verify_code->update([
-                                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
-                            ]);
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            if ($walletUser->country->code == 'CI') {
-
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount . $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at .
-                                    'votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notify And User an Admins
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        } else {
-
-                            // If is not Distribiter or s-distributer
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-
-                            // Send in compte Client
-                            $wallet_user->update([
-                                'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                    ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            if ($walletUser->country->code == 'CI') {
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount .
-                                    $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at . ' votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notifications
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Demande de transfert de ' .
-                                ' ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        }
-                    } elseif ($walletUser->country->code == 'CI') {
-                        // If person use reaload acompte is d
-                        if ($walletUser->is_under_distributer == 1) {
-
-                            // Valur off commission
-                            $commission_valeur =  $percent_robus_distri_ci->percent * $verify_code->amount;
-
-                            // 30% with drawal
-                            $valuer_with_drawal = $percent_robus_distri_ci->percent_with_drawal * $commission_valeur;
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Valeur receive
-
-                            // Update decrement in compte Client
-                            $wallet_user->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            // Commission Under_distributer
-
-                            // Commission Under_distributer
-                            if ($admin_civ->count() > 0) {
-
-                                $nmbre_admin = $admin_civ->count();
-
-                                $valeur_single = $valuer_with_drawal / $nmbre_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => $verify_code->id,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' =>  null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' => null,
-                                        'description' => 'Retrait d\'argent',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                            ' ' .
-                                            Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' =>  Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount-' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            $verify_code->update([
-                                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
-                            ]);
-
-                            if ($walletUser->country->code == 'CI') {
-
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount . $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at .
-                                    'Robus vous remercie';
-                                $encode = substr($wallet_user->sidUser->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notify And User an Admins
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        } else {
-
-                            // If is not Distribiter or s-distributer
-
-                            $verify_code->update([
-                                'type_transaction' => 'Retrait',
-                                'status' => 'SUCCESS',
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-
-                            // Send in compte Client
-                            $wallet_user->update([
-                                'reload_by' =>  Auth::guard('web')->user()->firstname .
-                                    ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount-' . $verify_code->amount),
-                            ]);
-
-                            $transaction = Transaction::create([
-                                'wallet_transaction_id' => $verify_code->id,
-                                'sid_user_id' => Auth::guard('web')->user()->id,
-                                'transaction_id' => 'RB_' . $verify_code->provider->name . '_' . $transactionCode,
-                                'operator_transaction_name' => $verify_code->provider->name,
-                                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                                'pay_amount' => $verify_code->amount,
-                                'fee_amount' => 0,
-                                'received_amount' => $verify_code->amount,
-                                'status' => $verify_code->status,
-                            ]);
-
-                            InvoiceTransaction::create([
-                                'title' => "Transfers d'argent",
-                                'wallet_transaction_id' => $verify_code->id,
-                                'transactions_id' => $transaction->id,
-                                'company_id' => Auth::guard('web')->user()->company->id,
-                                'description' => $verify_code->description,
-                                'status' => $verify_code->status,
-                                'created_by' => Auth::guard('web')->user()->id,
-                            ]);
-
-                            $walletUser->wallet->update([
-                                'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                'sid_user_relod' => Auth::guard('web')->user()->id,
-                                'amount' => DB::raw('amount+'  .  $verify_code->amount),
-                            ]);
-
-                            if ($walletUser->country->code == 'CI') {
-                                $message = 'Vous avez effectué un retrait de ' .
-                                    $verify_code->amount .
-                                    $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' . $verify_code->provider->name .
-                                    ' a ' . $verify_code->created_at . ' votre demande est en-cours de validation ' .
-                                    'Robus vous remercie';
-
-                                $encode = substr($verify_code->wallet->sidUser->phone, -10);
-
-                                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                            }
-                            // Notifications
-                            $msg_title = 'Transactions';
-                            $msg = 'Demande de transfert est en cours de validation ';
-                            $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                            $notifs = $walletUser->unreadNotifications;
-                            $wallet_user->sidUser->notify(
-                                new UserNotification([
-                                    'title' => $msg_title,
-                                    'message' => $msg,
-                                ])
-                            );
-                            $notifs = $wallet_user->sidUser->unreadNotifications;
-                            event(new CreateWalletTransfersEvent($verify_code));
-                            Notification::send($admins, new AdminNotification('Demande de transfert de ' .
-                                ' ' . $verify_code->wallet->sidUser->firstname));
-                            $admin = SidUser::where('status', true)
-                                ->where('is_admin', true)
-                                ->first();
-                            $notifs = $admin->unreadNotifications;
-                            event(new AdminNotifEvent($notifs));
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($verify_code);
-                            }
-                        }
+                    if ($walletUser->email != null) {
+                        $this->sendMailNotification($transaction);
                     }
                 }
             } else {
@@ -8103,6 +6574,16 @@ class Transfers extends Component
         ]);
     }
 
+    protected function updateVerifyCodeWallet($verify_code)
+    {
+
+        return  $verify_code->update([
+            'type_transaction' => 'Retrait',
+            'status' => 'SUCCESS',
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
     protected function updateWalletNull($check, $commission)
     {
 
@@ -8116,6 +6597,16 @@ class Transfers extends Component
             'amount_solde' => $amount_solde,
         ]);
     }
+
+    protected function updateWalletCommissions($verify_code, $valuer_with_drawal)
+    {
+
+        return  $verify_code->update([
+            'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
+        ]);
+    }
+
+
 
 
 

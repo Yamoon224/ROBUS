@@ -136,7 +136,7 @@ class AdminController extends Controller
     public function browse(Request $request)
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('voir-administrateur')) {
+        if (!Auth::guard('web')->user()->hasPermissionTo('utilisateurs')) {
             abort(403);
         }
 
@@ -1154,7 +1154,7 @@ class AdminController extends Controller
     public function ShowProfil(int $id, Request $request)
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur')) {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-utilisateur')) {
             abort(403);
         }
 
