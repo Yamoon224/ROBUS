@@ -73,7 +73,7 @@ use App\Events\CreateWalletPhoneCreditEvent;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Admin\MailController;
 
-class Transfers extends Component
+class TransferAnc extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';

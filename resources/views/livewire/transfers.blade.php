@@ -1,3 +1,10 @@
+@php
+
+    $is_under = sabdy()->is_under_distributer;
+    $is_distributer = sabdy()->is_distributer;
+
+@endphp
+
 <div>
     <!-- inject:js -->
     <script src="{{ asset('public/dist/js/app.js') }}"></script>
@@ -12,7 +19,7 @@
     </h2>
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
-        @if (sabdy()->is_distributer == true)
+        @if ($is_distributer)
 
             <h2 class="text-lg font-medium truncate mr-5 mt-6">Telechargé les differents raports d'activités</h2>
 
@@ -496,7 +503,7 @@
                         wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
                 @endif
             @else
-                @if (sabdy()->is_under_distributer == 1)
+                @if ($is_under)
 
                     @if (sabdy()->hasPermissionTo('transfers-argent'))
                         <button class="btn btn-transuv w-22 mr-1 mb-1"

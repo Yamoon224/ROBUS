@@ -424,7 +424,7 @@ class AdminController extends Controller
         return view('pages.admin.add_under_distributer', compact('roles', 'countries', 'currentStep'));
     }
 
-    
+
 
 
     public function add_under_distributer_two(Request $request)
@@ -441,6 +441,7 @@ class AdminController extends Controller
 
         $rt = rand(40, 5000) * time();
         $activation_code = sprintf("%0.4s", str_shuffle($rt));
+
 
         $validator = Validator::make($request->all(), [
             'name_ground' => ['required', 'string', 'max:255'],
@@ -497,7 +498,6 @@ class AdminController extends Controller
                 return redirect(route('admin.add_under_distributer_two'))->with('color', $color)->with('status', $msg);
             } else {
                 return back()
-                    // ->withErrors($validator)
                     ->with('color', 'danger')
                     ->with('status', 'Email de l\'agent doit etre de Robus ou votre Email n\'est pas correct')
                     ->withInput();
@@ -1437,7 +1437,12 @@ class AdminController extends Controller
 
             $user_info =  SidUser::whereId($id)->first();
 
-            SidUser::find($id)->update(['password' => Hash::make($request->password)]);
+            SidUser::find($id)->update([
+                'password' => Hash::make($request->password),
+                'activation_code'  =>  null,
+                'forget_password'  =>  null,
+            ]);
+        
 
             Mail::to($user_info->email)->send(new NewAdmin('Votre compte  sous distributeur marchant est activé ' . env('APP_NAME') .
                 ' Votre email : '  . $user_info->email . ' Votre mot de passe : ' . $request->password));

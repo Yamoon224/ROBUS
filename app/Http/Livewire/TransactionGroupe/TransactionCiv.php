@@ -42,12 +42,14 @@ class TransactionCiv extends Component
     public $name_custumers;
     public $num_piece_custumers;
     public $date_piece;
+    public $providerCountries = [];
 
     // protected $listeners = [
     //     'echo-private:wallet-transfers-created,.Created_wallet_transfers' => 'notifyNewTransfers',
     // ];
 
 
+    
     public function resetValeurReload()
     {
         $this->compte_number_robus = '';
@@ -82,7 +84,8 @@ class TransactionCiv extends Component
     public function mount()
     {
         $this->resetValeurReload();
-        // $this->emit('monEvenement', $resetValeurReload);
+        $this->updateProviderTransaction();
+
     }
 
     public function cancelTransactionField()
@@ -116,13 +119,9 @@ class TransactionCiv extends Component
 
             if (!$check) {
 
-                
-                if (sabdy()->country->code == 'CI') {
 
-                    // If Is Distributer and S-distributer
                     if (sabdy()->is_under_distributer == 1) {
 
-                        // If Transaction Is Robus
                         if ($this->provider_transaction == 9) {
 
                             $this->validate(
@@ -288,7 +287,7 @@ class TransactionCiv extends Component
                         $this->emit('modal-hide-transfers');
                         $this->emit('info', 'Vous ne pouvez pas faire des transactions  !');
                     }
-                }
+                
             } else {
                 $this->resetTransactionField();
                 $this->emit('modal-hide-transfers');
@@ -403,8 +402,88 @@ class TransactionCiv extends Component
             'usersCountry' => sabdy()->wallet->currencie->code,
             'countrie_number_local' => sabdy()->country
                 ->indecative,
+
         ]);
     }
+
+    public function getRobusPercentageSDistributers()
+    {
+        $countryNameGroup = sabdy()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return TransactionCost::whereId(26)->first();
+            case 'AFL':
+                return TransactionCost::whereId(32)->first();
+            case 'AFC':
+                return TransactionCost::whereId(33)->first();
+            case 'USA':
+                return TransactionCost::whereId(34)->first();
+            case 'URP':
+                return TransactionCost::whereId(35)->first();
+            case 'MAG':
+                return TransactionCost::whereId(36)->first();
+            case 'ASIE':
+                return TransactionCost::whereId(44)->first();
+            case 'AFE':
+                return TransactionCost::whereId(45)->first();
+            default:
+                return null; // Handle the default case as needed
+        }
+    }
+
+    public function getRobusPercentageCustumers()
+    {
+        $countryNameGroup = sabdy()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return TransactionCost::whereId(28)->first();
+            case 'AFL':
+                return TransactionCost::whereId(37)->first();
+            case 'AFC':
+                return TransactionCost::whereId(38)->first();
+            case 'USA':
+                return TransactionCost::whereId(39)->first();
+            case 'URP':
+                return TransactionCost::whereId(40)->first();
+            case 'MAG':
+                return TransactionCost::whereId(41)->first();
+            case 'ASIE':
+                return TransactionCost::whereId(46)->first();
+            case 'AFE':
+                return TransactionCost::whereId(48)->first();
+            default:
+                return null;
+        }
+    }
+
+    public function updateProviderTransaction()
+    {
+
+        $this->providerCountries = $this->getProvidersByType(new Provider , 1);
+
+        return $this->providerCountries;
+
+    }
+    
+
+    public static function getProvidersByType($query, $providerType)
+    {
+    
+        $providers = $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', sabdy()->country->id)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+
+
+        return $providers;
+    }
+    
 
     private function sendNotification($walletTransaction)
     {

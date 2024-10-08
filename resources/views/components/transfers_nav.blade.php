@@ -1,3 +1,9 @@
+   @php
+       
+      $is_under =  sabdy()->is_under_distributer;
+
+   @endphp
+   
    <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center" role="tablist">
 
 
@@ -53,7 +59,7 @@
                    </svg> Credit
                    telephonique</a>
            </li>
-           <li id="xbet-tab" class="nav-item" role="presentation">
+           {{-- <li id="xbet-tab" class="nav-item" role="presentation">
                <a href="javascript:;" class="nav-link py-4 flex items-center" id="xbet-nav" data-tw-target="#xbet"
                    aria-controls="xbet" aria-selected="false" role="tab"> <svg
                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -72,7 +78,7 @@
                     <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                 </svg> UV Wave
             </a>
-        </li>
+        </li> --}}
            <li id="inter-tab" class="nav-item" role="presentation">
                <a href="javascript:;" class="nav-link py-4 flex items-center" id="inter-nav" data-tw-target="#inter"
                    aria-controls="inter" aria-selected="false" role="tab"> <svg

@@ -5,7 +5,8 @@
                     *</span></label>
             <select wire:model="provider_transaction" id="modal-form-1" class="form-control">
                 <option value="null" disabled>Selectionnez le canal</option>
-                @foreach ($provide_west_africa as $item)
+                
+                @foreach ($providerCountries as $item)
                     <option value="{{ $item->id }}">{{ $item->name }}</option>
                 @endforeach
             </select>
@@ -37,7 +38,9 @@
 
             $provider = $providerData[$provider_transaction] ?? null;
             $countrie_indicative = App\Models\Custumers\Country::where('id', sabdy()->country->id)->first();
+
         @endphp
+
         @if ($provider)
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 style_image_providers">
                 <div class="col-span-12">
@@ -131,8 +134,11 @@
                 </div>
             </div>
             @if (!is_null($transaction_amount_robus))
+
+            
                 <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 ">
 
+                    @if (sabdy()->is_under_distributer == 1)
                     <div class="col-span-6 mt-3">
                         <label for="transaction_amount_robus" class="form-label">Commission<span class="text-danger">
                                 *</span></label>
@@ -144,9 +150,22 @@
                         </div>
 
                     </div>
+                    @else 
                     <div class="col-span-6 mt-3">
-                        <label for="transaction_amount_robus" class="form-label">Montant à
-                            recevoir<span class="text-danger">
+                        <label for="transaction_amount_robus" class="form-label">Montant à payer<span class="text-danger">
+                                *</span></label>
+
+                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                            style="font-size: 25px; color:white;">
+                            {{ $amount_transaction_nat_val_pay ?? null }}
+                            {{ $usersCountry }}
+                        </div>
+
+                    </div>
+                    @endif
+                 
+                    <div class="col-span-6 mt-3">
+                        <label for="transaction_amount_robus" class="form-label">Montant à récevoir<span class="text-danger">
                                 *</span></label>
 
                         <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
@@ -182,4 +201,11 @@
         )
 
     });
+
+    document.addEventListener('livewire:load', function () {
+    Livewire.on('providersFetched', providers => {
+        console.log('Providers:', providers);
+    });
+});
+
 </script>

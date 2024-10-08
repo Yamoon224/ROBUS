@@ -39,6 +39,7 @@ class TransactionCiv extends Component
     public $phone_inter_out_civ;
     public $interId;
     public $phone_inter_robus_civ;
+    public $providers = [];
 
     public function resetValeurReload()
     {
@@ -67,7 +68,7 @@ class TransactionCiv extends Component
     public function mount()
     {
         $this->resetValeurReload();
-        // $this->emit('monEvenement', $resetValeurReload);
+
     }
 
     public function loadChoose3()
@@ -257,15 +258,6 @@ class TransactionCiv extends Component
 
                 $commission_inter =  $this->getRobusPercentageInter($country_robus, $this->provider_inter_out_civ);
 
-                // if ($country_robus->name_groupe == "AFL") {
-                //     $commission_inter = $this->provider_inter_out_civ == 51 ? LevelMoney::whereId(71)->first() : LevelMoney::whereId(3)->first();
-                // } elseif ($country_robus->name_groupe == "AFC") {
-                //     $commission_inter = $this->provider_inter_out_civ == 51 ? LevelMoney::whereId(72)->first() : LevelMoney::whereId(18)->first();
-                // } else {
-                //     $commission_transaction_val_inter_pay  = "Pas de Groupe";
-                //     $commission_transaction_val_inter_receive =  "Pas de Groupe";
-                // }
-
                 if ($commission_inter) {
 
                     if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
@@ -387,76 +379,97 @@ class TransactionCiv extends Component
             'usersCountry' => sabdy()->wallet->currencie->code,
             'countrie_number_local' => sabdy()->country
                 ->indecative,
-            'provide_came_guine' => Provider::whereIn('id', array(49, 48))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_congo' => Provider::whereIn('id', array(48, 51))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_centre_afrique' => Provider::whereIn('id', array(49, 78))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_con_bn_gh_lib' => Provider::whereId(48)
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_gha' => Provider::whereIn('id', array(48, 51))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_gabon' => Provider::whereIn('id', array(71, 72))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_mali' => Provider::whereIn('id', array(49, 50, 55))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_west_africa' => Provider::whereIn('id', array(1, 3, 4, 6, 9))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_out_civ' => Provider::whereIn('id', array(1, 3, 4))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_civ' => Provider::whereIn('id', array(49, 50, 55, 48))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_ng_rd_tchad' => Provider::whereId(71)
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_senegal' => Provider::whereId(55)
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_togo' => Provider::whereId(50)
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_burki' => Provider::whereIn('id', array(49, 55))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_ethopie' => Provider::whereIn('id', array(48, 73))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_ouganda' => Provider::whereIn('id', array(71, 48))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_seria' => Provider::whereIn('id', array(49, 74, 75))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_rwanda' => Provider::whereIn('id', array(48, 71))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_civ_out' => Provider::whereIn('id', array(49, 50, 48))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'provide_kenya' => Provider::whereIn('id', array(76, 71, 77))
-                ->orderBy('name', 'asc')
-                ->get(),
-            'countrie_ivoires' => Country::whereRobus(true)
-                ->whereIn('id', array(146, 42, 83, 74, 218, 39, 42, 43, 50, 57, 79, 122, 69, 223, 191, 180, 112, 157, 133, 91))
-                ->orderBy('name', 'asc')
-                ->get(),
+            // 'provide_came_guine' => Provider::whereIn('id', array(49, 48))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_congo' => Provider::whereIn('id', array(48, 51))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_centre_afrique' => Provider::whereIn('id', array(49, 78))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_con_bn_gh_lib' => Provider::whereId(48)
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_gha' => Provider::whereIn('id', array(48, 51))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_gabon' => Provider::whereIn('id', array(71, 72))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_mali' => Provider::whereIn('id', array(49, 50, 55))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_west_africa' => Provider::whereIn('id', array(1, 3, 4, 6, 9))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_out_civ' => Provider::whereIn('id', array(1, 3, 4))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_civ' => Provider::whereIn('id', array(49, 50, 55, 48))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_ng_rd_tchad' => Provider::whereId(71)
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_senegal' => Provider::whereId(55)
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_togo' => Provider::whereId(50)
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_burki' => Provider::whereIn('id', array(49, 55))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_ethopie' => Provider::whereIn('id', array(48, 73))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_ouganda' => Provider::whereIn('id', array(71, 48))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_seria' => Provider::whereIn('id', array(49, 74, 75))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_rwanda' => Provider::whereIn('id', array(48, 71))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_civ_out' => Provider::whereIn('id', array(49, 50, 48))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'provide_kenya' => Provider::whereIn('id', array(76, 71, 77))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
+            // 'countrie_ivoires' => Country::whereRobus(true)
+            //     ->whereIn('id', array(146, 42, 83, 74, 218, 39, 42, 43, 50, 57, 79, 122, 69, 223, 191, 180, 112, 157, 133, 91))
+            //     ->orderBy('name', 'asc')
+            //     ->get(),
             'countrie_inter_ivoires' => Country::whereRobus(true)
-                ->whereIn('name_groupe', array('AFL', 'AFC'))
+                ->whereIn('name_groupe', array('AFL', 'AFC', 'ASIE' , 'AFE'))
+                ->where('id', '!=', sabdy()->country->id)
                 ->orderBy('name', 'asc')
                 ->get(),
 
         ]);
+    }
+
+    public function updatedCountryInterOutCiv($countryId)
+    {
+        $this->providers = $this->getProvidersByType(new Provider, $countryId, 8);
+    }
+    
+
+    public static function getProvidersByType($query, $countryId, $providerType)
+    {
+
+
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
     }
 
     private function getRobusPercentageInter($countrie, $provider_valeur)

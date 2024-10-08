@@ -139,7 +139,6 @@ class ProviderController extends Controller
     }
 
 
-
     public function offers()
     {
 

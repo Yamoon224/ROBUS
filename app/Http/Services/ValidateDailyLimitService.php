@@ -62,6 +62,17 @@ class ValidateDailyLimitService
     }
 
 
+    public function validateSabdyAmount($transaction_amount_robus)
+    {
+        $val_amount = $transaction_amount_robus;
+
+        if ($val_amount > sabdy()->wallet->amount) {
+            return false;
+        }
+
+        return true;
+    }
+
     public function validateAmountVirement($transaction_amount_robus)
     {
         $val_amount = $transaction_amount_robus;
@@ -263,7 +274,6 @@ class ValidateDailyLimitService
         $reel_amount = (float) $reel_amount;
 
         return $reel_amount;
-
-        return $reel_amount;
+        
     }
 }

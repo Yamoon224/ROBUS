@@ -16,6 +16,8 @@
             @enderror
         </div>
     </div>
+
+ 
     @if (!is_null($country_inter_out_civ))
         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
             @php
@@ -36,67 +38,26 @@
                         Etat Unis
                     @elseif ($countrie_indicative->name_groupe == 'CIV')
                         Côte d'Ivoire
+                    @elseif ($countrie_indicative->name_groupe == 'ASIE')
+                        Asie
+                    @elseif ($countrie_indicative->name_groupe == 'AFE')
+                        Afrique de l'EST
                     @endif
                 </span>
             </div>
 
             <input type="hidden" wire:init="loadChoose3">
-
             <div class="col-span-6 mt-3">
-                <label for="provider_inter_out_civ" class="form-label">Canal du paiement
-                    money<span class="text-danger">
-                        *</span></label>
-                <select wire:model.debounce.10ms="provider_inter_out_civ" id="provider_inter_out_civ"
-                    class="form-control">
+                <label for="provider_inter_out_civ" class="form-label">Canal du paiement money<span class="text-danger"> *</span></label>
+                <select wire:model="provider_inter_out_civ" id="provider_inter_out_civ" class="form-control">
                     <option value="null" disabled>Selectionnez le canal</option>
-
-                    @php
-                        $provideOptions = [];
-                        if ($country_inter_out_civ == 39 || $country_inter_out_civ == 91) {
-                            $provideOptions = $provide_came_guine;
-                        } elseif ($country_inter_out_civ == 50 || $country_inter_out_civ == 25 || $country_inter_out_civ == 122) {
-                            $provideOptions = $provide_con_bn_gh_lib;
-                        } elseif ($country_inter_out_civ == 79) {
-                            $provideOptions = $provide_gabon;
-                        } elseif ($country_inter_out_civ == 133) {
-                            $provideOptions = $provide_mali;
-                        } elseif ($country_inter_out_civ == 57 || $country_inter_out_civ == 43 || $country_inter_out_civ == 157) {
-                            $provideOptions = $provide_ng_rd_tchad;
-                        } elseif ($country_inter_out_civ == 57 || $country_inter_out_civ == 43 || $country_inter_out_civ == 157) {
-                            $provideOptions = $provide_ng_rd_tchad;
-                        } elseif ($country_inter_out_civ == 188) {
-                            $provideOptions = $provide_ng_rd_tchad;
-                        } elseif ($country_inter_out_civ == 214) {
-                            $provideOptions = $provide_togo;
-                        } elseif ($country_inter_out_civ == 36) {
-                            $provideOptions = $provide_burki;
-                        } elseif ($country_inter_out_civ == 69) {
-                            $provideOptions = $provide_ethopie;
-                        } elseif ($country_inter_out_civ == 223) {
-                            $provideOptions = $provide_ouganda;
-                        } elseif ($country_inter_out_civ == 191) {
-                            $provideOptions = $provide_seria;
-                        } elseif ($country_inter_out_civ == 180) {
-                            $provideOptions = $provide_rwanda;
-                        } elseif ($country_inter_out_civ == 112) {
-                            $provideOptions = $provide_kenya;
-                        } elseif ($country_inter_out_civ == 83) {
-                            $provideOptions = $provide_gha;
-                        } elseif ($country_inter_out_civ == 74 || $country_inter_out_civ == 146  || $country_inter_out_civ == 218) {
-                            $provideOptions = $provide_congo;
-                        }elseif($country_inter_out_civ == 42)
-                        {
-                            $provideOptions = $provide_centre_afrique;
-                        }
-                    @endphp
-                    @foreach ($provideOptions as $item)
-                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @foreach ($providers as $provider)
+                        <option value="{{ $provider->id }}">{{ $provider->name }}</option>
                     @endforeach
                 </select>
                 @error('provider_inter_out_civ')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
-
             </div>
             <div class="col-span-6 mt-3">
                 <label for="amount_inter_out_civ" class="form-label">Montant<span class="text-danger">*</span></label>

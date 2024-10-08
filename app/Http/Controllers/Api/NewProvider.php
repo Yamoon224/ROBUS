@@ -44,7 +44,7 @@ use App\Http\Resources\ProviderSingleCollection;
  *   ),
  *  )
  */
-class ProviderController extends Controller
+class NewProviderController extends Controller
 {
 
 
