@@ -513,7 +513,7 @@
 
                     @if (sabdy()->hasPermissionTo('rechargement-inters'))
                         <button class="btn btn-inter w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-inters-show' , 'create-interTransfers-modal')">Internationnal</button>
+                            wire:click="$emit('modal-inters-show' , 'create-interCivTransfers-modal')">Internationnal</button>
                     @endif
                 @else
                     @if (sabdy()->hasPermissionTo('transfers-argent'))
@@ -524,7 +524,7 @@
 
                     @if (sabdy()->hasPermissionTo('rechargement-inters'))
                         <button class="btn btn-inter w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-inters-show' , 'create-interTransfers-modal')">Internationnal</button>
+                            wire:click="$emit('modal-inters-show' , 'create-interCivTransfers-modal')">Internationnal</button>
                     @endif
 
 

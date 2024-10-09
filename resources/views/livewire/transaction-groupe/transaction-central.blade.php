@@ -153,7 +153,10 @@
                                     ->first();
                                 if ($wallet_search) {
                                     if ($wallet_search->sidUser->is_custumers) {
-                                        $wallet_name = $wallet_search->sidUser->firstname . ' ' . $wallet_search->sidUser->lastname;
+                                        $wallet_name =
+                                            $wallet_search->sidUser->firstname .
+                                            ' ' .
+                                            $wallet_search->sidUser->lastname;
                                     } else {
                                         $wallet_name = 'Numero introuvable ou n\' est pas client';
                                     }
@@ -381,3 +384,4 @@
         </div>
     @endif
 </div>
+

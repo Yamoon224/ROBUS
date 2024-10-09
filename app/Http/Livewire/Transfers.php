@@ -341,6 +341,7 @@ class Transfers extends Component
     // Protected valeurs Services
     private $phoneCreditService1;
 
+
     protected $listeners = [
         '' => 'transactionInterReload',
         'transaction_inters' => 'transactionData',
@@ -372,7 +373,6 @@ class Transfers extends Component
         'echo:wallet-phone-choose-created,.Created_wallet_phone_choose' =>
         'notifyNewPhone',
     ];
-
 
 
 
@@ -1010,6 +1010,8 @@ class Transfers extends Component
     {
         $this->currentStep = $step;
     }
+
+
 
     // Add Paiment
     public function addPaiement()

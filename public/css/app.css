@@ -24,6 +24,17 @@
   100% { opacity: 1; }
 }
 
+.style-validated{
+
+  background-color: #585858;
+  color: white;
+  border-radius: 10px 10px 0px 1px;
+  font-size: 16px !important;
+  margin-right: -4px;
+  height: 70%;
+  width:100%;
+}
+
 .blinking {
   animation: blink 0.9s infinite;
 }

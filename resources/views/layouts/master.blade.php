@@ -166,6 +166,11 @@
             $('#disabled-user_admin-modal').addClass('show');
         });
 
+        Livewire.on('show-password-modal', () => {
+            $('#validated-password-modal').removeClass('hide');
+            $('#validated-password-modal').addClass('show');
+        });
+
         // Livewire.on('reloadModal', function () {
         //     $('#reload-modal').modal('show');
         // });
@@ -176,9 +181,13 @@
 
         Livewire.on('modal-hide', () => {
 
+            
 
             $('#connected-master-modal').removeClass('show');
             $('#connected-master-modal').addClass('hide');
+
+            $('#validated-password-modal').removeClass('show');
+            $('#validated-password-modal').addClass('hide');
 
             // desabled master
             $('#disabled-master-admin-modal').removeClass('show');
@@ -803,6 +812,12 @@
             // Transfers Histo
             $('#update-transfersInterHisto-modal').removeClass('show');
             $('#update-transfersInterHisto-modal').addClass('hide');
+        });
+
+        Livewire.on('modal-hide-validated-transaction', () => {
+            // Transfers Histo
+            $('#create-transfersUV-modal').removeClass('show');
+            $('#create-transfersUV-modal').addClass('hide');
         });
 
         Livewire.on('modal-hide-transfers-validated', () => {

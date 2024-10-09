@@ -17,7 +17,7 @@
         </div>
     </div>
 
- 
+
     @if (!is_null($country_inter_out_civ))
         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
             @php
@@ -47,9 +47,11 @@
             </div>
 
             <input type="hidden" wire:init="loadChoose3">
-            <div class="col-span-6 mt-3">
-                <label for="provider_inter_out_civ" class="form-label">Canal du paiement money<span class="text-danger"> *</span></label>
-                <select wire:model="provider_inter_out_civ" id="provider_inter_out_civ" class="form-control">
+            <div class="col-span-12 mt-3">
+                <label for="provider_inter_out_civ" class="form-label">Canal du paiement money<span class="text-danger">
+                        *</span></label>
+                <select wire:model.debounce.10ms="provider_inter_out_civ"  id="provider_inter_out_civ"
+                    class="form-control">
                     <option value="null" disabled>Selectionnez le canal</option>
                     @foreach ($providers as $provider)
                         <option value="{{ $provider->id }}">{{ $provider->name }}</option>
@@ -59,19 +61,11 @@
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
-            <div class="col-span-6 mt-3">
-                <label for="amount_inter_out_civ" class="form-label">Montant<span class="text-danger">*</span></label>
-                <input wire:model.debounce.10ms="amount_inter_out_civ" id="amount_inter_out_civ" type="number"
-                    class="form-control" placeholder="Montant">
-                @error('amount_inter_out_civ')
-                    <span class="text-danger">{{ $message }}</span>
-                @enderror
-            </div>
 
         </div>
     @endif
-      
-    @if (!is_null($country_inter_out_civ) && !is_null($provider_inter_out_civ) && !is_null($amount_inter_out_civ))
+
+    @if (!is_null($country_inter_out_civ) && !is_null($provider_inter_out_civ))
 
         @if (!is_null($provider_inter_out_civ))
             @php
@@ -93,6 +87,8 @@
 
                 $provider = $providerData[$provider_inter_out_civ] ?? null;
                 $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+                $wallet_name = $wallet_name ?? '';
+
             @endphp
 
             @if ($provider)
@@ -103,55 +99,22 @@
                             alt="{{ $provider['name'] }}">
                     </div>
                 </div>
-                @if ($provider['name'] == 'Robus')
-                    <div class="col-span-12">
-                        <label for="phone_inter_robus_civ" class="form-label">Numero wallet<span class="text-danger">
-                                *</span></label>
 
-                        <input wire:model.debounce.10ms="phone_inter_robus_civ" id="phone_inter_robus_civ" type="text"
-                            class="form-control" value="" maxlength="9" placeholder="Numero wallet">
-                        <div wire:loading>Recherche wallet...</div>
-                        <div wire:loading.remove></div>
+                <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
+                    @if ($provider['name'] == 'Robus')
+                        @include('components.robus-wallet-inter-input', [
+                            'compte_number_robus' => $compte_inter_number_robus,
+                            'wallet_name' => $wallet_name,
+                        ])
 
-                        @if ($phone_inter_robus_civ == '')
-                            <div class="text-gray-500 text-sm">
-                                Entrer numero wallet
-                            </div>
-                        @else
-                            @php
-
-                                $wallet_search = App\Models\Wallets\Wallet::where('wallet_id', $phone_inter_robus_civ)
-                                    ->where('country_id', $countrie_indicative->id)
-                                    ->first();
-                                if ($wallet_search) {
-                                    if ($wallet_search->sidUser->is_custumers) {
-                                        $wallet_name = $wallet_search->sidUser->firstname . ' ' . $wallet_search->sidUser->lastname;
-                                    } else {
-                                        $wallet_name = 'Numero introuvable ou n\' est pas client';
-                                    }
-                                } else {
-                                    $wallet_name = 'Numero introuvable ou n\' est pas client';
-                                }
-
-                            @endphp
-
-                            <div class="text-lg text-gray-900 text-bold text-secondary ">
-                                <span
-                                    class="alert alert-secondary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                    {{ $wallet_name ?? null }}
-                                </span>
-
-                            </div>
-                        @endif
-
-
-                        @error('phone_inter_out_civ')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                @else
-                    <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 ">
-                        <div class="col-span-12 mt-space">
+                        @include('components.transaction-inter-amount-input', [
+                            'id' => 'transaction_amount_robus',
+                            'model' => 'transaction_amount_robus',
+                            'label' => 'Montant',
+                            'error' => 'transaction_amount_robus',
+                        ])
+                    @else
+                        <div class="col-span-6 mt-3">
                             <label for="phone_inter_out_civ" class="form-label">Numero de telephone<span
                                     class="text-danger">*</span></label>
 
@@ -161,95 +124,65 @@
                                     {{ $countrie_indicative->indecative ?? null }}
                                 </div>
                                 <input wire:model.defer="phone_inter_out_civ" id="phone_inter_out_civ" type="number"
-                                    class="form-control" placeholder="Numero" value="" minlength="6" maxlength="15">
+                                    class="form-control" placeholder="Numero" value="" minlength="6"
+                                    maxlength="15">
                                 @error('phone_inter_out_civ')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
                         </div>
+
+                        @include('components.transaction-inter-amount-input', [
+                            'id' => 'transaction_inter_amount_money',
+                            'model' => 'transaction_inter_amount_money',
+                            'label' => 'Montant',
+                            'error' => 'transaction_inter_amount_money',
+                        ])
+                    @endif
+                </div>
+
+                @if ($transaction_amount_robus || $transaction_inter_amount_money)
+                    <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
+                        {{-- Commission --}}
+                        @php
+                        $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
+                        $amount_to_pay = $this->commission_transaction_val_inter_pay; 
+                        $amount_to_receive = $this->commission_transaction_val_inter_convertion_send; 
+                        $commission = $this->commission_transaction_val_inter_pay; 
+                    @endphp
+            
+                      @if (sabdy()->is_under_distributer == 1)
+                        <x-transaction-inter-detail title="Commission" value="{{ $commission   ?? null }}"
+                            country="{{ $usersCountry }}" />
+                    @else
+                        <x-transaction-inter-detail title="Montant à payer" value="{{ $amount_to_pay  ?? null }}"
+                            country="{{ $usersCountry }}" />
+                    @endif
+    
+                    {{-- Montant à recevoir --}}
+                        <x-transaction-inter-detail title="Montant à recevoir" value="{{ $amount_to_receive  ?? null }}"
+                        country=" {{ $countrie_indicative->currencie->code ?? null }} " /> 
                     </div>
                 @endif
+
 
             @endif
         @endif
 
-        @if (!is_null($amount_inter_out_civ))
-            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                @php
-                    $countrie_indicative = App\Models\Custumers\Country::where('id', $country_inter_out_civ)->first();
-                @endphp
 
-                @if (sabdy()->is_under_distributer == 1)
-                    <div class="col-span-12 mt-3">
-                        <label for="amount_inter_out_civ" class="form-label">Commission<span class="text-danger">
-                                *</span></label>
-
-                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-pending   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                            style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_val_pay ?? null }}
-                            {{ $usersCountry }}
-                        </div>
-                    </div>
-                    <div class="col-span-6 mt-3">
-                        <label for="amount_inter_out_civ" class="form-label">Montant à
-                            payer<span class="text-danger">
-                                *</span></label>
-
-                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                            style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_commission_val_pay ?? null }}
-                            {{ $usersCountry }}
-                        </div>
-                    </div>
-
-                    <div class="col-span-6 mt-2">
-                        <label for="amount_inter_out_civ" class="form-label">Montant à
-                            recevoir<span class="text-danger">
-                                *</span></label>
-
-                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                            style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_val_receive ?? null }}
-                            {{ $countrie_indicative->currencie->code ?? null }}
-                        </div>
-                    </div>
-                @else
-                    <div class="col-span-6 mt-3">
-                        <label for="amount_inter_out_civ" class="form-label">Montant à
-                            payer<span class="text-danger">
-                                *</span></label>
-
-                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                            style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_commission_val_pay ?? null }}
-                            {{ $usersCountry }}
-                        </div>
-                    </div>
-
-                    <div class="col-span-6 mt-2">
-                        <label for="amount_inter_out_civ" class="form-label">Montant à
-                            recevoir<span class="text-danger">
-                                *</span></label>
-
-                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                            style="font-size: 25px; color:white;">
-                            {{ $amount_transaction_nat_val_receive ?? null }}
-                            {{ $countrie_indicative->currencie->code ?? null }}
-                        </div>
-                    </div>
-                @endif
-            </div>
-        @endif
         <div class="modal-footer style-foo">
             <button wire:click="cancelInterOutCivField" type="button"
                 class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
-            <button wire:click="addInterOutCiv" type="button" wire:loading.remove="" class="btn btn-primary w-50">Envoyer
+            <button wire:click="addInterOut" type="button"
+               wire:loading.attr="disabled" 
+               wire:loading.remove=""
+                class="btn btn-primary w-50">Envoyer
                 la
                 demande</button>
-            <div wire:loading wire:target="addInterOutCiv">
+            <div wire:loading wire:target="addInterOut">
                 Traitement en cours...
             </div>
         </div>
     @endif
-   
+
 </div>

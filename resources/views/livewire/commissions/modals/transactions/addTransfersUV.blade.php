@@ -17,27 +17,28 @@
             </a>
             <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3  mt-6">
 
-                @if (Sabdy()->is_distributer != 1)
-                    <div
-                        class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2 ">
+                @if (sabdy()->is_distributer != 1)
+                    <!-- Option 1: Transferts -->
+                    <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2"
+                        @if ($choose_type_transaction == 2) style="display: none;" @endif>
                         <input id="bordered-radio-6" type="radio" wire:model.debounce.10ms="choose_type_transaction"
                             value="1"
                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-
                         <label for="bordered-radio-6"
                             class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Transferts</label>
                         @error('choose_type_transaction')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div
-                        class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2 ">
+
+                    <!-- Option 2: Retraits -->
+                    <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2"
+                        @if ($choose_type_transaction == 1) style="display: none;" @endif>
                         <input id="bordered-radio-7" type="radio" wire:model.debounce.10ms="choose_type_transaction"
                             value="2"
                             class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                         <label for="bordered-radio-7"
                             class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Retraits</label>
-
                         @error('choose_type_transaction')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
@@ -62,19 +63,7 @@
             @if (!is_null($choose_type_transaction))
 
                 @if ($choose_type_transaction == 1)
-
-                    @if (sabdy()->country->name_groupe == 'AFL')
-                        @livewire('transaction-groupe.transaction-nation-west')
-                    @elseif(sabdy()->country->id == 107)
-                        @livewire('transaction-groupe.transaction-civ')
-                    @elseif (sabdy()->country->name_groupe == 'AFC')
-                        @livewire('transaction-groupe.transaction-nation-central')
-                    @elseif (sabdy()->country->name_groupe == 'USA')
-                        @livewire('transaction-groupe.transaction-usa')
-                    @elseif (sabdy()->country->name_groupe == 'URP')
-                        @livewire('transaction-groupe.transaction-europe')
-                    @endif
-                    
+                    @livewire('transaction-groupe.transaction-civ')
                 @else
                     <div
                         class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
@@ -194,9 +183,9 @@
                                             class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
                                         <button wire:click="firstStepSubmit" type="button" wire:loading.remove=""
                                             class="btn btn-primary w-50">Validez</button>
-                                            <div wire:loading wire:target="firstStepSubmit">
-                                                Traitement en cours...
-                                            </div>
+                                        <div wire:loading wire:target="firstStepSubmit">
+                                            Traitement en cours...
+                                        </div>
                                     </div>
 
                                 @endif
