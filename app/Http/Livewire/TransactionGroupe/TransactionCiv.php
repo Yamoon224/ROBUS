@@ -174,7 +174,7 @@ class TransactionCiv extends Component
         $this->date_piece = '';
         // $this->emit('transaction_national');
         $this->emit('modal-hide-inters-validated');
-        // $this->emit('menu-inters-active');
+        $this->emit('cancelTransactionInTransfers');
         $this->emit('modal-hide-transfers');
     }
 
@@ -186,7 +186,6 @@ class TransactionCiv extends Component
 
             if ($provider) {
 
-    
 
                 if ($this->provider_transaction == 9) {
 
@@ -298,214 +297,213 @@ class TransactionCiv extends Component
         $valeur_max_send  =  sabdy()->country->amount_max_send;
         $provider = Provider::whereId($this->provider_transaction)->first();
 
-
-        $this->validate(
-            [
-                'password_validated' => 'required',
-            ],
-            [
-                'password_validated.required' =>
-                'Mot de passe est obligatoire',
-            ]
-        );
-
-        if (Hash::check($this->password_validated, sabdy()->password)) {
-
-            if ($this->provider_transaction == 9) {
-
-                $this->validate(
-                    [
-                        'transaction_amount_robus' => 'required',
-                        'compte_number_robus' => 'required',
-                    ],
-                    [
-                        'compte_number_robus.exists' =>
-                        'Ce compte n\'existe pas dans chez nous ',
-                        'transaction_amount_robus.required' =>
-                        'Votre montant est obligatoire',
-                        'compte_number_robus.required' =>
-                        'le numero est obligatoire',
-                    ]
-                );
-
-                $this->transaction_amount_robus = htmlspecialchars($this->transaction_amount_robus, ENT_QUOTES, 'UTF-8');
-                $this->compte_number_robus = htmlspecialchars($this->compte_number_robus, ENT_QUOTES, 'UTF-8');
-
-                // Search Wallet Send
-                $wallet_search = Wallet::where('wallet_id', $this->compte_number_robus)
-                    ->where('country_id', sabdy()->country->id)
-                    // ->where('status', true)
-                    ->first();
-
-                $reel_amount =  $this->search_amount($this->transaction_amount_robus);
+        try {
 
 
-                if (sabdy()->is_under_distributer) {
-
-                    $percent_robus = $this->getRobusPercentageSDistributers();
-
-                    $isCustomer = $wallet_search->sidUser->is_custumers;
-                    $isNotDistributor = !$wallet_search->sidUser->is_under_distributer;
-                    $isNotAdmin = !$wallet_search->sidUser->is_admin;
-                    $isNotDistributor = !$wallet_search->sidUser->is_distributer;
-
-                    if ($isCustomer && $isNotDistributor && $isNotAdmin && $isNotDistributor) {
-
-
-                        if ($percent_robus !== null) {
-
+            $this->validate(
+                [
+                    'password_validated' => 'required',
+                ],
+                [
+                    'password_validated.required' =>
+                    'Mot de passe est obligatoire',
+                ]
+            );
+    
+            if (Hash::check($this->password_validated, sabdy()->password)) {
+    
+                $this->password_validated = "";
+    
+                if ($this->provider_transaction == 9) {
+    
+                    $this->validate(
+                        [
+                            'transaction_amount_robus' => 'required',
+                            'compte_number_robus' => 'required',
+                        ],
+                        [
+                            'compte_number_robus.exists' =>
+                            'Ce compte n\'existe pas dans chez nous ',
+                            'transaction_amount_robus.required' =>
+                            'Votre montant est obligatoire',
+                            'compte_number_robus.required' =>
+                            'le numero est obligatoire',
+                        ]
+                    );
+    
+                    $this->transaction_amount_robus = htmlspecialchars($this->transaction_amount_robus, ENT_QUOTES, 'UTF-8');
+                    $this->compte_number_robus = htmlspecialchars($this->compte_number_robus, ENT_QUOTES, 'UTF-8');
+    
+                    // Search Wallet Send
+                    $wallet_search = Wallet::where('wallet_id', $this->compte_number_robus)
+                        ->where('country_id', sabdy()->country->id)
+                        // ->where('status', true)
+                        ->first();
+    
+                    $reel_amount =  $this->search_amount($this->transaction_amount_robus);
+    
+    
+                    if (sabdy()->is_under_distributer) {
+    
+                        $percent_robus = $this->getRobusPercentageSDistributers();
+    
+                        $isCustomer = $wallet_search->sidUser->is_custumers;
+                        $isNotDistributor = !$wallet_search->sidUser->is_under_distributer;
+                        $isNotAdmin = !$wallet_search->sidUser->is_admin;
+                        $isNotDistributor = !$wallet_search->sidUser->is_distributer;
+    
+                        if ($isCustomer && $isNotDistributor && $isNotAdmin && $isNotDistributor) {
+    
+    
+                            if ($percent_robus !== null) {
+    
+                                if ($this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
+    
+                                    if ($this->validateAmount()) {
+    
+                                        $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
+    
+                                        // Update Info valeurs
+                                        $walletAmountSend = Wallet::where('wallet_id',   $this->compte_number_robus)->first();
+    
+                                        if ($walletAmountSend) {
+    
+                                            $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
+    
+                                            $walletTransaction =  $this->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
+    
+                                            if ($walletTransaction != null) {
+    
+                                                if ($this->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
+                                                    if ($this->processCommissionsDistributerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
+                                                        $this->sendNotification($walletTransaction);
+                                                        $this->resetTransactionField();
+                                                        $this->emit('modal-hide-transfers');
+                                                        $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
+                                                    } else {
+    
+                                                        $this->resetTransactionField();
+                                                        $this->emit('modal-hide-transfers');
+                                                        $this->emit('error', 'Error de transferts du montant!');
+                                                    }
+                                                }
+                                            } else {
+    
+    
+                                                $this->resetTransactionField();
+                                                $this->emit('modal-hide-transfers');
+                                                $this->emit('error', 'Error de creation de transfert du montant!');
+                                            }
+                                        } else {
+                                            $this->resetTransactionField();
+                                            $this->emit('modal-hide-transfers');
+                                            $this->emit('error', 'Error verification du wallet !');
+                                        }
+                                    } else {
+    
+                                        $this->resetTransactionField();
+                                        $this->emit('modal-hide-transfers');
+                                        $this->emit('error', 'Verifié votre solde !!');
+                                    }
+                                } else {
+    
+                                    $this->resetTransactionField();
+                                    $this->emit('modal-hide-transfers');
+                                    $this->emit('error', 'Votre montant journalier est atteint !');
+                                }
+                            } else {
+    
+                                $this->resetTransactionField();
+                                $this->emit('modal-hide-transfers');
+                                $this->emit('error', 'Niveau de pourcentage introuvable !');
+                            }
+                        } else {
+    
+    
                             if ($this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
-
-                                if ($this->validateAmount()) {
-
-                                    $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
-
+    
+                                if ($this->validatedamountDays->validateAmount()) {
+    
+                                    $valeur_received = $reel_amount;
+    
                                     // Update Info valeurs
-                                    $walletAmountSend = Wallet::where('wallet_id',   $this->compte_number_robus)->first();
-
+                                    $walletAmountSend = Wallet::where('wallet_id',  $this->compte_number_robus)->first();
+    
                                     if ($walletAmountSend) {
-
                                         $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
-
-                                        $walletTransaction =  $this->createRobusWalletTransaction($reel_amount, $percent_robus, $this->provider_transaction, $this->compte_number_robus, $amount_solde_drawal);
-
+    
+    
+                                        $walletTransaction =  $this->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
+    
                                         if ($walletTransaction != null) {
-
-                                            if ($this->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
-                                                if ($this->processCommissionsDistributerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
+    
+                                            if ($this->updateAmountRobusReceivedDistributer($this->compte_number_robus, $walletTransaction, $valeur_received)) {
+                                                if ($this->processCommissionsRobusDistributer($reel_amount)) {
                                                     $this->sendNotification($walletTransaction);
                                                     $this->resetTransactionField();
                                                     $this->emit('modal-hide-transfers');
                                                     $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
                                                 } else {
-
+    
                                                     $this->resetTransactionField();
                                                     $this->emit('modal-hide-transfers');
-                                                    $this->emit('error', 'Error de transferts du montant!');
+                                                    $this->emit('error', 'Error de transferts du montant  !!');
                                                 }
                                             }
                                         } else {
-
-
+    
                                             $this->resetTransactionField();
                                             $this->emit('modal-hide-transfers');
-                                            $this->emit('error', 'Error de creation de transfert du montant!');
+                                            $this->emit('error', 'Error de createtion transferts !!');
                                         }
                                     } else {
                                         $this->resetTransactionField();
                                         $this->emit('modal-hide-transfers');
-                                        $this->emit('error', 'Error verification du wallet !');
+                                        $this->emit('error', 'Error verification du wallet !!');
                                     }
                                 } else {
-
                                     $this->resetTransactionField();
                                     $this->emit('modal-hide-transfers');
                                     $this->emit('error', 'Verifié votre solde !!');
                                 }
                             } else {
-
                                 $this->resetTransactionField();
                                 $this->emit('modal-hide-transfers');
-                                $this->emit('error', 'Votre montant journalier est atteint !');
+                                $this->emit('error', 'Votre montant journalier est atteint  !!');
                             }
-                        } else {
-
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('error', 'Niveau de pourcentage introuvable !');
                         }
                     } else {
-
-
-                        if ($this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
-
-                            if ($this->validatedamountDays->validateAmount()) {
-
-                                $valeur_received = $reel_amount;
-
-                                // Update Info valeurs
-                                $walletAmountSend = Wallet::where('wallet_id',  $this->compte_number_robus)->first();
-
-                                if ($walletAmountSend) {
-                                    $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
-
-                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransactionDistributer($reel_amount, $percent_robus, $this->provider_transaction, $this->compte_number_robus, $amount_solde_drawal);
-
-                                    if ($walletTransaction != null) {
-
-                                        if ($this->updateAmountRobusReceivedDistributer($this->compte_number_robus, $walletTransaction, $valeur_received)) {
-                                            if ($this->processCommissionsRobusDistributer($reel_amount)) {
-                                                $this->sendNotification($walletTransaction);
-                                                $this->resetTransactionField();
-                                                $this->emit('modal-hide-transfers');
-                                                $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
-                                            } else {
-
-                                                $this->resetTransactionField();
-                                                $this->emit('modal-hide-transfers');
-                                                $this->emit('error', 'Error de transferts du montant  !!');
-                                            }
-                                        }
-                                    } else {
-
-                                        $this->resetTransactionField();
-                                        $this->emit('modal-hide-transfers');
-                                        $this->emit('error', 'Error de createtion transferts !!');
-                                    }
-                                } else {
-                                    $this->resetTransactionField();
-                                    $this->emit('modal-hide-transfers');
-                                    $this->emit('error', 'Error verification du wallet !!');
-                                }
-                            } else {
-                                $this->resetTransactionField();
-                                $this->emit('modal-hide-transfers');
-                                $this->emit('error', 'Verifié votre solde !!');
-                            }
-                        } else {
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('error', 'Votre montant journalier est atteint  !!');
-                        }
-                    }
-                } else {
-
-                    $percent_robus = $this->getRobusPercentageCustumers();
-
-                    // Code validated
-                    $isWalletSearchNull = $wallet_search === null;
-                    $isCustomer = $wallet_search->sidUser->is_custumers;
-                    $isCustomerStatusFalse = $wallet_search->sidUser->status === false;
-                    $isSameWalletAsUser = $this->compte_number_robus === sabdy()->wallet->wallet_id;
-                    $isUnderDistributor = $wallet_search->sidUser->is_under_distributer === true;
-                    $isAdmin_all = $wallet_search->sidUser->is_admin === true;
-
-                    // Is custumers
-                    if ($isWalletSearchNull || !$isCustomer || $isCustomerStatusFalse || $isSameWalletAsUser || $isUnderDistributor || $isAdmin_all) {
-
-                        $this->resetTransactionField();
-                        $this->emit('modal-hide-transfers');
-                        $this->emit('error', 'Ce numéro n\'est pas ROBUS ou est votre numéro ou un distributeur !!');
-                    } else {
-
+    
+                        $percent_robus = $this->getRobusPercentageCustumers();
+    
+                        // Code validated
+                        $isWalletSearchNull = $wallet_search === null;
+                        $isCustomer = $wallet_search->sidUser->is_custumers;
+                        $isCustomerStatusFalse = $wallet_search->sidUser->status === false;
+                        $isSameWalletAsUser = $this->compte_number_robus === sabdy()->wallet->wallet_id;
+                        $isUnderDistributor = $wallet_search->sidUser->is_under_distributer === true;
+                        $isAdmin_all = $wallet_search->sidUser->is_admin === true;
+    
+                        // Is custumers
                         if ($percent_robus !== null) {
-
-                            if ($this->validatedamountDays->validateDailyLimit($som_transfers, $valeur_ceiling)) {
-
-                                if ($this->validatedamountDays->validateAmount()) {
-
+    
+                            if ($this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
+    
+                                if ($this->validateAmount()) {
+    
                                     $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
-
+    
                                     // Update Info valeurs
                                     $walletAmountSend = Wallet::where('wallet_id',  $this->compte_number_robus)->first();
-
+    
                                     $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
-
+    
                                     if ($walletAmountSend) {
-                                        $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($reel_amount, $percent_robus, $this->provider_transaction, $this->compte_number_robus, $amount_solde_drawal);
-
+    
+                                        $walletTransaction = $this->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
+    
                                         if ($walletTransaction != null) {
-
+    
                                             if ($this->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
                                                 if ($this->processCommissionsCustumerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
                                                     $this->sendNotification($walletTransaction);
@@ -519,7 +517,7 @@ class TransactionCiv extends Component
                                                 }
                                             }
                                         } else {
-
+    
                                             $this->resetTransactionField();
                                             $this->emit('modal-hide-transfers');
                                             $this->emit('error', 'Error de creation de transfert du montant !!');
@@ -530,181 +528,186 @@ class TransactionCiv extends Component
                                         $this->emit('error', 'Error de verification du wallet !!');
                                     }
                                 } else {
-
+    
                                     $this->resetTransactionField();
                                     $this->emit('modal-hide-transfers');
                                     $this->emit('error', 'Verifié votre solde SVP  !!');
                                 }
                             } else {
-
+    
                                 $this->resetTransactionField();
                                 $this->emit('modal-hide-transfers');
                                 $this->emit('error', 'Votre plafond quotidien est atteint  !!');
                             }
                         } else {
-
+    
                             $this->resetTransactionField();
                             $this->emit('modal-hide-transfers');
                             $this->emit('error', 'Niveau de pourcentage introuvable !!');
                         }
                     }
-                }
-            } else {
-
-                if (sabdy()->is_under_distributer) {
-
-
-
-                    $this->validate([
-                        'transaction_amount_money' => 'required',
-                        'transaction_phone' => 'required',
-                        "name_custumer" => 'required',
-                        "num_piece_custumer" => 'required',
-                        "date_piece" => 'required',
-                    ], [
-                        'transaction_amount_money.required' => 'Votre montant est obligatoire',
-                        'transaction_phone.required' => 'le numero est obligatoire',
-                        'name_custumer.required' => 'Nom est obligatoire',
-                        'num_piece_custumer.required' => 'Numero piece est obligatoire',
-                        'date_piece.required' => 'date de validité est obligatoire',
-
-                    ]);
-
-
-
-                    if (sabdy()->country->name_groupe == 'CIV') {
-
-                        $percent_robus = $this->getRobusPercentageMobile();
-                    } elseif (sabdy()->country->name_groupe == 'MAG') {
-
-                        $percent_robus = $this->getRobusPercentageMobileMaroc();
-                    } else {
-
-                        $this->resetTransactionField();
-                        $this->emit('modal-hide-transfers');
-                        $this->emit('error', 'Pas de transfert Mobile Money!');
-                    }
                 } else {
-
-
-                    $this->validate([
-                        'transaction_amount_money' => 'required',
-                        'transaction_phone' => 'required',
-                    ], [
-                        'transaction_amount_money.required' => 'Votre montant est obligatoire',
-                        'transaction_phone.required' => 'le numero est obligatoire',
-
-                    ]);
-
-
-                    if (sabdy()->country->name_groupe == 'CIV') {
-
-                        $percent_robus = $this->getRobusPercentageMobileTwo();
-                    } else {
-
-                        $this->resetTransactionField();
-                        $this->emit('modal-hide-transfers');
-                        $this->emit('error', 'Pas de Transfert Mobile Money dans la zone !');
-                    }
-                }
-
-                $reel_amount =  $this->search_amount($this->transaction_amount_money);
-
-
-                if ($percent_robus !== null) {
-
-                    if ($this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
-
-                        if ($this->validateAmountSendLimit($reel_amount, $valeur_max_send)) {
-
-                            if (sabdy()->is_under_distributer) {
-
-                                if (sabdy()->country->name_groupe == 'CIV') {
-
-                                    $valeur_received = $reel_amount;
-
-                                    $amount_payment = $reel_amount;
-                                } else {
-
-                                    $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
-
-                                    $amount_payment =  $reel_amount + ($percent_robus->percent * $reel_amount);
-                                }
-
-                                $cost_payment = $percent_robus->percent *  $reel_amount;
-                            } else {
-
-                                $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
-
-                                $cost_payment = $percent_robus->percent *  $reel_amount;
-
-                                $amount_payment =  $reel_amount + ($percent_robus->percent * $reel_amount);
-                            }
-
-                            if ($this->validateVerifyAmount($amount_payment)) {
-
-                                $walletTransaction =  $this->createRobusWalletTransactionDistributer($percent_robus, $provider, $reel_amount, $this->date_piece, $this->num_piece_custumer, $this->name_custumer, $cost_payment, $this->transaction_phone);
-
-                                if ($walletTransaction != null) {
-
-                                    if ($this->updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)) {
-
-                                        if (sabdy()->is_under_distributer) {
-                                            $processCommission = $this->processCommissionsMobileDistributer($reel_amount, $percent_robus, $walletTransaction, $admin_civ);
-                                        } else {
-
-                                            $processCommission = $this->processCommissionsMobile($reel_amount, $percent_robus, $walletTransaction, $admin_civ);
-                                        }
-
-                                        if ($processCommission) {
-
-                                            $this->sendNotificationMobile($walletTransaction);
-
-                                            $this->resetTransactionField();
-                                            $this->emit('modal-hide-transfers');
-                                            $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
-                                        } else {
-
-                                            $this->resetTransactionField();
-                                            $this->emit('modal-hide-transfers');
-                                            $this->emit('error', 'Error de transferts du montant!');
-                                        }
-                                    }
-                                } else {
-
-                                    $this->resetTransactionField();
-                                    $this->emit('modal-hide-transfers');
-                                    $this->emit('error', 'Error de createtion transferts !');
-                                }
-                            } else {
-
-                                $this->resetTransactionField();
-                                $this->emit('modal-hide-transfers');
-                                $this->emit('error', 'Verifié votre solde SVP !');
-                            }
+    
+                    if (sabdy()->is_under_distributer) {
+    
+    
+    
+                        $this->validate([
+                            'transaction_amount_money' => 'required',
+                            'transaction_phone' => 'required',
+                            "name_custumer" => 'required',
+                            "num_piece_custumer" => 'required',
+                            "date_piece" => 'required',
+                        ], [
+                            'transaction_amount_money.required' => 'Votre montant est obligatoire',
+                            'transaction_phone.required' => 'le numero est obligatoire',
+                            'name_custumer.required' => 'Nom est obligatoire',
+                            'num_piece_custumer.required' => 'Numero piece est obligatoire',
+                            'date_piece.required' => 'date de validité est obligatoire',
+    
+                        ]);
+    
+    
+    
+                        if (sabdy()->country->name_groupe == 'CIV') {
+    
+                            $percent_robus = $this->getRobusPercentageMobile();
+                        } elseif (sabdy()->country->name_groupe == 'MAG') {
+    
+                            $percent_robus = $this->getRobusPercentageMobileMaroc();
                         } else {
-
+    
                             $this->resetTransactionField();
                             $this->emit('modal-hide-transfers');
-                            $this->emit('error', "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . robus()->country->currencie->code);
+                            $this->emit('error', 'Pas de transfert Mobile Money!');
+                        }
+                    } else {
+    
+    
+                        $this->validate([
+                            'transaction_amount_money' => 'required',
+                            'transaction_phone' => 'required',
+                        ], [
+                            'transaction_amount_money.required' => 'Votre montant est obligatoire',
+                            'transaction_phone.required' => 'le numero est obligatoire',
+    
+                        ]);
+    
+    
+                        if (sabdy()->country->name_groupe == 'CIV') {
+    
+                            $percent_robus = $this->getRobusPercentageMobileTwo();
+                        } else {
+    
+                            $this->resetTransactionField();
+                            $this->emit('modal-hide-transfers');
+                            $this->emit('error', 'Pas de Transfert Mobile Money dans la zone !');
+                        }
+                    }
+    
+                    $reel_amount =  $this->search_amount($this->transaction_amount_money);
+    
+    
+                    if ($percent_robus !== null) {
+    
+                        if ($this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
+    
+                            if ($this->validateAmountSendLimit($reel_amount, $valeur_max_send)) {
+    
+                                if (sabdy()->is_under_distributer) {
+    
+                                    if (sabdy()->country->name_groupe == 'CIV') {
+    
+                                        $valeur_received = $reel_amount;
+    
+                                        $amount_payment = $reel_amount;
+                                    } else {
+    
+                                        $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
+    
+                                        $amount_payment =  $reel_amount + ($percent_robus->percent * $reel_amount);
+                                    }
+    
+                                    $cost_payment = $percent_robus->percent *  $reel_amount;
+                                } else {
+    
+                                    $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
+    
+                                    $cost_payment = $percent_robus->percent *  $reel_amount;
+    
+                                    $amount_payment =  $reel_amount + ($percent_robus->percent * $reel_amount);
+                                }
+    
+                                if ($this->validateVerifyAmount($amount_payment)) {
+    
+                                    $walletTransaction =  $this->createRobusWalletTransactionDistributer($percent_robus, $provider, $reel_amount, $this->date_piece, $this->num_piece_custumer, $this->name_custumer, $cost_payment, $this->transaction_phone);
+    
+                                    if ($walletTransaction != null) {
+    
+                                        if ($this->updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)) {
+    
+                                            if (sabdy()->is_under_distributer) {
+                                                $processCommission = $this->processCommissionsMobileDistributer($reel_amount, $percent_robus, $walletTransaction, $admin_civ);
+                                            } else {
+    
+                                                $processCommission = $this->processCommissionsMobile($percent_robus, $walletTransaction, $admin_civ);
+                                            }
+    
+                                            if ($processCommission) {
+    
+                                                $this->sendNotificationMobile($walletTransaction);
+    
+                                                $this->resetTransactionField();
+                                                $this->emit('modal-hide-transfers');
+                                                $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
+                                            } else {
+    
+                                                $this->resetTransactionField();
+                                                $this->emit('modal-hide-transfers');
+                                                $this->emit('error', 'Error de transferts du montant!');
+                                            }
+                                        }
+                                    } else {
+    
+                                        $this->resetTransactionField();
+                                        $this->emit('modal-hide-transfers');
+                                        $this->emit('error', 'Error de createtion transferts !');
+                                    }
+                                } else {
+    
+                                    $this->resetTransactionField();
+                                    $this->emit('modal-hide-transfers');
+                                    $this->emit('error', 'Verifié votre solde SVP !');
+                                }
+                            } else {
+    
+                                $this->resetTransactionField();
+                                $this->emit('modal-hide-transfers');
+                                $this->emit('error', "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . robus()->country->currencie->code);
+                            }
+                        } else {
+                            $this->resetTransactionField();
+                            $this->emit('modal-hide-transfers');
+                            $this->emit('error', 'Votre montant journalier est atteint !');
                         }
                     } else {
                         $this->resetTransactionField();
                         $this->emit('modal-hide-transfers');
-                        $this->emit('error', 'Votre montant journalier est atteint !');
+                        $this->emit('error', 'Niveau de pourcentage introuvable !');
                     }
-                } else {
-                    $this->resetTransactionField();
-                    $this->emit('modal-hide-transfers');
-                    $this->emit('error', 'Niveau de pourcentage introuvable !');
                 }
+            } else {
+    
+                $this->resetTransactionField();
+                $this->emit('modal-hide-transfers');
+                $this->emit('error', 'Merci de bien vouloir vérifier votre mot de passe, s\'il vous plaît.!');
             }
-        } else {
-
-            $this->resetTransactionField();
-            $this->emit('modal-hide-transfers');
-            $this->emit('error', 'Merci de bien vouloir vérifier votre mot de passe, s\'il vous plaît.!');
+        } catch (\Exception $exception) {
+            $this->resetInterField();
+            $this->emit('modal-hide-inters');
+            $this->emit('error', 'Error de message demande a l\'admin !');
         }
+        
     }
 
     public function render()
@@ -1320,7 +1323,7 @@ class TransactionCiv extends Component
                 'num_piece' => null,
                 'validated_date' => null,
                 'created_by' => sabdy()->id,
-                'provider_id' => $provider,
+                'provider_id' => $provider->id,
                 'choose_type_transaction' => 1,
                 'type_transaction' => 'Depot',
                 'type_received' => 'Transfert',
@@ -1346,7 +1349,7 @@ class TransactionCiv extends Component
                 'transaction_cost_id' => $percent_robus->id,
                 'phone'   => sabdy()->country->indecative . $transaction_phone,
                 'created_by' => sabdy()->id,
-                'provider_id'  =>   $provider,
+                'provider_id'  =>   $provider->id,
                 'num_wallet'   =>  null,
                 'costs_amount' => $valuer_deposit_com,
                 'name_complet' => $name_custumers ?? null,
@@ -1532,8 +1535,9 @@ class TransactionCiv extends Component
         } else {
 
 
+       
             // Percent admin 
-            $valeur_percent_admin  =(float)$percent_robus->percent_admin *  (float) $this->transaction_amount_robus;
+            $valeur_percent_admin  = (float) $percent_robus->percent_admin *    (float) $this->transaction_amount_robus;
 
 
             if ($country_civ->currencie->value > sabdy()->country->currencie->value) {

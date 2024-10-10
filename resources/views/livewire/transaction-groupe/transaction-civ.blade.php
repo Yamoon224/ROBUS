@@ -1,13 +1,15 @@
 <div>
     @if ($step === 1)
-    <div  class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
-        <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
-            <a href="#step-1"
-                class="w-10 h-10 rounded-full btn btn-circle {{ $step != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
-            <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Saisissez les informations requises</div>
-        </div>
+        <div
+            class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+            <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
+                <a href="#step-1"
+                    class="w-10 h-10 rounded-full btn btn-circle {{ $step != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
+                <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Saisissez les informations requises
+                </div>
+            </div>
 
-    </div>
+        </div>
         <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
             <div class="col-span-12">
                 <label for="modal-form-1" class="form-label">Canal transfert d'argent <span class="text-danger">
@@ -79,7 +81,7 @@
                         ])
                     @else
                         {{-- Other Providers Inputs --}}
-                        <div class="col-span-12 mt-1">
+                        <div class="col-span-6 mt-3">
                             <label for="transaction_phone" class="form-label">Numero de telephone <span
                                     class="text-danger">*</span></label>
                             <div class="flex">
@@ -150,15 +152,16 @@
 
         </div>
     @elseif ($step === 2)
-    <div  class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
-        <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
-            <a href="#step-1"
-                class="w-10 h-10 rounded-full btn btn-circle {{ $step != 2 ? 'btn-default' : 'btn-primary' }}">1</a>
-            <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Validation </div>
-        </div>
+        <div
+            class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+            <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
+                <a href="#step-2"
+                    class="w-10 h-10 rounded-full btn btn-circle {{ $step != 2 ? 'btn-default' : 'btn-secondary' }}">2</a>
+                <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Validation </div>
+            </div>
 
-    </div>
-        <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
+        </div>
+        <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 mt-3">
 
             {{-- Other Providers Inputs --}}
 
@@ -168,7 +171,13 @@
                             class="text-danger">
                             *</span></label>
 
-                    <span> {{ $transaction_amount_robus ?? null }} {{ $usersCountry ?? null }}</span>
+                    <div class="flex">
+
+                        <div
+                            class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                            {{ $transaction_amount_robus ?? null }} {{ $usersCountry ?? null }}
+                        </div>
+                    </div>
 
                 </div>
                 <div class="col-span-6 mt-space-padding">
@@ -176,7 +185,6 @@
                             class="text-danger">
                             *</span></label>
                     <div class="flex">
-
 
                         <div
                             class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
@@ -186,32 +194,33 @@
 
                 </div>
             @else
-                {{-- <div class="modal-body grid grid-cols-12 gap-4 gap-y-3"> --}}
+                <div class="col-span-6 mt-space-padding">
+                    <label class="form-label">Montant de la transaction<span class="text-danger">
+                            *</span></label>
 
-                    <div class="col-span-6 mt-space-padding">
-                        <label for="number_phone_credit_edit" class="form-label">Montant de la transaction<span
-                                class="text-danger">
-                                *</span></label>
+                    <div class="flex">
 
                         <div
                             class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
                             {{ $transaction_amount_money ?? null }} {{ $usersCountry }}
                         </div>
                     </div>
-                    <div class="col-span-6 mt-space-padding">
-                        <label for="amount_phone_credit_edit" class="form-label">Numéro du bénéficiaire<span
-                                class="text-danger">
-                                *</span></label>
-                        <div class="flex">
 
 
-                            <div  class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $transaction_phone ?? null }}
-                            </div>
+                </div>
+                <div class="col-span-6 mt-space-padding">
+                    <label class="form-label">Numéro du bénéficiaire<span class="text-danger">
+                            *</span></label>
+                    <div class="flex">
+
+
+                        <div
+                            class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                            {{ $transaction_phone ?? null }}
                         </div>
-
                     </div>
-                {{-- </div> --}}
+
+                </div>
             @endif
 
 
@@ -264,8 +273,8 @@
             <button wire:click="cancelTransactionField" type="button"
                 class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
 
-            <button wire:click="validatedPassword" type="button" wire:loading.remove="" wire:loading.attr="disabled"
-                class="btn btn-primary w-50">Validez
+            <button wire:click="validatedPassword" type="button" wire:loading.remove=""
+                wire:loading.attr="disabled" class="btn btn-primary w-50">Validez
                 la demande</button>
             <div wire:loading wire:target="validatedPassword">
                 Traitement en cours...

@@ -1,4 +1,4 @@
-<div class="col-span-12">
+<div class="col-span-6 mt-3">
     <label for="compte_number_robus" class="form-label">Numero wallet<span class="text-danger">*</span></label>
 
     <input wire:model.debounce.300ms="compte_number_robus" id="compte_number_robus" type="text" class="form-control"

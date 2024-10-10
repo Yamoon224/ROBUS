@@ -50,7 +50,13 @@ class TransactionCiv extends Component
     public $commission_transaction_val_inter_convertion_cfa;
     public $commission_transaction_val_inter_convertion_send;
     public $password_validated;
-
+    public $stepInter = 1;
+    public $name_custumer;
+    public $num_piece_custumer;
+    public $date_piece;
+    public $name;
+    public $name_sender;
+    public $isValidating = false;
 
     public function resetValeurReload()
     {
@@ -91,10 +97,9 @@ class TransactionCiv extends Component
             ->first();
 
 
-        $reel_amount = $this->search_amount($this->transaction_amount_robus);
-        $reel_amount_money = $this->search_amount($this->transaction_inter_amount_money);
+        $reel_amount = $this->search_amount($this->transaction_inter_amount_money);
 
-        if ($reel_amount != '' ||  $reel_amount_money != '') {
+        if ($reel_amount != '') {
 
 
             $commission_inter =  $this->getRobusPercentageInter($country_robus, $this->provider_inter_out_civ);
@@ -127,6 +132,8 @@ class TransactionCiv extends Component
                     $this->commission_transaction_val_inter_convertion_send = (float)    $this->commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
 
 
+
+
                     if ($valeur_verify < 0) {
 
                         $this->commission_transaction_val_inter_receive =  "Montant negatif";
@@ -141,7 +148,7 @@ class TransactionCiv extends Component
                         $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $this->commission_transaction_val_inter_pay;
                     }
 
-                    $valeur_verify =  (float) $this->transaction_amount_robus -  $this->commission_transaction_val_inter_pay;
+                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_inter_pay;
 
                     //   Convertion  in CFA
                     $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
@@ -164,7 +171,7 @@ class TransactionCiv extends Component
                         $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $this->commission_transaction_val_inter_pay;
                     }
 
-                    $valeur_verify =  (float) $this->transaction_amount_robus -  $this->commission_transaction_val_inter_pay;
+                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_inter_pay;
 
                     //   Convertion  in CFA
                     $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) sabdy()->country->currencie->value;
@@ -216,46 +223,188 @@ class TransactionCiv extends Component
 
     public function cancelInterOutCivField()
     {
-        $this->transaction_amount_robus = '';
+
         $this->provider_inter_out_civ = null;
         $this->country_inter_out_civ = null;
-        $this->phone_inter_out_civ = '';
+        $this->phone_inter_out_civ = null;
         $this->compte_inter_number_robus = '';
         $this->transaction_inter_amount_money = '';
+        $this->stepInter = 1;
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
         $this->emit('transaction_inters');
+        
     }
 
     public function addInterOut()
     {
 
-        $check = WalletInter::whereId($this->interId)->first();
-        $country_robus = Country::whereId($this->country_inter_out_civ)
-            // ->whereStatus(true)
-            ->first();
-
-
-        $admin_civ = $this->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
-
-        $provider_payment = Provider::whereId($this->provider_inter_out_civ)->first();
-
-        $valeur_ceiling = sabdy()->silver_ceiling;
+        $provider_payment = Provider::whereId($this->provider_inter_out_civ)->first();    
 
         try {
 
-            if (!$check) {
+            if ($provider_payment) {
+
+                $this->emit('show-loading-screen');
+
+
+                if (in_array($this->provider_inter_out_civ, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 100, 101, 102])) {
+
+                    if (sabdy()->is_under_distributer) {
+
+                        $this->validate(
+                            [
+                                'transaction_amount_robus' => 'required',
+                                'phone_inter_out_civ' => 'required',
+                                'country_inter_out_civ' => 'required',
+                                "name_custumer" => 'required',
+                                "num_piece_custumer" => 'required',
+                                "date_piece" => 'required',
+                                'country' => 'required',
+                            ],
+                            [
+                                'transaction_amount_robus.required' =>
+                                'Votre montant est obligatoire',
+                                'country_inter_out_civ.required' => 'Pays  est obligatoire',
+                                'phone_inter_out_civ.required' => 'Numero est obligatoire',
+                                'name_custumer.required' => 'Nom est obligatoire',
+                                'num_piece_custumer.required' => 'Numero piece est obligatoire',
+                                'date_piece.required' => 'date de validité est obligatoire',
+                                'country.required' => 'Votre pays est obligatoire',
+                            ]
+                        );
+                    } else {
+
+                        $this->validate(
+                            [
+                                'transaction_inter_amount_money' => 'required',
+                                'phone_inter_out_civ' => 'required',
+                                'country_inter_out_civ' => 'required',
+                            ],
+                            [
+                                'transaction_inter_amount_money.required' =>
+                                'Votre montant est obligatoire',
+                                'country_inter_out_civ.required' => 'Pays  est obligatoire',
+                                'phone_inter_out_civ.required' => 'Numero est obligatoire',
+                            ]
+                        );
+                    }
+
+                    $this->stepInter = 2;
+
+                } elseif (in_array($this->provider_inter_out_civ, [99])) {
+
+
+                    if (sabdy()->is_under_distributer) {
+
+                        $this->validate(
+                            [
+                                'transaction_amount_robus' => 'required',
+                                'phone_inter_out_civ' => 'required',
+                                'country_inter_out_civ' => 'required',
+                                "name_custumer" => 'required',
+                                "name_sender" => 'required',
+                                "num_piece_custumer" => 'required',
+                                "date_piece" => 'required',
+                                'country' => 'required',
+                                'account_number' => 'required',
+                                'name' => 'required',
+                            ],
+                            [
+                                'transaction_amount_robus.required' =>
+                                'Votre montant est obligatoire',
+                                'country_inter_out_civ.required' => 'Pays  est obligatoire',
+                                'name_custumer.required' => 'Nom est obligatoire',
+                                'name_sender.required' => 'Nom expediteur est obligatoire',
+                                'num_piece_custumer.required' => 'Numero piece est obligatoire',
+                                'date_piece.required' => 'date de validité est obligatoire',
+                                'country.required' => 'Votre pays est obligatoire',
+                                'account_number.required' => 'Numero de compte est obligatoire',
+                                'name.required' => 'Nom de la banque est obligatoire',
+                            ]
+                        );
+                    } else {
+
+                        $this->validate(
+                            [
+                                'transaction_amount_robus' => 'required',
+                                'phone_inter_out_civ' => 'required',
+                                'country_inter_out_civ' => 'required',
+                            ],
+                            [
+                                'transaction_amount_robus.required' =>
+                                'Votre montant est obligatoire',
+                                'country_inter_out_civ.required' => 'Pays  est obligatoire',
+                                'phone_inter_out_civ.required' => 'Numero est obligatoire',
+                            ]
+                        );
+                    }
+
+                    $this->stepInter = 2;
+
+                } elseif ($this->provider_inter_out_civ == 51) {
+
+                    $this->validate(
+                        [
+                            'transaction_amount_robus' => 'required',
+                            'compte_inter_number_robus' => 'required',
+                            'country_inter_out_civ' => 'required',
+                        ],
+                        [
+                            'transaction_amount_robus.required' =>
+                            'Votre montant est obligatoire',
+                            'country_inter_out_civ.required' => 'Pays  est obligatoire',
+                            'compte_inter_number_robus.required' => 'Numero est obligatoire',
+                        ]
+                    );
+
+                    $this->stepInter = 2;
+
+                } else {
+                    $this->resetInterField();
+                    $this->emit('modal-hide-inters');
+                    $this->emit('error', 'Ce providers n\'est pas encore disponible chez Robus !');
+                }
+             
+            } else {
+                $this->resetInterField();
+                $this->emit('modal-hide-inters');
+                $this->emit('error', 'Enternationnal existante  !');
+            }
+        } catch (\Exception $exception) {
+            $this->resetInterField();
+            $this->emit('modal-hide-inters');
+            $this->emit('error', 'Error de message demande a l\'admin !');
+        }
+    }
+    
+
+    public function validatedTransaction()
+    {
+
+        $country_robus = Country::whereId($this->country_inter_out_civ)
+            // ->whereStatus(true)
+            ->first();
+        $admin_civ = $this->getAdminCIVProperty();
+        $som_transfers =  $this->getSumValTransactionProperty();
+        $provider_payment = Provider::whereId($this->provider_inter_out_civ)->first();
+        $valeur_ceiling = sabdy()->silver_ceiling;
+
+        try {
 
 
                 $this->validate([
                     'password_validated' => 'required',
                 ]);
 
-                if(Hash::check($this->password_transaction, sabdy()->password))
+                if(Hash::check($this->password_validated, sabdy()->password))
                 {
 
-                    if (in_array($this->provider_inter_out_civ, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78,  93, 94, 95, 96, 97, 98, 100, 101, 102])) {
+                    $this->isValidating = true;
+
+                    $this->password_validated = "";
+
+                    if (in_array($this->provider_inter_out_civ, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 100, 101, 102])) {
 
                         if (sabdy()->is_under_distributer) {
     
@@ -347,12 +496,12 @@ class TransactionCiv extends Component
     
                         $this->validate(
                             [
-                                'transaction_amount_robus' => 'required',
+                                'transaction_inter_amount_money' => 'required',
                                 'compte_inter_number_robus' => 'required',
                                 'country_inter_out_civ' => 'required',
                             ],
                             [
-                                'transaction_amount_robus.required' =>
+                                'transaction_inter_amount_money.required' =>
                                 'Votre montant est obligatoire',
                                 'country_inter_out_civ.required' => 'Pays  est obligatoire',
                                 'compte_inter_number_robus.required' => 'Numero est obligatoire',
@@ -365,7 +514,7 @@ class TransactionCiv extends Component
                     }
     
                     $percent_robus =  $this->getRobusPercentageInter($country_robus, $this->provider_inter_out_civ);
-                    $reel_amount =  $this->search_amount($this->transaction_amount_robus);
+                    $reel_amount =  $this->search_amount($this->transaction_inter_amount_money);
     
                     if ($this->provider_inter_out_civ == 51) {
     
@@ -452,7 +601,7 @@ class TransactionCiv extends Component
     
                                         if ($this->validateAmount($reel_amount)) {
     
-                                            if (robus()->is_under_distributer) {
+                                            if (sabdy()->is_under_distributer) {
     
                                                 $valeur_received = $reel_amount - ($percent_robus->percent_under_distributer * $reel_amount);
                                             } else {
@@ -466,19 +615,19 @@ class TransactionCiv extends Component
                                                 $country_robus,
                                                 $this->provider_inter_out_civ,
                                                 $this->phone_inter_out_civ,
-                                                $this->provider_inter_out_civ_type,
                                                 $this->name_custumer,
                                                 $this->num_piece_custumer,
                                                 $this->date_piece,
                                                 $this->name,
                                                 $this->name_sender,
-                                                $this->account_number
+                                                $this->compte_inter_number_robus
                                             );
     
                                             if ($walletInter != null) {
-    
+                                                 
+
                                                 if ($this->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
-    
+
                                                     if ($this->processCommissionMobiles($reel_amount, $percent_robus, $country_robus, $walletInter, $admin_civ)) {
                                                         $this->sendNotificationRobus($walletInter);
                                                         $this->resetInterField();
@@ -533,17 +682,13 @@ class TransactionCiv extends Component
                         $this->emit('modal-hide-inters');
                         $this->emit('error', 'Veuillez selectionnez les providers de destination SVP !');
                     }
+                    $this->isValidating = false;
                 }else {
                     $this->resetInterField();
                     $this->emit('modal-hide-inters');
                     $this->emit('error', 'Veuillez verifiez votre mot de passe SVP !');
                 }
-             
-            } else {
-                $this->resetInterField();
-                $this->emit('modal-hide-inters');
-                $this->emit('error', 'EInternationnal existante  !');
-            }
+         
         } catch (\Exception $exception) {
             $this->resetInterField();
             $this->emit('modal-hide-inters');
@@ -3588,6 +3733,7 @@ class TransactionCiv extends Component
     private function updateAmountReceived($walletInter, $country_robus, $valeur_received)
     {
 
+      
         if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
 
 
@@ -3608,8 +3754,9 @@ class TransactionCiv extends Component
             $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
         }
 
+       
         if ($commission_transaction_val_inter_convertion_send) {
-
+      
             $walletInter->update(['amount_received' => $commission_transaction_val_inter_convertion_send]);
 
             return true;
@@ -3770,7 +3917,6 @@ class TransactionCiv extends Component
         $country_robus,
         $provider_payment,
         $phone,
-        $provider_type,
         $name_custumers,
         $num_piece_custumers,
         $date_piece,
@@ -3779,28 +3925,28 @@ class TransactionCiv extends Component
         $account_number
     ) {
 
-        $amount_solde = robus()->wallet->amount - $amount_transaction;
+        $amount_solde = sabdy()->wallet->amount - $amount_transaction;
 
         return WalletInter::create([
-            'wallet_id' => robus()->wallet->id,
+            'wallet_id' => sabdy()->wallet->id,
             'amount' => $amount_transaction,
             'description' => null,
             'inter_cost_id' => null,
             'transaction_cost_id' => $percent_robus->id,
             'phone' => $country_robus->indecative . $phone ?? null,
             'number_compte' => $account_number,
-            'created_by' => robus()->id,
+            'created_by' => sabdy()->id,
             'provider_id' => $provider_payment,
             'name_complet' => $name_custumers ?? null,
             'name' => $name ?? null,
             'num_piece' => $num_piece_custumers ?? null,
             'name_benef' => $name_sender ?? null,
             'validated_date' => $date_piece ?? null,
-            'costs_amount' => robus()->is_under_distributer ? ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
             'provider_type' => 1,
             'status' => 'PENDING',
             'country_id' => $country_robus->id,
-            'choose_type_transaction' => $provider_type,
+            'choose_type_transaction' => 1,
             'amount_solde' => $amount_solde ?? null
         ]);
     }
