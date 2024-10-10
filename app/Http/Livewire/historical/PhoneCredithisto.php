@@ -184,86 +184,92 @@ class PhoneCredithisto extends Component
 
         $walletUser = Auth::guard('web')->user();
 
-        if ($walletUser->wallet->sidUser->is_under_distributer == true ) {
+        if ($walletUser->is_under_distributer) {
+            $phones->where('created_by', $walletUser->id);
+        }
 
-            abort(403);
 
-        } else
-         {
+        if ($this->startDate && $this->endDate) {
 
-            if ($this->startDate && $this->endDate) {
-
-                // $phones->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate]);
-            
-                return view(
-                    'livewire.historical.phone-credithisto',
-                    [
-                        'user' => $this->WalletPhoneCreditsDays,
-                        'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                            ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web' ,false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
-                        'usersCountry' =>   $walletUser->country->currencie->name,
-                        'provider_credits' => $this->PhoneCreditTransaction,
-    
-                    ]
-                );
-            }
-
-            if ($this->searchPhoneHistorical != "") {
-
-                $this->resetPage();
-
-                $phones->orwhereHas(
-                    'paymentPhone',
-                    function ($query) {
-                        $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchPhoneHistorical . '%')
-                            ->orWhere('transaction_id', 'like', '%' .  $this->searchPhoneHistorical   . '%')
-                            ->orWhere('trans_comp_id', 'like', '%' .  $this->searchPhoneHistorical  . '%');
-                    }
-                )
-                    ->orWhere("wallet_phone_credits.amount", "LIKE",  "%" . $this->searchPhoneHistorical . "%")
-                    ->orWhere("wallet_phone_credits.phone", "LIKE",  "%" . $this->searchPhoneHistorical . "%");
-            }
-
-            if ($this->statusPhoneFilter != "") {
-
-                // $phones->where("wallet_phone_credits.status", $this->statusPhoneFilter);
-
-                return view(
-                    'livewire.historical.phone-credithisto',
-                    [
-                        'user' => $this->PhoneCreditsAllStatus,
-                        'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                            ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web' ,false)->orderBy('wallet_phone_credits.created_at', 'desc')->where("wallet_phone_credits.status", $this->statusPhoneFilter)->select('wallet_phone_credits.*')->paginate(15),
-                        'usersCountry' =>   $walletUser->country->currencie->name,
-                        'provider_credits' => $this->PhoneCreditTransaction,
-    
-                    ]
-                );
-            }
+            // $phones->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate]);
 
             return view(
                 'livewire.historical.phone-credithisto',
                 [
-                    'user' => $this->PhoneCreditsAllDays,
+                    'user' => $this->WalletPhoneCreditsDays,
                     'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web' ,false)->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
+                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web', false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
                     'provider_credits' => $this->PhoneCreditTransaction,
 
                 ]
             );
         }
+
+        if ($this->searchPhoneHistorical != "") {
+
+            $this->resetPage();
+
+            $phones->orwhereHas(
+                'paymentPhone',
+                function ($query) {
+                    $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchPhoneHistorical . '%')
+                        ->orWhere('transaction_id', 'like', '%' .  $this->searchPhoneHistorical   . '%')
+                        ->orWhere('trans_comp_id', 'like', '%' .  $this->searchPhoneHistorical  . '%');
+                }
+            )
+                ->orWhere("wallet_phone_credits.amount", "LIKE",  "%" . $this->searchPhoneHistorical . "%")
+                ->orWhere("wallet_phone_credits.phone", "LIKE",  "%" . $this->searchPhoneHistorical . "%");
+        }
+
+        if ($this->statusPhoneFilter != "") {
+
+            // $phones->where("wallet_phone_credits.status", $this->statusPhoneFilter);
+
+            return view(
+                'livewire.historical.phone-credithisto',
+                [
+                    'user' => $this->PhoneCreditsAllStatus,
+                    'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
+                        ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web', false)->orderBy('wallet_phone_credits.created_at', 'desc')->where("wallet_phone_credits.status", $this->statusPhoneFilter)->select('wallet_phone_credits.*')->paginate(15),
+                    'usersCountry' =>   $walletUser->country->currencie->name,
+                    'provider_credits' => $this->PhoneCreditTransaction,
+
+                ]
+            );
+        }
+
+        return view(
+            'livewire.historical.phone-credithisto',
+            [
+                'user' => $this->PhoneCreditsAllDays,
+                'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web', false)->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
+                'usersCountry' =>   $walletUser->country->currencie->name,
+                'provider_credits' => $this->PhoneCreditTransaction,
+
+            ]
+        );
     }
 
 
-    
+
     public function getWalletPhoneCreditsDaysProperty()
     {
 
 
         $data = [];
 
-        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web' ,false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web', false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate]);
+
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -281,7 +287,15 @@ class PhoneCredithisto extends Component
 
         $data = [];
 
-        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web' ,false)->where("wallet_phone_credits.status", $this->statusPhoneFilter)->get();
+        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web', false)->where("wallet_phone_credits.status", $this->statusPhoneFilter);
+
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -298,7 +312,15 @@ class PhoneCredithisto extends Component
 
         $data = [];
 
-        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web' ,false)->get();
+        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web', false);
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -315,7 +337,15 @@ class PhoneCredithisto extends Component
 
         $data = [];
 
-        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web' ,false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletPhoneCredit::where('wallet_phone_credits.is_web', false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate]);
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -341,18 +371,26 @@ class PhoneCredithisto extends Component
     }
 
 
-   
+
 
     public function getWalletPhoneCreditDaysProperty()
     {
 
         $data = [];
+        $walletUser = Auth::guard('web')->user();
 
         // Exécutez la requête pour obtenir une collection d'objets
         $wallettransactions = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-        ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
-        ->where('wallet_phone_credits.is_web' ,false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->where('wallet_phone_credits.status', 'SUCCESS')->select('wallet_phone_credits.*')->get();
+            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)
+            ->where('wallet_phone_credits.is_web', false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->where('wallet_phone_credits.status', 'SUCCESS')->select('wallet_phone_credits.*');
 
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallettransactions->where('wallet_phone_credits.created_by', $walletUser->id);
+        }
+
+        $wallettransactions = $wallettransactions->get();
+        
         foreach ($wallettransactions as $wallet) {
             // Accédez à la propriété amount sur chaque objet
             $data[] = $wallet->costs_amount;
@@ -360,7 +398,4 @@ class PhoneCredithisto extends Component
 
         return array_sum($data);
     }
-
-
-
 }

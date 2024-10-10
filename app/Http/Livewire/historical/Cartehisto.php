@@ -192,70 +192,54 @@ class Cartehisto extends Component
         $cartes =  WalletDeposit::whereIsWeb(false);
 
         $walletUser = Auth::guard('web')->user();
+        if (sabdy()->is_under_distributer) {
+            $cartes->where('created_by', sabdy()->id);
+        }
 
-        if ($walletUser->wallet->sidUser->is_under_distributer == true) {
 
-            abort(403);
+        if ($this->startDate && $this->endDate) {
 
-        } else 
-        {
-
-            if ($this->startDate && $this->endDate) {
-
-                // $cartes->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate]);
-
-                return view(
-                    'livewire.historical.cartehisto',
-                    [
-                        'user' => $this->WalletDepositsDays,
-                        'card_historicals' => $cartes->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                            ->where('wallets.country_id', $walletUser->country->id)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_deposits.created_at', 'desc')->select('wallet_deposits.*')->paginate(15),
-                        'usersCountry' =>   $walletUser->country->currencie->name,
-                        'provider_reloads' =>  $this->ReloadTransaction,
-    
-                    ]
-                );
-            }
-
-            if ($this->searchCarteHistorical != "") {
-
-                $this->resetPage();
-
-                $cartes->orwhereHas(
-                    'deposit',
-                    function ($query) {
-                        $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchCarteHistorical . '%')
-                            ->orWhere('transaction_id', 'like', '%' .  $this->searchCarteHistorical   . '%')
-                            ->orWhere('trans_comp_id', 'like', '%' .  $this->searchCarteHistorical  . '%');
-                    }
-                )
-                    ->orWhere("wallet_deposits.amount", "LIKE",  "%" . $this->searchCarteHistorical . "%")
-                    ->orWhere("wallet_deposits.num_carte", "LIKE",  "%" . $this->searchCarteHistorical . "%")
-                    ->orWhere("wallet_deposits.name", "LIKE",  "%" . $this->searchCarteHistorical . "%");
-            }
-
-            if ($this->statusFilter != "") {
-
-                // $cartes->where("wallet_deposits.status", $this->statusFilter);
-
-                return view(
-                    'livewire.historical.cartehisto',
-                    [
-                        'user' => $this->DepositAllDaysStatus,
-                        'card_historicals' => $cartes->where("wallet_deposits.status", $this->statusFilter)->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                            ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_deposits.created_at', 'desc')->select('wallet_deposits.*')->paginate(15),
-                        'usersCountry' =>   $walletUser->country->currencie->name,
-                        'provider_reloads' =>  $this->ReloadTransaction,
-    
-                    ]
-                );
-            }
+            // $cartes->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate]);
 
             return view(
                 'livewire.historical.cartehisto',
                 [
-                    'user' => $this->DepositAllDays,
+                    'user' => $this->WalletDepositsDays,
                     'card_historicals' => $cartes->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+                        ->where('wallets.country_id', $walletUser->country->id)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_deposits.created_at', 'desc')->select('wallet_deposits.*')->paginate(15),
+                    'usersCountry' =>   $walletUser->country->currencie->name,
+                    'provider_reloads' =>  $this->ReloadTransaction,
+
+                ]
+            );
+        }
+
+        if ($this->searchCarteHistorical != "") {
+
+            $this->resetPage();
+
+            $cartes->orwhereHas(
+                'deposit',
+                function ($query) {
+                    $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchCarteHistorical . '%')
+                        ->orWhere('transaction_id', 'like', '%' .  $this->searchCarteHistorical   . '%')
+                        ->orWhere('trans_comp_id', 'like', '%' .  $this->searchCarteHistorical  . '%');
+                }
+            )
+                ->orWhere("wallet_deposits.amount", "LIKE",  "%" . $this->searchCarteHistorical . "%")
+                ->orWhere("wallet_deposits.num_carte", "LIKE",  "%" . $this->searchCarteHistorical . "%")
+                ->orWhere("wallet_deposits.name", "LIKE",  "%" . $this->searchCarteHistorical . "%");
+        }
+
+        if ($this->statusFilter != "") {
+
+            // $cartes->where("wallet_deposits.status", $this->statusFilter);
+
+            return view(
+                'livewire.historical.cartehisto',
+                [
+                    'user' => $this->DepositAllDaysStatus,
+                    'card_historicals' => $cartes->where("wallet_deposits.status", $this->statusFilter)->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_deposits.created_at', 'desc')->select('wallet_deposits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
                     'provider_reloads' =>  $this->ReloadTransaction,
@@ -263,6 +247,18 @@ class Cartehisto extends Component
                 ]
             );
         }
+
+        return view(
+            'livewire.historical.cartehisto',
+            [
+                'user' => $this->DepositAllDays,
+                'card_historicals' => $cartes->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_deposits.created_at', 'desc')->select('wallet_deposits.*')->paginate(15),
+                'usersCountry' =>   $walletUser->country->currencie->name,
+                'provider_reloads' =>  $this->ReloadTransaction,
+
+            ]
+        );
     }
 
 
@@ -286,7 +282,14 @@ class Cartehisto extends Component
 
         $data = [];
 
-        $wallets = WalletDeposit::where('wallet_deposits.is_web' ,false)->where("wallet_deposits.status", $this->statusFilter)->get();
+        $wallets = WalletDeposit::where('wallet_deposits.is_web', false)->where("wallet_deposits.status", $this->statusFilter)->get();
+
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -302,8 +305,14 @@ class Cartehisto extends Component
 
         $data = [];
 
-        $wallets = WalletDeposit::where('wallet_deposits.is_web' ,false)->get();
+        $wallets = WalletDeposit::where('wallet_deposits.is_web', false)->get();
 
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
             $data[] = $bank->amount;
@@ -318,7 +327,14 @@ class Cartehisto extends Component
         $data = [];
 
         $wallets = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-        ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_deposits.is_web' ,false)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
+            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_deposits.is_web', false)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get();
+
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('wallet_deposits.created_by', $walletUser->id);
+        }
 
         foreach ($wallets as $bank) {
             $data[] = $bank->amount;
@@ -326,21 +342,29 @@ class Cartehisto extends Component
 
         return array_sum($data);
     }
-  
+
 
     public function getWalletBankComDaysProperty()
     {
 
-       $data = [];
+        $data = [];
 
-       // Exécutez la requête pour obtenir une collection d'objets
-       $walletdeposits = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-       ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_deposits.is_web' ,false)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() ;
-       
+        // Exécutez la requête pour obtenir une collection d'objets
+        $walletdeposits = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_deposits.is_web', false)->whereBetween('wallet_deposits.created_at', [$this->startDate, $this->endDate])->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*');
 
-       foreach ($walletdeposits as $wallet) {
-           $data[] = $wallet->commissions;
-       }
+
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $walletdeposits->where('wallet_deposits.created_by', $walletUser->id);
+        }
+        $walletdeposits = $walletdeposits->get();
+
+        foreach ($walletdeposits as $wallet) {
+            $data[] = $wallet->commissions;
+        }
 
 
 

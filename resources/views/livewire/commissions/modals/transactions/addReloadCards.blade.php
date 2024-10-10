@@ -10,7 +10,7 @@
                     <h2 class="font-medium text-base mr-auto">Demande de rechargement de carte</h2>
                 </div>
                 <div
-                    class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+                    class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20 mt-3">
                     <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                         <a href="#step-1"
                             class="w-10 h-10 rounded-full btn btn-circle {{ $stepReloadCard != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
@@ -632,10 +632,33 @@
                 <div class="modal-footer style-foo">
                     <button wire:click="cancelReloadCardField" type="button"
                         class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
-                    <button wire:click="addValidatedReloadCard" type="button" wire:loading.remove=""
-                        class="btn btn-primary w-50">Envoyer la demande</button>
-                    <div wire:loading wire:target="addValidatedReloadCard">
-                        Traitement en cours...
+
+
+                    <button wire:click="addValidatedReloadCard" type="button" wire:loading.attr="disabled"
+                        class="btn btn-primary w-50" wire:loading.class="opacity-50 cursor-not-allowed">
+                        Validez la demande
+                    </button>
+
+                    <div wire:loading.flex wire:target="addValidatedReloadCard"
+                        class="flex items-center justify-center">
+                        <div class="loader"></div> <!-- Ajoutez votre loader ici -->
+                        <style>
+                            .loader {
+                                border: 4px solid rgba(0, 0, 0, 0.1);
+                                border-left-color: #09f;
+                                border-radius: 50%;
+                                width: 40px;
+                                height: 40px;
+                                animation: spin 1s linear infinite;
+                            }
+
+                            @keyframes spin {
+                                to {
+                                    transform: rotate(360deg);
+                                }
+                            }
+                        </style>
+                        <p>Traitement en cours...</p>
                     </div>
                 </div>
             </div>

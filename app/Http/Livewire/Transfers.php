@@ -1087,7 +1087,6 @@ class Transfers extends Component
                         }
 
                         $this->stepPaiment = 2;
-
                     } elseif ($this->provider_payment == 10) {
 
                         //   Provider SODECI
@@ -1130,7 +1129,6 @@ class Transfers extends Component
                         }
 
                         $this->stepPaiment = 2;
-                     
                     } elseif ($this->provider_payment == 7) {
 
 
@@ -1180,8 +1178,7 @@ class Transfers extends Component
                             return;
                         }
 
-                       $this->stepPaiment = 2;
-
+                        $this->stepPaiment = 2;
                     }
                 } else {
                     $this->resetPaiementField();
@@ -1225,15 +1222,14 @@ class Transfers extends Component
                     ]
                 );
 
-                if (Hash::check($this->password_validated, sabdy()->password)) 
-                {
+                if (Hash::check($this->password_validated, sabdy()->password)) {
                     if ($walletUser->country->code == 'CI') {
 
                         //Provider CIE  
                         $percent_robus = PaymentCost::whereId(2)->first();
-    
+
                         if ($this->provider_payment == 8) {
-    
+
                             // Validation rules and messages
                             $validationRules = [
                                 'paiement_name_cie' => 'required',
@@ -1243,7 +1239,7 @@ class Transfers extends Component
                                 'paiement_amount_total.required' => 'Votre montant est obligatoire',
                                 'paiement_name_cie.required' => 'Nom est obligatoire',
                             ];
-    
+
                             if ($this->facture_choix_type == 1) {
                                 $validationRules['paiement_id_invoice_pre'] = 'required';
                                 $validationMessages['paiement_id_invoice_pre.required'] = 'Numero est obligatoire';
@@ -1251,34 +1247,34 @@ class Transfers extends Component
                                 $validationRules['paiement_id_invoice'] = 'required';
                                 $validationMessages['paiement_id_invoice.required'] = 'Numero est obligatoire';
                             }
-    
+
                             // Validate the input
                             $this->validate($validationRules, $validationMessages);
-    
+
                             if ($som_transfers >= $valeur_ceiling) {
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
                                 $this->emit('warning', 'Votre montant journier est atteint !');
                                 return;
                             }
-    
+
                             // dd($this->paiement_amount_total);
                             $reel_amount =  $this->search_amount($this->paiement_amount_total);
-    
+
                             // $validatedamountDays->search_amount(2000);
                             $valAmount = $reel_amount +  $percent_robus->amount_auther;
-    
+
                             $amount_solde =  $walletUser->wallet->amount -  $valAmount;
-    
+
                             if ($valAmount > $walletUser->wallet->amount) {
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
                                 $this->emit('error', 'Verifier votre montant  svp !');
                                 return;
                             }
-    
+
                             if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer || $walletUser->is_under_distributer) {
-    
+
                                 $walletPayment = $this->createNewPaiement(
                                     $walletUser,
                                     $reel_amount,
@@ -1297,13 +1293,13 @@ class Transfers extends Component
                                     $this->facture_choix_type,
                                     $amount_solde,
                                 );
-    
+
                                 $commission =  $walletPayment->amount +  $percent_robus->amount_auther;
-    
+
                                 if ($walletPayment != null) {
-                                    $this->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment , $walletUser, $commission);
+                                    $this->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $commission);
                                 }
-    
+
                                 $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
                                     $walletUser->wallet->currencie->code .
                                     ' ' .
@@ -1313,23 +1309,23 @@ class Transfers extends Component
                                     $walletPayment->created_at .
                                     ' votre demande est en cours de validation ' .
                                     'Robus vous remercie';
-    
+
                                 if ($this->shouldNotifyCreateCI($walletUser)) {
-    
+
                                     $this->sendSuccessMessageCreateNotification($walletUser, $message);
                                 }
-    
+
                                 event(new CreateWalletPaiementEvent($walletPayment));
-    
+
                                 $this->notifyCreateUsers($walletUser, $admins, 'Paiement de facture ', 'Demande de paiement est en cours de validation', 'Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname);
-    
+
                                 if ($admins->count() > 0) {
                                     $this->notifyAdmins($admins);
                                 }
-    
+
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
-                                $this->emit('success', 'Paiement effectué !');
+                                $this->emit('success', 'Votre demande de transaction a bien été prise en compte.');
                                 if ($walletUser->email != null) {
                                     $this->sendMailPaiementNotification($walletPayment);
                                 }
@@ -1340,7 +1336,7 @@ class Transfers extends Component
                                 return;
                             }
                         } elseif ($this->provider_payment == 10) {
-    
+
                             //   Provider SODECI
                             $validationRules = [
                                 'paiement_name_sodecie' => 'required',
@@ -1355,33 +1351,33 @@ class Transfers extends Component
                                 'paiement_num_contrat.required' =>
                                 'Numero  est obligatoire',
                             ];
-    
-    
+
+
                             // Validate the input
                             $this->validate($validationRules, $validationMessages);
-    
+
                             if ($som_transfers >= $valeur_ceiling) {
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
                                 $this->emit('warning', 'Votre montant journier est atteint !');
                                 return;
                             }
-    
+
                             $reel_amount = $this->search_amount($this->paiement_amount_t_sodecie);
-    
+
                             $valAmount = $reel_amount +  $percent_robus->amount_auther;
-    
+
                             $amount_solde =  $walletUser->wallet->amount -  $valAmount;
-    
+
                             if ($valAmount > $walletUser->wallet->amount) {
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
                                 $this->emit('error', 'Verifier votre montant  svp !');
                                 return;
                             }
-    
+
                             if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-    
+
                                 $walletPayment = $this->createNewPaiementSodeci(
                                     $walletUser,
                                     $reel_amount,
@@ -1401,14 +1397,14 @@ class Transfers extends Component
                                     $this->facture_choix_type,
                                     $amount_solde,
                                 );
-    
-    
+
+
                                 $commission =  $walletPayment->amount +  $percent_robus->amount_auther;
-    
+
                                 if ($walletPayment != null) {
-                                    $this->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment , $walletUser, $commission);
+                                    $this->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $commission);
                                 }
-    
+
                                 $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
                                     $walletUser->wallet->currencie->code .
                                     ' ' .
@@ -1418,23 +1414,23 @@ class Transfers extends Component
                                     $walletPayment->created_at .
                                     ' votre demande est en cours de validation ' .
                                     'Robus vous remercie';
-    
+
                                 if ($this->shouldNotifyCreateCI($walletUser)) {
-    
+
                                     $this->sendSuccessMessageCreateNotification($walletUser, $message);
                                 }
-    
+
                                 event(new CreateWalletPaiementEvent($walletPayment));
-    
+
                                 $this->notifyCreateUsers($walletUser, $admins, 'Paiement de facture ', 'Demande de paiement est en cours de validation', 'Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname);
-    
+
                                 if ($admins->count() > 0) {
                                     $this->notifyAdmins($admins);
                                 }
-    
+
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
-                                $this->emit('success', 'Paiement effectué !');
+                                $this->emit('success', 'Votre demande de transaction a bien été prise en compte.');
                                 if ($walletUser->email != null) {
                                     $this->sendMailPaiementNotification($walletPayment);
                                 }
@@ -1445,11 +1441,11 @@ class Transfers extends Component
                                 return; // Arrête l'exécution si le montant est supérieur au solde
                             }
                         } elseif ($this->provider_payment == 7) {
-    
-    
+
+
                             // Percent commission providers
                             $val_amount = $offer->amount + $percent_robus->amount_canal;
-    
+
                             switch ($this->paiementChoix_phone) {
                                 case 1:
                                     $validationRules = [
@@ -1461,7 +1457,7 @@ class Transfers extends Component
                                         'paiement_phone_canal.required' => 'Numero est obligatoire',
                                     ];
                                     break;
-    
+
                                 case 2:
                                     $validationRules = [
                                         'paiement_decoder_canal' => 'required',
@@ -1473,28 +1469,28 @@ class Transfers extends Component
                                     ];
                                     break;
                             }
-    
+
                             // Validate the input
                             $this->validate($validationRules, $validationMessages);
-    
+
                             if ($som_transfers >= $valeur_ceiling) {
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
                                 $this->emit('warning', 'Votre montant journier est atteint !');
                                 return;
                             }
-    
+
                             $amount_solde =  $walletUser->wallet->amount - $val_amount;
-    
+
                             if ($val_amount > $walletUser->wallet->amount) {
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
                                 $this->emit('error', 'Verifier votre montant  svp !');
                                 return;
                             }
-    
+
                             if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-    
+
                                 $walletPayment = $this->createNewPaiementCanal(
                                     $walletUser,
                                     $offer,
@@ -1512,13 +1508,13 @@ class Transfers extends Component
                                     $this->facture_choix_type,
                                     $amount_solde,
                                 );
-    
+
                                 $commission = $walletPayment->amount +  $percent_robus->amount_canal;
-    
+
                                 if ($walletPayment != null) {
-                                    $this->updateAmountPaymentOfferReceveid($admin_civ, $percent_robus, $walletPayment , $walletUser, $commission);
+                                    $this->updateAmountPaymentOfferReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $commission);
                                 }
-    
+
                                 $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
                                     $walletUser->wallet->currencie->code .
                                     ' ' .
@@ -1528,22 +1524,22 @@ class Transfers extends Component
                                     $walletPayment->created_at .
                                     ' votre demande est en cours de validation ' .
                                     'Robus vous remercie';
-    
+
                                 if ($this->shouldNotifyCreateCI($walletUser)) {
-    
+
                                     $this->sendSuccessMessageCreateNotification($walletUser, $message);
                                 }
-    
-    
+
+
                                 event(new CreateWalletPaiementEvent($walletPayment));
                                 $this->notifyCreateUsers($walletUser, $admins, 'Paiement de facture ', 'Demande de paiement est en cours de validation', 'Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname);
                                 if ($admins->count() > 0) {
                                     $this->notifyAdmins($admins);
                                 }
-    
+
                                 $this->resetPaiementField();
                                 $this->emit('modal-hide-paiement');
-                                $this->emit('success', 'Paiement effectué !');
+                                $this->emit('success', 'Votre demande de transaction a bien été prise en compte.');
                                 if ($walletUser->email != null) {
                                     $this->sendMailPaiementNotification($walletPayment);
                                 }
@@ -1559,12 +1555,11 @@ class Transfers extends Component
                         $this->emit('modal-hide-paiement');
                         $this->emit('warning', 'Vous n\'etes pas en CIV !');
                     }
-                }else {
+                } else {
                     $this->resetPaiementField();
                     $this->emit('modal-hide-paiement');
                     $this->emit('warning', 'Veirifiez votre mot de passe SVP !');
                 }
-              
             } else {
                 $this->emit('error', 'Paiement existante !');
             }
@@ -1628,7 +1623,6 @@ class Transfers extends Component
                     // Arrête l'exécution si le montant est supérieur au solde
                 }
                 $this->stepVirement = 2;
-              
             } else {
                 $this->emit('error', 'Veuillez selectionnez un virement !');
             }
@@ -1664,8 +1658,7 @@ class Transfers extends Component
                 ]
             );
 
-            if (Hash::check($this->password_validated, sabdy()->password)) 
-            {
+            if (Hash::check($this->password_validated, sabdy()->password)) {
 
                 if ($this->provider_virement == 11 || $this->provider_virement == 12) {
 
@@ -1690,19 +1683,19 @@ class Transfers extends Component
                             'Votre fournisseur est obligatoire',
                         ]
                     );
-    
+
                     // Percent comission an valeur
                     $percent_robus = BankCost::whereId(2)->first();
-    
+
                     if ($som_transfers >= $valeur_ceiling) {
                         $this->resetVirementField();
                         $this->emit('modal-hide-virement');
                         $this->emit('warning', 'Votre montant journier est atteint !');
                         return; // Arrête l'exécution si le montant est supérieur au solde
                     }
-    
+
                     $valeur_end = $percent_robus->levelBankIvories->last();
-    
+
                     if ($valeur_end->amount_end < $this->amount_inter) {
                         $this->resetVirementField();
                         $this->emit('modal-hide-virement');
@@ -1710,33 +1703,32 @@ class Transfers extends Component
                         return;
                         // Arrête l'exécution si le montant est supérieur au solde
                     }
-    
+
                     $reel_amount = $this->search_amount($this->amount_virement);
-    
+
                     foreach ($percent_robus->levelBankIvories as $amount_user) {
-    
+
                         // Verify in interval valeur of amount Use send
                         if ($reel_amount >= $amount_user->amount_begin && $reel_amount <= $amount_user->amount_end) {
-    
+
                             $amount_valeur = $walletUser->is_under_distributer == 1 ? $reel_amount : $reel_amount + $amount_user->amount;
                             $amountReceved = $walletUser->is_under_distributer == 1 ? (float) $reel_amount : (float) $reel_amount -  (float) $amount_user->amount;
                             $soldeWallet = $walletUser->wallet->amount;
-    
+
                             if ($amount_valeur > $soldeWallet) {
-    
+
                                 $this->resetVirementField();
                                 $this->emit('modal-hide-virement');
                                 $this->emit('warning', 'Verifier votre montant !');
                                 return;
-    
                             } else {
-    
+
                                 $amount_solde =  $walletUser->wallet->amount -  $amount_valeur;
-    
+
                                 if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-    
-                             
-    
+
+
+
                                     $walletBank = $this->createNewVirement(
                                         $walletUser,
                                         $reel_amount,
@@ -1751,46 +1743,43 @@ class Transfers extends Component
                                         $country_virement,
                                         $amountReceved
                                     );
-    
-    
+
+
                                     $message = 'Vous avez effectué un virement de ' . $walletBank->amount . $walletUser->wallet->currencie->code .
                                         ' ' .
                                         'par ' . $walletBank->provider->name .
                                         ' a ' . $walletBank->firstname .
                                         ' ' . $walletBank->firstname .
                                         ' le ' . $walletBank->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
-    
+
                                     if ($this->shouldNotifyCreateCI($walletUser)) {
-    
+
                                         $this->sendSuccessMessageCreateNotification($walletUser, $message);
                                     }
-    
-                                
-                                    if($walletBank != null)
-                                    {
-                                      
-                                        $this->updateamountVirementReceveid($admin_civ , $amount_user , $walletBank, $walletUser, $amount_valeur);
-    
+
+
+                                    if ($walletBank != null) {
+
+                                        $this->updateamountVirementReceveid($admin_civ, $amount_user, $walletBank, $walletUser, $amount_valeur);
                                     }
-                                    
+
                                     event(new CreateWalletBankEvent($walletBank));
-                               
                                 } else {
-    
+
                                     $this->resetVirementField();
                                     $this->emit('modal-hide-virement');
-                                    $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
+                                    $this->emit('error', 'Desolez vous n\'etes pas autorisée !');
                                     return; // Arrête l'exécution si le montant est supérieur au solde
                                 }
-    
+
                                 $this->notifyCreateUsers($walletUser, $admins, 'Virement bancaire', 'Demande de virement est en cours de validation', 'Demande de virement de ' . ' ' . $walletBank->wallet->sidUser->firstname);
-    
+
                                 if ($admins->count() > 0) {
                                     $this->notifyAdmins($admins);
                                 }
                                 $this->resetVirementField();
                                 $this->emit('modal-hide-virement');
-                                $this->emit('success', 'Virement effectué !');
+                                $this->emit('success', 'Votre demande de transaction a bien été prise en compte.');
                                 if ($walletUser->email != null) {
                                     $this->sendMailVersementNotification($walletBank);
                                 }
@@ -1801,12 +1790,11 @@ class Transfers extends Component
                 } else {
                     $this->emit('error', 'Veuillez selectionnez un virement !');
                 }
-            }else {
+            } else {
                 $this->resetVirementField();
                 $this->emit('modal-hide-virement');
-                $this->emit('error', 'Verifiez votre mot de passe !'); 
+                $this->emit('error', 'Verifiez votre mot de passe !');
             }
-          
         } catch (\Exception $exception) {
             $this->resetVirementField();
             $this->emit('modal-hide-virement');
@@ -1862,18 +1850,18 @@ class Transfers extends Component
                         return;
                     }
 
-                
+
                     if (sabdy()->is_under_distributer) {
                         $valeur_first = $percent_robus->levelDepositIvories->where('is_ivoires', true)->first();
                         $valeur_end = $percent_robus->levelDepositIvories->where('is_ivoires', true)->last();
                         $all_valeurs = $percent_robus->levelDepositIvories->where('is_ivoires', true);
                     } else {
-    
+
                         $valeur_first = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->first();
                         $valeur_end = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->last();
                         $all_valeurs = $percent_robus->levelDepositIvories->where('is_inter_bank', true);
                     }
-    
+
                     $reel_amount = $this->search_amount($this->amount_reloadcard);
 
                     if ($valeur_end->amount_end < $reel_amount) {
@@ -1891,8 +1879,7 @@ class Transfers extends Component
                         return;
                     }
 
-                    $this->stepReloadCard = 2 ;
-                 
+                    $this->stepReloadCard = 2;
                 } else {
                     $this->emit('error', 'Aucune selection !');
                 }
@@ -1915,7 +1902,7 @@ class Transfers extends Component
         $admin_civ = $this->getAdminCIVProperty();
         $som_transfers =  $this->getSumValTransactionProperty();
 
-         try {
+        try {
 
             if ($provider) {
 
@@ -1937,9 +1924,8 @@ class Transfers extends Component
                     ]
                 );
 
-                if (Hash::check($this->password_validated, sabdy()->password)) 
-                {
-                     // Provider Bsic and Ecobank
+                if (Hash::check($this->password_validated, sabdy()->password)) {
+                    // Provider Bsic and Ecobank
                     if (in_array($this->provider_reloadcard, $this->validReloadCardProviders)) {
 
                         $this->validateReloadCard();
@@ -1951,18 +1937,18 @@ class Transfers extends Component
                             return;
                         }
 
-                    
+
                         if (sabdy()->is_under_distributer) {
                             $valeur_first = $percent_robus->levelDepositIvories->where('is_ivoires', true)->first();
                             $valeur_end = $percent_robus->levelDepositIvories->where('is_ivoires', true)->last();
                             $all_valeurs = $percent_robus->levelDepositIvories->where('is_ivoires', true);
                         } else {
-        
+
                             $valeur_first = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->first();
                             $valeur_end = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->last();
                             $all_valeurs = $percent_robus->levelDepositIvories->where('is_inter_bank', true);
                         }
-        
+
                         $reel_amount = $this->search_amount($this->amount_reloadcard);
 
                         if ($valeur_end->amount_end < $reel_amount) {
@@ -1980,7 +1966,7 @@ class Transfers extends Component
                             return;
                         }
 
-                    
+
 
                         foreach ($all_valeurs as $amount_user) {
 
@@ -1999,16 +1985,13 @@ class Transfers extends Component
                                         $valuer_admin_com = $percent_valeur - $valuer_deposit_com;
                                         $amount_cost = $amount_user->comission_distributer * $reel_amount;
                                         $amountReceved = (float)$reel_amount;
-
                                     } else {
-                                        $amount_verify = $reel_amount ;
+                                        $amount_verify = $reel_amount;
                                         $valuer_admin_com =  $amount_user->percent * $reel_amount;
                                         $amount_cost = $amount_user->percent * $percent_valeur;
                                         $valuer_deposit_com = 0;
                                         $amountReceved = (float)$reel_amount - (float)$percent_valeur;
                                     }
-
-
                                 } else {
 
                                     $percent_valeur = (float)$amount_user->amount + (float)$reel_amount;
@@ -2020,7 +2003,6 @@ class Transfers extends Component
                                         $valuer_admin_com = $reel_amount - $valuer_deposit_com;
                                         $amount_cost = $amount_user->comission_distributer;
                                         $amountReceved = (float)$reel_amount;
-
                                     } else {
                                         $amount_verify = (float)$reel_amount;
                                         $amount_cost = $amount_user->amount;
@@ -2028,7 +2010,6 @@ class Transfers extends Component
                                         $valuer_admin_com = (float)$amount_user->amount;
                                         $amountReceved = (float)$reel_amount - (float)$amount_user->amount;
                                     }
-
                                 }
 
 
@@ -2052,11 +2033,11 @@ class Transfers extends Component
                                     $walletReloadCard = $this->createNewReloadCard(
                                         $amount_solde,
                                         $walletUser,
-                                        $reel_amount, 
+                                        $reel_amount,
                                         $this->reloadcard_description,
                                         $this->account_number_reload_card,
                                         $this->name_reloadcard,
-                                        $amount_cost, 
+                                        $amount_cost,
                                         $provider,
                                         $amountReceved,
                                     );
@@ -2080,7 +2061,7 @@ class Transfers extends Component
 
 
                                     if ($walletReloadCard != null) {
-                                        $this->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com , $walletUser, $amount_verify);
+                                        $this->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $walletUser, $amount_verify);
                                     }
 
                                     event(new CreateWalletReloadCardEvent($walletReloadCard));
@@ -2095,7 +2076,7 @@ class Transfers extends Component
                                     $this->emit('modal-hide-reloadCard');
                                     $this->emit(
                                         'success',
-                                        'Rechargement en-cours !'
+                                        'Votre demande de transaction a bien été prise en compte.'
                                     );
 
                                     if ($walletUser->email != null) {
@@ -2113,12 +2094,11 @@ class Transfers extends Component
                     } else {
                         $this->emit('error', 'Aucune selection !');
                     }
-                }else {
+                } else {
                     $this->resetReloadCardField();
                     $this->emit('modal-hide-reloadCard');
-                    $this->emit('success', 'Verifiez votre mot de passe svp !'); 
+                    $this->emit('success', 'Verifiez votre mot de passe svp !');
                 }
-               
             } else {
                 $this->emit('error', 'Rechargement  existante !');
             }
@@ -2199,8 +2179,6 @@ class Transfers extends Component
                 }
 
                 $this->stepPhoneCredit = 2;
-
-                 
             } else {
                 $this->emit('error', 'Rechargement  existante !');
             }
@@ -2235,10 +2213,9 @@ class Transfers extends Component
                     ]
                 );
 
-           
-                if (Hash::check($this->password_validated, sabdy()->password)) 
-                {
-                // Providers MTN , MOOV , ORANGE , Wave
+
+                if (Hash::check($this->password_validated, sabdy()->password)) {
+                    // Providers MTN , MOOV , ORANGE , Wave
                     $percent_robus = PhoneCreditCost::whereId(1)->first();
 
                     if ($walletUser->country->code != 'CI') {
@@ -2331,7 +2308,7 @@ class Transfers extends Component
 
 
                         if ($walletPhone != null) {
-                            $this->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser ,$reel_amount);
+                            $this->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser, $reel_amount);
                         }
 
 
@@ -2355,7 +2332,7 @@ class Transfers extends Component
                         $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
                         return; // Arrête l'exécution si le montant est supérieur au solde
                     }
-                }else  {
+                } else {
                     $this->resetPhoneCreditField();
                     $this->emit('modal-hide-phoneCredit');
                     $this->emit('error', 'VQerifiez votre mot de passe SVP !');
@@ -3449,7 +3426,6 @@ class Transfers extends Component
                             $this->emit('modal-hide-inters');
                             $this->emit('success', 'Transfers Accepte !');
                             $this->sendMailInterNotification($check);
-
                         } elseif ($check->status == 'ERROR') {
 
 
@@ -3605,7 +3581,6 @@ class Transfers extends Component
                                 if ($valeur_amount_com != null) {
 
                                     $this->handleUnderDistributorPaiementCommission($check, $admin_civ);
-                               
                                 } else {
                                     $this->resetPaiementField();
                                     $this->emit('modal-hide-paiement');
@@ -3627,7 +3602,6 @@ class Transfers extends Component
                             }
 
                             $this->sendMailPaiementNotification($check);
-
                         } elseif ($check->status == 'ERROR') {
 
 
@@ -4425,57 +4399,23 @@ class Transfers extends Component
             ->orderBy('name', 'asc')
             ->get();
 
-
         $transaction = WalletTransaction::whereIsWeb(false);
-
         $paiement = WalletPayment::whereIsWeb(false);
-
         $wallet = Wallet::query();
-
         $sid_search = SidUser::query();
-
-
         $virement_bank = WalletBank::whereIsWeb(false);
-
         $inter_search = WalletInter::whereIsWeb(false);
-
         $reload_card = WalletDeposit::whereIsWeb(false);
-
         $phone_credit = WalletPhoneCredit::whereIsWeb(false);
-
         $walletUser = Auth::guard('web')->user();
-
-        $country_robus = Country::whereId($this->country_inter_out_civ)
-            // ->whereStatus(true)
-            ->first();
-
-        $default_valeur = 2000000;
-        $commission_reload_val_inter = null;
-        $commission_reload_val_nat_pay = null;
-        $commission_reload_val_nat_receive = null;
         $commission_reload_val_nat_true_pay = null;
         $commission_reload_val_nat_true_receive = null;
-        $commission_reload_inter_val_inter_pay = null;
-        $commission_reload_inter_val_inter_receive = null;
-        $commission_reload_inter_val_inter_true_pay = null;
-        $commission_reload_inter_val_inter_true_receive = null;
-        $commission_reload_inter_val_nat = null;
         $commission_paiement_invoice_val_nat_pay = null;
         $commission_paiement_invoice_val_nat_receive = null;
         $commission_paiement_invoice_canal_val_nat = null;
         $commission_paiement_invoice_canal_val_inter = null;
-        $commission_paiement_invoice_val_inter_pay = null;
-        $commission_paiement_invoice_val_inter_receive = null;
-        $commission_transaction_val_nat_pay = null;
-        $commission_transaction_val_nat_receive = null;
-        $commission_transaction_val_inter_pay = null;
-        $commission_transaction_val_inter_receive = null;
-        $commission_transaction_val_inter_mooney_pay = null;
-        $commission_transaction_val_inter_mooney_receive = null;
         $commission_virement_val_nat_pay  = null;
         $commission_virement_val_nat_receive  = null;
-        $commission_virement_val_inter_pay  = null;
-        $commission_virement_val_inter_receive  = null;
         $commission_phone_credit_val_inter_pay  = null;
         $commission_phone_credit_val_inter_receive  = null;
         $commission_phone_credit_val_nat_pay  = null;
@@ -4483,1829 +4423,474 @@ class Transfers extends Component
         $commission_transaction_val_nal_pay = null;
         $commission_transaction_val_nal_receive = null;
         $code_validated_val_nat = null;
-        $code_validated_val_inter = null;
         $amount_received_canal = null;
-        $reload_card_valeur = $this->ReloadTransaction;
 
-        if ($walletUser->wallet->sidUser->is_under_distributer == true) {
-            //UnderDistributer party
 
-            return false;
-        } else {
+        if ($this->code_validated != '') {
+            $transaction_code = WalletTransaction::whereCodeValidated(
+                $this->code_validated
+            )->first();
 
-            //Admin info
-            if ($this->statusFilterTransaction != '') {
-                $transaction->where(
-                    'wallet_transactions.status',
-                    $this->statusFilterTransaction
-                );
-                $this->emit('menu-transaction-active');
+            if ($transaction_code != null) {
+                $code_validated_val_nat = $transaction_code->code_validated ?? null;
+            } else {
+                $code_validated_val_nat = $transaction_code->code_validated ?? null;
             }
+        }
 
-            if ($this->statusFilterPaiement != '') {
-                $paiement->where(
-                    'wallet_payments.status',
-                    $this->statusFilterPaiement
-                );
-                $this->emit('menu-paiement-active');
-            }
+        // True valuer of relaod card
+        if ($this->amount_reloadcard != '') {
 
-            if ($this->statusFilterVirement != '') {
-                $virement_bank->where(
-                    'wallet_banks.status',
-                    $this->statusFilterVirement
-                );
-                $this->emit('menu-virement-active');
-            }
 
-            if ($this->statusFilterInter != '') {
-                $inter_search->where(
-                    'wallet_inters.status',
-                    $this->statusFilterInter
-                );
-                $this->emit('menu-inters-active');
-            }
+            $commission_reload = DepositCost::whereId(2)->first();
 
-            if ($this->statusFilterReloadCard != '') {
-                $reload_card->where(
-                    'wallet_deposits.status',
-                    $this->statusFilterReloadCard
-                );
-                $this->emit('menu-reloadCarte-active');
-            }
-
-            if ($this->statusFilterPhoneCredit != '') {
-                $phone_credit->where(
-                    'wallet_phone_credits.status',
-                    $this->statusFilterPhoneCredit
-                );
-                $this->emit('menu-phoneCredit-active');
-            }
-
-            if ($this->searchTransaction != '') {
-                $this->resetPage();
-                $walletUser = Auth::guard('web')->user();
-
-                $transaction
-                    ->orwhereHas('transaction', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchTransaction . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchTransaction . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchTransaction . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_transactions.amount',
-                        'like',
-                        '%' . $this->searchTransaction . '%'
-                    )
-                    ->orWhere(
-                        'wallet_transactions.num_wallet',
-                        'like',
-                        '%' . $this->searchTransaction . '%'
-                    )
-                    ->orWhere(
-                        'wallet_transactions.phone',
-                        'like',
-                        '%' . $this->searchTransaction . '%'
-                    )
-                    ->where('wallet_transactions.status', 'PENDING');
-
-                $this->emit('menu-transaction-active');
-            }
-
-            if ($this->searchPaiment != '') {
-                $this->resetPage();
-
-                $paiement
-                    ->orwhereHas('payment', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchPaiment . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchPaiment . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchPaiment . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_payments.amount',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->orWhere(
-                        'wallet_payments.number_phone',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->orWhere(
-                        'wallet_payments.name',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->orWhere(
-                        'wallet_payments.number_decoder',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->orWhere(
-                        'wallet_payments.id_invoice',
-                        'like',
-                        '%' . $this->searchPaiment . '%'
-                    )
-                    ->where('wallet_payments.status', 'PENDING');
-
-                $this->emit('menu-paiement-active');
-            }
-
-            if ($this->searchVirement != '') {
-                $this->resetPage();
-
-                $virement_bank
-                    ->orwhereHas('paymentBank', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchVirement . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchVirement . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchVirement . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_banks.amount',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->orWhere(
-                        'wallet_banks.phone',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->orWhere(
-                        'wallet_banks.number_compte',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->orWhere(
-                        'wallet_banks.firstname',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->orWhere(
-                        'wallet_banks.lastname',
-                        'like',
-                        '%' . $this->searchVirement . '%'
-                    )
-                    ->where('wallet_banks.status', 'PENDING');
-
-                $this->emit('menu-virement-active');
-            }
-
-            if ($this->searchInter != '') {
-                $this->resetPage();
-
-                $inter_search
-                    ->orwhereHas('transactionInter', function ($query) {
-                        $query
-                            ->where(
-                                'wallet_inters.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchInter . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchInter . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchInter . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_inters.amount',
-                        'like',
-                        '%' . $this->searchInter . '%'
-                    )
-                    ->orWhere(
-                        'wallet_inters.number_compte',
-                        'like',
-                        '%' . $this->searchInter . '%'
-                    )
-                    ->orWhere(
-                        'wallet_inters.phone',
-                        'like',
-                        '%' . $this->searchInter . '%'
-                    )
-                    ->where('wallet_inters.status', 'PENDING');
-
-                $this->emit('menu-inters-active');
-            }
-
-            if ($this->searchReloadCard != '') {
-                $this->resetPage();
-
-                $reload_card
-                    ->orwhereHas('deposit', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchReloadCard . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchReloadCard . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchReloadCard . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_deposits.amount',
-                        'like',
-                        '%' . $this->searchReloadCard . '%'
-                    )
-                    ->orWhere(
-                        'wallet_deposits.num_carte',
-                        'like',
-                        '%' . $this->searchReloadCard . '%'
-                    )
-                    ->orWhere(
-                        'wallet_deposits.name',
-                        'like',
-                        '%' . $this->searchReloadCard . '%'
-                    )
-                    ->where('wallet_deposits.status', 'PENDING');
-
-                $this->emit('menu-reloadCarte-active');
-            }
-
-            if ($this->searchPhoneCredit != '') {
-                $this->resetPage();
-
-                $phone_credit
-                    ->orwhereHas('paymentPhone', function ($query) {
-                        $query
-                            ->join('wallets', 'wallet_id', 'wallets.id')
-                            ->where(
-                                'wallets.country_id',
-                                Auth::guard('web')->user()->country->id
-                            )
-                            ->where(
-                                'operator_transaction_name',
-                                'like',
-                                '%' . $this->searchPhoneCredit . '%'
-                            )
-                            ->orWhere(
-                                'transaction_id',
-                                'like',
-                                '%' . $this->searchPhoneCredit . '%'
-                            )
-                            ->orWhere(
-                                'trans_comp_id',
-                                'like',
-                                '%' . $this->searchPhoneCredit . '%'
-                            );
-                    })
-                    ->orWhere(
-                        'wallet_phone_credits.amount',
-                        'like',
-                        '%' . $this->searchPhoneCredit . '%'
-                    )
-                    ->orWhere(
-                        'wallet_phone_credits.phone',
-                        'like',
-                        '%' . $this->searchPhoneCredit . '%'
-                    )
-                    ->where('wallet_phone_credits.status', 'PENDING');
-
-                $this->emit('menu-phoneCredit-active');
-            }
-
-            //  Code verifier
-
-            if ($this->code_validated != '') {
-                $transaction_code = WalletTransaction::whereCodeValidated(
-                    $this->code_validated
-                )->first();
-
-                if ($transaction_code != null) {
-                    $code_validated_val_nat = $transaction_code->code_validated ?? null;
-                } else {
-                    $code_validated_val_nat = $transaction_code->code_validated ?? null;
-                }
-            }
-
-            // Nationnal commission transaction
-            if ($this->transaction_amount_robus != '') {
-
-                if (Auth::guard('web')->user()->country->name_groupe == 'AFL') {
-                    //  Conversion valeur
-                    $conversion_valeur_end  =  $default_valeur  /  $walletUser->wallet->currencie->value;
-
-                    if ($conversion_valeur_end  < $this->transaction_amount_robus) {
-
-                        $commission_transaction_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_transaction_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    } else {
-
-                        if ($this->provider_transaction == 9) {
-                            if ($walletUser->is_under_distributer == 1 ||  $walletUser->is_distributer == 1) {
-                                // Search valeur wallet 
-                                $search_wallet = Wallet::where('wallet_id', $this->compte_number_robus)->first();
-
-                                if ($this->choose_type_transaction == 1) {
-
-                                    if ($search_wallet->sidUser->is_custumers) {
-
-                                        $commission_transaction = LevelMoney::whereId(5)->first();
-
-                                        $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                        $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                    } else {
-
-                                        $commission_transaction = LevelMoney::whereId(2)->first();
-
-                                        $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                        $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                    }
-                                }
-                            } else {
-
-                                $commission_transaction_cust = LevelMoney::whereId(6)->first();
-
-                                $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                            }
-                        } else {
-
-                            if ($walletUser->is_under_distributer == 1 ||  $walletUser->is_distributer == 1) {
-                                if ($this->choose_type_transaction == 1) {
-
-                                    $commission_transaction = LevelMoney::whereId(2)->first();
-
-                                    $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                }
-                            } else {
-                                $commission_transaction_cust = TransactionCost::whereId(2)->first();
-
-                                $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                            }
-                        }
-                    }
-                } else {
-
-                    if (
-                        $walletUser->wallet->currencie->code == 'EUR' ||
-                        $walletUser->wallet->currencie->code == 'DH' ||
-                        $walletUser->wallet->currencie->code == 'Dt' ||
-                        $walletUser->wallet->currencie->code == 'CEDI' ||
-                        $walletUser->wallet->currencie->code == 'USD'
-                    ) {
-
-                        //  Conversion valeur
-                        $conversion_valeur_end  =  $default_valeur  /  $walletUser->wallet->currencie->value;
-
-                        if ($conversion_valeur_end  < $this->transaction_amount_robus) {
-
-                            $commission_transaction_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                            $commission_transaction_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                        } else {
-
-                            if ($walletUser->country->code == 'CF') {
-
-
-                                if ($walletUser->is_under_distributer == 1 ||  $walletUser->is_distributer == 1) {
-                                    if ($this->choose_type_transaction == 1) {
-
-                                        $commission_transaction = TransactionCost::whereId(1)->first();
-
-                                        $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                        $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                    } else {
-                                    }
-                                } else {
-                                    $commission_transaction_cust = TransactionCost::whereId(2)->first();
-
-                                    $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                }
-                            } elseif ($walletUser->country->code == 'GH') {
-
-                                if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                    if ($this->choose_type_transaction == 1) {
-
-                                        // User Distributer GHANA send you Custumer lives GHANA
-                                        $commission_transaction = TransactionCost::whereId(11)->first();
-
-                                        $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                        $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                    } else {
-                                    }
-                                } else {
-                                    $commission_transaction_cust = TransactionCost::whereId(11)->first();
-
-                                    $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                }
-                            } elseif ($walletUser->country->code == 'MA') {
-
-                                if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                    if ($this->choose_type_transaction == 1) {
-
-                                        // User Distributer GHANA send you Custumer lives GHANA
-                                        $commission_transaction = TransactionCost::whereId(16)->first();
-
-                                        $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                        $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - (float) $commission_transaction->percent * $this->transaction_amount_robus;
-                                    } else {
-                                    }
-                                } else {
-                                    $commission_transaction_cust = TransactionCost::whereId(16)->first();
-
-                                    $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                }
-                            } elseif ($walletUser->country->code == 'TN') {
-
-                                if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                    if ($this->choose_type_transaction == 1) {
-
-                                        // User Distributer GHANA send you Custumer lives GHANA
-                                        $commission_transaction = TransactionCost::whereId(21)->first();
-
-                                        $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                        $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                    } else {
-                                    }
-                                } else {
-                                    $commission_transaction_cust = TransactionCost::whereId(21)->first();
-
-                                    $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                }
-                            } elseif ($walletUser->country->code == 'FR') {
-
-                                if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                    if ($this->choose_type_transaction == 1) {
-
-                                        // User Distributer GHANA send you Custumer lives GHANA
-                                        $commission_transaction = TransactionCost::whereId(6)->first();
-
-                                        $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                        $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                    } else {
-                                    }
-                                } else {
-                                    $commission_transaction_cust = TransactionCost::whereId(6)->first();
-
-                                    $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                }
-                            }
-                        }
-                    } elseif ($walletUser->wallet->currencie->code == 'GNF') {
-                        if ($walletUser->country->code == 'CF') {
-
-                            if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                if ($this->choose_type_transaction == 1) {
-
-                                    $commission_transaction = TransactionCost::whereId(1)->first();
-
-                                    $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                } else {
-                                }
-                            } else {
-                                $commission_transaction_cust = TransactionCost::whereId(1)->first();
-
-                                $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                            }
-                        } elseif ($walletUser->country->code == 'GH') {
-
-                            if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                if ($this->choose_type_transaction == 1) {
-
-                                    // User Distributer GHANA send you Custumer lives GHANA
-                                    $commission_transaction = TransactionCost::whereId(11)->first();
-
-                                    $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                } else {
-                                }
-                            } else {
-                                $commission_transaction_cust = TransactionCost::whereId(11)->first();
-
-                                $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                            }
-                        } elseif ($walletUser->country->code == 'MA') {
-
-                            if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                if ($this->choose_type_transaction == 1) {
-
-                                    // User Distributer GHANA send you Custumer lives GHANA
-                                    $commission_transaction = TransactionCost::whereId(16)->first();
-
-                                    $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                } else {
-                                }
-                            } else {
-                                $commission_transaction_cust = TransactionCost::whereId(16)->first();
-
-                                $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                            }
-                        } elseif ($walletUser->country->code == 'TN') {
-
-                            if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                if ($this->choose_type_transaction == 1) {
-
-                                    // User Distributer GHANA send you Custumer lives GHANA
-                                    $commission_transaction = TransactionCost::whereId(21)->first();
-
-                                    $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                } else {
-                                }
-                            } else {
-                                $commission_transaction_cust = TransactionCost::whereId(21)->first();
-
-                                $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                            }
-                        } elseif ($walletUser->country->code == 'FR') {
-
-                            if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                if ($this->choose_type_transaction == 1) {
-
-                                    // User Distributer GHANA send you Custumer lives GHANA
-                                    $commission_transaction = TransactionCost::whereId(6)->first();
-
-                                    $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                } else {
-                                }
-                            } else {
-                                $commission_transaction_cust = TransactionCost::whereId(6)->first();
-
-                                $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                            }
-                        }
-                    } elseif ($walletUser->wallet->currencie->code == 'CFA') {
-
-                        if ($walletUser->country->code == 'CF') {
-
-                            if ($walletUser->is_under_distributer == 1 ||    $walletUser->is_distributer == 1) {
-                                if ($this->choose_type_transaction == 1) {
-
-                                    $commission_transaction = TransactionCost::whereId(1)->first();
-
-                                    $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                } else {
-                                }
-                            } else {
-                                $commission_transaction_cust = TransactionCost::whereId(1)->first();
-
-                                $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                            }
-                        } elseif ($walletUser->country->code == 'CI') {
-                            if ($walletUser->is_under_distributer == 1 ||  $walletUser->is_distributer == 1) {
-                                if ($this->choose_type_transaction == 1) {
-
-                                    // User Distributer CIV send you Custumer lives CIV
-                                    $commission_transaction = TransactionCost::whereId(26)->first();
-
-                                    $commission_transaction_val_nat_pay = (float) $commission_transaction->percent * $this->transaction_amount_robus;
-
-                                    $commission_transaction_val_nat_receive = (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                                } else {
-                                }
-                            } else {
-                                $commission_transaction_cust = TransactionCost::whereId(26)->first();
-
-                                $commission_transaction_val_nat_pay =  (float) $commission_transaction_cust->percent *  $this->transaction_amount_robus;
-
-                                $commission_transaction_val_nat_receive =  (float) $this->transaction_amount_robus - $commission_transaction_val_nat_pay;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // amount_inter_robus
-            if ($this->amount_inter_robus != '') {
-
-                $country_robus = Country::whereId($this->country_inter_robus)
-                    // ->whereStatus(true)
-                    ->first();
-
-                if ($walletUser->country->code == 'CF') {
-                    //Valuer inter  transaction
-                    $commission_inter = TransactionCost::whereId(4)->first();
-
-                    $valeur_amount = $this->amount_inter_robus;
-
-                    // Verify valeur amount max in Landing the ROBUS
-                    $valeur_end = $commission_inter->levelTransactionIvoires->last();
-
-                    //  Conversion valeur
-                    $conversion_valeur_end  = $valeur_end->amount_end;
-
-                    if ($conversion_valeur_end  < $this->amount_inter_robus) {
-                        $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                        $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-                    } else {
-
-                        foreach ($commission_inter->levelTransactionIvoires  as $amount_comission) {
-                            if (
-                                $valeur_amount >= $amount_comission->amount_begin &&
-                                $valeur_amount <= $amount_comission->amount_end
-                            ) {
-
-                                $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                                $valeur_verify =   $valeur_amount -  $commission_transaction_val_inter_pay;
-
-                                if ($valeur_verify < 0) {
-                                    $commission_transaction_val_inter_receive =   'La valeur SVP';
-                                } else {
-
-                                    if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                        if ($walletUser->country->id  != 107) {
-
-                                            $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                        } else {
-
-                                            $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                        }
-                                    } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                        $commission_transaction_val_inter_receive =   $valeur_verify;
-                                    } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-                                        $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } elseif ($walletUser->country->code == 'GH') {
-                    //Countries GHANA 
-                    //  Conversion valeur
-                    $conversion_valeur_end  =  $default_valeur  /  $walletUser->wallet->currencie->value;
-
-                    if ($conversion_valeur_end  < $this->amount_inter_robus) {
-
-                        $commission_transaction_val_inter_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_transaction_val_inter_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    } else {
-
-                        $commission_inter = TransactionCost::whereId(14)->first();
-
-                        $commission_transaction_val_inter_pay = $commission_inter->percent  *  $this->amount_inter_robus;
-
-                        $valeur_verify =   $this->amount_inter_robus - $commission_transaction_val_inter_pay;
-
-                        if ($valeur_verify < 0) {
-                            $commission_transaction_val_inter_receive =  "";
-                        } else {
-
-
-                            if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                if ($walletUser->country->id  != 107) {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                }
-                            } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-                                $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                            }
-                        }
-                    }
-                } elseif ($walletUser->country->code == 'MA') {
-                    // Countries Maroc
-                    //  Conversion valeur
-                    $conversion_valeur_end  =  $default_valeur  /  $walletUser->wallet->currencie->value;
-
-                    if ($conversion_valeur_end  < $this->amount_inter_robus) {
-
-                        $commission_transaction_val_inter_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_transaction_val_inter_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    } else {
-
-                        //Valuer inter  transaction
-                        $commission_inter = TransactionCost::whereId(19)->first();
-
-                        $commission_transaction_val_inter_pay = $commission_inter->percent  *  $this->amount_inter_robus;
-
-                        $valeur_verify =   $this->amount_inter_robus - $commission_transaction_val_inter_pay;
-
-                        if ($valeur_verify < 0) {
-                            $commission_transaction_val_inter_receive =  "";
-                        } else {
-
-
-                            if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                if ($walletUser->country->id  != 107) {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                }
-                            } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-                                $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                            }
-                        }
-                    }
-                } elseif ($walletUser->country->code == 'FR') {
-
-                    //Valuer inter  transaction
-                    $commission_inter = TransactionCost::whereId(9)->first();
-
-                    if (
-                        $walletUser->wallet->currencie->code == 'EUR' || $walletUser->wallet->currencie->code == 'DH' || $walletUser->wallet->currencie->code == 'Dt' ||
-                        $walletUser->wallet->currencie->code == 'CEDI' ||
-                        $walletUser->wallet->currencie->code == 'USD'
-                    ) {
-
-                        $valeur_amount =  $this->amount_inter_robus;
-
-                        // Verify valeur amount max in Landing the ROBUS
-                        $valeur_end = $commission_inter->levelTransactionIvoires->last();
-
-                        $conversion_valeur_end =  $valeur_end->amount_end;
-                        //Verify amount in transactions 
-                        if ($conversion_valeur_end  < $valeur_amount) {
-                            $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                            $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-                        } else {
-
-                            foreach ($commission_inter->levelTransactionIvoires as $amount_comission) {
-                                if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                                    if ($amount_comission->percent == null) {
-
-                                        $valeur_verify =  $valeur_amount - $amount_comission->amount;
-
-                                        $commission_transaction_val_inter_pay = $amount_comission->amount;
-
-                                        if ($valeur_verify < 0) {
-                                            $commission_transaction_val_inter_receive =   "Montant negatif";
-                                        } else {
-
-                                            if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                                if ($walletUser->country->id  != 107) {
-
-                                                    $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                                } else {
-
-                                                    $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                                }
-                                            } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                                            } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-                                                $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                                            }
-
-                                            //   $commission_transaction_val_inter_receive = number_format($valeur_verify, 2, ',', ' ') ;
-
-
-                                        }
-                                    } else {
-
-
-                                        $commission_transaction_val_inter_pay =   $valeur_amount  * $amount_comission->percent;
-
-                                        $valeur_verify = $valeur_amount -  $commission_transaction_val_inter_pay;
-
-                                        if ($valeur_verify < 0) {
-                                            $commission_transaction_val_inter_receive =   "Montant negatif";
-                                        } else {
-
-
-                                            if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                                if ($walletUser->country->id  != 107) {
-
-                                                    $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                                } else {
-
-                                                    $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                                }
-                                            } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                                            } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-                                                $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } elseif ($walletUser->country->code == 'CI') {
-
-
-                    // Countrie ID 42 is CANTRE AFRIQUE
-                    if ($this->country_inter_robus == 42) {
-
-                        //Valuer inter  transaction
-                        $commission_inter = TransactionCost::whereId(5)->first();
-
-                        $valeur_amount =  $this->amount_inter_robus;
-
-                        // Verify valeur amount max in Landing the ROBUS
-                        $valeur_end = $commission_inter->levelTransactionIvoireInters->last();
-
-                        $conversion_valeur_end =  $valeur_end->amount_end;
-                        //Verify amount in transactions 
-                        if ($conversion_valeur_end  < $valeur_amount) {
-                            $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                            $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-                        } else {
-
-                            foreach ($commission_inter->levelTransactionIvoireInters as $amount_comission) {
-                                if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                                    $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                                    $valeur_verify =   $valeur_amount - $commission_transaction_val_inter_pay;
-
-                                    if ($valeur_verify < 0) {
-                                        $commission_transaction_val_inter_receive = "Montant negatif";
-                                    } else {
-                                        if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                            if ($walletUser->country->id  != 107) {
-
-                                                $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                            } else {
-
-                                                $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                            }
-                                        } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                            $commission_transaction_val_inter_receive =   $valeur_verify;
-                                        } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-
-                                            $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } elseif ($this->country_inter_robus == 146) {
-                        // countries Maroc
-                        //Valuer inter  transaction
-                        $commission_inter = TransactionCost::whereId(20)->first();
-
-                        $valeur_amount =  $this->amount_inter_robus;
-
-                        // Verify valeur amount max in Landing the ROBUS
-                        $valeur_end = $commission_inter->levelTransactionIvoireInters->last();
-
-                        $conversion_valeur_end =  $valeur_end->amount_end;
-                        //Verify amount in transactions 
-                        if ($conversion_valeur_end  < $valeur_amount) {
-                            $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                            $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-                        } else {
-
-                            foreach ($commission_inter->levelTransactionIvoireInters as $amount_comission) {
-                                if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                                    $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                                    $valeur_verify =   $valeur_amount - $commission_transaction_val_inter_pay;
-
-                                    if ($valeur_verify < 0) {
-                                        $commission_transaction_val_inter_receive = "Montant negatif";
-                                    } else {
-
-                                        if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                            if ($walletUser->country->id  != 107) {
-
-                                                $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                            } else {
-
-                                                $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                            }
-                                        } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                            $commission_transaction_val_inter_receive =   $valeur_verify;
-                                        } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-
-                                            $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } elseif ($this->country_inter_robus == 74) {
-                        // Countries FR
-                        $commission_inter = TransactionCost::whereId(10)->first();
-
-                        $valeur_amount =  $this->amount_inter_robus;
-
-                        // Verify valeur amount max in Landing the ROBUS
-                        $valeur_end = $commission_inter->levelTransactionIvoireInters->last();
-
-                        $conversion_valeur_end =  $valeur_end->amount_end;
-                        //Verify amount in transactions 
-                        if ($conversion_valeur_end  < $valeur_amount) {
-                            $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                            $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-                        } else {
-
-                            foreach ($commission_inter->levelTransactionIvoireInters as $amount_comission) {
-                                if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                                    $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                                    $valeur_verify =   $valeur_amount - $commission_transaction_val_inter_pay;
-
-                                    if ($valeur_verify < 0) {
-                                        $commission_transaction_val_inter_receive = "Montant negatif";
-                                    } else {
-
-                                        if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                            if ($walletUser->country->id  != 107) {
-
-                                                $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                            } else {
-
-                                                $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                            }
-                                        } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                            $commission_transaction_val_inter_receive =   $valeur_verify;
-                                        } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-
-                                            $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } elseif ($this->country_inter_robus == 83 &&  $this->provider_inter == 51) {
-                        // Countries Is CHANA
-
-                        //  Valeur is CFA        
-                        if ($default_valeur  < $this->amount_inter_robus) {
-
-                            $commission_transaction_val_inter_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                            $commission_transaction_val_inter_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                        } else {
-
-                            //Valuer inter  transaction
-                            $commission_inter = TransactionCost::whereId(15)->first();
-
-                            $commission_transaction_val_inter_pay = $commission_inter->percent  *  $this->amount_inter_robus;
-
-                            $valeur_verify =   $this->amount_inter_robus - $commission_transaction_val_inter_pay;
-
-                            if ($valeur_verify < 0) {
-                                $commission_transaction_val_inter_receive =  "";
-                            } else {
-
-                                if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                    if ($walletUser->country->id  != 107) {
-
-                                        $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                    }
-                                } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                    $commission_transaction_val_inter_receive =   $valeur_verify;
-                                } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                                }
-                            }
-                        }
-                    } elseif ($this->country_inter_robus == 218) {
-                        // Countries is TUNISIE
-                        //Valuer inter  transaction
-                        $commission_inter = TransactionCost::whereId(25)->first();
-
-                        $valeur_amount =  $this->amount_inter_robus;
-
-                        // Verify valeur amount max in Landing the ROBUS
-                        $valeur_end = $commission_inter->levelTransactionIvoireInters->last();
-
-                        $conversion_valeur_end =  $valeur_end->amount_end;
-                        //Verify amount in transactions 
-                        if ($conversion_valeur_end  < $valeur_amount) {
-                            $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                            $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-                        } else {
-
-                            foreach ($commission_inter->levelTransactionIvoireInters as $amount_comission) {
-                                if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                                    $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                                    $valeur_verify =   $valeur_amount - $commission_transaction_val_inter_pay;
-
-                                    if ($valeur_verify < 0) {
-                                        $commission_transaction_val_inter_receive = "Montant negatif";
-                                    } else {
-
-                                        if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                            if ($walletUser->country->id  != 107) {
-
-                                                $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                            } else {
-
-                                                $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                            }
-                                        } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                            $commission_transaction_val_inter_receive =   $valeur_verify;
-                                        } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-
-                                            $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } elseif (
-                        $this->country_inter_robus == 39 || $this->country_inter_robus == 50 || $this->country_inter_robus == 25
-                        || $this->country_inter_robus == 79  || $this->country_inter_robus == 91
-                        || $this->country_inter_robus == 122 || $this->country_inter_robus == 133
-                        || $this->country_inter_robus == 157 || $this->country_inter_robus == 57 || $this->country_inter_robus == 188
-                        || $this->country_inter_robus == 43 || $this->country_inter_robus == 214 || $this->country_inter_robus == 36
-                        || $this->country_inter_robus == 69 || $this->country_inter_robus == 223 || $this->country_inter_robus == 191
-                        || $this->country_inter_robus == 180 || $this->country_inter_robus == 112
-                    ) {
-                        // Countries is Auther
-
-                        $commission_inter = LevelMoney::whereId(3)->first();
-
-                        $commission_transaction_val_inter_pay = $commission_inter->percent  *  $this->amount_inter_robus;
-
-                        $valeur_verify =   $this->amount_inter_robus - $commission_transaction_val_inter_pay;
-
-                        if ($valeur_verify < 0) {
-                            $commission_transaction_val_inter_receive =  "Montant negatif";
-                        } else {
-
-                            if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                if ($walletUser->country->id  != 107) {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                }
-                            } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-                                $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                            }
-                        }
-                    } elseif ($this->country_inter_robus == 83 &&  $this->provider_inter == 48) {
-                        $commission_inter = LevelMoney::whereId(3)->first();
-
-                        $commission_transaction_val_inter_pay = $commission_inter->percent  *  $this->amount_inter_robus;
-
-                        $valeur_verify =   $this->amount_inter_robus - $commission_transaction_val_inter_pay;
-
-                        if ($valeur_verify < 0) {
-                            $commission_transaction_val_inter_receive =  "Montant negatif";
-                        } else {
-
-                            if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                if ($walletUser->country->id != 107) {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                }
-                            } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-
-                                $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                            }
-                        }
-                    }
-                } elseif ($walletUser->country->code == 'TN') {
-                    // Countries TUnisie
-
-                    //  Conversion valeur
-                    $conversion_valeur_end  =  $default_valeur  /  $walletUser->wallet->currencie->value;
-
-                    if ($conversion_valeur_end  < $this->amount_inter_robus) {
-
-                        $commission_transaction_val_inter_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_transaction_val_inter_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    } else {
-
-                        //Valuer inter  transaction
-                        $commission_inter = TransactionCost::whereId(24)->first();
-
-                        $commission_transaction_val_inter_pay = $commission_inter->percent  *  $this->amount_inter_robus;
-
-                        $valeur_verify =   $this->amount_inter_robus - $commission_transaction_val_inter_pay;
-
-                        if ($valeur_verify < 0) {
-                            $commission_transaction_val_inter_receive =  "Montant negatif";
-                        } else {
-
-                            if ($walletUser->country->currencie->value > $country_robus->currencie->value) {
-
-                                if ($walletUser->country->id  != 107) {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify *  $walletUser->country->currencie->value;
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =   $valeur_verify /  $country_robus->currencie->value;
-                                }
-                            } elseif ($walletUser->country->currencie->value == $country_robus->currencie->value) {
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            } elseif ($walletUser->country->currencie->value < $country_robus->currencie->value) {
-
-                                $commission_transaction_val_inter_receive =   $valeur_verify / $country_robus->currencie->value;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // True valuer of relaod card
-            if ($this->amount_reloadcard != '') {
-
-
-                $commission_reload = DepositCost::whereId(2)->first();
-
-                if ($walletUser->wallet->sidUser->is_under_distributer == true) {
-                    // Verify valeur amount max in Landing the ROBUS
-                    $valeur_end = $commission_reload->levelDepositIvories->where('is_ivoires', true)->last();
-
-                    $valeur_first = $commission_reload->levelDepositIvories->where('is_ivoires', true)->first();
-
-                    //  Conversion valeur
-                    $conversion_valeur_end  = $valeur_end->amount_end;
-
-                    $conversion_valeur_first  = $valeur_first->amount_begin;
-
-
-                    if ($conversion_valeur_first  > $this->amount_reloadcard) {
-                        $commission_reload_val_nat_true_pay = "Montant min est  : " .   number_format($conversion_valeur_first, 2, ',', ' ');
-
-                        $commission_reload_val_nat_true_receive = "Montant min est  : " .  number_format($conversion_valeur_first, 2, ',', ' ');
-                    } elseif ($conversion_valeur_end  < $this->amount_reloadcard) {
-
-                        $commission_reload_val_nat_true_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_reload_val_nat_true_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    } else {
-
-                        foreach ($commission_reload->levelDepositIvories->where('is_ivoires', true)  as $amount_comission) {
-                                
-                            if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
-
-                               
-
-                                if ($amount_comission->amount == null) {
-
-                                    $percent_admin =  $amount_comission->percent * $this->amount_reloadcard;
-
-                                    $admin_valeur = $percent_admin * $amount_comission->admin_percent;
-
-                                    // Commission valuer ROBUS
-                                    $commission_reload_val_nat_true_pay = $amount_comission->comission_distributer * $admin_valeur;
-
-
-                                    $valeur_receive = (float) $this->amount_reloadcard;
-
-                                    if ($valeur_receive < 0) {
-
-                                        $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                    } else {
-
-                                        $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                    }
-                                } else {
-
-                                    $commission_reload_val_nat_true_pay = (float) $amount_comission->comission_distributer;
-
-                                    $valeur_receive = (float) $this->amount_reloadcard;
-
-                                    if ($valeur_receive < 0) {
-
-                                        $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                    } else {
-
-                                        $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                } else {
-
-                    // Verify valeur amount max in Landing the ROBUS
-                    $valeur_end = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->last();
-
-                    $valeur_first = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->first();
-
-                    //  Conversion valeur
-                    $conversion_valeur_end  = $valeur_end->amount_end;
-
-                    $conversion_valeur_first  = $valeur_first->amount_begin;
-
-
-                    if ($conversion_valeur_first  > $this->amount_reloadcard) {
-                        $commission_reload_val_nat_true_pay = "Montant min est  : " .   number_format($conversion_valeur_first, 2, ',', ' ');
-
-                        $commission_reload_val_nat_true_receive = "Montant min est  : " .  number_format($conversion_valeur_first, 2, ',', ' ');
-                    } elseif ($conversion_valeur_end  < $this->amount_reloadcard) {
-
-                        $commission_reload_val_nat_true_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                        $commission_reload_val_nat_true_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                        
-                    } else {
-
-                        foreach ($commission_reload->levelDepositIvories->where('is_inter_bank', true)  as $amount_comission) {
-                            if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
-
-                                if ($amount_comission->amount == null) {
-
-                                    $commission_reload_val_nat_true_pay = (float) $amount_comission->percent *  $this->amount_reloadcard;
-
-                                    $valeur_receive = (float) $this->amount_reloadcard;
-
-                                    if ($valeur_receive < 0) {
-
-                                        $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                    } else {
-
-                                        $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                    }
-                                } else {
-
-                                    $commission_reload_val_nat_true_pay = (float) $amount_comission->amount;
-
-                                    $valeur_receive = (float) $this->amount_reloadcard;
-
-                                    if ($valeur_receive < 0) {
-
-                                        $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                    } else {
-
-                                        $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // Invoice auther
-            if ($this->paiement_amount_total != '') {
-
-                $commission_invoice = PaymentCost::whereId(2)->first();
-
-                if ($walletUser->country->code == 'CI') {
-
-                    $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
-
-                    $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_total;
-                }
-            }
-
-
-            if ($this->paiement_amount_t_sodecie != '') {
-
-                $commission_invoice = PaymentCost::whereId(2)->first();
-
-                if ($walletUser->wallet->sidUser->is_under_distributer == 1) {
-
-                    $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
-
-                    $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie;
-                } else {
-
-                    $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->amount_auther;
-
-                    $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie;
-                }
-            }
-
-            // Invoice canal national
-
-            if ($this->offer_paiement != '') {
-
-
-                if (
-                    $walletUser->wallet->currencie->code == 'EUR' ||
-                    $walletUser->wallet->currencie->code == 'DH' ||
-                    $walletUser->wallet->currencie->code == 'Dt' ||
-                    $walletUser->wallet->currencie->code == 'CEDI' ||
-                    $walletUser->wallet->currencie->code == 'USD'
-                ) {
-
-                    $commission_invoice = PaymentCost::whereId(1)->first();
-
-                    foreach ($offers  as $offer) {
-
-                        $offer_amount = $offer->whereId($this->offer_paiement)->first();
-                        $offer_amount = $offer->whereId($this->offer_paiement)->first();
-
-                        $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
-
-                        $amount_received_canal =  $commission_invoice->comission_canal / $walletUser->wallet->currencie->value;
-
-
-                        $commission_paiement_invoice_canal_val_inter = number_format($valeur_offer / $walletUser->wallet->currencie->value, 2, ',', ' ');
-                    }
-                } elseif ($walletUser->wallet->currencie->code == 'GNF') {
-
-                    $commission_invoice = PaymentCost::whereId(1)->first();
-
-                    foreach ($offers  as $offer) {
-
-                        $offer_amount = $offer->whereId($this->offer_paiement)->first();
-
-                        $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
-
-                        $amount_received_canal = $commission_invoice->comission_canal * $walletUser->wallet->currencie->value;
-
-                        $commission_paiement_invoice_canal_val_inter =  number_format($valeur_offer * $walletUser->wallet->currencie->value, 2, ',', ' ');
-                    }
-                } elseif ($walletUser->wallet->currencie->code == 'CFA') {
-
-
-
-                    if ($walletUser->wallet->country->code = 'CI') {
-
-                        $commission_invoice = PaymentCost::whereId(2)->first();
-
-                        foreach ($offers  as $offer) {
-
-                            $offer_amount = $offer->whereId($this->offer_paiement)->first();
-
-                            $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
-
-                            $amount_received_canal = $commission_invoice->comission_canal;
-
-                            $commission_paiement_invoice_canal_val_inter =  number_format($valeur_offer, 2, ',', ' ');
-                        }
-                    } else {
-
-                        $commission_invoice = PaymentCost::whereId(1)->first();
-
-                        foreach ($offers  as $offer) {
-
-                            $offer_amount = $offer->whereId($this->offer_paiement)->first();
-
-                            $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
-
-                            $amount_received_canal = $commission_invoice->comission_canal;
-
-                            $commission_paiement_invoice_canal_val_inter =  number_format($valeur_offer, 2, ',', ' ');
-                        }
-                    }
-                }
-            }
-
-
-            // National virement
-            if ($this->amount_virement != '') {
-
-                $commission_virement = BankCost::whereId(2)->first();
-
+            if ($walletUser->wallet->sidUser->is_under_distributer == true) {
                 // Verify valeur amount max in Landing the ROBUS
-                $valeur_end = $commission_virement->levelBankIvories->last();
+                $valeur_end = $commission_reload->levelDepositIvories->where('is_ivoires', true)->last();
+
+                $valeur_first = $commission_reload->levelDepositIvories->where('is_ivoires', true)->first();
 
                 //  Conversion valeur
                 $conversion_valeur_end  = $valeur_end->amount_end;
 
-                if ($conversion_valeur_end  < $this->amount_virement) {
-                    $commission_virement_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
+                $conversion_valeur_first  = $valeur_first->amount_begin;
 
-                    $commission_virement_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
+
+                if ($conversion_valeur_first  > $this->amount_reloadcard) {
+                    $commission_reload_val_nat_true_pay = "Montant min est  : " .   number_format($conversion_valeur_first, 2, ',', ' ');
+
+                    $commission_reload_val_nat_true_receive = "Montant min est  : " .  number_format($conversion_valeur_first, 2, ',', ' ');
+                } elseif ($conversion_valeur_end  < $this->amount_reloadcard) {
+
+                    $commission_reload_val_nat_true_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+
+                    $commission_reload_val_nat_true_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                 } else {
 
-                    foreach ($commission_virement->levelBankIvories as $amount_comission) {
-                        if ($this->amount_virement >= $amount_comission->amount_begin && $this->amount_virement <= $amount_comission->amount_end) {
-                            if ($walletUser->wallet->sidUser->is_under_distributer == 1) {
+                    foreach ($commission_reload->levelDepositIvories->where('is_ivoires', true)  as $amount_comission) {
 
-                                $commission_virement_val_nat_pay = $amount_comission->comission_distributer;
+                        if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
 
-                                $valeur_receive = (float) $this->amount_virement;
+
+
+                            if ($amount_comission->amount == null) {
+
+                                $percent_admin =  $amount_comission->percent * $this->amount_reloadcard;
+
+                                $admin_valeur = $percent_admin * $amount_comission->admin_percent;
+
+                                // Commission valuer ROBUS
+                                $commission_reload_val_nat_true_pay = $amount_comission->comission_distributer * $admin_valeur;
+
+
+                                $valeur_receive = (float) $this->amount_reloadcard;
 
                                 if ($valeur_receive < 0) {
 
-                                    $commission_virement_val_nat_receive = "Montant negatif";
+                                    $commission_reload_val_nat_true_receive = 'Montant negatif';
                                 } else {
 
-                                    $commission_virement_val_nat_receive = (float) $this->amount_virement;
+                                    $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
                                 }
                             } else {
 
-                                $commission_virement_val_nat_pay = $amount_comission->amount;
+                                $commission_reload_val_nat_true_pay = (float) $amount_comission->comission_distributer;
 
-                                $valeur_receive = (float) $this->amount_virement;
+                                $valeur_receive = (float) $this->amount_reloadcard;
 
                                 if ($valeur_receive < 0) {
 
-                                    $commission_virement_val_nat_receive = "Montant negatif";
+                                    $commission_reload_val_nat_true_receive = 'Montant negatif';
                                 } else {
 
-                                    $commission_virement_val_nat_receive = (float) $this->amount_virement;
+                                    $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+
+                // Verify valeur amount max in Landing the ROBUS
+                $valeur_end = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->last();
+
+                $valeur_first = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->first();
+
+                //  Conversion valeur
+                $conversion_valeur_end  = $valeur_end->amount_end;
+
+                $conversion_valeur_first  = $valeur_first->amount_begin;
+
+
+                if ($conversion_valeur_first  > $this->amount_reloadcard) {
+                    $commission_reload_val_nat_true_pay = "Montant min est  : " .   number_format($conversion_valeur_first, 2, ',', ' ');
+
+                    $commission_reload_val_nat_true_receive = "Montant min est  : " .  number_format($conversion_valeur_first, 2, ',', ' ');
+                } elseif ($conversion_valeur_end  < $this->amount_reloadcard) {
+
+                    $commission_reload_val_nat_true_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+
+                    $commission_reload_val_nat_true_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+                } else {
+
+                    foreach ($commission_reload->levelDepositIvories->where('is_inter_bank', true)  as $amount_comission) {
+                        if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
+
+                            if ($amount_comission->amount == null) {
+
+                                $commission_reload_val_nat_true_pay = (float) $amount_comission->percent *  $this->amount_reloadcard;
+
+                                $valeur_receive = (float) $this->amount_reloadcard;
+
+                                if ($valeur_receive < 0) {
+
+                                    $commission_reload_val_nat_true_receive = 'Montant negatif';
+                                } else {
+
+                                    $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
+                                }
+                            } else {
+
+                                $commission_reload_val_nat_true_pay = (float) $amount_comission->amount;
+
+                                $valeur_receive = (float) $this->amount_reloadcard;
+
+                                if ($valeur_receive < 0) {
+
+                                    $commission_reload_val_nat_true_receive = 'Montant negatif';
+                                } else {
+
+                                    $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
                                 }
                             }
                         }
                     }
                 }
             }
+        }
 
-            // Phone credit national
+        if ($this->paiement_amount_total != '') {
 
-            if ($this->amount_phone_credit != '') {
+            $commission_invoice = PaymentCost::whereId(2)->first();
 
-                $commission_phone_credit = PhoneCreditCost::whereId(1)->first();
+            if ($walletUser->country->code == 'CI') {
 
-                $commission_phone_credit_val_nat_pay = (float) $this->amount_phone_credit * (float) $commission_phone_credit->percent;
+                $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
 
-                $valeur_receive = (float) $this->amount_phone_credit;
+                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_total;
+            }
+        }
 
 
-                if ($valeur_receive < 0) {
+        if ($this->paiement_amount_t_sodecie != '') {
 
-                    $commission_phone_credit_val_nat_receive = "Montant negatif";
-                } else {
+            $commission_invoice = PaymentCost::whereId(2)->first();
 
-                    $commission_phone_credit_val_nat_receive =  $valeur_receive;
+            if ($walletUser->wallet->sidUser->is_under_distributer == 1) {
+
+                $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
+
+                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie;
+            } else {
+
+                $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->amount_auther;
+
+                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie;
+            }
+        }
+
+        // Invoice canal national
+
+        if ($this->offer_paiement != '') {
+
+
+            if (sabdy()->country->id == 107) {
+
+                $commission_invoice = PaymentCost::whereId(2)->first();
+
+                foreach ($offers  as $offer) {
+
+                    $offer_amount = $offer->whereId($this->offer_paiement)->first();
+
+                    if (sabdy()->is_under_distributer == true) {
+
+                        $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
+
+
+                        $commission_paiement_invoice_canal_val_inter = number_format($commission_invoice->comission_canal, 2, ',', ' ');
+                    } else {
+
+                        $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
+
+                        $commission_paiement_invoice_canal_val_inter =  number_format($valeur_offer, 2, ',', ' ');
+                    }
+
+                    $amount_received_canal =  $valeur_offer;
                 }
             }
-
-
-            $search_ = $wallet->where('wallet_id', 'like', '%' . $this->account_number_inter . '%')
-                // ->where('status', true)
-                ->get();
-
-            return view('livewire.transfers', [
-                'walletSolde' => Wallet::where(
-                    'sid_user_id',
-                    $walletUser->id
-                )->sum('amount'),
-                'transactions' => $transaction
-                    ->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                    // ->where('wallets.country_id', $walletUser->country->id)
-                    ->where('wallet_transactions.status', 'PENDING')
-                    ->where('wallet_transactions.phone', '!=', null)
-                    ->select('wallet_transactions.*')
-                    ->orderBy('wallet_transactions.created_at', 'desc')
-                    ->paginate(15),
-                'paiements' => $paiement
-                    ->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $walletUser->country->id)
-                    ->where('wallet_payments.status', 'PENDING')
-                    ->select('wallet_payments.*')
-                    ->orderBy('wallet_payments.created_at', 'desc')
-                    ->paginate(15),
-                'virements' => $virement_bank
-                    ->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $walletUser->country->id)
-                    ->where('wallet_banks.status', 'PENDING')
-                    ->select('wallet_banks.*')
-                    ->orderBy('wallet_banks.created_at', 'desc')
-                    ->paginate(15),
-                'Internationals' => $inter_search
-                    ->join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                    // ->where('wallet_inters.country_id', '=', $walletUser->country->id)
-                    ->where('wallet_inters.status', 'PENDING')
-                    ->select('wallet_inters.*')
-                    ->orderBy('wallet_inters.created_at', 'desc')
-                    ->paginate(15),
-                'reloadCards' => $reload_card
-                    ->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $walletUser->country->id)
-                    ->where('wallet_deposits.status', 'PENDING')
-                    ->select('wallet_deposits.*')
-                    ->orderBy('wallet_deposits.created_at', 'desc')
-                    ->paginate(15),
-                'phoneCredits' => $phone_credit
-                    ->join(
-                        'wallets',
-                        'wallet_phone_credits.wallet_id',
-                        'wallets.id'
-                    )
-                    ->where('wallets.country_id', $walletUser->country->id)
-                    ->where('wallet_phone_credits.status', 'PENDING')
-                    ->select('wallet_phone_credits.*')
-                    ->orderBy('wallet_phone_credits.created_at', 'desc')
-                    ->paginate(15),
-                'countrie_number_local' => Auth::guard('web')->user()->country
-                    ->indecative,
-
-                'wallet_search' => $wallet
-                    ->where(
-                        'wallet_id',
-                        'like',
-                        '%' . $this->compte_number_robus . '%'
-                    )
-                    ->first(),
-                'number_search' => $sid_search
-                    ->where(
-                        'phone',
-                        'like',
-                        '%' . $this->transaction_phone . '%'
-                    )
-                    ->where('country_id', $walletUser->country->id)
-                    ->where('is_custumers', true)
-                    ->get(),
-                'wallet_search_inter' => $search_,
-                'number_search_inter' => $sid_search
-                    ->where('phone', 'like', '%' . $this->phone_inter . '%')
-                    ->where('is_custumers', true)
-                    ->get(),
-                'amount_percent' => TransactionCost::where(
-                    'status',
-                    true
-                )->first(),
-                'amount_invoice' => PaymentCost::where('status', true)->first(),
-                'amount_bank' => BankCost::whereId(2)->first(),
-                // Valuer Commissions begin
-                'amount_deposit_nation_pay' => $commission_reload_val_nat_true_pay,
-                'amount_deposit_nation_receive' => $commission_reload_val_nat_true_receive,
-                'amount_deposit_nation_true_pay' => $commission_reload_val_nat_true_pay,
-                'amount_deposit_nation_true_receive' => $commission_reload_val_nat_true_receive,
-                'amount_deposit_inter' => $commission_reload_val_inter,
-                'amount_deposit_inter_nation' => $commission_reload_inter_val_nat,
-                'amount_deposit_inter_inter_pay' => $commission_reload_inter_val_inter_pay,
-                'amount_deposit_inter_inter_receive' => $commission_reload_inter_val_inter_receive,
-                'amount_deposit_inter_inter_true_pay' => $commission_reload_inter_val_inter_true_pay,
-                'amount_deposit_inter_inter_true_receive' => $commission_reload_inter_val_inter_true_receive,
-                'amount_paiement_invoice_auther_pay' => $commission_paiement_invoice_val_nat_pay,
-                'amount_paiement_invoice_auther_receive' => $commission_paiement_invoice_val_nat_receive,
-                'amount_paiement_invoice_auther_inter_pay' => $commission_paiement_invoice_val_inter_pay,
-                'amount_paiement_invoice_auther_inter_receive' => $commission_paiement_invoice_val_inter_receive,
-                'amount_paiement_invoice_canal' => $commission_paiement_invoice_canal_val_nat,
-                'amount_paiement_invoice_canal_inter' => $commission_paiement_invoice_canal_val_inter,
-                'amount_transaction_under_pay' => $commission_transaction_val_nat_pay,
-                'amount_transaction_under_receive' => $commission_transaction_val_nat_receive,
-                'amount_transaction_mooney_inter_pay' => $commission_transaction_val_inter_mooney_pay,
-                'amount_transaction_mooney_inter_receive' => $commission_transaction_val_inter_mooney_receive,
-                'amount_transaction_under_inter_pay' => $commission_transaction_val_inter_pay,
-                'amount_transaction_under_inter_receive' => $commission_transaction_val_inter_receive,
-                'amount_virement_nation_pay' => $commission_virement_val_nat_pay,
-                'amount_virement_nation_receive' => $commission_virement_val_nat_receive,
-                'amount_phone_credit_val_pay' => $commission_phone_credit_val_inter_pay,
-                'amount_phone_credit_val_receive' => $commission_phone_credit_val_inter_receive,
-                'amount_virement_inter_val_pay' => $commission_virement_val_inter_pay,
-                'amount_virement_inter_val_receive' => $commission_virement_val_inter_receive,
-                'amount_transaction_nat_val_receive' => $commission_transaction_val_nal_receive,
-                'amount_transaction_nat_val_pay' => $commission_transaction_val_nal_pay,
-                'amount_phone_credit_val_nat_pay' => $commission_phone_credit_val_nat_pay,
-                'amount_phone_credit_val_nat_receive' => $commission_phone_credit_val_nat_receive,
-                // New val
-                'amount_received_canal' => $amount_received_canal,
-                // End valeur comissions
-                // Code validated
-                'code_valided' => $code_validated_val_nat,
-                'code_valided_inter' => $code_validated_val_nat,
-                'withdrawal_robus' => Provider::whereStatus(true)
-                    ->whereId(9)
-                    ->get(),
-                'withdrawal_robus_inter' => Provider::whereStatus(true)
-                    ->whereId(51)
-                    ->get(),
-                'provide_came_guine' => Provider::whereIn('id', array(49, 48))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_con_bn_gh_lib' => Provider::whereId(48)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_gha' => Provider::whereIn('id', array(48, 51))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_gabon' => Provider::whereIn('id', array(71, 72))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_mali' => Provider::whereIn('id', array(49, 50, 55))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_west_africa' => Provider::whereIn('id', array(1, 3, 4, 6, 9))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_civ' => Provider::whereIn('id', array(49, 50, 55, 48))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_civ_out' => Provider::whereIn('id', array(49, 50, 48))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_ng_rd_tchad' => Provider::whereId(71)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_senegal' => Provider::whereId(55)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_togo' => Provider::whereId(50)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_burki' => Provider::whereIn('id', array(49, 55))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_ethopie' => Provider::whereIn('id', array(48, 73))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_ouganda' => Provider::whereIn('id', array(71, 48))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_seria' => Provider::whereIn('id', array(49, 74, 75))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_rwanda' => Provider::whereIn('id', array(48, 71))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'provide_kenya' => Provider::whereIn('id', array(76, 71, 77))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'countrie_ivoires' => Country::whereRobus(true)
-                    ->whereIn('id', array(146, 42, 83, 74, 218, 39, 42, 43, 50, 57, 79, 122, 69, 223, 191, 180, 112, 157, 133, 91))
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'payment_error' => $this->PaymentError,
-                'payment_success' => $this->PaymentSuccess,
-                'payment_pendding' => $this->PaymentPendding,
-                'transaction_error' => $this->TransactionError,
-                'transaction_success' => $this->TransactionSuccess,
-                'transaction_pendding' => $this->TransactionPendding,
-                'WalletReloads' => $this->WalletReloads,
-                'reload_error' => $this->ReloadError,
-                'reload_success' => $this->ReloadSuccess,
-                'reload_pendding' => $this->ReloadPendding,
-                'bank_error' => $this->VirementError,
-                'bank_success' => $this->VirementSuccess,
-                'bank_pendding' => $this->VirementPendding,
-                'inter_error' => $this->InterError,
-                'inter_success' => $this->InterSuccess,
-                'inter_pendding' => $this->InterPendding,
-                'card_error' => $this->DepositError,
-                'card_success' => $this->DepositSuccess,
-                'card_pendding' => $this->DepositPendding,
-                'phone_error' => $this->PhoneCreditError,
-                'phone_success' => $this->PhoneCreditSuccess,
-                'phone_pendding' => $this->PhoneCreditPendding,
-                'WalletBanks' => $this->WalletBanks,
-                'WalletDeposits' => $this->WalletDeposits,
-                'WalletInters' => $this->WalletInters,
-                'WalletPayments' => $this->WalletPayments,
-                'WalletTransactions' => $this->WalletTransactions,
-                'WalletPhoneCredits' => $this->WalletPhoneCredits,
-                'offers_canal' => $offers,
-                'countries' => Country::whereRobus(true)
-                    ->orderBy('name', 'asc')
-                    ->get(),
-                'countrie_inter_cf' => Country::whereRobus(true)->whereId(107)
-                    ->first(),
-                'wallet_countries_users' => SidUser::where('status', true)
-                    ->orderBy('firstname', 'asc')
-                    ->get(),
-                'providers' => $this->NationTransaction,
-                'provider_paiements' => $this->PaiementTransaction,
-                'provider_paiements_inter' => $this->PaymentInterTransaction,
-                'provider_virements' => $this->VirementTransaction,
-                'provider_inters' => $this->ProviderInterTransaction,
-                'provider_inter_virements' => $this->VirmentTransactionInter,
-                'provider_reloads' => $this->ReloadTransaction,
-                'provider_reload_inters' => $this->RelaodCardInter,
-                'provider_credits' => $this->PhoneCreditTransaction,
-                'provider_credits_inter' => $this->PhoneCreditTransactionInter,
-                'usersCountry' => Auth::guard('web')->user()->wallet->currencie->code,
-                'user_auth' => $walletUser,
-                'user_send' => Auth::guard('web')->user(),
-            ]);
         }
+
+        // National virement
+        if ($this->amount_virement != '') {
+
+            $commission_virement = BankCost::whereId(2)->first();
+
+            // Verify valeur amount max in Landing the ROBUS
+            $valeur_end = $commission_virement->levelBankIvories->last();
+
+            //  Conversion valeur
+            $conversion_valeur_end  = $valeur_end->amount_end;
+
+            if ($conversion_valeur_end  < $this->amount_virement) {
+                $commission_virement_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
+
+                $commission_virement_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
+            } else {
+
+                foreach ($commission_virement->levelBankIvories as $amount_comission) {
+                    if ($this->amount_virement >= $amount_comission->amount_begin && $this->amount_virement <= $amount_comission->amount_end) {
+                        if ($walletUser->wallet->sidUser->is_under_distributer == 1) {
+
+                            $commission_virement_val_nat_pay = $amount_comission->comission_distributer;
+
+                            $valeur_receive = (float) $this->amount_virement;
+
+                            if ($valeur_receive < 0) {
+
+                                $commission_virement_val_nat_receive = "Montant negatif";
+                            } else {
+
+                                $commission_virement_val_nat_receive = (float) $this->amount_virement;
+                            }
+                        } else {
+
+                            $commission_virement_val_nat_pay = $amount_comission->amount;
+
+                            $valeur_receive = (float) $this->amount_virement;
+
+                            if ($valeur_receive < 0) {
+
+                                $commission_virement_val_nat_receive = "Montant negatif";
+                            } else {
+
+                                $commission_virement_val_nat_receive = (float) $this->amount_virement;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        if ($this->amount_phone_credit != '') {
+
+            $commission_phone_credit = PhoneCreditCost::whereId(1)->first();
+
+            $commission_phone_credit_val_nat_pay = (float) $this->amount_phone_credit * (float) $commission_phone_credit->percent;
+
+            $valeur_receive = (float) $this->amount_phone_credit;
+
+
+            if ($valeur_receive < 0) {
+
+                $commission_phone_credit_val_nat_receive = "Montant negatif";
+            } else {
+
+                $commission_phone_credit_val_nat_receive =  $valeur_receive;
+            }
+        }
+
+        // Transactions
+        $transactions = $transaction->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+            ->where('wallet_transactions.status', 'PENDING')
+            ->where('wallet_transactions.phone', '!=', null);
+
+        if ($walletUser->is_under_distributer) {
+            $transactions->where('wallet_transactions.wallet_id', $walletUser->wallet->id);
+        }
+
+        $transactions = $transactions->select('wallet_transactions.*')
+            ->orderBy('wallet_transactions.created_at', 'desc')
+            ->paginate(15);
+
+
+        // Paiements
+        $paiements = $paiement->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_payments.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $paiements->where('wallet_payments.wallet_id', $walletUser->wallet->id);
+        }
+
+        $paiements = $paiements->select('wallet_payments.*')
+            ->orderBy('wallet_payments.created_at', 'desc')
+            ->paginate(15);
+
+        // Virements
+        $virements = $virement_bank
+            ->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_banks.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $virements->where('wallet_banks.wallet_id', $walletUser->wallet->id);
+        }
+
+        $virements = $virements->select('wallet_banks.*')
+            ->orderBy('wallet_banks.created_at', 'desc')
+            ->paginate(15);
+
+        // Transactions Internationales
+        $internationals = $inter_search
+            ->join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
+            ->where('wallet_inters.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $internationals->where('wallet_inters.wallet_id', $walletUser->wallet->id);
+        }
+
+        $internationals = $internationals->select('wallet_inters.*')
+            ->orderBy('wallet_inters.created_at', 'desc')
+            ->paginate(15);
+
+
+        // Reload Cards
+        $reloadCards = $reload_card
+            ->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_deposits.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $reloadCards->where('wallet_deposits.wallet_id', $walletUser->wallet->id);
+        }
+
+        $reloadCards = $reloadCards->select('wallet_deposits.*')
+            ->orderBy('wallet_deposits.created_at', 'desc')
+            ->paginate(15);
+
+
+        $phoneCredits = $phone_credit
+            ->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_phone_credits.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $phoneCredits->where('wallet_phone_credits.wallet_id', $walletUser->wallet->id);
+        }
+
+        $phoneCredits = $phoneCredits->select('wallet_phone_credits.*')
+            ->orderBy('wallet_phone_credits.created_at', 'desc')
+            ->paginate(15);
+
+        return view('livewire.transfers', [
+            'walletSolde' => Wallet::where(
+                'sid_user_id',
+                $walletUser->id
+            )->sum('amount'),
+            'transactions' => $transactions,
+            'paiements' => $paiements,
+            'virements' => $virements,
+            'Internationals' => $internationals,
+            'reloadCards' => $reloadCards,
+            'phoneCredits' => $phoneCredits,
+            'countrie_number_local' => Auth::guard('web')->user()->country
+                ->indecative,
+            'wallet_search' => $wallet
+                ->where(
+                    'wallet_id',
+                    'like',
+                    '%' . $this->compte_number_robus . '%'
+                )
+                ->first(),
+            'number_search' => $sid_search
+                ->where(
+                    'phone',
+                    'like',
+                    '%' . $this->transaction_phone . '%'
+                )
+                ->where('country_id', $walletUser->country->id)
+                ->where('is_custumers', true)
+                ->get(),
+            'amount_percent' => TransactionCost::where(
+                'status',
+                true
+            )->first(),
+            'amount_invoice' => PaymentCost::where('status', true)->first(),
+            'amount_bank' => BankCost::whereId(2)->first(),
+            'amount_deposit_nation_pay' => $commission_reload_val_nat_true_pay,
+            'amount_deposit_nation_receive' => $commission_reload_val_nat_true_receive,
+            'amount_deposit_nation_true_pay' => $commission_reload_val_nat_true_pay,
+            'amount_deposit_nation_true_receive' => $commission_reload_val_nat_true_receive,
+            'amount_paiement_invoice_auther_pay' => $commission_paiement_invoice_val_nat_pay,
+            'amount_paiement_invoice_auther_receive' => $commission_paiement_invoice_val_nat_receive,
+            'amount_paiement_invoice_canal' => $commission_paiement_invoice_canal_val_nat,
+            'amount_paiement_invoice_canal_inter' => $commission_paiement_invoice_canal_val_inter,
+            'amount_virement_nation_pay' => $commission_virement_val_nat_pay,
+            'amount_virement_nation_receive' => $commission_virement_val_nat_receive,
+            'amount_phone_credit_val_pay' => $commission_phone_credit_val_inter_pay,
+            'amount_phone_credit_val_receive' => $commission_phone_credit_val_inter_receive,
+            'amount_transaction_nat_val_receive' => $commission_transaction_val_nal_receive,
+            'amount_transaction_nat_val_pay' => $commission_transaction_val_nal_pay,
+            'amount_phone_credit_val_nat_pay' => $commission_phone_credit_val_nat_pay,
+            'amount_phone_credit_val_nat_receive' => $commission_phone_credit_val_nat_receive,
+            'amount_received_canal' => $amount_received_canal,
+            'code_valided' => $code_validated_val_nat,
+            'code_valided_inter' => $code_validated_val_nat,
+            'withdrawal_robus' => Provider::whereStatus(true)
+                ->whereId(9)
+                ->get(),
+            'withdrawal_robus_inter' => Provider::whereStatus(true)
+                ->whereId(51)
+                ->get(),
+            'payment_error' => $this->PaymentError,
+            'payment_success' => $this->PaymentSuccess,
+            'payment_pendding' => $this->PaymentPending,
+            'transaction_error' => $this->TransactionError,
+            'transaction_success' => $this->TransactionSuccess,
+            'transaction_pendding' => $this->TransactionPendding,
+            'WalletReloads' => $this->WalletReloads,
+            'reload_error' => $this->ReloadError,
+            'reload_success' => $this->ReloadSuccess,
+            'reload_pendding' => $this->ReloadPendding,
+            'bank_error' => $this->VirementError,
+            'bank_success' => $this->VirementSuccess,
+            'bank_pendding' => $this->VirementPendding,
+            'inter_error' => $this->InterError,
+            'inter_success' => $this->InterSuccess,
+            'inter_pendding' => $this->InterPendding,
+            'card_error' => $this->DepositError,
+            'card_success' => $this->DepositSuccess,
+            'card_pendding' => $this->DepositPendding,
+            'phone_error' => $this->PhoneCreditError,
+            'phone_success' => $this->PhoneCreditSuccess,
+            'phone_pendding' => $this->PhoneCreditPendding,
+            'WalletBanks' => $this->WalletBanks,
+            'WalletDeposits' => $this->WalletDeposits,
+            'WalletInters' => $this->WalletInters,
+            'WalletPayments' => $this->WalletPayments,
+            'WalletTransactions' => $this->WalletTransactions,
+            'WalletPhoneCredits' => $this->WalletPhoneCredits,
+            'offers_canal' => $offers,
+            'countries' => Country::whereRobus(true)
+                ->orderBy('name', 'asc')
+                ->get(),
+            'countrie_inter_cf' => Country::whereRobus(true)->whereId(107)
+                ->first(),
+            'wallet_countries_users' => SidUser::where('status', true)
+                ->orderBy('firstname', 'asc')
+                ->get(),
+            'providers' => $this->NationTransaction,
+            'provider_paiements' => $this->PaiementTransaction,
+            'provider_virements' => $this->VirementTransaction,
+            'provider_reloads' => $this->ReloadTransaction,
+            'provider_credits' => $this->PhoneCreditTransaction,
+            'usersCountry' => Auth::guard('web')->user()->wallet->currencie->code,
+            'user_auth' => $walletUser,
+            'user_send' => Auth::guard('web')->user(),
+        ]);
     }
 
-    //    Service Update validated Transactions
-
+ 
     protected function createTransaction($check, $transactionCode, $transactionCompiCode)
     {
         return Transaction::create([
@@ -6436,7 +5021,7 @@ class Transfers extends Component
         ]);
     }
 
-    protected function updateamountVirementReceveid($admin_civ, $amount_user, $walletBank , $walletUser, $amount_valeur)
+    protected function updateamountVirementReceveid($admin_civ, $amount_user, $walletBank, $walletUser, $amount_valeur)
     {
 
 
@@ -6447,11 +5032,9 @@ class Transfers extends Component
             $walletBank->update([
                 'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
             ]);
-            
         } else {
 
             $valuer_deposit = $amount_user->amount;
-
         }
 
 
@@ -6467,7 +5050,7 @@ class Transfers extends Component
 
             foreach ($admin_civ as $user) {
                 $admin_single = SidUser::find($user->id);
-              
+
                 AdminsCom::create([
                     'amount' => $valeur_single,
                     'sid_user_id' => $admin_single->id,
@@ -6477,7 +5060,6 @@ class Transfers extends Component
                     'amount_under' =>  sabdy()->is_under_distributer ? $valuer_deposit : 0,
                     'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ]);
-
             }
         }
 
@@ -6508,7 +5090,7 @@ class Transfers extends Component
         ]);
     }
 
-    public function updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser ,$amount)
+    public function updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser, $amount)
     {
 
         $amount_commission = $amount + ($percent_robus->percent * $amount);
@@ -6519,7 +5101,7 @@ class Transfers extends Component
             'amount_solde' => $amount_solde,
         ]);
 
-    
+
         $this->updatePaiementWallet($walletUser, $amount_commission);
 
 
@@ -6727,7 +5309,7 @@ class Transfers extends Component
                 'num_carte' =>  $account_number_reload_card,
                 'name' => $name_reloadcard,
                 'deposit_cost_id' => 2,
-                'costs_amount' =>  $amount_user,               
+                'costs_amount' =>  $amount_user,
                 'created_by' => Auth::guard('web')->user()->id,
                 'provider_id' => $provider->id,
                 'amount_received' => $amountReceved,
@@ -6736,7 +5318,7 @@ class Transfers extends Component
         );
     }
 
-    protected function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission , $walletUser, $amount_verify)
+    protected function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $walletUser, $amount_verify)
     {
 
 
@@ -6747,7 +5329,7 @@ class Transfers extends Component
             $walletOrderCard->update([
                 'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
             ]);
-        } 
+        }
 
         $admin_valeur =  $amount_commission;
 
@@ -6760,7 +5342,7 @@ class Transfers extends Component
 
             foreach ($admin_civ as $user) {
                 $admin_single = SidUser::find($user->id);
-              
+
 
                 AdminsCom::create([
                     'amount' => $valeur_single,
@@ -6770,7 +5352,6 @@ class Transfers extends Component
                     'amount_under' =>  sabdy()->is_under_distributer ? $valuer_deposit : 0,
                     'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ]);
-
             }
         }
 
@@ -7023,7 +5604,7 @@ class Transfers extends Component
     }
 
     // Paiements USERS
-    protected function updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment , $walletUser, $amount)
+    protected function updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $amount)
     {
 
 
@@ -7051,7 +5632,7 @@ class Transfers extends Component
         return true;
     }
 
-    protected function updateAmountPaymentOfferReceveid($admin_civ, $percent_robus, $walletPayment , $walletUser , $amount)
+    protected function updateAmountPaymentOfferReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $amount)
     {
 
 
@@ -7894,24 +6475,7 @@ class Transfers extends Component
         return $payments;
     }
 
-    public function getPaymentInterTransactionProperty()
-    {
-        $walletUser = Auth::guard('web')->user();
 
-        $payment_inter = Provider::join(
-            'country_services',
-            'country_services.provider_id',
-            'providers.id'
-        )
-            ->where('country_services.country_id', $walletUser->country->id)
-            ->where('providers.status', true)
-            ->where('providers.provider_type_id', 7)
-            ->select('providers.*')
-            ->orderBy('providers.name', 'asc')
-            ->get();
-
-        return $payment_inter;
-    }
 
     public function getVirementTransactionProperty()
     {
@@ -7979,26 +6543,6 @@ class Transfers extends Component
         return  $somm_valeur;
     }
 
-    public function getProviderInterTransactionProperty()
-    {
-        $walletUser = Auth::guard('web')->user();
-
-
-        $provider_inter = Provider::join(
-            'country_services',
-            'country_services.provider_id',
-            'providers.id'
-        )
-            ->where('country_services.country_id', $walletUser->country->id)
-            ->where('providers.status', true)
-            ->where('providers.provider_type_id', 8)
-            ->whereIn('providers.provider_type_id', array(8))
-            ->distinct()
-            ->select('providers.*')
-            ->orderBy('providers.name', 'asc')
-            ->get();
-        return $provider_inter;
-    }
 
     public function getReloadTransactionProperty()
     {
@@ -8019,24 +6563,6 @@ class Transfers extends Component
         return $reload_transaction;
     }
 
-    public function getRelaodCardInterProperty()
-    {
-        $walletUser = Auth::guard('web')->user();
-
-        $reload_transaction = Provider::join(
-            'country_services',
-            'country_services.provider_id',
-            'providers.id'
-        )
-            ->where('country_services.country_id', $walletUser->country->id)
-            ->where('providers.status', true)
-            ->where('providers.provider_type_id', 11)
-            ->select('providers.*')
-            ->orderBy('providers.name', 'asc')
-            ->get();
-
-        return $reload_transaction;
-    }
 
     public function getPhoneCreditTransactionProperty()
     {
@@ -8057,43 +6583,7 @@ class Transfers extends Component
         return $phone_transaction;
     }
 
-    public function getPhoneCreditTransactionInterProperty()
-    {
-        $walletUser = Auth::guard('web')->user();
 
-        $phone_transaction = Provider::join(
-            'country_services',
-            'country_services.provider_id',
-            'providers.id'
-        )
-            ->where('country_services.country_id', $walletUser->country->id)
-            ->where('providers.status', true)
-            ->where('providers.provider_type_id', 9)
-            ->select('providers.*')
-            ->orderBy('providers.name', 'asc')
-            ->get();
-
-        return $phone_transaction;
-    }
-
-    public function getVirmentTransactionInterProperty()
-    {
-        $walletUser = Auth::guard('web')->user();
-
-        $phone_transaction = Provider::join(
-            'country_services',
-            'country_services.provider_id',
-            'providers.id'
-        )
-            ->where('country_services.country_id', $walletUser->country->id)
-            ->where('providers.status', true)
-            ->where('providers.provider_type_id', 10)
-            ->select('providers.*')
-            ->orderBy('providers.name', 'asc')
-            ->get();
-
-        return $phone_transaction;
-    }
 
     // Sum Seilver Ceiling
     public function getWalletBanksSeilverCeilingProperty()
@@ -8120,159 +6610,122 @@ class Transfers extends Component
         return array_sum($data);
     }
     // Admin
+
     public function getWalletBanksProperty()
     {
-        $data = [];
-        foreach (
-            WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->select('wallet_banks.*')
-                ->whereDate('wallet_banks.created_at', Carbon::today())
-                ->where('wallet_banks.status', 'SUCCESS')
-                ->get()
-            as $bank
-        ) {
-            $data[] = $bank->amount;
+        $userCountryId = Auth::guard('web')->user()->country->id;
+
+        // Construire la requête de base
+        $walletBankQuery = WalletBank::join('wallets', 'wallet_banks.wallet_id', '=', 'wallets.id')
+            ->where('wallets.country_id', $userCountryId)
+            ->whereDate('wallet_banks.created_at', Carbon::today())
+            ->where('wallet_banks.status', 'SUCCESS');
+
+        // Vérifier si l'utilisateur est sous distributeur
+        if (sabdy()->is_under_distributer) {
+            $walletBankQuery->where('wallet_banks.wallet_id', sabdy()->wallet->id);
         }
 
-        return array_sum($data);
+        // Exécuter la requête et calculer la somme des montants
+        return $walletBankQuery->sum('wallet_banks.amount');
     }
 
     public function getWalletDepositsProperty()
     {
-        $data = [];
+        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        foreach (
-            WalletDeposit::join(
-                'wallets',
-                'wallet_deposits.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->select('wallet_deposits.*')
-                ->whereDate('wallet_deposits.created_at', Carbon::today())
-                ->where('wallet_deposits.status', 'SUCCESS')
-                ->get()
-            as $deposit
-        ) {
-            $data[] = $deposit->amount;
+        // Construire la requête de base pour les dépôts
+        $walletDepositQuery = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', '=', 'wallets.id')
+            ->where('wallets.country_id', $userCountryId)
+            ->whereDate('wallet_deposits.created_at', Carbon::today())
+            ->where('wallet_deposits.status', 'SUCCESS');
+
+        // Vérifier si l'utilisateur est sous distributeur
+        if (sabdy()->is_under_distributer) {
+            $walletDepositQuery->where('wallet_deposits.wallet_id', sabdy()->wallet->id);
         }
 
-        return array_sum($data);
+        // Retourner la somme des montants des dépôts
+        return $walletDepositQuery->sum('wallet_deposits.amount');
     }
 
     public function getWalletIntersProperty()
     {
-        $data = [];
+        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        foreach (
-            WalletInter::join(
-                'wallets',
-                'wallet_inters.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->select('wallet_inters.*')
-                ->whereDate('wallet_inters.created_at', Carbon::today())
-                ->where('wallet_inters.status', 'SUCCESS')
-                ->get()
-            as $inter
-        ) {
-            $data[] = $inter->amount;
+        // Construire la requête de base pour les intérêts
+        $walletInterQuery = WalletInter::join('wallets', 'wallet_inters.wallet_id', '=', 'wallets.id')
+            ->where('wallets.country_id', $userCountryId)
+            ->whereDate('wallet_inters.created_at', Carbon::today())
+            ->where('wallet_inters.status', 'SUCCESS');
+
+        // Vérifier si l'utilisateur est sous distributeur
+        if (sabdy()->is_under_distributer) {
+            $walletInterQuery->where('wallet_inters.wallet_id', sabdy()->wallet->id);
         }
 
-        return array_sum($data);
+        // Retourner la somme des montants des intérêts
+        return $walletInterQuery->sum('wallet_inters.amount');
     }
+
 
     public function getWalletPaymentsProperty()
     {
-        $data = [];
+        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        foreach (
-            WalletPayment::join(
-                'wallets',
-                'wallet_payments.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->select('wallet_payments.*')
-                ->whereDate('wallet_payments.created_at', Carbon::today())
-                ->select('wallet_payments.*')
-                ->where('wallet_payments.status', 'SUCCESS')
-                ->get()
-            as $payment
-        ) {
-            $data[] = $payment->amount;
+        // Construire la requête de base pour les paiements
+        $walletPaymentQuery = WalletPayment::join('wallets', 'wallet_payments.wallet_id', '=', 'wallets.id')
+            ->where('wallets.country_id', $userCountryId)
+            ->whereDate('wallet_payments.created_at', Carbon::today())
+            ->where('wallet_payments.status', 'SUCCESS');
+
+        // Vérifier si l'utilisateur est sous distributeur
+        if (sabdy()->is_under_distributer) {
+            $walletPaymentQuery->where('wallet_payments.wallet_id', sabdy()->wallet->id);
         }
 
-        return array_sum($data);
+        // Retourner la somme des montants des paiements
+        return $walletPaymentQuery->sum('wallet_payments.amount');
     }
 
     public function getWalletTransactionsProperty()
     {
-        $data = [];
+        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        foreach (
-            WalletTransaction::join(
-                'wallets',
-                'wallet_transactions.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->select('wallet_transactions.*')
-                ->whereDate('wallet_transactions.created_at', Carbon::today())
-                ->select('wallet_transactions.*')
-                ->where('wallet_transactions.status', 'SUCCESS')
-                ->get()
-            as $transaction
-        ) {
-            $data[] = $transaction->amount;
+        // Construire la requête de base pour les transactions
+        $walletTransactionQuery = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', '=', 'wallets.id')
+            ->where('wallets.country_id', $userCountryId)
+            ->whereDate('wallet_transactions.created_at', Carbon::today())
+            ->where('wallet_transactions.status', 'SUCCESS');
+
+        // Vérifier si l'utilisateur est sous distributeur
+        if (sabdy()->is_under_distributer) {
+            $walletTransactionQuery->where('wallet_transactions.wallet_id', sabdy()->wallet->id);
         }
 
-        return array_sum($data);
+        // Retourner la somme des montants des transactions
+        return $walletTransactionQuery->sum('wallet_transactions.amount');
     }
 
     public function getWalletPhoneCreditsProperty()
     {
-        $data = [];
+        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        foreach (
-            WalletPhoneCredit::join(
-                'wallets',
-                'wallet_phone_credits.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->select('wallet_phone_credits.*')
-                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-                ->select('wallet_phone_credits.*')
-                ->where('wallet_phone_credits.status', 'SUCCESS')
-                ->get()
-            as $phone
-        ) {
-            $data[] = $phone->amount;
+        // Construire la requête de base pour les crédits de téléphone
+        $walletPhoneCreditQuery = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', '=', 'wallets.id')
+            ->where('wallets.country_id', $userCountryId)
+            ->whereDate('wallet_phone_credits.created_at', Carbon::today())
+            ->where('wallet_phone_credits.status', 'SUCCESS');
+
+        // Vérifier si l'utilisateur est sous distributeur
+        if (sabdy()->is_under_distributer) {
+            $walletPhoneCreditQuery->where('wallet_phone_credits.wallet_id', sabdy()->wallet->id);
         }
 
-        return array_sum($data);
+        // Retourner la somme des montants des crédits de téléphone
+        return $walletPhoneCreditQuery->sum('wallet_phone_credits.amount');
     }
+
 
     public function search_amount($amount_received)
     {
@@ -8311,383 +6764,266 @@ class Transfers extends Component
         return array_sum($data);
     }
 
-
     // Details Transaction Admin
+
+    private function getTransactionCountByStatus($status)
+    {
+        $userCountryId = Auth::guard('web')->user()->country->id;
+
+        if (sabdy()->is_under_distributer) {
+            $walletInfos = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_transactions.status', $status)
+                ->where('wallet_transactions.wallet_id', sabdy()->wallet->id)
+                ->whereDate('wallet_transactions.created_at', Carbon::today())
+                ->count();
+        } else {
+            $walletInfos = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_transactions.status', $status)
+                ->whereDate('wallet_transactions.created_at', Carbon::today())
+                ->count();
+        }
+
+        return  $walletInfos;
+    }
     public function getTransactionErrorProperty()
     {
-        $transactionError = WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where('wallet_transactions.status', 'ERROR')
-            ->whereDate('wallet_transactions.created_at', Carbon::today())
-            ->count();
-        return $transactionError;
+        return $this->getTransactionCountByStatus('ERROR');
     }
 
     public function getTransactionSuccessProperty()
     {
-        $transactionSuccess = WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->whereDate('wallet_transactions.created_at', Carbon::today())
-            ->count();
-        return $transactionSuccess;
+        return $this->getTransactionCountByStatus('SUCCESS');
     }
 
     public function getTransactionPenddingProperty()
     {
-        $transactionPendding = WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where('wallet_transactions.status', 'PENDING')
-            ->whereDate('wallet_transactions.created_at', Carbon::today())
-            ->count();
-        return $transactionPendding;
+        return $this->getTransactionCountByStatus('PENDING');
+    }
+
+    private function getPaymentCountByStatus($status)
+    {
+        $userCountryId = Auth::guard('web')->user()->country->id;
+
+        if (sabdy()->is_under_distributer) {
+            $walletPaiement = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_payments.status', $status)
+                ->where('wallet_payments.wallet_id', sabdy()->wallet->id)
+                ->whereDate('wallet_payments.created_at', Carbon::today())
+                ->count();
+        } else {
+            $walletPaiement = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_payments.status', $status)
+                ->whereDate('wallet_payments.created_at', Carbon::today())
+                ->count();
+        }
+
+        return  $walletPaiement;
     }
 
     public function getPaymentErrorProperty()
     {
-        $paimentError = WalletPayment::join(
-            'wallets',
-            'wallet_payments.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'ERROR')
-            ->whereDate('wallet_payments.created_at', Carbon::today())
-            ->count();
-        return $paimentError;
+        return $this->getPaymentCountByStatus('ERROR');
     }
 
     public function getPaymentSuccessProperty()
     {
-        $paimentSuccess = WalletPayment::join(
-            'wallets',
-            'wallet_payments.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->whereDate('wallet_payments.created_at', Carbon::today())
-            ->count();
-        return $paimentSuccess;
+        return $this->getPaymentCountByStatus('SUCCESS');
     }
 
-    public function getPaymentPenddingProperty()
+    public function getPaymentPendingProperty()
     {
-        $paimentPendding = WalletPayment::join(
-            'wallets',
-            'wallet_payments.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'PENDING')
-            ->whereDate('wallet_payments.created_at', Carbon::today())
-            ->count();
-        return $paimentPendding;
+        return $this->getPaymentCountByStatus('PENDING');
     }
 
+    private function getReloadCountByStatus($status)
+    {
+        $userCountryId = Auth::guard('web')->user()->country->id;
+
+        if (sabdy()->is_under_distributer) {
+            $walletPaiement = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_reloads.status', $status)
+                ->where('wallet_reloads.wallet_id', sabdy()->wallet->id)
+                ->whereDate('wallet_reloads.created_at', Carbon::today())
+                ->count();
+        } else {
+            $walletPaiement = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_reloads.status', $status)
+                ->whereDate('wallet_reloads.created_at', Carbon::today())
+                ->count();
+        }
+
+        return  $walletPaiement;
+    }
     public function getReloadErrorProperty()
     {
-        $reloadError = WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'ERROR')
-            ->whereDate('wallet_reloads.created_at', Carbon::today())
-            ->count();
-        return $reloadError;
+        return $this->getReloadCountByStatus('ERROR');
     }
 
     public function getReloadSuccessProperty()
     {
-        $reloadSuccess = WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->whereDate('wallet_reloads.created_at', Carbon::today())
-            ->count();
-        return $reloadSuccess;
+
+        return $this->getReloadCountByStatus('SUCCESS');
     }
 
     public function getReloadPenddingProperty()
     {
-        $reloadPendding = WalletReload::join(
-            'wallets',
-            'wallet_reloads.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'PENDING')
-            ->whereDate('wallet_reloads.created_at', Carbon::today())
-            ->count();
-        return $reloadPendding;
+
+        return $this->getReloadCountByStatus('PENDING');
     }
 
+    private function getVirementCountByStatus($status)
+    {
+        $userCountryId = Auth::guard('web')->user()->country->id;
+
+        if (sabdy()->is_under_distributer) {
+            $walletPaiement = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_banks.status', $status)
+                ->where('wallet_banks.wallet_id', sabdy()->wallet->id)
+                ->whereDate('wallet_banks.created_at', Carbon::today())
+                ->count();
+        } else {
+            $walletPaiement = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_banks.status', $status)
+                ->whereDate('wallet_banks.created_at', Carbon::today())
+                ->count();
+        }
+
+        return  $walletPaiement;
+    }
     public function getVirementSuccessProperty()
     {
-        $virementSuccess = WalletBank::join(
-            'wallets',
-            'wallet_banks.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_banks.*')
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->whereDate('wallet_banks.created_at', Carbon::today())
-            ->count();
-        return $virementSuccess;
+
+        return $this->getVirementCountByStatus('SUCCESS');
     }
 
     public function getVirementPenddingProperty()
     {
-        $virementPendding = WalletBank::join(
-            'wallets',
-            'wallet_banks.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_banks.*')
-            ->where('wallet_banks.status', 'PENDING')
-            ->whereDate('wallet_banks.created_at', Carbon::today())
-            ->count();
-        return $virementPendding;
+
+        return $this->getVirementCountByStatus('PENDING');
     }
 
     public function getVirementErrorProperty()
     {
-        $virementError = WalletBank::join(
-            'wallets',
-            'wallet_banks.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_banks.*')
-            ->where('wallet_banks.status', 'ERROR')
-            ->whereDate('wallet_banks.created_at', Carbon::today())
-            ->count();
-        return $virementError;
+
+        return $this->getVirementCountByStatus('ERROR');
+    }
+
+    private function getInterCountByStatus($status)
+    {
+        $userCountryId = Auth::guard('web')->user()->country->id;
+
+        if (sabdy()->is_under_distributer) {
+            $walletInters = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_inters.status', $status)
+                ->where('wallet_inters.wallet_id', sabdy()->wallet->id)
+                ->whereDate('wallet_inters.created_at', Carbon::today())
+                ->count();
+        } else {
+            $walletInters = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_inters.status', $status)
+                ->whereDate('wallet_inters.created_at', Carbon::today())
+                ->count();
+        }
+
+        return  $walletInters;
     }
 
     public function getInterErrorProperty()
     {
-        $interError = WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'ERROR')
-            ->whereDate('wallet_inters.created_at', Carbon::today())
-            ->count();
-        return $interError;
+        return $this->getInterCountByStatus('ERROR');
     }
 
     public function getInterSuccessProperty()
     {
-        $interSuccess = WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'SUCCESS')
-            ->whereDate('wallet_inters.created_at', Carbon::today())
-            ->count();
-        return $interSuccess;
+        return $this->getInterCountByStatus('SUCCESS');
     }
 
     public function getInterPenddingProperty()
     {
-        $interPendding = WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'PENDING')
-            ->whereDate('wallet_inters.created_at', Carbon::today())
-            ->count();
-        return $interPendding;
+        return $this->getInterCountByStatus('PENDING');
+    }
+
+    private function getPhoneCreditCountByStatus($status)
+    {
+        $userCountryId = Auth::guard('web')->user()->country->id;
+
+        if (sabdy()->is_under_distributer) {
+            $walletInfos = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_phone_credits.status', $status)
+                ->where('wallet_phone_credits.wallet_id', sabdy()->wallet->id)
+                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
+                ->count();
+        } else {
+            $walletInfos = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_phone_credits.status', $status)
+                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
+                ->count();
+        }
+
+        return  $walletInfos;
     }
 
     public function getPhoneCreditErrorProperty()
     {
-        $phoneCreditError = WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.status', 'ERROR')
-            ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-            ->count();
-        return $phoneCreditError;
+        return $this->getPhoneCreditCountByStatus('ERROR');
     }
 
     public function getPhoneCreditSuccessProperty()
     {
-        $phoneCreditSuccess = WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-            ->count();
-        return $phoneCreditSuccess;
+        return $this->getPhoneCreditCountByStatus('SUCCESS');
     }
 
     public function getPhoneCreditPenddingProperty()
     {
-        $phoneCreditPendding = WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.status', 'PENDING')
-            ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-            ->count();
-        return $phoneCreditPendding;
+        return $this->getPhoneCreditCountByStatus('PENDING');
+    }
+
+    private function getDepositCountByStatus($status)
+    {
+        $userCountryId = Auth::guard('web')->user()->country->id;
+
+        if (sabdy()->is_under_distributer) {
+            $walletInfos = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_deposits.status', $status)
+                ->where('wallet_deposits.wallet_id', sabdy()->wallet->id)
+                ->whereDate('wallet_deposits.created_at', Carbon::today())
+                ->count();
+        } else {
+            $walletInfos = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $userCountryId)
+                ->where('wallet_deposits.status', $status)
+                ->whereDate('wallet_deposits.created_at', Carbon::today())
+                ->count();
+        }
+
+        return  $walletInfos;
     }
 
     public function getDepositErrorProperty()
     {
-        $depositError = WalletDeposit::join(
-            'wallets',
-            'wallet_deposits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_deposits.*')
-            ->where('wallet_deposits.status', 'ERROR')
-            ->whereDate('wallet_deposits.created_at', Carbon::today())
-            ->count();
-        return $depositError;
+        return $this->getDepositCountByStatus('ERROR');
     }
 
     public function getDepositSuccessProperty()
     {
-        $depositSuccess = WalletDeposit::join(
-            'wallets',
-            'wallet_deposits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_deposits.*')
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->whereDate('wallet_deposits.created_at', Carbon::today())
-            ->count();
-        return $depositSuccess;
+        return $this->getDepositCountByStatus('SUCCESS');
     }
 
     public function getDepositPenddingProperty()
     {
-        $depositPendding = WalletDeposit::join(
-            'wallets',
-            'wallet_deposits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                Auth::guard('web')->user()->country->id
-            )
-            ->select('wallet_deposits.*')
-            ->where('wallet_deposits.status', 'PENDING')
-            ->whereDate('wallet_deposits.created_at', Carbon::today())
-            ->count();
-        return $depositPendding;
+        return $this->getDepositCountByStatus('PENDING');
     }
 }

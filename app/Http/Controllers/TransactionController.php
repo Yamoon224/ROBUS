@@ -16,11 +16,10 @@ class TransactionController extends Controller
     public function browse()
     {
 
-        if (sabdyWebVerify()) {
-            return view('pages.transfers.browse');
-        } else {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+        return view('pages.transfers.browse');
     }
     
     public function browse_visitors()
@@ -41,11 +40,13 @@ class TransactionController extends Controller
 
     public function browse_historique()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.transfers.browse_historiques');
-        } else {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.transfers.browse_historiques');
+
     }
 
 

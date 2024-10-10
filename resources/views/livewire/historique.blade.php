@@ -60,16 +60,18 @@
                         <div class="font-medium text-historique mt-6">Echec</div>
                         <div class="text-slate-500 mt-3">{{ $sum_error ?? null }}</div>
                     </div>
-                    <div class="col-span-12 sm:col-span-4 2xl:col-span-6 box p-5 cursor-pointer zoom-in style-tran ">
-                        <i data-feather="trending-down" class="font-medium-5"></i>
-                        <div class="font-medium text-historique mt-6">Total UV S-distributeur</div>
-                        <div class="text-slate-500 mt-3">{{ $sum_under_distributers ?? null }} FRCFA</div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-4 2xl:col-span-6 box p-5 cursor-pointer zoom-in ">
-                        <i data-feather="trending-down" class="font-medium-5"></i>
-                        <div class="font-medium text-historique mt-6">Total Somme UV clients</div>
-                        <div class="text-slate-500 mt-3">{{ $sum_custumers ?? null }} FRCFA</div>
-                    </div>
+                    @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
+                        <div class="col-span-12 sm:col-span-4 2xl:col-span-6 box p-5 cursor-pointer zoom-in style-tran ">
+                            <i data-feather="trending-down" class="font-medium-5"></i>
+                            <div class="font-medium text-historique mt-6">Total UV S-distributeur</div>
+                            <div class="text-slate-500 mt-3">{{ $sum_under_distributers ?? null }} FRCFA</div>
+                        </div>
+                        <div class="col-span-12 sm:col-span-4 2xl:col-span-6 box p-5 cursor-pointer zoom-in ">
+                            <i data-feather="trending-down" class="font-medium-5"></i>
+                            <div class="font-medium text-historique mt-6">Total Somme UV clients</div>
+                            <div class="text-slate-500 mt-3">{{ $sum_custumers ?? null }} FRCFA</div>
+                        </div>
+                    @endif
                 </div>
             </div>
 

@@ -42,11 +42,12 @@ class CardController extends Controller
      */
     public function browse()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.cards.browse');
-        } else {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-cartes')) {
             abort(403);
         }
+
+        return view('pages.cards.browse');
     }
 
     /**

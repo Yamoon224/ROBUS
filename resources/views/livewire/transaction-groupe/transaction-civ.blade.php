@@ -273,11 +273,30 @@
             <button wire:click="cancelTransactionField" type="button"
                 class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
 
-            <button wire:click="validatedPassword" type="button" wire:loading.remove=""
-                wire:loading.attr="disabled" class="btn btn-primary w-50">Validez
-                la demande</button>
-            <div wire:loading wire:target="validatedPassword">
-                Traitement en cours...
+            <button wire:click="validatedPassword" type="button" wire:loading.attr="disabled"
+                class="btn btn-primary w-50" wire:loading.class="opacity-50 cursor-not-allowed">
+                Validez la demande
+            </button>
+
+            <div wire:loading.flex wire:target="validatedPassword" class="flex items-center justify-center">
+                <div class="loader"></div> <!-- Ajoutez votre loader ici -->
+                <style>
+                    .loader {
+                        border: 4px solid rgba(0, 0, 0, 0.1);
+                        border-left-color: #09f;
+                        border-radius: 50%;
+                        width: 40px;
+                        height: 40px;
+                        animation: spin 1s linear infinite;
+                    }
+
+                    @keyframes spin {
+                        to {
+                            transform: rotate(360deg);
+                        }
+                    }
+                </style>
+                <p>Traitement en cours...</p>
             </div>
 
         </div>

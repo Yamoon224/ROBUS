@@ -73,9 +73,9 @@ class Bankhisto extends Component
         $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
         $admins = $this->getAdminValeurProperty();
         $admin_civ = SidUser::whereStatus(true)
-                    ->whereIsAdmin(true)
-                    ->where('country_id', 107)
-                    ->get();
+            ->whereIsAdmin(true)
+            ->where('country_id', 107)
+            ->get();
         if ($check) {
 
             $this->validate(['virementStatus' => 'required']);
@@ -85,31 +85,30 @@ class Bankhisto extends Component
 
                 if ($this->virementStatus == "REFUND") {
 
-                    if($check->wallet->sidUser->is_under_distributer == 1)
-                    {
+                    if ($check->wallet->sidUser->is_under_distributer == 1) {
                         $commission =  $check->amount;
-    
+
                         $check->wallet->update([
-                            'reload_by' => Auth::guard('web')->user()->firstname .' ' . Auth::guard('web')->user()->lastname,
+                            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
                             'sid_user_relod' => Auth::guard('web')->user()->id,
                             'amount' => DB::raw('amount+' . $commission),
                         ]);
-    
+
                         // Update commission
                         $check->update([
                             'commissions' => 0,
                             'commissions_admin' => 0,
                         ]);
-    
+
                         // Valeur amount commission distributeur
                         $valeur_amount_com = $check->adminCom->amount;
-                         //  Send valeur in Admin
+                        //  Send valeur in Admin
                         if ($admin_civ->count() > 0) {
-    
+
                             $count_admin = $admin_civ->count();
-    
+
                             $valeur_single = $valeur_amount_com / $count_admin;
-    
+
                             foreach ($admin_civ as $user) {
                                 $admin_single = SidUser::find($user->id);
                                 $valeur_decrement = $check->adminCom->update([
@@ -124,7 +123,7 @@ class Bankhisto extends Component
                                 ]);
                             }
                         }
-    
+
                         $msg_title = 'Versement banquaire';
                         $msg = 'Demande de virement a été remboursée';
                         $check->wallet->sidUser->notify(
@@ -143,60 +142,58 @@ class Bankhisto extends Component
                             )
                         );
                         if ($admins->count() > 0) {
-        
+
                             foreach ($admins  as $user) {
-    
+
                                 $admin_single = SidUser::find($user->id);
-    
+
                                 $notifs = $admin_single->unreadNotifications;
-    
+
                                 event(new AdminNotifEvent($notifs));
                             }
-    
-    
+
+
                             $this->resetVirementField();
                             $this->emit('modal-hide-virement');
                             $this->emit('error', 'Virement Remboursée !');
-                            
+
                             $notify = new MailController;
                             $notify->newVirement($check);
-    
                         } else {
-    
+
                             $this->resetVirementField();
                             $this->emit('modal-hide-virement');
                             $this->emit('error', 'Virement Remboursée !');
-                            
+
                             $notify = new MailController;
                             $notify->newVirement($check);
                         }
-                    
-                    }else {
-    
+                    } else {
+
                         $commission =  $check->amount + $check->costs_amount;
-    
+
                         $check->wallet->update([
-                            'reload_by' => Auth::guard('web')->user()->firstname .' ' . Auth::guard('web')->user()->lastname,
+                            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
                             'sid_user_relod' => Auth::guard('web')->user()->id,
                             'amount' => DB::raw('amount+' . $commission),
                         ]);
-    
-                           // Update commission
+
+                        // Update commission
                         $check->update([
                             'commissions' => 0,
                             'commissions_admin' => 0,
                         ]);
-    
+
                         // Valeur amount commission distributeur
                         $valeur_amount_com = $check->adminCom->amount;
-    
+
                         //  Send valeur in Admin
                         if ($admin_civ->count() > 0) {
-    
+
                             $count_admin = $admin_civ->count();
-    
+
                             $valeur_single = $valeur_amount_com / $count_admin;
-    
+
                             foreach ($admin_civ as $user) {
                                 $admin_single = SidUser::find($user->id);
                                 $valeur_decrement = $check->adminCom->update([
@@ -211,9 +208,9 @@ class Bankhisto extends Component
                                 ]);
                             }
                         }
-    
+
                         if ($check->wallet->sidUser->country->code == 'CI') {
-                        
+
                             $message =
                                 'Votre demande de virement de ' .
                                 $check->amount .
@@ -230,9 +227,9 @@ class Bankhisto extends Component
                                 $check->updated_at .
                                 ' ' .
                                 'Robus vous remercie';
-        
+
                             $encode = substr($check->wallet->sidUser->phone, -10);
-        
+
                             Http::get(
                                 "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
                             );
@@ -253,37 +250,35 @@ class Bankhisto extends Component
                                     'Demande de virement a été remboursée'
                                 )
                             );
-                            
+
                             if ($admins->count() > 0) {
-            
+
                                 foreach ($admins  as $user) {
-        
+
                                     $admin_single = SidUser::find($user->id);
-        
+
                                     $notifs = $admin_single->unreadNotifications;
-        
+
                                     event(new AdminNotifEvent($notifs));
                                 }
-        
-        
+
+
                                 $this->resetVirementField();
                                 $this->emit('modal-hide-virement');
                                 $this->emit('error', 'Virement Remboursé !');
                                 $notify = new MailController;
                                 $notify->newVirement($check);
-        
                             } else {
-        
-                         
+
+
                                 $this->resetVirementField();
                                 $this->emit('modal-hide-virement');
                                 $this->emit('error', 'Virement Remboursé !');
                                 $notify = new MailController;
                                 $notify->newVirement($check);
                             }
-        
                         } else {
-        
+
                             $msg_title = 'Versement banquaire';
                             $msg = 'Demande de virement a été validée';
                             $check->wallet->sidUser->notify(
@@ -302,41 +297,40 @@ class Bankhisto extends Component
                                 )
                             );
                             if ($admins->count() > 0) {
-            
+
                                 foreach ($admins  as $user) {
-        
+
                                     $admin_single = SidUser::find($user->id);
-        
+
                                     $notifs = $admin_single->unreadNotifications;
-        
+
                                     event(new AdminNotifEvent($notifs));
                                 }
-        
-        
+
+
                                 $this->resetVirementField();
                                 $this->emit('modal-hide-virement');
                                 $this->emit('error', 'Virement Remboursée !');
-                                
+
                                 $notify = new MailController;
                                 $notify->newVirement($check);
-        
                             } else {
-        
+
                                 $this->resetVirementField();
                                 $this->emit('modal-hide-virement');
                                 $this->emit('error', 'Virement Remboursée !');
-                                
+
                                 $notify = new MailController;
                                 $notify->newVirement($check);
                             }
                         }
                     }
-                    
+
                     PaymentBank::create([
                         'wallet_bank_id' => $check->id,
                         'sid_user_id' => Auth::guard('web')->user()->id,
                         'transaction_id' =>
-                            'RB_' .
+                        'RB_' .
                             $check->provider->name .
                             '_' .
                             $transactionCode,
@@ -347,8 +341,6 @@ class Bankhisto extends Component
                         'received_amount' => $commission,
                         'status' => $check->status,
                     ]);
-                   
-                    
                 } else {
 
                     $this->resetVirementField();
@@ -380,76 +372,60 @@ class Bankhisto extends Component
 
         $banks =  WalletBank::query();
 
-        if ($walletUser->wallet->sidUser->is_under_distributer == true) {
-            abort(403);
-
-        } else
-        {
-
-            if ($this->startDate && $this->endDate) {
-
-                // $banks->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate]);
-            
-                return view(
-                    'livewire.historical.bankhisto',
-                    [
-                        'user' => $this->VirementsDays,
-                        'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                            ->where('wallets.country_id', $walletUser->country->id)->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate])->where('wallet_banks.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
-                        'usersCountry' =>   $walletUser->country->currencie->name,
-                        'provider_virements' =>  $this->VirementTransaction,
-                        'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
-    
-                    ]
-                );
-            
-            }
-
-            if ($this->searchBankHistorical != "") {
+        if (sabdy()->is_under_distributer) {
+            $banks->where('created_by', sabdy()->id);
+        }
 
 
-                $this->resetPage();
+        if ($this->startDate && $this->endDate) {
 
-                $banks->orwhereHas(
-                    'paymentBank',
-                    function ($query) {
-                        $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchBankHistorical . '%')
-                            ->orWhere('transaction_id', 'like', '%' .  $this->searchBankHistorical   . '%')
-                            ->orWhere('trans_comp_id', 'like', '%' .  $this->searchBankHistorical  . '%');
-                    }
-                )
-                    ->orWhere("wallet_banks.amount", "LIKE",  "%" . $this->searchBankHistorical . "%")
-                    ->orWhere("wallet_banks.phone", "LIKE",  "%" . $this->searchBankHistorical . "%")
-                    ->orWhere("wallet_banks.number_compte", "LIKE",  "%" . $this->searchBankHistorical . "%")
-                    ->orWhere("wallet_banks.firstname", "LIKE",  "%" . $this->searchBankHistorical . "%")
-                    ->orWhere("wallet_banks.lastname", "LIKE",  "%" . $this->searchBankHistorical . "%");
-            }
-
-
-            if ($this->statusFilter != "") {
-
-                // $banks->where("wallet_banks.status", $this->statusFilter);
-
-
-                return view(
-                    'livewire.historical.bankhisto',
-                    [
-                        'user' => $this->VirementsAllDaysStatus,
-                        'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')->where("wallet_banks.status", $this->statusFilter)
-                            ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
-                        'usersCountry' =>   $walletUser->country->currencie->name,
-                        'provider_virements' =>  $this->VirementTransaction,
-                        'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
-    
-                    ]
-                );
-            }
+            // $banks->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate]);
 
             return view(
                 'livewire.historical.bankhisto',
                 [
-                    'user' => $this->VirementsAllDays,
+                    'user' => $this->VirementsDays,
                     'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+                        ->where('wallets.country_id', $walletUser->country->id)->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate])->where('wallet_banks.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
+                    'usersCountry' =>   $walletUser->country->currencie->name,
+                    'provider_virements' =>  $this->VirementTransaction,
+                    'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
+
+                ]
+            );
+        }
+
+        if ($this->searchBankHistorical != "") {
+
+
+            $this->resetPage();
+
+            $banks->orwhereHas(
+                'paymentBank',
+                function ($query) {
+                    $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchBankHistorical . '%')
+                        ->orWhere('transaction_id', 'like', '%' .  $this->searchBankHistorical   . '%')
+                        ->orWhere('trans_comp_id', 'like', '%' .  $this->searchBankHistorical  . '%');
+                }
+            )
+                ->orWhere("wallet_banks.amount", "LIKE",  "%" . $this->searchBankHistorical . "%")
+                ->orWhere("wallet_banks.phone", "LIKE",  "%" . $this->searchBankHistorical . "%")
+                ->orWhere("wallet_banks.number_compte", "LIKE",  "%" . $this->searchBankHistorical . "%")
+                ->orWhere("wallet_banks.firstname", "LIKE",  "%" . $this->searchBankHistorical . "%")
+                ->orWhere("wallet_banks.lastname", "LIKE",  "%" . $this->searchBankHistorical . "%");
+        }
+
+
+        if ($this->statusFilter != "") {
+
+            // $banks->where("wallet_banks.status", $this->statusFilter);
+
+
+            return view(
+                'livewire.historical.bankhisto',
+                [
+                    'user' => $this->VirementsAllDaysStatus,
+                    'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')->where("wallet_banks.status", $this->statusFilter)
                         ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
                     'provider_virements' =>  $this->VirementTransaction,
@@ -458,6 +434,19 @@ class Bankhisto extends Component
                 ]
             );
         }
+
+        return view(
+            'livewire.historical.bankhisto',
+            [
+                'user' => $this->VirementsAllDays,
+                'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
+                'usersCountry' =>   $walletUser->country->currencie->name,
+                'provider_virements' =>  $this->VirementTransaction,
+                'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
+
+            ]
+        );
     }
 
 
@@ -468,6 +457,13 @@ class Bankhisto extends Component
         $data = [];
 
         $wallets = WalletBank::where("wallet_banks.status", $this->statusFilter)->get();
+
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -525,6 +521,4 @@ class Bankhisto extends Component
 
         return $virement_transaction;
     }
-
-
 }

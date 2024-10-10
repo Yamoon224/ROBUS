@@ -41,7 +41,6 @@ class Reloadhisto extends Component
 
             if ($this->startDate && $this->endDate) {
 
-                // $realod->whereBetween('wallet_reloads.created_at', [$this->startDate, $this->endDate]);
            
                 return view(
                     'livewire.historical.reloadhisto',

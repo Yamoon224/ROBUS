@@ -470,71 +470,69 @@ class TransferHisto extends Component
 
         $walletUser = Auth::guard('web')->user();
 
-        if ($walletUser->wallet->sidUser->is_under_distributer == true) {
+        if ($walletUser->is_under_distributer) {
+            $transfers->where('created_by', $walletUser->id); 
+        }
 
-            abort(403);
-        } else {
+        if ($this->startDate && $this->endDate) {
 
-            if ($this->startDate && $this->endDate) {
-
-                // $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15);
-
-                return view(
-                    'livewire.historical.transfer-histo',
-                    [
-                        'user' => $this->TransactionsDays,
-                        'transfer_historicals' =>  $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
-                        'usersCountry' =>  $walletUser->country->currencie->name,
-                        'providers' =>  $this->NationTransaction,
-
-                    ]
-                );
-            }
-
-            if ($this->searchTransferHistorical != "") {
-
-                $this->resetPage();
-
-                $transfers->orwhereHas(
-                    'transaction',
-                    function ($query) {
-                        $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchTransferHistorical . '%')
-                            ->orWhere('transaction_id', 'like', '%' .  $this->searchTransferHistorical   . '%')
-                            ->orWhere('trans_comp_id', 'like', '%' .  $this->searchTransferHistorical  . '%');
-                    }
-                )
-                    ->orWhere("wallet_transactions.amount", "LIKE",  "%" . $this->searchTransferHistorical . "%")
-                    ->orWhere("wallet_transactions.num_wallet", "LIKE",  "%" . $this->searchTransferHistorical . "%")
-                    ->orWhere("wallet_transactions.phone", "LIKE",  "%" . $this->searchTransferHistorical . "%");
-            }
-
-            if ($this->statusTransferFilter != "") {
-
-                // $transfers->where("wallet_transactions.status", $this->statusTransferFilter);
-
-                return view(
-                    'livewire.historical.transfer-histo',
-                    [
-                        'user' => $this->TransactionsAllStatus,
-                        'transfer_historicals' => $transfers->where("wallet_transactions.status", $this->statusTransferFilter)->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
-                        'usersCountry' =>  $walletUser->country->currencie->name,
-                        'providers' =>  $this->NationTransaction,
-
-                    ]
-                );
-            }
+            // $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15);
 
             return view(
                 'livewire.historical.transfer-histo',
                 [
-                    'user' => $this->TransactionsAllDays,
-                    'transfer_historicals' => $transfers->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
+                    'user' => $this->TransactionsDays,
+                    'transfer_historicals' =>  $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                     'usersCountry' =>  $walletUser->country->currencie->name,
                     'providers' =>  $this->NationTransaction,
 
                 ]
             );
         }
+
+        if ($this->searchTransferHistorical != "") {
+
+            $this->resetPage();
+
+            $transfers->orwhereHas(
+                'transaction',
+                function ($query) {
+                    $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchTransferHistorical . '%')
+                        ->orWhere('transaction_id', 'like', '%' .  $this->searchTransferHistorical   . '%')
+                        ->orWhere('trans_comp_id', 'like', '%' .  $this->searchTransferHistorical  . '%');
+                }
+            )
+                ->orWhere("wallet_transactions.amount", "LIKE",  "%" . $this->searchTransferHistorical . "%")
+                ->orWhere("wallet_transactions.num_wallet", "LIKE",  "%" . $this->searchTransferHistorical . "%")
+                ->orWhere("wallet_transactions.phone", "LIKE",  "%" . $this->searchTransferHistorical . "%");
+        }
+
+        if ($this->statusTransferFilter != "") {
+
+            // $transfers->where("wallet_transactions.status", $this->statusTransferFilter);
+
+            return view(
+                'livewire.historical.transfer-histo',
+                [
+                    'user' => $this->TransactionsAllStatus,
+                    'transfer_historicals' => $transfers->where("wallet_transactions.status", $this->statusTransferFilter)->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
+                    'usersCountry' =>  $walletUser->country->currencie->name,
+                    'providers' =>  $this->NationTransaction,
+
+                ]
+            );
+        }
+
+        return view(
+            'livewire.historical.transfer-histo',
+            [
+                'user' => $this->TransactionsAllDays,
+                'transfer_historicals' => $transfers->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
+                'usersCountry' =>  $walletUser->country->currencie->name,
+                'providers' =>  $this->NationTransaction,
+
+            ]
+        );
     }
 
 
@@ -544,7 +542,17 @@ class TransferHisto extends Component
 
         $data = [];
 
-        $wallets = WalletTransaction::where('wallet_transactions.is_web' ,false)->where("wallet_transactions.status", $this->statusTransferFilter)->get();
+
+        $wallets = WalletTransaction::where('wallet_transactions.is_web', false)->where("wallet_transactions.status", $this->statusTransferFilter);
+
+        $walletUser = Auth::guard('web')->user(); 
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -560,8 +568,17 @@ class TransferHisto extends Component
 
         $data = [];
 
-        $wallets = WalletTransaction::where('wallet_transactions.is_web' ,false)->get();
+        $wallets = WalletTransaction::where('wallet_transactions.is_web', false);
 
+        $walletUser = Auth::guard('web')->user(); 
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
+        
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
             $data[] = $bank->amount;
@@ -577,7 +594,16 @@ class TransferHisto extends Component
 
         $data = [];
 
-        $wallets = WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
+        $wallets = WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT]);
+
+        $walletUser = Auth::guard('web')->user(); 
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet

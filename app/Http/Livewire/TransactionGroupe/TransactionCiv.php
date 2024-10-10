@@ -703,7 +703,7 @@ class TransactionCiv extends Component
                 $this->emit('error', 'Merci de bien vouloir vérifier votre mot de passe, s\'il vous plaît.!');
             }
         } catch (\Exception $exception) {
-            $this->resetInterField();
+            $this->resetTransactionField();
             $this->emit('modal-hide-inters');
             $this->emit('error', 'Error de message demande a l\'admin !');
         }

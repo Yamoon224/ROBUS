@@ -548,7 +548,7 @@ class TransactionCiv extends Component
                                                     $this->sendNotificationRobus($walletInter);
                                                     $this->resetInterField();
                                                     $this->emit('modal-hide-inters');
-                                                    $this->emit('info', 'Votre demande a été envoye avec success!');
+                                                    $this->emit('info', 'Votre demande de transaction a bien été prise en compte. !');
                                                 } else {
     
                                                     $this->resetInterField();
@@ -632,7 +632,7 @@ class TransactionCiv extends Component
                                                         $this->sendNotificationRobus($walletInter);
                                                         $this->resetInterField();
                                                         $this->emit('modal-hide-inters');
-                                                        $this->emit('info', 'Votre demande a été envoye avec success!');
+                                                        $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
                                                     } else {
     
                                                         $this->resetInterField();

@@ -498,73 +498,72 @@ class Interhisto extends Component
 
         $walletUser = Auth::guard('web')->user();
 
-        if ($walletUser->wallet->sidUser->is_under_distributer == true) {
 
-            abort(403);
-
-        } else {
-
-            if ($this->startDate && $this->endDate) {
-
-                // $inters->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate]);
-
-                return view(
-                    'livewire.historical.interhisto',
-                    [
-                        'user' => $this->WalletIntersDays,
-                        'inter_historicals' =>  $inters->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->orderBy('created_at', 'desc')->paginate(15),
-                        'usersCountry' =>   $walletUser->country->currencie->name,
-                        'providers' =>  $this->NationTransaction,
-
-                    ]
-                );
-            }
-
-            if ($this->searchInterHistorical != "") {
-                $this->resetPage();
-
-                $inters->orwhereHas(
-                    'transactionInter',
-                    function ($query) {
-                        $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchInterHistorical . '%')
-                            ->orWhere('transaction_id', 'like', '%' .  $this->searchInterHistorical   . '%')
-                            ->orWhere('trans_comp_id', 'like', '%' .  $this->searchInterHistorical  . '%');
-                    }
-                )
-                    ->orWhere("wallet_inters.amount", "LIKE",  "%" . $this->searchInterHistorical . "%")
-                    ->orWhere("wallet_inters.number_compte", "LIKE",  "%" . $this->searchInterHistorical . "%")
-                    ->orWhere("wallet_inters.phone", "LIKE",  "%" . $this->searchInterHistorical . "%");
-            }
+        if (sabdy()->is_under_distributer) {
+            $inters->where('created_by', sabdy()->id);
+        }
 
 
-            if ($this->statusInterFilter != "") {
+        if ($this->startDate && $this->endDate) {
 
-                // $inters->where("wallet_inters.status", $this->statusInterFilter);
-
-
-                return view(
-                    'livewire.historical.interhisto',
-                    [
-                        'user' => $this->walletInterAllStatus,
-                        'inter_historicals' =>  $inters->where("wallet_inters.status", $this->statusInterFilter)->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
-                        'usersCountry' =>   $walletUser->country->currencie->name,
-                        'providers' =>  $this->NationTransaction,
-
-                    ]
-                );
-            }
+            // $inters->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate]);
 
             return view(
                 'livewire.historical.interhisto',
                 [
-                    'user' => $this->WalletIntersPayments,
-                    'inter_historicals' =>  $inters->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
+                    'user' => $this->WalletIntersDays,
+                    'inter_historicals' =>  $inters->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->orderBy('created_at', 'desc')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
                     'providers' =>  $this->NationTransaction,
 
                 ]
             );
         }
+
+        if ($this->searchInterHistorical != "") {
+            $this->resetPage();
+
+            $inters->orwhereHas(
+                'transactionInter',
+                function ($query) {
+                    $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchInterHistorical . '%')
+                        ->orWhere('transaction_id', 'like', '%' .  $this->searchInterHistorical   . '%')
+                        ->orWhere('trans_comp_id', 'like', '%' .  $this->searchInterHistorical  . '%');
+                }
+            )
+                ->orWhere("wallet_inters.amount", "LIKE",  "%" . $this->searchInterHistorical . "%")
+                ->orWhere("wallet_inters.number_compte", "LIKE",  "%" . $this->searchInterHistorical . "%")
+                ->orWhere("wallet_inters.phone", "LIKE",  "%" . $this->searchInterHistorical . "%");
+        }
+
+
+        if ($this->statusInterFilter != "") {
+
+            // $inters->where("wallet_inters.status", $this->statusInterFilter);
+
+
+            return view(
+                'livewire.historical.interhisto',
+                [
+                    'user' => $this->walletInterAllStatus,
+                    'inter_historicals' =>  $inters->where("wallet_inters.status", $this->statusInterFilter)->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
+                    'usersCountry' =>   $walletUser->country->currencie->name,
+                    'providers' =>  $this->NationTransaction,
+
+                ]
+            );
+        }
+
+        return view(
+            'livewire.historical.interhisto',
+            [
+                'user' => $this->WalletIntersPayments,
+                'inter_historicals' =>  $inters->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
+                'usersCountry' =>   $walletUser->country->currencie->name,
+                'providers' =>  $this->NationTransaction,
+
+            ]
+        );
     }
 
     public function getWalletIntersPaymentsProperty()
@@ -573,7 +572,15 @@ class Interhisto extends Component
 
         $data = [];
 
-        $wallets = WalletInter::where('wallet_inters.is_web' ,false)->orderBy('wallet_inters.created_at', 'desc')->get();
+        $wallets = WalletInter::where('wallet_inters.is_web', false)->orderBy('wallet_inters.created_at', 'desc');
+
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -584,7 +591,7 @@ class Interhisto extends Component
         return array_sum($data);
     }
 
-   
+
 
     // Wallet inter transactions
     public function getWalletIntersDaysProperty()
@@ -593,7 +600,15 @@ class Interhisto extends Component
 
         $data = [];
 
-        $wallets = WalletInter::where('wallet_inters.is_web' ,false)->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletInter::where('wallet_inters.is_web', false)->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate]);
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -611,7 +626,15 @@ class Interhisto extends Component
 
         $data = [];
 
-        $wallets = WalletInter::where('wallet_inters.is_web' ,false)->where("wallet_inters.status", $this->statusInterFilter)->get();
+        $wallets = WalletInter::where('wallet_inters.is_web', false)->where("wallet_inters.status", $this->statusInterFilter);
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -630,7 +653,15 @@ class Interhisto extends Component
 
         $data = [];
 
-        $wallets = WalletInter::where('wallet_inters.is_web' ,false)->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletInter::where('wallet_inters.is_web', false)->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate]);
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -660,7 +691,18 @@ class Interhisto extends Component
     {
 
         $data = [];
-        foreach (WalletInter::where('wallet_inters.is_web' ,false)->where("wallet_inters.status", $this->statusPhoneFilter)->where('wallet_inters.status', 'SUCCESS')->select('wallet_inters.*')->get() as $bank) {
+
+        $wallets = WalletInter::where('wallet_inters.is_web', false)->where("wallet_inters.status", $this->statusPhoneFilter)->where('wallet_inters.status', 'SUCCESS')->select('wallet_inters.*');
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+
+        $wallets = $wallets->get();
+
+        foreach ($wallets as $bank) {
             $data[] = $bank->commissions;
         }
 
@@ -998,5 +1040,4 @@ class Interhisto extends Component
 
         return $transaction_nationnal;
     }
-   
 }

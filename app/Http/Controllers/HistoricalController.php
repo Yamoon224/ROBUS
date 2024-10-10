@@ -25,11 +25,12 @@ class HistoricalController extends Controller
      */
     public function browse_reload()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.browse_reload');
-        } else {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.browse_reload');
     }
 
     public function reporting_historical()
@@ -44,10 +45,12 @@ class HistoricalController extends Controller
 
         if ($usersCountry->is_under_distributer == true) {
 
-            foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_banks.created_by', $usersCountry->id)
-                ->whereDate('wallet_banks.created_at', $convertions)->select('wallet_banks.*')->get() as $bank) {
+            foreach (
+                WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $usersCountry->country->id)
+                    ->where('wallet_banks.created_by', $usersCountry->id)
+                    ->whereDate('wallet_banks.created_at', $convertions)->select('wallet_banks.*')->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -68,11 +71,14 @@ class HistoricalController extends Controller
 
             $pdf = Pdf::loadView('pages.historicals.pdf_bank', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_virement.pdf');
+
         } elseif ($usersCountry->is_distributer == true) {
 
-            foreach (WalletBank::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at', $convertions)
-                ->get() as $bank) {
+            foreach (
+                WalletBank::where('updated_by', $usersCountry->id)
+                    ->whereDate('created_at', $convertions)
+                    ->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -114,10 +120,12 @@ class HistoricalController extends Controller
         $bank_historicals = [];
         if ($usersCountry->is_under_distributer == true) {
 
-            foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_reloads.created_by', $usersCountry->id)
-                ->whereDate('wallet_reloads.created_at', $convertions)->select('wallet_reloads.*')->get() as $bank) {
+            foreach (
+                WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $usersCountry->country->id)
+                    ->where('wallet_reloads.created_by', $usersCountry->id)
+                    ->whereDate('wallet_reloads.created_at', $convertions)->select('wallet_reloads.*')->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -140,8 +148,10 @@ class HistoricalController extends Controller
             return $pdf->download('reporting_rechargment.pdf');
         } elseif ($usersCountry->is_distributer == true) {
 
-            foreach (WalletReload::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at', $convertions)->get() as $bank) {
+            foreach (
+                WalletReload::where('updated_by', $usersCountry->id)
+                    ->whereDate('created_at', $convertions)->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -182,10 +192,12 @@ class HistoricalController extends Controller
         $bank_historicals = [];
         if ($usersCountry->is_under_distributer == true) {
 
-            foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_deposits.created_by', $usersCountry->id)
-                ->whereDate('wallet_deposits.created_at',  $convertions)->select('wallet_deposits.*')->get() as $bank) {
+            foreach (
+                WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $usersCountry->country->id)
+                    ->where('wallet_deposits.created_by', $usersCountry->id)
+                    ->whereDate('wallet_deposits.created_at',  $convertions)->select('wallet_deposits.*')->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -207,8 +219,10 @@ class HistoricalController extends Controller
             $pdf = Pdf::loadView('pages.historicals.pdf_card_bank', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_commande.pdf');
         } elseif ($usersCountry->is_distributer == true) {
-            foreach (WalletDeposit::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->get() as $bank) {
+            foreach (
+                WalletDeposit::where('updated_by', $usersCountry->id)
+                    ->whereDate('created_at',  $convertions)->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -252,10 +266,12 @@ class HistoricalController extends Controller
 
         if ($usersCountry->is_under_distributer == true) {
 
-            foreach (WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_inters.created_by', $usersCountry->id)
-                ->whereDate('wallet_inters.created_at',  $convertions)->select('wallet_inters.*')->get() as $bank) {
+            foreach (
+                WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $usersCountry->country->id)
+                    ->where('wallet_inters.created_by', $usersCountry->id)
+                    ->whereDate('wallet_inters.created_at',  $convertions)->select('wallet_inters.*')->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
             $users_countrie = Auth::guard('web')->user()->wallet->currencie->code;
@@ -280,8 +296,10 @@ class HistoricalController extends Controller
             return $pdf->download('reporting_inter.pdf');
         } elseif ($usersCountry->is_distributer == true) {
 
-            foreach (WalletInter::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->get() as $bank) {
+            foreach (
+                WalletInter::where('updated_by', $usersCountry->id)
+                    ->whereDate('created_at',  $convertions)->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
             $users_countrie = Auth::guard('web')->user()->wallet->currencie->code;
@@ -324,10 +342,12 @@ class HistoricalController extends Controller
         $bank_historicals = [];
 
         if ($usersCountry->is_under_distributer == true) {
-            foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_payments.created_by', $usersCountry->id)
-                ->whereDate('wallet_payments.created_at',  $convertions)->select('wallet_payments.*')->get() as $bank) {
+            foreach (
+                WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $usersCountry->country->id)
+                    ->where('wallet_payments.created_by', $usersCountry->id)
+                    ->whereDate('wallet_payments.created_at',  $convertions)->select('wallet_payments.*')->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -351,8 +371,10 @@ class HistoricalController extends Controller
             return $pdf->download('reporting_payment.pdf');
         } elseif ($usersCountry->is_distributer == true) {
 
-            foreach (WalletPayment::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->get() as $bank) {
+            foreach (
+                WalletPayment::where('updated_by', $usersCountry->id)
+                    ->whereDate('created_at',  $convertions)->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -399,10 +421,12 @@ class HistoricalController extends Controller
 
         if ($usersCountry->is_under_distributer == true) {
 
-            foreach (WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_phone_credits.created_by', $usersCountry->id)
-                ->whereDate('wallet_phone_credits.created_at',  $convertions)->select('wallet_phone_credits.*')->get() as $bank) {
+            foreach (
+                WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $usersCountry->country->id)
+                    ->where('wallet_phone_credits.created_by', $usersCountry->id)
+                    ->whereDate('wallet_phone_credits.created_at',  $convertions)->select('wallet_phone_credits.*')->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -425,8 +449,10 @@ class HistoricalController extends Controller
             $pdf = Pdf::loadView('pages.historicals.pdf_phone', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_phone.pdf');
         } elseif ($usersCountry->is_distributer == true) {
-            foreach (WalletPhoneCredit::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->get() as $bank) {
+            foreach (
+                WalletPhoneCredit::where('updated_by', $usersCountry->id)
+                    ->whereDate('created_at',  $convertions)->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -467,11 +493,13 @@ class HistoricalController extends Controller
 
         if ($usersCountry->is_under_distributer == true) {
 
-            foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_transactions.created_by', $usersCountry->id)
-                ->whereDate('wallet_transactions.created_at',  $convertions)
-                ->select('wallet_transactions.*')->get() as $bank) {
+            foreach (
+                WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+                    ->where('wallets.country_id', $usersCountry->country->id)
+                    ->where('wallet_transactions.created_by', $usersCountry->id)
+                    ->whereDate('wallet_transactions.created_at',  $convertions)
+                    ->select('wallet_transactions.*')->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -499,8 +527,10 @@ class HistoricalController extends Controller
             return $pdf->download('reporting_transfers.pdf');
         } elseif ($usersCountry->is_distributer == true) {
 
-            foreach (WalletTransaction::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->get() as $bank) {
+            foreach (
+                WalletTransaction::where('updated_by', $usersCountry->id)
+                    ->whereDate('created_at',  $convertions)->get() as $bank
+            ) {
                 $bank_historicals[] = $bank;
             }
 
@@ -550,11 +580,13 @@ class HistoricalController extends Controller
         $bank_historicals = [];
 
 
-        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $usersCountry->country->id)
-            ->where('wallet_transactions.wallet_id', $usersCountry->wallet->id)
-            // ->whereDate('wallet_transactions.created_at',  $convertions)
-            ->select('wallet_transactions.*')->get() as $bank) {
+        foreach (
+            WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $usersCountry->country->id)
+                ->where('wallet_transactions.wallet_id', $usersCountry->wallet->id)
+                // ->whereDate('wallet_transactions.created_at',  $convertions)
+                ->select('wallet_transactions.*')->get() as $bank
+        ) {
             $bank_historicals[] = $bank;
         }
 
@@ -640,7 +672,6 @@ class HistoricalController extends Controller
         }
     }
 
-
     /**
      * Display a listing of the resource.
      *
@@ -648,18 +679,25 @@ class HistoricalController extends Controller
      */
     public function browse_transfer()
     {
-
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+            abort(403);
+        }
         return view('firms.pages.browse_transfer');
     }
 
     public function browse_transferfirm()
     {
-
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+            abort(403);
+        }
         return view('pages.historicals.browse_transfer');
     }
 
     public function browse_transfert_visitors()
     {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+            abort(403);
+        }
         return view('pages.historicals.visitors.browse_transfert_visitors');
     }
 
@@ -671,11 +709,11 @@ class HistoricalController extends Controller
     public function browse_paiement()
     {
 
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.browse_paiement');
-        } else {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.browse_paiement');
     }
 
     /**
@@ -686,11 +724,11 @@ class HistoricalController extends Controller
     public function browse_virement()
     {
 
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.browse_virement');
-        } else {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.browse_virement');
     }
     /**
      * Display a listing of the resource.
@@ -699,20 +737,20 @@ class HistoricalController extends Controller
      */
     public function browse_inter()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.browse_inter');
-        } else {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.browse_inter');
     }
 
     public function browse_inter_visitors()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.visitors.browse_inter_visitors');
-        } else {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.visitors.browse_inter_visitors');
     }
 
     /**
@@ -722,23 +760,22 @@ class HistoricalController extends Controller
      */
     public function browse_carte()
     {
-
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.browse_carte');
-        } else {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.browse_carte');
     }
 
 
     public function browse_carte_visitors()
     {
-
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.visitors.browse_carte_visitors');
-        } else {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+
+        return view('pages.historicals.visitors.browse_carte_visitors');
     }
     /**
      * Display a listing of the resource.
@@ -747,38 +784,41 @@ class HistoricalController extends Controller
      */
     public function browse_phone()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.browse_phone');
-        } else {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.browse_phone');
     }
 
     public function browse_phone_visitors()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.visitors.browse_phone_visitors');
-        } else {
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.visitors.browse_phone_visitors');
     }
 
     public function browse_waves()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.browse_wave');
-        } else {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.browse_wave');
     }
-    
+
     public function browse_xbets()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.browse_xbets');
-        } else {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+
+        return view('pages.historicals.browse_xbets');
     }
 
     public function browse_xbets_visitors()
@@ -793,10 +833,10 @@ class HistoricalController extends Controller
 
     public function browse_drawer()
     {
-        if (sabdyWebVerify()) {
-            return view('pages.historicals.browse_drawer');
-        } else {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
             abort(403);
         }
+        return view('pages.historicals.browse_drawer');
     }
 }
