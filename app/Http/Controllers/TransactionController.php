@@ -16,7 +16,7 @@ class TransactionController extends Controller
     public function browse()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+        if (!Auth::guard('web')->user()->hasPermissionTo('transferts')) {
             abort(403);
         }
         return view('pages.transfers.browse');

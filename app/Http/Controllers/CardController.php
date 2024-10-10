@@ -59,14 +59,29 @@ class CardController extends Controller
 
     public function add()
     {
-        // $countries = Country::where('robus', true)->where('indecative', '!=', null)->get();
-        $type_reload  = Provider::where('status', true)->where('provider_type_id',  5)->orderBy('name', 'asc')->get();
-        $amount_valeur = OrderCardCost::whereId(1)->first();
-        if (sabdyWebVerify()) {
-            return view('pages.cards.add', compact('type_reload', 'amount_valeur'));
-        } else {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-cartes')) {
             abort(403);
         }
+
+        $type_reload =  $this->getProvidersByType(new Provider, sabdy()->country->id, 5);
+
+
+        return view('pages.cards.add', compact('type_reload'));
+    }
+
+    private static function getProvidersByType($query, $countryId, $providerType)
+    {
+
+
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
     }
     /**
      * Store a newly created resource in storage.
@@ -83,757 +98,134 @@ class CardController extends Controller
             ->where('country_id', 107)
             ->get();
         $wallet_user = Auth::guard('web')->user();
-        $admins = SidUser::where('status', true)->where('is_admin', true)->where('country_id', Auth::guard('web')->user()->country->id)->get();
-        // Verify Solde sen amount days
         $valeur_ceiling  =  $wallet_user->silver_ceiling;
-
         $amount_days = $this->getWalletBanksCeilingProperty() + $this->getWalletDepositsCeilingProperty() + $this->getWalletIntersCeilingProperty()
             + $this->getWalletPaymentsCeilingProperty() + $this->getWalletTransactionsCeilingProperty()
             + $this->getWalletPhoneCreditsCeilingProperty() + $this->getWalletReloadsCeilingProperty()  + $this->getWalletBankCardCeilingProperty();
 
-        $validator = Validator::make($request->all(), [
-            'phone' => 'required',
-            'identity_doc' => 'nullable|mimes:jpeg,png,jpg|max:2048',
-            'identity_form' => 'nullable|mimes:jpeg,png,jpg|max:2048',
-            'type_card_id' => 'required',
-        ]);
-        if ($validator->fails()) {
-            return back()->withErrors($validator)
-                ->with('color', 'danger')
-                ->with('status', 'Erreur de création')
-                ->withInput();
-        }
-
+       
+       
         try {
 
-            $percent_robus = OrderCardCost::whereId(1)->first();
+            $validator = Validator::make($request->all(), [
+                'phone' => 'required',
+                'email' => 'required',
+                'address' => 'required',
+                'identity_doc' => 'nullable|mimes:jpeg,png,jpg|max:2048',
+                'identity_form' => 'nullable|mimes:jpeg,png,jpg|max:2048',
+                'type_card_id' => 'required',
+            ]);
 
-            if ($amount_days >=   $valeur_ceiling) {
+            
+            if ($validator->fails()) {
+                return back()->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Erreur de création')
+                    ->withInput();
+            }
+
+            
+            $percent_robus = Provider::where('provider_type_id',  5)
+                ->whereId($request->type_card_id)
+                ->first();
+
+            $valeur_amount =   $this->convertAdminCommission($percent_robus->amount);
+
+            if(!$valeur_amount)
+            {
+
+                return back()
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Cette carte n\'a pas de montant ')
+                    ->withInput();
+
+            }
+            
+            if ($amount_days >=  $valeur_ceiling) {
 
                 return back()
                     ->withErrors($validator)
                     ->with('color', 'danger')
                     ->with('status', 'Vous avez atteint votre montant maxi journalier')
                     ->withInput();
-            } else {
-
-                if (($wallet_user->wallet->currencie->code == "EUR" ||
-                    $wallet_user->wallet->currencie->code == "DH" ||
-                    $wallet_user->wallet->currencie->code == "Dt" ||
-                    $wallet_user->wallet->currencie->code == "CEDI" ||
-                    $wallet_user->wallet->currencie->code == "USD")) {
-
-                    $valeur_amount =  $percent_robus->amount / $wallet_user->wallet->currencie->value;
-
-                    if ($valeur_amount > $wallet_user->wallet->amount) {
-
-                        return back()
-                            ->withErrors($validator)
-                            ->with('color', 'danger')
-                            ->with('status', 'Verifier votre solde')
-                            ->withInput();
-                    } else {
-
-                        $card_bank = new BankCard();
-                        $card_bank->company_id  = auth()->user()->company->id;
-                        $card_bank->company_id  = Auth::guard('web')->user()->company->id;
-                        $card_bank->country_id  = Auth::guard('web')->user()->country->id;
-                        $card_bank->city_id  = Auth::guard('web')->user()->city->id;
-                        $card_bank->email =  $request->email ?? null;
-                        $card_bank->order_card_cost_id = 1;
-                        $card_bank->phone  = $request->phone;
-                        $card_bank->bank_card_id = $request->type_card_id;
-                        $card_bank->amount  = $valeur_amount ?? null;
-                        $card_bank->wallet_id = Auth::guard('web')->user()->wallet->id;
-                        $card_bank->status  = false;
-                        $card_bank->created_by = Auth::guard('web')->user()->id;
-                        $card_bank->costs_amount  = $valeur_amount;
-                        $file_identity_doc = $request->file('identity_doc');
-                        $file_identity_form = $request->file('identity_form');
-
-                        // Upload Images        
-                        if (isset($file_identity_doc)) {
-                            $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id . '/');
-                            $front_file = 'recto_' . date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
-                            $file_identity_doc->move($destination_path, $front_file);
-                            $card_bank->identity_doc =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id . "/$front_file";
-                        }
-
-                        if (isset($file_identity_form)) {
-                            $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id  . '/');
-                            $back_file = 'verso_' . date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
-                            $file_identity_form->move($destination_path, $back_file);
-                            $card_bank->identity_form =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id  . "/$back_file";
-                        }
-
-                        $card_bank->save();
-
-
-                        $card_bank->wallet->update([
-                            'amount' => DB::raw('amount-'  .   $card_bank->amount),
-                        ]);
-
-                        if ($wallet_user->is_under_distributer == 1) {
-
-                            // Commission if distributer
-                            $valuer_deposit =  $percent_robus->percent_merchands;
-
-                            // Convertion valeur distributer
-                            $valeur_conver_distr = $valuer_deposit / $wallet_user->wallet->currencie->value;
-
-                            // Commission admin
-                            $admin_valeur =  $card_bank->amount -  $percent_robus->percent_merchands;
-
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
-
-                                $count_admin = $admin_civ->count();
-
-                                $valeur_single = $admin_valeur / $count_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => null,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' => null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' =>  $card_bank->id,
-                                        'description' => 'Commission',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $card_bank->update([
-                                'commissions' => DB::raw('commissions+'  .  $valeur_conver_distr),
-                            ]);
-                            $msg = 'Votre demande est en cours de validation';
-                            $msg_title = 'Commande carte';
-                            $wallet_user->notify(new UserNotification(
-                                [
-                                    'title' => $msg_title,
-                                    'message' => $msg
-                                ]
-                            ));
-                            if ($wallet_user->country->code == "CI") {
-
-                                $message = 'Vous avez effectué une commande de carte de ' . $card_bank->amount .  $wallet_user->wallet->currencie->code . ' ' .  'par '
-                                    . $card_bank->typeCard->name  .  ' a '
-                                    . $card_bank->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone,  -10);
-
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                            }
-                            $notifs = $wallet_user->unreadNotifications;
-                            event(new CreateCardBankEvent($card_bank));
-                            Notification::send($admins, new AdminNotification('Commande de carte de ' . ' ' . $card_bank->wallet->sidUser->firstname));
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            } else {
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            }
-                        } else {
-
-
-                            // Commission admin
-                            $admin_valeur =  $card_bank->amount;
-
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
-
-                                $count_admin = $admin_civ->count();
-
-                                $valeur_single = $admin_valeur / $count_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => null,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' => null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' =>  $card_bank->id,
-                                        'description' => 'Commission',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $msg = 'Votre demande est en cours de validation';
-                            $msg_title = 'Commande carte';
-                            $wallet_user->notify(new UserNotification(
-                                [
-                                    'title' => $msg_title,
-                                    'message' => $msg
-                                ]
-                            ));
-                            if ($wallet_user->country->code == "CI") {
-
-                                $message = 'Vous avez effectué une commande de carte de ' . $card_bank->amount .  $wallet_user->wallet->currencie->code . ' ' .  'par '
-                                    . $card_bank->typeCard->name  .  ' a '
-                                    . $card_bank->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone,  -10);
-
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                            }
-                            $notifs = $wallet_user->unreadNotifications;
-                            event(new CreateCardBankEvent($card_bank));
-                            Notification::send($admins, new AdminNotification('Commande de carte de ' . ' ' . $card_bank->wallet->sidUser->firstname));
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            } else {
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            }
-                        }
-
-                        $msg = "Carte crée avec succès";
-                        $color = 'success';
-
-                        return redirect(route('cards.browse'))->with('color', $color)->with('status', $msg);
-                    }
-                } elseif ($wallet_user->wallet->currencie->code == "GNF") {
-
-                    $valeur_amount =  $percent_robus->amount *  $wallet_user->wallet->currencie->value;
-
-                    if ($valeur_amount > $wallet_user->wallet->amount) {
-
-                        return back()
-                            ->withErrors($validator)
-                            ->with('color', 'danger')
-                            ->with('status', 'Verifier votre solde')
-                            ->withInput();
-                    } else {
-
-                        $card_bank = new BankCard();
-                        $card_bank->company_id  = auth()->user()->company->id;
-                        $card_bank->company_id  = Auth::guard('web')->user()->company->id;
-                        $card_bank->country_id  = Auth::guard('web')->user()->country->id;
-                        $card_bank->city_id  = Auth::guard('web')->user()->city->id;
-                        $card_bank->email =  $request->email ?? null;
-                        $card_bank->order_card_cost_id = 1;
-                        $card_bank->phone  = $request->phone;
-                        $card_bank->bank_card_id = $request->type_card_id;
-                        $card_bank->amount  = $valeur_amount ?? null;
-                        $card_bank->wallet_id = Auth::guard('web')->user()->wallet->id;
-                        $card_bank->status  = false;
-                        $card_bank->created_by = Auth::guard('web')->user()->id;
-                        $card_bank->costs_amount  = $valeur_amount;
-                        $file_identity_doc = $request->file('identity_doc');
-                        $file_identity_form = $request->file('identity_form');
-
-                        // Upload Images        
-                        if (isset($file_identity_doc)) {
-                            $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id . '/');
-                            $front_file = 'recto_' . date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
-                            $file_identity_doc->move($destination_path, $front_file);
-                            $card_bank->identity_doc =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id . "/$front_file";
-                        }
-
-                        if (isset($file_identity_form)) {
-                            $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id  . '/');
-                            $back_file = 'verso_' . date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
-                            $file_identity_form->move($destination_path, $back_file);
-                            $card_bank->identity_form =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id  . "/$back_file";
-                        }
-
-                        $card_bank->save();
-
-
-                        $card_bank->wallet->update([
-                            'amount' => DB::raw('amount-'  .   $card_bank->amount),
-                        ]);
-
-                        if ($wallet_user->is_under_distributer == 1) {
-
-                            // Commission if distributer
-                            $valuer_deposit =  $percent_robus->percent_merchands;
-
-                            // Convertion valeur distributer
-                            $valeur_conver_distr = $valuer_deposit / $wallet_user->wallet->currencie->value;
-
-                            // Commission admin
-                            $admin_valeur =  $card_bank->amount -  $percent_robus->percent_merchands;
-
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
-
-                                $count_admin = $admin_civ->count();
-
-                                $valeur_single = $admin_valeur / $count_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => null,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' => null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' =>  $card_bank->id,
-                                        'description' => 'Commission',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $card_bank->update([
-                                'commissions' => DB::raw('commissions+'  .  $valeur_conver_distr),
-                            ]);
-                            $msg = 'Votre demande est en cours de validation';
-                            $msg_title = 'Commande carte';
-                            $wallet_user->notify(new UserNotification(
-                                [
-                                    'title' => $msg_title,
-                                    'message' => $msg
-                                ]
-                            ));
-                            if ($wallet_user->country->code == "CI") {
-
-                                $message = 'Vous avez effectué une commande de carte de ' . $card_bank->amount .  $wallet_user->wallet->currencie->code . ' ' .  'par '
-                                    . $card_bank->typeCard->name  .  ' a '
-                                    . $card_bank->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone,  -10);
-
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                            }
-                            $notifs = $wallet_user->unreadNotifications;
-                            event(new CreateCardBankEvent($card_bank));
-                            Notification::send($admins, new AdminNotification('Commande de carte de ' . ' ' . $card_bank->wallet->sidUser->firstname));
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            } else {
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            }
-                        } else {
-
-
-                            // Commission admin
-                            $admin_valeur =  $card_bank->amount;
-
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
-
-                                $count_admin = $admin_civ->count();
-
-                                $valeur_single = $admin_valeur / $count_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => null,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' => null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' =>  $card_bank->id,
-                                        'description' => 'Commission',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $msg = 'Votre demande est en cours de validation';
-                            $msg_title = 'Commande carte';
-                            $wallet_user->notify(new UserNotification(
-                                [
-                                    'title' => $msg_title,
-                                    'message' => $msg
-                                ]
-                            ));
-                            if ($wallet_user->country->code == "CI") {
-
-                                $message = 'Vous avez effectué une commande de carte de ' . $card_bank->amount .  $wallet_user->wallet->currencie->code . ' ' .  'par '
-                                    . $card_bank->typeCard->name  .  ' a '
-                                    . $card_bank->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone,  -10);
-
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                            }
-                            $notifs = $wallet_user->unreadNotifications;
-                            event(new CreateCardBankEvent($card_bank));
-                            Notification::send($admins, new AdminNotification('Commande de carte de ' . ' ' . $card_bank->wallet->sidUser->firstname));
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            } else {
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            }
-                        }
-
-                        $msg = "Carte crée avec succès";
-                        $color = 'success';
-
-                        return redirect(route('cards.browse'))->with('color', $color)->with('status', $msg);
-                    }
-                } elseif ($wallet_user->wallet->currencie->code == "CFA") {
-
-                    $valeur_amount =  $percent_robus->amount;
-
-                    if ($valeur_amount > $wallet_user->wallet->amount) {
-
-                        return back()
-                            ->withErrors($validator)
-                            ->with('color', 'danger')
-                            ->with('status', 'Verifier votre solde')
-                            ->withInput();
-                    } else {
-
-                        $card_bank = new BankCard();
-                        $card_bank->company_id  = auth()->user()->company->id;
-                        $card_bank->company_id  = Auth::guard('web')->user()->company->id;
-                        $card_bank->country_id  = Auth::guard('web')->user()->country->id;
-                        $card_bank->city_id  = Auth::guard('web')->user()->city->id;
-                        $card_bank->email =  $request->email ?? null;
-                        $card_bank->order_card_cost_id = 1;
-                        $card_bank->phone  = $request->phone;
-                        $card_bank->bank_card_id = $request->type_card_id;
-                        $card_bank->amount  = $valeur_amount ?? null;
-                        $card_bank->wallet_id = Auth::guard('web')->user()->wallet->id;
-                        $card_bank->status  = false;
-                        $card_bank->created_by = Auth::guard('web')->user()->id;
-                        $card_bank->costs_amount  = $valeur_amount;
-                        $file_identity_doc = $request->file('identity_doc');
-                        $file_identity_form = $request->file('identity_form');
-
-                        // Upload Images        
-                        if (isset($file_identity_doc)) {
-                            $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id . '/');
-                            $front_file = 'recto_' . date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
-                            $file_identity_doc->move($destination_path, $front_file);
-                            $card_bank->identity_doc =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id . "/$front_file";
-                        }
-
-                        if (isset($file_identity_form)) {
-                            $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id  . '/');
-                            $back_file = 'verso_' . date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
-                            $file_identity_form->move($destination_path, $back_file);
-                            $card_bank->identity_form =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id  . "/$back_file";
-                        }
-
-                        $card_bank->save();
-
-
-                        $card_bank->wallet->update([
-                            'amount' => DB::raw('amount-'  .   $card_bank->amount),
-                        ]);
-
-                        if ($wallet_user->is_under_distributer == 1) {
-
-                            // Commission if distributer
-                            $valuer_deposit =  $percent_robus->percent_merchands;
-
-                            // Convertion valeur distributer
-                            $valeur_conver_distr = $valuer_deposit / $wallet_user->wallet->currencie->value;
-
-                            // Commission admin
-                            $admin_valeur =  $card_bank->amount -  $percent_robus->percent_merchands;
-
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
-
-                                $count_admin = $admin_civ->count();
-
-                                $valeur_single = $admin_valeur / $count_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => null,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' => null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' =>  $card_bank->id,
-                                        'description' => 'Commission',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $card_bank->update([
-                                'commissions' => DB::raw('commissions+'  .  $valeur_conver_distr),
-                            ]);
-
-                            $msg = 'Votre demande est en cours de validation';
-                            $msg_title = 'Commande carte';
-                            $wallet_user->notify(new UserNotification(
-                                [
-                                    'title' => $msg_title,
-                                    'message' => $msg
-                                ]
-                            ));
-                            if ($wallet_user->country->code == "CI") {
-
-                                $message = 'Vous avez effectué une commande de carte de ' . $card_bank->amount .  $wallet_user->wallet->currencie->code . ' ' .  'par '
-                                    . $card_bank->typeCard->name  .  ' a '
-                                    . $card_bank->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone,  -10);
-
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                            }
-                            $notifs = $wallet_user->unreadNotifications;
-                            event(new CreateCardBankEvent($card_bank));
-                            Notification::send($admins, new AdminNotification('Commande de carte de ' . ' ' . $card_bank->wallet->sidUser->firstname));
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            } else {
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            }
-                        } else {
-
-
-                            // Commission admin
-                            $admin_valeur =  $card_bank->amount;
-
-                            //  Send valeur in Admin
-                            if ($admin_civ->count() > 0) {
-
-                                $count_admin = $admin_civ->count();
-
-                                $valeur_single = $admin_valeur / $count_admin;
-
-                                foreach ($admin_civ as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    AdminsCom::create([
-                                        'amount' =>   $valeur_single,
-                                        'sid_user_id' =>   $admin_single->id,
-                                        'wallet_transaction_id' => null,
-                                        'wallet_bank_id' => null,
-                                        'wallet_deposit_id' => null,
-                                        'wallet_inter_id' => null,
-                                        'wallet_payment_id' => null,
-                                        'wallet_phone_credit_id' => null,
-                                        'wallet_reload_id' => null,
-                                        'bank_card_id' =>  $card_bank->id,
-                                        'description' => 'Commission',
-                                    ]);
-
-                                    $admin_single->wallet->update([
-                                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                                        'sid_user_relod' => Auth::guard('web')->user()->id,
-                                        'amount' => DB::raw('amount+' . $valeur_single),
-                                    ]);
-                                }
-                            }
-
-                            $msg = 'Votre demande est en cours de validation';
-                            $msg_title = 'Commande carte';
-                            $wallet_user->notify(new UserNotification(
-                                [
-                                    'title' => $msg_title,
-                                    'message' => $msg
-                                ]
-                            ));
-                            if ($wallet_user->country->code == "CI") {
-
-                                $message = 'Vous avez effectué une commande de carte de ' . $card_bank->amount .  $wallet_user->wallet->currencie->code . ' ' .  'par '
-                                    . $card_bank->typeCard->name  .  ' a '
-                                    . $card_bank->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
-
-                                $encode = substr(Auth::guard('web')->user()->phone,  -10);
-
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                            }
-                            $notifs = $wallet_user->unreadNotifications;
-                            event(new CreateCardBankEvent($card_bank));
-                            Notification::send($admins, new AdminNotification('Commande de carte de ' . ' ' . $card_bank->wallet->sidUser->firstname));
-
-                            if ($admins->count() > 0) {
-
-                                foreach ($admins  as $user) {
-
-                                    $admin_single = SidUser::find($user->id);
-
-                                    $notifs = $admin_single->unreadNotifications;
-
-                                    event(new AdminNotifEvent($notifs));
-                                }
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            } else {
-
-                                if ($wallet_user->email != null) {
-
-                                    $notify = new MailController;
-                                    $notify->newCardOrder($card_bank);
-                                }
-                            }
-                        }
-
-                        $msg = "Carte crée avec succès";
-                        $color = 'success';
-
-                        return redirect(route('cards.browse'))->with('color', $color)->with('status', $msg);
-                    }
+            }
+
+            if ($valeur_amount > $wallet_user->wallet->amount) {
+
+                return back()
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Verifier votre solde')
+                    ->withInput();
+            } 
+
+            if ($percent_robus != null) {
+
+                $card_bank = new BankCard();
+                $card_bank->company_id  = auth()->user()->company->id;
+                $card_bank->company_id  = Auth::guard('web')->user()->company->id;
+                $card_bank->country_id  = Auth::guard('web')->user()->country->id;
+                $card_bank->city_id  = Auth::guard('web')->user()->city->id;
+                $card_bank->email =  $request->email ?? null;
+                $card_bank->order_card_cost_id = 1;
+                $card_bank->phone  = $request->phone;
+                $card_bank->address  = $request->address;
+                $card_bank->bank_card_id = $request->type_card_id;
+                $card_bank->amount  = $valeur_amount ?? null;
+                $card_bank->wallet_id = Auth::guard('web')->user()->wallet->id;
+                $card_bank->status  = false;
+                $card_bank->created_by = Auth::guard('web')->user()->id;
+                $card_bank->costs_amount  = $valeur_amount;
+                $file_identity_doc = $request->file('identity_doc');
+                $file_identity_form = $request->file('identity_form');
+
+                // Upload Images        
+                if (isset($file_identity_doc)) {
+                    $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id . '/');
+                    $front_file = 'recto_' . date('YmdHis') . "." . $file_identity_doc->getClientOriginalExtension();
+                    $file_identity_doc->move($destination_path, $front_file);
+                    $card_bank->identity_doc =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id . "/$front_file";
                 }
+
+                if (isset($file_identity_form)) {
+                    $destination_path = public_path('bank_cards/' . Auth::guard('api')->user()->id  . '/');
+                    $back_file = 'verso_' . date('YmdHis') . "." . $file_identity_form->getClientOriginalExtension();
+                    $file_identity_form->move($destination_path, $back_file);
+                    $card_bank->identity_form =  env('APP_URL') . "/public/bank_cards/" . Auth::guard('api')->user()->id  . "/$back_file";
+                }
+
+                $card_bank->save();
+
+
+                $card_bank->wallet->update([
+                    'amount' => DB::raw('amount-'  .   $card_bank->amount),
+                ]);
+
+                if ($this->updateamountOrderCardReceveid($admin_civ, $percent_robus, $card_bank, $valeur_amount)) {
+
+                    if( $this->sendNotificationOrderCard($card_bank))
+                    {
+
+                        $this->sendNotificationOrderCard($card_bank);
+                        $msg = "Carte crée avec succès";
+                        $color = 'success';
+
+                        return redirect(route('cards.browse'))->with('color', $color)->with('status', $msg);
+                    }
+                }else {
+                    return back()
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Erreur de MAJ des données')
+                    ->withInput();
+                }
+            }else {
+                return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Voir le provider selectionner')
+                ->withInput();
             }
         } catch (\Throwable $th) {
             return back()
@@ -841,6 +233,152 @@ class CardController extends Controller
                 ->with('color', 'danger')
                 ->with('status', 'Erreur de création')
                 ->withInput();
+        }
+    }
+
+    private function sendNotificationOrderCard($walletOrderCard)
+    {
+
+        if (sabdy()->is_custumers) {
+            if (sabdy()->country->code == "CI") {
+
+                $message = 'Vous avez effectué une commande de carte de  ' . $walletOrderCard->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
+                    . $walletOrderCard->provider->name  .  ' le '
+                    . $walletOrderCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+                $encode = substr(sabdy()->phone,  -10);
+
+                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            }
+        }
+        $msg = 'Votre demande est en cours de validation';
+        $msg_title = 'Commande carte';
+        sabdy()->notify(new UserNotification(
+            [
+                'title' => $msg_title,
+                'message' => $msg
+            ]
+        ));
+
+        $admins = SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->where('country_id', 107)
+            ->get();
+
+        $notifs = sabdy()->unreadNotifications;
+        event(new CreateCardBankEvent($walletOrderCard));
+        Notification::send($admins, new AdminNotification('Commande de carte de ' . ' ' . $walletOrderCard->wallet->sidUser->firstname));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+
+            if (sabdy()->email != null) {
+
+                $notify = new MailController;
+                $notify->newCardOrder($walletOrderCard);
+            }
+
+            return true;
+        }
+
+        return true;
+
+    }
+
+    private function updateamountOrderCardReceveid($admin_civ, $percent_robus, $walletOrderCard, $amount_commission)
+    {
+
+        if (sabdy()->is_under_distributer) {
+
+            $valuer_deposit =  $percent_robus->percent_merchands;
+
+            // Convertion in devise Use send
+            $convertion_commission = $this->convertAdminCommission($valuer_deposit);
+
+            $admin_valeur =  $amount_commission -  $percent_robus->percent_merchands;
+
+            $walletOrderCard->update([
+                'commissions' => DB::raw('commissions+'  .  $convertion_commission),
+            ]);
+
+            
+            if ($admin_civ->count() > 0) {
+
+                $nmbre_admin = $admin_civ->count();
+    
+                $valeur_single = $admin_valeur / $nmbre_admin;
+    
+                foreach ($admin_civ as $user) {
+                    $admin_single = SidUser::find($user->id);
+    
+                    AdminsCom::create([
+                        'amount' =>   $admin_valeur,
+                        'sid_user_id' =>   $admin_single->id,
+                        'bank_card_id' =>  $walletOrderCard->id,
+                        'description' => 'Commission administrateur',
+                        'amount_under' =>  sabdy()->is_under_distributer ? $valuer_deposit : 0,
+                        'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                    ]);
+                }
+            }
+
+        } else {
+
+            $admin_valeur =  $amount_commission;
+
+        }
+
+
+        $admin_valeur_convertion = $this->convertAdminCommission($admin_valeur);
+
+        sabdy()->wallet->update([
+            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+            'sid_user_relod' => sabdy()->id,
+            'amount' => DB::raw('amount-'  .  $amount_commission),
+        ]);
+
+
+        //  Send valeur in Admin
+        if ($admin_civ->count() > 0) {
+
+            $count_admin = $admin_civ->count();
+
+            $valeur_single = $admin_valeur_convertion / $count_admin;
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                AdminsCom::create([
+                    'amount' =>   $valeur_single,
+                    'sid_user_id' =>   $admin_single->id,
+                    'bank_card_id' =>  $walletOrderCard->id,
+                    'description' => 'Commission administrateur',
+                ]);
+
+            }
+        }
+
+        return true;
+    }
+
+    public function convertAdminCommission($amount)
+    {
+        $country_civ = Country::find(107);
+        $robus_currency = sabdy()->country->currencie->value;
+
+        if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
+            return $amount * $robus_currency;
+        } elseif ($country_civ->currencie->value == sabdy()->country->currencie->value) {
+            return $amount;
+        } else {
+            return $amount * $robus_currency;
         }
     }
 
@@ -860,7 +398,7 @@ class CardController extends Controller
         if (empty($card)) {
             return redirect(route('cards.browse'))->with('color', 'danger')->with('status', 'Pas de doc');
         }
-        
+
         return view('pages.cards.show', compact('card'));
     }
 
@@ -1010,8 +548,10 @@ class CardController extends Controller
     public function getWalletBankCardCeilingProperty()
     {
         $data = [];
-        foreach (BankCard::where('created_by', Auth::guard('web')->user()->id)
-            ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank) {
+        foreach (
+            BankCard::where('created_by', Auth::guard('web')->user()->id)
+                ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank
+        ) {
             $data[] = $bank->amount;
         }
 
@@ -1022,8 +562,10 @@ class CardController extends Controller
     public function getWalletBanksCeilingProperty()
     {
         $data = [];
-        foreach (WalletBank::where('created_by', Auth::guard('web')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank) {
+        foreach (
+            WalletBank::where('created_by', Auth::guard('web')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank
+        ) {
             $data[] = $bank->amount;
         }
 
@@ -1035,8 +577,10 @@ class CardController extends Controller
 
         $data = [];
 
-        foreach (WalletDeposit::where('created_by',  Auth::guard('web')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $deposit) {
+        foreach (
+            WalletDeposit::where('created_by',  Auth::guard('web')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $deposit
+        ) {
             $data[] = $deposit->amount;
         }
 
@@ -1047,8 +591,10 @@ class CardController extends Controller
     {
         $data = [];
 
-        foreach (WalletInter::where('created_by',  Auth::guard('web')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $inter) {
+        foreach (
+            WalletInter::where('created_by',  Auth::guard('web')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $inter
+        ) {
             $data[] = $inter->amount;
         }
 
@@ -1059,8 +605,10 @@ class CardController extends Controller
     {
         $data = [];
 
-        foreach (WalletPayment::where('created_by',  Auth::guard('web')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $payment) {
+        foreach (
+            WalletPayment::where('created_by',  Auth::guard('web')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $payment
+        ) {
             $data[] = $payment->amount;
         }
 
@@ -1072,8 +620,10 @@ class CardController extends Controller
     {
         $data = [];
 
-        foreach (WalletTransaction::where('created_by',  Auth::guard('web')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $transaction) {
+        foreach (
+            WalletTransaction::where('created_by',  Auth::guard('web')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $transaction
+        ) {
             $data[] = $transaction->amount;
         }
 
@@ -1085,8 +635,10 @@ class CardController extends Controller
         $data = [];
 
 
-        foreach (WalletPhoneCredit::where('created_by', Auth::guard('web')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $phone) {
+        foreach (
+            WalletPhoneCredit::where('created_by', Auth::guard('web')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $phone
+        ) {
             $data[] = $phone->amount;
         }
 
@@ -1097,8 +649,10 @@ class CardController extends Controller
     {
         $data = [];
 
-        foreach (WalletReload::where('wallet_reloads.created_by',  Auth::guard('web')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $reload) {
+        foreach (
+            WalletReload::where('wallet_reloads.created_by',  Auth::guard('web')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $reload
+        ) {
             $data[] = $reload->amount;
         }
 

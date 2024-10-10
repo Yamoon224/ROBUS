@@ -23,9 +23,6 @@
                             </svg>
                         </a>
                     </h2>
-                    {{-- <div class="form-check form-switch w-full sm:w-auto sm:ml-auto mt-3 sm:mt-0">
-                <label class="form-check-label ml-0" for="show-example-5"> Nouveau administrateur</label>
-            </div> --}}
                 </div>
 
                 <div class="p-5">
@@ -52,23 +49,7 @@
                                 </div>
                             </div>
 
-                            {{-- <div class="intro-y col-span-12 lg:col-span-4">
-                                <div class="mx-auto xl:mr-0 xl:ml-6">
-                                    <img class="object-none object-center bg-yellow-300 w-30 h-30"
-                                        src="{{ old('identity_id') ?? asset('public/dist/images/food-beverage-1.jpg') }}"
-                                        alt="Piece" id="imageCaptureId">
-                                    <div class="mx-auto cursor-pointer relative mt-5">
-                                        <input id="imageUploadId" type="file" name="identity_id" placeholder="Piece"
-                                            capture style="display: none" accept="image/png, image/jpeg">
-                                        <h6 class="text-center ">Identifiant</h6>
-                                        @error('identity_id')
-                                            <span class="invalid-feedback" role="alert">
-                                                <strong>{{ $message }}</strong>
-                                            </span>
-                                        @enderror
-                                    </div>
-                                </div>
-                            </div> --}}
+
                             <div class="intro-y col-span-12 lg:col-span-6">
                                 <div class="mx-auto xl:mr-0 xl:ml-6">
                                     <img class="object-none object-center bg-yellow-300 w-30 h-30"
@@ -100,7 +81,7 @@
                                     </span>
                                 @enderror
                             </div>
-                            {{-- <div class="crud-form-1 intro-y col-span-12 lg:col-span-6">
+                            <div class="crud-form-1 intro-y col-span-12 lg:col-span-6">
                                 <label class="form-label">Adresse email
                                     <span class="text-danger"> *</span>
                                 </label>
@@ -113,26 +94,22 @@
                                     </span>
                                 @enderror
 
-                            </div> --}}
+                            </div>
 
-                            {{-- <div class="crud-form-1 intro-y col-span-12 lg:col-span-4">
-                                <label class="form-label" for="country">Pays <span class="text-danger"> * </span></label>
-                                <select required id="country_id" name="country_id"
-                                    class="select2 form-select @error('country_id') is-invalid @enderror">
-                                    <option disabled selected>-</option>
-                                    @foreach ($countries as $countrie)
-                                        <option value="{{ $countrie->id }}"
-                                            @if ($countrie->id === $countrie->country_id) selected @endif>
-                                            {{ $countrie->name }}</option>
-                                    @endforeach
-                                </select>
-                                @error('country_id')
+                            <div class="crud-form-1 intro-y col-span-12 lg:col-span-6">
+                                <label class="form-label">Adresse
+                                    <span class="text-danger"> *</span>
+                                </label>
+                                <input type="text" name="address"
+                                    class="form-control @error('address') is-invalid @enderror" value="{{ old('address') }}"
+                                    required>
+                                @error('address')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
                                 @enderror
-                            </div> --}}
 
+                            </div>
 
                             <div class="crud-form-1 intro-y col-span-12 lg:col-span-6">
                                 <label class="form-label">Type de carte <span class="text-danger"> * </span></label>
@@ -141,9 +118,10 @@
                                     class="select2 form-select @error('type_card_id') is-invalid @enderror">
                                     <option disabled selected>-</option>
                                     @foreach ($type_reload as $type_card)
-                                        <option value="{{ $type_card->id }}"
+                                        <option value="{{ $type_card->id }}" data-amount="{{ $type_card->amount }}"
                                             @if ($type_card->id === $type_card->type_card_id) selected @endif>
-                                            {{ $type_card->name }}</option>
+                                            {{ $type_card->name }}
+                                        </option>
                                     @endforeach
                                 </select>
 
@@ -153,17 +131,16 @@
                                     </span>
                                 @enderror
                             </div>
+
                         </div>
                         <div class="crud-form-1 intro-y col-span-12 lg:col-span-13">
-
-                            <div class="alert alert-dark show  text-center mt-3" role="alert">
-                                Prix de la carte : {{ $amount_valeur->amount }} Frcfa
+                            <div class="alert alert-dark show text-center mt-3" role="alert" id="amount-display">
+                                Prix de la carte : 0 Frcfa
                             </div>
-
                         </div>
-                        <div class="text-left">
+                        <div class="text-center">
                             <button type="submit" class="btn btn-primary w-24  mb-2 mt-6 ml-6"
-                                style="margin-left: 1rem;">Ajouter</button>
+                                style="margin-left: 1rem;">Envoyer la demande</button>
 
                         </div>
                     </form>
@@ -186,6 +163,23 @@
 @push('scripts')
     {{-- Changes country --}}
     <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const typeCardSelect = document.getElementById('type_card_id');
+            const amountDisplay = document.getElementById('amount-display');
+
+            typeCardSelect.addEventListener('change', function() {
+                const selectedOption = typeCardSelect.options[typeCardSelect.selectedIndex];
+                const amount = selectedOption ? selectedOption.getAttribute('data-amount') : 0;
+                amountDisplay.textContent = `Prix de la carte : ${amount} Frcfa`;
+            });
+
+            // Pour initialiser le montant lors du chargement de la page
+            if (typeCardSelect.selectedIndex > 0) {
+                const selectedOption = typeCardSelect.options[typeCardSelect.selectedIndex];
+                const amount = selectedOption.getAttribute('data-amount');
+                amountDisplay.textContent = `Prix de la carte : ${amount} Frcfa`;
+            }
+        });
         $(document).ready(function() {
             $('#country_id').on('change', function() {
                 var country_id = $('#country_id').val();

@@ -1,11 +1,11 @@
 <div>
-   
+
 
     @if ($stepInter === 1)
-    <div id="loader" style="display:none;">
-        <!-- Ici, vous pouvez mettre votre animation de chargement -->
-        <p>Chargement en cours...</p>
-    </div>
+        <div id="loader" style="display:none;">
+            <!-- Ici, vous pouvez mettre votre animation de chargement -->
+            <p>Chargement en cours...</p>
+        </div>
         <div
             class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20 mt-3">
             <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
@@ -133,6 +133,30 @@
                                 'error' => 'transaction_inter_amount_money',
                             ])
                         @else
+
+                            @if (sabdy()->is_under_distributer == 1)
+                            
+                                @include('components.transaction-custumer-input', [
+                                    'id' => 'name_custumer',
+                                    'model' => 'name_custumer',
+                                    'label' => 'Nom & prenom',
+                                    'error' => 'name_custumer',
+                                ])
+
+                                @include('components.transaction-custumer-input', [
+                                    'id' => 'num_piece_custumer',
+                                    'model' => 'num_piece_custumer',
+                                    'label' => 'Numero piece',
+                                    'error' => 'num_piece_custumer',
+                                ])
+
+                                @include('components.transaction-date-input', [
+                                    'id' => 'date_piece',
+                                    'model' => 'date_piece',
+                                    'label' => 'Date piece',
+                                    'error' => 'date_piece',
+                                ])
+                            @endif
                             <div class="col-span-6 mt-3">
                                 <label for="phone_inter_out_civ" class="form-label">Numero de telephone<span
                                         class="text-danger">*</span></label>
@@ -368,5 +392,3 @@
         </div>
     @endif
 </div>
-
-

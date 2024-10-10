@@ -15,6 +15,8 @@ class CardLists extends Component
     public $search = "";
     public $countriesFilter = "";
     public $ref_card_card;
+    public $phone_card;
+    public $email_card;
     public $cardStatus;
     public $cardId;
     public $showNBankNotification = false;
@@ -28,6 +30,8 @@ class CardLists extends Component
     {
         $check = BankCard::whereId($id)->first();
         $this->cardStatus = $check->status;
+        $this->phone_card = $check->phone;
+        $this->email_card = $check->email;
         $this->emit($state);
     }
 
@@ -62,6 +66,11 @@ class CardLists extends Component
         $bank_cards = BankCard::query();
 
         $walletUser = Auth::guard('web')->user();
+
+
+        if ($walletUser->is_under_distributer) {
+            $bank_cards->where('created_by', $walletUser->id); 
+        }
 
         if ($this->search != "") {
 

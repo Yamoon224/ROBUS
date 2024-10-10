@@ -254,23 +254,21 @@ class TransactionCiv extends Component
 
                         $this->validate(
                             [
-                                'transaction_amount_robus' => 'required',
+                                'transaction_inter_amount_money' => 'required',
                                 'phone_inter_out_civ' => 'required',
                                 'country_inter_out_civ' => 'required',
                                 "name_custumer" => 'required',
                                 "num_piece_custumer" => 'required',
                                 "date_piece" => 'required',
-                                'country' => 'required',
                             ],
                             [
-                                'transaction_amount_robus.required' =>
+                                'transaction_inter_amount_money.required' =>
                                 'Votre montant est obligatoire',
                                 'country_inter_out_civ.required' => 'Pays  est obligatoire',
                                 'phone_inter_out_civ.required' => 'Numero est obligatoire',
                                 'name_custumer.required' => 'Nom est obligatoire',
                                 'num_piece_custumer.required' => 'Numero piece est obligatoire',
                                 'date_piece.required' => 'date de validité est obligatoire',
-                                'country.required' => 'Votre pays est obligatoire',
                             ]
                         );
                     } else {
@@ -306,7 +304,6 @@ class TransactionCiv extends Component
                                 "name_sender" => 'required',
                                 "num_piece_custumer" => 'required',
                                 "date_piece" => 'required',
-                                'country' => 'required',
                                 'account_number' => 'required',
                                 'name' => 'required',
                             ],
@@ -318,7 +315,6 @@ class TransactionCiv extends Component
                                 'name_sender.required' => 'Nom expediteur est obligatoire',
                                 'num_piece_custumer.required' => 'Numero piece est obligatoire',
                                 'date_piece.required' => 'date de validité est obligatoire',
-                                'country.required' => 'Votre pays est obligatoire',
                                 'account_number.required' => 'Numero de compte est obligatoire',
                                 'name.required' => 'Nom de la banque est obligatoire',
                             ]
@@ -327,12 +323,12 @@ class TransactionCiv extends Component
 
                         $this->validate(
                             [
-                                'transaction_amount_robus' => 'required',
+                                'transaction_inter_amount_money' => 'required',
                                 'phone_inter_out_civ' => 'required',
                                 'country_inter_out_civ' => 'required',
                             ],
                             [
-                                'transaction_amount_robus.required' =>
+                                'transaction_inter_amount_money.required' =>
                                 'Votre montant est obligatoire',
                                 'country_inter_out_civ.required' => 'Pays  est obligatoire',
                                 'phone_inter_out_civ.required' => 'Numero est obligatoire',
@@ -346,12 +342,12 @@ class TransactionCiv extends Component
 
                     $this->validate(
                         [
-                            'transaction_amount_robus' => 'required',
+                            'transaction_inter_amount_money' => 'required',
                             'compte_inter_number_robus' => 'required',
                             'country_inter_out_civ' => 'required',
                         ],
                         [
-                            'transaction_amount_robus.required' =>
+                            'transaction_inter_amount_money.required' =>
                             'Votre montant est obligatoire',
                             'country_inter_out_civ.required' => 'Pays  est obligatoire',
                             'compte_inter_number_robus.required' => 'Numero est obligatoire',
@@ -416,7 +412,6 @@ class TransactionCiv extends Component
                                     "name_custumer" => 'required',
                                     "num_piece_custumer" => 'required',
                                     "date_piece" => 'required',
-                                    'country' => 'required',
                                 ],
                                 [
                                     'transaction_inter_amount_money.required' =>
@@ -426,7 +421,6 @@ class TransactionCiv extends Component
                                     'name_custumer.required' => 'Nom est obligatoire',
                                     'num_piece_custumer.required' => 'Numero piece est obligatoire',
                                     'date_piece.required' => 'date de validité est obligatoire',
-                                    'country.required' => 'Votre pays est obligatoire',
                                 ]
                             );
                         } else {
@@ -459,7 +453,6 @@ class TransactionCiv extends Component
                                     "name_sender" => 'required',
                                     "num_piece_custumer" => 'required',
                                     "date_piece" => 'required',
-                                    'country' => 'required',
                                     'account_number' => 'required',
                                     'name' => 'required',
                                 ],
@@ -471,7 +464,6 @@ class TransactionCiv extends Component
                                     'name_sender.required' => 'Nom expediteur est obligatoire',
                                     'num_piece_custumer.required' => 'Numero piece est obligatoire',
                                     'date_piece.required' => 'date de validité est obligatoire',
-                                    'country.required' => 'Votre pays est obligatoire',
                                     'account_number.required' => 'Numero de compte est obligatoire',
                                     'name.required' => 'Nom de la banque est obligatoire',
                                 ]

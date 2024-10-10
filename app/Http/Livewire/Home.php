@@ -26,7 +26,7 @@ class Home extends Component
     public $startDate = '';
     public $endDate = '';
 
-    
+
     public function render()
     {
         $walletUser = sabdy();
@@ -93,33 +93,28 @@ class Home extends Component
         $wave_amount_month = $this->getDaysTransaction(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount');
 
         // count One transactions
-        $transaction_amount_days = $this->getTransactionAllCount(WalletTransaction::class , 'wallet_transactions.wallet_id', 'wallet_transactions.created_at');
-        $reload_amount_days = $this->getTransactionAllCount(WalletReload::class , 'wallet_reloads.wallet_id', 'wallet_reloads.created_at');
+        $transaction_amount_days = $this->getTransactionAllCount(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at');
+        $reload_amount_days = $this->getTransactionAllCount(WalletReload::class, 'wallet_reloads.wallet_id', 'wallet_reloads.created_at');
         $payment_amount_days = $this->getTransactionAllCount(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at');
         $phone_amount_days = $this->getTransactionAllCount(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at');
-        $inter_amount_days = $this->getTransactionAllCount(WalletInter::class , 'wallet_inters.wallet_id', 'wallet_inters.created_at');
-        $bank_amount_days = $this->getTransactionAllCount(WalletBank::class , 'wallet_banks.wallet_id', 'wallet_banks.created_at');
-        $deposit_amount_days = $this->getTransactionAllCount(WalletDeposit::class , 'wallet_deposits.wallet_id', 'wallet_deposits.created_at');
-        $xbet_amount_days = $this->getTransactionAllCount(WalletXbet::class , 'wallet_xbets.wallet_id', 'wallet_xbets.created_at');
-        $wave_amount_days = $this->getTransactionAllCount(WalletWave::class , 'wallet_waves.wallet_id', 'wallet_waves.created_at');
-        $closeRobus = CloseApp::orderBy('id' , 'asc')->get();
+        $inter_amount_days = $this->getTransactionAllCount(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at');
+        $bank_amount_days = $this->getTransactionAllCount(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at');
+        $deposit_amount_days = $this->getTransactionAllCount(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at');
+        $xbet_amount_days = $this->getTransactionAllCount(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at');
+        $wave_amount_days = $this->getTransactionAllCount(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at');
+        $closeRobus = CloseApp::orderBy('id', 'asc')->get();
         // Get Users
-        $custumers =$this->getUserTypeTotal('is_custumers' , true);
-        $underDistributors =$this->getUserTypeTotal('is_under_distributer' , true);
-        $masters =$this->getUserTypeTotal('is_master' , true);
-        $supervisors =$this->getUserTypeTotal('is_supervisor' , true);
-        $distributors =$this->getUserTypeTotal('is_distributer' , true);
-        $companies =$this->getUserTypeTotal('is_company' , true);
-        $comzones =$this->getUserTypeTotal('is_com_zone' , true);
-
-  
-        if ($walletUser->is_under_distributer == true) {
-            abort(403);
-        } else {
+        $custumers = $this->getUserTypeTotal('is_custumers', true);
+        $underDistributors = $this->getUserTypeTotal('is_under_distributer', true);
+        $masters = $this->getUserTypeTotal('is_master', true);
+        $supervisors = $this->getUserTypeTotal('is_supervisor', true);
+        $distributors = $this->getUserTypeTotal('is_distributer', true);
+        $companies = $this->getUserTypeTotal('is_company', true);
+        $comzones = $this->getUserTypeTotal('is_com_zone', true);
 
             return view('livewire.home', [
 
-                 // Users
+                // Users
 
                 'is_masters' => $masters,
                 'is_custumers' => $custumers,
@@ -180,7 +175,7 @@ class Home extends Component
                 'amount_deposit_days' => $deposit_amount,
                 'amount_xbet_days' => $xbet_amount,
                 'amount_wave_days' => $wave_amount,
-          
+
 
                 'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
                 'usersCountry' => $walletUser->country->currencie->name,
@@ -214,11 +209,11 @@ class Home extends Component
                 'account_wave_days' => $wave_amount_days,
                 'open_apps' => $closeRobus,
             ]);
-        }
+        
     }
 
 
-    public function getUserTypeTotal($user , $status)
+    public function getUserTypeTotal($user, $status)
     {
 
         $totalUsers = SidUser::where($user,  $status)->count();
@@ -268,24 +263,29 @@ class Home extends Component
     public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days)
     {
 
+        $countryId = sabdy()->country->id;
 
-        return $walletModel::join(
+        $query =  $walletModel::join(
             'wallets',
             $wallet_transactions,
             'wallets.id'
         )
-            ->whereDate($transaction_days, Carbon::today())
-            ->where(function ($query) {
-                $countryId = sabdy()->country->id;
-                if (sabdy()->is_distributer) {
-                    $query->where('wallets.country_id', '=', sabdy()->id);
-                } else {
+            ->whereDate($transaction_days, Carbon::today());
 
-                    $query->where('wallets.country_id', '!=', $countryId)
-                        ->orWhere('wallets.country_id', '=', $countryId);
-                }
-            })
-            ->count();
+        if (sabdy()->is_distributer) {
+            $query->where('wallets.country_id', '=', sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transactions) {
+                $query->where($wallet_transactions, sabdy()->wallet->id);
+            });
+        } else {
+
+            $query->where('wallets.country_id', '!=', $countryId)
+                ->orWhere('wallets.country_id', '=', $countryId);
+        }
+
+
+        return $query->count();
     }
 
 
@@ -293,86 +293,97 @@ class Home extends Component
     public function getTransactionCount($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status)
     {
 
-        return $walletModel::join(
-            'wallets',
-            $wallet_transactions,
-            'wallets.id'
-        )
+        $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
             ->whereDate($transaction_days, Carbon::today())
-            ->where(function ($query) use ($walletMy) {
-                if (sabdy()->is_distributer) {
-                    $query->where($walletMy, '=', sabdy()->id);
-                } else {
-                    $query->where($walletMy, '=', sabdy()->id)->orWhere($walletMy, '!=', sabdy()->id);
-                }
-            })
-            ->where($wallet_status, $status)
-            ->where(function ($query) {
-                $countryId = sabdy()->country->id;
-                if (sabdy()->is_distributer) {
-                    $query->where('wallets.country_id', '=', sabdy()->id);
-                } else {
+            ->where($wallet_status, $status);
 
+        if (sabdy()->is_distributer) {
+            $query->where($walletMy, sabdy()->id)
+                ->where('wallets.country_id', sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transactions) {
+                $query->where($wallet_transactions, sabdy()->wallet->id);
+            });
+        } else {
+
+            $query->where(function ($query) use ($walletMy) {
+                $query->where($walletMy, sabdy()->id)
+                    ->orWhere($walletMy, '!=', sabdy()->id);
+            })
+                ->where(function ($query) {
+                    $countryId = sabdy()->country->id;
                     $query->where('wallets.country_id', '!=', $countryId)
                         ->orWhere('wallets.country_id', '=', $countryId);
-                }
-            })
-            ->count();
+                });
+        }
+
+        return $query->count();
     }
 
     // Sum amount days valeurs
     public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
     {
 
-        return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
-            ->where(function ($query) use ($walletMy) {
-                if (sabdy()->is_distributer) {
-                    $query->where($walletMy, '=', sabdy()->id);
-                } else {
-                    $query->where($walletMy, '=', sabdy()->id)->orWhere($walletMy, '!=', sabdy()->id);
-                }
-            })
-            // ->where($transaction_status, 'SUCCESS')
-            ->where(function ($query) {
-                $countryId = sabdy()->country->id;
-                if (sabdy()->is_distributer) {
-                    $query->where('wallets.country_id', '=', sabdy()->id);
-                } else {
+        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+        ->whereDate($transaction_days, Carbon::today())
+        ->where($transaction_status, 'SUCCESS');
 
+
+        if (sabdy()->is_distributer) {
+            $query->where($walletMy, sabdy()->id)
+                ->where('wallets.country_id', sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transaction) {
+                $query->where($wallet_transaction, sabdy()->wallet->id);
+            });
+        } else {
+
+            $query->where(function ($query) use ($walletMy) {
+                $query->where($walletMy, sabdy()->id)
+                    ->orWhere($walletMy, '!=', sabdy()->id);
+            })
+                ->where(function ($query) {
+                    $countryId = sabdy()->country->id;
                     $query->where('wallets.country_id', '!=', $countryId)
                         ->orWhere('wallets.country_id', '=', $countryId);
-                }
-            })
-            ->sum($wallet_amount);
+                });
+        }
+
+       
+        
+            return $query->sum($wallet_amount);
+
     }
 
     // Sum amount month valeurs
     public function getDaysTransaction($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
     {
 
-        return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereMonth($transaction_days, now()->month)
-            ->where(function ($query) use ($walletMy) {
-                if (sabdy()->is_distributer) {
-                    $query->where($walletMy, '=', sabdy()->id);
-                } else {
-                    $query->where($walletMy, '=', sabdy()->id)->orWhere($walletMy, '!=', sabdy()->id);
-                }
-            })
-            // ->where($transaction_status, 'SUCCESS')
-            ->where(function ($query) {
-                $countryId = sabdy()->country->id;
-                if (sabdy()->is_distributer) {
-                    $query->where('wallets.country_id', '=', sabdy()->id);
-                } else {
+        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+        ->whereMonth($transaction_days, now()->month)
+        ->where($transaction_status, 'SUCCESS');
 
+        if (sabdy()->is_distributer) {
+            $query->where($walletMy, sabdy()->id)
+                ->where('wallets.country_id', sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transaction) {
+                $query->where($wallet_transaction, sabdy()->wallet->id);
+            });
+        } else {
+
+            $query->where(function ($query) use ($walletMy) {
+                $query->where($walletMy, sabdy()->id)
+                    ->orWhere($walletMy, '!=', sabdy()->id);
+            })
+                ->where(function ($query) {
+                    $countryId = sabdy()->country->id;
                     $query->where('wallets.country_id', '!=', $countryId)
                         ->orWhere('wallets.country_id', '=', $countryId);
-                }
-            })
-            ->sum($wallet_amount);
+                });
+        }
+        
+        return $query->sum($wallet_amount);
+    
     }
-
-   
 }

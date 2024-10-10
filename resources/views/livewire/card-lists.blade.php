@@ -107,8 +107,6 @@
                                         @if (Auth::guard('web')->user()->hasPermissionTo('activer-carte'))
                                             <div class="flex items-center justify-center text-success">
 
-
-
                                                 <a wire:click="edit({{ $item->id }}, 'show-disabled-card-modal'); $emit('show-disabled-card-modal')"
                                                     class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
                                                     href="javascript:;"
@@ -120,13 +118,7 @@
                                     @else
                                         @if (Auth::guard('web')->user()->hasPermissionTo('activer-carte'))
                                             <div class="flex items-center justify-center text-danger">
-
-                                                {{-- <a class="flex items-center mr-3"
-                                                    href="{{ route('cards.activate', ['id' => $item->id]) }}"
-                                                    data-message="Etes vous sûr de vouloir effectuer cette action ?"
-                                                    onclick="promptAlert(this)">
-                                                    <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
-                                                </a> --}}
+                                               
 
                                                 <a wire:click="edit({{ $item->id }}, 'show-disabled-card-modal'); $emit('show-disabled-card-modal')"
                                                     class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
@@ -227,6 +219,6 @@
         });
     </script>
 
-    {{-- @include('livewire.commissions.modals.updateCard') --}}
+    {{-- @include('livewire.commissions.modals.providers.desabledOrderCard') --}}
 
 </div>

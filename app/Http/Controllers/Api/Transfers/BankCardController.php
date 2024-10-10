@@ -154,7 +154,6 @@ class BankCardController extends Controller
 
                     $valeur_amount =  $this->orderCardService->convertAdminCommission($percent_robus->amount);
 
-
                     if ($this->validatedamountDays->validateAmount($valeur_amount)) {
 
                         $walletOrderCard =  $this->orderCardService->createRobusWalletOrderCard($percent_robus->amount, $request->provider, $percent_robus, $request->address, $request->email);

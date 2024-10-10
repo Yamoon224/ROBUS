@@ -80,7 +80,30 @@
                             'error' => 'transaction_amount_robus',
                         ])
                     @else
-                        {{-- Other Providers Inputs --}}
+
+                        @if (sabdy()->is_under_distributer == 1)
+
+                            @include('components.transaction-custumer-input', [
+                                'id' => 'name_custumer',
+                                'model' => 'name_custumer',
+                                'label' => 'Nom & prenom',
+                                'error' => 'name_custumer',
+                            ])
+
+                            @include('components.transaction-custumer-input', [
+                                'id' => 'num_piece_custumer',
+                                'model' => 'num_piece_custumer',
+                                'label' => 'Numero piece',
+                                'error' => 'num_piece_custumer',
+                            ])
+                            
+                             @include('components.transaction-date-input', [
+                                'id' => 'date_piece',
+                                'model' => 'date_piece',
+                                'label' => 'Date piece',
+                                'error' => 'date_piece',
+                            ])
+                        @endif
                         <div class="col-span-6 mt-3">
                             <label for="transaction_phone" class="form-label">Numero de telephone <span
                                     class="text-danger">*</span></label>
