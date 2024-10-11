@@ -11,10 +11,11 @@
                         cette action ?</div>
                 </div>
 
-                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3" wire:loading.class="hidden"
+                    wire:target="updateInter">
 
                     <div class="mb-1 mt-6 col-span-12" x-data="{ show: true }">
-                        
+
                         <div class="d-flex justify-content-between">
                             <label class="form-label" for="password">Mot de passe<span class="text-danger">
                                     *</span></label>
@@ -22,7 +23,7 @@
                         <div class="input-group input-group-merge form-password-toggle">
                             <input wire:model="password_transaction" placeholder="mot de passe"
                                 :type="show ? 'password' : 'text'" id="password" tabindex="2"
-                                aria-describedby="password"   autocomplete="current-password"
+                                aria-describedby="password" autocomplete="current-password"
                                 class="form-control
                                 focus:placeholder-gray-500
                                 focus:bg-white 
@@ -52,16 +53,42 @@
                     </div>
                 </div>
 
-                   
-                    <div class="px-5 pb-8 text-center mt-6">
-                        <button type="button" wire:click="cancelInterField()"
-                            class="btn btn-outline-secondary w-25 mr-1 mb-1">Annuler</button>
-                        <button wire:click="updateInter" type="button" wire:loading.remove=""
-                            class="btn btn-primary w-50">Validez</button>
-                        <div  wire:loading wire:target="updateInter">
-                            Traitement en cours...
-                        </div>
+
+                <div class="px-5 pb-8 text-center mt-6">
+                    <button type="button" wire:click="cancelInterField()"
+                        class="btn btn-outline-secondary w-25 mr-1 mb-1" wire:loading.class="hidden"
+                        wire:target="updateInter">Annuler</button>
+
+                    <button wire:click="updateInter" type="button" wire:loading.attr="disabled"
+                        class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
+                        Validez la demande
+                    </button>
+
+                    <div wire:loading.flex wire:target="updateInter" class="flex items-center justify-center">
+                        <div class="loader"></div>
+                        <style>
+                            .loader {
+                                border: 4px solid rgba(0, 0, 0, 0.1);
+                                border-left-color: #09f;
+                                border-radius: 50%;
+                                width: 40px;
+                                height: 40px;
+                                animation: spin 1s linear infinite;
+                            }
+
+                            @keyframes spin {
+                                to {
+                                    transform: rotate(360deg);
+                                }
+                            }
+
+                            .hidden {
+                                display: none;
+                            }
+                        </style>
+                        <p>Traitement en cours...</p>
                     </div>
+                </div>
 
 
             </div>

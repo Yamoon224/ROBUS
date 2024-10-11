@@ -541,9 +541,7 @@
         <div class="tab-content mt-6">
 
             @include('components.transfer_compo')
-            @if (sabdy()->is_under_distributer == false)
-                @include('components.paiement_compo')
-            @endif
+            @include('components.paiement_compo')
             @include('components.virement_compo')
             @include('components.carte_compo')
             @include('components.credit_compo')

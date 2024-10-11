@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header alert alert-primary ">
-                <h2 class="font-medium text-base mr-auto">Valider la  demande de credit telephonique</h2>
+                <h2 class="font-medium text-base mr-auto">Valider la   demande de credit telephonique</h2>
             </div>
             <a wire:click="$emit('modal-hide-phoneCredit')"
                 style="position: absolute; right: 0px; top: 0px; margin-top: 0.75rem; margin-right: 0.75rem;">

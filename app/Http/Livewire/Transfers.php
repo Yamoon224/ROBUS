@@ -2560,6 +2560,7 @@ class Transfers extends Component
 
 
         try {
+
             if ($check) {
 
                 $this->validate([
@@ -2602,7 +2603,6 @@ class Transfers extends Component
                                 $this->handleAdminCommission($check, $admin_civ);
 
                                 $this->notifyUsers($check, $admins, 'Credit téléphonique', 'Demande de paiement de crédit a été validé', 'Demande de paiement de crédit validé');
-
 
                                 $message = 'Votre demande de credit de ' .
                                     $check->amount .

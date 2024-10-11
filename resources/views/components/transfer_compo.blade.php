@@ -1,4 +1,4 @@
-<div id="transfers" class="tab-pane " role="tabpanel" aria-labelledby="transfers-tab">
+<div id="transfers" class="tab-pane" role="tabpanel" aria-labelledby="transfers-tab">
     <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
         <div class="hidden md:block mx-auto text-slate-500"></div>
         <div class="hidden md:block mx-auto text-slate-500"></div>
@@ -6,10 +6,10 @@
 
         <div class="hidden md:block mx-auto text-slate-500"></div>
 
-        <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;   ">
+        <div class="input-group input-group-md hidden" style="margin-top: 13px;width: 250px;">
             <div class="w-56 relative text-slate-500">
 
-                <input type="text" name="table_search" wire:model.debounce.250ms="searchTransaction"
+                <input type="text" name="table_search" 
                     class="form-control  w-56 box pr-10" style="height: 3rem; background-color: #eff3f7;"
                     placeholder="Rechercher">
                 <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"

@@ -11,7 +11,8 @@
                         cette action ?</div>
                 </div>
 
-                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3" wire:loading.class="hidden"
+                    wire:target="updatePhoneCredit">
 
                     <div class="mb-1 mt-6 col-span-12" x-data="{ show: true }">
                         <div class="d-flex justify-content-between">
@@ -57,15 +58,41 @@
                     </div>
                 </div>
 
-                    <div class="px-5 pb-8 text-center mt-6">
-                        <button type="button" wire:click="cancelPhoneCreditField()"
-                            class="btn btn-outline-secondary w-25 mr-1 mb-1">Annuler</button>
-                        <button wire:click="updatePhoneCredit" type="button" wire:loading.remove=""
-                            class="btn btn-primary w-50">Validez</button>
-                            <div  wire:loading wire:target="updatePhoneCredit">
-                                Traitement en cours...
-                            </div>
+                <div class="px-5 pb-8 text-center mt-6">
+                    <button type="button" wire:click="cancelPhoneCreditField()"
+                        class="btn btn-outline-secondary w-25 mr-1 mb-1" wire:loading.class="hidden"
+                        wire:target="updatePhoneCredit">Annuler</button>>
+
+                    <button wire:click="updatePhoneCredit" type="button" wire:loading.attr="disabled"
+                        class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
+                        Validez la demande
+                    </button>
+
+                    <div wire:loading.flex wire:target="updatePhoneCredit" class="flex items-center justify-center">
+                        <div class="loader"></div>
+                        <style>
+                            .loader {
+                                border: 4px solid rgba(0, 0, 0, 0.1);
+                                border-left-color: #09f;
+                                border-radius: 50%;
+                                width: 40px;
+                                height: 40px;
+                                animation: spin 1s linear infinite;
+                            }
+
+                            @keyframes spin {
+                                to {
+                                    transform: rotate(360deg);
+                                }
+                            }
+
+                            .hidden {
+                                display: none;
+                            }
+                        </style>
+                        <p>Traitement en cours...</p>
                     </div>
+                </div>
 
 
             </div>

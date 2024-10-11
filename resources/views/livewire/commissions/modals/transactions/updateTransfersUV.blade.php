@@ -1,3 +1,4 @@
+
 <div wire:ignore.self id="update-transfersUV-modal" class="modal hide overflow-y-auto" data-tw-backdrop="static"
     style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000; display: block;">
     <div class="modal-dialog modal-lg">

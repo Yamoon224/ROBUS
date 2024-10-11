@@ -5,10 +5,10 @@
           <div class="hidden md:block mx-auto text-slate-500"></div>
           <div class="hidden md:block mx-auto text-slate-500"></div>
 
-          <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;">
+          <div class="input-group input-group-md hidden" style="margin-top: 13px;width: 250px;">
               <div class="w-56 relative text-slate-500">
 
-                  <input type="text" name="table_search" wire:model.debounce.250ms="searchPhoneCredit"
+                  <input type="text" name="table_search" 
                       class="form-control  w-56 box pr-10" style="height: 3rem;  background-color: #eff3f7;"
                       placeholder="Rechercher">
                   <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem; "
@@ -20,7 +20,7 @@
           <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
               <div class="flex items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                   <h2 class="font-medium text-base mr-auto">
-                      Liste des rechargements de credit telephonique
+                      Liste des réchargements de credit telephonique
                   </h2>
               </div>
               <div class="py-5">
