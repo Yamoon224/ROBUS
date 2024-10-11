@@ -56,7 +56,8 @@ class TransactionCiv extends Component
     public $commission_transaction_money_val_admin_receive;
     public $commission_transaction_money_val_nat_receive;
     public $password_validated;
-    
+    public $showPasswordField = 1; // Variable to control the visibility of the password field
+
     // protected $listeners = [
     //     'echo-private:wallet-transfers-created,.Created_wallet_transfers' => 'notifyNewTransfers',
     // ];
@@ -136,6 +137,7 @@ class TransactionCiv extends Component
         $this->name_custumer = '';
         $this->num_piece_custumer = '';
         $this->date_piece = '';
+        $this->step = 1;
         // $this->emit('modal-hide-transfers-validated');
         // $this->emit('modal-hide-transfers');
     }
@@ -151,6 +153,7 @@ class TransactionCiv extends Component
         $this->name_custumer = '';
         $this->num_piece_custumer = '';
         $this->date_piece = '';
+        $this->step = 1;
         $this->emit('modal-hide-transfers-validated');
         $this->emit('modal-hide-transfers');
         $this->emit('transaction_national');
@@ -172,6 +175,7 @@ class TransactionCiv extends Component
         $this->name_custumer = '';
         $this->num_piece_custumer = '';
         $this->date_piece = '';
+        $this->step = 1;
         // $this->emit('transaction_national');
         $this->emit('modal-hide-inters-validated');
         $this->emit('cancelTransactionInTransfers');
@@ -181,10 +185,14 @@ class TransactionCiv extends Component
     public function addTransaction()
     {
         $provider = Provider::whereId($this->provider_transaction)->first();
-
+        $som_transfers =  $this->getSumValTransactionProperty();
+        // Verifier plafond days
+        $valeur_ceiling = sabdy()->silver_ceiling;
+        
         try {
 
             if ($provider) {
+
 
 
                 if ($this->provider_transaction == 9) {
@@ -260,21 +268,29 @@ class TransactionCiv extends Component
                         ]);
 
 
-                        if (sabdy()->country->name_groupe == 'CIV') {
-
-                            $percent_robus = $this->getRobusPercentageMobileTwo();
-                        } else {
-
-                            $this->resetTransactionField();
-                            $this->emit('modal-hide-transfers');
-                            $this->emit('error', 'Pas de Transfert Mobile Money dans la zone !');
-                        }
-
                         $this->step = 2;
 
                     }
 
                 }
+
+
+                if($this->validateDailyLimit($som_transfers, $valeur_ceiling))
+                {
+
+                    $this->resetTransactionField();
+                    $this->emit('modal-hide-transfers');
+                    $this->emit('error', 'Votre montant journalier est atteint !');
+                }
+
+                if($this->validateAmount())
+                {
+
+                    $this->resetTransactionField();
+                    $this->emit('modal-hide-transfers');
+                    $this->emit('error', 'Verifié votre solde !!');
+                }
+
             } else {
                 $this->resetTransactionField();
                 $this->emit('modal-hide-transfers');
@@ -289,7 +305,6 @@ class TransactionCiv extends Component
 
     public function validatedPassword()
     {
-        
         $admin_civ = $this->getAdminCIVProperty();
         $som_transfers =  $this->getSumValTransactionProperty();
         // Verifier plafond days
@@ -309,11 +324,11 @@ class TransactionCiv extends Component
                     'Mot de passe est obligatoire',
                 ]
             );
-    
+          
             if (Hash::check($this->password_validated, sabdy()->password)) {
     
                 $this->password_validated = "";
-    
+
                 if ($this->provider_transaction == 9) {
     
                     $this->validate(
@@ -330,6 +345,7 @@ class TransactionCiv extends Component
                             'le numero est obligatoire',
                         ]
                     );
+
     
                     $this->transaction_amount_robus = htmlspecialchars($this->transaction_amount_robus, ENT_QUOTES, 'UTF-8');
                     $this->compte_number_robus = htmlspecialchars($this->compte_number_robus, ENT_QUOTES, 'UTF-8');
@@ -696,6 +712,8 @@ class TransactionCiv extends Component
                         $this->emit('error', 'Niveau de pourcentage introuvable !');
                     }
                 }
+
+
             } else {
     
                 $this->resetTransactionField();

@@ -295,14 +295,17 @@ class Paymenthisto extends Component
 
         $data = [];
 
-        $wallets = WalletPayment::whereBetween('wallet_payments.created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletPayment::whereBetween('wallet_payments.created_at', [$this->startDate, $this->endDate]);
 
+        
         $walletUser = Auth::guard('web')->user();
 
         if ($walletUser->is_under_distributer) {
             // Filtrer par utilisateur
             $wallets->where('created_by', $walletUser->id);
         }
+        
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -344,7 +347,7 @@ class Paymenthisto extends Component
 
         $data = [];
 
-        $wallets = WalletPayment::orderBy('wallet_payments.created_at', 'desc')->get();
+        $wallets = WalletPayment::orderBy('wallet_payments.created_at', 'desc');
 
         $walletUser = Auth::guard('web')->user();
 
@@ -352,6 +355,8 @@ class Paymenthisto extends Component
             // Filtrer par utilisateur
             $wallets->where('created_by', $walletUser->id);
         }
+        
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet

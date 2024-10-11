@@ -265,7 +265,7 @@
                             <div class="ml-auto">{{ $reload->created_at ?? null }}</div>
                         </div>
                     @endforeach
-                    <a href="{{ route('phones.historical') }}"
+                    <a href="{{ route('phones.states') }}"
                         class="btn btn-outline-secondary w-full border-slate-300 dark:border-darkmode-300 border-dashed relative justify-start mb-2">
                         <span class="truncate mr-5">Voir plus</span>
                         <span

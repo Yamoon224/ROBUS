@@ -421,7 +421,8 @@
                 <div class="modal-header alert alert-primary mb-3">
                     <h2 class="font-medium text-base mr-auto">Validation de mot de passe </h2>
                 </div>
-                <div class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20 mt-3">
+                <div
+                    class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20 mt-3">
                     <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                         <a href="#step-1"
                             class="w-10 h-10 rounded-full btn btn-circle {{ $stepPaiment != 2 ? 'btn-default' : 'btn-secondary' }}">1</a>
@@ -516,7 +517,7 @@
                         </div>
                     @endif
 
-                    <div class="col-span-12 mt-1">
+                    <div class="col-span-12 mt-1" wire:loading.class="hidden" wire:target="addPaiementValidated">
                         <div class="d-flex justify-content-between">
                             <label class="form-label" for="password">Mot de passe<span class="text-danger">
                                     *</span></label>
@@ -527,10 +528,10 @@
                                 :type="show ? 'password' : 'text'" id="password" tabindex="2"
                                 aria-describedby="password" name="password" required autocomplete="current-password"
                                 class="form-control
-                    focus:placeholder-gray-500
-                    focus:bg-white 
-                    focus:border-gray-600  
-                 focus:outline-none">
+                                    focus:placeholder-gray-500
+                                    focus:bg-white 
+                                    focus:border-gray-600  
+                                focus:outline-none">
                             <div class="input-group-text cursor-pointer">
                                 <svg class="h-4 text-gray-700" fill="none" @click="show = !show"
                                     :class="{ 'hidden': !show, 'block': show }" xmlns="http://www.w3.org/2000/svg"
@@ -565,15 +566,16 @@
 
                 <div class="modal-footer style-foo">
                     <button wire:click="cancelPaiementField" type="button"
-                        class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
+                        class="btn btn-outline-secondary w-20 mr-1" wire:loading.class="hidden"
+                        wire:target="addPaiementValidated">Annuler</button>
                     <button wire:click="addPaiementValidated" type="button" wire:loading.attr="disabled"
-                        class="btn btn-primary w-50" wire:loading.class="opacity-50 cursor-not-allowed">
+                        class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
                         Validez la demande
                     </button>
 
                     <div wire:loading.flex wire:target="addPaiementValidated"
                         class="flex items-center justify-center">
-                        <div class="loader"></div> <!-- Ajoutez votre loader ici -->
+                        <div class="loader"></div>
                         <style>
                             .loader {
                                 border: 4px solid rgba(0, 0, 0, 0.1);
@@ -588,6 +590,10 @@
                                 to {
                                     transform: rotate(360deg);
                                 }
+                            }
+
+                            .hidden {
+                                display: none;
                             }
                         </style>
                         <p>Traitement en cours...</p>

@@ -202,6 +202,11 @@ class TransactionCiv extends Component
         $this->provider_inter_out_civ = null;
         $this->country_inter_out_civ = null;
         $this->compte_inter_number_robus = '';
+        $this->name_custumer = '';
+        $this->num_piece_custumer = '';
+        $this->date_piece = '';
+        $this->name = '';
+        $this->name_sender = '';
         $this->phone_inter_out_civ = '';
         $this->transaction_inter_amount_money = '';
         $this->emit('modal-hide-inters-validated');
@@ -230,6 +235,11 @@ class TransactionCiv extends Component
         $this->compte_inter_number_robus = '';
         $this->transaction_inter_amount_money = '';
         $this->stepInter = 1;
+        $this->name_custumer = '';
+        $this->num_piece_custumer = '';
+        $this->date_piece = '';
+        $this->name = '';
+        $this->name_sender = '';
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
         $this->emit('transaction_inters');
@@ -240,12 +250,12 @@ class TransactionCiv extends Component
     {
 
         $provider_payment = Provider::whereId($this->provider_inter_out_civ)->first();    
+        $valeur_ceiling = sabdy()->silver_ceiling;
+        $som_transfers =  $this->getSumValTransactionProperty();
 
         try {
 
             if ($provider_payment) {
-
-                $this->emit('show-loading-screen');
 
 
                 if (in_array($this->provider_inter_out_civ, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 100, 101, 102])) {
@@ -360,6 +370,22 @@ class TransactionCiv extends Component
                     $this->resetInterField();
                     $this->emit('modal-hide-inters');
                     $this->emit('error', 'Ce providers n\'est pas encore disponible chez Robus !');
+                }
+
+                if($this->validateDailyLimit($som_transfers, $valeur_ceiling))
+                {
+
+                    $this->resetInterField();
+                    $this->emit('modal-hide-transfers');
+                    $this->emit('error', 'Votre montant journalier est atteint !');
+                }
+
+                if($this->validateAmount())
+                {
+
+                    $this->resetInterField();
+                    $this->emit('modal-hide-transfers');
+                    $this->emit('error', 'Verifié votre solde !!');
                 }
              
             } else {

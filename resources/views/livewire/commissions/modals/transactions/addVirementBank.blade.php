@@ -294,7 +294,7 @@
             </div>
         </div>
     @elseif ($stepVirement === 2)
-        <div class="modal-dialog modal-lg mt-3">
+        <div class="modal-dialog modal-lg mt-3" >
             <div class="modal-content">
                 <div class="modal-header alert alert-primary">
                     <h2 class="font-medium text-base mr-auto">Validation de mot de passe </h2>
@@ -338,7 +338,7 @@
                         </div>
 
                     </div>
-                    <div class="col-span-12 mt-1">
+                    <div class="col-span-12 mt-1"  wire:loading.class="hidden" wire:target="addValidatedVirement">
                         <div class="d-flex justify-content-between">
                             <label class="form-label" for="password">Mot de passe<span class="text-danger">
                                     *</span></label>
@@ -387,10 +387,12 @@
 
                 <div class="modal-footer style-foo">
                     <button wire:click="cancelVirementField" type="button"
-                        class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
+                        class="btn btn-outline-secondary w-20 mr-1"
+                        wire:loading.class="hidden" wire:target="addValidatedVirement"
+                        >Annuler</button>
 
                     <button wire:click="addValidatedVirement" type="button" wire:loading.attr="disabled"
-                        class="btn btn-primary w-50" wire:loading.class="opacity-50 cursor-not-allowed">
+                        class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
                         Validez la demande
                     </button>
 
@@ -412,6 +414,10 @@
                                     transform: rotate(360deg);
                                 }
                             }
+
+                            .hidden {
+                display: none;
+            }
                         </style>
                         <p>Traitement en cours...</p>
                     </div>

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\UpdateReloadEvent;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class StatistiqueController extends Controller
 {
@@ -14,6 +15,10 @@ class StatistiqueController extends Controller
      */
     public function browse_states()
     {
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
+
         return view('pages.states.browse_state');
     }
 
@@ -33,7 +38,6 @@ class StatistiqueController extends Controller
         // dd('ici');
         $event = new UpdateReloadEvent();
         event($event);
-        dd('iic');
     }
 
     /**
@@ -43,6 +47,9 @@ class StatistiqueController extends Controller
      */
     public function browse_reload()
     {
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
 
         return view('pages.states.browse_reload');
     }
@@ -55,11 +62,18 @@ class StatistiqueController extends Controller
     public function browse_transfer()
     {
 
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
         return view('pages.states.browse_transfer');
     }
 
     public function browse_state_employes()
     {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
         return view('firms.pages.browse_transfer_state');
 
     }
@@ -72,6 +86,9 @@ class StatistiqueController extends Controller
     public function browse_paiement()
     {
 
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
         return view('pages.states.browse_paiement');
     }
 
@@ -83,6 +100,9 @@ class StatistiqueController extends Controller
     public function browse_virement()
     {
 
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
         return view('pages.states.browse_virement');
     }
     /**
@@ -93,6 +113,9 @@ class StatistiqueController extends Controller
     public function browse_inter()
     {
 
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
         return view('pages.states.browse_inter');
     }
 
@@ -103,7 +126,9 @@ class StatistiqueController extends Controller
      */
     public function browse_carte()
     {
-
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
         return view('pages.states.browse_carte');
     }
 
@@ -114,7 +139,9 @@ class StatistiqueController extends Controller
      */
     public function browse_phone()
     {
-
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
         return view('pages.states.browse_phone');
     }
 }

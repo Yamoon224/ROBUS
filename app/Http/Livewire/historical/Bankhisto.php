@@ -456,7 +456,7 @@ class Bankhisto extends Component
 
         $data = [];
 
-        $wallets = WalletBank::where("wallet_banks.status", $this->statusFilter)->get();
+        $wallets = WalletBank::where("wallet_banks.status", $this->statusFilter);
 
         $walletUser = Auth::guard('web')->user();
 
@@ -464,6 +464,7 @@ class Bankhisto extends Component
             // Filtrer par utilisateur
             $wallets->where('created_by', $walletUser->id);
         }
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -496,7 +497,16 @@ class Bankhisto extends Component
 
         $data = [];
 
-        $wallets = WalletBank::whereBetween('created_at', [$this->startDate, $this->endDate])->get();
+        $wallets = WalletBank::whereBetween('created_at', [$this->startDate, $this->endDate]);
+
+        $walletUser = Auth::guard('web')->user();
+
+        if ($walletUser->is_under_distributer) {
+            // Filtrer par utilisateur
+            $wallets->where('created_by', $walletUser->id);
+        }
+        
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet

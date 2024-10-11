@@ -328,7 +328,7 @@
                         </div>
 
                     </div>
-                    <div class="col-span-12 mt-1">
+                    <div class="col-span-12 mt-1"  wire:loading.class="hidden" wire:target="addValidatedPhoneCredit">
                         <div class="d-flex justify-content-between">
                             <label class="form-label" for="password">Mot de passe<span class="text-danger">
                                     *</span></label>
@@ -339,10 +339,10 @@
                                 :type="show ? 'password' : 'text'" id="password" tabindex="2"
                                 aria-describedby="password" name="password" required autocomplete="current-password"
                                 class="form-control
-        focus:placeholder-gray-500
-        focus:bg-white 
-        focus:border-gray-600  
-     focus:outline-none">
+                                        focus:placeholder-gray-500
+                                        focus:bg-white 
+                                        focus:border-gray-600  
+                                    focus:outline-none">
                             <div class="input-group-text cursor-pointer">
                                 <svg class="h-4 text-gray-700" fill="none" @click="show = !show"
                                     :class="{ 'hidden': !show, 'block': show }" xmlns="http://www.w3.org/2000/svg"
@@ -375,11 +375,13 @@
 
                 <div class="modal-footer style-foo">
                     <button wire:click="cancelPhoneCreditField" type="button"
-                        class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
+                        class="btn btn-outline-secondary w-20 mr-1"
+                        wire:loading.class="hidden" wire:target="addValidatedPhoneCredit"
+                        >Annuler</button>
 
 
                     <button wire:click="addValidatedPhoneCredit" type="button" wire:loading.attr="disabled"
-                        class="btn btn-primary w-50" wire:loading.class="opacity-50 cursor-not-allowed">
+                        class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
                         Validez la demande
                     </button>
 
@@ -401,6 +403,9 @@
                                     transform: rotate(360deg);
                                 }
                             }
+                            .hidden {
+                display: none;
+            }
                         </style>
                         <p>Traitement en cours...</p>
                     </div>

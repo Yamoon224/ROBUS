@@ -310,7 +310,7 @@
             @endif
 
 
-            <div class="col-span-12 mt-1">
+            <div class="col-span-12 mt-1"  wire:loading.class="hidden" wire:target="validatedTransaction">
                 <div class="d-flex justify-content-between">
                     <label class="form-label" for="password">Mot de passe<span class="text-danger">
                             *</span></label>
@@ -358,12 +358,12 @@
         <div class="modal-footer">
             <button wire:click="cancelInterOutCivField" type="button" class="btn btn-outline-secondary w-20 mr-1"
                 wire:loading.attr="disabled" wire:loading.class="opacity-50 cursor-not-allowed"
-                wire:disabled="{{ $isValidating }}">
+                wire:loading.class="hidden" wire:target="validatedTransaction">
                 Annuler
             </button>
 
             <button wire:click="validatedTransaction" type="button" wire:loading.attr="disabled"
-                class="btn btn-primary w-50" wire:loading.class="opacity-50 cursor-not-allowed">
+                class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
                 Validez la demande
             </button>
 
@@ -384,6 +384,10 @@
                             transform: rotate(360deg);
                         }
                     }
+
+                    .hidden {
+                display: none;
+            }
                 </style>
                 <p>Traitement en cours...</p>
             </div>

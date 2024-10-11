@@ -1180,6 +1180,14 @@ class Transfers extends Component
 
                         $this->stepPaiment = 2;
                     }
+
+                    if ($som_transfers >= $valeur_ceiling) {
+                        $this->resetPaiementField();
+                        $this->emit('modal-hide-inters');
+                        $this->emit('warning', 'Votre montant journalier est atteint !');
+                        return false;
+                    }
+                   
                 } else {
                     $this->resetPaiementField();
                     $this->emit('modal-hide-paiement');
@@ -1626,6 +1634,13 @@ class Transfers extends Component
             } else {
                 $this->emit('error', 'Veuillez selectionnez un virement !');
             }
+
+            if ($som_transfers >= $valeur_ceiling) {
+                $this->resetVirementField();
+                $this->emit('modal-hide-inters');
+                $this->emit('warning', 'Votre montant journalier est atteint !');
+                return false;
+            }
         } catch (\Exception $exception) {
             $this->resetVirementField();
             $this->emit('modal-hide-virement');
@@ -1882,6 +1897,13 @@ class Transfers extends Component
                     $this->stepReloadCard = 2;
                 } else {
                     $this->emit('error', 'Aucune selection !');
+                }
+
+                if ($som_transfers >= $valeur_ceiling) {
+                    $this->resetReloadCardField();
+                    $this->emit('modal-hide-inters');
+                    $this->emit('warning', 'Votre montant journalier est atteint !');
+                    return false;
                 }
             } else {
                 $this->emit('error', 'Rechargement  existante !');

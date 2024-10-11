@@ -282,14 +282,17 @@ class Cartehisto extends Component
 
         $data = [];
 
-        $wallets = WalletDeposit::where('wallet_deposits.is_web', false)->where("wallet_deposits.status", $this->statusFilter)->get();
+        $wallets = WalletDeposit::where('wallet_deposits.is_web', false)->where("wallet_deposits.status", $this->statusFilter);
 
+       
         $walletUser = Auth::guard('web')->user();
 
         if ($walletUser->is_under_distributer) {
             // Filtrer par utilisateur
             $wallets->where('created_by', $walletUser->id);
         }
+        
+        $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
@@ -305,14 +308,18 @@ class Cartehisto extends Component
 
         $data = [];
 
-        $wallets = WalletDeposit::where('wallet_deposits.is_web', false)->get();
+        $wallets = WalletDeposit::where('wallet_deposits.is_web', false);
 
+       
         $walletUser = Auth::guard('web')->user();
 
         if ($walletUser->is_under_distributer) {
             // Filtrer par utilisateur
             $wallets->where('created_by', $walletUser->id);
         }
+        
+        $wallets = $wallets->get();
+
         foreach ($wallets as $bank) {
             // Accédez à la propriété amount sur chaque objet
             $data[] = $bank->amount;
