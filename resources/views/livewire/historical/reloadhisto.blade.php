@@ -100,18 +100,7 @@
 
             </div>
 
-            <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
-                <label for="countriesFilter">Filtrer par status</label>
-                <select id="statusFilter" wire:model="statusFilter"
-                    class="form-select py-3 px-4 box w-full
-                    dark-border-dark-3 mt-lg-0 ms-auto mt-3"
-                    aria-placeholder="Rechercher par pays">
-                    <option selected>Status</option>
-                    <option value="SUCCESS">Success</option>
-                    <option value="ERROR">Erreur</option>
-                    <option value="PENDING">En attente</option>
-                </select>
-            </div>
+          
             <div class="col-span-12 sm:col-span-3 2xl:col-span-3 " style="margin-top: 13px;width: 250px;">
                 <div class="w-56 relative text-slate-500 mt-3">
                     <input type="text" name="table_search" wire:model.debounce.250ms="searchRealodHistorical"

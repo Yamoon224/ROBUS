@@ -210,7 +210,7 @@ class Paymenthisto extends Component
 
 
         if (sabdy()->is_under_distributer) {
-            $paiements->where('created_by', sabdy()->id);
+            $paiements->where('wallet_payments.created_by', sabdy()->id);
         }
 
 

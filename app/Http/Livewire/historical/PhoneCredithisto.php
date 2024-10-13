@@ -185,7 +185,7 @@ class PhoneCredithisto extends Component
         $walletUser = Auth::guard('web')->user();
 
         if ($walletUser->is_under_distributer) {
-            $phones->where('created_by', $walletUser->id);
+            $phones->where('wallet_phone_credits.created_by', $walletUser->id);
         }
 
 

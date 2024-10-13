@@ -4,9 +4,8 @@
 
 @section('content')
     <section class="page-title animate__animated animate__slideInDown"
-        style="background-image:url(https://robus.home.ci/public/dist/images/transaction_money.jpeg);">
+        style="background-image:url(https://robus.home.ci/public/dist/images/transaction_acoumpte.jpg);">
         <div class="container text-center text-white">
-            <h1 class="text-black" style="color: black">TRANSFERT MOBILE MONEY ET PAIEMENT DE CREDIT</h1>
         </div>
 
     </section>

@@ -294,12 +294,28 @@
                                         {{ $walletInters->country->name ?? null }}
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ 'Numero de telephone' }}</td>
-                                    <td class="bold" style="border-bottom:1px dotted #B8B8B8">
-                                        {{ $walletInters->phone ?? null }}</td>
-                                </tr>
+                                @if ($walletInters->provider->id == 99)
+                                    <tr>
+                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
+                                            {{ 'Numero bénéficiaire' }}</td>
+                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
+                                            {{ $walletInters->phone ?? null }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
+                                            {{ 'Numero du compte' }}</td>
+                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
+                                            {{ $walletInters->number_compte ?? null }}</td>
+                                    </tr>
+                                @else
+                                    <tr>
+                                        <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
+                                            {{ 'Numero de téléphone' }}</td>
+                                        <td class="bold" style="border-bottom:1px dotted #B8B8B8">
+                                            {{ $walletInters->phone ?? null }}</td>
+                                    </tr>
+                                @endif
+
                                 <tr>
                                     <td class="text-left" style="border-bottom:1px dotted #B8B8B8">
                                         {{ 'frais' }}</td>
@@ -329,7 +345,7 @@
                                             {{ 'Montant demandé' }}</td>
                                         <td class="bold" style="border-bottom:1px dotted #B8B8B8">
                                             {{ $walletInters->amount ?? null }}
-                                            {{ $walletInters->wallet->currencie->name?? null }}</td>
+                                            {{ $walletInters->wallet->currencie->name ?? null }}</td>
                                     </tr>
                                     <tr>
                                         <td class="text-left" style="border-bottom:1px dotted #B8B8B8">

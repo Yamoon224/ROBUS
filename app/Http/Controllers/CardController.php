@@ -64,7 +64,7 @@ class CardController extends Controller
             abort(403);
         }
 
-        $type_reload =  $this->getProvidersByType(new Provider, sabdy()->country->id, 5);
+        $type_reload =  $this->getProvidersByTypepaddd(new Provider, sabdy()->country->id, 5);
 
 
         return view('pages.cards.add', compact('type_reload'));

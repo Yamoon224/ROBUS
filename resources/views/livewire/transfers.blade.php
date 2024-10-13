@@ -21,7 +21,9 @@
 
         @if ($is_distributer)
 
-            <h2 class="text-lg font-medium truncate mr-5 mt-6">Telechargé les differents raports d'activités</h2>
+            <h2 class="text-lg font-medium truncate mr-5 mt-6">
+                Téléchargé les différents rapports d'activités
+            </h2>
 
             @if (sabdy()->hasPermissionTo('transfers-argent'))
                 <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
@@ -472,16 +474,14 @@
 
                 @if (sabdy()->hasPermissionTo('transfers-argent'))
                     <button class="btn btn-transuv w-22 mr-1 mb-1"
-                        wire:click="$emit('modal-transfers-show' , 'create-transfersUV-modal')">Transfers
-                        d'argent</button>
+                        wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
+                        {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
+                    </button>
                 @endif
-                @if (sabdy()->is_under_distributer == false)
-
-                    @if (sabdy()->hasPermissionTo('rechargement-compte'))
-                        <button class="btn btn-invoice w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">Paiements
-                            facture</button>
-                    @endif
+                @if (sabdy()->hasPermissionTo('paiement-factures'))
+                    <button class="btn btn-invoice w-22 mr-1 mb-1"
+                        wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">Paiements
+                        facture</button>
                 @endif
                 @if (sabdy()->hasPermissionTo('virement-compte'))
                     <button class="btn btn-virement w-22 mr-1 mb-1"
@@ -540,14 +540,26 @@
 
         <div class="tab-content mt-6">
 
-            @include('components.transfer_compo')
-            @include('components.paiement_compo')
-            @include('components.virement_compo')
-            @include('components.carte_compo')
-            @include('components.credit_compo')
-            @include('components.inter_compo')
-            {{-- @include('components.xbetTransaction') --}}
-            {{-- @include('components.waveTransaction') --}}
+            @if (sabdy()->hasPermissionTo('transfers-argent'))
+                @include('components.transfer_compo')
+            @endif
+
+            @if (sabdy()->hasPermissionTo('paiement-factures'))
+                @include('components.paiement_compo')
+            @endif
+            @if (sabdy()->hasPermissionTo('virement-compte'))
+                @include('components.virement_compo')
+            @endif
+            @if (sabdy()->hasPermissionTo('rechargement-carte'))
+                @include('components.carte_compo')
+            @endif
+            @if (sabdy()->hasPermissionTo('rechargement-credit'))
+                @include('components.credit_compo')
+            @endif
+            @if (sabdy()->hasPermissionTo('rechargement-inters'))
+                @include('components.inter_compo')
+            @endif
+
         </div>
 
     </div>

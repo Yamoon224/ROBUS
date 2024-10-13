@@ -373,7 +373,7 @@ class Bankhisto extends Component
         $banks =  WalletBank::query();
 
         if (sabdy()->is_under_distributer) {
-            $banks->where('created_by', sabdy()->id);
+            $banks->where('wallet_banks.created_by', sabdy()->id);
         }
 
 

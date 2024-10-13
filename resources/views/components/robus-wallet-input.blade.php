@@ -1,39 +1,41 @@
-<div class="col-span-6 mt-3">
-    <label for="compte_number_robus" class="form-label">Numero wallet<span class="text-danger">*</span></label>
+<div class="grid grid-cols-12 gap-6 mt-6">
 
-    <input wire:model.debounce.300ms="compte_number_robus" id="compte_number_robus" type="text" class="form-control"
-        maxlength="9" placeholder="Numero wallet">
+    <!-- BEGIN: Sales Report -->
+    <div class="col-span-12 sm:col-span-8 lg:col-span-4 mt-8">
+        <div class="intro-y block sm:flex items-center h-10">
+            <h2 class="text-lg font-medium truncate mr-5">
+                Activités d'aujourd'hui en {{ $usersCountry }}
+            </h2>
+        </div>
+        <div class="intro-y box p-5 mt-12 sm:mt-5">
+            <canvas id="sum"    virement="{{ json_encode($sum_bank) }}"
+                deposit="{{ json_encode($sum_deposit) }}" payment="{{ json_encode($sum_payment) }}"
+                reload="{{ json_encode($sum_reload) }}" transaction="{{ json_encode($sum_transaction) }}"
+                inter="{{ json_encode($sum_inter) }}" phone="{{ json_encode($sum_phoneCredit) }}" 
+                phone="{{ json_encode($sum_phoneCredit) }}"
+                ></canvas>
 
-    {{-- Affichage du message de chargement pendant la recherche --}}
-    <div wire:loading>Recherche wallet...</div>
-
-    @php
-        $wallet_search = App\Models\Wallets\Wallet::where('wallet_id', $compte_number_robus)
-            ->first();
-
-        if ($wallet_search) {
-           $wallet_name = $wallet_search->sidUser->firstname . ' ' . $wallet_search->sidUser->lastname;
-        } else {
-            $wallet_name = 'Numero introuvable ou n\' est pas client';
-        }
-
-    @endphp
-
-    {{-- Affichage du nom ou du message d'erreur --}}
-    @if ($compte_number_robus == '')
-        <div class="text-gray-500 text-sm">Entrer numero wallet</div>
-    @else
-        @if ($wallet_name)
-            <div class="text-lg text-gray-900 text-bold text-secondary">
-                <span
-                    class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                    {{ $wallet_name }}
-                </span>
-            </div>
-        @endif
-    @endif
-
-    @error('compte_number_robus')
-        <span class="text-danger">{{ $message }}</span>
-    @enderror
+        </div>
+    </div>
+    <!-- END: Sales Report -->
+    <!-- BEGIN: Sales Report -->
+    <!-- BEGIN: Sales Report -->
+    <div class="col-span-12 sm:col-span-8 lg:col-span-8 mt-8">
+        <div class="intro-y flex items-center h-10">
+            <h2 class="text-lg font-medium truncate mr-5">
+                Les activités des 30 derniers jours en {{ $usersCountry }}
+            </h2>
+        </div>
+        {{-- <div class="intro-y box p-5 mt-12 sm:mt-5">
+            <canvas id="sum_month" virement_month="{{ json_encode($sum_bank_month) }}"
+                deposit_month="{{ json_encode($sum_deposit_month) }}"
+                payment_month="{{ json_encode($sum_payment_month) }}"
+                reload_month="{{ json_encode($sum_reload_month) }}"
+                transaction_month="{{ json_encode($sum_transaction_month) }}"
+                inter_month="{{ json_encode($sum_inter_month) }}"
+                phone_month="{{ json_encode($sum_phoneCredit_month) }}"></canvas>
+        </div> --}}
+    </div>
+    <!-- END: Sales Report -->
+    <!-- END: Sales Report -->
 </div>

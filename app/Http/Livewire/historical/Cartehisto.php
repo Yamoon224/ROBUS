@@ -193,7 +193,7 @@ class Cartehisto extends Component
 
         $walletUser = Auth::guard('web')->user();
         if (sabdy()->is_under_distributer) {
-            $cartes->where('created_by', sabdy()->id);
+            $cartes->where('wallet_deposits.created_by', sabdy()->id);
         }
 
 

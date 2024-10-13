@@ -164,6 +164,13 @@ function getReloadPaiements()
         ->orderBy('name', 'asc')->get();
 }
 
+function getReloadLimitPaiements()
+{
+
+    return Provider::whereStatus(true)->where('provider_type_id',  8)->where('id', '!=', 51)
+        ->orderBy('name', 'asc')->limit(9)->get();
+}
+
 
 function getReloadMoneysPaiements()
 {
@@ -172,9 +179,22 @@ function getReloadMoneysPaiements()
         ->orderBy('name', 'asc')->get();
 }
 
-function sabdyWebVerify()
+function sabdyHomeVerify()
 {
     $allowedRoles = ['root', 'Distributeur', 'superviseur'];
+
+    $user = Auth::guard('web')->user();
+
+    if ($user && $user->hasAnyRole($allowedRoles)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function sabdyWebVerify()
+{
+    $allowedRoles = ['root', 'Distributeur', 'superviseur' ,  'sous-distributeur'];
 
     $user = Auth::guard('web')->user();
 

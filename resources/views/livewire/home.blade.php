@@ -1,135 +1,124 @@
 <div>
 
     <div class="intro-y col-span-12 lg:col-span-12">
-        <div class="grid grid-cols-12 gap-6">
+        @if (sabdyHomeVerify())
+            <div class="grid grid-cols-12 gap-6">
 
+                <div class="col-span-12 2xl:col-span-12">
 
-            <div class="col-span-12 2xl:col-span-12">
-                @php
-                    $currentDayOfWeek = Illuminate\Support\Carbon::now()->dayOfWeek;
-                @endphp
-                @foreach ($open_apps as $index => $open)
-                    <div class="col-span-12 xl:col-span-6 ml-3 mr-3 mb-3">
-                        @if ($currentDayOfWeek == $open->id)
-                            <h2 class="text-lg font-medium truncate items-center text-xs mt-3 mr-6 ml-6 text-center whitespace-nowrap"
-                                id="box_{{ $index }}">
-                               App Robus Distributeur est ouvert ce {{ $open->day_of_week ?? null }} de :
-                                {{ $open->time_start ?? null }} a {{ $open->time_end ?? null }}
-                            </h2>
-                        @endif
-                    </div>
-                @endforeach
-                <div class="grid grid-cols-12 gap-6 mt-5">
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y style_user1">
-                        <div class="report-box zoom-in style_user1">
-                            <div class="box p-5 style_user1">
-                                <div class="flex">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                    <div class="grid grid-cols-12 gap-6 mt-5">
+                        <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y style_user1">
+                            <div class="report-box zoom-in style_user1">
+                                <div class="box p-5 style_user1">
+                                    <div class="flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                        </svg>
 
                                     </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    {{ $is_custumers ?? null }}
+                                    <div class="text-3xl font-medium leading-8 mt-6">
+                                        {{ $is_custumers ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500 mt-1">Clients</div>
                                 </div>
-                                <div class="text-base text-slate-500 mt-1">Clients</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-2 intro-y style_2">
-                        <div class="report-box zoom-in style_2">
-                            <div class="box p-5 style_2">
-                                <div class="flex">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                        <div class="col-span-12 sm:col-span-6 xl:col-span-2 intro-y style_2">
+                            <div class="report-box zoom-in style_2">
+                                <div class="box p-5 style_2">
+                                    <div class="flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="text-3xl font-medium leading-8 mt-6">
+                                        {{ $is_distributors ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500 mt-1">Operatrices</div>
                                 </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    {{ $is_distributors ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Operatrices</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y style_user2">
-                        <div class="report-box zoom-in style_user2">
-                            <div class="box p-5 style_user2">
-                                <div class="flex">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                        <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y style_user2">
+                            <div class="report-box zoom-in style_user2">
+                                <div class="box p-5 style_user2">
+                                    <div class="flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="text-3xl font-medium leading-8 mt-6">
+                                        {{ $is_underdistributors }}
+                                    </div>
+                                    <div class="text-base text-slate-500 mt-1">Sous-distributeurs</div>
                                 </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    {{ $is_underdistributors }}
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Sous-distributeurs</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y ">
-                        <div class="report-box zoom-in ">
-                            <div class="box p-5 ">
-                                <div class="flex">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                        <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y ">
+                            <div class="report-box zoom-in ">
+                                <div class="box p-5 ">
+                                    <div class="flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="text-3xl font-medium leading-8 mt-6">
+                                        {{ $is_compagnies }}
+                                    </div>
+                                    <div class="text-base text-slate-500 mt-1">Compagnies</div>
                                 </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    {{ $is_compagnies }}
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Compagnies</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 xl:col-span-2 intro-y style_user3">
-                        <div class="report-box zoom-in  style_user3">
-                            <div class="box p-5 style_user3">
-                                <div class="flex">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                        <div class="col-span-12 sm:col-span-6 xl:col-span-2 intro-y style_user3">
+                            <div class="report-box zoom-in  style_user3">
+                                <div class="box p-5 style_user3">
+                                    <div class="flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="text-3xl font-medium leading-8 mt-6">
+                                        {{ $is_masters ?? null }}</div>
+                                    <div class="text-base text-slate-500 mt-1">Masters</div>
                                 </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    {{ $is_masters ?? null }}</div>
-                                <div class="text-base text-slate-500 mt-1">Masters</div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y">
-                        <div class="report-box zoom-in">
-                            <div class="box p-5">
-                                <div class="flex">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                        <div class="col-span-12 sm:col-span-6 lg:col-span-2 intro-y">
+                            <div class="report-box zoom-in">
+                                <div class="box p-5">
+                                    <div class="flex">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                                        </svg>
 
+                                    </div>
+                                    <div class="text-3xl font-medium leading-8 mt-6">
+                                        {{ $is_supervisors ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500 mt-1">Superviseurs</div>
                                 </div>
-                                <div class="text-3xl font-medium leading-8 mt-6">
-                                    {{ $is_supervisors ?? null }}
-                                </div>
-                                <div class="text-base text-slate-500 mt-1">Superviseurs</div>
                             </div>
                         </div>
+
+
+
                     </div>
-
-
 
                 </div>
-
             </div>
-        </div>
+        @endif
+
         <div class="intro-y block sm:flex items-center h-10 mt-6">
             <h2 class="text-lg font-medium truncate mr-5">
                 Les Activites du compte Aujourdh'ui
@@ -196,7 +185,7 @@
                         <div class="text-3xl font-medium leading-8 mt-transactions">
                             {{ number_format($amount_reload_days, 2, ',', ' ') ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Rechargements {{ $user_currencie }}</div>
+                        <div class="text-base text-slate-500 mt-1">Réchargements {{ $user_currencie }}</div>
                     </div>
                 </div>
             </div>
@@ -242,7 +231,7 @@
                         <div class="text-3xl font-medium leading-8 mt-transactions">
                             {{ $amount_phone_credit_days ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Credit télephonique {{ $user_currencie }} </div>
+                        <div class="text-base text-slate-500 mt-1">Crédits téléphoniques {{ $user_currencie }} </div>
                     </div>
                 </div>
             </div>
@@ -423,7 +412,7 @@
                         <div class="text-3xl font-medium leading-8 mt-transactions">
                             {{ $amount_bank_days ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Transactions Banque {{ $user_currencie }} </div>
+                        <div class="text-base text-slate-500 mt-1">Transactions Banques {{ $user_currencie }} </div>
                     </div>
                 </div>
             </div>
@@ -468,7 +457,7 @@
                         <div class="text-3xl font-medium leading-8 mt-transactions">
                             {{ $amount_deposit_days ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Rechargements carte {{ $user_currencie }} </div>
+                        <div class="text-base text-slate-500 mt-1">Réchargement cartes {{ $user_currencie }} </div>
                     </div>
                 </div>
             </div>
@@ -479,7 +468,7 @@
                             <div class="ml-auto">
                                 <div class="report-box__indicator bg-success tooltip cursor-pointer">
                                     Success
-                                    {{ $success_wave ?? null }}
+                                    {{ $success_xbet ?? null }}
 
                                 </div>
                             </div>
@@ -487,7 +476,7 @@
 
                                 <div class="report-box__indicator bg-pending tooltip cursor-pointer">
                                     Attente
-                                    {{ $pendding_wave ?? null }}
+                                    {{ $pendding_xbet ?? null }}
 
                                 </div>
 
@@ -495,7 +484,7 @@
                             <div class="ml-auto">
                                 <div class="report-box__indicator bg-danger tooltip cursor-pointer">
                                     Echec
-                                    {{ $pendding_wave ?? null }}
+                                    {{ $error_xbet ?? null }}
 
                                 </div>
 
@@ -510,9 +499,9 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $amount_wave_days ?? null }}
+                            {{ $amount_xbet_days ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Achat UV Wave{{ $user_currencie }} </div>
+                        <div class="text-base text-slate-500 mt-1">Achat 1Xbets{{ $user_currencie }} </div>
                     </div>
                 </div>
             </div>
@@ -556,7 +545,7 @@
                         <div class="text-3xl font-medium leading-8 mt-transactions">
                             {{ $amount_deposit_days ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Rechargements carte {{ $user_currencie }} </div>
+                        <div class="text-base text-slate-500 mt-1">Réchargement cartes {{ $user_currencie }} </div>
                     </div>
                 </div>
             </div>
@@ -583,7 +572,7 @@
                 <div class="font-medium text-historique mt-6">
 
                     <a href="{{ route('transactions.browse') }}">
-                        Transfers d'argent</a>
+                        Transferts d'argents</a>
 
                 </div>
 
@@ -603,7 +592,7 @@
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_payment_days ?? null }}</div>
                 <div class="font-medium text-historique mt-6">
                     <a href="{{ route('transactions.browse') }}">
-                        Paiement facture</a>
+                        Paiement factures</a>
                 </div>
             </div>
             <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
@@ -619,8 +608,7 @@
 
                 <div class="font-medium text-historique  mt-6">
 
-                    <a href="{{ route('transactions.browse') }}"> Virement
-                        bancaire</a>
+                    <a href="{{ route('transactions.browse') }}"> Virements bancaires</a>
 
                 </div>
             </div>
@@ -637,7 +625,7 @@
 
                 <div class="font-medium text-historique mt-6">
 
-                    <a href="{{ route('transactions.browse') }}"> Paiement internationnal</a>
+                    <a href="{{ route('transactions.browse') }}"> Paiements internationaux</a>
 
                 </div>
             </div>
@@ -653,7 +641,7 @@
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_deposit_days ?? null }}</div>
 
                 <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}"> Rechargement de carte</a>
+                    <a href="{{ route('transactions.browse') }}"> Réchargements de carte</a>
                 </div>
             </div>
             <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_facture_home3">
@@ -668,100 +656,53 @@
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_reload_days ?? null }}</div>
 
                 <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.uv.browse') }}"> Rechargement</a>
+                    <a href="{{ route('transactions.uv.browse') }}"> Réchargements</a>
 
 
                 </div>
             </div>
         </div>
-        <div class="col-span-12 2xl:col-span-3">
 
-            <div class="intro-y col-span-12 lg:col-span-12">
-                <div class="grid grid-cols-12 gap-6">
+        <div class="grid grid-cols-12 gap-6 mt-6">
 
-                    <div class="col-span-12 2xl:col-span-9">
-                        <div class="col-span-12 2xl:col-span-9">
-                            <!-- BEGIN: Sales Report -->
-                            <div class="col-span-12 sm:col-span-12 lg:col-span-8 mt-8">
-                                <div class="intro-y block sm:flex items-center h-10">
-                                    <h2 class="text-lg font-medium truncate mr-5">
-                                        Activités d'aujourd'hui en {{ $usersCountry }}
-                                    </h2>
-                                </div>
-                                <div class="intro-y box p-5 mt-12 sm:mt-5">
-                                    <canvas id="sum" virement="{{ json_encode($sum_bank) }}"
-                                        deposit="{{ json_encode($sum_deposit) }}"
-                                        payment="{{ json_encode($sum_payment) }}"
-                                        reload="{{ json_encode($sum_reload) }}"
-                                        transaction="{{ json_encode($sum_transaction) }}"
-                                        inter="{{ json_encode($sum_inter) }}" 
-                                        xbet="{{ json_encode($sum_xbet) }}"
-                                        wave="{{ json_encode($sum_wave) }}"
-                                        phone="{{ json_encode($sum_phoneCredit) }}"></canvas>
+            <!-- BEGIN: Sales Report -->
+            <div class="col-span-12 sm:col-span-8 lg:col-span-4 mt-8">
+                <div class="intro-y block sm:flex items-center h-10">
+                    <h2 class="text-lg font-medium truncate mr-5">
+                        Activités d'aujourd'hui en {{ $usersCountry }}
+                    </h2>
+                </div>
+                <div class="intro-y box p-5 mt-12 sm:mt-5">
+                    <canvas id="sum" virement="{{ json_encode($sum_bank) }}"
+                        deposit="{{ json_encode($sum_deposit) }}" payment="{{ json_encode($sum_payment) }}"
+                        reload="{{ json_encode($sum_reload) }}" transaction="{{ json_encode($sum_transaction) }}"
+                        inter="{{ json_encode($sum_inter) }}" phone="{{ json_encode($sum_phoneCredit) }}"
+                        xbet="{{ json_encode($sum_phoneCredit) }}"></canvas>
 
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-span-12 sm:col-span-8 lg:col-span-9 mt-8">
-                            <div class="intro-y flex items-center h-10">
-                                <h2 class="text-lg font-medium truncate mr-5">
-                                    Les activités du mois en {{ $usersCountry }}
-                                </h2>
-                            </div>
-                            <div class="intro-y box p-5 mt-12 sm:mt-5">
-                                <canvas id="sum_month" virement_month="{{ json_encode($sum_bank_month) }}"
-                                    deposit_month="{{ json_encode($sum_deposit_month) }}"
-                                    payment_month="{{ json_encode($sum_payment_month) }}"
-                                    reload_month="{{ json_encode($sum_reload_month) }}"
-                                    transaction_month="{{ json_encode($sum_transaction_month) }}"
-                                    inter_month="{{ json_encode($sum_inter_month) }}"
-                                    xbet_month="{{ json_encode($sum_xbet_month) }}"
-                                    wave_month="{{ json_encode($sum_wave_month) }}"
-                                    phone_month="{{ json_encode($sum_phoneCredit_month) }}">
-                                </canvas>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="col-span-12 2xl:col-span-3">
-                        <div class="col-span-12 sm:col-span-12 lg:col-span-4 mt-8">
-                            <div class="intro-y block sm:flex items-center h-10">
-                                <h2 class="text-lg font-medium truncate mr-5">
-                                    Les jours d'ouverture et fermeture de ROBUS
-                                </h2>
-                            </div>
-                            @php
-                                $currentDayOfWeek = Illuminate\Support\Carbon::now()->dayOfWeek;
-                            @endphp
-                            @foreach ($open_apps as $index => $open)
-                                <div class="col-span-12 xl:col-span-6 ml-3 mr-3 mb-3">
-                                    @if ($currentDayOfWeek == $open->id)
-                                        <div class="box blinking style_app" id="box_{{ $index }}">
-                                        @else
-                                            <div class="box style_app" id="box_{{ $index }}">
-                                    @endif
-                                    <div class="flex flex-col items-center p-3 border-b border-slate-200/60 dark:border-darkmode-400"
-                                        style="overflow-x: auto;">
-                                        <h2 class="text-lg font-medium truncate mr-5 text-white">
-                                            {{ $open->day_of_week ?? null }}
-                                        </h2>
-                                    </div>
-                                    <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6">
-                                        <div class="mr-auto text-white">Ouverture : {{ $open->time_start ?? null }}
-                                        </div>
-                                    </div>
-                                    <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6 mb-3">
-                                        <div class="mr-auto text-white">Fermeture : {{ $open->time_end ?? null }}
-                                        </div>
-                                    </div>
-                                </div>
-                        </div>
-                        @endforeach
-
-
-                    </div>
                 </div>
             </div>
+            <!-- END: Sales Report -->
+            <!-- BEGIN: Sales Report -->
+            <!-- BEGIN: Sales Report -->
+            <div class="col-span-12 sm:col-span-8 lg:col-span-8 mt-8">
+                <div class="intro-y flex items-center h-10">
+                    <h2 class="text-lg font-medium truncate mr-5">
+                        Les activités des 30 derniers jours en {{ $usersCountry }}
+                    </h2>
+                </div>
+                <div class="intro-y box p-5 mt-12 sm:mt-5">
+                    <canvas id="sum_month" virement_month="{{ json_encode($sum_bank_month) }}"
+                        deposit_month="{{ json_encode($sum_deposit_month) }}"
+                        payment_month="{{ json_encode($sum_payment_month) }}"
+                        reload_month="{{ json_encode($sum_reload_month) }}"
+                        transaction_month="{{ json_encode($sum_transaction_month) }}"
+                        inter_month="{{ json_encode($sum_inter_month) }}"
+                        phone_month="{{ json_encode($sum_phoneCredit_month) }}"
+                        xbet_month="{{ json_encode($sum_xbet_month) }}"></canvas>
+                </div>
+            </div>
+            <!-- END: Sales Report -->
+            <!-- END: Sales Report -->
         </div>
 
     </div>
@@ -789,7 +730,6 @@
         var sumTransaction = JSON.parse($('#sum').attr('transaction'));
         var sumInter = JSON.parse($('#sum').attr('inter'));
         var sumPhone = JSON.parse($('#sum').attr('phone'));
-        var sumWave = JSON.parse($('#sum').attr('wave'));
         var sumXbet = JSON.parse($('#sum').attr('xbet'));
         var sum_v_month = JSON.parse($('#sum_month').attr('virement_month'));
         var sum_d_month = JSON.parse($('#sum_month').attr('deposit_month'));
@@ -798,13 +738,12 @@
         var sum_t_month = JSON.parse($('#sum_month').attr('transaction_month'));
         var sum_i_month = JSON.parse($('#sum_month').attr('inter_month'));
         var sum_phone_month = JSON.parse($('#sum_month').attr('phone_month'));
-        var sum_xbet_month = JSON.parse($('#sum_month').attr('xbet_month'));
-        var sum_wave_month = JSON.parse($('#sum_month').attr('wave_month'));
+        var sum_1xbetw_month = JSON.parse($('#sum_month').attr('xbet_month'));
         var _ctx = $('#sum');
         var _ctx2 = $('#sum_month');
 
         new Chart(_ctx, {
-            type: 'line',
+            type: 'pie',
             data: {
                 labels: [
                     'Virements',
@@ -814,14 +753,14 @@
                     'Transactions',
                     'Inters',
                     'Credits',
-                    'Xbets',
-                    'Wave'
+                    '1Xbet',
                 ],
                 datasets: [{
 
                     label: 'Activites du jours',
-                    data: [sumVirement, sumDeposit, sumPayment, sumReload, sumTransaction, sumInter,
-                        sumPhone, sumXbet , sumWave
+                    data: [sumVirement, sumDeposit, sumPayment, sumReload,
+                        sumTransaction, sumInter,
+                        sumPhone, sumXbet
                     ],
                     backgroundColor: [
                         '#84cc17',
@@ -875,16 +814,15 @@
                     'Paiements',
                     'Rechargement',
                     'Transactions',
+                    '1Xbet',
                     'Inters',
-                    'Credits',
-                    'Xbets',
-                    'Waves'
                 ],
                 datasets: [{
 
                     label: 'Activites du mois',
-                    data: [sum_v_month, sum_d_month, sum_p_month, sum_r_month, sum_t_month, sum_i_month,
-                        sum_phone_month, sum_xbet_month , sum_wave_month
+                    data: [sum_v_month, sum_d_month,
+                        sum_p_month, sum_r_month, sum_t_month, sum_i_month, sum_phone_month,
+                        sum_1xbetw_month
                     ],
                     backgroundColor: [
                         '#84cc17',

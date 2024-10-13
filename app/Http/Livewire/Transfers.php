@@ -346,7 +346,11 @@ class Transfers extends Component
     public $stepVirement = 1;
     public $stepReloadCard = 1;
     public $stepPhoneCredit = 1;
-    public $password_validated;
+    public $password_validated = ''; 
+    public $amount_canal_send; 
+    public $name_canal_send; 
+    public $password_validated_transaction;
+    public $isPasswordValid = false;
 
 
     protected $listeners = [
@@ -383,6 +387,21 @@ class Transfers extends Component
     ];
 
 
+
+    public function checkPassword()
+    {
+
+        if (empty($this->password_validated)) {
+            // Gérer le cas où le mot de passe n'est pas valide
+            return;
+        }
+
+        if (Hash::check($this->password_validated, sabdy()->password)) {
+            $this->isPasswordValid = true;
+        } else {
+            $this->isPasswordValid = false;
+        }
+    }
 
     public function transactionAll($data)
     {
@@ -1135,6 +1154,9 @@ class Transfers extends Component
                         // Percent commission providers
                         $val_amount = $offer->amount + $percent_robus->amount_canal;
 
+                        $this->name_canal_send  = $offer->name ;
+                        $this->amount_canal_send  = $val_amount ;
+
                         switch ($this->paiementChoix_phone) {
                             case 1:
                                 $validationRules = [
@@ -1187,7 +1209,6 @@ class Transfers extends Component
                         $this->emit('warning', 'Votre montant journalier est atteint !');
                         return false;
                     }
-                   
                 } else {
                     $this->resetPaiementField();
                     $this->emit('modal-hide-paiement');
@@ -4433,6 +4454,8 @@ class Transfers extends Component
         $commission_reload_val_nat_true_pay = null;
         $commission_reload_val_nat_true_receive = null;
         $commission_paiement_invoice_val_nat_pay = null;
+        $commission_paiement_invoice_val_nat_pay_frais = null;
+        $commission_paiement_canal_val_nat_pay_frais = null;
         $commission_paiement_invoice_val_nat_receive = null;
         $commission_paiement_invoice_canal_val_nat = null;
         $commission_paiement_invoice_canal_val_inter = null;
@@ -4599,6 +4622,8 @@ class Transfers extends Component
 
                 $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
 
+                $commission_paiement_invoice_val_nat_pay_frais =  (float) $commission_invoice->amount_auther;
+
                 $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_total;
             }
         }
@@ -4613,11 +4638,17 @@ class Transfers extends Component
                 $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
 
                 $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie;
+
+                $commission_paiement_invoice_val_nat_pay_frais =  (float) $commission_invoice->amount_auther;
+
             } else {
 
                 $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->amount_auther;
 
                 $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie;
+
+                $commission_paiement_invoice_val_nat_pay_frais =  (float) $commission_invoice->amount_auther;
+
             }
         }
 
@@ -4647,6 +4678,7 @@ class Transfers extends Component
                         $commission_paiement_invoice_canal_val_inter =  number_format($valeur_offer, 2, ',', ' ');
                     }
 
+                
                     $amount_received_canal =  $valeur_offer;
                 }
             }
@@ -4855,6 +4887,7 @@ class Transfers extends Component
             'amount_transaction_nat_val_pay' => $commission_transaction_val_nal_pay,
             'amount_phone_credit_val_nat_pay' => $commission_phone_credit_val_nat_pay,
             'amount_phone_credit_val_nat_receive' => $commission_phone_credit_val_nat_receive,
+            'amount_paiemet_frais_receive' => $commission_paiement_invoice_val_nat_pay_frais,
             'amount_received_canal' => $amount_received_canal,
             'code_valided' => $code_validated_val_nat,
             'code_valided_inter' => $code_validated_val_nat,
@@ -4912,7 +4945,7 @@ class Transfers extends Component
         ]);
     }
 
- 
+
     protected function createTransaction($check, $transactionCode, $transactionCompiCode)
     {
         return Transaction::create([

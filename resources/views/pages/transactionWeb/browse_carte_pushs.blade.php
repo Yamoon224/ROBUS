@@ -4,7 +4,7 @@
 
 @section('content')
     <section class="page-title animate__animated animate__slideInDown"
-        style="background-image:url(https://robus.home.ci/public/dist/images/rechargement_carte.jpeg);">
+        style="background-image:url(https://robus.home.ci/public/dist/images/wallet_reload.jpeg);">
         <div class="container text-center text-white">
             <h1>Réchargement de carte PUSH</h1>
         </div>

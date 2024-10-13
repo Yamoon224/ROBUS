@@ -2305,6 +2305,7 @@ class AdminHistoriqueController extends Controller
 
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_payment', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_payment.pdf');
+
         } else {
 
 
@@ -2461,7 +2462,30 @@ class AdminHistoriqueController extends Controller
 
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_transfer', compact('wallet_id', 'amount_reload_total', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_transfers.pdf');
-        } else {
+
+        }elseif(sabdy()->is_under_distributer == true) {
+
+            foreach (WalletTransaction::where('created_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
+                $bank_historicals[] = $bank;
+            }
+
+
+            $account_penddings = WalletTransaction::where('created_by', $userId)->whereDate('updated_at', $formattedDate)
+                ->where('status', 'PENDING')->count();
+            $account_success = WalletTransaction::where('created_by', $userId)->whereDate('updated_at', $formattedDate)
+                ->where('status', 'SUCCESS')->count();
+
+            $account_errors = WalletTransaction::where('created_by', $userId)->whereDate('updated_at', $formattedDate)
+                ->where('status', 'ERROR')->count();
+
+            $amount_reload_total = $this->walletRelaodSumReceivedTransactionDaysProperty($userId);
+
+            $amount_total = $this->walletRelaodSumSendTransactionDaysProperty($userId);
+
+            $pdf = Pdf::loadView('pages.historicals.distributers.pdf_transfer', compact('wallet_id', 'amount_reload_total', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
+            return $pdf->download('reporting_transfers.pdf');
+
+        }  else {
 
             foreach (WalletTransaction::where('wallet_id', $id)->get() as $bank) {
                 $bank_historicals[] = $bank;
@@ -2544,4 +2568,6 @@ class AdminHistoriqueController extends Controller
 
         return array_sum($data);
     }
+
+
 }

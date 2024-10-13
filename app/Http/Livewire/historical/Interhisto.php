@@ -500,7 +500,7 @@ class Interhisto extends Component
 
 
         if (sabdy()->is_under_distributer) {
-            $inters->where('created_by', sabdy()->id);
+            $inters->where('wallet_inters.created_by', sabdy()->id);
         }
 
 
@@ -512,7 +512,7 @@ class Interhisto extends Component
                 'livewire.historical.interhisto',
                 [
                     'user' => $this->WalletIntersDays,
-                    'inter_historicals' =>  $inters->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->orderBy('created_at', 'desc')->paginate(15),
+                    'inter_historicals' =>  $inters->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
                     'providers' =>  $this->NationTransaction,
 

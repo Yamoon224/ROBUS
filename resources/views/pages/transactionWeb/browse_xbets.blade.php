@@ -4,7 +4,7 @@
 
 @section('content')
     <section class="page-title animate__animated animate__slideInDown"
-        style="background-image:url(https://robus.home.ci/public/dist/images/transactions.jpeg);">
+        style="background-image:url(https://robus.home.ci/public/dist/images/reload_acompte.jpg);">
         <div class="container text-center text-white">
             <h1>Réchargement 1XBet</h1>
         </div>

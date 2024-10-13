@@ -40,7 +40,7 @@
                                         <div class="col-lg-4 col-md-12 mb-4 mb-lg-0 mb-3 mt-3">
                                             <div class="bg-image hover-overlay ripple shadow-1-strong rounded"
                                                 data-ripple-color="light">
-                                                <img src="{{ $carteReloads->image ?? null }}" class="w-100" />
+                                                <img src="{{ $carteReloads->image ?? null }}" class="card-img-top" />
                                             </div>
                                         </div>
                                     @endforeach
@@ -61,11 +61,11 @@
                                     <h2>Nos modes de paiements</h2>
                                 </div>
                                 <div class="row">
-                                    @foreach (getReloadPaiements() as $carteReloads)
+                                    @foreach (getReloadLimitPaiements() as $carteReloads)
                                         <div class="col-lg-4 col-md-12 mb-4 mb-lg-0 mb-3 mt-3">
-                                            <div class="bg-image hover-overlay ripple shadow-1-strong rounded"
+                                            <div class="bg-image hover-overlay ripple shadow-1-strong rounded" style=" height: 2.5rem;"
                                                 data-ripple-color="light">
-                                                <img src="{{ $carteReloads->image ?? null }}" class="w-100" />
+                                                <img src="{{ $carteReloads->image ?? null }}" class="card-img-top" />
                                                 <a href="#!" data-mdb-modal-init
                                                     data-mdb-target="#exampleModal1">
                                                     <div class="mask"

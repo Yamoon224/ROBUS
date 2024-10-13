@@ -425,17 +425,17 @@
                                                             @if ($item->provider_id == 99)
                                                                 <p class="font-medium whitespace-nowrap">
                                                                     Nom du expéditeur : {{ $item->name_benef ?? null }}
-                                                                   
+
                                                                 </p>
-                                                                 <p class="font-medium whitespace-nowrap">
+                                                                <p class="font-medium whitespace-nowrap">
                                                                     Numero Compte banque :
                                                                     {{ $item->number_compte ?? null }}
 
-                                                                 </p>
-                                                                 <p class="font-medium whitespace-nowrap">
+                                                                </p>
+                                                                <p class="font-medium whitespace-nowrap">
                                                                     Nom banque : {{ $item->name ?? null }}
 
-                                                                 </p>
+                                                                </p>
                                                             @endif
                                                         @endif
                                                     </td>
@@ -543,7 +543,21 @@
                                                                         $item->provider_id == 75 ||
                                                                         $item->provider_id == 76 ||
                                                                         $item->provider_id == 77 ||
-                                                                        $item->provider_id == 78))
+                                                                        $item->provider_id == 78 ||
+                                                                        $item->provider->id == 93 ||
+                                                                        $item->provider->id == 94 ||
+                                                                        $item->provider->id == 95 ||
+                                                                        $item->provider->id == 96 ||
+                                                                        $item->provider->id == 97 ||
+                                                                        $item->provider->id == 49 ||
+                                                                        $item->provider->id == 50 ||
+                                                                        $item->provider->id == 55 ||
+                                                                        $item->provider->id == 98 ||
+                                                                        $item->provider->id == 99 ||
+                                                                        $item->provider->id == 100 ||
+                                                                        $item->provider->id == 101 ||
+                                                                        $item->provider->id == 102
+                                                                        ))
                                                                 <a target="_bank"
                                                                     href="{{ route('inters.invoice.print', $item->id) }}"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"

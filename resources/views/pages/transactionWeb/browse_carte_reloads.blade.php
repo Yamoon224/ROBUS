@@ -4,9 +4,13 @@
 
 @section('content')
     <section class="page-title animate__animated animate__slideInDown"
-        style="background-image:url(https://robus.home.ci/public/dist/images/rechargement_carte.jpeg);">
+        style="background-image:url(https://robus.home.ci/public/dist/images/wallet_reload.jpg);">
         <div class="container text-center text-white">
-            <h1>Réchargement de carte VISA/MASTER CARTE</h1>
+            <h1>
+                
+                Réchargement de carte VISA/MASTER CARTE
+            
+            </h1>
         </div>
 
     </section>

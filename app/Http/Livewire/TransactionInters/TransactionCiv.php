@@ -40,11 +40,13 @@ class TransactionCiv extends Component
     public $phone_inter_out_civ;
     public $interId;
     public $compte_inter_number_robus;
+    public $account_number;
     public $providers = [];
     public $transaction_inter_amount_money;
 
     public $commission;
     public $commission_transaction_val_inter_pay;
+    public $commission_transaction_val_percent_pay;
     public $commission_transaction_val_inter_admin_receive;
     public $commission_transaction_val_inter_receive;
     public $commission_transaction_val_inter_convertion_cfa;
@@ -57,6 +59,7 @@ class TransactionCiv extends Component
     public $name;
     public $name_sender;
     public $isValidating = false;
+    public $isPasswordValid = false;
 
     public function resetValeurReload()
     {
@@ -67,8 +70,40 @@ class TransactionCiv extends Component
         $this->phone_inter_out_civ = '';
         $this->compte_inter_number_robus = '';
         $this->transaction_inter_amount_money = '';
+        $this->account_number = '';
         // $this->emit('modal-hide-transfers-validated');
         // $this->emit('modal-hide-transfers');
+    }
+
+    public function updateProviderTransaction()
+    {
+
+        $this->transaction_amount_robus = '';
+        $this->provider_inter_out_civ = null;
+        // $this->country_inter_out_civ = null;
+        $this->phone_inter_out_civ = '';
+        $this->compte_inter_number_robus = '';
+        $this->transaction_inter_amount_money = '';
+        $this->name_custumer = '';
+        $this->num_piece_custumer = '';
+        $this->date_piece = '';
+        $this->name = '';
+        $this->name_sender = ''; 
+        $this->phone_inter_out_civ = '';
+        $this->transaction_inter_amount_money = '';
+        $this->account_number = '';
+
+        return $this->providers;
+    }
+
+    public function checkPassword()
+    {
+
+        if (Hash::check($this->password_validated, sabdy()->password)) {
+            $this->isPasswordValid = true;
+        } else {
+            $this->isPasswordValid = false;
+        }
     }
 
     public function updatedTransactionAmountRobus()
@@ -86,6 +121,7 @@ class TransactionCiv extends Component
 
         // Amount Robus
         $this->commission_transaction_val_inter_pay = 0;
+        $this->commission_transaction_val_percent_pay = 0;
         $this->commission_transaction_val_inter_admin_receive = 0;
         $this->commission_transaction_val_inter_receive = 0;
         $this->commission_transaction_val_inter_convertion_cfa = 0;
@@ -104,14 +140,18 @@ class TransactionCiv extends Component
 
             $commission_inter =  $this->getRobusPercentageInter($country_robus, $this->provider_inter_out_civ);
 
+      
             if ($commission_inter) {
 
                 if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
+                   
+                  
+                    $this->commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $reel_amount;
 
-                    $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_under_distributer  * (float) $reel_amount;
+                  
                 } else {
 
-                    $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $reel_amount;
+                    $this->commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $reel_amount;
                 }
 
                 if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
@@ -119,10 +159,16 @@ class TransactionCiv extends Component
 
                     if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
 
-                        $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $this->commission_transaction_val_inter_pay;
+                        $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $reel_amount;
+
+                    } else {
+
+                        $this->commission_transaction_val_inter_pay =  $this->commission_transaction_val_percent_pay;
+
+
                     }
 
-                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_inter_pay;
+                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_percent_pay;
 
 
                     //   Convertion  in CFA
@@ -145,10 +191,16 @@ class TransactionCiv extends Component
 
                     if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
 
-                        $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $this->commission_transaction_val_inter_pay;
-                    }
+                        $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $reel_amount;
+                    } else {
 
-                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_inter_pay;
+                        $this->commission_transaction_val_inter_pay =  $this->commission_transaction_val_percent_pay;
+
+
+                    }
+                    
+                   
+                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_percent_pay;
 
                     //   Convertion  in CFA
                     $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
@@ -168,10 +220,15 @@ class TransactionCiv extends Component
 
                     if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
 
-                        $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $this->commission_transaction_val_inter_pay;
+                        $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $reel_amount;
+                    } else {
+
+                        $this->commission_transaction_val_inter_pay =  $this->commission_transaction_val_percent_pay;
+
+
                     }
 
-                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_inter_pay;
+                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_percent_pay;
 
                     //   Convertion  in CFA
                     $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) sabdy()->country->currencie->value;
@@ -202,13 +259,14 @@ class TransactionCiv extends Component
         $this->provider_inter_out_civ = null;
         $this->country_inter_out_civ = null;
         $this->compte_inter_number_robus = '';
-        $this->name_custumer = '';
+       $this->name_custumer = '';
         $this->num_piece_custumer = '';
         $this->date_piece = '';
         $this->name = '';
-        $this->name_sender = '';
+        $this->name_sender = ''; 
         $this->phone_inter_out_civ = '';
         $this->transaction_inter_amount_money = '';
+        $this->account_number = '';
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
         $this->emit('modal-hide-inters');
@@ -240,6 +298,7 @@ class TransactionCiv extends Component
         $this->date_piece = '';
         $this->name = '';
         $this->name_sender = '';
+        $this->account_number = '';
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
         $this->emit('transaction_inters');
@@ -253,6 +312,7 @@ class TransactionCiv extends Component
         $valeur_ceiling = sabdy()->silver_ceiling;
         $som_transfers =  $this->getSumValTransactionProperty();
 
+        
         try {
 
             if ($provider_payment) {
@@ -305,9 +365,10 @@ class TransactionCiv extends Component
 
                     if (sabdy()->is_under_distributer) {
 
+
                         $this->validate(
                             [
-                                'transaction_amount_robus' => 'required',
+                                'transaction_inter_amount_money' => 'required',
                                 'phone_inter_out_civ' => 'required',
                                 'country_inter_out_civ' => 'required',
                                 "name_custumer" => 'required',
@@ -318,7 +379,7 @@ class TransactionCiv extends Component
                                 'name' => 'required',
                             ],
                             [
-                                'transaction_amount_robus.required' =>
+                                'transaction_inter_amount_money.required' =>
                                 'Votre montant est obligatoire',
                                 'country_inter_out_civ.required' => 'Pays  est obligatoire',
                                 'name_custumer.required' => 'Nom est obligatoire',
@@ -372,20 +433,12 @@ class TransactionCiv extends Component
                     $this->emit('error', 'Ce providers n\'est pas encore disponible chez Robus !');
                 }
 
-                if($this->validateDailyLimit($som_transfers, $valeur_ceiling))
-                {
-
-                    $this->resetInterField();
-                    $this->emit('modal-hide-transfers');
-                    $this->emit('error', 'Votre montant journalier est atteint !');
+                if (!$this->validateAmount()) {
+                    return;
                 }
-
-                if($this->validateAmount())
-                {
-
-                    $this->resetInterField();
-                    $this->emit('modal-hide-transfers');
-                    $this->emit('error', 'Verifié votre solde !!');
+    
+                if (!$this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
+                    return;
                 }
              
             } else {
@@ -638,7 +691,7 @@ class TransactionCiv extends Component
                                                 $this->date_piece,
                                                 $this->name,
                                                 $this->name_sender,
-                                                $this->compte_inter_number_robus
+                                                $this->account_number
                                             );
     
                                             if ($walletInter != null) {
@@ -735,13 +788,43 @@ class TransactionCiv extends Component
             'usersCountry' => sabdy()->wallet->currencie->code,
             'countrie_number_local' => sabdy()->country
                 ->indecative,
-            'countrie_inter_ivoires' => Country::whereRobus(true)
-                ->whereIn('name_groupe', array('AFL', 'AFC', 'ASIE', 'AFE'))
-                ->where('id', '!=', sabdy()->country->id)
-                ->orderBy('name', 'asc')
-                ->get(),
+            'countrie_inter_ivoires' => $this->ProvidersForCountryInters,
 
         ]);
+    }
+
+    public function getProvidersForCountryIntersProperty()
+    {
+        $countryNameGroup = sabdy()->country->name_groupe;
+        $isUnderDistributer = sabdy()->is_under_distributer;
+
+        $providerMap = [];
+
+        if ($isUnderDistributer) {
+            if ($countryNameGroup == "CIV") {
+                $providerMap = ['AFL', 'AFC', 'ASIE' , 'AFE'];
+            } else {
+                $providerMap = ['AFL', 'CIV', 'AFC', 'ASIE' , 'AFE'];
+            }
+        } else {
+            $providerMaps = [
+                "CIV" => ['AFL', 'AFC', 'USA', 'MAG', 'URP' , 'ASIE', 'AFE'],
+                "USA" => ['AFL', 'AFC', 'URP', 'MAG', 'CIV' , 'ASIE', 'AFE'],
+                "AFL" => ['AFL', 'AFC', 'URP', 'CIV', 'USA', 'MAG' , 'ASIE' , 'AFE'],
+                "AFC" => ['CIV', 'AFC', 'URP', 'USA', 'MAG', 'AFL' , 'ASIE' , 'AFE'],
+                "URP" => ['CIV', 'AFC', 'AFL', 'USA', 'MAG' , 'ASIE' , 'AFE'],
+                "MAG" => ['CIV', 'AFC', 'URP', 'AFL', 'USA', 'MAG' , 'ASIE', 'AFE'],
+            ];
+
+            $providerMap = $providerMaps[$countryNameGroup] ?? [];
+        }
+
+
+        return Country::whereIn('name_groupe', $providerMap)
+            ->whereRobus(true)
+            ->where('id', '!=', sabdy()->country->id)
+            ->orderBy('name', 'asc')
+            ->get();
     }
 
     public function validateAmountSendLimit($som_transfers, $valeur_ceiling)
@@ -776,17 +859,22 @@ class TransactionCiv extends Component
 
     public static function getProvidersByType($query, $countryId, $providerType)
     {
+        $isUnderDistributer = sabdy()->is_under_distributer;
 
-
-        return $query
-            ->join('country_services', 'country_services.provider_id', 'providers.id')
+        $result = $query
+            ->join('country_services', 'country_services.provider_id', '=', 'providers.id')
             ->where('country_services.country_id', $countryId)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
-            ->select('providers.*')
-            ->orderBy('providers.name', 'asc')
-            ->get();
+            ->select('providers.*');
+        if ($isUnderDistributer) {
+            $result->where('providers.id', '!=', 51);
+        }
+    
+        // Ordonner par le nom des fournisseurs
+        return $result->orderBy('providers.name', 'asc')->get();
     }
+    
 
 
     private function getRobusPercentageInter($countrie, $provider_valeur)
@@ -4196,7 +4284,7 @@ class TransactionCiv extends Component
     private function validateAmount()
     {
 
-        $val_amount = $this->transaction_amount_robus;
+        $val_amount = $this->transaction_inter_amount_money;
 
         if ($val_amount > sabdy()->wallet->amount) {
             $this->resetInterField();

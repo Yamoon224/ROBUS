@@ -86,17 +86,13 @@ class Historique extends Component
         $xbet_amount = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount',  'wallet_xbets.is_web', false);
         $wave_amount = $this->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount',  'wallet_waves.is_web', false);
 
-        if ($walletUser->wallet->sidUser->is_under_distributer == true) {
-
-            abort(403);
-        } else {
-
+  
             return view('livewire.historique', [
 
                 'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-                'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error + $wave_error,
-                'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success + $wave_success,
-                'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding  + $wave_padding,
+                'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error ,
+                'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success ,
+                'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding ,
                 'wallet_Banks_last' => WalletBank::where('is_web', false)
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('created_by', sabdy()->id); 
@@ -143,8 +139,7 @@ class Historique extends Component
                 'Wallet_wave_last' => WalletWave::whereIsWeb(true)
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('created_by', sabdy()->id); 
-                })
-                ->select('wallet_waves.*')->limit(5)->orderBy('wallet_waves.created_at', 'desc')->get(),
+                })->select('wallet_waves.*')->limit(5)->orderBy('wallet_waves.created_at', 'desc')->get(),
                 'With_drawer_merchant' => WithMerchant::limit(5)
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('sid_user_id', sabdy()->id); 
@@ -158,12 +153,12 @@ class Historique extends Component
                 'sum_inter' => $inter_amount,
                 'sum_phoneCredit' => $phonecredit_amount,
                 'sum_xbets' => $xbet_amount,
-                // 'sum_waves' => $wave_amount,
+                'sum_waves' => $wave_amount,
                 'sum_under_distributers' => $this->historiqueService->getSDistributeurSumAdmin(),
                 'sum_custumers' => $this->historiqueService->getCustumersSumAdmin(),
 
             ]);
-        }
+    
     }
 
     public function getTransactionCountReload($walletModel)

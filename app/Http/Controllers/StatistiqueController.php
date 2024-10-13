@@ -22,23 +22,23 @@ class StatistiqueController extends Controller
         return view('pages.states.browse_state');
     }
 
-    public function browse_state_masters()
-    {
+    // public function browse_state_masters()
+    // {
 
-        if (master()) {
-            return view('pages.states.browse_state_masters');
-        } else {
-            abort(403);
-        }
-    }
+    //     if (master()) {
+    //         return view('pages.states.browse_state_masters');
+    //     } else {
+    //         abort(403);
+    //     }
+    // }
 
 
-    public function index()
-    {
-        // dd('ici');
-        $event = new UpdateReloadEvent();
-        event($event);
-    }
+    // public function index()
+    // {
+    //     // dd('ici');
+    //     $event = new UpdateReloadEvent();
+    //     event($event);
+    // }
 
     /**
      * Display a listing of the resource.

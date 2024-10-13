@@ -67,15 +67,15 @@ class TransferHisto extends Component
     }
 
 
-    protected function getTransactionsDays()
-    {
-        return WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
-    }
+    // protected function getTransactionsDays()
+    // {
+    //     return WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
+    // }
 
-    protected function getTransactionCount($status)
-    {
-        return WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->where('status', $status)->count();
-    }
+    // protected function getTransactionCount($status)
+    // {
+    //     return WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->where('status', $status)->count();
+    // }
 
     public function updateTransactionHisto()
     {
@@ -471,7 +471,7 @@ class TransferHisto extends Component
         $walletUser = Auth::guard('web')->user();
 
         if ($walletUser->is_under_distributer) {
-            $transfers->where('created_by', $walletUser->id); 
+            $transfers->where('wallet_transactions.created_by', $walletUser->id); 
         }
 
         if ($this->startDate && $this->endDate) {
