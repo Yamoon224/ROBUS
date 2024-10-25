@@ -86,79 +86,149 @@ class Historique extends Component
         $xbet_amount = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount',  'wallet_xbets.is_web', false);
         $wave_amount = $this->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount',  'wallet_waves.is_web', false);
 
-  
-            return view('livewire.historique', [
 
-                'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-                'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error ,
-                'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success ,
-                'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding ,
-                'wallet_Banks_last' => WalletBank::where('is_web', false)
+        return view('livewire.historique', [
+
+            'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
+            'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error,
+            'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success,
+            'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding,
+            'wallet_Banks_last' => WalletBank::where('is_web', false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
                 ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('created_by', sabdy()->id); 
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
                 })
                 ->orderBy('created_at', 'desc')
                 ->select('wallet_banks.*')
                 ->limit(5)
                 ->get(),
-                'Wallet_Deposits_last' => WalletDeposit::whereIsWeb(false)
-                ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('created_by', sabdy()->id); 
+            'Wallet_Deposits_last' => WalletDeposit::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
                 })
-                ->select('wallet_deposits.*')->limit(5)->orderBy('wallet_deposits.created_at', 'desc')->get(),
-                'Wallet_Inters_last' => WalletInter::whereIsWeb(false)
                 ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('created_by', sabdy()->id); 
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
+                })
+                ->select('wallet_deposits.*')
+                ->limit(5)->orderBy('wallet_deposits.created_at', 'desc')->get(),
+            'Wallet_Inters_last' => WalletInter::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
+                ->when(sabdy()->is_under_distributer, function ($query) {
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
                 })
                 ->select('wallet_inters.*')->limit(5)->orderBy('wallet_inters.created_at', 'desc')->get(),
-                'Wallet_Payments_last' => WalletPayment::whereIsWeb(false)
-                ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('created_by', sabdy()->id); 
-                }) 
-                ->select('wallet_payments.*')->limit(5)->orderBy('wallet_payments.created_at', 'desc')->get(),
-                'Wallet_Transactions_last' => WalletTransaction::whereIsWeb(false)
-                ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('created_by', sabdy()->id); 
-                }) 
-                ->select('wallet_transactions.*')->limit(5)->orderBy('wallet_transactions.created_at', 'desc')->get(),
-                'Wallet_PhoneCredits_last' => WalletPhoneCredit::whereIsWeb(false)
-                ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('created_by', sabdy()->id); 
+            'Wallet_Payments_last' => WalletPayment::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
                 })
-                ->select('wallet_phone_credits.*')->limit(5)->orderBy('wallet_phone_credits.created_at', 'desc')->get(),
-                'Wallet_Reloads_last' => WalletReload::select('wallet_reloads.*')
                 ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('created_by', sabdy()->id); 
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
+                })
+                ->select('wallet_payments.*')->limit(5)->orderBy('wallet_payments.created_at', 'desc')->get(),
+            'Wallet_Transactions_last' => WalletTransaction::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
+                ->when(sabdy()->is_under_distributer, function ($query) {
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
+                })
+                ->select('wallet_transactions.*')->limit(5)->orderBy('wallet_transactions.created_at', 'desc')->get(),
+            'Wallet_PhoneCredits_last' => WalletPhoneCredit::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    return $query;
+                })
+                ->when(sabdy()->is_under_distributer, function ($query) {
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    return $query->where('updated_by', sabdy()->id);
+                })
+                ->select('wallet_phone_credits.*')
+                ->limit(5)->orderBy('wallet_phone_credits.created_at', 'desc')->get(),
+            'Wallet_Reloads_last' => WalletReload::select('wallet_reloads.*')
+                ->when(sabdy()->is_under_distributer, function ($query) {
+                    return $query->where('created_by', sabdy()->id);
                 })
                 ->limit(5)->orderBy('wallet_reloads.created_at', 'desc')->get(),
-                'Wallet_xbet_last' => WalletXbet::whereIsWeb(false)
+            'Wallet_xbet_last' => WalletXbet::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
                 ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('created_by', sabdy()->id); 
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
                 })
                 ->select('wallet_xbets.*')->limit(5)->orderBy('wallet_xbets.created_at', 'desc')->get(),
-                'Wallet_wave_last' => WalletWave::whereIsWeb(true)
+            'Wallet_wave_last' => WalletWave::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
                 ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('created_by', sabdy()->id); 
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
                 })->select('wallet_waves.*')->limit(5)->orderBy('wallet_waves.created_at', 'desc')->get(),
-                'With_drawer_merchant' => WithMerchant::limit(5)
+            'With_drawer_merchant' => WithMerchant::limit(5)
                 ->when(sabdy()->is_under_distributer, function ($query) {
-                    return $query->where('sid_user_id', sabdy()->id); 
+                    return $query->where('sid_user_id', sabdy()->id);
                 })->orderBy('date_removed', 'desc')->get(),
-                'usersCountry' =>  $walletUser->country->currencie->name,
-                'sum_bank' =>  $bank_amount,
-                'sum_deposit' => $deposit_amount,
-                'sum_payment' => $payement_amount,
-                'sum_reload' => $reload_amount,
-                'sum_transaction' => $transaction_amount,
-                'sum_inter' => $inter_amount,
-                'sum_phoneCredit' => $phonecredit_amount,
-                'sum_xbets' => $xbet_amount,
-                'sum_waves' => $wave_amount,
-                'sum_under_distributers' => $this->historiqueService->getSDistributeurSumAdmin(),
-                'sum_custumers' => $this->historiqueService->getCustumersSumAdmin(),
+            'usersCountry' =>  $walletUser->country->currencie->name,
+            'sum_bank' =>  $bank_amount,
+            'sum_deposit' => $deposit_amount,
+            'sum_payment' => $payement_amount,
+            'sum_reload' => $reload_amount,
+            'sum_transaction' => $transaction_amount,
+            'sum_inter' => $inter_amount,
+            'sum_phoneCredit' => $phonecredit_amount,
+            'sum_xbets' => $xbet_amount,
+            'sum_waves' => $wave_amount,
+            'sum_under_distributers' => $this->historiqueService->getSDistributeurSumAdmin(),
+            'sum_custumers' => $this->historiqueService->getCustumersSumAdmin(),
 
-            ]);
-    
+        ]);
     }
 
     public function getTransactionCountReload($walletModel)
@@ -178,9 +248,9 @@ class Historique extends Component
     {
 
         $totalAmount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
-        ->whereStatus('SUCCESS')
-        ->whereDate('created_at', Carbon::today())
-        ->sum('amount');
+            ->whereStatus('SUCCESS')
+            ->whereDate('created_at', Carbon::today())
+            ->sum('amount');
 
         return $totalAmount;
     }
@@ -194,8 +264,7 @@ class Historique extends Component
             ->where($IswebStatus, $isWeb);
 
         if (sabdy()->is_distributer) {
-            $query->where($walletMy, sabdy()->id)
-                ->where('wallets.country_id', sabdy()->id);
+            $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);
@@ -229,8 +298,7 @@ class Historique extends Component
 
         // Vérification de l'utilisateur distributeur
         if (sabdy()->is_distributer) {
-            $query->where($walletMy, sabdy()->id)
-                ->where('wallets.country_id', sabdy()->id);
+            $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
             $query->where(function ($query) use ($wallet_transactions) {
                 $query->where($wallet_transactions, sabdy()->wallet->id);

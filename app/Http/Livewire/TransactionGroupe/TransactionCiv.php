@@ -30,6 +30,8 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CodeValidated;
 
 class TransactionCiv extends Component
 {
@@ -289,7 +291,7 @@ class TransactionCiv extends Component
                 ]
             );
 
-          
+
             if (Hash::check($this->password_validated, sabdy()->password)) {
 
                 $this->password_validated = "";
@@ -356,6 +358,21 @@ class TransactionCiv extends Component
                                             if ($walletTransaction != null) {
 
                                                 if ($this->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
+
+                                                    $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                                    if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                                        $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                                    }
+
+                                                    if ($wallet_search->sidUser->email != null) {
+
+                                                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+                                                    }
+
                                                     if ($this->processCommissionsDistributerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
                                                         $this->sendNotification($walletTransaction);
                                                         $this->resetTransactionField();
@@ -418,6 +435,19 @@ class TransactionCiv extends Component
 
                                         if ($walletTransaction != null) {
 
+                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                            if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                                $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                            }
+
+                                            if ($wallet_search->sidUser->email != null) {
+
+                                                Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+                                            }
                                             if ($this->updateAmountRobusReceivedDistributer($this->compte_number_robus, $walletTransaction, $valeur_received)) {
                                                 if ($this->processCommissionsRobusDistributer($reel_amount)) {
                                                     $this->sendNotification($walletTransaction);
@@ -485,6 +515,19 @@ class TransactionCiv extends Component
 
                                         if ($walletTransaction != null) {
 
+                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                            if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                                $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                            }
+
+                                            if ($wallet_search->sidUser->email != null) {
+
+                                                Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+                                            }
                                             if ($this->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
                                                 if ($this->processCommissionsCustumerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
                                                     $this->sendNotification($walletTransaction);

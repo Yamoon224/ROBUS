@@ -20,6 +20,10 @@ use App\Http\Services\SearchTransactionService;
 use App\Http\Services\ValidateDailyLimitService;
 use App\Http\Services\MobileWalletTransactionService;
 use App\Http\Services\CreateRobusWalletWithDrawalService;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\CodeValidated;
+use Illuminate\Support\Facades\Http;
+
 
 class TransactionController extends Controller
 {
@@ -226,6 +230,20 @@ class TransactionController extends Controller
 
                                     if ($walletTransaction != null) {
 
+                                        $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                        if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                            $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                        }
+
+                                        if ($wallet_search->sidUser->email != null) {
+
+                                            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+                                        }
+
                                         if ($this->robusTransactionService->updateAmountRobusReceived($request->num_wallet, $walletTransaction, $valeur_received)) {
                                             if ($this->robusTransactionService->processCommissionsDistributerRobus($request->amount, $percent_robus, $walletTransaction, $admin_civ)) {
                                                 $this->notifications->sendNotification($walletTransaction);
@@ -265,6 +283,20 @@ class TransactionController extends Controller
                                 $walletTransaction =  $this->robusTransactionService->createRobusWalletTransactionDistributer($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
 
                                 if ($walletTransaction != null) {
+
+                                    $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                    if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                        $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                    }
+
+                                    if ($wallet_search->sidUser->email != null) {
+
+                                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+                                    }
 
                                     if ($this->robusTransactionService->updateAmountRobusReceivedDistributer($request->num_wallet, $walletTransaction, $valeur_received)) {
                                         if ($this->robusTransactionService->processCommissionsRobusDistributer($request->amount)) {
@@ -327,6 +359,20 @@ class TransactionController extends Controller
 
                                     if ($walletTransaction != null) {
 
+                                        $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                        if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                            $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                        }
+
+                                        if ($wallet_search->sidUser->email != null) {
+
+                                            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+                                        }
+
                                         if ($this->robusTransactionService->updateAmountRobusReceived($request->num_wallet, $walletTransaction, $valeur_received)) {
                                             if ($this->robusTransactionService->processCommissionsCustumerRobus($request->amount, $percent_robus, $walletTransaction, $admin_civ)) {
                                                 $this->notifications->sendNotification($walletTransaction);
@@ -385,11 +431,9 @@ class TransactionController extends Controller
                     if (robus()->country->name_groupe == 'CIV') {
 
                         $percent_robus = $this->percentRobus->getRobusPercentageMobile();
-
-                    }elseif(robus()->country->name_groupe == 'MAG') {
+                    } elseif (robus()->country->name_groupe == 'MAG') {
 
                         $percent_robus = $this->percentRobus->getRobusPercentageMobileMaroc();
-                    
                     } else {
 
                         return response()->json(
@@ -452,23 +496,18 @@ class TransactionController extends Controller
 
                             if (robus()->is_under_distributer) {
 
-                                if(robus()->country->name_groupe == 'CIV')
-                                {
+                                if (robus()->country->name_groupe == 'CIV') {
                                     $valeur_received = $request->amount;
 
                                     $amount_payment = $request->amount;
-
-                                }else {
+                                } else {
 
                                     $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
 
                                     $amount_payment =  $request->amount + ($percent_robus->percent * $request->amount);
-
                                 }
 
                                 $cost_payment = $percent_robus->percent *  $request->amount;
-
-                                
                             } else {
 
                                 $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
@@ -617,8 +656,6 @@ class TransactionController extends Controller
                                             'id'      => $walletTransaction->id,
                                             'provider' => $walletTransaction->provider->name,
                                             'amount' => $walletTransaction->amount,
-                                            // 'phone' => $walletTransaction->phone,
-                                            // 'num_wallet' => $walletTransaction->num_wallet,
                                             'status' => $walletTransaction->status,
                                         ],
                                         'message' => ('Votre demande de retrait en-cours de validation .')
@@ -690,6 +727,8 @@ class TransactionController extends Controller
             $verify_code =  $this->validatedamountDays->validatedTransaction($request->code_validated);
 
             $walletUserSearch = $this->validatedamountDays->validatedWallet($request->num_wallet);
+          
+            $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
 
 
             if ($verify_code->num_wallet == $request->num_wallet) {
@@ -730,20 +769,38 @@ class TransactionController extends Controller
 
                             if ($percent_robus != null) {
 
-                                // Valeur off commission
                                 $commission_valeur = $percent_robus->percent * $verify_code->amount;
 
-                                // 30% with drawal
                                 $valuer_with_drawal = $percent_robus->percent_with_drawal * $commission_valeur;
 
                                 $verify_code->update([
                                     'type_transaction' => 'Retrait',
                                     'status' => 'SUCCESS',
                                     'costs_amount' => 0,
+                                    'code_validated' => null,
                                     'created_by' => robus()->id,
                                 ]);
 
+                                $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
+
+                                $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$verify_code->amount;
+
                                 if ($this->transactionWalletDrawal->updateDrawalTransaction($verify_code, $walletUserSearch, $valuer_with_drawal)) {
+
+                                    $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $verify_code->amount . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                    if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                        $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                    }
+
+                                    if ($wallet_search->sidUser->email != null) {
+
+                                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
+                                    }
+
                                     return $this->transactionWalletDrawal->sendNotificationWithDrawal($verify_code, $admin_civ, $valuer_with_drawal, $walletUserSearch, $admins);
                                 } else {
 
@@ -869,19 +926,15 @@ class TransactionController extends Controller
 
                     if (robus()->is_under_distributer) {
 
-                        if(robus()->country->name_groupe == 'MAG')
-                        {
+                        if (robus()->country->name_groupe == 'MAG') {
 
                             $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
-
-                        }else{
+                        } else {
 
                             $commission_transaction_val_nat_receive = (float)$amount_transaction;
-
                         }
-                        
-                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
 
+                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
                     } else {
 
                         $commission_transaction_val_nat_pay = (float)$commission_transaction->percent * $amount_transaction;

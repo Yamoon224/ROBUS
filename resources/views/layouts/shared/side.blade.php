@@ -101,10 +101,18 @@
 <div id="app" class="intro-x dropdown mr-auto sm:mr-6">
     <div class="notification-content pt-2 dropdown-menu">
         <div class="notification-content__box dropdown-content">
-            <div class="notification-content__title">Notifications</div>
-            <admin-notification :userid="{{ auth()->guard('web')->user()->id }}"
-                :unreads="{{ Auth::guard('web')->user()->unreadNotifications()->latest()->get() ?? '' }}">
-            </admin-notification>
+            @if (sabdy()->is_distributer)
+                <div class="notification-content__title">Notifications</div>
+                <under-distributer :userid="{{ auth()->guard('web')->user()->id }}"
+                    :unreads="{{ Auth::guard('web')->user()->unreadNotifications()->latest()->get() ?? '' }}">
+                </under-distributer>
+            @else
+                <div class="notification-content__title">Notifications</div>
+                <admin-notification :userid="{{ auth()->guard('web')->user()->id }}"
+                    :unreads="{{ Auth::guard('web')->user()->unreadNotifications()->latest()->get() ?? '' }}">
+                </admin-notification>
+            @endif
+
 
         </div>
     </div>

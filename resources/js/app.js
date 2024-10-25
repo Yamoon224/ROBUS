@@ -4,7 +4,7 @@ import 'vue-toastr-2/dist/vue-toastr-2.min.css'
 import './style.css'
 
 
-import App from './components/AdminNotification.vue'
+import App from './components/AdminNotification.vue';
 
 createApp(App).mount('#app')
 

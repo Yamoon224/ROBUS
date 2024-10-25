@@ -75,6 +75,16 @@
 
 
                     </div>
+                    <div
+                        class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+                        <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
+                            <a href="#step-1"
+                                class="w-10 h-10 rounded-full btn btn-circle {{ $currentStep != 2 ? 'btn-default' : 'btn-secondary' }}">1</a>
+                            <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Validation retrait</div>
+                        </div>
+
+
+                    </div>
                     @if (Sabdy()->is_distributer == 1)
                         <div class="modal-header alert alert-secondary ">
                             <h2 class="font-medium text-base mr-auto">En tant qu'opératrice, vous avez la possibilité de
@@ -191,12 +201,89 @@
                                 @endif
                             @endif
                         </div>
+
+                        <div class="{{ $currentStep != 2 ? 'displayNone' : '' }}" id="step-2">
+                            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                                <div class="col-span-6 mt-space-padding">
+                                    <label class="form-label">Wallet de retrait<span class="text-danger">
+                                            *</span></label>
+
+                                    <div class="flex">
+
+                                        <div
+                                            class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                            {{ $compte_number_robus ?? null }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-span-6 mt-space-padding">
+                                    <label class="form-label">Montant <span class="text-danger">
+                                            *</span></label>
+
+                                    <div class="flex">
+
+                                        <div
+                                            class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                            {{ $transaction_amount_robus ?? null }}
+                                            {{ $user_send->wallet->currencie->code ?? null }}
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="col-span-12" wire:loading.class="hidden" wire:target="addTransactionWithdrawal">
+                                    <label for="code_validated" class="form-label">Code OTP <span
+                                            class="text-danger">*</span></label>
+                                    <input wire:model.defer="code_validated" id="code_validated" type="text"
+                                        class="form-control" placeholder="Entrez votre code OTP">
+                                    @error('code_validated')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button wire:click="addTransactionWithdrawal" type="button" wire:loading.attr="disabled"
+                                    class="btn btn-primary w-50"
+                                    wire:loading.class="hidden opacity-50 cursor-not-allowed">
+                                    Validez code
+                                </button>
+
+
+                                <div wire:loading.flex wire:target="addTransactionWithdrawal"
+                                    class="flex items-center justify-center">
+                                    <div class="loader"></div>
+                                    <p>Traitement en cours...</p>
+                                </div>
+                            </div>
+                        </div>
                     @endif
                 @endif
             @endif
 
         </div>
     </div>
+
+    <style>
+        .loader {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: #09f;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
     <script>
         window.addEventListener('DOMContentLoaded', function() {
             Echo.private('wallet-transfers-created.').listen(

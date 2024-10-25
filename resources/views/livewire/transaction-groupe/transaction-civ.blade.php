@@ -216,9 +216,9 @@
         </div>
         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 mt-3">
 
-            {{-- Other Providers Inputs --}}
 
             @if ($provider_transaction == 9)
+            
                 <div class="col-span-6 mt-space-padding">
                     <label for="number_phone_credit_edit" class="form-label">Montant de la transaction Robus<span
                             class="text-danger">
@@ -305,7 +305,6 @@
                 </p>
             @endif
 
-            <!-- Loader affiché pendant le chargement -->
             <div wire:loading.flex wire:target="validatedPassword" class="flex items-center justify-center">
                 <div class="loader"></div>
                 <p>Traitement en cours...</p>

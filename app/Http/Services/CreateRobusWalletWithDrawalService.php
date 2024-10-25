@@ -53,7 +53,7 @@ class CreateRobusWalletWithDrawalService
 
             $message = 'Code de validation : ' . $code_valdated  . ' . Ne partagez ce code qu\'avec un agent ROBUS lors d\'une transaction ' . ' Expire dans 5 min';
 
-            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
         }
 
         if ($wallet_search->sidUser->email != null) {
@@ -212,6 +212,7 @@ class CreateRobusWalletWithDrawalService
         $notifs = $wallet_user_search->sidUser->unreadNotifications;
         event(new CreateWalletTransfersEvent($verify_code));
         Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $verify_code->wallet->sidUser->firstname));
+
 
         if ($admins->count() > 0) {
 

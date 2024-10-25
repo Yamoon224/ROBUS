@@ -71,9 +71,9 @@ class StatistiqueController extends Controller
     public function browse_state_employes()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
-            abort(403);
-        }
+        // if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+        //     abort(403);
+        // }
         return view('firms.pages.browse_transfer_state');
 
     }

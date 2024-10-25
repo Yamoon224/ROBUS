@@ -1125,12 +1125,12 @@ class TransfersOrigin extends Component
                             $this->resetTransactionField();
                             $this->emit('modal-hide-transfers');
                             $this->emit('error', 'Ce numero n\'existe pas dans cette base ou vous appartient !');
-                        } elseif (
-                            !$wallet_search->sidUser->is_under_distributer
+                        } elseif (!$wallet_search->sidUser->is_under_distributer
                             || !$wallet_search->sidUser->is_custumers
                             || !$wallet_search->sidUser->is_distributer
                             || !$wallet_search->sidUser->is_supervisor
-                        ) {
+                        ) 
+                        {
 
 
                             if ($som_transfers >= $valeur_ceiling) {

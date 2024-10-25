@@ -679,9 +679,7 @@ class HistoricalController extends Controller
      */
     public function browse_transfer()
     {
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
+    
         return view('firms.pages.browse_transfer');
     }
 

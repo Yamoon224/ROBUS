@@ -396,8 +396,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                // https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af
-                //                 http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+               
                 http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
@@ -451,6 +450,7 @@ class NotificationSendService
     public function sendNotification($walletTransaction)
     {
 
+ 
         if (robus()->is_custumers) {
             if (robus()->country->code == "CI") {
 

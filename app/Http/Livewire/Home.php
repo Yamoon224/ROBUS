@@ -93,14 +93,14 @@ class Home extends Component
         // $wave_amount_month = $this->getDaysTransaction(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount');
 
         // count One transactions
-        $transaction_amount_days = $this->getTransactionAllCount(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at');
-        $reload_amount_days = $this->getTransactionAllCount(WalletReload::class, 'wallet_reloads.wallet_id', 'wallet_reloads.created_at');
-        $payment_amount_days = $this->getTransactionAllCount(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at');
-        $phone_amount_days = $this->getTransactionAllCount(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at');
-        $inter_amount_days = $this->getTransactionAllCount(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at');
-        $bank_amount_days = $this->getTransactionAllCount(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at');
-        $deposit_amount_days = $this->getTransactionAllCount(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at');
-        $xbet_amount_days = $this->getTransactionAllCount(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at');
+        $transaction_amount_days = $this->getTransactionAllCount(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by');
+        $reload_amount_days = $this->getTransactionAllCount(WalletReload::class, 'wallet_reloads.wallet_id', 'wallet_reloads.created_at', 'wallet_reloads.updated_by');
+        $payment_amount_days = $this->getTransactionAllCount(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by');
+        $phone_amount_days = $this->getTransactionAllCount(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by');
+        $inter_amount_days = $this->getTransactionAllCount(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by');
+        $bank_amount_days = $this->getTransactionAllCount(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by');
+        $deposit_amount_days = $this->getTransactionAllCount(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by');
+        $xbet_amount_days = $this->getTransactionAllCount(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by');
         // $wave_amount_days = $this->getTransactionAllCount(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at');
         // $closeRobus = CloseApp::orderBy('id', 'asc')->get();
         // Get Users
@@ -260,7 +260,7 @@ class Home extends Component
     }
 
 
-    public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days)
+    public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days , $walletMy)
     {
 
         $countryId = sabdy()->country->id;
@@ -273,7 +273,7 @@ class Home extends Component
             ->whereDate($transaction_days, Carbon::today());
 
         if (sabdy()->is_distributer) {
-            $query->where('wallets.country_id', '=', sabdy()->id);
+            $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
             $query->where(function ($query) use ($wallet_transactions) {
                 $query->where($wallet_transactions, sabdy()->wallet->id);
@@ -298,8 +298,7 @@ class Home extends Component
             ->where($wallet_status, $status);
 
         if (sabdy()->is_distributer) {
-            $query->where($walletMy, sabdy()->id)
-                ->where('wallets.country_id', sabdy()->id);
+            $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
             $query->where(function ($query) use ($wallet_transactions) {
                 $query->where($wallet_transactions, sabdy()->wallet->id);
@@ -330,8 +329,7 @@ class Home extends Component
 
 
         if (sabdy()->is_distributer) {
-            $query->where($walletMy, sabdy()->id)
-                ->where('wallets.country_id', sabdy()->id);
+            $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);
@@ -364,8 +362,7 @@ class Home extends Component
         ->where($transaction_status, 'SUCCESS');
 
         if (sabdy()->is_distributer) {
-            $query->where($walletMy, sabdy()->id)
-                ->where('wallets.country_id', sabdy()->id);
+            $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);

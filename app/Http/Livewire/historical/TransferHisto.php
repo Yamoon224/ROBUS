@@ -472,6 +472,12 @@ class TransferHisto extends Component
 
         if ($walletUser->is_under_distributer) {
             $transfers->where('wallet_transactions.created_by', $walletUser->id); 
+        }elseif($walletUser->is_distributer)
+        {
+            $transfers->where('wallet_transactions.updated_by', $walletUser->id); 
+
+        }else {
+            $transfers->where('wallet_transactions.created_by' , '!=', $walletUser->id); 
         }
 
         if ($this->startDate && $this->endDate) {
@@ -515,7 +521,8 @@ class TransferHisto extends Component
                 'livewire.historical.transfer-histo',
                 [
                     'user' => $this->TransactionsAllStatus,
-                    'transfer_historicals' => $transfers->where("wallet_transactions.status", $this->statusTransferFilter)->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
+                    'transfer_historicals' => $transfers->where("wallet_transactions.status", $this->statusTransferFilter)
+                             ->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                     'usersCountry' =>  $walletUser->country->currencie->name,
                     'providers' =>  $this->NationTransaction,
 
@@ -548,14 +555,18 @@ class TransferHisto extends Component
         $walletUser = Auth::guard('web')->user(); 
 
         if ($walletUser->is_under_distributer) {
-            // Filtrer par utilisateur
-            $wallets->where('created_by', $walletUser->id);
+            $wallets->where('wallet_transactions.created_by', $walletUser->id); 
+        }elseif($walletUser->is_distributer)
+        {
+            $wallets->where('wallet_transactions.updated_by', $walletUser->id); 
+
+        }else {
+            $wallets->where('wallet_transactions.created_by' , '!=', $walletUser->id); 
         }
 
         $wallets = $wallets->get();
 
         foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
             $data[] = $bank->amount;
         }
 
@@ -573,9 +584,15 @@ class TransferHisto extends Component
         $walletUser = Auth::guard('web')->user(); 
 
         if ($walletUser->is_under_distributer) {
-            // Filtrer par utilisateur
-            $wallets->where('created_by', $walletUser->id);
+            $wallets->where('wallet_transactions.created_by', $walletUser->id); 
+        }elseif($walletUser->is_distributer)
+        {
+            $wallets->where('wallet_transactions.updated_by', $walletUser->id); 
+
+        }else {
+            $wallets->where('wallet_transactions.created_by' , '!=', $walletUser->id); 
         }
+
 
         $wallets = $wallets->get();
         
@@ -599,9 +616,15 @@ class TransferHisto extends Component
         $walletUser = Auth::guard('web')->user(); 
 
         if ($walletUser->is_under_distributer) {
-            // Filtrer par utilisateur
-            $wallets->where('created_by', $walletUser->id);
+            $wallets->where('wallet_transactions.created_by', $walletUser->id); 
+        }elseif($walletUser->is_distributer)
+        {
+            $wallets->where('wallet_transactions.updated_by', $walletUser->id); 
+
+        }else {
+            $wallets->where('wallet_transactions.created_by' , '!=', $walletUser->id); 
         }
+
 
         $wallets = $wallets->get();
 

@@ -34,10 +34,10 @@ export default {
     props: ['unreads', 'userid'],
     data() {
         return {
-            notifications: this.unreads
+            notifications: []
         }
     },
-    methods: {
+     methods: {
         getNotifications() {
             axios.get('/account/get-notifications')
                 .then(response => {
@@ -49,7 +49,7 @@ export default {
                 });
         },
         markAsRead() {
-            axios.post('/account/mark_notifications_as_read', {})
+            axios.get('/account/make_read_all', {})
                 .then(response => {
                     this.getNotifications();
                 })
@@ -58,22 +58,6 @@ export default {
                 });
         }
     },
-    created() {
-        this.getNotifications();
-        Echo.channel('admin-all')
-            .listen('.Events_all_admin', (e) => {
-                if (e.notification) {
-                    Swal.fire({
-                        // position: 'top-end',
-                        icon: 'success',
-                        timer: 2000,
-                        title: '!!Vous avez une nouvelle notification',
-                        showConfirmButton: true,
-                    });
-                }
-                this.notifications = e.notification;
-            });
-    }
 }
 </script>
 <style scoped>
