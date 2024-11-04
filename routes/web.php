@@ -124,6 +124,8 @@ Route::group(['prefix' => ''], function () {
             Route::get('/browse_level_deposit_ivoire', [LevelController::class, 'browse_levels_deposit_ivoire'])->name('levels.browse_levels_deposit_ivoire');
             Route::get('/browse_level_deposit_under', [LevelController::class, 'browse_levels_deposit_ivoire_under'])->name('levels.browse_levels_deposit_ivoire_under');
         });
+
+        
         //   Cards
         Route::prefix('cards')->group(function () {
             Route::get('/browse', [CardController::class, 'browse'])->name('cards.browse');
@@ -243,6 +245,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/payments/add', [CommissionController::class, 'add_payments'])->name('commissions.add_payments');
             Route::post('/payments/store', [CommissionController::class, 'store_payments'])->name('commissions.store_payments');
             Route::post('/countrys_amount', [CommissionController::class, 'country_amounts'])->name('commissions.country_amounts.payments');
+            Route::get('/companies', [CommissionController::class, 'browse_companies'])->name('commissions.browse_companies');
 
             Route::get('/deposits', [CommissionController::class, 'browse_deposits'])->name('commissions.browse_deposits');
             Route::get('/inters', [CommissionController::class, 'browse_inters'])->name('commissions.browse_inters');

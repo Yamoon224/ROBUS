@@ -5,15 +5,15 @@
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-         
+
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
                 <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add_company') }}">Ajouter une
                     sociéte</a>
             @endif
             <div class="dropdown">
                 @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
-                    <a class="dropdown-toggle btn px-2 box" href="{{ route('admin.add_company') }}"
-                        aria-expanded="false" data-tw-toggle="dropdown">
+                    <a class="dropdown-toggle btn px-2 box" href="{{ route('admin.add_company') }}" aria-expanded="false"
+                        data-tw-toggle="dropdown">
                         <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4"
                                 data-feather="plus"></i> </span>
                     </a>
@@ -74,7 +74,13 @@
                                         {{ $item->country->name ?? null }} ville : {{ $item->city->name ?? null }}
                                     </span>
                                 </div>
+                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
+                                    <span  class="alert alert-success  inline-flex items-center text-white justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
 
+                                       Forfait : {{ $item->company->percent->name ?? null }}
+                                    </span>
+
+                                </div>
                             </td>
                             <td>
                                 <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $item->phone }}

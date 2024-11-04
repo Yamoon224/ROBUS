@@ -181,7 +181,13 @@
 
         Livewire.on('modal-hide', () => {
 
-            
+            //Update new Companie Modal
+            $('#update-percent-companie-modal').removeClass('show');
+            $('#update-percent-companie-modal').addClass('hide');
+
+            $('#add-percent-companie-modal').removeClass('show');
+            $('#add-percent-companie-modal').addClass('hide');
+
 
             $('#connected-master-modal').removeClass('show');
             $('#connected-master-modal').addClass('hide');
@@ -530,11 +536,35 @@
             // $('body').css('overflow', 'auto');
         });
 
+
+        // new modal companies
+        Livewire.on('show-update-percent-companie-modal', () => {
+            $('#update-percent-companie-modal').removeClass('hide');
+            $('#update-percent-companie-modal').addClass('show');
+
+        });
+
+        Livewire.on('show-add-percent-companie-modal', () => {
+            $('#add-percent-companie-modal').removeClass('hide');
+            $('#add-percent-companie-modal').addClass('show');
+
+        });
+
+        Livewire.on('show-disabled-percent-companie-modal', () => {
+            $('#disabled-percent-companie-modal').removeClass('hide');
+            $('#disabled-percent-companie-modal').addClass('show');
+
+        });
+
+
+        // End modal new
+
         Livewire.on('show-connected-master-modal', () => {
             $('#connected-master-modal').removeClass('hide');
             $('#connected-master-modal').addClass('show');
         });
 
+        
         Livewire.on('show-onexbetrans-modal', () => {
             $('#update-1xbet-transaction-modal').removeClass('hide');
             $('#update-1xbet-transaction-modal').addClass('show');

@@ -272,7 +272,7 @@ class IntersPaymentController extends Controller
                                 "phone" => 'required',
                                 "amount" => 'required',
                                 "name_custumer" => 'required',
-                                "name_sender" => 'required',
+                                // "name_sender" => 'required',
                                 "num_piece_custumer" => 'required',
                                 "date_piece" => 'required',
                                 'country' => 'required',
@@ -284,7 +284,7 @@ class IntersPaymentController extends Controller
                                 'phone.required' => 'Votre numero est obligatoire',
                                 'amount.required' => 'Votre montant est obligatoire',
                                 'name_custumer.required' => 'Nom est obligatoire',
-                                'name_sender.required' => 'Nom expediteur est obligatoire',
+                                // 'name_sender.required' => 'Nom expediteur est obligatoire',
                                 'num_piece_custumer.required' => 'Numero piece est obligatoire',
                                 'date_piece.required' => 'date de validité est obligatoire',
                                 'country.required' => 'Votre pays est obligatoire',
@@ -319,6 +319,8 @@ class IntersPaymentController extends Controller
                                 'account_number' => 'required',
                                 'name' => 'required',
                             ],
+
+                            
                             [
     
                                 'phone.required' => 'Votre numero est obligatoire',

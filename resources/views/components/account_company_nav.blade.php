@@ -14,4 +14,14 @@
             aria-controls="employers" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
                 data-feather="shield"></i> Employers </a>
     </li>
+    <li id="unders-tab" class="nav-item" role="presentation">
+        <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#unders"
+            aria-controls="unders" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                data-feather="shield"></i> Sous distributeurs </a>
+    </li>
+    <li id="percent-tab" class="nav-item" role="presentation">
+        <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#percent"
+            aria-controls="percent" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                data-feather="shield"></i> Pourcentage </a>
+    </li>
 </ul>

@@ -27,7 +27,7 @@ use App\Http\Services\PhoneCreditInterService;
 use App\Http\Services\SearchTransactionService;
 use App\Http\Services\ValidateDailyLimitService;
 
-class IntersPaymentController extends Controller
+class IntersPaymentAncienController extends Controller
 {
 
     /** @var  IntersRepository */
@@ -191,7 +191,7 @@ class IntersPaymentController extends Controller
                         'amount.required' => 'Votre montant est obligatoire',
                         'country.required' => 'Votre pays est obligatoire',
                     ];
-                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94 , 95 , 96 , 97 , 98])) {
+                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94 , 95 , 96 , 97 , 98 , 100, 101,102])) {
 
                     if (robus()->is_under_distributer) {
 
@@ -312,23 +312,23 @@ class IntersPaymentController extends Controller
                             [
                                 "phone" => 'required',
                                 "amount" => 'required',
-                                "name_custumer" => 'required',
-                                "num_piece_custumer" => 'required',
-                                "date_piece" => 'required',
+                                // "name_custumer" => 'required',
+                                // "num_piece_custumer" => 'required',
+                                // "date_piece" => 'required',
                                 'country' => 'required',
-                                'account_number' => 'required',
-                                'name' => 'required',
+                                // 'account_number' => 'required',
+                                // 'name' => 'required',
                             ],
                             [
     
                                 'phone.required' => 'Votre numero est obligatoire',
                                 'amount.required' => 'Votre montant est obligatoire',
-                                'name_custumer.required' => 'Nom est obligatoire',
-                                'num_piece_custumer.required' => 'Numero piece est obligatoire',
-                                'date_piece.required' => 'date de validité est obligatoire',
+                                // 'name_custumer.required' => 'Nom est obligatoire',
+                                // 'num_piece_custumer.required' => 'Numero piece est obligatoire',
+                                // 'date_piece.required' => 'date de validité est obligatoire',
                                 'country.required' => 'Votre pays est obligatoire',
-                                'account_number.required' => 'Numero de compte est obligatoire',
-                                'name.required' => 'Nom de la banque est obligatoire',
+                                // 'account_number.required' => 'Numero de compte est obligatoire',
+                                // 'name.required' => 'Nom de la banque est obligatoire',
     
                             ]
                         );
@@ -418,7 +418,7 @@ class IntersPaymentController extends Controller
                     } else {
                         return   json_message_response(false, "veuillez selectionnez le pays de destination ou le  Numero ne correspond pas au pays SVP !", 300);
                     }
-                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78 , 93, 94 , 95 , 96 , 97 , 98 , 99])) {
+                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78 , 93, 94 , 95 , 96 , 97 , 98 , 99 , 100, 101,102])) {
 
                     if ($this->interServices->validatePhone($request->phone)) {
 

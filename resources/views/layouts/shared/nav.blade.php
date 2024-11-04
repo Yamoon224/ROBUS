@@ -389,6 +389,15 @@
                                 <div class="side-menu__title">Rechargement carte</div>
                             </a>
                         </li>
+                        <li>
+                            <a href="{{ route('commissions.browse_companies') }}"
+                                class="side-menu {{ $route == 'commissions.browse_companies' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title">Companies</div>
+                            </a>
+                        </li>
+
 
                         <li>
                             <a href="{{ route('commissions.browse_payments') }}"

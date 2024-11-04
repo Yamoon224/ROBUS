@@ -190,10 +190,30 @@
                         @enderror
 
                     </div>
+
+                    <div class="crud-form-1 mt-3">
+                        <label class="form-label">Pourcentage<span class="text-danger"> *</span></label>
+                        <select name="percent" data-placeholder="Selectionne le pourcentage"
+                            class="select2 form-select @error('percent') is-invalid @enderror">
+                            <option disabled selected>-</option>
+
+                            @foreach ($percentCompanies as $percent)
+                                <option value="{{ $percent->id }}">{{ $percent->name }}</option>
+                            @endforeach
+                        </select>
+                        @error('percent')
+                            <span class="invalid-feedback" role="alert">
+                                <strong>{{ $message }}</strong>
+                            </span>
+                        @enderror
+
+                    </div>
+
+                    
                     <div class="crud-form-1 mt-3">
                         <label class="form-label">Mot de passe <span class="text-danger"> *</label>
                         <input type="password" class="form-control @error('password') is-invalid @enderror"
-                            name="password" id="password" required maxlength="4">
+                            name="password" id="password" required >
                         @error('password')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -204,7 +224,7 @@
                     <div class="crud-form-1 mt-3">
                         <label class="form-label">Confirmer Mot de passe <span class="text-danger">*</span></label>
                         <input type="password" class="form-control @error('password_confirmation') is-invalid @enderror"
-                            name="password_confirmation" id="password_confirmation" required maxlength="4">
+                            name="password_confirmation" id="password_confirmation" required >
                     </div>
 
                 </div>
@@ -227,94 +247,7 @@
 @endsection
 
 @push('scripts')
-    {{-- Choise actor --}}
-    <script type="text/javascript">
-        $(document).ready(function() {
 
-            $('input[name="is_distributer"]').click(function() {
-                if ($(this).is(":checked")) {
-                    $("#switch_under_distributer").hide();
-                    $("#switch_under_admin").hide();
-                    $("#switch_supervisor").hide();
-                    $("#switch_company").hide();
-                } else {
-                    $("#switch_under_distributer").show();
-                    $("#switch_distributer").show();
-                    $("#switch_under_admin").show();
-                    $("#switch_supervisor").show();
-                    $("#switch_company").show();
-                }
-
-            });
-
-            $('input[name="is_under_distributer"]').click(function() {
-                if ($(this).is(":checked")) {
-                    $("#switch_distributer").hide();
-                    $("#switch_under_admin").hide();
-                    $("#switch_supervisor").hide();
-                    $("#switch_company").hide();
-
-                } else {
-                    $("#switch_under_distributer").show();
-                    $("#switch_distributer").show();
-                    $("#switch_under_admin").show();
-                    $("#switch_supervisor").show();
-                    $("#switch_company").show();
-                }
-
-            });
-
-            $('input[name="is_admin"]').click(function() {
-                if ($(this).is(":checked")) {
-                    $("#switch_distributer").hide();
-                    $("#switch_under_distributer").hide();
-                    $("#switch_supervisor").hide();
-                    $("#switch_company").hide();
-                } else {
-                    $("#switch_under_distributer").show();
-                    $("#switch_distributer").show();
-                    $("#switch_under_admin").show();
-                    $("#switch_supervisor").show();
-                    $("#switch_company").show();
-                }
-
-            });
-
-            $('input[name="is_supervisor"]').click(function() {
-                if ($(this).is(":checked")) {
-                    $("#switch_distributer").hide();
-                    $("#switch_under_distributer").hide();
-                    $("#switch_under_admin").hide();
-                    $("#switch_company").hide();
-                } else {
-                    $("#switch_under_distributer").show();
-                    $("#switch_distributer").show();
-                    $("#switch_under_admin").show();
-                    $("#switch_supervisor").show();
-                    $("#switch_company").show();
-                }
-
-            });
-
-            $('input[name="is_company"]').click(function() {
-                if ($(this).is(":checked")) {
-                    $("#switch_distributer").hide();
-                    $("#switch_under_distributer").hide();
-                    $("#switch_under_admin").hide();
-                    $("#switch_supervisor").hide();
-                } else {
-                    $("#switch_company").hide();
-                    $("#switch_under_distributer").show();
-                    $("#switch_distributer").show();
-                    $("#switch_under_admin").show();
-                    $("#switch_supervisor").show();
-                }
-
-            });
-
-        });
-    </script>
-    {{-- Changes country --}}
     <script type="text/javascript">
         $(document).ready(function() {
             $('#country_id').on('change', function() {

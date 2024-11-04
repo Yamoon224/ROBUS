@@ -16,6 +16,7 @@ use App\Models\Custumers\Country;
 use App\Models\Custumers\Zone;
 use App\Models\Kyc;
 use App\Models\Master;
+use App\Models\PercentCompanie;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
@@ -355,9 +356,10 @@ class AdminController extends Controller
             abort(403);
         }
         $roles = Role::orderBy('created_at', 'desc')->whereId(6)->get();
+        $percentCompanies = PercentCompanie::orderBy('created_at', 'desc')->get();
         $countries = Country::whereRobus(true)
             ->where('indecative', '!=', null)->get();
-        return view('pages.admin.add_company', compact('roles', 'countries'));
+        return view('pages.admin.add_company', compact('roles', 'countries', 'percentCompanies'));
     }
 
 
@@ -949,6 +951,7 @@ class AdminController extends Controller
             'firstname' => ['required', 'string', 'max:255'],
             'country_id' => 'required',
             'zone' => 'required',
+            'percent' => 'required',
             'roles' => ['required'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:sid_users'],
             'phone' => ['required', 'unique:sid_users'],
@@ -958,6 +961,7 @@ class AdminController extends Controller
             'image_verso' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
 
         ]);
+
         if ($validator->fails()) {
             return redirect('application/admin/add_company')
                 ->withErrors($validator)
@@ -972,6 +976,7 @@ class AdminController extends Controller
         $tool = new Image;
 
         try {
+
 
             $rt = rand(40, 5000) * time();
             $tr = str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
@@ -998,7 +1003,6 @@ class AdminController extends Controller
                 $user->image =  env('APP_URL') . "/public/profil/" . $user->id . "/$front_file";
             }
 
-
             $user->password  = Hash::make($request->password);
             $user->is_under_distributer  = false;
             $user->is_distributer  = false;
@@ -1011,15 +1015,12 @@ class AdminController extends Controller
             $user->assignRole($request['roles']);
 
             if (!$user->country->currencie) {
-
                 return redirect('application/admin/add_company')
                     ->withErrors($validator)
                     ->with('color', 'danger')
                     ->with('status', 'Pas de devise dans se pays\n \nveillez activer la devise')
                     ->withInput();
             }
-
-
 
             $user->save();
 
@@ -1052,11 +1053,12 @@ class AdminController extends Controller
                 $company_user = Company::create([
                     'city_id' =>   $user->city_id,
                     'name' =>      $user->firstname,
-                    'country_id' =>  $request->country_id,
+                    'country_id' =>  $user->country_id,
                     'email' =>  $user->email,
-                    'phone' =>  $user->phone,
+                    'phone' =>  $user->country->indecative . $user->phone,
+                    'percent_companie_id' => $request->percent,
                     'city' =>  $user->zone,
-                    'currencie_id' =>  $user->country->currencie->id,
+                    // 'currencie_id' =>  $user->country->currencie->id,
                     'status' => true
                 ]);
 
@@ -1079,11 +1081,12 @@ class AdminController extends Controller
                     'phone'  =>   $user->country->indecative . $user->phone,
                     'silver_ceiling'  =>   $user->country->silver_ceiling
                 ]);
+
             } else {
 
                 $msg = "Societe crée avec succès";
                 $color = 'danger';
-                return redirect(route('admin.browse'))->with('color', $color)->with('status', $msg);
+                return redirect(route('company.browse'))->with('color', $color)->with('status', $msg);
             }
 
 
@@ -1094,7 +1097,7 @@ class AdminController extends Controller
             $msg = "Societe crée avec succès";
             $color = 'success';
 
-            return redirect(route('admin.browse'))->with('color', $color)->with('status', $msg);
+            return redirect(route('company.browse'))->with('color', $color)->with('status', $msg);
         } catch (\Throwable $th) {
             return redirect('application/admin/add_company')
                 ->withErrors($validator)
@@ -1442,7 +1445,7 @@ class AdminController extends Controller
                 'activation_code'  =>  null,
                 'forget_password'  =>  null,
             ]);
-        
+
 
             Mail::to($user_info->email)->send(new NewAdmin('Votre compte  sous distributeur marchant est activé ' . env('APP_NAME') .
                 ' Votre email : '  . $user_info->email . ' Votre mot de passe : ' . $request->password));

@@ -74,32 +74,35 @@ class UserCompany extends Component
 
     public function render()
     {
-
-        $users = SidUser::query();
-
+        $users = SidUser::query()->where('is_company', true);
+    
         if ($this->search != "") {
-
             $this->resetPage();
-
-            $users->where('is_admin', true)
-                ->orWhere("is_distributer", true)
-                ->orWhere("is_under_distributer", true)
-                ->orwhere("firstname", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("lastname", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("phone", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("email", "LIKE",  "%" . $this->search . "%")
-                ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                ->paginate($this->perPage);
+    
+            $users->where(function($query) {
+                $query->where('is_admin', true)
+                    ->orWhere("is_distributer", true)
+                    ->orWhere("is_under_distributer", true)
+                    ->orWhere("firstname", "LIKE", "%" . $this->search . "%")
+                    ->orWhere("lastname", "LIKE", "%" . $this->search . "%")
+                    ->orWhere("phone", "LIKE", "%" . $this->search . "%")
+                    ->orWhere("email", "LIKE", "%" . $this->search . "%");
+            });
         }
-
+    
         if ($this->countriesFilter != "") {
             $users->where("country_id", $this->countriesFilter);
         }
-
+    
+        $users = $users->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                       ->orderBy('created_at', 'desc')
+                       ->paginate($this->perPage);
+    
         return view('livewire.user-company', [
-            "users" => $users->where('is_company' ,true)->orderBy('created_at', 'desc')->latest()->paginate(30),
+            "users" => $users,
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get()
         ]);
     }
+    
 
 }

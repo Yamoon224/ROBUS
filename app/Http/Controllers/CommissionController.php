@@ -2069,6 +2069,14 @@ class CommissionController extends Controller
         return view('pages.commissions.transactions');
     }
 
+    public function browse_companies()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+        return view('pages.commissions.browse_companies');
+    }
+
     public function browse_onexbets()
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {

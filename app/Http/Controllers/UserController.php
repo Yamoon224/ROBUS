@@ -230,7 +230,8 @@ class UserController extends Controller
                 ->orderBy('created_at', 'desc')->paginate(20);
 
 
-            $employers =  SidUser::where('id', '!=', $id)->where('company_id', $user->company_id)->paginate(20);
+            $employers =  SidUser::where('is_custumers' ,true)->where('id', '!=', $id)->where('company_id', $user->company_id)->paginate(20);
+            $underDistributors =  SidUser::where('is_under_distributer' ,true)->where('id', '!=', $id)->where('company_id', $user->company_id)->paginate(20);
 
             $usersCountry = Auth::guard('web')->user()->country->currencie->name;
 
@@ -239,6 +240,7 @@ class UserController extends Controller
                 'transactions',
                 'usersCountry',
                 'employers',
+                'underDistributors',
                 'kycs'
             ));
         } else {
