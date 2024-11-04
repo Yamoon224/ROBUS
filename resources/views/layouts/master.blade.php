@@ -189,6 +189,9 @@
             $('#add-percent-companie-modal').addClass('hide');
 
 
+            $('#connected-company-modal').removeClass('show');
+            $('#connected-company-modal').addClass('hide');
+
             $('#connected-master-modal').removeClass('show');
             $('#connected-master-modal').addClass('hide');
 
@@ -198,6 +201,9 @@
             // desabled master
             $('#disabled-master-admin-modal').removeClass('show');
             $('#disabled-master-admin-modal').addClass('hide');
+
+            $('#disabled-company-admin-modal').removeClass('show');
+            $('#disabled-company-admin-modal').addClass('hide');
 
             // desabled application
             $('#disabled-appRobus-modal').removeClass('show');
@@ -558,10 +564,14 @@
 
 
         // End modal new
-
         Livewire.on('show-connected-master-modal', () => {
             $('#connected-master-modal').removeClass('hide');
             $('#connected-master-modal').addClass('show');
+        });
+
+        Livewire.on('show-connected-company-modal', () => {
+            $('#connected-company-modal').removeClass('hide');
+            $('#connected-company-modal').addClass('show');
         });
 
         

@@ -26,6 +26,7 @@ class UnderDistributors extends Component
     public $sidUserStatus;
     public $user_id;
     public $master_id;
+    public $company_id;
     public $user_country;
     public $user_city;
     public $master_selected;
@@ -41,11 +42,21 @@ class UnderDistributors extends Component
         $this->emit($state);
     }
 
-  public function editConnected($id, $state)
+    public function editConnected($id, $state)
     {
         $check = SidUser::whereId($id)->first();
         $this->user_id = $check->id;
         $this->master_id = $check->master_id;
+        $this->underdistributeurDesabled = $check->is_accepted;
+        $this->emit($state);
+    }
+
+
+    public function editConnectedCompanie($id, $state)
+    {
+        $check = SidUser::whereId($id)->first();
+        $this->user_id = $check->id;
+        $this->company_id = $check->company_id;
         $this->underdistributeurDesabled = $check->is_accepted;
         $this->emit($state);
     }
@@ -61,21 +72,33 @@ class UnderDistributors extends Component
         $this->emit($state);
     }
 
+    public function addConnectedCompanie($id, $state)
+    {
+        $check = SidUser::whereId($id)->first();
+        $this->user_id = $check->id;
+        $this->company_id = $check->company_id;
+        $this->user_country = $check->country->id;
+        $this->user_city = $check->city->id;
+        $this->underdistributeurDesabled = $check->is_accepted_companie;
+        $this->emit($state);
+    }
+
+
     public function edit_update($data)
     {
-      
+
         $sid_user = $data['user_id'];
-        
+
         $operator_id = $data['operator_id'];
 
         $check_user = SidUser::whereId($sid_user)->first();
 
         $check_operator = Operator::whereId($operator_id)->first();
-        
+
         $old_operators = OperatorService::where('sid_user_id', $check_user->id)
-                                                ->where('operator_id', $check_operator->id)
-                                                ->first();
-      
+            ->where('operator_id', $check_operator->id)
+            ->first();
+
         if (!empty($old_operators)) {
 
             $old_operators->forcedelete();
@@ -83,11 +106,10 @@ class UnderDistributors extends Component
             $this->resetdesableField();
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Liste des operateurs mise à jour !');
-
-        }else {
+        } else {
 
             $operator_service = new OperatorService;
-            $operator_service->sid_user_id =$check_user->id;
+            $operator_service->sid_user_id = $check_user->id;
             $operator_service->operator_id  = $check_operator->id;
             $operator_service->save();
             event(new assignementEvent($operator_service));
@@ -95,17 +117,13 @@ class UnderDistributors extends Component
             $this->resetdesableField();
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Liste des operateurs mise à jour !');
-
         }
     }
-     
+
     public function resetdesableField()
     {
         $this->emit('modal-hide', 'hide');
-        // return redirect(request()->header('Referer'));
     }
-
-
 
 
     public function connected()
@@ -135,6 +153,33 @@ class UnderDistributors extends Component
         }
     }
 
+    public function connectedCompanie()
+    {
+        $check = SidUser::find($this->user_id);
+
+        $check_master = SidUser::find($this->company_id)->first();
+
+        if (!empty($check)) {
+            if ($check->company_id  == $this->company_id && $check->is_accepted) {
+                $msg = 'Vous avez été lié a un sous distributeur';
+                $msg_title = 'Liaison a un sous distributeur';
+                $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $check->update(['company_id' => null, 'is_accepted_companie' => false]);
+                $check->assignRole(4);
+            } else {
+                $msg = 'Vous avez été detaché a un sous distributeur';
+                $msg_title = 'Détachément a un sous distributeur';
+                $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $check->update(['company_id' => $this->company_id, 'is_accepted_companie' => true]);
+                $check->assignRole(4);
+            }
+            $this->cancelConnectedField();
+            $this->emit('modal-hide', 'hide');
+            $this->emit('refreshPage'); // À appeler après avoir effectué les modifications
+            $this->emit('success', $check->company_id  == $this->company_id ? 'Sous distributeur lié !' : 'Sous distributeur détaché !');
+        }
+    }
+
     public function cancelConnectedField()
     {
         $this->user_country = null;
@@ -158,8 +203,27 @@ class UnderDistributors extends Component
             $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
             $this->emit('modal-hide', 'hide');
             $this->cancelConnectedField();
-            $this->emit('refreshPage'); // À appeler après avoir effectué les modifications
+            $this->emit('refreshPage'); 
             $this->emit('success', $check->master_id  == $this->master_selected ? 'Sous distributeur lié !' : 'Sous distributeur désactivée !');
+        }
+    }
+
+    public function connectedOneCompanie()
+    {
+        $check = SidUser::find($this->user_id);
+
+        $check_master = SidUser::find($this->master_selected)->first();
+
+        if (!empty($check)) {
+            $check->update(['company_id' => $this->master_selected, 'is_accepted_companie' => true]);
+            // $check->assignRole(4);
+            $msg = 'Vous avez été lié a un sous distributeur';
+            $msg_title = 'Liaison a un sous distributeur';
+            $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+            $this->emit('modal-hide', 'hide');
+            $this->cancelConnectedField();
+            $this->emit('refreshPage'); 
+            $this->emit('success', $check->company_id  == $this->master_selected ? 'Sous distributeur lié !' : 'Sous distributeur désactivée !');
         }
     }
 

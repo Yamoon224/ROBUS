@@ -56,9 +56,9 @@
                     <tbody>
                         @php
 
-                        $old_operators = getOperators($item->id);
+                            $old_operators = getOperators($item->id);
 
-                    @endphp
+                        @endphp
                         <tr class="intro-x">
                             <td class="w-35">
                                 <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
@@ -77,6 +77,68 @@
                                     </span>
                                 </div>
 
+
+                                @if ($item->company_id != null && $item->company_id != 1)
+
+                                    <div class="text-slate-300 text-xs  mt-0.5 mb-2">
+                                        <p>Compagnie :</p>
+                                        {{-- <div class="text-slate-300 text-xs  mt-2">
+                                            {{ $item->company_id != null ? $item->company->name : null }}
+                                        </div> --}}
+                                    </div>
+                                    <div class="text-slate-500  mt-0.5">
+                                        <span
+                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            {{ $item->company->country->name ?? null }} ville :
+                                            {{ $item->company->city->name ?? null }}
+                                        </span>
+                                    </div>
+                                    <div class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
+
+                                        @if ($item->is_accepted_companie )
+                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                <div class="flex items-center justify-center text-success">
+
+                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
+                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
+                                                        href="javascript:;" wire:loading.attr="disabled"
+                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
+                                                        <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i>
+                                                        Déja attribuer
+                                                    </a>
+
+                                                </div>
+                                            @endif
+                                        @else
+                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                <div class="flex items-center justify-center text-danger">
+                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
+                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
+                                                        href="javascript:;"
+                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
+                                                        Attribution en attente
+                                                    </a>
+
+                                                </div>
+                                            @endif
+                                        @endif
+
+
+                                    </div>
+                                @else
+                                    @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                        <div class="flex items-center justify-center text-primary ">
+
+                                            <a wire:click="addConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
+                                                class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
+                                                href="javascript:;" wire:loading.attr="disabled"
+                                                title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
+                                                Lié a une compagnie
+                                            </a>
+
+                                        </div>
+                                    @endif
+                                @endif
 
                             </td>
                             <td>
@@ -203,7 +265,8 @@
                                                 {{ $item->city->name ?? null }}
                                             </span>
                                         </div>
-                                        <div class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
+                                        <div
+                                            class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
 
                                             @if ($item->is_accepted)
                                                 @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
@@ -341,7 +404,6 @@
 
                                     </div>
                                 </div>
-
                             </td>
                         </tr>
                     </tbody>
@@ -364,5 +426,7 @@
     @include('livewire.modals.disabledUsers')
     @include('livewire.modals.connectedUnders')
     @include('livewire.modals.connectedOneUnderDistributors')
+    @include('livewire.modals.connectedCompanyUnders')
+    @include('livewire.modals.connectedCompanyOneUnderDistributors')
 
 </div>

@@ -977,8 +977,8 @@
             </div>
         </div> 
         @endif
-   
 
+        @include('livewire.modals.disabledUsers')
 
     </div>
 
@@ -1000,13 +1000,4 @@
             )
         });
     </script>
-    {{-- <script>
-    window.Laravel = {'csrfToken': '{{csrf_token()}}'}
-
-    window.Echo.private(`items.{{{$item->id}}}`)
-    .listen('ItemUpdated', function(e) {
-        console.log("It is working!");
-    });
-
-</script> --}}
 @endpush
