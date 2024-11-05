@@ -183,7 +183,7 @@
             </div>
         </div>
 
-        
+
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-pendd">
             <div>
@@ -705,7 +705,7 @@
             @livewire('transaction-details.reload-transactions', ['walletAllReloads' => $user->id])
         </div>
         <div id="transfers" class="tab-pane " role="tabpanel" aria-labelledby="transfers-tab">
-        
+
             @livewire('transaction-details.transactions-users', ['walletAllTransactions' => $user->id])
 
         </div>
@@ -726,21 +726,19 @@
             @livewire('transaction-details.phone-credit-users', ['walletAllPhoneCredits' => $user->id])
 
         </div>
-      <div id="inter" class="tab-pane" role="tabpanel" aria-labelledby="inter-tab">
-            @livewire('transaction-details.inters-users', ['walletAllInters' => $user->id])
 
+        <div id="inter" class="tab-pane" role="tabpanel" aria-labelledby="inter-tab">
+            @livewire('transaction-details.inters-users', ['walletAllInters' => $user->id])
         </div>
-        
+
 
         <div id="carte" class="tab-pane" role="tabpanel" aria-labelledby="carte-tab">
             @livewire('transaction-details.carte-users', ['walletAllDeposits' => $user->id])
-
         </div>
-        
-        
+
+
         <div id="xbet" class="tab-pane" role="tabpanel" aria-labelledby="xbet-tab">
             @livewire('transaction-details.xbets-users', ['walletAllXbets' => $user->id])
-
         </div>
 
 
@@ -758,6 +756,3 @@
         }
     </script>
 @endpush
-
-
-        

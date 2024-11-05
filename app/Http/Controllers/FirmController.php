@@ -34,6 +34,15 @@ class FirmController extends Controller
         }
     }
 
+    public function browse_underDistributors()
+    {
+        if (firm()) {
+            return view('firms.pages.browse_underDistributors');
+        } else {
+            abort(403);
+        } 
+    }
+
 
     public function browse_categories()
     {

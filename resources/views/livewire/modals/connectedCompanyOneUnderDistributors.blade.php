@@ -12,6 +12,7 @@
 
                    
                         $masters = App\Models\Sid\SidUser::where('is_company' ,true)
+                            ->where('company_id' , '!=', 1)
                             ->where('country_id', $this->user_country)
                             ->get();
                         
@@ -42,7 +43,7 @@
 
                     <input wire:click="connectedOneCompanie" wire:loading.remove type="button"
                         class="btn btn-danger  w-25 mr-1 mb-1"
-                        value="{{ $underdistributeurDesabled == 0 ? 'Lié a la societé' : 'Désactiver a la societé' }}" />
+                        value="{{ $underdistributeurDesabled == 0 ? 'Attribution' : 'Modifier' }}" />
 
                     <div wire:loading wire:target="connectedOneCompanie">
                         Traitement en cours...

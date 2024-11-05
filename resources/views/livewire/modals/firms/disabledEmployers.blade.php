@@ -8,7 +8,7 @@
                     <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
                     <div class="text-3xl mt-5">Action requise !!!</div>
                     <div class="text-slate-500 mt-2">Êtes-vous sûr de vouloir
-                        {{ $employerDesabled == firm()->id ? 'Activer' : 'Désactiver' }} cet client ?</div>
+                        {{ $employerDesabled == firm()->id ? 'Activer' : 'Rétirer' }} cet client ?</div>
                 </div>
 
                 <div class="px-5 pb-8 text-center mt-6">
@@ -16,7 +16,7 @@
                         class="btn btn-outline-secondary w-25 mr-1 mb-1">Annuler</button>
                     <input wire:click="disable" wire:loading.remove type="button"
                         class="btn btn-danger  w-25 mr-1 mb-1"
-                        value="{{ $employerDesabled == firm()->id  ? 'Activer' : 'Désactiver' }}" />
+                        value="{{ $employerDesabled == firm()->id  ? 'Activer' : 'Rétirer' }}" />
                    
                         <div  wire:loading wire:target="disable">
                             Traitement en cours...

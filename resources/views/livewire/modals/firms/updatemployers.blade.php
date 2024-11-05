@@ -6,23 +6,23 @@
                 <h2 class="font-medium text-base mr-auto">Modifier employé</h2>
             </div>
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-                <div class="col-span-12">
-                    <label for="wallet_id_add" class="form-label">Nom & prenom<span class="text-danger">
+                <div class="col-span-12 text-center">
+                    <label for="wallet_id_add" class="form-label text-center">Nom & prenom<span class="text-danger">
                             *</span></label>
-                    <div class="text-lg text-gray-900 text-bold text-secondary ">
+                    <div class="text-lg text-center text-gray-900 text-bold text-secondary ">
                         <span
                             class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3  font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                            {{ $wallet_info_searchs ?? null }}
+                            {{ $userdetails ?? null }}
                         </span>
 
                     </div>
                 
                 </div>
-                <div class="col-span-12">
+                <div class="col-span-12 text-center">
                    
-                    <label for="wallet_id_add" class="form-label">Numero wallet<span class="text-danger">
+                    <label for="wallet_id_add" class="form-label text-center">Numero wallet<span class="text-danger">
                             *</span></label>
-                    <div class="text-lg text-gray-900 text-bold text-secondary ">
+                    <div class="text-lg text-gray-900  text-center text-bold text-secondary ">
                         <span
                             class="alert alert-secondary   inline-flex items-center justify-center px-2 py-1 mb-3 font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                             {{ $wallet_id_add ?? null }}

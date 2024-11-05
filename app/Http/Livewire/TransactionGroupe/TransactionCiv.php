@@ -58,12 +58,9 @@ class TransactionCiv extends Component
     public $commission_transaction_money_val_admin_receive;
     public $commission_transaction_money_val_nat_receive;
     public $password_validated;
-    public $showPasswordField = 1; // Variable to control the visibility of the password field
+    public $showPasswordField = 1; 
     public $isPasswordValid = false;
 
-    // protected $listeners = [
-    //     'echo-private:wallet-transfers-created,.Created_wallet_transfers' => 'notifyNewTransfers',
-    // ];
 
 
     public function updatedTransactionAmountRobus()
@@ -291,7 +288,6 @@ class TransactionCiv extends Component
                 ]
             );
 
-
             if (Hash::check($this->password_validated, sabdy()->password)) {
 
                 $this->password_validated = "";
@@ -329,7 +325,6 @@ class TransactionCiv extends Component
                     if (sabdy()->is_under_distributer) {
 
                         $percent_robus = $this->getRobusPercentageSDistributers();
-
                         $isCustomer = $wallet_search->sidUser->is_custumers;
                         $isNotDistributor = !$wallet_search->sidUser->is_under_distributer;
                         $isNotAdmin = !$wallet_search->sidUser->is_admin;
@@ -386,7 +381,6 @@ class TransactionCiv extends Component
                                                     }
                                                 }
                                             } else {
-
 
                                                 $this->resetTransactionField();
                                                 $this->emit('modal-hide-transfers');

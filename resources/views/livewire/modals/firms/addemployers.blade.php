@@ -26,35 +26,37 @@
                     @enderror
                     <div wire:loading>Recherche numero...</div>
                     <div wire:loading.remove></div>
-                    @if ($wallet_id_add == '')
-                        <div class="text-gray-500 text-sm">
-                            Entrer le numero du wallet
-                        </div>
-                    @elseif($wallet_info_searchs != null)
-                        @php
-                            $wallet_search = App\Models\Wallets\Wallet::where('wallet_id', $wallet_id_add)
-                                ->where('country_id', sabdy()->country->id)
-                                ->first();
 
-                            if ($wallet_search != null) {
-                                $wallet_name = $wallet_search->sidUser->firstname . ' ' . $wallet_search->sidUser->lastname;
+                    @php
+                        $wallet_search = App\Models\Wallets\Wallet::where('wallet_id', $wallet_id_add)
+                            ->where('country_id', firm()->country->id)
+                            ->first();
+                        if ($wallet_search) {
+                            if ($wallet_search->sidUser->is_custumers) {
+                                $wallet_name =
+                                    $wallet_search->sidUser->firstname . ' ' . $wallet_search->sidUser->lastname;
                             } else {
-                                $wallet_name = 'Numero introuvable';
+                                $wallet_name = 'Numero introuvable ou n\' est pas client';
                             }
+                        } else {
+                            $wallet_name = 'Numero introuvable ou n\' est pas client';
+                        }
 
-                        @endphp
-                        <div class="text-lg text-gray-900 text-bold text-secondary ">
-                            <span
-                                class="alert alert-secondary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                {{ $wallet_name ?? null }}
-                            </span>
+                    @endphp
 
-                        </div>
+                    @if ($wallet_id_add == '')
+                        <div class="text-gray-500 text-sm">Entrer numero wallet</div>
                     @else
-                        <div class="text-gray-500 text-sm">
-                            Numero inconnu chez Robus
-                        </div>
+                        @if ($wallet_name)
+                            <div class="text-lg text-gray-900 text-bold text-secondary">
+                                <span
+                                    class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                    {{ $wallet_name }}
+                                </span>
+                            </div>
+                        @endif
                     @endif
+
                 </div>
 
             </div>

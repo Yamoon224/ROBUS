@@ -7,6 +7,8 @@ use App\Models\CloseApp;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletTransaction;
+use App\Notifications\UserNotification;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -38,15 +40,29 @@ class HomeCompany extends Component
     }
 
 
+
     public function disable()
     {
+
         $check = SidUser::find($this->user_id);
+
         if (!empty($check)) {
-            if ($check->company_id == firm()->id) $check->update(['company_id' => 1, 'categorie_id' => null]);
-            else $check->update(['company_id' => firm()->id, 'categorie_id' => null]);
-            $this->emit('modal-hide', 'hide');
+
+            if ($check->company_id  == firm()->id && $check->is_accepted_companie) {
+                $msg = 'Vous avez été délié ';
+                $msg_title = 'Déliaison a  ' . firm()->firstname;
+                $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $check->update(['company_id' => 1, 'is_accepted_companie' => false , 'categorie_id' => null]);
+            } else {
+                $msg = 'Vous avez été délié ';
+                $msg_title = 'Déliaison a  ' . firm()->firstname;
+                $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $check->update(['company_id' => 1, 'is_accepted_companie' => false , 'categorie_id' => null]);
+            }
             $this->cancelEmployesField();
-            $this->emit('success', $check->company_id == firm()->id ? 'Client activée !' : 'Client désactivée !');
+            $this->emit('modal-hide', 'hide');
+            $this->emit('refreshPage');
+            $this->emit('success', $check->company_id  == firm()->id ? 'Client lié !' : 'Client détaché !');
         }
     }
 
@@ -84,90 +100,68 @@ class HomeCompany extends Component
 
     public function render()
     {
+
         $walletUser = Auth::guard('company')->user();
-        $wallet_info_firstname = null;
-        $wallet_info_lastname = null;
-        $wallet_payment_firstname = null;
-        $wallet_payment_lastname = null;
-
-        $wallets = Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.is_custumers', true)
-            // ->orWhere('sid_users.is_under_distributer', true)
-            ->where('wallets.status', true)
-            ->Where('wallets.country_id', firm()->country->id)
-            ->get();
-
-        $wallet_payments = Wallet::join('sid_users', 'sid_users.id', 'wallets.sid_user_id')
-            ->where('sid_users.company_id', firm()->id)
-            // ->orWhere('sid_users.is_under_distributer', true)
-            ->where('wallets.status', true)
-            ->Where('wallets.country_id', firm()->country->id)
-            ->get();
-        if ($this->wallet_id != '') {
-
-
-            foreach ($wallets  as $wallet_user) {
-
-                $wallet_search_user = $wallet_user->where('wallet_id', $this->wallet_id)->first();
-
-                if ($wallet_search_user == null) {
-
-                    $wallet_info_firstname = "N'existe pas chez nous";
-                } else {
-
-                    $wallet_info_firstname = $wallet_search_user->sidUser->firstname ?? null;
-
-                    $wallet_info_lastname = $wallet_search_user->sidUser->lastname ?? null;
-                }
-            }
-        }
-
-        if ($this->wallet_id_employer != '') {
-
-
-            foreach ($wallet_payments  as $wallet_user) {
-
-                $wallet_search_user = $wallet_user->where('wallet_id', $this->wallet_id_employer)->first();
-
-
-
-                if ($wallet_search_user == null) {
-
-                    $wallet_payment_firstname = "N'existe pas chez nous";
-                } else {
-
-                    $wallet_payment_firstname = $wallet_search_user->sidUser->firstname ?? null;
-
-                    $wallet_payment_lastname = $wallet_search_user->sidUser->lastname ?? null;
-                }
-            }
-        }
-
         $state_transaction_year =  $this->getMastersGainProperty(WalletTransaction::class);
-
         $transaction_amount_month = $this->getDaysTransaction(WalletTransaction::class);
-
+        $transaction_error = $this->getTransactionCount(WalletTransaction::class, 'ERROR', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
+        $transaction_padding = $this->getTransactionCount(WalletTransaction::class, 'PENDING', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
+        $transaction_success = $this->getTransactionCount(WalletTransaction::class, 'SUCCESS', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
+        $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
         $closeRobus = CloseApp::orderBy('id', 'asc')->get();
+        $employers =  SidUser::where('is_custumers' ,true)->where('company_id', firm()->company_id)->count();
+        $underDistributors =  SidUser::where('is_under_distributer' ,true)->where('company_id', firm()->company_id)->count();
 
         return view('livewire.home-company', [
             'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-            'sum_error' =>  $this->TransactionErrorUser,
-            'sum_success' =>  $this->TransactionSuccessUser,
-            'pending_success' => $this->TransactionPenddingUser,
-            "users" => SidUser::where('company_id', firm()->id)->orderBy('created_at', 'desc')->limit(3)->latest()->get(),
-            'sum_amount' => $this->WalletTransactionSumUser,
-            'wallet_info_searchs' => $wallet_info_firstname . '  ' . $wallet_info_lastname,
-            'wallet_info_search_payment' => $wallet_payment_firstname . '  ' . $wallet_payment_lastname,
-            "categories" => Categorie::where('sid_user_id', firm()->id)->orderBy("name", 'desc')->get(),
+            'sum_error' =>  $transaction_error,
+            'sum_success' =>  $transaction_success,
+            'pending_success' => $transaction_padding,
+            "users" => SidUser::where('company_id', firm()->company->id)->where('id' , '!=', firm()->id)->orderBy('created_at', 'desc')->limit(3)->latest()->get(),
+            'sum_amount' => $transaction_amount,
+            "categories" => Categorie::where('sid_user_id', firm()->company->id)->orderBy("name", 'desc')->get(),
             'usersCountry' => $walletUser->country->currencie->name,
-            'sum_transaction' => $this->WalletTransactionSumUser,
-            'sum_transaction_month' => $this->WalletTransactionMonthUser,
             'realods' => $state_transaction_year,
-            // 'reloads_gain'  =>  $this->RealodsAdminGain,
             'reloads_days'  =>  $transaction_amount_month,
+            'employers'  =>  $employers,
+            'undersDistributors'  =>  $underDistributors,
             'open_apps' => $closeRobus,
 
         ]);
+    }
+
+    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
+    {
+
+        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+            ->whereDate($transaction_days, Carbon::today())
+            ->where($transaction_status, 'SUCCESS');
+
+        if (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transaction) {
+                $query->where($wallet_transaction, firm()->wallet->id);
+            });
+        }
+
+
+        return $query->sum($wallet_amount);
+    }
+
+
+    public function getTransactionCount($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status)
+    {
+
+        $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
+            ->whereDate($transaction_days, Carbon::today())
+            ->where($wallet_status, $status);
+
+        if (sabdy()->is_company) {
+            $query->where(function ($query) use ($wallet_transactions) {
+                $query->where($wallet_transactions, firm()->wallet->id);
+            });
+        }
+
+        return $query->count();
     }
 
     public function getDaysTransaction($walletModel)
@@ -274,134 +268,4 @@ class HomeCompany extends Component
         return $reloads;
     }
 
-
-    public function getTransactionPenddingUserProperty()
-    {
-        $transactionPendding = WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                firm()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where(
-                'wallet_transactions.created_by',
-                firm()->id
-            )
-            ->where('wallet_transactions.status', 'PENDING')
-            ->whereDate('wallet_transactions.created_at', Carbon::now())
-            ->count();
-        return $transactionPendding;
-    }
-    public function getTransactionErrorUserProperty()
-    {
-        $transactionError = WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                firm()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where(
-                'wallet_transactions.created_by',
-                firm()->id
-            )
-            ->where('wallet_transactions.status', 'ERROR')
-            ->whereDate('wallet_transactions.created_at', Carbon::now())
-            ->count();
-        return $transactionError;
-    }
-
-    public function getWalletTransactionSumUserProperty()
-    {
-        $data = [];
-
-        foreach (WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                firm()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where(
-                'wallet_transactions.created_by',
-                firm()->id
-            )
-            ->whereDate('wallet_transactions.created_at', Carbon::now())
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->get()
-            as $transaction) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getTransactionSuccessUserProperty()
-    {
-        $transactionSuccess = WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                firm()->country->id
-            )
-            ->select('wallet_transactions.*')
-            ->where(
-                'wallet_transactions.created_by',
-                firm()->id
-            )
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->whereDate('wallet_transactions.created_at', Carbon::now())
-            ->count();
-        return $transactionSuccess;
-    }
-
-    public function getWalletTransactionMonthUserProperty()
-    {
-        $data = [];
-
-        $result = WalletTransaction::join(
-            'wallets',
-            'wallets.id',
-            'wallet_transactions.wallet_id'
-        )
-            ->where(
-                'wallets.country_id',
-                firm()->country->id
-            )
-            ->where(
-                'wallet_transactions.created_by',
-                firm()->id
-            )
-            ->whereDate(
-                'wallet_transactions.created_at',
-                '>=',
-                Carbon::now()->subDays(30)
-            )
-            ->select(
-                DB::raw(
-                    'sum(wallet_transactions.amount) as cumul_amount_chiffre'
-                )
-            )
-            ->groupBy('wallet_transactions.created_at')
-            ->get();
-
-        foreach ($result as $sumTrans) {
-            $data[] = $sumTrans->cumul_amount_chiffre;
-        }
-
-        return array_sum($data);
-    }
 }

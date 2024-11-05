@@ -1,7 +1,7 @@
 <div>
 
     <div class="intro-y col-span-12 lg:col-span-12">
-        @php
+        {{-- @php
             $currentDayOfWeek = Illuminate\Support\Carbon::now()->dayOfWeek;
         @endphp
         @foreach ($open_apps as $index => $open)
@@ -14,18 +14,18 @@
                     </h2>
                 @endif
             </div>
-        @endforeach
+        @endforeach --}}
         <div class="intro-y block sm:flex items-center h-10">
             <h2 class="text-lg font-medium truncate mr-5">
                 Les Activites du compte Aujourdh'ui
             </h2>
         </div>
 
-        <dxiv class="intro-y grid grid-cols-12 gap-5 mt-5">
-            <div class="col-span-12 sm:col-span-4 2xl:col-span-6 box p-5 cursor-pointer zoom-in style_table_factures">
-                <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                        stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+        <div class="intro-y grid grid-cols-12 gap-5 mt-5">
+            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_table_factures">
+                <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
+                        class="feather feather-trending-down font-medium-5">
                         <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
                         <polyline points="17 18 23 18 23 12"></polyline>
                     </svg>
@@ -33,6 +33,36 @@
                 <div class="font-medium text-historique mt-6">Montant total</div>
                 <div class="text-slate-500 mt-3">
                     {{ number_format($sum_amount, 2, ',', ' ') ?? null }} {{ $usersCountry }}
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
+                <div class="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    </svg>
+
+                </div>
+                <div class="font-medium text-historique mt-6">Clients</div>
+                <div class="text-slate-500 mt-3">
+                    {{ $employers ?? null }}
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_user1">
+                <div class="flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    </svg>
+
+                </div>
+                <div class="font-medium text-historique mt-6">Sous distributeurs</div>
+                <div class="text-slate-500 mt-3">
+                    {{ $undersDistributors ?? null }}
                 </div>
             </div>
 
@@ -77,297 +107,329 @@
                 </div>
             </div>
 
-    </div>
-    <div class="col-span-12 xl:col-span-6 mt-6">
-        <div class="intro-y block sm:flex items-center h-10">
-            <h2 class="text-lg font-medium truncate mr-5">
-                Les 10 derniers employes
-            </h2>
         </div>
-        <!-- BEGIN: Weekly Top Products -->
-        <div class="intro-y col-span-12  lg:overflow-visible mt-3">
-            <table class="table table-bordered table-hover -mt-2 -intro-x ">
-                <thead class="table-dark">
-                    <tr>
-                        <th class="whitespace-nowrap">Nom & prenom</th>
-                        <th class="text-center whitespace-nowrap">Email</th>
-                        <th class="text-center whitespace-nowrap">Pays/Ville</th>
-                        <th class="text-center whitespace-nowrap">Catégorie</th>
-                        <th class="text-center whitespace-nowrap">Status compte </th>
-                        <th class="text-center whitespace-nowrap">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @if ($users->count() > 0)
-                        @foreach ($users as $item)
-                            <tr class="intro-x">
-                                <td>
-                                    {{ $item->firstname }}
-                                    {{ $item->lastname }}
-                                </td>
-                                <td>
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->email ?? null }}
-                                    </span>
-
-                                </td>
-
-                                <td>
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->country->name ?? null }} : {{ $item->city->name ?? null }}
-                                    </span>
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        Numero : {{ $item->phone ?? null }}
-                                    </span>
-                                </td>
-                                <td>
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->categorie->name ?? null }}
-                                    </span>
-                                </td>
-
-                                <td class="table-report__action w-35">
-                                    @if ($item->company_id == firm()->id)
-                                        <div class="flex items-center justify-center text-success">
-
-                                            <a wire:click="edit({{ $item->wallet->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                class="flex items-center mr-3 @if ($item->company_id == firm()->id) @else @endif"
-                                                href="javascript:;"
-                                                title="@if ($item->company_id == firm()->id) Désactiver @else Activer @endif">
-                                                <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
-                                            </a>
-
-                                        </div>
-                                    @else
-                                        <div class="flex items-center justify-center text-danger">
-                                            <a wire:click="edit({{ $item->wallet->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                class="flex items-center mr-3 @if ($item->company_id == firm()->id) @else @endif"
-                                                href="javascript:;"
-                                                title="@if ($item->company_id == firm()->id) Désactiver @else Activer @endif">
-                                                <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
-                                            </a>
-
-                                        </div>
-                                    @endif
-                                </td>
-                                <td class="table-report__action w-56">
-                                    <div class="flex justify-center items-center">
-                                        <a wire:click="edit({{ $item->wallet->id }}, 'update-employers-modal')"
-                                            class="btn btn-warning  mr-1 mb-2 btn-sm" href="javascript:;"
-                                            title="Modifier">
-                                            Modifier
-                                        </a>
-                                        <a class="btn btn-primary  mr-1 mb-2 btn-sm"
-                                            href="{{ route('employes.show', ['id' => $item->id]) }}">
-                                            Voir
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
-                        @endforeach
-                    @else
+        <div class="col-span-12 xl:col-span-6 mt-6">
+            <div class="intro-y block sm:flex items-center h-10">
+                <h2 class="text-lg font-medium truncate mr-5">
+                    Les 10 derniers clients
+                </h2>
+            </div>
+            <!-- BEGIN: Weekly Top Products -->
+            <div class="intro-y col-span-12  lg:overflow-visible mt-3">
+                <table class="table table-bordered table-hover -mt-2 -intro-x ">
+                    <thead class="table-dark">
                         <tr>
-                            <td colspan="7" class="text-center">Aucun client pour le moment</td>
+                            <th class="whitespace-nowrap">Nom & prenom</th>
+                            <th class="text-center whitespace-nowrap">Email</th>
+                            <th class="text-center whitespace-nowrap">Pays/Ville</th>
+                            <th class="text-center whitespace-nowrap">Catégorie</th>
+                            <th class="text-center whitespace-nowrap">Utilisateur</th>
+                            <th class="text-center whitespace-nowrap">Status compte </th>
+                            <th class="text-center whitespace-nowrap">Actions</th>
                         </tr>
-                    @endif
+                    </thead>
+                    <tbody>
+                        @if ($users->count() > 0)
+                            @foreach ($users as $item)
+                                <tr class="intro-x">
+                                    <td>
+                                        {{ $item->firstname }}
+                                        {{ $item->lastname }}
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            {{ $item->email ?? null }}
+                                        </span>
 
-                </tbody>
+                                    </td>
 
-            </table>
-        </div>
-        <!-- END: Weekly Top Products -->
-    </div>
+                                    <td>
+                                        <span
+                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            {{ $item->country->name ?? null }} : {{ $item->city->name ?? null }}
+                                        </span>
+                                        <span
+                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            Numero : {{ $item->phone ?? null }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span
+                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            {{ $item->categorie->name ?? null }}
+                                        </span>
+                                    </td>
 
-    <div class="grid grid-cols-12 gap-6 mt-6">
+                                    <td>
+                                        @if ($item->is_under_distributer)
+                                            <div class="text-slate-500  mt-0.5">
+                                                <span
+                                                    class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                    Sous-distributeur
+                                                </span>
+                                            </div>
+                                        @else
+                                            <div class="text-slate-500  mt-0.5">
+                                                <span
+                                                    class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                    Client
+                                                </span>
+                                            </div>
+                                        @endif
 
-        <div class="col-span-12 2xl:col-span-9">
+                                    </td>
 
-            <!-- BEGIN: Sales Report -->
-            <div class="col-span-12 sm:col-span-8 lg:col-span-6 mt-8">
-                <div class="intro-y block sm:flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">
-                        Statistique de la semaine {{ $usersCountry }}
-                    </h2>
-                </div>
-                <div class="intro-y box p-5 mt-12 sm:mt-5">
-                    {{-- <canvas id="reloads_gain" reload_gain="{{ json_encode($reloads_gain) }}"></canvas> --}}
-                    <canvas id="sum" sum="{{ json_encode($reloads_days) }}"></canvas>
-                </div>
-            </div>
-            <!-- END: Sales Report -->
-            <!-- BEGIN: Sales Report -->
-            <div class="col-span-12 sm:col-span-8 lg:col-span-6 mt-8">
-                <div class="intro-y flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">
-                        Les statistiques de l'année en {{ $usersCountry }}
-                    </h2>
-                </div>
-                <div class="intro-y box p-5 mt-12 sm:mt-5">
-                    <canvas id="reload" reload="{{ json_encode($realods) }}"></canvas>
-                </div>
-            </div>
-            <!-- END: Sales Report -->
-        </div>
-        <div class="col-span-12 2xl:col-span-3">
-            <div class="col-span-12 sm:col-span-12 lg:col-span-4 mt-8">
-                <div class="intro-y block sm:flex items-center h-10">
-                    <h2 class="text-lg font-medium truncate mr-5">
-                        Les jours d'ouverture et fermeture de ROBUS
-                    </h2>
-                </div>
-                @php
-                    $currentDayOfWeek = Illuminate\Support\Carbon::now()->dayOfWeek;
-                @endphp
-                @foreach ($open_apps as $index => $open)
-                    <div class="col-span-12 xl:col-span-6 ml-3 mr-3 mb-3">
-                        @if ($currentDayOfWeek == $open->id)
-                            <div class="box blinking style_app" id="box_{{ $index }}">
-                            @else
-                                <div class="box style_app" id="box_{{ $index }}">
+                                    <td class="table-report__action w-35">
+
+                                        @if ($item->company_id == firm()->company->id)
+
+                                            <div  class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
+
+                                                @if ($item->is_accepted_companie == '1')
+                                                    <div class="flex items-center justify-center text-success">
+                                                        <a 
+                                                            class="flex items-center mr-3 @if ($item->company_id == firm()->id) @else @endif"
+                                                            href="javascript:;" wire:loading.attr="disabled"
+                                                            title="@if ($item->company_id == firm()->id) Désactiver @else Activer @endif">
+                                                            <div class="text-slate-300 text-xs  mt-0.5 mb-2">
+                                                                <div class="text-slate-300 text-xs  mt-0.5">
+                                                                    Déja attribuer
+                                                                </div>
+                                                            </div>
+                                                        </a>
+
+                                                    </div>
+                                                @else
+                                                    <div class="flex items-center justify-center text-danger">
+                                                        <a  class="flex items-center mr-3 @if ($item->company_id == firm()->id) @else @endif"
+                                                            href="javascript:;"
+                                                            title="@if ($item->company_id == firm()->id) Désactiver @else Activer @endif">
+                                                            <div class="text-slate-300 text-xs  mt-0.5 mb-2">
+                                                                <div class="text-slate-300 text-xs  mt-0.5">
+                                                                    Attribution en attente
+                                                                </div>
+                                                            </div>
+
+                                                        </a>
+
+                                                    </div>
+                                                @endif
+
+                                            </div>
+                                        @endif
+                                    </td>
+                                    <td class="table-report__action w-56">
+                                        <div class="flex justify-center items-center">
+                                            <a class="btn btn-primary  mr-1 mb-2 btn-sm"
+                                                href="{{ route('employes.show', ['id' => $item->id]) }}">
+                                                Voir
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        @else
+                            <tr>
+                                <td colspan="7" class="text-center">Aucun client pour le moment</td>
+                            </tr>
                         @endif
-                        <div class="flex flex-col items-center p-3 border-b border-slate-200/60 dark:border-darkmode-400"
-                            style="overflow-x: auto;">
-                            <h2 class="text-lg font-medium truncate mr-5 text-white">
-                                {{ $open->day_of_week ?? null }}
-                            </h2>
-                        </div>
-                        <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6">
-                            <div class="mr-auto text-white">Ouverture : {{ $open->time_start ?? null }}
-                            </div>
-                        </div>
-                        <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6 mb-3">
-                            <div class="mr-auto text-white">Fermeture : {{ $open->time_end ?? null }}
-                            </div>
-                        </div>
-                    </div>
-            </div>
-            @endforeach
 
+                    </tbody>
+
+                </table>
+            </div>
+            <!-- END: Weekly Top Products -->
+        </div>
+
+        <div class="grid grid-cols-12 gap-6 mt-6">
+
+            <div class="col-span-12 2xl:col-span-9">
+
+                <!-- BEGIN: Sales Report -->
+                <div class="col-span-12 sm:col-span-8 lg:col-span-6 mt-8">
+                    <div class="intro-y block sm:flex items-center h-10">
+                        <h2 class="text-lg font-medium truncate mr-5">
+                            Statistique de la semaine {{ $usersCountry }}
+                        </h2>
+                    </div>
+                    <div class="intro-y box p-5 mt-12 sm:mt-5">
+                        <canvas id="sum" sum="{{ json_encode($reloads_days) }}"></canvas>
+                    </div>
+                </div>
+                <!-- END: Sales Report -->
+                <!-- BEGIN: Sales Report -->
+                <div class="col-span-12 sm:col-span-8 lg:col-span-6 mt-8">
+                    <div class="intro-y flex items-center h-10">
+                        <h2 class="text-lg font-medium truncate mr-5">
+                            Les statistiques de l'année en {{ $usersCountry }}
+                        </h2>
+                    </div>
+                    <div class="intro-y box p-5 mt-12 sm:mt-5">
+                        <canvas id="reload" reload="{{ json_encode($realods) }}"></canvas>
+                    </div>
+                </div>
+                <!-- END: Sales Report -->
+            </div>
+            <div class="col-span-12 2xl:col-span-3">
+                <div class="col-span-12 sm:col-span-12 lg:col-span-4 mt-8">
+                    <div class="intro-y block sm:flex items-center h-10">
+                        <h2 class="text-lg font-medium truncate mr-5">
+                            Les jours d'ouverture et fermeture de ROBUS
+                        </h2>
+                    </div>
+                    @php
+                        $currentDayOfWeek = Illuminate\Support\Carbon::now()->dayOfWeek;
+                    @endphp
+                    @foreach ($open_apps as $index => $open)
+                        <div class="col-span-12 xl:col-span-6 ml-3 mr-3 mb-3">
+                            @if ($currentDayOfWeek == $open->id)
+                                <div class="box blinking style_app" id="box_{{ $index }}">
+                                @else
+                                    <div class="box style_app" id="box_{{ $index }}">
+                            @endif
+                            <div class="flex flex-col items-center p-3 border-b border-slate-200/60 dark:border-darkmode-400"
+                                style="overflow-x: auto;">
+                                <h2 class="text-lg font-medium truncate mr-5 text-white">
+                                    {{ $open->day_of_week ?? null }}
+                                </h2>
+                            </div>
+                            <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6">
+                                <div class="mr-auto text-white">Ouverture : {{ $open->time_start ?? null }}
+                                </div>
+                            </div>
+                            <div class="flex text-slate-500 text-xs mt-3 mr-6 ml-6 mb-3">
+                                <div class="mr-auto text-white">Fermeture : {{ $open->time_end ?? null }}
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                @endforeach
+
+
+            </div>
 
         </div>
+
     </div>
+
+    @stack('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        setInterval(function() {
+            const boxes = document.querySelectorAll('.style_app');
+            boxes.forEach((box, index) => {
+                const colors = ['red', 'blue', 'green',
+                    '#6C0277', '#34C924', '#6600FF', '#F9429E'
+                ]; // Ajoutez d'autres couleurs si nécessaire
+                const color = colors[index % colors.length];
+                box.style.backgroundColor = color;
+
+            });
+        }, 1000);
+    </script>
+    <script>
+        var relaods = JSON.parse($('#reload').attr('reload'));
+        var sumReload = JSON.parse($('#sum').attr('sum'));
+
+        var _ctx = $('#reload');
+        var _ctx2 = $('#sum');
+
+        new Chart(_ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre',
+                    'Octobre', 'Novembre', 'Décembre'
+                ],
+                datasets: [{
+                    label: 'Rechargement année',
+                    data: relaods,
+                    backgroundColor: [
+                        'rgba(255, 99, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                        'rgba(153, 102, 255,1)',
+                        'rgba(201, 203, 207,1)',
+                        'rgba(255, 0, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                        'rgba(153, 102, 255,1)',
+                        'rgba(201, 203, 207,1)',
+                        'rgba(255, 0, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                    ],
+                    borderWidth: 1,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    labels: {
+                        render: 'percentage',
+                        fontColor: ['white', 'white'],
+                    }
+                },
+            }
+        });
+
+        new Chart(_ctx2, {
+            type: 'line',
+            data: {
+                labels: ['Transactions'],
+                datasets: [{
+                    label: 'Rechargement du mois',
+                    data: sumReload,
+                    backgroundColor: [
+                        'rgba(255, 99, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                        'rgba(153, 102, 255,1)',
+                        'rgba(201, 203, 207,1)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                        'rgba(153, 102, 255,1)',
+                        'rgba(201, 203, 207,1)'
+                    ],
+                    borderWidth: 1,
+                }]
+            },
+            options: {
+                animations: {
+                    tension: {
+                        duration: 1000,
+                        easing: 'linear',
+                        from: 1,
+                        to: 0,
+                        loop: true
+                    }
+                },
+
+            }
+        });
+    </script>
 </div>
 @include('livewire.modals.firms.updatemployers')
 @include('livewire.modals.firms.disabledEmployers')
-@stack('scripts')
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    setInterval(function() {
-        const boxes = document.querySelectorAll('.style_app');
-        boxes.forEach((box, index) => {
-            const colors = ['red', 'blue', 'green',
-                '#6C0277', '#34C924', '#6600FF', '#F9429E'
-            ]; // Ajoutez d'autres couleurs si nécessaire
-            const color = colors[index % colors.length];
-            box.style.backgroundColor = color;
-
-        });
-    }, 1000);
-</script>
-<script>
-    var relaods = JSON.parse($('#reload').attr('reload'));
-    var sumReload = JSON.parse($('#sum').attr('sum'));
-
-    var _ctx = $('#reload');
-    var _ctx2 = $('#sum');
-
-    new Chart(_ctx, {
-        type: 'bar',
-        data: {
-            labels: ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre',
-                'Octobre', 'Novembre', 'Décembre'
-            ],
-            datasets: [{
-                label: 'Rechargement année',
-                data: relaods,
-                backgroundColor: [
-                    'rgba(255, 99, 132,1)',
-                    'rgba(255, 159, 64,1)',
-                    'rgba(255, 205, 86,1)',
-                    'rgba(75, 192, 192,1)',
-                    'rgba(54, 162, 235,1)',
-                    'rgba(153, 102, 255,1)',
-                    'rgba(201, 203, 207,1)',
-                    'rgba(255, 0, 132,1)',
-                    'rgba(255, 159, 64,1)',
-                    'rgba(255, 205, 86,1)',
-                    'rgba(75, 192, 192,1)',
-                    'rgba(54, 162, 235,1)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132,1)',
-                    'rgba(255, 159, 64,1)',
-                    'rgba(255, 205, 86,1)',
-                    'rgba(75, 192, 192,1)',
-                    'rgba(54, 162, 235,1)',
-                    'rgba(153, 102, 255,1)',
-                    'rgba(201, 203, 207,1)',
-                    'rgba(255, 0, 132,1)',
-                    'rgba(255, 159, 64,1)',
-                    'rgba(255, 205, 86,1)',
-                    'rgba(75, 192, 192,1)',
-                    'rgba(54, 162, 235,1)',
-                ],
-                borderWidth: 1,
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                labels: {
-                    render: 'percentage',
-                    fontColor: ['white', 'white'],
-                }
-            },
-        }
-    });
-
-    new Chart(_ctx2, {
-        type: 'line',
-        data: {
-            labels: ['Transactions'],
-            datasets: [{
-                label: 'Rechargement du mois',
-                data: sumReload,
-                backgroundColor: [
-                    'rgba(255, 99, 132,1)',
-                    'rgba(255, 159, 64,1)',
-                    'rgba(255, 205, 86,1)',
-                    'rgba(75, 192, 192,1)',
-                    'rgba(54, 162, 235,1)',
-                    'rgba(153, 102, 255,1)',
-                    'rgba(201, 203, 207,1)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132,1)',
-                    'rgba(255, 159, 64,1)',
-                    'rgba(255, 205, 86,1)',
-                    'rgba(75, 192, 192,1)',
-                    'rgba(54, 162, 235,1)',
-                    'rgba(153, 102, 255,1)',
-                    'rgba(201, 203, 207,1)'
-                ],
-                borderWidth: 1,
-            }]
-        },
-        options: {
-            animations: {
-                tension: {
-                    duration: 1000,
-                    easing: 'linear',
-                    from: 1,
-                    to: 0,
-                    loop: true
-                }
-            },
-
-        }
-    });
-</script>
-</div>

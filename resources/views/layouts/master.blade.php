@@ -188,6 +188,8 @@
             $('#add-percent-companie-modal').removeClass('show');
             $('#add-percent-companie-modal').addClass('hide');
 
+            $('#connected-company-under-modal').removeClass('show');
+            $('#connected-company-under-modal').addClass('hide');
 
             $('#connected-company-modal').removeClass('show');
             $('#connected-company-modal').addClass('hide');
@@ -197,6 +199,9 @@
 
             $('#validated-password-modal').removeClass('show');
             $('#validated-password-modal').addClass('hide');
+
+            $('#deconnected-company-modal').removeClass('show');
+            $('#deconnected-company-modal').addClass('hide');
 
             // desabled master
             $('#disabled-master-admin-modal').removeClass('show');
@@ -574,6 +579,15 @@
             $('#connected-company-modal').addClass('show');
         });
 
+        Livewire.on('show-desactive-company-modal', () => {
+            $('#deconnected-company-modal').removeClass('hide');
+            $('#deconnected-company-modal').addClass('show');
+        });
+
+        Livewire.on('show-connected-company-under-modal', () => {
+            $('#connected-company-under-modal').removeClass('hide');
+            $('#connected-company-under-modal').addClass('show');
+        });
         
         Livewire.on('show-onexbetrans-modal', () => {
             $('#update-1xbet-transaction-modal').removeClass('hide');

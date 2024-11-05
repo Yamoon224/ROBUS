@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Events\assignementEvent;
+use App\Models\Company;
 
 class UnderDistributors extends Component
 {
@@ -39,6 +40,7 @@ class UnderDistributors extends Component
         $check = SidUser::whereId($id)->first();
         $this->sidUserId = $id;
         $this->sidUserStatus = $check->status;
+        $this->user_country = $check->country->id;
         $this->emit($state);
     }
 
@@ -47,6 +49,7 @@ class UnderDistributors extends Component
         $check = SidUser::whereId($id)->first();
         $this->user_id = $check->id;
         $this->master_id = $check->master_id;
+        $this->user_country = $check->country->id;
         $this->underdistributeurDesabled = $check->is_accepted;
         $this->emit($state);
     }
@@ -57,7 +60,8 @@ class UnderDistributors extends Component
         $check = SidUser::whereId($id)->first();
         $this->user_id = $check->id;
         $this->company_id = $check->company_id;
-        $this->underdistributeurDesabled = $check->is_accepted;
+        $this->user_country = $check->country->id;
+        $this->underdistributeurDesabled = $check->is_accepted_companie;
         $this->emit($state);
     }
 
@@ -203,7 +207,7 @@ class UnderDistributors extends Component
             $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
             $this->emit('modal-hide', 'hide');
             $this->cancelConnectedField();
-            $this->emit('refreshPage'); 
+            $this->emit('refreshPage');
             $this->emit('success', $check->master_id  == $this->master_selected ? 'Sous distributeur lié !' : 'Sous distributeur désactivée !');
         }
     }
@@ -212,18 +216,59 @@ class UnderDistributors extends Component
     {
         $check = SidUser::find($this->user_id);
 
-        $check_master = SidUser::find($this->master_selected)->first();
+        $check_company = SidUser::whereId($this->master_selected)->first();
+
+
+        if (!empty($check_company->company_id)) {
+
+            if ($check->company_id  == $this->company_id && $check_company->is_accepted_companie) {
+
+                $msg = 'Vous avez été lié a un sous distributeur';
+                $msg_title = 'Liaison a un sous distributeur';
+                $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $check->update(['company_id' => $check_company->company_id, 'is_accepted_companie' => true]);
+            } else {
+                $msg = 'Vous avez été détaché a un sous distributeur';
+                $msg_title = 'Détachément a un sous distributeur';
+                $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $check->update(['company_id' => $check_company->company_id, 'is_accepted_companie' => true]);
+            }
+
+            $this->cancelConnectedField();
+            $this->emit('refreshPage');
+            $this->emit('success', $check->company_id  == $this->master_selected ? 'Sous distributeur lié !' : 'Sous distributeur désactivée !');
+        } else {
+            $this->cancelConnectedField();
+            $this->emit('refreshPage');
+            $this->emit('error', 'Pas de selection de la companie !');
+        }
+    }
+
+
+    public function deconnectedOneCompanie()
+    {
+        $check = SidUser::find($this->user_id);
 
         if (!empty($check)) {
-            $check->update(['company_id' => $this->master_selected, 'is_accepted_companie' => true]);
-            // $check->assignRole(4);
-            $msg = 'Vous avez été lié a un sous distributeur';
-            $msg_title = 'Liaison a un sous distributeur';
-            $check_master->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-            $this->emit('modal-hide', 'hide');
+
+            if ($check->company_id  == $this->company_id && $check->is_accepted_companie) {
+                $msg = 'Vous avez été lié a un sous distributeur';
+                $msg_title = 'Liaison a un sous distributeur';
+                $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $check->update(['company_id' => 1, 'is_accepted_companie' => false]);
+            } else {
+                $this->cancelConnectedField();
+                $this->emit('refreshPage');
+                $this->emit('error', 'Pas de selection de la companie !');
+            }
+
             $this->cancelConnectedField();
-            $this->emit('refreshPage'); 
+            $this->emit('refreshPage');
             $this->emit('success', $check->company_id  == $this->master_selected ? 'Sous distributeur lié !' : 'Sous distributeur désactivée !');
+        } else {
+            $this->cancelConnectedField();
+            $this->emit('refreshPage');
+            $this->emit('error', 'Pas de selection de la companie !');
         }
     }
 

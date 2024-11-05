@@ -65,23 +65,23 @@
 
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @if (firm())
-                <button wire:click="$emit('modal-show')" class="btn btn-primary shadow-md mr-2"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                </svg>Ajouter</button>
+                <button wire:click="$emit('modal-show')" class="btn btn-primary shadow-md mr-2"> <svg
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6 mr-3">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    </svg>Ajouter</button>
             @endif
 
 
             <div class="hidden md:block mx-auto text-slate-500"></div>
             @if (firm())
-               
                 <button wire:click="$emit('modal-show-employers')" class="btn btn-primary shadow-md mr-2">
-                    <div class="side-menu__icon">  <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
-                    </svg>
+                    <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+                        </svg>
                     </div>
                     Payer les
                     employés
@@ -149,25 +149,48 @@
                                 </td>
 
                                 <td class="table-report__action w-35">
-                                    @if ($item->company_id == firm()->id)
-                                        <div class="flex items-center justify-center text-success">
 
-                                            <a wire:click="edit({{ $item->wallet->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                class="flex items-center mr-3 @if ($item->company_id == firm()->id) @else @endif"
-                                                href="javascript:;"
-                                                title="@if ($item->company_id == firm()->id) Désactiver @else Activer @endif">
-                                                <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
-                                            </a>
+                                    @if ($item->company_id == firm()->company->id)
+                                        <div
+                                            class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
 
-                                        </div>
-                                    @else
-                                        <div class="flex items-center justify-center text-danger">
-                                            <a wire:click="edit({{ $item->wallet->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                class="flex items-center mr-3 @if ($item->company_id == firm()->id) @else @endif"
-                                                href="javascript:;"
-                                                title="@if ($item->company_id == firm()->id) Désactiver @else Activer @endif">
-                                                <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
-                                            </a>
+                                            @if ($item->is_accepted_companie == '1')
+                                                <div class="flex items-center justify-center text-success">
+                                                    <a class="flex items-center mr-3 @if ($item->company_id == firm()->id) @else @endif"
+                                                        href="javascript:;" wire:loading.attr="disabled"
+                                                        title="@if ($item->company_id == firm()->id) Désactiver @else Activer @endif">
+                                                        <div class="text-slate-300 text-xs  mt-0.5 mb-2">
+                                                            <div class="text-slate-300 text-xs  mt-0.5">
+                                                                Déja attribuer
+                                                            </div>
+                                                        </div>
+                                                    </a>
+
+
+                                                </div>
+                                                <div class="flex items-center justify-center text-pending mt-3">
+                                                    <a wire:click="edit({{ $item->wallet->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
+                                                        class="flex items-center mr-3 @if ($item->company_id == firm()->id) @else @endif"
+                                                        href="javascript:;" wire:loading.attr="disabled"
+                                                        title="@if ($item->company_id == firm()->id) Désactiver @else Activer @endif">
+                                                        Rétirer l'employer
+                                                    </a>
+                                                </div>
+                                            @else
+                                                <div class="flex items-center justify-center text-danger">
+                                                    <a class="flex items-center mr-3 @if ($item->company_id == firm()->id) @else @endif"
+                                                        href="javascript:;"
+                                                        title="@if ($item->company_id == firm()->id) Désactiver @else Activer @endif">
+                                                        <div class="text-slate-300 text-xs  mt-0.5 mb-2">
+                                                            <div class="text-slate-300 text-xs  mt-0.5">
+                                                                Attribution en attente
+                                                            </div>
+                                                        </div>
+
+                                                    </a>
+
+                                                </div>
+                                            @endif
 
                                         </div>
                                     @endif

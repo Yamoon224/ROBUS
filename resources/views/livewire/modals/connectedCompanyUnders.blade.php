@@ -7,7 +7,7 @@
                     <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
                     <div class="text-3xl mt-5">Action requise !!!</div>
                     <div class="text-slate-500 mt-2">Êtes-vous sûr de vouloir
-                        {{ $underdistributeurDesabled == 0 ? 'Lié' : 'Désactiver' }} ce sous distributeur ?
+                        {{ $underdistributeurDesabled == 0 ? 'Attribuer' : 'Non attribuer' }} ce sous distributeur ?
                     </div>
                 </div>
 
@@ -17,7 +17,7 @@
 
                     <input wire:click="connected" wire:loading.remove type="button"
                         class="btn btn-danger  w-25 mr-1 mb-1"
-                        value="{{ $underdistributeurDesabled == 0  ? 'Lié' : 'Désactiver' }}" />
+                        value="{{ $underdistributeurDesabled == 0  ? 'Attribuer' : 'Non attribuer' }}" />
 
                     <div wire:loading wire:target="connected">
                         Traitement en cours...

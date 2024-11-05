@@ -67,16 +67,6 @@ class TransferHisto extends Component
     }
 
 
-    // protected function getTransactionsDays()
-    // {
-    //     return WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->get();
-    // }
-
-    // protected function getTransactionCount($status)
-    // {
-    //     return WalletTransaction::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT])->where('status', $status)->count();
-    // }
-
     public function updateTransactionHisto()
     {
         $check = WalletTransaction::whereId($this->transactionId)->first();
@@ -597,7 +587,6 @@ class TransferHisto extends Component
         $wallets = $wallets->get();
         
         foreach ($wallets as $bank) {
-            // Accédez à la propriété amount sur chaque objet
             $data[] = $bank->amount;
         }
 
