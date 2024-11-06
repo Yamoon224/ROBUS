@@ -1314,15 +1314,6 @@ class IntersPaymentAncienController extends Controller
 
                             if (robus()->country->currencie->value > $countrie->currencie->value) {
 
-                                // Verify amount send maxi
-                                // $convertion_transaction_val_inter_receive = (float)   $default_valeur  /   (float) $countrie->currencie->value;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
 
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
@@ -1352,15 +1343,7 @@ class IntersPaymentAncienController extends Controller
                                 // }
                             } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
 
-                                // $convertion_transaction_val_inter_receive =  $default_valeur;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
-
+                               
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
                                     $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
@@ -1388,14 +1371,7 @@ class IntersPaymentAncienController extends Controller
                                 // }
                             } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
 
-                                // $convertion_transaction_val_inter_receive =  $default_valeur /   (float) $countrie->currencie->value;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
+                               
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
@@ -1556,15 +1532,7 @@ class IntersPaymentAncienController extends Controller
 
                             if (robus()->country->currencie->value > $countrie->currencie->value) {
 
-                                // Verify amount send maxi
-                                // $convertion_transaction_val_inter_receive = (float)   $default_valeur  /   (float) $countrie->currencie->value;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
+                               
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
@@ -1592,15 +1560,6 @@ class IntersPaymentAncienController extends Controller
                                 }
                                 // }
                             } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-                                // $convertion_transaction_val_inter_receive = (float)   $default_valeur;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
 
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
@@ -1630,14 +1589,7 @@ class IntersPaymentAncienController extends Controller
                                 // }
                             } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
 
-                                // $convertion_transaction_val_inter_receive = (float)   $default_valeur  /   (float) $countrie->currencie->value;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
+                                
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
@@ -1848,15 +1800,6 @@ class IntersPaymentAncienController extends Controller
 
                             if (robus()->country->currencie->value > $countrie->currencie->value) {
 
-                                // Verify amount send maxi
-                                // $convertion_transaction_val_inter_receive = (float)   $default_valeur  /   (float) $countrie->currencie->value;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
 
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
@@ -1888,12 +1831,6 @@ class IntersPaymentAncienController extends Controller
 
                                 $convertion_transaction_val_inter_receive =  $default_valeur;
 
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
@@ -1922,14 +1859,7 @@ class IntersPaymentAncienController extends Controller
                                 // }
                             } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
 
-                                // $convertion_transaction_val_inter_receive =  $default_valeur /   (float) $countrie->currencie->value;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
+                          
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
@@ -1955,25 +1885,20 @@ class IntersPaymentAncienController extends Controller
 
                                     $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
                                 }
-                                // }
+                           
                             }
                         } else {
 
 
                             if (robus()->country->name_groupe == 'URP') {
 
-                                // $commission_inter = TransactionCost::whereId(8)->first();
                                 $commission_inter_inter = TransactionCost::whereId(8)->first();
 
                                 $valeur_end = $commission_inter_inter->levelTransactions->last();
 
                                 $conversion_valeur_end =  $valeur_end->amount_end;
 
-                                // if ($valeur_end->amount_end < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_inter_pay  = "La valeur maximun est atteinte" .  $conversion_valeur_end;
-                                //     $commission_transaction_val_inter_receive =  "La valeur maximun est atteinte" .  $conversion_valeur_end;
-                                // }
+                               
 
                                 $valeur_amount =  $amount_paiement_robus;
 
@@ -2225,15 +2150,7 @@ class IntersPaymentAncienController extends Controller
 
                             if (robus()->country->currencie->value > $countrie->currencie->value) {
 
-                                // Verify amount send maxi
-                                // $convertion_transaction_val_inter_receive = (float)   $default_valeur  /   (float) $countrie->currencie->value;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
+                            
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
@@ -2264,14 +2181,6 @@ class IntersPaymentAncienController extends Controller
 
                                 $convertion_transaction_val_inter_receive = (float)   $default_valeur;
 
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
-
-
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 
                                     $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
@@ -2299,14 +2208,7 @@ class IntersPaymentAncienController extends Controller
                                 // }
                             } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
 
-                                // $convertion_transaction_val_inter_receive = (float)   $default_valeur  /   (float) $countrie->currencie->value;
-
-                                // if ($convertion_transaction_val_inter_receive < $amount_paiement_robus) {
-
-                                //     $commission_transaction_val_percent_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_pay = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                //     $commission_transaction_val_inter_receive = "Le montant maxi est de " . $convertion_transaction_val_inter_receive;
-                                // } else {
+                               
 
                                 if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
 

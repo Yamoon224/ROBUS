@@ -128,7 +128,8 @@
                             @endif
 
                             <div class="col-span-12 mt-3">
-                                <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-3 cursor-pointer zoom-in style_table2">
+                                <div
+                                    class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-3 cursor-pointer zoom-in style_table2">
 
                                     <div class="font-medium text-historique mt-6">Nombre d'employés de la categorie
                                         :
@@ -147,7 +148,7 @@
                         </div>
                     @else
                         <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-                            <div class="col-span-12">
+                            <div class="col-span-6">
                                 <label for="wallet_id_employer" class="form-label">Numero wallet<span
                                         class="text-danger">
                                         *</span></label>
@@ -158,65 +159,88 @@
                                 @enderror
                                 <div wire:loading>Recherche numero...</div>
                                 <div wire:loading.remove></div>
-                                @if ($wallet_id_employer == '')
-                                    <div class="text-gray-500 text-sm">
-                                        Entrer le numero du wallet
-                                    </div>
-                                @elseif($wallet_info_search_payment != null)
-                                    <div class="text-lg text-gray-900 text-bold text-secondary ">
-                                        <span
-                                            class="alert alert-secondary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $wallet_info_search_payment ?? null }}
-                                        </span>
 
-                                    </div>
+                                @php
+
+                                    $wallet_search = App\Models\Wallets\Wallet::where('wallet_id', $wallet_id_employer)
+                                        ->where('country_id', firm()->country->id)
+                                        ->first();
+                                    if ($wallet_search) {
+                                        if (
+                                            $wallet_search->sidUser->is_custumers &&
+                                            $wallet_search->sidUser->company_id == firm()->company->id
+                                        ) {
+                                            $wallet_name =
+                                                $wallet_search->sidUser->firstname .
+                                                ' ' .
+                                                $wallet_search->sidUser->lastname;
+                                        } else {
+                                            $wallet_name = 'Numero introuvable ou n\' est pas client';
+                                        }
+                                    } else {
+                                        $wallet_name = 'Numero introuvable ou n\' est pas client';
+                                    }
+
+                                @endphp
+
+                                @if ($wallet_id_employer == '')
+                                    <div class="text-gray-500 text-sm">Entrer numero wallet</div>
                                 @else
-                                    <div class="text-gray-500 text-sm">
-                                        Numero inconnu chez Robus
-                                    </div>
+                                    @if ($wallet_name)
+                                        <div class="text-lg text-gray-900 text-bold text-secondary">
+                                            <span
+                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                {{ $wallet_name }}
+                                            </span>
+                                        </div>
+                                    @endif
                                 @endif
                             </div>
-                            <div class="col-span-12 mt-2">
-                                <label for="transaction_description_robus" class="form-label">Decription<span
-                                        class="text-danger">
+
+                            <div class="col-span-6">
+                                <label for="amount_payment" class="form-label">Montant<span class="text-danger">
                                         *</span></label>
-                                <textarea wire:model.defer="transaction_description_robus" id="transaction_description_robus" type="text"
-                                    class="form-control" cols="13" rows="3">
-                        </textarea>
-                                @error('transaction_description_robus')
-                                    <span class="text-danger">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            <div class="col-span-12">
-                                <label for="amount_payment" class="form-label">Montant<span
-                                        class="text-danger">
-                                        *</span></label>
-                                <input wire:model.debounce.10ms="amount_payment" id="amount_payment"
-                                    min="1" max="5" type="number" class="form-control"
-                                    placeholder="Montant">
+                                <input wire:model.debounce.10ms="amount_payment" id="amount_payment" min="1"
+                                    max="5" type="number" class="form-control" placeholder="Montant">
                                 @error('amount_payment')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
+
+                            <div class="col-span-12 mt-2">
+                                <label for="transaction_description_robus" class="form-label">Decription<span
+                                        class="text-danger">
+                                        *</span>
+                                </label>
+                                <textarea wire:model.defer="transaction_description_robus" id="transaction_description_robus" type="text"
+                                    class="form-control" cols="13" rows="3">
+                                </textarea>
+
+                                @error('transaction_description_robus')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+
                             @if ($amount_payment)
-                            @php
+                                @php
 
-                                $amount_to_pay = $amount_transaction_nat_val_percent;
-                                $amount_to_receive = $amount_transaction_nat_val_receive;
-                                $commission = $amount_transaction_nat_val_pay;
-                                $frais = $commission_transaction_val_admin_receive;
-                                $usersCountry = $wallet_amount->currencie->code ?? null;
+                                    $amount_to_pay = $amount_transaction_nat_val_percent ?? null;
+                                    $amount_to_receive = $amount_transaction_nat_val_receive ?? null;
+                                    $commission = $amount_transaction_nat_val_pay ?? null;
+                                    $frais = $commission_transaction_val_admin_receive ?? null;
+                                    $usersCountry = $wallet_amount->currencie->code ?? null;
 
-                            @endphp
+                                @endphp
 
-                            <x-transaction-detail title="Commission" value="{{ $commission }}"
-                                country="{{ $usersCountry }}" />
+                                <x-transaction-detail title="frais" value="{{ $frais }}"
+                                    country="{{ $usersCountry }}" />
 
-                            {{-- Montant à recevoir --}}
-                            <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
-                                country="{{ $usersCountry }}" />
-                        @endif
+                                <x-transaction-detail title="Commission" value="{{ $commission }}"
+                                    country="{{ $usersCountry }}" />
 
+                                <x-transaction-send title="Montant à recevoir" value="{{ $amount_to_receive }}"
+                                    country="{{ $usersCountry }}" />
+                            @endif
 
                         </div>
 
@@ -233,7 +257,8 @@
                     </div>
                 </div>
             @elseif ($step === 2)
-                <div class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+                <div
+                    class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
                     <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                         <a href="#step-2"
                             class="w-10 h-10 rounded-full btn btn-circle {{ $step != 2 ? 'btn-default' : 'btn-secondary' }}">2</a>
@@ -258,45 +283,87 @@
                         </div>
 
                     </div>
-                    <div class="col-span-6 mt-space-padding">
-                        <label for="number_phone_credit_edit" class="form-label">Categorie<span
-                                class="text-danger">
-                                *</span></label>
 
-                        <div class="flex">
-                            @php
-                            $categorieId = App\Models\Categorie::whereId($categorieId)
-                                ->first();
-                        
-    
-                        @endphp
-                            <div  class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $categorieId->name ?? null }} 
+                    @if ($choose_type_payement_emp == 1)
+
+                        <div class="col-span-6 mt-space-padding">
+                            <label for="number_phone_credit_edit" class="form-label">Categorie<span
+                                    class="text-danger">
+                                    *</span></label>
+
+                            <div class="flex">
+                                @php
+                                    $categorieId = App\Models\Categorie::whereId($categorieId)->first();
+
+                                @endphp
+                                <div
+                                    class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                    {{ $categorieId->name ?? null }}
+                                </div>
                             </div>
                         </div>
 
-                    </div>
+                        <div class="col-span-12 mt-3">
+                            <div
+                                class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-3 cursor-pointer zoom-in style_table2">
 
-                    
+                                <div class="font-medium text-historique mt-6">Nombre d'employés de la categorie
+                                    :
+                                    {{ $account_valeurs ?? null }} </div>
 
-                    <div class="col-span-12 mt-3">
-                        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-3 cursor-pointer zoom-in style_table2">
+                                <div class="px-5 py-3 mt-1  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                    style="font-size: 25px; color:white;">
+                                    Montant a payé :
+                                    {{ number_format($amount_valeurs, 2, ',', ' ') ?? null }}
+                                    {{ $wallet_amount->currencie->code ?? null }}
 
-                            <div class="font-medium text-historique mt-6">Nombre d'employés de la categorie
-                                :
-                                {{ $account_valeurs ?? null }} </div>
-
-                            <div class="px-5 py-3 mt-1  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                style="font-size: 25px; color:white;">
-                                Montant a payé :
-                                {{ number_format($amount_valeurs, 2, ',', ' ') ?? null }}
-                                {{ $wallet_amount->currencie->code ?? null }}
-
+                                </div>
                             </div>
-                        </div>
 
-                    </div>
-                
+                        </div>
+                    @else
+                        <div class="col-span-6 mt-space-padding">
+                            <label for="number_phone_credit_edit" class="form-label">Nom & Prenom<span
+                                    class="text-danger">
+                                    *</span></label>
+
+                            <div class="flex">
+                                @php
+
+                                    $wallet_search = App\Models\Wallets\Wallet::where('wallet_id', $wallet_id_employer)
+                                        ->where('country_id', firm()->country->id)
+                                        ->first();
+
+                                    if ($wallet_search) {
+                                        if (
+                                            $wallet_search->sidUser->is_custumers &&
+                                            $wallet_search->sidUser->company_id == firm()->company->id
+                                        ) {
+                                            $wallet_name =
+                                                $wallet_search->sidUser->firstname .
+                                                ' ' .
+                                                $wallet_search->sidUser->lastname;
+                                        } else {
+                                            $wallet_name = 'Numero introuvable ou n\' est pas client';
+                                        }
+                                    } else {
+                                        $wallet_name = 'Numero introuvable ou n\' est pas client';
+                                    }
+                                @endphp
+
+                                @if ($wallet_name)
+                                    <div
+                                        class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                        {{ $wallet_name ?? null }}
+                                    </div>
+                                @endif
+                            </div>
+
+                        </div>
+                    @endif
+
+
+
 
                     <div class="col-span-12 mt-1" wire:loading.class="hidden" wire:target="validatedPassword">
 

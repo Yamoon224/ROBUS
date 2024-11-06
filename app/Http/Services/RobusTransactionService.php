@@ -110,6 +110,7 @@ class RobusTransactionService
         $valeur_percent_admin = $percent_robus->percent * $transaction_amount_robus;
 
         if (robus()->is_under_distributer) {
+            
             $valeur_admin = $percent_robus->percent_admin * $valeur_percent_admin;
             $valuer_deposit = $percent_robus->percent_deposit * $valeur_percent_admin;
             $valuer_master =  $master_id ? $percent_robus->percent_masters * $valuer_deposit : 0 ;

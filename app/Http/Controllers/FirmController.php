@@ -19,9 +19,25 @@ use App\Events\UpdateActiveAccountEvent;
 use App\Models\Wallets\WalletTransaction;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Admin\MailController;
+use App\Http\Services\TransactionsAccountService;
+use App\Models\Wallets\WalletBank;
+use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletInter;
+use App\Models\Wallets\WalletPayment;
+use App\Models\Wallets\WalletPhoneCredit;
+use App\Models\Wallets\WalletReload;
+use App\Models\Banks\BankCard;
 
 class FirmController extends Controller
 {
+
+    protected $transactionAccountService;
+
+    public function __construct(
+        TransactionsAccountService $transactionAccountService,
+    ) {
+        $this->transactionAccountService = $transactionAccountService;
+    }
 
 
     public function browse_employes()
@@ -98,6 +114,158 @@ class FirmController extends Controller
         }
     }
 
+
+      /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show__underdistributors(Request $request, int $id)
+    {
+        if (firm()) {
+
+
+            $user = SidUser::whereId($id)->first();
+
+            $user_wallet =  $user->wallet->id;
+
+            $master_wallet =  firm()->wallet->id;
+
+            // commissions transactions
+            $transaction_com = $this->transactionAccountService->walletSumCommissionCompany(WalletTransaction::class, $user_wallet);
+
+            $paiement_com = $this->transactionAccountService->walletSumCommissionCompany(WalletPayment::class, $user_wallet);
+
+            $virement_com = $this->transactionAccountService->walletSumCommissionCompany(WalletBank::class, $user_wallet);
+
+            $phoneCredit_com = $this->transactionAccountService->walletSumCommissionCompany(WalletPhoneCredit::class, $user_wallet);
+
+            $reloadCard_com = $this->transactionAccountService->walletSumCommissionCompany(WalletDeposit::class, $user_wallet);
+
+            $International_com = $this->transactionAccountService->walletSumCommissionCompany(WalletInter::class, $user_wallet);
+
+            $walletOrderCarte_com = $this->transactionAccountService->walletSumCommissionCompany(BankCard::class, $user_wallet);
+
+            // amounts valeurs transactions
+            $transactionAmounts = $this->transactionAccountService->getTransactionAmount(WalletTransaction::class, $user_wallet);
+
+            $paiementAmounts = $this->transactionAccountService->getTransactionAmount(WalletPayment::class, $user_wallet);
+
+            $virementAmounts = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $user_wallet);
+
+            $phoneCreditAmounts = $this->transactionAccountService->getTransactionAmount(WalletPhoneCredit::class, $user_wallet);
+
+            $reloadCardAmounts = $this->transactionAccountService->getTransactionAmount(WalletDeposit::class, $user_wallet);
+
+            $reloadAmounts = $this->transactionAccountService->getTransactionAmount(WalletReload::class, $master_wallet);
+
+            $InternationalAmounts = $this->transactionAccountService->getTransactionAmount(WalletInter::class, $user_wallet);
+
+            $walletOrderCarteAmounts = $this->transactionAccountService->getTransactionAmount(BankCard::class, $user_wallet);
+
+            // sum commissions masters
+
+            $sum_wallet_transaction = $transaction_com + $paiement_com + $virement_com  + $phoneCredit_com + $reloadCard_com + $International_com + $walletOrderCarte_com;
+
+
+            // Utilisation de la fonction pour les transactions de compte
+            $accountTransactionCounts = $this->getTransactionCounts(WalletTransaction::class, $user_wallet);
+            // Utilisation de la fonction pour les virements de compte bancaire
+            $accountVirementCounts = $this->getTransactionCounts(WalletBank::class, $user_wallet);
+            $accountPaymentCounts = $this->getTransactionCounts(WalletPayment::class, $user_wallet);
+            $accountBankCounts = $this->getTransactionCounts(BankCard::class, $user_wallet);
+            $accountInterCounts = $this->getTransactionCounts(WalletInter::class, $user_wallet);
+            $accountDepositCounts = $this->getTransactionCounts(WalletDeposit::class, $user_wallet);
+            $accountPhoneCreditCounts = $this->getTransactionCounts(WalletPhoneCredit::class, $user_wallet);
+
+            // Accéder aux compteurs spécifiques
+            $accountTransactionPendings = $accountTransactionCounts['PENDING'];
+            $accountTransactionSuccess = $accountTransactionCounts['SUCCESS'];
+            $accountTransactionErrors = $accountTransactionCounts['ERROR'];
+
+            $accountVirementPendings = $accountVirementCounts['PENDING'];
+            $accountVirementSuccess = $accountVirementCounts['SUCCESS'];
+            $accountVirementErrors = $accountVirementCounts['ERROR'];
+
+            $accountPaymentPendings = $accountPaymentCounts['PENDING'];
+            $accountPaymentSuccess = $accountPaymentCounts['SUCCESS'];
+            $accountPaymentErrors = $accountPaymentCounts['ERROR'];
+
+            $accountBankPendings = $accountBankCounts['PENDING'];
+            $accountBankSuccess = $accountBankCounts['SUCCESS'];
+            $accountBankErrors = $accountBankCounts['ERROR'];
+
+            $accountInterPendings = $accountInterCounts['PENDING'];
+            $accountInterSuccess = $accountInterCounts['SUCCESS'];
+            $accountInterErrors = $accountInterCounts['ERROR'];
+
+            $accountDepositPendings = $accountDepositCounts['PENDING'];
+            $accountDepositSuccess = $accountDepositCounts['SUCCESS'];
+            $accountDepositErrors = $accountDepositCounts['ERROR'];
+
+            $accountPhonePendings = $accountPhoneCreditCounts['PENDING'];
+            $accountPhoneSuccess = $accountPhoneCreditCounts['SUCCESS'];
+            $accountPhoneErrors = $accountPhoneCreditCounts['ERROR'];
+
+
+            return view('firms.pages.show_underdistributors', compact(
+                'user',
+                'transaction_com',
+                'paiement_com',
+                'virement_com',
+                'phoneCredit_com',
+                'reloadCard_com',
+                'International_com',
+                'walletOrderCarte_com',
+                'transactionAmounts',
+                'paiementAmounts',
+                'virementAmounts',
+                'phoneCreditAmounts',
+                'reloadCardAmounts',
+                'InternationalAmounts',
+                'walletOrderCarteAmounts',
+                'sum_wallet_transaction',
+                'accountTransactionPendings',
+                'accountTransactionSuccess',
+                'accountTransactionErrors',
+                'accountVirementPendings',
+                'accountVirementSuccess',
+                'accountVirementErrors',
+                'accountPaymentPendings',
+                'accountPaymentSuccess',
+                'accountPaymentErrors',
+                'accountBankPendings',
+                'accountBankSuccess',
+                'accountBankErrors',
+                'accountInterPendings',
+                'accountInterSuccess',
+                'accountInterErrors',
+                'accountDepositPendings',
+                'accountDepositSuccess',
+                'accountDepositErrors',
+                'accountPhonePendings',
+                'accountPhoneSuccess',
+                'accountPhoneErrors',
+                'reloadAmounts'
+            ));
+        } else {
+            abort(403);
+        }
+    }
+
+    private function getTransactionCounts($modelClass, $userWallet)
+    {
+        $statuses = ['PENDING', 'SUCCESS', 'ERROR'];
+
+        $counts = [];
+
+        foreach ($statuses as $status) {
+            $counts[$status] = $this->transactionAccountService->getTransactionCount($modelClass, $userWallet, $status);
+        }
+
+        return $counts;
+    }
     public function getWalletTransactionSumAdminProperty($id, $user_wallet)
     {
         $todays = Carbon::now();

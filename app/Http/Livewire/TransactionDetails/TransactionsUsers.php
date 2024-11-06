@@ -26,7 +26,6 @@ class TransactionsUsers extends Component
     public function render()
     {
 
-
         $sid_user = SidUser::whereId($this->walletAllTransactions)->first();
 
         $realod_search =  WalletTransaction::query();

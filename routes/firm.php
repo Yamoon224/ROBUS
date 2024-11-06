@@ -36,9 +36,8 @@ Route::group(['middleware' => ['auth:company']], function () {
     });
 
     Route::prefix('underdistributors')->group(function () {
-        Route::get('/browse', [FirmController::class, 'browse_underDistributors'])->name('underdistributors.browse');
-        // Route::get('/add', [FirmController::class, 'add_employes'])->name('underdistributors.add');
-        Route::get('/show/{id}', [FirmController::class, 'show__unders'])->name('underdistributors.show');
+        Route::get('/browse', [FirmController::class, 'browse_underDistributors'])->name('underdistributors.companies.browse');
+        Route::get('/show/{id}', [FirmController::class, 'show__underdistributors'])->name('underdistributors.companies.show');
     });
 
     //   Users

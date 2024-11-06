@@ -17,19 +17,6 @@ class TransactionState extends Component
     {
 
 
-        // $date = Carbon::now();
-
-        // $wallet_valer = WalletTransaction::whereId(1)->first();
-
-        // $valeur_days =  $wallet_valer->created_at;
-
-        // // dd(  $wallet_valer->created_at );
-        // if ($valeur_days->dayOfWeek === Carbon::FRIDAY) {
-        //     // echo "Aujourd'hui, c'est mardi!";
-        //     dd('ouiii');
-        // } else {
-        //     dd('nonnn');
-        // }
         $walletUser = firm();
 
 
@@ -64,7 +51,7 @@ class TransactionState extends Component
 
         $data = [];
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->commissions;
+            $data[] = $bank->commission_companie;
         }
 
         return array_sum($data);
@@ -76,7 +63,7 @@ class TransactionState extends Component
 
         $data = [];
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->commissions;
+            $data[] = $bank->commission_companie;
         }
 
         return array_sum($data);
@@ -206,29 +193,29 @@ class TransactionState extends Component
         $reload12 = [];
 
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-01-%')->get() as $reload)
-            $reload1[] = ($reload->commissions);
+            $reload1[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-02-%')->get() as $reload)
-            $reload2[] = ($reload->commissions);
+            $reload2[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-03-%')->get() as $reload)
-            $reload3[] = ($reload->commissions);
+            $reload3[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-04-%')->get() as $reload)
-            $reload4[] = ($reload->commissions);
+            $reload4[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-05-%')->get() as $reload)
-            $reload5[] = ($reload->commissions);
+            $reload5[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-06-%')->get() as $reload)
-            $reload6[] = ($reload->commissions);
+            $reload6[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-07-%')->get() as $reload)
-            $reload7[] = ($reload->commissions);
+            $reload7[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-08-%')->get() as $reload)
-            $reload8[] = ($reload->commissions);
+            $reload8[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-09-%')->get() as $reload)
-            $reload9[] = ($reload->commissions);
+            $reload9[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-10-%')->get() as $reload)
-            $reload10[] = ($reload->commissions);
+            $reload10[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-11-%')->get() as $reload)
-            $reload11[] = ($reload->commissions);
+            $reload11[] = ($reload->commission_companie);
         foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->where('created_at', 'like', '%-12-%')->get() as $reload)
-            $reload12[] = ($reload->commissions);
+            $reload12[] = ($reload->commission_companie);
         $reloads = [array_sum($reload1), array_sum($reload2), array_sum($reload3), array_sum($reload4), array_sum($reload5), array_sum($reload6), array_sum($reload7), array_sum($reload8), array_sum($reload9), array_sum($reload10), array_sum($reload11), array_sum($reload12)];
         // dd($reloads);
         return $reloads;

@@ -33,48 +33,44 @@ class TransactionHisto extends Component
 
     public function render()
     {
-
-        $transfers =  WalletTransaction::query();
-
+        $walletId = firm()->wallet->id;
         $walletUser = firm();
-
-
+        $transfersQuery = WalletTransaction::where('wallet_id', $walletId);
+    
+        // Filtrage par date
         if ($this->startDate && $this->endDate) {
-
-            $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate]);
+            $transfersQuery->whereBetween('created_at', [$this->startDate, $this->endDate]);
         }
-
-        if ($this->searchTransferHistorical != "") {
+    
+        if (!empty($this->searchTransferHistorical)) {
             $this->resetPage();
-            $transfers->orwhereHas(
-                'transaction',
-                function ($query) {
-                    $query->where('operator_transaction_name', 'LIKE', '%' . $this->searchTransferHistorical . '%')
-                        ->orWhere('transaction_id', 'like', '%' .  $this->searchTransferHistorical   . '%')
-                        ->orWhere('trans_comp_id', 'like', '%' .  $this->searchTransferHistorical  . '%');
-                }
-            )
-                ->orWhere("wallet_transactions.amount", "LIKE",  "%" . $this->searchTransferHistorical . "%")
-                ->orWhere("wallet_transactions.num_wallet", "LIKE",  "%" . $this->searchTransferHistorical . "%")
-                ->orWhere("wallet_transactions.phone", "LIKE",  "%" . $this->searchTransferHistorical . "%");
+            $transfersQuery->where(function ($query) {
+                $query->whereHas('transaction', function ($subQuery) {
+                    $subQuery->where('operator_transaction_name', 'LIKE', '%' . $this->searchTransferHistorical . '%')
+                        ->orWhere('transaction_id', 'LIKE', '%' . $this->searchTransferHistorical . '%')
+                        ->orWhere('trans_comp_id', 'LIKE', '%' . $this->searchTransferHistorical . '%');
+                })
+                ->orWhere('amount', 'LIKE', '%' . $this->searchTransferHistorical . '%')
+                ->orWhere('num_wallet', 'LIKE', '%' . $this->searchTransferHistorical . '%')
+                ->orWhere('phone', 'LIKE', '%' . $this->searchTransferHistorical . '%');
+            });
         }
-
-        if ($this->statusTransferFilter != "") {
-            $transfers->where("wallet_transactions.status", $this->statusTransferFilter);
+    
+        if (!empty($this->statusTransferFilter)) {
+            $transfersQuery->where('status', $this->statusTransferFilter);
         }
-
-        return view(
-            'livewire.firms.transaction-histo',
-            [
-                'user' => $walletUser,
-                'transfer_historicals' => $transfers->where('wallet_id' , firm()->wallet->id)->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
-                'usersCountry' =>  $walletUser->country->currencie->name,
-                'sum_commissions' => $this->WalletRelaod,
-                'providers' =>  $this->NationTransaction,
-
-            ]
-        );
+    
+        $transferHistoricals = $transfersQuery->orderByDesc('created_at')->paginate(15);
+    
+        return view('livewire.firms.transaction-histo', [
+            'user' => $walletUser,
+            'transfer_historicals' => $transferHistoricals,
+            'usersCountry' => $walletUser->country->currencie->name,
+            'sum_commissions' => $this->WalletRelaod,
+            'providers' => $this->NationTransaction,
+        ]);
     }
+    
 
     public function getNationTransactionProperty()
     {
@@ -93,7 +89,7 @@ class TransactionHisto extends Component
         $data = [];
         foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id', firm()->country->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
-            $data[] = $bank->commissions_admin;
+            $data[] = $bank->commission_companie;
         }
 
         return array_sum($data);
@@ -106,7 +102,7 @@ class TransactionHisto extends Component
         $data = [];
         foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallets.country_id', firm()->country->id)->where('wallet_transactions.created_by', firm()->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
-            $data[] = $bank->commissions;
+            $data[] = $bank->commission_companie;
         }
 
         return array_sum($data);

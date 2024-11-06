@@ -401,7 +401,6 @@ class Reloads extends Component
 
 
 
-
     public function cancelReload()
     {
 

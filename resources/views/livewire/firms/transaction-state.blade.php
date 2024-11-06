@@ -29,7 +29,7 @@
         <div class="intro-y col-span-12 lg:col-span-12">
             <div class="intro-y block sm:flex items-center h-10">
                 <h2 class="text-lg font-medium truncate mr-5">
-                    Les Activites des rechargements
+                    Les Activites des rechargements des employers
                 </h2>
             </div>
 

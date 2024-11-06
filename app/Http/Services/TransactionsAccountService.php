@@ -293,6 +293,19 @@ class TransactionsAccountService
     }
 
 
+    public function walletSumCommissionCompany($wallets, $id)
+    {
+
+        $data = [];
+
+        foreach ($wallets::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $transaction) {
+            $data[] = $transaction->commission_companie;
+        }
+
+        return array_sum($data);
+    }
+
+
     public function getWalletTransactions($wallets, $id)
     {
         return $wallets::where('wallet_id', $id)->orderBy('created_at', 'desc')->paginate(20);

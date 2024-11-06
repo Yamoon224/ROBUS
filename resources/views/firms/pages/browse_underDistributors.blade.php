@@ -1,10 +1,10 @@
 @extends('layouts.master_company')
 
-@section('title', 'Liste des employers')
+@section('title', 'Liste des sous distributeurs')
 
 @section('content')
     <div>
-        <livewire:firms.employers>
+        <livewire:firms.undersdistributors>
     </div>
 @endsection
 

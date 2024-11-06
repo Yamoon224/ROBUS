@@ -122,30 +122,36 @@
                                 <td>
                                     {{ $item->firstname }}
                                     {{ $item->lastname }}
+
+                                    <span  class="alert alert-secondary mt-2  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        Wallet : {{ $item->wallet->wallet_id ?? null }}
+                                    </span>
+
                                 </td>
                                 <td>
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->email ?? null }}
-                                    </span>
+                                    <div class="text-lg text-gray-800 font-semibold">
+                                        <span class="alert alert-secondary inline-flex items-center justify-center px-4 py-2 text-indigo-500 bg-indigo-600 rounded">
+                                            {{ $item->email ?? 'N/A' }}
+                                        </span>
+                                    </div>
 
                                 </td>
 
                                 <td>
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->country->name ?? null }} : {{ $item->city->name ?? null }}
-                                    </span>
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                    <h3 class="mb-3">
+                                        Localisation : {{ $item->country->name ?? null }} -
+                                        {{ $item->city->name ?? null }} - {{ $item->zone ?? null }}
+                                    </h3>
+                                    <h3>
                                         Numero : {{ $item->phone ?? null }}
-                                    </span>
+                                    </h3>
                                 </td>
                                 <td>
                                     <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        class="alert alert-secondary text-center inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                                         {{ $item->categorie->name ?? null }}
                                     </span>
+
                                 </td>
 
                                 <td class="table-report__action w-35">
@@ -204,7 +210,7 @@
                                         </a>
                                         <a class="btn btn-primary  mr-1 mb-2 btn-sm"
                                             href="{{ route('employes.show', ['id' => $item->id]) }}">
-                                            Voir
+                                            Détails
                                         </a>
                                     </div>
                                 </td>

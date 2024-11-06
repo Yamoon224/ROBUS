@@ -154,7 +154,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('search_payment_mooney_inter/{paiement_mooney_id}', [IntersPaymentController::class, 'search_payment_mooney_inter']);
             Route::get('search_payment_inter_CIV/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_payment_inter_CIV']);
             Route::get('search_payment_inter_out/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_robus_inter']);
-            // Route::get('search_payment_inter_out_robus/{country_id}/{wallet}/{paiement_amount}', [IntersPaymentController::class, 'search_payment_robus_inter_out']);
+            Route::get('search_payment_inter_out_received/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_robus_inter_out']);
 
 
             // Drawal transaction
