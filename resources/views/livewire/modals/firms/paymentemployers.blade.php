@@ -188,51 +188,34 @@
                                 @enderror
                             </div>
                             <div class="col-span-12">
-                                <label for="amount_payment_wallet" class="form-label">Montant<span
+                                <label for="amount_payment" class="form-label">Montant<span
                                         class="text-danger">
                                         *</span></label>
-                                <input wire:model.debounce.10ms="amount_payment_wallet" id="amount_payment_wallet"
+                                <input wire:model.debounce.10ms="amount_payment" id="amount_payment"
                                     min="1" max="5" type="number" class="form-control"
                                     placeholder="Montant">
-                                @error('amount_payment_wallet')
+                                @error('amount_payment')
                                     <span class="text-danger">{{ $message }}</span>
                                 @enderror
                             </div>
-                            @if (!is_null($amount_payment_wallet))
-                                <div class="col-span-6 mt-3">
-                                    <label for="amount_payment_wallet" class="form-label">Montant à payer<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    @if ($amount_payment_wallet == '')
-                                        <div class="text-gray-500 text-sm">
-                                            Entrer le montant
-                                        </div>
-                                    @else
-                                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                            style="font-size: 25px; color:white;">
-                                            {{ $amount_transaction_under_pay ?? null }}
-                                            {{ $wallet_amount->currencie->code ?? null }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="col-span-6 mt-3">
-                                    <label for="amount_payment_wallet" class="form-label">Montant à
-                                        recevoir<span class="text-danger">
-                                            *</span></label>
-                                    @if ($amount_payment_wallet == '')
-                                        <div class="text-gray-500 text-sm">
-                                            Entrer le montant
-                                        </div>
-                                    @else
-                                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                            style="font-size: 25px; color:white;">
-                                            {{ $amount_transaction_under_receive ?? null }}
-                                            {{ $wallet_amount->currencie->code ?? null }}
+                            @if ($amount_payment)
+                            @php
 
-                                        </div>
-                                    @endif
-                                </div>
-                            @endif
+                                $amount_to_pay = $amount_transaction_nat_val_percent;
+                                $amount_to_receive = $amount_transaction_nat_val_receive;
+                                $commission = $amount_transaction_nat_val_pay;
+                                $frais = $commission_transaction_val_admin_receive;
+                                $usersCountry = $wallet_amount->currencie->code ?? null;
+
+                            @endphp
+
+                            <x-transaction-detail title="Commission" value="{{ $commission }}"
+                                country="{{ $usersCountry }}" />
+
+                            {{-- Montant à recevoir --}}
+                            <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
+                                country="{{ $usersCountry }}" />
+                        @endif
 
 
                         </div>

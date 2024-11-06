@@ -286,6 +286,10 @@ class Employers extends Component
             ]
         );
 
+        $percentRobus = $this->getRobusPercentageCompanies();
+
+        $reel_amount =  $this->search_amount($this->amount_payment);
+
         if (Hash::check($this->password_validated, firm()->password)) {
 
             if ($this->choose_type_payement_emp == 1) {
@@ -320,7 +324,6 @@ class Employers extends Component
                 } else {
 
 
-                    $percentRobus = $this->getRobusPercentageCompanies();
 
                     $amount_employers =  SidUser::where('company_id', firm()->id)->where('categorie_id', $this->categorieId)->get();
 
@@ -328,15 +331,10 @@ class Employers extends Component
 
                     $amountReceived = $this->amount_payment - ($percentRobus->percent->percent * $this->amount_payment);
 
-                    $walletUser->wallet->update([
-                        'reload_by' => firm()->firstname .
-                            ' ' . firm()->lastname,
-                        'sid_user_relod' => firm()->id,
-                        'amount' => DB::raw('amount-' . $amount_payment_alls),
-                    ]);
+
+                    $this->updateWalletFirmAmount($walletUser, $amount_payment_alls);
 
                     foreach ($amount_employers  as  $key => $wallet_user) {
-
 
                         $walletAmountSend = Wallet::where('wallet_id', $wallet_user->wallet_id)->first();
 
@@ -354,10 +352,10 @@ class Employers extends Component
             } elseif ($this->choose_type_payement_emp == 2) {
 
                 $this->validate([
-                    'amount_payment_wallet' => 'required',
+                    'amount_payment' => 'required',
                     'wallet_id_employer' => 'required',
                 ], [
-                    'amount_payment_wallet.required' => 'Votre montant est obligatoire',
+                    'amount_payment.required' => 'Votre montant est obligatoire',
                     'wallet_id_employer.required' => 'le wallet est obligatoire',
 
                 ]);
@@ -369,216 +367,54 @@ class Employers extends Component
                     $this->cancelEmployesField();
                     $this->emit('modal-hide');
                     $this->emit('info', 'Ce numero n\'existe pas dans chez vous !');
-                } elseif ($som_transfers >= $valeur_ceiling) {
+                    return;
+
+                } 
+                
+                if ($som_transfers >= $valeur_ceiling) {
 
                     $this->cancelEmployesField();
                     $this->emit('modal-hide');
-                    $this->emit(
-                        'warning',
-                        'Votre montant journier est atteint !'
-                    );
+                    $this->emit('warning', 'Votre montant journier est atteint !');
+                    return ;
+                } 
+
+                if ($reel_amount > $walletUser->wallet->amount) {
+                    $this->cancelEmployesField();
+                    $this->emit('modal-hide-transfers');
+                    $this->emit('success', 'Verifier votre montant ! !');
+                }
+                
+                $amountSolde =  $walletUser->wallet->amount -  $reel_amount;
+
+                $walletAmountSend = Wallet::where('wallet_id',  $this->wallet_id_employer)->first();
+                
+                $amountDrawal = (float)$walletAmountSend->amount +  (float) $reel_amount;
+                
+                $walletTransaction = $this->createWalletTransaction2($reel_amount, $this->transaction_description_robus, $percentRobus, $this->transaction_phone, $this->wallet_id_employer, $this->choose_type_payement_emp, $amountSolde, $amountDrawal);
+
+
+                if ($walletTransaction != null) {
+
+                    $this->updateWalletFirmAmount($walletUser, $reel_amount);
+
+                    $valuer_receive = $walletTransaction->amount - ($percentRobus->percent->percent * $reel_amount);
+
+                    $this->updateWalletRecevedAmount($wallet_search, $valuer_receive);
+
+                    $this->sendSmsNotification($walletUser, $walletTransaction);
+
+                    $this->companyCommissionToAdmins($reel_amount , $percentRobus , $walletTransaction, $admin_civ);
+                    $this->generateInvoiceTransaction($walletTransaction, $valuer_receive);
+                    $this->sendNotifications($walletTransaction, $walletUser);
+                    $this->cancelEmployesField();
+                    $this->emit('modal-hide');
+                    $this->emit('success', 'Votre transfert a été effectué avec success !');
                 } else {
 
-                    // Emount + Percent comission
-                    $val_amount =  $this->amount_payment_wallet;
-
-
-                    // Verify compte in Use send
-                    if ($val_amount > $walletUser->wallet->amount) {
-                        $this->cancelEmployesField();
-                        $this->emit('modal-hide-transfers');
-                        $this->emit('success', 'Verifier votre montant ! !');
-                    } else {
-
-                        $amount_solde =  $walletUser->wallet->amount -  $val_amount;
-
-                        $percent_robus = TransactionCost::where('is_sociaty', true)->first();
-
-
-                        // $amount_solde = $check->wallet->amount +  $commission;
-                        $walletAmountSend = Wallet::where('wallet_id',  $this->wallet_id_employer)->first();
-
-                        $amount_solde_drawal = (float)$walletAmountSend->amount +  (float) $val_amount;
-
-                        $amount_drawal =      $amount_solde_drawal;
-
-
-                        $walletTransaction = WalletTransaction::create(
-                            [
-                                'wallet_id' => $walletUser->wallet->id,
-                                'amount' => $this->amount_payment_wallet,
-                                'description' => $this->transaction_description_robus ?? null,
-                                'transaction_cost_id' =>  $percent_robus->id,
-                                'phone' => $this->transaction_phone ?? null,
-                                'costs_amount' => $percent_robus->percent * $this->amount_payment_wallet,
-                                'amount_received' => $this->amount_payment_wallet - ($percent_robus->percent * $this->amount_payment_wallet),
-                                'num_wallet' => $this->wallet_id_employer,
-                                'created_by' => firm()->id,
-                                'provider_id' => 9,
-                                'choose_type_transaction' => $this->choose_type_transaction ?? null,
-                                'choose_type_payement_emp' => $this->choose_type_payement_emp,
-                                'type_transaction' => 'Depot',
-                                'type_received' => 'Transfert',
-                                'status' => 'SUCCESS',
-                                'amount_solde'  => $amount_solde ?? null,
-                                'amount_solde_drawal' => $amount_drawal ?? null
-                            ]
-                        );
-
-                        //valeur comission send
-                        $commission = $walletTransaction->amount;
-
-                        // Valur off commission
-                        $commission_valeur = $percent_robus->percent * $walletTransaction->amount;
-
-                        // 50 %
-                        $valuer_admin = $percent_robus->percent_admin * $commission_valeur;
-
-                        // Convertion valeur CFA adim
-                        $amount_cfa_admin =  $valuer_admin *  $walletUser->wallet->currencie->value;
-
-
-                        $walletUser->wallet->update([
-                            'reload_by' => firm()->firstname .
-                                ' ' . firm()->lastname,
-                            'sid_user_relod' => firm()->id,
-                            'amount' => DB::raw('amount-' . $commission),
-                        ]);
-
-                        // Valeur received User
-                        $valuer_receive = $walletTransaction->amount - ($percent_robus->percent * $this->amount_payment_wallet);
-
-
-                        // wallet_valeur
-                        // Send in compte User and name reload
-
-                        $wallet_search->update([
-                            'reload_by' => firm()->firstname . ' ' . firm()->lastname,
-                            'sid_user_relod' => firm()->id,
-                            'amount' => DB::raw('amount+' . $valuer_receive),
-                        ]);
-
-                        if ($walletUser->country->code == 'CI') {
-
-                            $message = 'Vous avez recu un transfert  de ' . $walletTransaction->amount .
-                                $walletUser->wallet->currencie->code .
-                                // ' de ' . $walletUser->sidUser->country->name_ground != null ? $walletUser->sidUser->country->name_ground  : ' ' .  ' ' .
-                                'par ' . $walletTransaction->provider->name .
-                                'Numero Transaction ' . $walletUser->phone .
-                                ' a ' . $walletTransaction->created_at .
-                                'Robus vous remercie';
-
-                            $encode = substr($wallet_search->sidUser->phone, -10);
-
-                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                        }
-
-                        // Send valeur percent in Admin
-                        if ($admin_civ->count() > 0) {
-
-                            $count_admin = $admin_civ->count();
-
-                            $admin_valeur  =  $amount_cfa_admin;
-
-                            $valeur_single =  $admin_valeur / $count_admin;
-
-
-                            foreach ($admin_civ as $user) {
-                                $admin_single = SidUser::find($user->id);
-                                AdminsCom::create([
-                                    'amount' =>   $valeur_single,
-                                    'sid_user_id' =>   $admin_single->id,
-                                    'wallet_transaction_id' => $walletTransaction->id,
-                                    'wallet_bank_id' => null,
-                                    'wallet_deposit_id' => null,
-                                    'wallet_inter_id' => null,
-                                    'wallet_payment_id' => null,
-                                    'wallet_phone_credit_id' => null,
-                                    'amount_with_draw' =>  0,
-                                    'wallet_reload_id' => null,
-                                    'bank_card_id' => null,
-                                    'description' => 'Commission administrateur',
-                                ]);
-                                $admin_single->wallet->update([
-                                    'reload_by' => firm()->firstname . ' ' . firm()->lastname,
-                                    'sid_user_relod' => firm()->id,
-                                    'amount' => DB::raw('amount+' . $valeur_single),
-                                ]);
-                            }
-                        }
-
-                        // Valuer in Ivoice transaction
-                        $transaction = Transaction::create([
-                            'wallet_transaction_id' => $walletTransaction->id,
-                            'sid_user_id' => firm()->id,
-                            'transaction_id' => 'RB_' . $walletTransaction->provider->name . '_' . $transactionCode,
-                            'operator_transaction_name' => $walletTransaction->provider->name,
-                            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                            'pay_amount' => $walletTransaction->amount,
-                            'fee_amount' =>  $walletTransaction->costs_amount,
-                            'received_amount' => $walletTransaction->amount,
-                            'status' => $walletTransaction->status,
-                        ]);
-
-                        InvoiceTransaction::create([
-                            'title' => "Transfers d'argent",
-                            'wallet_transaction_id' => $walletTransaction->id,
-                            'transactions_id' => $transaction->id,
-                            'company_id' => firm()->company->id,
-                            'description' => $walletTransaction->description,
-                            'status' => $walletTransaction->status,
-                            'created_by' => firm()->id,
-                        ]);
-
-
-                        // Send Notification Real time Admin and User and send message everyone
-                        $msg_title = 'Transactions';
-                        $msg = 'Demande de transfert est en cours de validation ';
-                        // Notify User Auth
-                        $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                        // Notify no read
-                        $notifs = $walletUser->unreadNotifications;
-                        // Notify User Send
-                        $wallet_search->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg,]));
-                        $notifs = $wallet_search->sidUser->unreadNotifications;
-                        // Create event Realt Time
-                        event(new CreateWalletTransfersEvent($walletTransaction));
-                        // Notify Admins of country
-                        Notification::send($admins, new AdminNotification('Demande de transfert de ' .
-                            ' ' . $walletTransaction->wallet->sidUser->firstname));
-                        if ($admins->count() > 0) {
-
-                            foreach ($admins  as $user) {
-
-                                $admin_single = SidUser::find($user->id);
-
-                                $notifs = $admin_single->unreadNotifications;
-                                event(new AdminNotifEvent($notifs));
-                            }
-
-
-                            $this->cancelEmployesField();
-                            $this->emit('modal-hide');
-                            $this->emit('success', 'Transfers effectué !');
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($walletTransaction);
-                            }
-                        } else {
-
-
-                            $this->cancelEmployesField();
-                            $this->emit('modal-hide');
-                            $this->emit('success', 'Transfers effectué !');
-
-
-                            if ($walletUser->email != null) {
-                                $notify = new MailController();
-                                $notify->newTransaction($walletTransaction);
-                            }
-                        }
-                    }
+                    $this->cancelEmployesField();
+                    $this->emit('modal-hide');
+                    $this->emit('info', 'Ce Provider n\'existe pas dans chez vous !');
                 }
             } else {
                 $this->cancelEmployesField();
@@ -613,7 +449,6 @@ class Employers extends Component
             $this->distributeCommissionToAdmins($walletTransaction, $commissionValue);
             $this->generateInvoiceTransaction($walletTransaction, $finalAmountReceived);
             $this->sendNotifications($walletTransaction, $walletUserEmployer);
-
         } else {
 
             $this->cancelEmployesField();
@@ -645,12 +480,54 @@ class Employers extends Component
         ]);
     }
 
+    private function createWalletTransaction2($amount_payment, $transaction_description_robus, $percentRobus, $transaction_phone, $wallet_id_employer, $choose_type_payement_emp, $amountSolde, $amountDrawal)
+    {
+
+        return WalletTransaction::create([
+            'wallet_id' => firm()->wallet->id,
+            'amount' => $amount_payment,
+            'description' => $transaction_description_robus ?? null,
+            // 'transaction_cost_id' => $percentRobus->percent->id,
+            'phone' => $transaction_phone ?? null,
+            'costs_amount' => (float)$percentRobus->percent->percent * (float)$amount_payment,
+            'amount_received' => $amount_payment - ($percentRobus->percent->percent * $amount_payment),
+            'num_wallet' => $wallet_id_employer,
+            'created_by' => firm()->id,
+            'provider_id' => 9,
+            'choose_type_payement_emp' => $choose_type_payement_emp,
+            'type_transaction' => 'Depot',
+            'type_received' => 'Transfert',
+            'status' => 'SUCCESS',
+            'amount_solde' => $amountSolde,
+            'amount_solde_drawal' => $amountDrawal
+        ]);
+    }
+
     private function updateWalletAmount($walletUserEmployer, $finalAmountReceived)
     {
         $walletUserEmployer->wallet->update([
             'reload_by' => firm()->firstname . ' ' . firm()->lastname,
             'sid_user_relod' => firm()->id,
             'amount' => DB::raw('amount+' . $finalAmountReceived),
+        ]);
+    }
+
+    private function updateWalletRecevedAmount($walletUserEmployer, $finalAmountReceived)
+    {
+        $walletUserEmployer->update([
+            'reload_by' => firm()->firstname . ' ' . firm()->lastname,
+            'sid_user_relod' => firm()->id,
+            'amount' => DB::raw('amount+' . $finalAmountReceived),
+        ]);
+    }
+
+
+    private function updateWalletFirmAmount($walletUserEmployer, $amount_payment_alls)
+    {
+        $walletUserEmployer->wallet->update([
+            'reload_by' => firm()->firstname . ' ' . firm()->lastname,
+            'sid_user_relod' => firm()->id,
+            'amount' => DB::raw('amount-' . $amount_payment_alls),
         ]);
     }
 
@@ -691,6 +568,61 @@ class Employers extends Component
         }
     }
 
+    public function companyCommissionToAdmins($transaction_amount_robus, $percent_robus, $walletTransaction, $admin_civ)
+    {
+
+        $country_civ = Country::find(107);
+        // Gestion des commissions d'intermédiaires
+        $valeur_percent_admin = $percent_robus->percent->percent * $transaction_amount_robus;
+       
+        $valeur_admin = $percent_robus->percent->percent_admin * $valeur_percent_admin;
+        $valuer_deposit = $percent_robus->percent->percent_deposit * $valeur_percent_admin;
+        $valuer_with_drawal = $percent_robus->percent->percent_with_drawal * $valeur_percent_admin;
+
+        if ($country_civ->currencie->value > firm()->country->currencie->value) {
+            $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)firm()->country->currencie->value;
+            $admin_valeur_convertion = (float)$valeur_admin * (float)firm()->country->currencie->value;
+        } elseif ($country_civ->currencie->value == firm()->country->currencie->value) {
+            $admin_valeur_convertion_drawal = $valuer_with_drawal;
+            $admin_valeur_convertion = (float)$valeur_admin;
+        } else {
+            $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)firm()->country->currencie->value;
+            $admin_valeur_convertion = (float)$valeur_admin * (float)firm()->country->currencie->value;
+        }
+
+        $walletTransaction->increment('commission_companie', $valuer_deposit);
+
+        if ($admin_civ->count() > 0) {
+            $nmbre_admin = $admin_civ->count();
+            $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
+
+            foreach ($admin_civ as $user) {
+                $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+            }
+        }
+
+        return true;
+    }
+
+    private function processAdminCommissionSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
+    {
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'wallet_transaction_id' => $walletTransactionId,
+            'description' => 'Commission societe',
+            'status'  => "SUCCESS",
+            'amount_under' =>  firm()->is_under_distributer ? $valuer_deposit : 0,
+            'description_underdistributer' =>  firm()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+        ]);
+
+        $admin_single->wallet->increment('amount', $amount);
+    }
+
+
+
     private function generateInvoiceTransaction($walletTransaction, $amountReceived)
     {
         $transaction = Transaction::create([
@@ -723,6 +655,7 @@ class Employers extends Component
         $walletUserEmployer->notify(new UserNotification(['title' => $msgTitle, 'message' => $msg]));
         $walletTransaction->wallet->sidUser->notify(new UserNotification(['title' => $msgTitle, 'message' => $msg]));
         $admins = $this->getAdminValeurProperty();
+        event(new CreateWalletTransfersEvent($walletTransaction));
         Notification::send($admins, new AdminNotification('Transfert de ' . $walletTransaction->wallet->sidUser->firstname));
         if ($walletUserEmployer->email != null) {
             $notify = new MailController();
@@ -748,11 +681,11 @@ class Employers extends Component
     {
         $country_civ = Country::find(107);
 
-        $robus_currency = sabdy()->country->currencie->value;
+        $robus_currency = firm()->country->currencie->value;
 
-        if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
+        if ($country_civ->currencie->value > firm()->country->currencie->value) {
             return $amount * $robus_currency;
-        } elseif ($country_civ->currencie->value == sabdy()->country->currencie->value) {
+        } elseif ($country_civ->currencie->value == firm()->country->currencie->value) {
             return $amount;
         } else {
             return $amount * $robus_currency;
@@ -761,10 +694,9 @@ class Employers extends Component
 
     private function convertAdminCommission($amount, $wallet)
     {
+
         $country_civ = Country::find(107);
-
-        $robus_currency = sabdy()->country->currencie->value;
-
+        // $robus_currency = sabdy()->country->currencie->value;
         if ($country_civ->currencie->value >  $wallet->country->currencie->value) {
             return $amount / $wallet->country->currencie->value;
         } elseif ($country_civ->currencie->value ==  $wallet->country->currencie->value) {
