@@ -6,7 +6,7 @@
             <div class="modal-header alert alert-primary ">
                 <h2 class="font-medium text-base mr-auto">Rechargement Distributer/S-distributeur</h2>
             </div>
-            <a wire:click="cancelReloadCardField"
+            <a wire:click="cancelReload"
                 style="position: absolute; right: 0px; top: 0px; margin-top: 0.75rem; margin-right: 0.75rem;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="x"
@@ -16,86 +16,223 @@
                 </svg>
             </a>
 
+            @if ($step === 1)
 
-            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 style_image_providers mt-3">
-                <div class="col-span-12">
-                    <img class="object-none object-center bg-yellow-300 w-logo"
-                        src="{{ asset('public/dist/providers/robus.png') }}" alt="image"wire:model="image">
-                </div>
-            </div>
+                <div class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+                    <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
+                        <a href="#step-1"
+                            class="w-10 h-10 rounded-full btn btn-circle {{ $step != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
+                        <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Saisissez les informations
+                            requises
+                        </div>
+                    </div>
 
-            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-                <div class="col-span-6">
-                    <label for="account_reload_uv" class="form-label">Numero wallet<span class="text-danger">
-                            *</span></label>
-                    <input wire:model.debounce.500ms="account_reload_uv" id="account_reload_uv" type="text"
-                        class="form-control" placeholder="Numero wallet">
-                    @error('account_reload_uv')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div class="col-span-6">
-                    <label for="relaod_uv_amout" class="form-label">Montant<span class="text-danger">
-                            *</span></label>
-                    <input wire:model.defer="relaod_uv_amout" id="relaod_uv_amout" type="number"
-                        class="form-control" placeholder="Montant">
-                    @error('relaod_uv_amout')
-                        <span class="text-danger">{{ $message }}</span>
-                    @enderror
                 </div>
 
-                <div class="col-span-12">
+                <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 style_image_providers mt-3">
+                    <div class="col-span-12">
+                        <img class="object-none object-center bg-yellow-300 w-logo"
+                            src="{{ asset('public/dist/providers/robus.png') }}" alt="image"wire:model="image">
+                    </div>
+                </div>
+
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                    <div class="col-span-6">
+                        <label for="account_reload_uv" class="form-label">Numero wallet<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.debounce.500ms="account_reload_uv" id="account_reload_uv" type="text"
+                            class="form-control" placeholder="Numero wallet">
+                        @error('account_reload_uv')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="col-span-6">
+                        <label for="relaod_uv_amout" class="form-label">Montant<span class="text-danger">
+                                *</span></label>
+                        <input wire:model.defer="relaod_uv_amout" id="relaod_uv_amout" type="number"
+                            class="form-control" placeholder="Montant">
+                        @error('relaod_uv_amout')
+                            <span class="text-danger">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="col-span-12">
 
 
-                    <div wire:loading>Recherche numero...</div>
-                    <div wire:loading.remove></div>
-                    @php
+                        <div wire:loading>Recherche numero...</div>
+                        <div wire:loading.remove></div>
 
-                        $wallet_search = App\Models\Wallets\Wallet::where('wallet_id', $account_reload_uv)
-                            ->where('country_id', firm()->country->id)
-                            ->first();
-                        if ($wallet_search) {
-                            if (
-                                $wallet_search->sidUser->is_custumers &&
-                                $wallet_search->sidUser->company_id == firm()->company->id
-                            ) {
-                                $wallet_name =
-                                    $wallet_search->sidUser->firstname . ' ' . $wallet_search->sidUser->lastname;
+                        @php
+
+                            $wallet_search = App\Models\Wallets\Wallet::where('wallet_id', $account_reload_uv)
+                                ->where('country_id', firm()->country->id)
+                                ->first();
+
+                            if ($wallet_search) {
+
+                                if ($wallet_search->sidUser->is_under_distributer &&  $wallet_search->sidUser->company_id == firm()->company->id) 
+                                {
+                                    $wallet_name = $wallet_search->sidUser->firstname . ' ' . $wallet_search->sidUser->lastname;
+                                } else {
+                                    $wallet_name = 'Numero introuvable ou n\' est pas sous distributeur';
+                                }
                             } else {
-                                $wallet_name = 'Numero introuvable ou n\' est pas client';
+                                $wallet_name = 'Numero introuvable ou n\' est pas sous distributeur';
                             }
-                        } else {
-                            $wallet_name = 'Numero introuvable ou n\' est pas client';
-                        }
 
-                    @endphp
+                        @endphp
 
-                    @if ($account_reload_uv == '')
-                        <div class="text-gray-500 text-sm">Entrer numero wallet</div>
-                    @else
-                        @if ($wallet_name)
-                            <div class="text-lg text-gray-900 text-bold text-secondary">
-                                <span
-                                    class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                    {{ $wallet_name }}
-                                </span>
-                            </div>
+                        @if ($account_reload_uv == '')
+                            <div class="text-gray-500 text-sm">Entrer numero wallet</div>
+                        @else
+                            @if ($wallet_name)
+                                <div class="text-lg text-gray-900 text-bold text-secondary">
+                                    <span
+                                        class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        {{ $wallet_name  ?? null}}
+                                    </span>
+                                </div>
+                            @endif
                         @endif
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer style-foo">
+                    <button wire:click="cancelReload" type="button"
+                        class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
+                    <button wire:click="addTransaction" type="button" wire:loading.remove=""
+                        class="btn btn-primary w-50">Transferer</button>
+                    <div wire:loading wire:target="addTransaction">
+                        Traitement en cours...
+                    </div>
+                </div>
+            @elseif ($step === 2)
+                <div
+                    class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+                    <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
+                        <a href="#step-2"
+                            class="w-10 h-10 rounded-full btn btn-circle {{ $step != 2 ? 'btn-default' : 'btn-secondary' }}">2</a>
+                        <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Validation </div>
+                    </div>
+
+                </div>
+                <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 mt-3">
+
+
+                    <div class="col-span-6 mt-space-padding">
+                        <label for="number_phone_credit_edit" class="form-label">Montant de la transaction Robus<span
+                                class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $relaod_uv_amout ?? null }} {{ $wallet_amount->currencie->code ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-span-6 mt-space-padding">
+                        <label for="account_reload_uv" class="form-label">Nom & Prenom<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+                            @php
+
+                                $wallet_search = App\Models\Wallets\Wallet::where('wallet_id', $account_reload_uv)
+                                    ->where('country_id', firm()->country->id)
+                                    ->first();
+
+                                if ($wallet_search) {
+                                    if (
+                                        $wallet_search->sidUser->is_under_distributer &&
+                                        $wallet_search->sidUser->company_id == firm()->company->id
+                                    ) {
+                                        $wallet_name =
+                                            $wallet_search->sidUser->firstname .
+                                            ' ' .
+                                            $wallet_search->sidUser->lastname;
+                                    } else {
+                                        $wallet_name = 'Numero introuvable ou n\' est pas client';
+                                    }
+                                } else {
+                                    $wallet_name = 'Numero introuvable ou n\' est pas client';
+                                }
+                            @endphp
+
+                            @if ($wallet_name)
+                                <div
+                                    class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                    {{ $wallet_name ?? null }}
+                                </div>
+                            @endif
+                        </div>
+
+                    </div>
+                    <div class="col-span-12 mt-1" wire:loading.class="hidden" wire:target="validatedPassword">
+
+                        <x-password-input />
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <!-- Bouton "Annuler" -->
+                    <button wire:click="cancelEmployesField" type="button" class="btn btn-outline-secondary w-20 mr-1"
+                        wire:loading.class="hidden" wire:target="validatedPassword">
+                        Annuler
+                    </button>
+
+                    <!-- Bouton "Validez la demande" -->
+                    @if ($isPasswordValid)
+                        <button wire:click="validatedPassword" type="button" wire:loading.attr="disabled"
+                            class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
+                            Validez la demande
+                        </button>
+                    @else
+                        <p class="text-danger mt-2">
+                            Veuillez entrer un mot de passe valide pour activer le bouton de validation.
+                        </p>
                     @endif
+
+                    <div wire:loading.flex wire:target="validatedPassword" class="flex items-center justify-center">
+                        <div class="loader"></div>
+                        <p>Traitement en cours...</p>
+                    </div>
                 </div>
 
-            </div>
+
+            @endif
 
 
-            <div class="modal-footer style-foo">
-                <button wire:click="cancelReload" type="button"
-                    class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
-                <button wire:click="addReload" type="button" wire:loading.remove=""
-                    class="btn btn-primary w-50">Transferer</button>
-                <div wire:loading wire:target="addReload">
-                    Traitement en cours...
-                </div>
-            </div>
+            <style>
+                .loader {
+                    border: 4px solid rgba(0, 0, 0, 0.1);
+                    border-left-color: #09f;
+                    border-radius: 50%;
+                    width: 40px;
+                    height: 40px;
+                    animation: spin 1s linear infinite;
+                }
+
+                @keyframes spin {
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+
+                .hidden {
+                    display: none;
+                }
+            </style>
         </div>
     </div>
 </div>

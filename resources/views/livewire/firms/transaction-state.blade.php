@@ -111,7 +111,6 @@
 
     <div class="grid grid-cols-12 gap-6 mt-6">
 
-        <!-- BEGIN: Sales Report -->
         <div class="col-span-12 sm:col-span-8 lg:col-span-6 mt-8">
             <div class="intro-y block sm:flex items-center h-10">
                 <h2 class="text-lg font-medium truncate mr-5">
@@ -119,13 +118,9 @@
                 </h2>
             </div>
             <div class="intro-y box p-5 mt-12 sm:mt-5">
-                {{-- <canvas id="reloads_gain" reload_gain="{{ json_encode($reloads_gain) }}"></canvas> --}}
                 <canvas id="sum" sum="{{ json_encode($reloads_days) }}"></canvas>
             </div>
         </div>
-        <!-- END: Sales Report -->
-        <!-- BEGIN: Sales Report -->
-        <!-- BEGIN: Sales Report -->
         <div class="col-span-12 sm:col-span-8 lg:col-span-6 mt-8">
             <div class="intro-y flex items-center h-10">
                 <h2 class="text-lg font-medium truncate mr-5">
@@ -136,8 +131,6 @@
                 <canvas id="reload" reload="{{ json_encode($realods) }}"></canvas>
             </div>
         </div>
-        <!-- END: Sales Report -->
-        <!-- END: Sales Report -->
     </div>
 
     @stack('scripts')

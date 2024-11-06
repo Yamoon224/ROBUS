@@ -54,7 +54,9 @@ Route::group(['middleware' => ['auth:company']], function () {
     //Historical
     Route::prefix('historicals')->group(function () {
         Route::get('/transfers_historicals', [HistoricalController::class, 'browse_transfer'])->name('employes.transfers.historical');
+        Route::get('/reloads_historicals', [HistoricalController::class, 'browse_reloads'])->name('employes.reloads.historical');
         Route::get('transfers/reporting_transfer_historical', [HistoricalController::class, 'reporting_transfer_historical_company'])->name('employers.transfers.historical.reporting_transfer_historical');
+        Route::get('reloads_days/reporting_reloads_days_historical', [HistoricalController::class, 'searchByReloadsDate'])->name('employers.historical.reporting_transaction_days_historical.companies');
     });
 
     //Invoices

@@ -240,9 +240,6 @@ class Employers extends Component
                     return;
                 }
 
-                // if (!$this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
-                //     return;
-                // }
             } else {
                 $this->cancelEmployesField();
                 $this->emit('modal-hide');
@@ -427,7 +424,7 @@ class Employers extends Component
         } else {
             $this->cancelEmployesField();
             $this->emit('modal-hide');
-            $this->emit('info', 'Ce Provider n\'existe pas dans chez vous !');
+            $this->emit('info', 'Votre mot de passe est incorrect !');
         }
     }
 

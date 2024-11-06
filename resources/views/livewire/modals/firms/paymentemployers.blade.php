@@ -404,9 +404,6 @@
             @endif
 
 
-
-
-
             <style>
                 .loader {
                     border: 4px solid rgba(0, 0, 0, 0.1);

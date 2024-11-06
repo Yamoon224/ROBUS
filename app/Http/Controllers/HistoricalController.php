@@ -623,6 +623,85 @@ class HistoricalController extends Controller
 
         return $pdf->download('reporting_transfers.pdf');
     }
+
+    public function reporting_reload_historical_company()
+    {
+
+        $usersCountry  =   firm();
+        $todays = Carbon::now();
+        $convertions = $todays->toDateString();
+        $bank_historicals = [];
+
+
+        foreach (
+            WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                ->where('wallets.country_id', $usersCountry->country->id)
+                ->where('wallet_reloads.created_by', $usersCountry->id)
+                ->whereDate('wallet_reloads.created_at', $convertions)->select('wallet_reloads.*')->get() as $bank
+        ) {
+            $bank_historicals[] = $bank;
+        }
+
+        $account_penddings = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $usersCountry->country->id)
+            ->where('wallet_reloads.created_by', $usersCountry->id)
+            ->whereDate('wallet_reloads.created_at', $convertions)->where('wallet_reloads.status', 'PENDING')->select('wallet_reloads.*')->count();
+
+        $account_success = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $usersCountry->country->id)
+            ->where('wallet_reloads.created_by', $usersCountry->id)
+            ->whereDate('wallet_reloads.created_at', $convertions)->where('wallet_reloads.status', 'SUCCESS')->select('wallet_reloads.*')->count();
+
+        $account_errors = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $usersCountry->country->id)
+            ->where('wallet_reloads.created_by', $usersCountry->id)
+            ->whereDate('wallet_reloads.created_at', $convertions)->where('wallet_reloads.status', 'ERROR')->select('wallet_reloads.*')->count();
+
+        $pdf = Pdf::loadView('pages.historicals.pdf_reload', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
+        return $pdf->download('reporting_rechargment.pdf');
+    }
+
+    public function searchByReloadsDate(Request $request)
+    {
+
+        $this->validate($request, [
+            'search_begin' => 'required|date',
+            'search_end' => 'required|date|after_or_equal:search_begin',
+        ]);
+
+
+        $searchDateBegin = $request->input('search_begin');
+
+        $searchDateEnd = $request->input('search_end');
+
+        $bank_historicals = $this->getTransactionDate(WalletReload::class, $searchDateBegin, $searchDateEnd);
+
+        $account_penddings =  $this->getTransactionCount(WalletReload::class, 'PENDING', $searchDateBegin, $searchDateEnd);;
+
+        $account_success = $this->getTransactionCount(WalletReload::class, 'SUCCESS', $searchDateBegin, $searchDateEnd);
+
+        $account_errors = $this->getTransactionCount(WalletReload::class, 'ERROR', $searchDateBegin, $searchDateEnd);
+
+        $amount_total = $this->walletTransactionsDays(WalletReload::class, $searchDateBegin, $searchDateEnd);
+
+        $pdf = Pdf::loadView('pages.historicals.pdf_reload', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
+        return $pdf->download('reporting_rechargment.pdf');
+
+    }
+
+    public function walletTransactionsDays($wallets, $searchDateBegin, $searchDateEnd)
+    {
+
+        $data = [];
+
+        foreach ($wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('wallet_id' , firm()->wallet->wallet_id)->where('status', 'SUCCESS')->get() as $bank) {
+
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
+    }
+
     public function reporting_drawer_historical()
     {
 
@@ -681,6 +760,12 @@ class HistoricalController extends Controller
     {
     
         return view('firms.pages.browse_transfer');
+    }
+
+    public function browse_reloads()
+    {
+        return view('firms.pages.browse_reloads');
+
     }
 
     public function browse_transferfirm()

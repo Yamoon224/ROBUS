@@ -40,7 +40,6 @@ class TransactionState extends Component
                 'usersCountry' =>  $walletUser->country->currencie->name,
                 'sum_commissions' => $this->WalletReloadSumGain,
                 'realods' => $this->RealodsAdmin,
-                // 'reloads_gain'  =>  $this->RealodsAdminGain,
                 'reloads_days'  =>  $this->RealodsAdminDays,
             ]
         );
