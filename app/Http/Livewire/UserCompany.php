@@ -5,10 +5,12 @@ namespace App\Http\Livewire;
 use App\Mail\UvSend;
 use App\Models\Custumers\Country;
 use App\Models\Operator;
+use App\Models\OperatorService;
 use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Events\assignementEvent;
 
 class UserCompany extends Component
 {
@@ -31,6 +33,42 @@ class UserCompany extends Component
         $this->emit($state);
     }
 
+    public function edit_update($data)
+    {
+
+        $sid_user = $data['user_id'];
+
+        $operator_id = $data['operator_id'];
+
+        $check_user = SidUser::whereId($sid_user)->first();
+
+        $check_operator = Operator::whereId($operator_id)->first();
+
+        $old_operators = OperatorService::where('sid_user_id', $check_user->id)
+            ->where('operator_id', $check_operator->id)
+            ->first();
+
+        if (!empty($old_operators)) {
+
+            $old_operators->forcedelete();
+            event(new assignementEvent($old_operators));
+            $this->resetField();
+            $this->emit('modal-hide', 'hide');
+            $this->emit('success', 'Liste des operateurs mise à jour !');
+        } else {
+
+            $operator_service = new OperatorService;
+            $operator_service->sid_user_id = $check_user->id;
+            $operator_service->operator_id  = $check_operator->id;
+            $operator_service->save();
+            event(new assignementEvent($operator_service));
+
+            $this->resetField();
+            $this->emit('modal-hide', 'hide');
+            $this->emit('success', 'Liste des operateurs mise à jour !');
+        }
+    }
+    
     public function resetField()
     {
         $this->sidUserId = '';
@@ -102,7 +140,7 @@ class UserCompany extends Component
         return view('livewire.user-company', [
             "users" => $users,
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
-            "operators" => Operator::whereStatus(true)->whereIsUnder(true)->orderBy("name", 'desc')->get(),
+            "operators" => Operator::whereStatus(true)->whereIsCommission(true)->orderBy("name", 'desc')->get(),
         ]);
     }
     

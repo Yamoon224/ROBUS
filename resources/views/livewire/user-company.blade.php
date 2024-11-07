@@ -171,9 +171,9 @@
                                         <div class="flex items-start ">
 
                                             <div class="absolute right-0 top-0 mr-5 mt-3 dropdown">
-                                                <h2 class="intro-y text-lg font-medium ">
-                                                    <i class="fas fa-lock w-4 h-4 mr-2"></i>Commisions
-                                                </h2>
+                                                <div class="text-slate-500 text-xs  mt-0.5 ">
+                                                    <i class="fas fa-lock w-3 h-4 mr-2"></i>Commisions
+                                                </div>
                                                 <a class="dropdown-toggle w-5 h-5 block" href="javascript:;"
                                                     aria-expanded="false" data-tw-toggle="dropdown"> <svg
                                                         xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -195,14 +195,13 @@
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
                                                     <div class="dropdown-content">
                                                         @foreach ($operators as $operator)
-                                                            <input
-                                                                wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                            <input  wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
                                                                 value="{{ $operator->id }}" type="checkbox"
                                                                 class="sid-switch"
                                                                 @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
 
 
-                                                            <p class="font-assign ">
+                                                            <p class="text-slate-500 text-xs  mt-0.5">
                                                                 {{ $operator->name ?? null }}
 
                                                             </p>

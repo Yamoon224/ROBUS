@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Firms;
 
+use App\Models\Operator;
+use App\Models\OperatorService;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
@@ -38,6 +40,9 @@ class GainCompanies extends Component
     public $inter_gain;
     public $bank_gain;
     public $typeRemonte;
+    public $operators;
+    public $showRemonterTransButton = false;
+    public $showRemonterCreditButton = false;
 
     public function mount()
     {
@@ -47,11 +52,23 @@ class GainCompanies extends Component
         $this->phonecredit_gain = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class);
         $this->inter_gain = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class);
         $this->bank_gain = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class);
+        $this->operators = OperatorService::getOperatorsWithCommissions(firm()->id);
+
+        foreach ($this->operators as $operator) {
+            $restrictions = explode(',', $operator->name); 
+            if (in_array('Bloque Transactions', $restrictions)) {
+                $this->showRemonterTransButton = true;
+                break; 
+            }else if(in_array('Bloque Crédits', $restrictions)) {
+                $this->showRemonterCreditButton = true;
+                break; 
+            }
+        }
     }
 
     public function edit($remonteGain, $typeRemonte, $state)
     {
-
+        $this->showRemonterTransButton = true; 
         $this->gain_amount = $remonteGain;
         $this->typeRemonte = $typeRemonte;
         $this->emit($state);
@@ -60,6 +77,7 @@ class GainCompanies extends Component
 
     public function cancelField()
     {
+        $this->showRemonterTransButton = true; 
         $this->gain_amount = null;
         $this->emit('modal-hide', 'hide');
     }
@@ -161,6 +179,9 @@ class GainCompanies extends Component
             'amount' => DB::raw('amount+'  .  $withRemonte->amount_with_draw),
         ]);
     }
+
+
+
     public function render()
     {
 
@@ -195,7 +216,6 @@ class GainCompanies extends Component
         $transferHistoricals = $transfersQuery->orderByDesc('created_at')->paginate(30);
 
         return view('livewire.firms.gain-companies', [
-
             'WalletRemontes' => $this->WalletRemonts,
             'allRemontes' => $transferHistoricals,
             'company_gains' => $sum_gain,
@@ -205,7 +225,8 @@ class GainCompanies extends Component
             'amount_phone_credits' => $phonecredit_amount,
             'amount_inters' => $inter_amount,
             'amount_banks' => $bank_amount,
-            'amount_deposits' => $deposit_amount,
+            'showRemonterTransButton' => $this->showRemonterTransButton,
+            'showRemonterCreditButton' => $this->showRemonterCreditButton,
             // Gains
             'gain_payments' => $this->payement_gain,
             'gain_transactions' => $this->transaction_gain,

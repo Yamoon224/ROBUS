@@ -367,8 +367,7 @@
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
                                                     <div class="dropdown-content">
                                                         @foreach ($operators as $operator)
-                                                            <input
-                                                                wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                            <input  wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
                                                                 value="{{ $operator->id }}" type="checkbox"
                                                                 class="sid-switch"
                                                                 @if (in_array($operator->id, $old_operators)) checked="checked" @endif>

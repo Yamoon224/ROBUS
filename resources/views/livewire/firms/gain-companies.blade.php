@@ -62,45 +62,53 @@
                 {{ number_format($gain_payments, 2, ',', ' ') ?? null }}
                 {{ $user_currencie }}</div>
         </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-error ">
-            <a wire:click="edit({{ $gain_transactions }} , 'Transactions' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-error">
+           
+            @if ($showRemonterTransButton)
+                <a id="modify-button"
+                    wire:click="edit({{ $gain_transactions }} , 'Transactions' , 'modal-show-remonte-ccommission')"
+                    class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                         stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                              stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                              stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                              stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                              stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </a>
+            @endif
+        
             <div class="font-medium text-historique mt-6">Transactions</div>
-
-
             <div class="text-slate-500 mt-3">
-                {{ number_format($gain_transactions, 2, ',', ' ') ?? null }}
-                {{ $user_currencie }}</div>
+                {{ number_format($gain_transactions, 2, ',', ' ') ?? null }} {{ $user_currencie }}
+            </div>
         </div>
+        
         <div class="col-span-12 sm:col-span-4 2xl:col-span-4 box p-5 cursor-pointer zoom-in style_table_virements">
+            
+            @if ($showRemonterCreditButton)
             <a wire:click="edit({{ $gain_phone_credits }} , 'Crédits' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
+            class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="w-6 h-6 mr-3">
+                <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                    stroke-linejoin="round" />
+                <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                    stroke-linejoin="round" />
+            </svg>
+            Rémonter
+        </a>
+            @endif
+        
             <div class="font-medium text-historique mt-6">Credits</div>
             <div class="text-slate-500 mt-3"> {{ number_format($gain_phone_credits, 2, ',', ' ') ?? null }}
                 {{ $user_currencie }}</div>
@@ -181,7 +189,7 @@
     </div>
     <div class="intro-y box px-5 pt-1 mt-1 ">
         <!-- BEGIN: Ticket -->
-        
+
         <div class="grid grid-cols-12 gap-6 mt-1">
             <div class="col-span-12 sm:col-span-8 lg:col-span-6 mt-8">
                 <div class="intro-y block sm:flex items-center h-10">
@@ -390,6 +398,7 @@
         @stack('scripts')
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
         <script>
             var relaods = JSON.parse($('#reload').attr('reload'));
             var sumReload = JSON.parse($('#sum').attr('sum'));
@@ -489,6 +498,8 @@
                 }
             });
         </script>
+
+
     </div>
     @include('livewire.modals.firms.remonteCommissions')
 

@@ -27,4 +27,24 @@ class OperatorService extends Model
     {
         return $this->belongsTo(SidUser::class, 'sid_user_id', 'id');
     }
+
+    public static function getOperatorsWithCommissions($userId)
+    {
+
+        $operatorCommissionIds = self::where('sid_user_id', $userId)
+            ->pluck('operator_id')
+            ->toArray();
+
+        return Operator::whereStatus(true)
+            ->whereIsCommission(true)
+            ->whereIn('id', $operatorCommissionIds)
+            ->orderBy("name", 'desc')
+            ->get()
+            ->map(function ($operator) {
+                $operator->isChecked = true;
+                return $operator;
+            });
+    }
+
+  
 }
