@@ -25,16 +25,8 @@ class PaymentCost extends Model
         'updated_at',
     ];
     
-    protected $fillable = [
-        'name',
-        'amount_canal',
-        'amount_auther',
-        'comission_auther',
-        'comission_canal',
-        'status',
-        'created_by',
-        'percent_masters',
-    ];
+    protected $guarded = [];
+
 
     protected $casts = [
         'amount_auther' => 'double',
@@ -96,6 +88,11 @@ class PaymentCost extends Model
         $this->attributes['percent_masters'] = $value / 100 ? json_encode($value / 100) : null;
     }
    
+    public function setPercentPaymentCompanieAttribute($value)
+    {
+        $this->attributes['percent_companie'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+
     public function WalletPayment()
     {
         return $this->hasOne(WalletPayment::class)->withTrashed();

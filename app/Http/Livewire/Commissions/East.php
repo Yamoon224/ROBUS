@@ -30,6 +30,7 @@ class East extends Component
     public $percent_admin_distibuter;
     public $percent_deposit_distibuter;
     public $percent_with_drawal_distibuter;
+    public $comissionCompanie;
 
     public function add()
     {
@@ -82,7 +83,7 @@ class East extends Component
         $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
-        $this->comission_master = $check->percent_masters * 100;
+        $this->comissionCompanie = $check->percent_companie * 100;
         // $this->distributer_custumer = $check->distributer_custumer;
 
         // Under distributeurs
@@ -104,7 +105,7 @@ class East extends Component
                 'percent_deposit' => 'required',
                 'percent_transaction_under_distributer' => 'required',
                 'percent_admin_distibuter' => 'required',
-                'comission_master' => 'required',
+                'comissionCompanie' => 'required',
                 // 'percent_deposit_distibuter' => 'required',
                 // 'percent_with_drawal_distibuter' => 'required',
 
@@ -114,7 +115,7 @@ class East extends Component
                 'percent_admin.required' => 'Ce champ est requis',
                 'percent_transaction.required' => 'Ce champ est requis',
                 'percent_deposit.required' => 'Ce champ est requis',
-                'comission_master.required' => 'Ce champ est requis',
+                'comissionCompanie.required' => 'Ce champ est requis',
             ]
         );
         $check = LevelCountry::whereId($this->transaction_id)->first();
@@ -133,7 +134,7 @@ class East extends Component
             'percent_with_drawal_under_distributer'  => $this->percent_with_drawal_distibuter,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
-            'percent_masters'  => $this->comission_master,
+            'percent_companie'  => $this->comissionCompanie,
         ]);
 
         $this->resetField();

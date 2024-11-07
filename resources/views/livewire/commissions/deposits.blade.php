@@ -43,7 +43,7 @@
                         <div class="accordion p-5">
                             @foreach ($item->levelDepositIvories as $itemLevelbank)
                                 <div class="accordion-item">
-                                    <p class="mr-6">{{ 'Paliers des montant ' }} | {{ 'Frais en Montant/Pourcentage' }}</p>
+                                    <p class="mr-6">{{ 'Paliers des montant ' }} | {{ 'Frais en Montant/Pourcentage' }} | {{ 'S-distributeur' }} | {{ 'Compagnie' }}</p>
 
                                     <div id="faq-accordion-collapse-1" class="accordion-collapse collapse show"
                                         aria-labelledby="faq-accordion-content-1" data-tw-parent="#faq-accordion-1">
@@ -70,7 +70,7 @@
 
                             @foreach ($item->levelDeposits as $itemLevelbank)
                                 <div class="accordion-item">
-                                    <p class="mr-6">{{ 'Paliers des montant ' }} | {{ 'Frais en Pourcentage' }}</p>
+                                    <p class="mr-6">{{ 'Paliers des montant ' }} | {{ 'Frais en Pourcentage' }} </p>
 
                                     <div id="faq-accordion-collapse-1" class="accordion-collapse collapse show"
                                         aria-labelledby="faq-accordion-content-1" data-tw-parent="#faq-accordion-1">

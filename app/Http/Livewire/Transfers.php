@@ -2203,7 +2203,9 @@ class Transfers extends Component
                                         $valuer_deposit_com = $amount_user->comission_distributer * $reel_amount;
                                         $valuer_admin_com = $percent_valeur - $valuer_deposit_com;
                                         $amount_cost = $amount_user->comission_distributer * $reel_amount;
+                                        $commissionCompanie = $amount_user->percent_companie * $percent_valeur;
                                         $amountReceved = (float)$reel_amount;
+
                                     } else {
                                         $amount_verify = $reel_amount;
                                         $valuer_admin_com =  $amount_user->percent * $reel_amount;
@@ -2221,6 +2223,7 @@ class Transfers extends Component
                                         $valuer_deposit_com = $amount_user->comission_distributer;
                                         $valuer_admin_com = $reel_amount - $valuer_deposit_com;
                                         $amount_cost = $amount_user->comission_distributer;
+                                        $commissionCompanie = $amount_user->percent_companie ;
                                         $amountReceved = (float)$reel_amount;
                                     } else {
                                         $amount_verify = (float)$reel_amount;
@@ -2280,7 +2283,7 @@ class Transfers extends Component
 
 
                                     if ($walletReloadCard != null) {
-                                        $this->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $walletUser, $amount_verify);
+                                        $this->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $walletUser, $amount_verify , $commissionCompanie);
                                     }
 
                                     event(new CreateWalletReloadCardEvent($walletReloadCard));
@@ -5261,6 +5264,13 @@ class Transfers extends Component
             $walletBank->update([
                 'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
             ]);
+
+            $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+                $valuer_companie = $amount_user->percent_companie;
+                $walletBank->increment('commission_companie', $valuer_companie);
+            }
         } else {
 
             $valuer_deposit = $amount_user->amount;
@@ -5547,7 +5557,7 @@ class Transfers extends Component
         );
     }
 
-    protected function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $walletUser, $amount_verify)
+    protected function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $walletUser, $amount_verify , $commissionCompanie)
     {
 
 
@@ -5558,6 +5568,13 @@ class Transfers extends Component
             $walletOrderCard->update([
                 'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
             ]);
+
+            $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+                $valuer_companie = $commissionCompanie;
+                $walletOrderCard->increment('commission_companie', $valuer_companie);
+            }
         }
 
         $admin_valeur =  $amount_commission;
@@ -5848,6 +5865,15 @@ class Transfers extends Component
             $walletPayment->update([
                 'commissions' => $valuer_deposit,
             ]);
+
+            $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+
+                $valuer_companie = $percent_robus->percent_companie;
+
+                $walletPayment->increment('commission_companie', $valuer_companie);
+            }
         } else {
 
             $admin_valeur =  $percent_robus->amount_auther;

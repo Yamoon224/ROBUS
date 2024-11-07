@@ -84,6 +84,11 @@ class OrderCardCost extends Model
 
     // }
 
+    public function setPercentPaymentCompanieAttribute($value)
+    {
+        $this->attributes['percent_companie'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+
 
     // public function setPercentAdminAttribute($value)
     // {

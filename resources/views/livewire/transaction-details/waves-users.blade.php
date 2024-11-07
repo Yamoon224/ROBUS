@@ -134,73 +134,79 @@
 
                                             <td class="w-40">
 
-                                                @if ($item->updated_by == null)
-                                                    <p class="font-medium whitespace-nowrap">
-                                                    <p class="mb-2">
-                                                        {{ $item->full_name ?? null }}
-                                                    </p>
-                                                    {{ substr($item->phone ?? null, 0, 5) }}
+                                                @if (!firm())
+                                                    @if ($item->updated_by == null)
+                                                        <p class="font-medium whitespace-nowrap">
+                                                        <p class="mb-2">
+                                                            {{ $item->full_name ?? null }}
+                                                        </p>
+                                                        {{ substr($item->phone ?? null, 0, 5) }}
 
-                                                    </p>
-                                                    <div class="flex items-center justify-center text-success mt-3">
+                                                        </p>
+                                                        <div class="flex items-center justify-center text-success mt-3">
 
-                                                        @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                            <a class="flex btn btn-warning items-center  mr-1 mb-2">
-                                                                Je prends <svg width="25" viewBox="0 0 120 30"
-                                                                    xmlns="http://www.w3.org/2000/svg" fill="1a202c"
-                                                                    class="w-4 h-4 ml-2">
-                                                                    <circle cx="15" cy="15" r="15">
-                                                                        <animate attributeName="r" from="15"
-                                                                            to="15" begin="0s" dur="0.8s"
-                                                                            values="15;9;15" calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                        <animate attributeName="fill-opacity"
-                                                                            from="1" to="1" begin="0s"
-                                                                            dur="0.8s" values="1;.5;1"
-                                                                            calcMode="linear" repeatCount="indefinite">
-                                                                        </animate>
-                                                                    </circle>
-                                                                    <circle cx="60" cy="15" r="9"
-                                                                        fill-opacity="0.3">
-                                                                        <animate attributeName="r" from="9"
-                                                                            to="9" begin="0s" dur="0.8s"
-                                                                            values="9;15;9" calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                        <animate attributeName="fill-opacity"
-                                                                            from="0.5" to="0.5"
-                                                                            begin="0s" dur="0.8s"
-                                                                            values=".5;1;.5" calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                    </circle>
-                                                                    <circle cx="105" cy="15" r="15">
-                                                                        <animate attributeName="r" from="15"
-                                                                            to="15" begin="0s"
-                                                                            dur="0.8s" values="15;9;15"
-                                                                            calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                        <animate attributeName="fill-opacity"
-                                                                            from="1" to="1"
-                                                                            begin="0s" dur="0.8s"
-                                                                            values="1;.5;1" calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                    </circle>
-                                                                </svg>
+                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                <a class="flex btn btn-warning items-center  mr-1 mb-2">
+                                                                    Je prends <svg width="25" viewBox="0 0 120 30"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        fill="1a202c" class="w-4 h-4 ml-2">
+                                                                        <circle cx="15" cy="15" r="15">
+                                                                            <animate attributeName="r" from="15"
+                                                                                to="15" begin="0s"
+                                                                                dur="0.8s" values="15;9;15"
+                                                                                calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                            <animate attributeName="fill-opacity"
+                                                                                from="1" to="1"
+                                                                                begin="0s" dur="0.8s"
+                                                                                values="1;.5;1" calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                        </circle>
+                                                                        <circle cx="60" cy="15" r="9"
+                                                                            fill-opacity="0.3">
+                                                                            <animate attributeName="r" from="9"
+                                                                                to="9" begin="0s"
+                                                                                dur="0.8s" values="9;15;9"
+                                                                                calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                            <animate attributeName="fill-opacity"
+                                                                                from="0.5" to="0.5"
+                                                                                begin="0s" dur="0.8s"
+                                                                                values=".5;1;.5" calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                        </circle>
+                                                                        <circle cx="105" cy="15" r="15">
+                                                                            <animate attributeName="r" from="15"
+                                                                                to="15" begin="0s"
+                                                                                dur="0.8s" values="15;9;15"
+                                                                                calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                            <animate attributeName="fill-opacity"
+                                                                                from="1" to="1"
+                                                                                begin="0s" dur="0.8s"
+                                                                                values="1;.5;1" calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                        </circle>
+                                                                    </svg>
 
-                                                            </a>
-                                                        @endif
+                                                                </a>
+                                                            @endif
 
-                                                    </div>
-                                                @else
-                                                    <p class="font-medium whitespace-nowrap">
+                                                        </div>
+                                                    @else
+                                                        <p class="font-medium whitespace-nowrap">
 
-                                                        {{ $item->phone ?? null }}
-                                                    </p>
+                                                            {{ $item->phone ?? null }}
+                                                        </p>
+                                                    @endif
                                                 @endif
+
                                             </td>
 
                                             <td class="w-40">
@@ -276,66 +282,73 @@
                                             </td>
                                             <td class="w-56">
                                                 <div class="flex justify-center items-center">
-                                                    @if ($item->updated_by != null)
-                                                        @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
-                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                <a class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                    href="javascript:;" title="Modifier">
-                                                                    Modifier
-                                                                </a>
-                                                            @endif
-                                                        @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)
-                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                <a target="_bank"
-                                                                    href="{{ route('paiements.invoice.print', $item->id) }}"
-                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                    title="Facture">
-                                                                    Facture
-                                                                </a>
+
+                                                    @if (!firm())
+                                                        @if ($item->updated_by != null)
+                                                            @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
+                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                    <a class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                                        href="javascript:;" title="Modifier">
+                                                                        Modifier
+                                                                    </a>
+                                                                @endif
+                                                            @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)
+                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                    <a target="_bank"
+                                                                        href="{{ route('paiements.invoice.print', $item->id) }}"
+                                                                        class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                                        title="Facture">
+                                                                        Facture
+                                                                    </a>
+                                                                @endif
+                                                            @else
+                                                                <div
+                                                                    class="flex items-center justify-center text-dark">
+                                                                    <div
+                                                                        class="flex items-center justify-center text-pending">
+                                                                        <span
+                                                                            class="alert  alert-warning inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                                                    text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                            style="color: white;">
+                                                                            Déjà choisir
+                                                                        </span>
+
+                                                                    </div>
+                                                                </div>
                                                             @endif
                                                         @else
                                                             <div class="flex items-center justify-center text-dark">
                                                                 <div
-                                                                    class="flex items-center justify-center text-pending">
+                                                                    class="flex items-center justify-center text-warring">
                                                                     <span
-                                                                        class="alert  alert-warning inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                                        text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                        class="alert alert-dark show mb-2 inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
                                                                         style="color: white;">
-                                                                        Déjà choisir
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="24" height="24"
+                                                                            viewBox="0 0 24 24" fill="none"
+                                                                            stroke="currentColor" stroke-width="2"
+                                                                            stroke-linecap="round"
+                                                                            stroke-linejoin="round"
+                                                                            icon-name="alert-octagon"
+                                                                            data-lucide="alert-octagon"
+                                                                            class="lucide lucide-alert-octagon w-6 h-6 mr-2">
+                                                                            <polygon
+                                                                                points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2">
+                                                                            </polygon>
+                                                                            <line x1="12" y1="8"
+                                                                                x2="12" y2="12"></line>
+                                                                            <line x1="12" y1="16"
+                                                                                x2="12.01" y2="16"></line>
+                                                                        </svg>
+                                                                        Pas encore choisir
                                                                     </span>
 
                                                                 </div>
                                                             </div>
                                                         @endif
-                                                    @else
-                                                        <div class="flex items-center justify-center text-dark">
-                                                            <div class="flex items-center justify-center text-warring">
-                                                                <span
-                                                                    class="alert alert-dark show mb-2 inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                      text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                                    style="color: white;">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                                        width="24" height="24"
-                                                                        viewBox="0 0 24 24" fill="none"
-                                                                        stroke="currentColor" stroke-width="2"
-                                                                        stroke-linecap="round" stroke-linejoin="round"
-                                                                        icon-name="alert-octagon"
-                                                                        data-lucide="alert-octagon"
-                                                                        class="lucide lucide-alert-octagon w-6 h-6 mr-2">
-                                                                        <polygon
-                                                                            points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2">
-                                                                        </polygon>
-                                                                        <line x1="12" y1="8"
-                                                                            x2="12" y2="12"></line>
-                                                                        <line x1="12" y1="16"
-                                                                            x2="12.01" y2="16"></line>
-                                                                    </svg>
-                                                                    Pas encore choisir
-                                                                </span>
-
-                                                            </div>
-                                                        </div>
                                                     @endif
+
 
                                                 </div>
                                             </td>

@@ -177,12 +177,14 @@
                                         <td class="w-56">
                                             <div class="flex justify-center items-center">
                                                 @if ($item->status == 'PENDING')
-                                                    @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                        <a wire:click="editReload({{ $item->id }}, 'update-reloadWallet-modal')"
-                                                            class="btn btn-primary mr-1 mb-2 btn-sm" href="javascript:;"
-                                                            title="Modifier">
-                                                            Modifier
-                                                        </a>
+                                                    @if (!firm())
+                                                        @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                            <a wire:click="editReload({{ $item->id }}, 'update-reloadWallet-modal')"
+                                                                class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                                href="javascript:;" title="Modifier">
+                                                                Modifier
+                                                            </a>
+                                                        @endif
                                                     @endif
                                                 @elseif ($item->status == 'SUCCESS')
                                                     <a target="_bank"

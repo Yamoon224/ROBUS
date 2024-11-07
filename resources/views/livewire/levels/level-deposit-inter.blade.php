@@ -20,7 +20,7 @@
                         <th class="text-center whitespace-nowrap text-center">Pourcentage/Montant</th>
                         {{-- <th class="text-center whitespace-nowrap text-center">Admin/Montant</th> --}}
                         <th class="text-center whitespace-nowrap text-center">Commissions sous-distributeur <br> (% ou Montant)</th>
-                        <th class="text-center whitespace-nowrap text-center">Commissions MASTERS <br> (% ou Montant)</th>
+                        <th class="text-center whitespace-nowrap text-center">Commissions Compagnie <br> (% ou Montant)</th>
                         <th class="text-center whitespace-nowrap text-center">Description</th>
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>
@@ -71,11 +71,11 @@
                                 <td class="w-35 text-center">
                                     @if ($item->amount == null)
                                         <div class="text-slate-500 text-xs  mt-0.5">
-                                            {{ $item->percent_masters  * 100}} %
+                                            {{ $item->percent_companie  * 100}} %
                                         </div>
                                     @else
                                         <div class="text-slate-500 text-xs  mt-0.5">
-                                            {{ $item->percent_masters ?? null }} Frcfa
+                                            {{ $item->percent_companie ?? null }} Frcfa
                                         </div>
                                     @endif
 

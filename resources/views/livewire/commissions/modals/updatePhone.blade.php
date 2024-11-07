@@ -35,11 +35,11 @@
                     @enderror
                 </div>
                 <div class="col-span-6">
-                    <label for="modal-form-1" class="form-label">Pourcentage MASTERS<span class="text-danger">
+                    <label for="modal-form-1" class="form-label">Pourcentage Compagnie<span class="text-danger">
                             *</span></label>
-                    <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                    <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
                         placeholder="Pourcentage marchant">
-                    @error('comission_master')
+                    @error('comissionCompanie')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

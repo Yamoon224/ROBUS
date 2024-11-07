@@ -49,6 +49,13 @@ class LevelBank extends Model
         $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
     }
 
+
+    public function setPercentCompanieAttribute($value)
+    {
+        $this->attributes['percent_companie'] = ($value / 100) ? json_encode($value / 100) : null;
+    }
+
+
     public function bankCost()
     {
         return $this->belongsTo(BankCost::class, 'bank_cost_id', 'id');

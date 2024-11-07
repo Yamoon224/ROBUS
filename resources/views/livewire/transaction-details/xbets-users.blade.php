@@ -161,57 +161,61 @@
                                                     </p>
                                                     <div class="flex items-center justify-center text-success mt-3">
 
-                                                        @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                            <a class="flex btn btn-warning items-center  mr-1 mb-2"
-                                                               >
-                                                                Je prends <svg width="25" viewBox="0 0 120 30"
-                                                                    xmlns="http://www.w3.org/2000/svg" fill="1a202c"
-                                                                    class="w-4 h-4 ml-2">
-                                                                    <circle cx="15" cy="15" r="15">
-                                                                        <animate attributeName="r" from="15"
-                                                                            to="15" begin="0s" dur="0.8s"
-                                                                            values="15;9;15" calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                        <animate attributeName="fill-opacity"
-                                                                            from="1" to="1" begin="0s"
-                                                                            dur="0.8s" values="1;.5;1"
-                                                                            calcMode="linear" repeatCount="indefinite">
-                                                                        </animate>
-                                                                    </circle>
-                                                                    <circle cx="60" cy="15" r="9"
-                                                                        fill-opacity="0.3">
-                                                                        <animate attributeName="r" from="9"
-                                                                            to="9" begin="0s"
-                                                                            dur="0.8s" values="9;15;9"
-                                                                            calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                        <animate attributeName="fill-opacity"
-                                                                            from="0.5" to="0.5"
-                                                                            begin="0s" dur="0.8s"
-                                                                            values=".5;1;.5" calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                    </circle>
-                                                                    <circle cx="105" cy="15" r="15">
-                                                                        <animate attributeName="r" from="15"
-                                                                            to="15" begin="0s"
-                                                                            dur="0.8s" values="15;9;15"
-                                                                            calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                        <animate attributeName="fill-opacity"
-                                                                            from="1" to="1"
-                                                                            begin="0s" dur="0.8s"
-                                                                            values="1;.5;1" calcMode="linear"
-                                                                            repeatCount="indefinite">
-                                                                        </animate>
-                                                                    </circle>
-                                                                </svg>
+                                                        @if (!firm())
+                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                <a class="flex btn btn-warning items-center  mr-1 mb-2">
+                                                                    Je prends <svg width="25" viewBox="0 0 120 30"
+                                                                        xmlns="http://www.w3.org/2000/svg"
+                                                                        fill="1a202c" class="w-4 h-4 ml-2">
+                                                                        <circle cx="15" cy="15" r="15">
+                                                                            <animate attributeName="r" from="15"
+                                                                                to="15" begin="0s"
+                                                                                dur="0.8s" values="15;9;15"
+                                                                                calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                            <animate attributeName="fill-opacity"
+                                                                                from="1" to="1"
+                                                                                begin="0s" dur="0.8s"
+                                                                                values="1;.5;1" calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                        </circle>
+                                                                        <circle cx="60" cy="15" r="9"
+                                                                            fill-opacity="0.3">
+                                                                            <animate attributeName="r" from="9"
+                                                                                to="9" begin="0s"
+                                                                                dur="0.8s" values="9;15;9"
+                                                                                calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                            <animate attributeName="fill-opacity"
+                                                                                from="0.5" to="0.5"
+                                                                                begin="0s" dur="0.8s"
+                                                                                values=".5;1;.5" calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                        </circle>
+                                                                        <circle cx="105" cy="15" r="15">
+                                                                            <animate attributeName="r" from="15"
+                                                                                to="15" begin="0s"
+                                                                                dur="0.8s" values="15;9;15"
+                                                                                calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                            <animate attributeName="fill-opacity"
+                                                                                from="1" to="1"
+                                                                                begin="0s" dur="0.8s"
+                                                                                values="1;.5;1" calcMode="linear"
+                                                                                repeatCount="indefinite">
+                                                                            </animate>
+                                                                        </circle>
+                                                                    </svg>
 
-                                                            </a>
+                                                                </a>
+                                                            @endif
                                                         @endif
+
 
                                                     </div>
                                                 @else
@@ -300,21 +304,24 @@
                                                 <div class="flex justify-center items-center">
                                                     @if ($item->updated_by != null)
                                                         @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
-                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                <a 
-                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                    href="javascript:;" title="Modifier">
-                                                                    Modifier
-                                                                </a>
+                                                            @if (!firm())
+                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                    <a class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                                        href="javascript:;" title="Modifier">
+                                                                        Modifier
+                                                                    </a>
+                                                                @endif
                                                             @endif
                                                         @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)
-                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                <a target="_bank"
-                                                                    href="{{ route('paiements.invoice.print', $item->id) }}"
-                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                    title="Facture">
-                                                                    Facture
-                                                                </a>
+                                                            @if (!firm())
+                                                                @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                    <a target="_bank"
+                                                                        href="{{ route('paiements.invoice.print', $item->id) }}"
+                                                                        class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                                        title="Facture">
+                                                                        Facture
+                                                                    </a>
+                                                                @endif
                                                             @endif
                                                         @else
                                                             <div class="flex items-center justify-center text-dark">

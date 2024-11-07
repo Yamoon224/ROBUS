@@ -165,8 +165,7 @@ class Undersdistributors extends Component
                 $account_is_under = $wallet_search->sidUser->is_under_distributer;
 
 
-                if (
-                    $wallet_search === null || !$wallet_search->sidUser ||
+                if ( $wallet_search === null || !$wallet_search->sidUser ||
                     ($wallet_search->sidUser->is_under_distributer === '1' && $wallet_search->sidUser->company_id == $company_id)
                 ) {
                     $this->cancelReload();

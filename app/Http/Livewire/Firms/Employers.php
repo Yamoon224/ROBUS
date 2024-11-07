@@ -239,7 +239,6 @@ class Employers extends Component
                 if (!$this->validateAmount()) {
                     return;
                 }
-
             } else {
                 $this->cancelEmployesField();
                 $this->emit('modal-hide');
@@ -789,7 +788,10 @@ class Employers extends Component
         $check = Wallet::whereId($id)->first();
         $this->user_id = $check->sidUser->id;
         $this->userdetails = $check->sidUser->firstname . ' ' . $check->sidUser->lastname;
-        $this->userLocation = $check->sidUser->country->name . ' - ' . $check->sidUser->city->name .  ' - ' . $check->sidUser->zone;
+        $this->userLocation =
+            ($check->sidUser->country->name ?? 'Non spécifié') . ' - ' .
+            ($check->sidUser->city->name ?? 'Non spécifié') . ' - ' .
+            ($check->sidUser->zone ?? 'Non spécifié');
         $this->wallet_id_add = $check->wallet_id;
         $this->userPhone = $check->sidUser->phone;
         $this->employerDesabled = $check->company_id;

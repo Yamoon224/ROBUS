@@ -106,6 +106,12 @@ class LevelCountry extends Model
     }
 
 
+    public function setPercentCompanieAttribute($value)
+    {
+        $this->attributes['percent_companie'] = ($value / 100) ? json_encode($value / 100) : null;
+    }
+
+
     public function setPercentDepositUnderDistributerAttribute($value)
     {
 

@@ -85,10 +85,10 @@ class PhoneCreditCost extends Model
 
     }
 
-    // public function setPercentAdminAttribute($value)
-    // {
-    //     $this->attributes['percent_admin'] = json_encode($this->formatPercentage($value));
-    // }
+    public function setPercentCompanieAttribute($value)
+    {
+        $this->attributes['percent_companie'] = $value / 100 ? json_encode($value / 100) : null;
+    }
 
     public function setPercentMerchandsAttribute($value)
     {
@@ -100,7 +100,6 @@ class PhoneCreditCost extends Model
     {
         $this->attributes['percent_masters'] = json_encode($this->formatPercentage($value));
     }
-
 
 
     public function setPercentBanqueAttribute($value)

@@ -133,15 +133,63 @@
         </div>
     </div>
 
+    <div class="alert alert-dark   show mb-2 ml-6 mr-6 text-center mt-6" role="alert">
+        Statistique  des gains employers
+    </div>
+    <div class="intro-y col-span-12 lg:col-span-12">
+        <div class="grid grid-cols-12 gap-6">
+
+            <div class="col-span-12 2xl:col-span-6">
+                <div class="col-span-12 2xl:col-span-9">
+                    <!-- BEGIN: Sales Report -->
+                    <div class="col-span-12 sm:col-span-12 lg:col-span-8 mt-8">
+                        <div class="intro-y block sm:flex items-center h-10">
+                            <h2 class="text-lg font-medium truncate mr-5">
+                                Activités du jour {{ $usersCountry ?? null }}
+                            </h2>
+                        </div>
+                        <div class="intro-y box p-5 mt-12 sm:mt-5">
+                            <canvas id="sum_paiement" sum_paiement="{{ json_encode($gainPaiementsDays) }}"></canvas>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="col-span-12 2xl:col-span-6">
+                <div class="col-span-12 2xl:col-span-9">
+                    <!-- BEGIN: Sales Report -->
+                    <div class="col-span-12 sm:col-span-12 lg:col-span-8 mt-8">
+                        <div class="intro-y block sm:flex items-center h-10">
+                            <h2 class="text-lg font-medium truncate mr-5">
+                                Activités du mois {{ $usersCountry ?? null }}
+                            </h2>
+                        </div>
+                        <div class="intro-y box p-5 mt-12 sm:mt-5">
+                            <canvas id="gainreload" gainreload="{{ json_encode($gainPaiementsMonth) }}"></canvas>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     @stack('scripts')
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         var relaods = JSON.parse($('#reload').attr('reload'));
         var sumReload = JSON.parse($('#sum').attr('sum'));
+        var sumReloadPaiement = JSON.parse($('#sum_paiement').attr('sum_paiement'));
+        var gainrelaods = JSON.parse($('#gainreload').attr('gainreload'));
 
         var _ctx = $('#reload');
         var _ctx2 = $('#sum');
+        var _ctx_3 = $('#gainreload');
+        var _ctx_6 = $('#sum_paiement');
 
         new Chart(_ctx, {
             type: 'bar',
@@ -203,6 +251,100 @@
                 datasets: [{
                     label: 'Rechargement',
                     data: sumReload,
+                    backgroundColor: [
+                        'rgba(255, 99, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                        'rgba(153, 102, 255,1)',
+                        'rgba(201, 203, 207,1)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                        'rgba(153, 102, 255,1)',
+                        'rgba(201, 203, 207,1)'
+                    ],
+                    borderWidth: 1,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    labels: {
+                        render: 'percentage',
+                        fontColor: ['white', 'white'],
+                    }
+                },
+            }
+        });
+        new Chart(_ctx_3, {
+            type: 'bar',
+            data: {
+                labels: ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre',
+                    'Octobre', 'Novembre', 'Décembre'
+                ],
+                datasets: [{
+                    label: 'Rechargement année',
+                    data: gainrelaods,
+                    backgroundColor: [
+                        'rgba(255, 99, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                        'rgba(153, 102, 255,1)',
+                        'rgba(201, 203, 207,1)',
+                        'rgba(255, 0, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                        'rgba(153, 102, 255,1)',
+                        'rgba(201, 203, 207,1)',
+                        'rgba(255, 0, 132,1)',
+                        'rgba(255, 159, 64,1)',
+                        'rgba(255, 205, 86,1)',
+                        'rgba(75, 192, 192,1)',
+                        'rgba(54, 162, 235,1)',
+                    ],
+                    borderWidth: 1,
+                }]
+
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    labels: {
+                        render: 'percentage',
+                        fontColor: ['white', 'white'],
+                    }
+                },
+            }
+        });
+
+
+        new Chart(_ctx_6, {
+            type: 'bar',
+            data: {
+                labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimande'
+                ],
+                datasets: [{
+                    label: 'Rechargement',
+                    data: sumReloadPaiement,
                     backgroundColor: [
                         'rgba(255, 99, 132,1)',
                         'rgba(255, 159, 64,1)',

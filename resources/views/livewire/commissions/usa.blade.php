@@ -45,7 +45,7 @@
                         <th class="whitespace-nowrap w-20">% S-agent retrait<br /> client/S-Distibuteur
                         </th>
                         <th class="whitespace-nowrap w-20">% <br /> banque</th>
-                        <th class="whitespace-nowrap w-20">% <br />  MASTERS</th>
+                        <th class="whitespace-nowrap w-20">% <br />  Compagnie</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -99,7 +99,7 @@
                                 </td>
                                 <td class="w-40">
                                     <p class="font-medium whitespace-nowrap">
-                                        {{floatval($item->percent_masters) * 100 ?? null }} %</p>
+                                        {{floatval($item->percent_companie) * 100 ?? null }} %</p>
                                     <p class="font-medium whitespace-nowrap mt-1">
                                 </td>
 

@@ -21,6 +21,7 @@ class LevelTransactionFrance extends Component
     public $amount_admin;
     public $amount_distributer;
     public $percent;
+    public $comissionCompanie;
 
     protected $rules = [
         'amount_begin' => 'required',

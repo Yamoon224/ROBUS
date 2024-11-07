@@ -41,7 +41,7 @@
                         <th class="whitespace-nowrap w-20">% S-agent depot <br />client/S-Distibuteur</th>
                         <th class="whitespace-nowrap w-20">% S-agent retrait<br /> client/S-Distibuteur
                         </th>
-                        <th class="whitespace-nowrap w-20">% MASTERS<br />
+                        <th class="whitespace-nowrap w-20">% Compagnie<br />
                         </th>
                         <th class="whitespace-nowrap w-20">% <br />  banque</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
@@ -91,7 +91,7 @@
                                 </td>
                                 <td class="w-40">
                                     <p class="font-medium whitespace-nowrap">
-                                        {{ floatval($item->percent_masters) * 100 ?? null }} %</p>
+                                        {{ floatval($item->percent_companie) * 100 ?? null }} %</p>
                                     <p class="font-medium whitespace-nowrap mt-1">
                                 </td>
                                 <td class="w-40">
@@ -137,7 +137,7 @@
                         <th class="whitespace-nowrap w-20">% S-agent depot <br />client/S-Distibuteur</th>
                         <th class="whitespace-nowrap w-20">% S-agent retrait<br /> client/S-Distibuteur
                         </th>
-                        <th class="whitespace-nowrap w-20">% MASTERS<br />
+                        <th class="whitespace-nowrap w-20">% Compagnie<br />
                         </th>
                         <th class="whitespace-nowrap w-20">% <br />  banque</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
@@ -187,7 +187,7 @@
                                 </td>
                                 <td class="w-40">
                                     <p class="font-medium whitespace-nowrap">
-                                        {{ floatval($item->percent_masters) * 100 ?? null }} %</p>
+                                        {{ floatval($item->percent_companie) * 100 ?? null }} %</p>
                                     <p class="font-medium whitespace-nowrap mt-1">
                                 </td>
                                 <td class="w-40">

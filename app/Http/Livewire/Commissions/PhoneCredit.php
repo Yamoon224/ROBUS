@@ -17,18 +17,21 @@ class PhoneCredit extends Component
     public $orderCardMerchant;
     public $comission_master;
     public $comission_admin;
+    public $comissionCompanie;
 
 
     protected $rules = [
         'phoneName' => 'required',
         'phonePercent' => 'required',
         'orderCardMerchant' => 'required',
+        'comissionCompanie' => 'required',
     ];
 
     protected $messages = [
         'phoneName.required' => 'Ce champ est requis',
         'phonePercent.required' => 'Ce champ est requis',
         'orderCardMerchant.required' => 'Ce champ est requis',
+        'comissionCompanie' => 'Ce champ est requis',
     ];
 
 
@@ -42,8 +45,9 @@ class PhoneCredit extends Component
                     'name' => $this->phoneName,
                     'percent'  => $this->phonePercent,
                     'percent_merchands'  => $this->orderCardMerchant,
-                    'percent_masters'  => $this->comission_master,
+                    // 'percent_companie'  => $this->comission_master,
                     'created_by' => Auth::guard('web')->user()->id,
+                    'percent_companie'  => $this->comissionCompanie,
                     'status'  => 1
                 ]
             );
@@ -62,7 +66,7 @@ class PhoneCredit extends Component
         $this->phoneName = $check->name;
         $this->phonePercent = $check->percent * 100;
         $this->orderCardMerchant = $check->percent_merchands * 100;
-        $this->comission_master = $check->percent_masters * 100;
+        $this->comissionCompanie = $check->percent_companie * 100;
         $this->comission_admin = $check->percent_banque  * 100;
         $this->phoneStatus = $check->status;
         $this->emit($state);
@@ -83,7 +87,7 @@ class PhoneCredit extends Component
                     'name' => $this->phoneName,
                     'percent' => $this->phonePercent,
                     'percent_merchands'  => $this->orderCardMerchant,
-                    'percent_masters'  => $this->comission_master,
+                    'percent_companie'  => $this->comissionCompanie,
                     'percent_banque'  => $this->comission_admin,
                     'status' => 1,
                     'created_by' => Auth::guard('web')->user()->id,
@@ -100,7 +104,7 @@ class PhoneCredit extends Component
                 'name' => $this->phoneName,
                 'percent' => $this->phonePercent,
                 'percent_merchands'  => $this->orderCardMerchant,
-                'percent_masters'  => $this->comission_master,
+                'percent_companie'  => $this->comissionCompanie,
                 'percent_banque'  => $this->comission_admin,
                 'status' => 1,
                 'created_by' => Auth::guard('web')->user()->id,
@@ -117,7 +121,7 @@ class PhoneCredit extends Component
         $this->phoneName = '';
         $this->phonePercent = '';
         $this->orderCardMerchant = '';
-        $this->comission_master = '';
+        $this->comissionCompanie = '';
         $this->comission_admin = '';
         $this->emit('modal-hide', 'hide');
     }

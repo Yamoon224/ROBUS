@@ -18,7 +18,7 @@
                         <th class="whitespace-nowrap text-center">Montant debut</th>
                         <th class="text-center whitespace-nowrap text-center">Montant Fin</th>
                         <th class="text-center whitespace-nowrap text-center">Montant</th>
-                        <th class="text-center whitespace-nowrap text-center">Montant MASTERS</th>
+                        <th class="text-center whitespace-nowrap text-center">Montant Compagnie</th>
                         <th class="text-center whitespace-nowrap text-center">Descriptions</th>
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>
@@ -42,7 +42,7 @@
                                 </td>
 
                                 <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $item->percent_masters ?? null }} Frcfa
+                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $item->percent_companie ?? null }} Frcfa
                                     </div>
 
                                 </td>

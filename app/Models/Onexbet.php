@@ -76,6 +76,13 @@ class Onexbet extends Model
         $this->attributes['percent_banque'] = json_encode($this->formatPercentage($value));
     }
 
+
+    public function setPercentCompanieAttribute($value)
+    {
+        $this->attributes['percent_companie'] = ($value / 100) ? json_encode($value / 100) : null;
+    }
+
+
     public function setPercentWithDrawalAttribute($value)
     {
         $this->attributes['percent_with_drawal'] = json_encode($this->formatPercentage($value));

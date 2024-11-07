@@ -45,6 +45,11 @@ Route::group(['middleware' => ['auth:company']], function () {
         Route::get('/browse', [FirmController::class, 'browse_categories'])->name('categories.employers.browse');
     });
 
+    Route::prefix('commissions')->group(function () {
+        Route::get('/browse', [FirmController::class, 'browse_commissions'])->name('compagnies.browse_commissions');
+    });
+
+
 
     //Statisques
     Route::prefix('statistics')->group(function () {

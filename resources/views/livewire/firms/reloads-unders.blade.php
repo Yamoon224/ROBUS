@@ -1,57 +1,57 @@
 <div>
 
     <div class="intro-y box px-5 pt-1 mt-1 ">
-            <!-- BEGIN: Ticket -->
-            <div class="intro-y col-span-12 grid grid-cols-12 gap-5 items-center mt-2">
+        <!-- BEGIN: Ticket -->
+        <div class="intro-y col-span-12 grid grid-cols-12 gap-5 items-center mt-2">
 
-                <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
-                    <form method="GET"
-                        action="{{ route('employers.historical.reporting_transaction_days_historical.companies') }}">
-                        <div class="relative text-slate-500 mt-3">
-                            <label for="search_begin">Date de début</label>
-                            <input type="date"
-                                class="form-control w-56 box pr-10 mt -1 @error('search_begin') is-invalid @enderror"
-                                name="search_begin" placeholder="Rechercher par date les commandes" id="search_begin"
-                                aria-label="Date de début" onchange="sortDate()">
-                            @error('search_begin')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                </div>
-
-                <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
+            <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
+                <form method="GET"
+                    action="{{ route('employers.historical.reporting_transaction_days_historical.companies') }}">
                     <div class="relative text-slate-500 mt-3">
-                        <label for="search_end">Date de fin</label>
+                        <label for="search_begin">Date de début</label>
                         <input type="date"
-                            class="form-control w-56 box pr-10 mt -1 @error('search_end') is-invalid @enderror"
-                            name="search_end" placeholder="Rechercher par date les commandes" id="search_end"
-                            aria-label="Date de fin" onchange="sortDate()">
-                        @error('search_end')
+                            class="form-control w-56 box pr-10 mt -1 @error('search_begin') is-invalid @enderror"
+                            name="search_begin" placeholder="Rechercher par date les commandes" id="search_begin"
+                            aria-label="Date de début" onchange="sortDate()">
+                        @error('search_begin')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
                             </span>
                         @enderror
                     </div>
-                </div>
-
-                <div class="col-span-12 sm:col-span-3 2xl:col-span-3 mt-3">
-                   
-                    <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
-
-                        <button class="btn btn-primary mr-6 ml-6 mt-3" type="submit" aria-label="Télécharger en pdf"
-                            style="color: white;">
-                            <i data-feather="file-text" class="hidden sm:block w-4 h-4 mr-2"></i> Telecharger le
-                            rapport des
-                            rechargements
-                        </button>
-                    </div>
-                    </form>
-                </div>
-
-
             </div>
+
+            <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
+                <div class="relative text-slate-500 mt-3">
+                    <label for="search_end">Date de fin</label>
+                    <input type="date"
+                        class="form-control w-56 box pr-10 mt -1 @error('search_end') is-invalid @enderror"
+                        name="search_end" placeholder="Rechercher par date les commandes" id="search_end"
+                        aria-label="Date de fin" onchange="sortDate()">
+                    @error('search_end')
+                        <span class="invalid-feedback" role="alert">
+                            <strong>{{ $message }}</strong>
+                        </span>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-3 2xl:col-span-3 mt-3">
+
+                <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
+
+                    <button class="btn btn-primary mr-6 ml-6 mt-3" type="submit" aria-label="Télécharger en pdf"
+                        style="color: white;">
+                        <i data-feather="file-text" class="hidden sm:block w-4 h-4 mr-2"></i> Telecharger le
+                        rapport des
+                        rechargements
+                    </button>
+                </div>
+                </form>
+            </div>
+
+
+        </div>
         <div class="grid grid-cols-12 gap-6 mt-1">
             <div class="col-span-12 sm:col-span-8 lg:col-span-6 mt-8">
                 <div class="intro-y block sm:flex items-center h-10">
@@ -171,7 +171,7 @@
 
         </div>
         <div class="intro-y col-span-12 lg:col-span-12">
-        
+
             <div class="intro-y col-span-12 grid grid-cols-12 gap-5 items-center mt-2">
                 <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
                     <div class="w-56 relative text-slate-500 mt-3">
@@ -563,3 +563,4 @@
             });
         </script>
     </div>
+</div>

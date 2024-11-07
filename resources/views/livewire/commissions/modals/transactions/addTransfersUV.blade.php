@@ -264,7 +264,7 @@
         </div>
     </div>
 
-    <style>
+    {{-- <style>
         .loader {
             border: 4px solid rgba(0, 0, 0, 0.1);
             border-left-color: #09f;
@@ -283,7 +283,7 @@
         .hidden {
             display: none;
         }
-    </style>
+    </style> --}}
     <script>
         window.addEventListener('DOMContentLoaded', function() {
             Echo.private('wallet-transfers-created.').listen(

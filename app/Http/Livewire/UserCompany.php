@@ -3,11 +3,12 @@
 namespace App\Http\Livewire;
 
 use App\Mail\UvSend;
-use Livewire\Component;
-use App\Models\Sid\SidUser;
-use Livewire\WithPagination;
 use App\Models\Custumers\Country;
+use App\Models\Operator;
+use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\Mail;
+use Livewire\Component;
+use Livewire\WithPagination;
 
 class UserCompany extends Component
 {
@@ -100,7 +101,8 @@ class UserCompany extends Component
     
         return view('livewire.user-company', [
             "users" => $users,
-            "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get()
+            "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
+            "operators" => Operator::whereStatus(true)->whereIsUnder(true)->orderBy("name", 'desc')->get(),
         ]);
     }
     

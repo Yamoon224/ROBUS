@@ -98,6 +98,16 @@
 
         <li>
 
+            <a href="{{ route('compagnies.browse_commissions') }}"
+                class="side-menu {{ $route == 'compagnies.browse_commissions' ? 'side-menu--active' : '' }}">
+                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i></div>
+                <div class="side-menu__title"> Gains </div>
+            </a>
+        </li>
+        <li class="side-nav__devider my-4"></li>
+
+        <li>
+
             <a href="{{ route('categories.employers.browse') }}"
                 class="side-menu {{ $route == 'categories.employers.browse' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

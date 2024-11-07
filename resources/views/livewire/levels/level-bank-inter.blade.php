@@ -19,7 +19,7 @@
                         <th class="text-center whitespace-nowrap text-center">Termine</th>
                         <th class="text-center whitespace-nowrap text-center">Pourcentage</th>
                         <th class="text-center whitespace-nowrap text-center">% Distributeur</th>
-                        <th class="text-center whitespace-nowrap text-center">% MASTER</th>
+                        <th class="text-center whitespace-nowrap text-center">% Compagnie</th>
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>
                 </thead>
@@ -48,7 +48,7 @@
                                 </td>
                                 <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">
-                                        {{ $item->percent_masters * 100 ?? null }} %
+                                        {{ $item->percent_companie * 100 ?? null }} %
                                     </div>
 
                                 </td>

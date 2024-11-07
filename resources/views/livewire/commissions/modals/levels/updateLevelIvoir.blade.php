@@ -45,19 +45,19 @@
                     </div>
 
                     <div class="col-span-12">
-                        <label for="modal-form-1" class="form-label">Montant MASTER</label>
-                        <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                        <label for="modal-form-1" class="form-label">Montant Compagnie</label>
+                        <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
                             placeholder="Montant">
-                        @error('comission_master')
+                        @error('comissionCompanie')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
                 @else
                     <div class="col-span-12">
-                        <label for="modal-form-1" class="form-label">Montant MASTER</label>
-                        <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                        <label for="modal-form-1" class="form-label">Montant Compagnie</label>
+                        <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
                             placeholder="Montant">
-                        @error('comission_master')
+                        @error('comissionCompanie')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

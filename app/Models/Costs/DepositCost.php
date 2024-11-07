@@ -104,6 +104,11 @@ class DepositCost extends Model
 
     }
 
+    public function setPercentPaymentCompanieAttribute($value)
+    {
+        $this->attributes['percent_companie'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+
     public function setPercentMastersAttribute($value)
     {
         $this->attributes['percent_masters'] = json_encode($this->formatPercentage($value));

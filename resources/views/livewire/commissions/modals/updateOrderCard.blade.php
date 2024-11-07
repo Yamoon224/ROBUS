@@ -37,11 +37,11 @@
                     @enderror
                 </div>
                 <div class="col-span-6">
-                    <label for="modal-form-1" class="form-label">Commission marchants<span class="text-danger">
+                    <label for="modal-form-1" class="form-label">Commission Compagnie<span class="text-danger">
                             *</span></label>
-                    <input wire:model="amount_merchant" id="modal-form-1" type="text" class="form-control"
+                    <input wire:model="comissionCompanie" id="modal-form-1" type="text" class="form-control"
                         placeholder="Montant marhant">
-                    @error('amount_merchant')
+                    @error('comissionCompanie')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

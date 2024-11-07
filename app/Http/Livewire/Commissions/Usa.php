@@ -30,6 +30,7 @@ class Usa extends Component
     public $percent_deposit_distibuter;
     public $percent_with_drawal_distibuter;
     public $comission_master;
+    public $comissionCompanie;
 
     public function add()
     {
@@ -83,7 +84,7 @@ class Usa extends Component
         $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
-        $this->comission_master = $check->percent_masters * 100;
+        $this->comissionCompanie = $check->percent_companie * 100;
 
         // Under distributeurs
         $this->percent_transaction_under_distributer = $check->percent_under_distributer * 100;
@@ -107,7 +108,7 @@ class Usa extends Component
                 'percent_deposit' => 'required',
                 'percent_transaction_under_distributer' => 'required',
                 'percent_admin_distibuter' => 'required',
-                'comission_master' => 'required',
+                'comissionCompanie' => 'required',
                 // 'percent_deposit_distibuter' => 'required',
                 // 'percent_with_drawal_distibuter' => 'required',
 
@@ -117,7 +118,7 @@ class Usa extends Component
                 'percent_admin.required' => 'Ce champ est requis',
                 'percent_transaction.required' => 'Ce champ est requis',
                 'percent_deposit.required' => 'Ce champ est requis',
-                'comission_master.required' => 'Ce champ est requis',
+                'comissionCompanie.required' => 'Ce champ est requis',
 
             ]
         );
@@ -137,7 +138,7 @@ class Usa extends Component
             'percent_with_drawal_under_distributer'  => $this->percent_with_drawal_distibuter,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
-            'percent_masters'  => $this->comission_master,
+            'percent_companie'  => $this->comissionCompanie,
 
         ]);
 
@@ -154,7 +155,7 @@ class Usa extends Component
         $this->percent_deposit = '';
         $this->percent_with_drawal = '';
         $this->percent_transaction = '';
-        $this->comission_master = '';
+        $this->comissionCompanie = '';
         $this->emit('modal-hide', 'hide');
     }
 

@@ -185,8 +185,6 @@
 
         });
 
-     
-
         new Chart(_ctx_6, {
             type: 'bar',
             data: {

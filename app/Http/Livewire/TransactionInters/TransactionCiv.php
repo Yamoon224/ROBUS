@@ -3896,13 +3896,19 @@ class TransactionCiv extends Component
             // Percent admin 
             $valeur_amount_admin  = $percent_robus->percent_under_distributer * $amount;
 
-            // 20%
-
             $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
 
             $walletInter->update([
                 'commissions' => DB::raw('commissions+'  . $valuer_deposit),
             ]);
+
+            $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+                $valuer_companie = $percent_robus->percent_companie * $valeur_amount_admin;
+                $walletInter->increment('commission_companie', $valuer_companie);
+            }
+
         } else {
 
             if (sabdy()->country->code == 'CI') {
@@ -4192,6 +4198,14 @@ class TransactionCiv extends Component
             $walletInter->update([
                 'commissions' => DB::raw('commissions+'  . $valuer_deposit),
             ]);
+
+            $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+                $valuer_companie = $percent_robus->percent_companie * $valeur_amount_admin;
+                $walletInter->increment('commission_companie', $valuer_companie);
+            }
+
         } else {
 
             if (sabdy()->country->code == 'CI') {

@@ -136,22 +136,24 @@ class HomeCompany extends Component
         $inter_success = $this->getTransactionUsersCount(WalletInter::class, 'SUCCESS');
 
         // Amount transactions days
-        $payement_amount = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class);
-        $transaction_amount = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class);
+        $payement_amount = $this->getTodayTransactionUndersAmountTotal(WalletPayment::class);
+        $transaction_amount = $this->getTodayTransactionUndersAmountTotal(WalletTransaction::class);
         $reload_amount = $this->getTodayReloadAmountTotal(WalletReload::class);
-        $phonecredit_amount = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class);
-        $inter_amount = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class);
-        $bank_amount = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class);
-        $deposit_amount = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
+        $phonecredit_amount = $this->getTodayTransactionUndersAmountTotal(WalletPhoneCredit::class);
+        $inter_amount = $this->getTodayTransactionUndersAmountTotal(WalletInter::class);
+        // dd( $payement_amount);
+        
+        $bank_amount = $this->getTodayTransactionUndersAmountTotal(WalletBank::class);
+        $deposit_amount = $this->getTodayTransactionUndersAmountTotal(WalletDeposit::class);
 
         // Amount transactions month
-        $payement_amount_month = $this->getDaysTransaction(WalletPayment::class);
-        $transaction_amount_month_company = $this->getDaysTransaction(WalletTransaction::class);
+        $payement_amount_month = $this->getDaysTransactionUnderMonth(WalletPayment::class);
+        $transaction_amount_month_company = $this->getDaysTransactionUnderMonth(WalletTransaction::class);
         $reload_amount_month = $this->getDaysReloadAmountTotal(WalletReload::class);
-        $phonecredit_amount_month = $this->getDaysTransaction(WalletPhoneCredit::class);
-        $inter_amount_month = $this->getDaysTransaction(WalletInter::class);
-        $bank_amount_month = $this->getDaysTransaction(WalletBank::class);
-        $deposit_amount_month = $this->getDaysTransaction(WalletDeposit::class);
+        $phonecredit_amount_month = $this->getDaysTransactionUnderMonth(WalletPhoneCredit::class);
+        $inter_amount_month = $this->getDaysTransactionUnderMonth(WalletInter::class);
+        $bank_amount_month = $this->getDaysTransactionUnderMonth(WalletBank::class);
+        $deposit_amount_month = $this->getDaysTransactionUnderMonth(WalletDeposit::class);
 
         // Gain Month
         $payement_gain_month = $this->getDaysTransactionGain(WalletPayment::class);
@@ -283,7 +285,7 @@ class HomeCompany extends Component
     {
 
         $sidUsers = SidUser::where('company_id', firm()->company->id)
-        // ->where('id', '!=', firm()->id)
+        ->where('id', '!=', firm()->id)
         ->get();
 
         $totalAmount = 0;
@@ -309,7 +311,9 @@ class HomeCompany extends Component
     public function getTodayTransactionCommissionAmountTotal($walletModel)
     {
 
-        $sidUsers = SidUser::where('company_id',  firm()->company->id)->get();
+        $sidUsers = SidUser::where('company_id',  firm()->company->id)
+        ->where('id', '!=', firm()->id)
+        ->get();
 
         $totalAmount = 0;
 
@@ -331,7 +335,7 @@ class HomeCompany extends Component
         return $totalAmount;
     }
 
-    public function getTodayTransactionGainAmountTotal($walletModel)
+    public function getTodayTransactionUndersAmountTotal($walletModel)
     {
 
         $sidUsers = SidUser::where('company_id',  firm()->company->id)
@@ -458,6 +462,33 @@ class HomeCompany extends Component
     }
 
 
+    public function getDaysTransactionUnderMonth($walletModel)
+    {
+
+        $sidUsers = SidUser::where('company_id', firm()->company->id)
+        ->where('id', '!=', firm()->id)
+        ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->whereMonth('created_at', now()->month)
+                ->sum('amount');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
     public function getMastersGainProperty($walletModel)
     {
         $reloads = [];
@@ -482,22 +513,68 @@ class HomeCompany extends Component
         return $reloads;
     }
 
+    
+
     public function getRealodsAdminDays($walletModel)
     {
-        $reloadsByDay = array_fill(0, 7, 0);
-    
-        $transactions = $walletModel::where('wallet_id', firm()->wallet->id)
-            ->where('status', 'SUCCESS')
-            ->get();
-    
-        foreach ($transactions as $transaction) {
-            $dayOfWeek = $transaction->created_at->dayOfWeek; 
-            $reloadsByDay[$dayOfWeek] += $transaction->commission_companie;
+
+        $reload1 = [];
+        $reload2 = [];
+        $reload3 = [];
+        $reload4 = [];
+        $reload5 = [];
+        $reload6 = [];
+        $reload7 = [];
+
+        foreach ($walletModel::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+
+            if ($reload->created_at->dayOfWeek === Carbon::MONDAY) {
+
+                $reload1[] = ($reload->amount);
+            }
         }
-    
-        return $reloadsByDay; 
+        foreach ($walletModel::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+
+            if ($reload->created_at->dayOfWeek === Carbon::TUESDAY) {
+
+                $reload2[] = ($reload->amount);
+            }
+        }
+        foreach ($walletModel::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::WEDNESDAY) {
+
+                $reload3[] = ($reload->amount);
+            }
+        }
+        foreach ($walletModel::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::THURSDAY) {
+
+                $reload4[] = ($reload->amount);
+            }
+        }
+        foreach ($walletModel::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::FRIDAY) {
+
+                $reload5[] = ($reload->amount);
+            }
+        }
+        foreach ($walletModel::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::SATURDAY) {
+
+                $reload6[] = ($reload->amount);
+            }
+        }
+        foreach ($walletModel::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::SUNDAY) {
+
+                $reload7[] = ($reload->amount);
+            }
+        }
+        $reloads = [array_sum($reload1), array_sum($reload2), array_sum($reload3), array_sum($reload4), array_sum($reload5), array_sum($reload6), array_sum($reload7)];
+        // dd($reloads);
+        return $reloads;
     }
-    
+
 
     public function getRealodsAdminAmountDaysUsers($walletModel)
     {
@@ -505,23 +582,79 @@ class HomeCompany extends Component
             ->where('id', '!=', firm()->id)
             ->get();
     
-        $reloadsByDay = array_fill(0, 7, 0);
-    
-        foreach ($sidUsers as $sidUser) {
-            $sidUserId = $sidUser->wallet->id;
-    
-            $transactions = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', 'SUCCESS')
-                ->get();
-    
-            foreach ($transactions as $transaction) {
-                $dayOfWeek = $transaction->created_at->dayOfWeek;
-                $reloadsByDay[$dayOfWeek] += $transaction->amount;
-            }
-        }
-    
-        return $reloadsByDay;
-    }
+            $reload1 = [];
+            $reload2 = [];
+            $reload3 = [];
+            $reload4 = [];
+            $reload5 = [];
+            $reload6 = [];
+            $reload7 = [];
 
     
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+    
+            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
+
+                if ($reload->created_at->dayOfWeek === Carbon::MONDAY) {
+    
+                    $reload1[] = ($reload->amount);
+                }
+            }
+            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
+    
+                if ($reload->created_at->dayOfWeek === Carbon::TUESDAY) {
+    
+                    $reload2[] = ($reload->amount);
+                }
+            }
+            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
+                if ($reload->created_at->dayOfWeek === Carbon::WEDNESDAY) {
+    
+                    $reload3[] = ($reload->amount);
+                }
+            }
+            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
+                if ($reload->created_at->dayOfWeek === Carbon::THURSDAY) {
+    
+                    $reload4[] = ($reload->amount);
+                }
+            }
+            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
+                if ($reload->created_at->dayOfWeek === Carbon::FRIDAY) {
+    
+                    $reload5[] = ($reload->amount);
+                }
+            }
+            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
+                if ($reload->created_at->dayOfWeek === Carbon::SATURDAY) {
+    
+                    $reload6[] = ($reload->amount);
+                }
+            }
+            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
+                if ($reload->created_at->dayOfWeek === Carbon::SUNDAY) {
+    
+                    $reload7[] = ($reload->amount);
+                }
+            }
+ 
+
+            // $transactions = $walletModel::where('wallet_id', $sidUserId)
+            //     ->where('status', 'SUCCESS')
+            //     ->get();
+    
+            // foreach ($transactions as $transaction) {
+            //     $dayOfWeek = $transaction->created_at->dayOfWeek;
+            //     $reloadsByDay[$dayOfWeek] += $transaction->amount;
+            // }
+        }
+    
+                  
+        $reloads = [array_sum($reload1), array_sum($reload2), array_sum($reload3), array_sum($reload4), array_sum($reload5), array_sum($reload6), array_sum($reload7)];
+        // dd($reloads);
+        return $reloads;
+    }
+
 }

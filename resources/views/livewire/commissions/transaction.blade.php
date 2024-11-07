@@ -35,7 +35,7 @@
                         <th class="whitespace-nowrap text-center">Pourcentage Admin</th>
                         <th class="whitespace-nowrap text-center">Pourcentage S-agent depot</th>
                         <th class="whitespace-nowrap text-center">Pourcentage S-agent retrait</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage MASTERS</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage Compagnie</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -74,7 +74,7 @@
 
                                 <td class="w-40">
                                     <p class="font-medium whitespace-nowrap">
-                                        {{ $item->percent_masters * 100 ?? null }} %</p>
+                                        {{ $item->percent_companie * 100 ?? null }} %</p>
                                 </td>
 
 

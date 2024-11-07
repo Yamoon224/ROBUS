@@ -30,6 +30,7 @@ class MobileMoney extends Component
 
     public $distributer_custumer;
     public $comission_master;
+    public $comissionCompanie;
 
     public function edit($id, $state)
     {
@@ -42,7 +43,7 @@ class MobileMoney extends Component
         $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
-        $this->comission_master = $check->percent_masters * 100;
+        $this->comissionCompanie = $check->percent_companie * 100;
 
         // Under distributeurs
         $this->percent_transaction_under_distributer = $check->percent_under_distributer * 100;
@@ -66,7 +67,7 @@ class MobileMoney extends Component
                 'percent_deposit' => 'required',
                 'percent_transaction_under_distributer' => 'required',
                 'percent_admin_distibuter' => 'required',
-                'comission_master' => 'required',
+                'comissionCompanie' => 'required',
                 // 'percent_deposit_distibuter' => 'required',
                 // 'percent_with_drawal_distibuter' => 're/quired',
                 
@@ -76,7 +77,7 @@ class MobileMoney extends Component
                 'percent_admin.required' => 'Ce champ est requis',
                 'percent_transaction.required' => 'Ce champ est requis',
                 'percent_deposit.required' => 'Ce champ est requis',
-                'comission_master.required' => 'Ce champ est requis',
+                'comissionCompanie.required' => 'Ce champ est requis',
             ]
         );
         $check = LevelCountry::whereId($this->transaction_id)->first();
@@ -93,7 +94,7 @@ class MobileMoney extends Component
             'percent_admin_under_distributer'  => $this->percent_admin_distibuter,
             'percent_deposit_under_distributer'  => $this->percent_deposit_distibuter,
             'percent_with_drawal_under_distributer'  => $this->percent_with_drawal_distibuter,
-            'percent_masters'  => $this->comission_master,
+            'percent_companie'  => $this->comissionCompanie,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
@@ -111,7 +112,7 @@ class MobileMoney extends Component
         $this->transaction_name = $check->name;
         $this->transaction_id = $check->id;
         $this->percent_transaction = $check->percent * 100;
-        $this->comission_master = $check->percent_transaction * 100;
+        $this->comissionCompanie = $check->percent_companie * 100;
         $this->percent_admin = $check->percent_admin * 100;
         $this->percent_banque = $check->percent_banque * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
@@ -129,7 +130,7 @@ class MobileMoney extends Component
         $this->percent_transaction = '';
         $this->percent_transaction = '';
         $this->percent_banque = '';
-        $this->comission_master = '';
+        $this->comissionCompanie = '';
         $this->emit('modal-hide', 'hide');
     }
 

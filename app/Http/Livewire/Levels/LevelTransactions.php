@@ -15,6 +15,7 @@ class LevelTransactions extends Component
     public $amount_begin;
     public $amount_end;
     public $amount;
+    public $comissionCompanie;
 
     protected $rules = [
         'amount_begin' => 'required',

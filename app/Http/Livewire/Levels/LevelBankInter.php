@@ -17,13 +17,14 @@ class LevelBankInter extends Component
     public $percent;
     public $comission_distributer;
     public $comission_master;
+    public $comissionCompanie;
 
     protected $rules = [
         'amount_begin' => 'required',
         'amount_end' => 'required',
         'percent' => 'required',
         'comission_distributer' => 'required',
-        'comission_master' => 'required',
+        'comissionCompanie' => 'required',
     ];
 
     protected $messages = [
@@ -31,7 +32,7 @@ class LevelBankInter extends Component
         'amount_end.required' => 'Le montant est requis',
         'percent.required' => 'Le montant est requis',
         'comission_distributer.required' => 'Le pourcentage est requis',
-        'comission_master.required' => 'Le montant est requis',
+        'comissionCompanie.required' => 'Le montant est requis',
     ];
 
 
@@ -46,7 +47,7 @@ class LevelBankInter extends Component
                     'amount_end'  => $this->amount_end,
                     'percent'  => $this->percent,
                     'comission_distributer'  => $this->comission_distributer,
-                    'percent_masters'  => $this->comission_master,
+                    'percent_companie'  => $this->comissionCompanie,
                 ]
             );
             $this->resetField();
@@ -62,7 +63,7 @@ class LevelBankInter extends Component
             $this->levelId = $check->id;
             $this->amount_begin = $check->amount_begin;
             $this->amount_end = $check->amount_end;
-            $this->comission_master = $check->percent_masters * 100;
+            $this->comissionCompanie = $check->percent_companie * 100;
             $this->percent = $check->percent * 100;
             $this->comission_distributer = $check->comission_distributer * 100;
             $this->emit($state);
@@ -83,7 +84,7 @@ class LevelBankInter extends Component
                 'amount_end'  => $this->amount_end,
                 'percent'  => $this->percent,
                 'comission_distributer'  => $this->comission_distributer,
-                'percent_masters'  => $this->comission_master,
+                'percent_companie'  => $this->comissionCompanie,
             ]);
 
             $this->resetField();
@@ -101,7 +102,7 @@ class LevelBankInter extends Component
         $this->amount_begin = '';
         $this->amount_end = '';
         $this->percent = '';
-        $this->comission_master = '';
+        $this->comissionCompanie = '';
         $this->comission_distributer = '';
         $this->emit('modal-hide', 'hide');
     }

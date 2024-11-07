@@ -21,19 +21,20 @@ class Onexbets extends Component
     public $percent_with_drawal;
     public $distributer_custumer;
     public $comission_master;
+    public $comissionCompanie;
 
 
     public function edit($id, $state)
     {
         $check = Onexbet::whereId($id)->first();
-      
+
         $this->transaction_id = $check->id;
         $this->transaction_name = $check->name;
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_merchands * 100;
-        $this->comission_master = $check->percent_masters * 100;
+        $this->comissionCompanie = $check->percent_companie * 100;
         $this->distributer_custumer = $check->distributer_custumer;
         $this->emit($state);
     }
@@ -47,12 +48,14 @@ class Onexbets extends Component
                 'percent_admin' => 'required',
                 'percent_transaction' => 'required',
                 'percent_deposit' => 'required',
+                'comissionCompanie' => 'required',
             ],
             [
                 'transaction_name.required' => 'Ce champ est requis',
                 'percent_admin.required' => 'Ce champ est requis',
                 'percent_transaction.required' => 'Ce champ est requis',
                 'percent_deposit.required' => 'Ce champ est requis',
+                'comissionCompanie.required' => 'Ce champ est requis',
             ]
         );
         $check = Onexbet::whereId($this->transaction_id)->first();
@@ -63,7 +66,7 @@ class Onexbets extends Component
             'percent_admin' => $this->percent_admin,
             'percent_merchands' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
-            'percent_masters'  => $this->comission_master,
+            'percent_companie'  => $this->comissionCompanie,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
@@ -80,7 +83,7 @@ class Onexbets extends Component
         $this->percent_deposit = '';
         $this->percent_with_drawal = '';
         $this->percent_transaction = '';
-        $this->comission_master = '';
+        $this->comissionCompanie = '';
         $this->emit('modal-hide', 'hide');
     }
 

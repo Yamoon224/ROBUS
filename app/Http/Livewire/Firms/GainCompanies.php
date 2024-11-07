@@ -1,0 +1,458 @@
+<?php
+
+namespace App\Http\Livewire\Firms;
+
+use App\Models\Sid\SidUser;
+use App\Models\Wallets\WalletBank;
+use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletInter;
+use App\Models\Wallets\WalletPayment;
+use App\Models\Wallets\WalletPhoneCredit;
+use App\Models\Wallets\WalletReload;
+use App\Models\Wallets\WalletTransaction;
+use App\Models\WithMerchant;
+use App\Notifications\UserNotification;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Livewire\Component;
+use Livewire\WithPagination;
+
+class GainCompanies extends Component
+{
+
+
+    use WithPagination;
+    protected $paginationTheme = "bootstrap";
+    public $searchRealod = "";
+    public $statusFilter = "";
+    public $searchTransferHistorical = "";
+    public $statusTransferFilter = "";
+    public  $startDate = "";
+    public  $endDate =  "";
+    public $deposit_gain;
+    public $gain_amount;
+    public $payement_gain;
+    public $transaction_gain;
+    public $phonecredit_gain;
+    public $inter_gain;
+    public $bank_gain;
+    public $typeRemonte;
+
+    public function mount()
+    {
+        $this->deposit_gain = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
+        $this->payement_gain = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class);
+        $this->transaction_gain = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class);
+        $this->phonecredit_gain = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class);
+        $this->inter_gain = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class);
+        $this->bank_gain = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class);
+    }
+
+    public function edit($remonteGain, $typeRemonte, $state)
+    {
+
+        $this->gain_amount = $remonteGain;
+        $this->typeRemonte = $typeRemonte;
+        $this->emit($state);
+    }
+
+
+    public function cancelField()
+    {
+        $this->gain_amount = null;
+        $this->emit('modal-hide', 'hide');
+    }
+
+
+    public function remonte()
+    {
+
+        $check = SidUser::find(firm()->id);
+
+        if (!empty($check)) {
+
+            $amount_solde = (float)firm()->wallet->amount + (float)$this->gain_amount;
+
+            if ($this->gain_amount <= 0) {
+                $this->emit('modal-hide', 'hide');
+
+                $this->emit('error', 'Le montant de la commission est invalide ou null !!');
+                return;
+            }
+
+            if ($this->typeRemonte == "Paiements") {
+
+                $this->gain_amount =  $this->payement_gain;
+            } else if ($this->typeRemonte == "Transactions") {
+
+                $this->gain_amount =  $this->transaction_gain;
+            } else if ($this->typeRemonte == "Crédits") {
+
+                $this->gain_amount =  $this->phonecredit_gain;
+            } else if ($this->typeRemonte == "International") {
+
+                $this->gain_amount =  $this->inter_gain;
+            } else if ($this->typeRemonte == "Virements") {
+
+                $this->gain_amount =  $this->bank_gain;
+            } else if ($this->typeRemonte == "Rechargements") {
+
+                $this->gain_amount =  $this->deposit_gain;
+            } else {
+                $this->emit('error', 'Type de remontée invalide');
+                return;
+            }
+
+            $withRemonte = $this->createWithCommission($amount_solde, $this->gain_amount,  $this->typeRemonte);
+
+            if ($withRemonte != null) {
+
+                $this->updateWallet($withRemonte);
+
+                if ($this->typeRemonte == "Paiements") {
+
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class);
+                } else if ($this->typeRemonte == "Transactions") {
+
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletTransaction::class);
+                } else if ($this->typeRemonte == "Crédits") {
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPhoneCredit::class);
+                } else if ($this->typeRemonte == "International") {
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class);
+                } else if ($this->typeRemonte == "Virements") {
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class);
+                } else if ($this->typeRemonte == "Rechargements") {
+
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class);
+                } else {
+                    $this->emit('error', 'Type de remontée invalide');
+                    return;
+                }
+                $msg = 'Vous avez transferé vos commission sur votre compte';
+                $msg_title = 'Transfert de la commission ';
+                $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $this->emit('modal-hide', 'hide');
+                $this->emit('success', 'Votre commission a été remonté avec success !!');
+            } else {
+                $this->emit('modal-hide', 'hide');
+                $this->emit('error', 'Erreur de recuperation du montant de la commission !');
+            }
+        }
+    }
+
+    private function createWithCommission($amount_solde, $gain_amount, $typeRemonte)
+    {
+        return WithMerchant::create([
+            'amount_with_draw' =>  $gain_amount,
+            'sid_user_id' =>   firm()->id,
+            'amount_solde' =>   $amount_solde,
+            'type_transaction' => $typeRemonte,
+            'status' =>  "SUCCESS",
+            'date_removed' => Carbon::now(),
+        ]);
+    }
+
+    private function updateWallet($withRemonte)
+    {
+        firm()->wallet->update([
+            'reload_by' => firm()->firstname . ' ' . firm()->lastname,
+            'sid_user_relod' => firm()->id,
+            'amount' => DB::raw('amount+'  .  $withRemonte->amount_with_draw),
+        ]);
+    }
+    public function render()
+    {
+
+        $walletUser = firm()->id;
+
+        $transfersQuery =  WithMerchant::where('sid_user_id', $walletUser);
+
+        if ($this->startDate && $this->endDate) {
+            $transfersQuery->whereBetween('created_at', [$this->startDate, $this->endDate]);
+        }
+
+        if (!empty($this->searchTransferHistorical)) {
+            $this->resetPage();
+            $transfersQuery->where('amount_with_draw', 'LIKE', '%' . $this->searchTransferHistorical . '%');
+        }
+
+        if (!empty($this->statusTransferFilter)) {
+            $transfersQuery->where('status', $this->statusTransferFilter);
+        }
+
+        // Amount transactions month
+        $payement_amount = $this->getDaysTransactionUnderMonth(WalletPayment::class);
+        $transaction_amount = $this->getDaysTransactionUnderMonth(WalletTransaction::class);
+        $phonecredit_amount = $this->getDaysTransactionUnderMonth(WalletPhoneCredit::class);
+        $inter_amount = $this->getDaysTransactionUnderMonth(WalletInter::class);
+        $bank_amount = $this->getDaysTransactionUnderMonth(WalletBank::class);
+        $deposit_amount = $this->getDaysTransactionUnderMonth(WalletDeposit::class);
+
+
+        $sum_gain = $this->payement_gain + $this->transaction_gain + $this->phonecredit_gain + $this->inter_gain + $this->bank_gain + $this->deposit_gain;
+
+        $transferHistoricals = $transfersQuery->orderByDesc('created_at')->paginate(30);
+
+        return view('livewire.firms.gain-companies', [
+
+            'WalletRemontes' => $this->WalletRemonts,
+            'allRemontes' => $transferHistoricals,
+            'company_gains' => $sum_gain,
+            'user_currencie' => firm()->country->currencie->name,
+            'amount_payments' => $payement_amount,
+            'amount_transactions' => $transaction_amount,
+            'amount_phone_credits' => $phonecredit_amount,
+            'amount_inters' => $inter_amount,
+            'amount_banks' => $bank_amount,
+            'amount_deposits' => $deposit_amount,
+            // Gains
+            'gain_payments' => $this->payement_gain,
+            'gain_transactions' => $this->transaction_gain,
+            'gain_phone_credits' => $this->phonecredit_gain,
+            'gain_inters' => $this->inter_gain,
+            'gain_banks' => $this->bank_gain,
+            'gain_deposits' => $this->deposit_gain,
+            // Commissions remonte
+            'remonteDays' => $this->RealodsAdminDaysGain,
+            'remonteYear' => $this->RealodsAdminGain,
+        ]);
+    }
+
+    public function getWalletRemontsProperty()
+    {
+
+        $data = [];
+
+        foreach (WithMerchant::where('sid_user_id', firm()->id)->whereStatus('SUCCESS')->get() as $reload) {
+            $data[] = $reload->amount_with_draw;
+        }
+
+        return array_sum($data);
+    }
+
+    public function getTransactionCountReload($walletModel)
+    {
+
+
+        $totalCount = $walletModel::where('wallet_id', firm()->wallet->id)
+            ->whereStatus('SUCCESS')
+            // ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        return $totalCount;
+    }
+
+    public function getTransactionUsersCount($walletModel, $status)
+    {
+
+
+        $sidUsers = SidUser::where('company_id',  firm()->company->id)
+            ->where('id', '!=', firm()->id)->get();
+        $totalcount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $count = $walletModel::where('wallet_id', $sidUserId)
+                ->where('status', $status)->count();
+
+            if ($count !== null) {
+                $totalcount += $count;
+            }
+        }
+
+        return $totalcount;
+    }
+
+
+    public function getDaysTransactionUnderMonth($walletModel)
+    {
+
+        $sidUsers = SidUser::where('company_id', firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('commission_companie', '!=', 0)
+                ->sum('amount');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
+
+
+    public function getTodayTransactionCommissionAmountTotal($walletModel)
+    {
+
+        $sidUsers = SidUser::where('company_id',  firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
+
+    public function getUpdateTransactionCommissionAmountNullTotal($walletModel)
+    {
+        $sidUsers = SidUser::where('company_id', firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+            $sidUserId = $sidUser->wallet->id;
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+
+            $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->update(['commission_companie' => 0]);
+        }
+
+        return $totalAmount;
+    }
+
+    public function getRealodsAdminDaysGainProperty()
+    {
+
+        $reload1 = [];
+        $reload2 = [];
+        $reload3 = [];
+        $reload4 = [];
+        $reload5 = [];
+        $reload6 = [];
+        $reload7 = [];
+
+        $userId = firm()->id;
+
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->get() as $reload) {
+
+            if ($reload->created_at->dayOfWeek === Carbon::MONDAY) {
+
+                $reload1[] = ($reload->amount_with_draw);
+            }
+        }
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->get() as $reload) {
+
+            if ($reload->created_at->dayOfWeek === Carbon::TUESDAY) {
+
+                $reload2[] = ($reload->amount_with_draw);
+            }
+        }
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::WEDNESDAY) {
+
+                $reload3[] = ($reload->amount_with_draw);
+            }
+        }
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::THURSDAY) {
+
+                $reload4[] = ($reload->amount_with_draw);
+            }
+        }
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::FRIDAY) {
+
+                $reload5[] = ($reload->amount_with_draw);
+            }
+        }
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::SATURDAY) {
+
+                $reload6[] = ($reload->amount_with_draw);
+            }
+        }
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::SUNDAY) {
+
+                $reload7[] = ($reload->amount_with_draw);
+            }
+        }
+        $reloads = [array_sum($reload1), array_sum($reload2), array_sum($reload3), array_sum($reload4), array_sum($reload5), array_sum($reload6), array_sum($reload7)];
+        // dd($reloads);
+        return $reloads;
+    }
+    public function getRealodsAdminGainProperty()
+    {
+
+        $reload1 = [];
+        $reload2 = [];
+        $reload3 = [];
+        $reload4 = [];
+        $reload5 = [];
+        $reload6 = [];
+        $reload7 = [];
+        $reload8 = [];
+        $reload9 = [];
+        $reload10 = [];
+        $reload11 = [];
+        $reload12 = [];
+        $userId = firm()->id;
+
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-01-%')->get() as $reload)
+            $reload1[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-02-%')->get() as $reload)
+            $reload2[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-03-%')->get() as $reload)
+            $reload3[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-04-%')->get() as $reload)
+            $reload4[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-05-%')->get() as $reload)
+            $reload5[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-06-%')->get() as $reload)
+            $reload6[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-07-%')->get() as $reload)
+            $reload7[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-08-%')->get() as $reload)
+            $reload8[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-09-%')->get() as $reload)
+            $reload9[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-10-%')->get() as $reload)
+            $reload10[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-11-%')->get() as $reload)
+            $reload11[] = ($reload->amount_with_draw);
+        foreach (WithMerchant::where('sid_user_id', $userId)->where('status', 'SUCCESS')->where('created_at', 'like', '%-12-%')->get() as $reload)
+            $reload12[] = ($reload->amount_with_draw);
+        $reloads = [array_sum($reload1), array_sum($reload2), array_sum($reload3), array_sum($reload4), array_sum($reload5), array_sum($reload6), array_sum($reload7), array_sum($reload8), array_sum($reload9), array_sum($reload10), array_sum($reload11), array_sum($reload12)];
+        // dd($reloads);
+        return $reloads;
+    }
+}

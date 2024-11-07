@@ -40,10 +40,10 @@
 
 
                     <div class="col-span-12">
-                        <label for="modal-form-1" class="form-label">Commissions % MASTERS</label>
-                        <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                        <label for="modal-form-1" class="form-label">Commissions % Compagnie</label>
+                        <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
                             placeholder="Frais">
-                        @error('comission_master')
+                        @error('comissionCompanie')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>
@@ -62,10 +62,10 @@
                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
 
                     <div class="col-span-12">
-                        <label for="modal-form-1" class="form-label">Commissions cfa MASTERS</label>
-                        <input wire:model.defer="comission_master" id="modal-form-1" type="number" class="form-control"
+                        <label for="modal-form-1" class="form-label">Commissions cfa Compagnie</label>
+                        <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
                             placeholder="Frais">
-                        @error('comission_master')
+                        @error('comissionCompanie')
                             <span class="text-danger">{{ $message }}</span>
                         @enderror
                     </div>

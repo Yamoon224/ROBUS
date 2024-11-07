@@ -171,8 +171,8 @@
                             <td class="text-left">
                                 {{ 'Nom et prenom' }}</td>
                             <td class="bold">
-                                {{ $walletTransfers->wallet->sidUser->firstname ?? $order->wallet->user->firstname }}
-                                {{ $walletTransfers->wallet->sidUser->lastname ?? $order->wallet->user->lastname }}
+                                {{ $walletTransfers->wallet->sidUser->firstname ?? null }}
+                                {{ $walletTransfers->wallet->sidUser->lastname ?? null  }}
                             </td>
                         </tr>
                         @if ($walletTransfers->wallet->sidUser->is_under_distributer == 1)

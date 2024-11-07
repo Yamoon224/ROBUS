@@ -60,41 +60,20 @@
 
                 <div class="px-5 pb-8 text-center mt-6">
                     <button type="button" wire:click="cancelPhoneCreditField"
-                        class="btn btn-outline-secondary w-25 mr-1 mb-1"
-                        wire:loading.class="hidden"
-                        wire:target="updatePhoneCredit"
-                        >Annuler</button>
-                   
+                        class="btn btn-outline-secondary w-25 mr-1 mb-1" wire:loading.class="hidden"
+                        wire:target="updatePhoneCredit">Annuler</button>
+
 
                     <button wire:click="updatePhoneCredit" type="button" wire:loading.attr="disabled"
-                    class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
-                    Validez la demande
-                </button>
+                        class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
+                        Validez la demande
+                    </button>
 
-                <div wire:loading.flex wire:target="updatePhoneCredit" class="flex items-center justify-center">
-                    <div class="loader"></div>
-                    <style>
-                        .loader {
-                            border: 4px solid rgba(0, 0, 0, 0.1);
-                            border-left-color: #09f;
-                            border-radius: 50%;
-                            width: 40px;
-                            height: 40px;
-                            animation: spin 1s linear infinite;
-                        }
-
-                        @keyframes spin {
-                            to {
-                                transform: rotate(360deg);
-                            }
-                        }
-
-                        .hidden {
-                            display: none;
-                        }
-                    </style>
-                    <p>Traitement en cours...</p>
-                </div>
+                    <div wire:loading.flex wire:target="updatePhoneCredit" class="flex items-center justify-center">
+                        <div class="loader"></div>
+                   
+                        <p>Traitement en cours...</p>
+                    </div>
                 </div>
 
 
@@ -102,4 +81,5 @@
         </div>
     </div>
 </div>
+
 <!-- END: Disable Confirmation Modal -->

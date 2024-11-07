@@ -34,7 +34,7 @@
                         <th class="whitespace-nowrap">Nom</th>
                         <th class="whitespace-nowrap text-center">Carte</th>
                         <th class="whitespace-nowrap text-center">Montant</th>
-                        <th class="whitespace-nowrap text-center">Montant marchants</th>
+                        <th class="whitespace-nowrap text-center">Montant Compagnie</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -67,7 +67,7 @@
                                 </td>
                                 <td class="text-center">
                                     <p href="" class="font-medium whitespace-nowrap">
-                                        {{ $item->percent_merchands ?? null }} Frcfa
+                                        {{ $item->percent_companie ?? null }} Frcfa
                                     </p>
 
                                 </td>

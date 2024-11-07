@@ -33,7 +33,7 @@
                         <th class="whitespace-nowrap text-center">Montant CIE/SODECI</th>
                         <th class="whitespace-nowrap text-center">Comission S-D Canal</th>
                         <th class="whitespace-nowrap text-center">Comission S-D CIE/SODECI</th>
-                        <th class="whitespace-nowrap text-center">Comission MASTERS</th>
+                        <th class="whitespace-nowrap text-center">Comission Compagnie</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
@@ -75,7 +75,7 @@
 
                                 <td class="text-center">
 
-                                    {{ $item->percent_masters ?? null }} Frcfa
+                                    {{ $item->percent_companie ?? null }} Frcfa
 
                                 </td>
 

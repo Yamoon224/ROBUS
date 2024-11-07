@@ -41,6 +41,8 @@ class TransactionState extends Component
                 'sum_commissions' => $this->WalletReloadSumGain,
                 'realods' => $this->RealodsAdmin,
                 'reloads_days'  =>  $this->RealodsAdminDays,
+                'gainPaiementsMonth' => $this->RealodsAdminGain,
+                'gainPaiementsDays'  =>  $this->RealodsAdminDaysGain,
             ]
         );
     }
@@ -130,6 +132,65 @@ class TransactionState extends Component
         return $reloads;
     }
 
+    public function getRealodsAdminDaysGainProperty()
+    {
+
+        $reload1 = [];
+        $reload2 = [];
+        $reload3 = [];
+        $reload4 = [];
+        $reload5 = [];
+        $reload6 = [];
+        $reload7 = [];
+
+        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+
+            if ($reload->created_at->dayOfWeek === Carbon::MONDAY) {
+
+                $reload1[] = ($reload->commission_companie);
+            }
+        }
+        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+
+            if ($reload->created_at->dayOfWeek === Carbon::TUESDAY) {
+
+                $reload2[] = ($reload->commission_companie);
+            }
+        }
+        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::WEDNESDAY) {
+
+                $reload3[] = ($reload->commission_companie);
+            }
+        }
+        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::THURSDAY) {
+
+                $reload4[] = ($reload->commission_companie);
+            }
+        }
+        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::FRIDAY) {
+
+                $reload5[] = ($reload->commission_companie);
+            }
+        }
+        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::SATURDAY) {
+
+                $reload6[] = ($reload->commission_companie);
+            }
+        }
+        foreach (WalletTransaction::where('wallet_id', firm()->wallet->id)->where('status', 'SUCCESS')->get() as $reload) {
+            if ($reload->created_at->dayOfWeek === Carbon::SUNDAY) {
+
+                $reload7[] = ($reload->commission_companie);
+            }
+        }
+        $reloads = [array_sum($reload1), array_sum($reload2), array_sum($reload3), array_sum($reload4), array_sum($reload5), array_sum($reload6), array_sum($reload7)];
+        // dd($reloads);
+        return $reloads;
+    }
     public function getRealodsAdminProperty()
     {
 

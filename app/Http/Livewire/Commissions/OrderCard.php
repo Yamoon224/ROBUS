@@ -17,17 +17,20 @@ class OrderCard extends Component
     public $name;
     public $amount_merchant;
     public $provider_valeur;
+    public $comissionCompanie;
 
     protected $rules = [
         'amount' => 'required',
         'amount_merchant' => 'required',
         'provider_valeur' => 'required',
+        'comissionCompanie' => 'required',
     ];
 
     protected $messages = [
         'amount.required' => 'Ce champ est requis',
         'amount_merchant.required' => 'Ce champ est requis',
         'provider_valeur.required' => 'Ce champ est requis',
+        'comissionCompanie.required' => 'Ce champ est requis',
     ];
 
 
@@ -45,6 +48,7 @@ class OrderCard extends Component
                     'percent_merchands'  => $this->amount_merchant,
                     'created_by' => Auth::guard('web')->user()->id,
                     'provider_id' => $this->provider_valeur,
+                    'percent_companie'  => $this->comissionCompanie,
                     'status'  => 1
                 ]
             );
@@ -62,6 +66,7 @@ class OrderCard extends Component
         $this->amount = $check->amount;
         $this->provider_valeur = $check->provider_id ?? null;
         $this->amount_merchant = $check->percent_merchands;
+        $this->comissionCompanie = $check->percent_companie ?? null;
         $this->emit($state);
     }
 
@@ -69,15 +74,15 @@ class OrderCard extends Component
     public function update()
     {
         $this->validate();
-        $check = OrderCardCost::first(); 
+        $check = OrderCardCost::whereId($this->orderId)->first();
     
-
             $check->update([
                 'name' => $this->name,
                 'amount' => $this->amount,
                 'percent_merchands'  => $this->amount_merchant,
                 'status' => 1,
                 'created_by' => Auth::guard('web')->user()->id,
+                'percent_companie'  => $this->comissionCompanie,
                 'provider_id' => $this->provider_valeur,
             ]);
 
@@ -92,6 +97,7 @@ class OrderCard extends Component
         $this->amount = '';
         $this->amount_merchant = '';
         $this->name = '';
+        $this->comissionCompanie = '';
         $this->provider_valeur = null;
         $this->emit('modal-hide', 'hide');
     }

@@ -21,18 +21,20 @@ class LevelTransactionIvoireFr extends Component
     public $amount_admin;
     public $amount_distributer;
     public $percent;
+    public $comissionCompanie;
 
     protected $rules = [
         'amount_begin' => 'required',
         'amount_end' => 'required',
         'amount' => 'required',
-        'amount' => 'required',
+        'comissionCompanie' => 'required',
     ];
 
     protected $messages = [
         'amount_begin.required' => 'Ce champ est requis',
         'amount_end.required' => 'Le montant est requis',
         'amount.required' => 'Le montant est requis',
+        'comissionCompanie.required' => 'Le montant est requis',
     ];
 
 

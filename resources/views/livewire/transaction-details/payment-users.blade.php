@@ -153,21 +153,25 @@
                                             <td class="w-56">
                                                 <div class="flex justify-center items-center">
                                                     @if ($item->status == 'PENDING')
-                                                        @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                            <a wire:click="editPaiement({{ $item->id }}, 'update-paiementInvoice-modal')"
-                                                                class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                href="javascript:;" title="Modifier">
-                                                                Modifier
-                                                            </a>
+                                                        @if (!firm())
+                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                <a wire:click="editPaiement({{ $item->id }}, 'update-paiementInvoice-modal')"
+                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                                    href="javascript:;" title="Modifier">
+                                                                    Modifier
+                                                                </a>
+                                                            @endif
                                                         @endif
                                                     @elseif ($item->status == 'SUCCESS')
-                                                        @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                            <a target="_bank"
-                                                                href="{{ route('all_payments.invoice.print', $item->id) }}"
-                                                                class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                title="Facture">
-                                                                Facture
-                                                            </a>
+                                                        @if (!firm())
+                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                <a target="_bank"
+                                                                    href="{{ route('all_payments.invoice.print', $item->id) }}"
+                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                                    title="Facture">
+                                                                    Facture
+                                                                </a>
+                                                            @endif
                                                         @endif
                                                     @else
                                                         <div class="flex items-center justify-center text-dark">

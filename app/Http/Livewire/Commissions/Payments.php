@@ -18,6 +18,7 @@ class Payments extends Component
     public $comission_auther;
     public $comission_canal;
     public $comission_master;
+    public $comissionCompanie;
 
 
     protected $rules = [
@@ -25,6 +26,7 @@ class Payments extends Component
         'payment_amount_auther' => 'required',
         'comission_auther' => 'required',
         'comission_canal' => 'required',
+        'comissionCompanie' => 'required',
     ];
 
     protected $messages = [
@@ -32,7 +34,7 @@ class Payments extends Component
         'payment_amount_auther.required' => 'Ce champ est requis',
         'comission_auther.required' => 'Ce champ est requis',
         'comission_canal.required' => 'Ce champ est requis',
-
+        'comissionCompanie.required' => 'Ce champ est requis',
     ];
 
 
@@ -49,7 +51,7 @@ class Payments extends Component
                     'comission_auther'  => $this->comission_auther,
                     'comission_canal'  => $this->comission_canal,
                     'created_by' => Auth::guard('web')->user()->id,
-                    'percent_masters'  => $this->comission_master,
+                    'percent_companie'  => $this->comissionCompanie,
                     'status'  => 1
                 ]
             );
@@ -72,7 +74,7 @@ class Payments extends Component
         $this->payment_amount_auther = $check->amount_auther;
         $this->comission_auther = $check->comission_auther;
         $this->comission_canal = $check->comission_canal;
-        $this->comission_master = $check->percent_masters;
+        $this->comissionCompanie = $check->percent_companie;
         $this->paymentStatus = $check->status;
         $this->emit($state);
     }
@@ -89,7 +91,7 @@ class Payments extends Component
             'amount_auther'  => $this->payment_amount_auther,
             'comission_auther'  => $this->comission_auther,
             'comission_canal'  => $this->comission_canal,
-            'percent_masters'  => $this->comission_master,
+            'percent_companie'  => $this->comissionCompanie,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
@@ -106,7 +108,7 @@ class Payments extends Component
         $this->payment_amount_auther = '';
         $this->comission_auther = '';
         $this->comission_canal = '';
-        $this->comission_master = '';
+        $this->comissionCompanie = '';
         $this->emit('modal-hide', 'hide');
     }
 

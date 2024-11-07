@@ -94,8 +94,11 @@ class TransactionCost extends Model
         $this->attributes['percent_masters'] = json_encode($this->formatPercentage($value));
     }
 
-
-
+    public function setPercentCompanieAttribute($value)
+    {
+        $this->attributes['percent_companie'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+    
     public function getPercentAdminAttribute($value)
     {
         $val = isset($value) ? json_decode($value, true) : null;

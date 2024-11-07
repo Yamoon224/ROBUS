@@ -11,19 +11,19 @@
             </a>
         @endif
 
-         @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))
+        @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))
             <a href="{{ route('levels.browse_levels_ivoire') }}" class="btn btn-warning  mt-6  mr-6 ml-6 mb-2 btn-sm"
                 href="javascript:;" title="Modifier">
-                Modifier les montant en  CIV Distributeur
+                Modifier les montant en CIV Distributeur
             </a>
         @endif
 
         @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))
-        <a href="{{ route('levels.browse_levels_custumers') }}" class="btn btn-warning  mt-6  mr-6 ml-6 mb-2 btn-sm"
-            href="javascript:;" title="Modifier">
-            Modifier les montant en  CIV Client
-        </a>
-    @endif
+            <a href="{{ route('levels.browse_levels_custumers') }}" class="btn btn-warning  mt-6  mr-6 ml-6 mb-2 btn-sm"
+                href="javascript:;" title="Modifier">
+                Modifier les montant en CIV Client
+            </a>
+        @endif
     </div>
     <div class="grid grid-cols-12 gap-6 mt-5">
 
@@ -45,7 +45,7 @@
                         <div class="accordion p-5">
                             @foreach ($item->levelBankIvories as $itemLevelbank)
                                 <div class="accordion-item">
-                                    <p class="mr-6">{{ 'Paliers des montant ' }} | {{ 'Frais en Montant' }}</p>
+                                    <p class="mr-6">{{ 'Paliers des montant ' }} | {{ 'Frais en Montant' }} | {{ 'S-distributeur' }} | {{ 'Compagnie' }}</p>
 
                                     <div id="faq-accordion-collapse-1" class="accordion-collapse collapse show"
                                         aria-labelledby="faq-accordion-content-1" data-tw-parent="#faq-accordion-1">
@@ -53,9 +53,16 @@
                                             {{ $itemLevelbank->amount_begin ?? null }} --
                                             {{ $itemLevelbank->amount_end ?? null }}
                                             <span class="mr-6 ml-6">
-
                                                 Montant :
                                                 {{ $itemLevelbank->amount ?? null }} Fcfa
+                                            </span>
+                                            <span class="mr-6 ml-6">
+                                                Montant s-distruteur :
+                                                {{ $itemLevelbank->comission_distributer ?? null }} Fcfa
+                                            </span>
+                                            <span class="mr-6 ml-6">
+                                                Montant compagnie :
+                                                {{ $itemLevelbank->percent_companie ?? null }} Fcfa
                                             </span>
                                         </div>
                                     </div>
@@ -64,15 +71,24 @@
 
                             @foreach ($item->levelBanks as $itemLevelbank)
                                 <div class="accordion-item">
-                                    <p class="mr-6">{{ 'Paliers des montant ' }} | {{ 'Frais en Pourcentage' }}</p>
+                                    <p class="mr-6">{{ 'Paliers des montant ' }} | {{ 'Frais en Pourcentage' }} | {{ 'S-distributeur' }} | {{ 'Compagnie' }}</p>
 
                                     <div id="faq-accordion-collapse-1" class="accordion-collapse collapse show"
                                         aria-labelledby="faq-accordion-content-1" data-tw-parent="#faq-accordion-1">
                                         <div class="accordion-body text-slate-600 dark:text-slate-500 leading-relaxed">
 
                                             {{ $itemLevelbank->amount_begin ?? null }} --
-                                            {{ $itemLevelbank->amount_end ?? null }} <span class="mr-6 ml-6">
+                                            {{ $itemLevelbank->amount_end ?? null }} 
+                                           <span class="mr-6 ml-6">
                                                 Pourcentage : {{ $itemLevelbank->percent ?? null }}
+                                            </span>
+                                            <span class="mr-6 ml-6">
+                                                Montant s-distruteur :
+                                                {{ $itemLevelbank->comission_distributer ?? null }}
+                                            </span>
+                                            <span class="mr-6 ml-6">
+                                                Montant compagnie :
+                                                {{ $itemLevelbank->percent_companie ?? null }}
                                             </span>
                                         </div>
                                     </div>

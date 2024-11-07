@@ -167,6 +167,9 @@
             $('#create-categorie-modal').removeClass('show');
             $('#create-categorie-modal').addClass('hide');
 
+            $('#remonte-ccommission-modal').removeClass('show');
+            $('#remonte-ccommission-modal').addClass('hide');
+
             $('#disabled-categorie-modal').removeClass('show');
             $('#disabled-categorie-modal').addClass('hide');
 
@@ -209,6 +212,11 @@
         Livewire.on('modal-show', () => {
             $('#create-categorie-modal').removeClass('hide');
             $('#create-categorie-modal').addClass('show');
+        });
+
+        Livewire.on('modal-show-remonte-ccommission', () => {
+            $('#remonte-ccommission-modal').removeClass('hide');
+            $('#remonte-ccommission-modal').addClass('show');
         });
 
         Livewire.on('show-disabled-modal', () => {

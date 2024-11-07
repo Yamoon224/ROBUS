@@ -68,6 +68,17 @@ class FirmController extends Controller
             abort(403);
         }
     }
+
+
+    public function browse_commissions()
+    {
+        if (firm()) {
+            return view('firms.pages.browse_commissions');
+        } else {
+            abort(403);
+        }
+    }
+
     public function browse_invalidated(Request $request)
     {
 

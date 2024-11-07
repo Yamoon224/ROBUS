@@ -58,7 +58,7 @@ class TransactionCiv extends Component
     public $commission_transaction_money_val_admin_receive;
     public $commission_transaction_money_val_nat_receive;
     public $password_validated;
-    public $showPasswordField = 1; 
+    public $showPasswordField = 1;
     public $isPasswordValid = false;
 
 
@@ -411,10 +411,9 @@ class TransactionCiv extends Component
                             }
                         } else {
 
-
                             if ($this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
 
-                                if ($this->validatedamountDays->validateAmount()) {
+                                if ($this->validateAmount()) {
 
                                     $valeur_received = $reel_amount;
 
@@ -567,7 +566,6 @@ class TransactionCiv extends Component
                 } else {
 
                     if (sabdy()->is_under_distributer) {
-
 
 
                         $this->validate([
@@ -1164,10 +1162,10 @@ class TransactionCiv extends Component
         $valeur_percent_admin = $percent_robus->percent * $transaction_amount_robus;
 
         if (sabdy()->is_under_distributer) {
+
             $valeur_admin = $percent_robus->percent_admin * $valeur_percent_admin;
             $valuer_deposit = $percent_robus->percent_deposit * $valeur_percent_admin;
             $valuer_with_drawal = $percent_robus->percent_with_drawal * $valeur_percent_admin;
-
             if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)sabdy()->country->currencie->value;
                 $admin_valeur_convertion = (float)$valeur_admin * (float)sabdy()->country->currencie->value;
@@ -1180,6 +1178,13 @@ class TransactionCiv extends Component
             }
 
             $walletTransaction->increment('commissions', $valuer_deposit);
+
+            $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+                $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
+                $walletTransaction->increment('commission_companie', $valuer_companie);
+            }
 
             if ($admin_civ->count() > 0) {
                 $nmbre_admin = $admin_civ->count();
@@ -1435,6 +1440,13 @@ class TransactionCiv extends Component
                 'commissions' => DB::raw('commissions+'  . $admin_valeur_convertion),
             ]);
 
+            $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+                $valuer_companie = $percent_robus->percent_companie * $valeur_percent_valeur;
+                $walletTransaction->increment('commission_companie', $valuer_companie);
+            }
+
             if ($admin_civ->count() > 0) {
 
                 $nmbre_admin = $admin_civ->count();
@@ -1516,6 +1528,13 @@ class TransactionCiv extends Component
             $walletTransaction->update([
                 'commissions' => DB::raw('commissions+'  . $valuer_deposit),
             ]);
+
+            $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+                $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
+                $walletTransaction->increment('commission_companie', $valuer_companie);
+            }
 
             if ($admin_civ->count() > 0) {
 
