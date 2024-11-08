@@ -18,6 +18,12 @@ class Transaction extends Component
     public $percent_admin;
     public $percent_deposit;
     public $percent_with_drawal;
+    // Percentage
+    public $percent_with_drawal_custumer;
+    public $percent_with_drawal_admin;
+    public $percent_with_drawal_companie;
+    public $percent_with_drawal_master;
+
     public $distributer_custumer;
     public $comission_master;
     public $comissionCompanie;
@@ -54,14 +60,15 @@ class Transaction extends Component
                     'percent_with_drawal'  => $this->percent_with_drawal,
                     'created_by' => Auth::guard('web')->user()->id,
                     'percent_companie'  => $this->comissionCompanie,
+                    'percent_custum_drawal'  => $this->percent_with_drawal_custumer,
+                    'percent_custum_drawal_admin'  => $this->percent_with_drawal_admin,
+                    'percent_custum_drawal_companie'  => $this->percent_with_drawal_companie,
+                    'percent_custum_drawal_master'  => $this->percent_with_drawal_master,
                     'status'  => 1,
 
                 ]
             );
-            $this->transaction_name = '';
-            $this->percent_admin = '';
-            $this->percent_deposit = '';
-            $this->percent_with_drawal = '';
+            $this->resetField();
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Commission  ajouté !');
         } else $this->emit('error', 'Commission  existante !');
@@ -76,6 +83,12 @@ class Transaction extends Component
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
+
+        $this->percent_with_drawal_custumer = $check->percent_custum_drawal * 100;
+        $this->percent_with_drawal_admin = $check->percent_custum_drawal_admin * 100;
+        $this->percent_with_drawal_companie = $check->percent_custum_drawal_companie * 100;
+        $this->percent_with_drawal_master = $check->percent_custum_drawal_master * 100;
+
         $this->percent_deposit = $check->percent_deposit * 100;
         $this->comissionCompanie = $check->percent_companie * 100;
         $this->distributer_custumer = $check->distributer_custumer;
@@ -108,6 +121,10 @@ class Transaction extends Component
             'percent_deposit' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'percent_companie'  => $this->comissionCompanie,
+            'percent_custum_drawal'  => $this->percent_with_drawal_custumer,
+            'percent_custum_drawal_admin'  => $this->percent_with_drawal_admin,
+            'percent_custum_drawal_companie'  => $this->percent_with_drawal_companie,
+            'percent_custum_drawal_master'  => $this->percent_with_drawal_master,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
@@ -143,6 +160,9 @@ class Transaction extends Component
                     'percent_admin'  => $this->percent_admin,
                     'percent_deposit'  => $this->percent_deposit,
                     'percent_with_drawal'  => $this->percent_with_drawal,
+                    'percent_custum_drawal_admin'  => $this->percent_with_drawal_admin,
+                    'percent_custum_drawal_companie'  => $this->percent_with_drawal_companie,
+                    'percent_custum_drawal_master'  => $this->percent_with_drawal_master,
                     'created_by' => Auth::guard('web')->user()->id,
                     'status'  => 1
                 ]
@@ -151,6 +171,10 @@ class Transaction extends Component
             $this->percent_admin = '';
             $this->percent_deposit = '';
             $this->percent_with_drawal = '';
+            $this->percent_with_drawal_custumer = '';
+            $this->percent_with_drawal_admin = '';
+            $this->percent_with_drawal_companie = '';
+            $this->percent_with_drawal_master = '';
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Commission  ajouté !');
         } else $this->emit('error', 'Commission  existante !');
@@ -210,6 +234,10 @@ class Transaction extends Component
         $this->percent_with_drawal = '';
         $this->percent_transaction = '';
         $this->comissionCompanie = '';
+        $this->percent_with_drawal_custumer = '';
+        $this->percent_with_drawal_admin = '';
+        $this->percent_with_drawal_companie = '';
+        $this->percent_with_drawal_master = '';
         $this->emit('modal-hide', 'hide');
     }
 

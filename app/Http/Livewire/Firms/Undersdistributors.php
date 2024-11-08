@@ -126,7 +126,6 @@ class Undersdistributors extends Component
         $walletUser = firm();
         $provider = Provider::whereId(9)->first();
         $valeur_ceiling  =  $walletUser->silver_ceiling;
-        $som_transfers =  $this->getWalletTransactionsCeilingProperty();
         $country_id = $walletUser->country->id;
         $admins = SidUser::where('status', true)->where('is_admin', true)->where('country_id', $country_id)->get();
         $company_id = $walletUser->company->id;
@@ -165,7 +164,8 @@ class Undersdistributors extends Component
                 $account_is_under = $wallet_search->sidUser->is_under_distributer;
 
 
-                if ( $wallet_search === null || !$wallet_search->sidUser ||
+                if (
+                    $wallet_search === null || !$wallet_search->sidUser ||
                     ($wallet_search->sidUser->is_under_distributer === '1' && $wallet_search->sidUser->company_id == $company_id)
                 ) {
                     $this->cancelReload();
@@ -176,49 +176,42 @@ class Undersdistributors extends Component
 
                     if ($account_is_under) {
 
-                        if ($som_transfers >= $valeur_ceiling) {
-                            $this->emit('modal-hide', 'hide');
+
+                        $val_amount = $this->relaod_uv_amout;
+
+                        if ($val_amount > $walletUser->wallet->amount) {
+
                             $this->cancelReload();
-                            $this->emit('warning', 'Votre montant journier est atteint !');
-                        } {
+                            $this->emit('modal-hide', 'hide');
+                            $this->emit('success', 'Verifier votre montant ! !');
+                        } else {
 
-                            $val_amount = $this->relaod_uv_amout;
+                            $valeur_receive =  $this->convertAdminCommission($this->relaod_uv_amout, $wallet_search);
 
-                            if ($val_amount > $walletUser->wallet->amount) {
+                            $walletAmountSend = Wallet::where('wallet_id',  $this->account_reload_uv)->first();
+
+                            $amount_solde_drawal = (float)$walletAmountSend->amount +  (float)$valeur_receive;
+
+                            $amount_drawal =      $amount_solde_drawal;
+
+                            $amount_solde = (float)sabdy()->wallet->amount - (float)$this->relaod_uv_amout;
+
+                            $walletReloads =  $this->createWAlletReloadRobus($walletUser, $this->relaod_uv_amout, $provider, $this->account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal);
+
+                            if ($walletReloads != null) {
+
+                                if ($this->updateAmountRobusReceived($walletReloads, $walletUser, $wallet_search, $valeur_receive)) {
+                                    $this->sendNotification($wallet_search, $walletUser, $walletReloads, $admins);
+                                } else {
+                                    $this->cancelReload();
+                                    $this->emit('modal-hide', 'hide');
+                                    $this->emit('error', 'Error de transferts du montant !');
+                                }
+                            } else {
 
                                 $this->cancelReload();
                                 $this->emit('modal-hide', 'hide');
-                                $this->emit('success', 'Verifier votre montant ! !');
-                            } else {
-
-                                $valeur_receive =  $this->convertAdminCommission($this->relaod_uv_amout, $wallet_search);
-
-                                $walletAmountSend = Wallet::where('wallet_id',  $this->account_reload_uv)->first();
-
-                                $amount_solde_drawal = (float)$walletAmountSend->amount +  (float)$valeur_receive;
-
-                                $amount_drawal =      $amount_solde_drawal;
-
-                                $amount_solde = (float)sabdy()->wallet->amount - (float)$this->relaod_uv_amout;
-
-                                $walletReloads =  $this->createWAlletReloadRobus($walletUser, $this->relaod_uv_amout, $provider, $this->account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal);
-
-                                if ($walletReloads != null) {
-
-                                    if ($this->updateAmountRobusReceived($walletReloads, $walletUser, $wallet_search, $valeur_receive)) {
-                                        $this->sendNotification($wallet_search, $walletUser, $walletReloads, $admins);
-                                    } else {
-                                        $this->cancelReload();
-                                        $this->emit('modal-hide', 'hide');
-                                        $this->emit('error', 'Error de transferts du montant !');
-                                    }
-
-                                } else {
-
-                                    $this->cancelReload();
-                                    $this->emit('modal-hide', 'hide');
-                                    $this->emit('error', 'Error de transferts !');
-                                }
+                                $this->emit('error', 'Error de transferts !');
                             }
                         }
                     } else {
@@ -240,35 +233,6 @@ class Undersdistributors extends Component
         }
     }
 
-    public function getWalletTransactionsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletTransaction::join(
-                'wallets',
-                'wallet_reloads.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    firm()->country->id
-                )
-                ->where(
-                    'wallet_reloads.created_by',
-                    firm()->id
-                )
-                ->whereDate('wallet_reloads.created_at', Carbon::today())
-                ->select('wallet_reloads.*')
-                ->where('wallet_reloads.status', 'SUCCESS')
-                ->get()
-            as $transaction
-        ) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
-    }
 
     private function createWAlletReloadRobus($walletUser, $relaod_uv_amout, $provider, $account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal)
     {
@@ -516,7 +480,7 @@ class Undersdistributors extends Component
         ]);
     }
 
-    public function getTransactionCount($walletModel, $status, $wallet_reloads, $transaction_days , $wallet_status)
+    public function getTransactionCount($walletModel, $status, $wallet_reloads, $transaction_days, $wallet_status)
     {
 
         $query = $walletModel::join('wallets', $wallet_reloads, 'wallets.id')
@@ -532,7 +496,7 @@ class Undersdistributors extends Component
         return $query->count();
     }
 
-    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days , $transaction_status, $wallet_amount)
+    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $transaction_status, $wallet_amount)
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')

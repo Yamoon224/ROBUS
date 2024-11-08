@@ -67,12 +67,20 @@ class ServiceController extends Controller
 
     public function browse_close_app_visitors()
     {
-         if (!Auth::guard('web')->user()->hasPermissionTo('close-robus')) {
-        abort(403);
+        if (!Auth::guard('web')->user()->hasPermissionTo('close-robus')) {
+            abort(403);
+        }
+
+        return view('pages.services.browse_close_app_visitors');
     }
 
-    return view('pages.services.browse_close_app_visitors');
+    public function browse_close_app_companies()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('close-robus')) {
+            abort(403);
+        }
 
+        return view('pages.services.browse_close_app_companies');
     }
 
     public function browse_operators()
@@ -116,7 +124,7 @@ class ServiceController extends Controller
 
         return view('pages.services.add', compact('countries', 'providerTypes'));
     }
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -302,7 +310,7 @@ class ServiceController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
         ]);
-        
+
         if ($validator->fails()) {
             return back()
                 ->withErrors($validator)
@@ -348,7 +356,6 @@ class ServiceController extends Controller
 
                 return redirect(route('services.browse_visitores'))->with('status', 'Service modifier avec succès');
             }
-
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)

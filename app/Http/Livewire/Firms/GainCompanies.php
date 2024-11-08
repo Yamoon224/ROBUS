@@ -41,34 +41,53 @@ class GainCompanies extends Component
     public $bank_gain;
     public $typeRemonte;
     public $operators;
+    public $transaction_gain_empl;
     public $showRemonterTransButton = false;
     public $showRemonterCreditButton = false;
+    public $showRemonterPaiementButton = false;
+    public $showRemonterInterButton = false;
+    public $showRemonterRechargementButton = false;
+    public $showRemonterVirementButton = false;
 
     public function mount()
     {
         $this->deposit_gain = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
         $this->payement_gain = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class);
         $this->transaction_gain = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class);
+        $this->transaction_gain_empl = $this->getEmployerTransactionCommission(WalletTransaction::class);
         $this->phonecredit_gain = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class);
         $this->inter_gain = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class);
         $this->bank_gain = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class);
         $this->operators = OperatorService::getOperatorsWithCommissions(firm()->id);
 
+        $restrictionMap = [
+            'Active Transactions' => 'showRemonterTransButton',
+            'Active Crédits' => 'showRemonterCreditButton',
+            'Active Paiements' => 'showRemonterPaiementButton',
+            'Active International' => 'showRemonterInterButton',
+            'Active Rechargements' => 'showRemonterRechargementButton',
+            'Active Virements' => 'showRemonterVirementButton',
+        ];
+
         foreach ($this->operators as $operator) {
-            $restrictions = explode(',', $operator->name); 
-            if (in_array('Bloque Transactions', $restrictions)) {
-                $this->showRemonterTransButton = true;
-                break; 
-            }else if(in_array('Bloque Crédits', $restrictions)) {
-                $this->showRemonterCreditButton = true;
-                break; 
+            $restrictions = explode(',', $operator->name);
+
+            foreach ($restrictionMap as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
             }
         }
     }
 
     public function edit($remonteGain, $typeRemonte, $state)
     {
-        $this->showRemonterTransButton = true; 
+        $this->showRemonterTransButton = true;
+        $this->showRemonterCreditButton = true;
+        $this->showRemonterPaiementButton = true;
+        $this->showRemonterInterButton = true;
+        $this->showRemonterRechargementButton = true;
+        $this->showRemonterVirementButton = true;
         $this->gain_amount = $remonteGain;
         $this->typeRemonte = $typeRemonte;
         $this->emit($state);
@@ -77,7 +96,12 @@ class GainCompanies extends Component
 
     public function cancelField()
     {
-        $this->showRemonterTransButton = true; 
+        $this->showRemonterTransButton = true;
+        $this->showRemonterCreditButton = true;
+        $this->showRemonterPaiementButton = true;
+        $this->showRemonterInterButton = true;
+        $this->showRemonterRechargementButton = true;
+        $this->showRemonterVirementButton = true;
         $this->gain_amount = null;
         $this->emit('modal-hide', 'hide');
     }
@@ -117,6 +141,9 @@ class GainCompanies extends Component
             } else if ($this->typeRemonte == "Rechargements") {
 
                 $this->gain_amount =  $this->deposit_gain;
+            } else if ($this->typeRemonte == "Transactions Salaire") {
+
+                $this->gain_amount =  $this->transaction_gain_empl;
             } else {
                 $this->emit('error', 'Type de remontée invalide');
                 return;
@@ -124,7 +151,7 @@ class GainCompanies extends Component
 
             $withRemonte = $this->createWithCommission($amount_solde, $this->gain_amount,  $this->typeRemonte);
 
-            if ($withRemonte != null) {
+            if ($withRemonte !== null) {
 
                 $this->updateWallet($withRemonte);
 
@@ -143,6 +170,9 @@ class GainCompanies extends Component
                 } else if ($this->typeRemonte == "Rechargements") {
 
                     $this->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class);
+                } else if ($this->typeRemonte == "Transactions Salaire") {
+
+                    $this->getUpdateTransactionEmplCommissionAmountNullTotal(WalletTransaction::class);
                 } else {
                     $this->emit('error', 'Type de remontée invalide');
                     return;
@@ -227,6 +257,10 @@ class GainCompanies extends Component
             'amount_banks' => $bank_amount,
             'showRemonterTransButton' => $this->showRemonterTransButton,
             'showRemonterCreditButton' => $this->showRemonterCreditButton,
+            'showRemonterPaiementButton' => $this->showRemonterPaiementButton,
+            'showRemonterInterButton' => $this->showRemonterInterButton,
+            'showRemonterRechargementButton' => $this->showRemonterRechargementButton,
+            'showRemonterVirementButton' => $this->showRemonterVirementButton,
             // Gains
             'gain_payments' => $this->payement_gain,
             'gain_transactions' => $this->transaction_gain,
@@ -234,12 +268,30 @@ class GainCompanies extends Component
             'gain_inters' => $this->inter_gain,
             'gain_banks' => $this->bank_gain,
             'gain_deposits' => $this->deposit_gain,
+            'gainEmpl_transactions' => $this->transaction_gain_empl,
             // Commissions remonte
             'remonteDays' => $this->RealodsAdminDaysGain,
             'remonteYear' => $this->RealodsAdminGain,
         ]);
     }
 
+    public function getEmployerTransactionCommission($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', firm()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->sum('commission_companie');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+
+        return $totalAmount;
+    }
     public function getWalletRemontsProperty()
     {
 
@@ -365,6 +417,26 @@ class GainCompanies extends Component
             $walletModel::where('wallet_id', $sidUserId)
                 ->whereStatus('SUCCESS')
                 ->update(['commission_companie' => 0]);
+        }
+
+        return $totalAmount;
+    }
+
+    public function getUpdateTransactionEmplCommissionAmountNullTotal($walletModel)
+    {
+
+        $transactions = $walletModel::where('wallet_id', firm()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($transactions as $transaction) {
+            if ($transaction->commission_companie !== null) {
+                $totalAmount += $transaction->commission_companie;
+                $transaction->commission_companie = null;
+                $transaction->save();
+            }
         }
 
         return $totalAmount;

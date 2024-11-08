@@ -134,7 +134,13 @@
                                         </span>
                                     </div>
                                 @endif
-
+                                <p>Commission Ouverte : </p>
+                                @foreach ($item->operator_services as $opera)
+                                    <span
+                                        class="alert alert-success font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        {{ $opera->operator->name ?? null }}
+                                    </span>
+                                @endforeach
                             </td>
                             <td class="table-report__action w-35">
                                 @if ($item->status == '1')
@@ -169,7 +175,6 @@
                                 <div class="flex justify-center items-center">
                                     @if ($item->is_company)
                                         <div class="flex items-start ">
-
                                             <div class="absolute right-0 top-0 mr-5 mt-3 dropdown">
                                                 <div class="text-slate-500 text-xs  mt-0.5 ">
                                                     <i class="fas fa-lock w-3 h-4 mr-2"></i>Commisions

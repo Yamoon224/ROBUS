@@ -2,8 +2,10 @@
 
 namespace App\Console;
 
+use App\Jobs\CheckAppCompanyStatus;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Laravel\Tinker\Console\TinkerCommand;
 
 class Kernel extends ConsoleKernel
 {
@@ -21,6 +23,10 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('app:close-status')->everyMinute();
+        $schedule->job(new CheckAppCompanyStatus)
+        ->everyMinute()
+        ->withoutOverlapping();  
+    
     }
 
     /**

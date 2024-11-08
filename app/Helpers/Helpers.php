@@ -10,8 +10,10 @@ use App\Models\Providers\Provider;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletReload;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+
 
 
 
@@ -94,6 +96,29 @@ function getCountriesForVisitorsUser($user)
     return $countries;
 }
 
+if (!function_exists('appDispoRobus')) {
+    function appDispoRobus($model)
+    {
+        Artisan::call('app:close-company-status');
+        
+        $appStatus = $model::latest()->first();
+
+        if ($appStatus && $appStatus->status_app === 'closed') {
+            $robus_hour_begin = $appStatus->time_start;
+            $robus_hour_end = $appStatus->time_end;
+            $robus_hour_description = $appStatus->description;
+
+            return [
+                'success' => false,
+                'message' => "L'application ROBUS Compagnie était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour cause de {$robus_hour_description}.",
+            ];
+        }
+
+        return ['success' => true];
+    }
+}
+
+
 function getOperators($userId)
 {
 
@@ -147,10 +172,10 @@ function getAppCloseTomorowWeb()
 
     $currentDaySearch = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek;
 
-    
-    $add_days =   $currentDaySearch + 1  ;
-  
-    $days_decremente =   $add_days == 8 ? 1 : $add_days ;
+
+    $add_days =   $currentDaySearch + 1;
+
+    $days_decremente =   $add_days == 8 ? 1 : $add_days;
 
     return CloseAppWeb::whereStatus(true)->whereId($days_decremente)->first();
 }
@@ -194,7 +219,7 @@ function sabdyHomeVerify()
 
 function sabdyWebVerify()
 {
-    $allowedRoles = ['root', 'Distributeur', 'superviseur' ,  'sous-distributeur'];
+    $allowedRoles = ['root', 'Distributeur', 'superviseur',  'sous-distributeur'];
 
     $user = Auth::guard('web')->user();
 

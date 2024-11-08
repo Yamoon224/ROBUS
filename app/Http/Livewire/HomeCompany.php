@@ -335,6 +335,8 @@ class HomeCompany extends Component
         return $totalAmount;
     }
 
+    
+
     public function getTodayTransactionUndersAmountTotal($walletModel)
     {
 

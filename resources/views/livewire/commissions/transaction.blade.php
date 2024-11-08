@@ -34,7 +34,7 @@
                         <th class="whitespace-nowrap text-center">Pourcentage</th>
                         <th class="whitespace-nowrap text-center">Pourcentage Admin</th>
                         <th class="whitespace-nowrap text-center">Pourcentage S-agent depot</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage S-agent retrait</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage  retrait</th>
                         <th class="whitespace-nowrap text-center">Pourcentage Compagnie</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -69,7 +69,20 @@
                                 </td>
                                 <td class="w-40">
                                     <p class="font-medium whitespace-nowrap">
-                                        {{ $item->percent_with_drawal * 100 ?? null }} %</p>
+                                        S-agent  : {{ $item->percent_with_drawal * 100 ?? null }} %
+                                    </p>
+                                    <p class="font-medium whitespace-nowrap mt-1">
+                                        Client : {{ $item->percent_custum_drawal * 100 ?? null }} %
+                                    </p>
+                                    <p class="font-medium whitespace-nowrap mt-1">
+                                        Admin : {{ $item->percent_custum_drawal_admin * 100 ?? null }} %
+                                    </p>
+                                    <p class="font-medium whitespace-nowrap mt-1">
+                                        Compagnie :  {{ $item->percent_custum_drawal_companie * 100 ?? null }} %
+                                    </p>
+                                    <p class="font-medium whitespace-nowrap mt-1">
+                                        Master :  {{ $item->percent_custum_drawal_master * 100 ?? null }} %
+                                    </p>
                                 </td>
 
                                 <td class="w-40">

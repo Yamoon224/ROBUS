@@ -89,7 +89,7 @@ class CreateRobusWalletWithDrawalService
 
         // Update Info valeurs
         $walletAmountSend = Wallet::where('wallet_id',  $wallet_user_search->wallet_id)->first();
-
+        
         $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$verify_code->amount;
 
         $amount_solde = (float)robus()->wallet->amount + (float)$verify_code->amount;

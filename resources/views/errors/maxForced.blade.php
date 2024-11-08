@@ -31,11 +31,13 @@
                 </div>
                 <div class="text-white mt-10 lg:mt-0">
                     <div class="intro-x text-8xl font-medium">@yield('code')</div>
-                    <h1 class="text-4xl font-bold text-red-600">Erreur 599</h1>
-                    <div class="intro-x text-xl lg:text-3xl font-medium mt-5">Oops. Cette page a disparu.</div>
-                    <div class="intro-x text-lg mt-3"> Vous n'êtes pas a la bonne addresse.</div>
+                    <h1 class="text-4xl font-bold text-red-600">Application Hors Ligne</h1>
+                   
+                    <div class="intro-x text-xl lg:text-3xl font-medium mt-5">{{ $message ?? 'L’application est actuellement hors ligne pour maintenance.' }}</div>
+                    <div class="intro-x text-lg mt-3"> 
+                        Robus était disponible aujourd'hui de <strong>{{ $dateOpen }} MN</strong> à <strong>{{ $dateClose }} MN</strong>.
+                     </div>
                     <a href="{{ url('/') }}" class="intro-x btn py-3 px-4 text-white border-white dark:border-darkmode-400 dark:text-slate-200 mt-10"><i class="feather icon-home mr-2"></i> Retour sur votre adresse</a>
-                    {{-- <button class="intro-x btn py-3 px-4 text-white border-white dark:border-darkmode-400 dark:text-slate-200 mt-10">Back to Home</button> --}}
                 </div>
             </div>
             <!-- END: Error Page -->

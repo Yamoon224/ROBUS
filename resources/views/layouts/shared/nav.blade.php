@@ -586,6 +586,17 @@
                                     </a>
                                 </li>
                             @endif
+
+                            @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
+                            <li>
+                                <a href="{{ route('browse_companies.browse') }}"
+                                    class="side-menu {{ $route == 'browse_companies.browse' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="package"
+                                            class="block mx-auto"></i></div>
+                                    <div class="side-menu__title"> App Compagnie </div>
+                                </a>
+                            </li>
+                        @endif
                             @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
                                 <li>
                                     <a href="{{ route('browse_close_app_comzones.browse') }}"

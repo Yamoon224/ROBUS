@@ -99,6 +99,29 @@ class TransactionCost extends Model
         $this->attributes['percent_companie'] = $value / 100 ? json_encode($value / 100) : null;
     }
     
+
+    public function setPercentCustumDrawalAttribute($value)
+    {
+        $this->attributes['percent_custum_drawal'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+
+
+    public function setPercentCustumDrawalAdminAttribute($value)
+    {
+        $this->attributes['percent_custum_drawal_admin'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+
+    public function setPercentCustumDrawalCompanieAttribute($value)
+    {
+        $this->attributes['percent_custum_drawal_companie'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+
+
+    public function setPercentCustumDrawalMasterAttribute($value)
+    {
+        $this->attributes['percent_custum_drawal_master'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+    
     public function getPercentAdminAttribute($value)
     {
         $val = isset($value) ? json_decode($value, true) : null;

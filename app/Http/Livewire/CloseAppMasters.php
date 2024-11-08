@@ -86,17 +86,16 @@ class CloseAppMasters extends Component
 
     public function render()
     {
-
-        $closerobus = AppCloseMaster::query();
-
-        if ($this->search != "") {
-            $this->resetPage();
-
-            $closerobus->where("day_of_week", "LIKE",  "%" . $this->search . "%");
+        $closerobusQuery = AppCloseMaster::where('is_master', true);
+    
+        if (!empty($this->search)) {
+            $this->resetPage(); 
+            $closerobusQuery->where('day_of_week', 'LIKE', '%' . $this->search . '%');
         }
-
-        return view('livewire.close-app-masters', [
-            "closeapps" => $closerobus->orderBy('id', 'asc')->get()
-        ]);
+    
+        $closeapps = $closerobusQuery->orderBy('id', 'asc')->get();
+    
+        return view('livewire.close-app-masters', compact('closeapps'));
     }
+    
 }

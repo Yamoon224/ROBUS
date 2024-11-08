@@ -351,6 +351,10 @@ class Transfers extends Component
     public $name_canal_send;
     public $password_validated_transaction;
     public $isPasswordValid = false;
+    public $commission_transaction_val_nat_pay;
+    public $commission_transaction_val_admin_receive;
+    public $commission_transaction_val_nat_receive;
+    public $commission_transaction_drawal;
 
 
     protected $listeners = [
@@ -845,15 +849,23 @@ class Transfers extends Component
 
                                 $commission_send =  $this->convertAdminCommissionInter($commission_receiveid, $wallet_send, $wallet_receveid);
 
+                                $amount_drawal_percent = $percent_robus->percent_custum_drawal *  $commission_send;
+
+                                $amountDrawal =  $amount_drawal_percent +  $commission_send;
+
+                                $walletAmountSend = DB::table('wallets')->select(DB::raw('SUM(amount) as total_amount'))->where('wallet_id',  $this->compte_number_robus)->first();
+
+                                $amount_solde_drawal = (float)$walletAmountSend->total_amount -  (float)$amountDrawal;
+
                                 // Verify amount
-                                if ($commission_send > $wallet_search->amount) {
+                                if ($amountDrawal > $wallet_search->amount) {
                                     $this->resetTransactionField();
                                     $this->emit('modal-hide-transfers');
                                     $this->emit('success', 'Verifier votre montant ! !');
                                     return;
                                 }
 
-                                $walletTransaction = $this->createRobusWalletWithDrawalTransaction($this->transaction_amount_robus, $this->provider_transaction, $this->compte_number_robus,  $wallet_search);
+                                $walletTransaction = $this->createRobusWalletWithDrawalTransaction($this->transaction_amount_robus, $this->provider_transaction, $this->compte_number_robus,  $wallet_search, $amount_drawal_percent);
 
                                 if ($walletTransaction != null) {
 
@@ -896,7 +908,7 @@ class Transfers extends Component
         }
     }
 
-    private function createRobusWalletWithDrawalTransaction($transaction_amount_robus, $provider, $compte_number_robus, $wallet_search)
+    private function createRobusWalletWithDrawalTransaction($transaction_amount_robus, $provider, $compte_number_robus, $wallet_search, $amount_drawal_percent)
     {
 
 
@@ -909,14 +921,14 @@ class Transfers extends Component
         $code_valdated = sprintf('%0.4s', str_shuffle($rt . $temps_ecoule . $robus));
         $val_amount = $transaction_amount_robus;
 
-        if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+        // if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-            $encode = substr($wallet_search->sidUser->phone,  -10);
+        //     $encode = substr($wallet_search->sidUser->phone,  -10);
 
-            $message = 'Code de validation : ' . $code_valdated  . ' . Ne partagez ce code qu\'avec un agent ROBUS lors d\'une transaction ' . ' Expire dans 5 min';
+        //     $message = 'Code de validation : ' . $code_valdated  . ' . Ne partagez ce code qu\'avec un agent ROBUS lors d\'une transaction ' . ' Expire dans 5 min';
 
-            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-        }
+        //     http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        // }
 
         if ($wallet_search->sidUser->email != null) {
 
@@ -932,6 +944,7 @@ class Transfers extends Component
             'provider_id'  => $provider,
             'num_wallet' => strtoupper($compte_number_robus),
             'choose_type_transaction' => 1,
+            'costs_amount' => $amount_drawal_percent,
             'type_transaction' => 'Retrait',
             'choose_type_transaction' => 2,
             'code_validated' => $code_valdated,
@@ -1043,7 +1056,6 @@ class Transfers extends Component
         $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
         $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
         $admins = $this->getAdminValeurProperty();
-        $admin_civ_drawal = $this->getAdminDrawalCIVProperty();
         $admin_civ = SidUser::whereStatus(true)
             ->whereIsAdmin(true)
             ->where('country_id', 107)
@@ -1101,11 +1113,23 @@ class Transfers extends Component
 
                             $commission_valeur = $percent_robus->percent * $verify_code->amount;
 
+                            $percent_drawal = $percent_robus->percent_custum_drawal * $verify_code->amount;
+
+                            $commissionAdmin_drawal =  $percent_robus->percent_custum_drawal_admin * $percent_drawal;
+
+                            $amount_payment_drawal = $verify_code->amount + $percent_drawal;
+
                             $valuer_with_drawal = $percent_robus->percent_with_drawal * $commission_valeur;
 
-                            $this->updateVerifyCodeWallet($verify_code);
+                            $walletAmountSend = Wallet::where('wallet_id',  $verify_code->num_wallet)->first();
 
-                            $validated_transaction =   $this->updatePaiementWithdrawalWallet($wallet_user, $verify_code->amount);
+                            $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$amount_payment_drawal;
+
+                            $amount_solde = (float)sabdy()->wallet->amount + (float)$verify_code->amount;
+
+                            $this->updateVerifyCodeWallet($verify_code, $amount_solde, $amount_solde_drawal);
+
+                            $validated_transaction =   $this->updatePaiementWithdrawalWallet($wallet_user, $amount_payment_drawal);
 
                             if ($validated_transaction) {
 
@@ -1119,35 +1143,49 @@ class Transfers extends Component
                                     $verify_code
                                 );
 
-                                $this->updatePaiementDrawalWallet($walletUser,  $verify_code->amount);
+                                $amountAccountDrawal = $this->updatePaiementDrawalWallet($walletUser,  $verify_code->amount);
 
-                                $this->updateWalletCommissions($verify_code,  $valuer_with_drawal);
+                                if ($amountAccountDrawal) {
 
-                                event(new CreateWalletTransfersEvent($verify_code));
 
-                                $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $verify_code->amount . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                    $updateWallet =  $this->updateWalletCommissions($verify_code,  $valuer_with_drawal, $percent_robus, $verify_code->amount);
 
-                                if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-                                    $encode = substr($wallet_search->sidUser->phone,  -10);
+                                    if ($updateWallet) {
 
-                                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                        $this->commissionAdminDrawal($admin_civ, $commissionAdmin_drawal, $verify_code);
+
+                                        event(new CreateWalletTransfersEvent($verify_code));
+
+                                        $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $verify_code->amount . $wallet_search->currencie->code . ' chez ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                        if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                            $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                        }
+
+                                        if ($wallet_search->sidUser->email != null) {
+
+                                            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
+                                        }
+
+                                        $this->notifyCreateUsers($walletUser, $admins, 'Transactions', 'Demande de retrait est en cours de validation', 'Demande de Retrait effectuer par  ' . ' ' . $verify_code->wallet->sidUser->firstname);
+
+                                        if ($admins->count() > 0) {
+                                            $this->notifyAdmins($admins);
+                                        }
+
+                                        $this->resetTransactionField();
+                                        $this->emit('modal-hide-transfers');
+                                        $this->emit('success', 'Retrait effectué !');
+                                    }
+                                } else {
+                                    $this->resetTransactionField();
+                                    $this->emit('modal-hide-transfers');
+                                    $this->emit('error', 'Erreur de depot sur le compte du S.D !');
                                 }
-
-                                if ($wallet_search->sidUser->email != null) {
-
-                                    Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
-                                }
-
-                                $this->notifyCreateUsers($walletUser, $admins, 'Transactions', 'Demande de retrait est en cours de validation', 'Demande de Retrait effectuer par  ' . ' ' . $verify_code->wallet->sidUser->firstname);
-
-                                if ($admins->count() > 0) {
-                                    $this->notifyAdmins($admins);
-                                }
-
-                                $this->resetTransactionField();
-                                $this->emit('modal-hide-transfers');
-                                $this->emit('success', 'Retrait effectué !');
                             } else {
                                 $this->resetTransactionField();
                                 $this->emit('modal-hide-transfers');
@@ -1179,6 +1217,35 @@ class Transfers extends Component
         }
     }
 
+
+    public function updatedTransactionAmountRobus()
+    {
+        $this->calculateAmounts();
+    }
+
+    public function calculateAmounts()
+    {
+
+        $this->commission_transaction_val_nat_receive = 0;
+        $this->commission_transaction_val_admin_receive = 0;
+        $this->commission_transaction_drawal = 0;
+
+
+        if ($this->transaction_amount_robus) {
+            // Calcul pour les transactions Robus
+            $reel_amount = $this->search_amount($this->transaction_amount_robus);
+
+            if ($reel_amount != '') {
+
+                $commission_transaction = $this->getRobusPercentageSDistributers();
+
+                // Calculs
+                $this->commission_transaction_val_admin_receive = (float) $commission_transaction->percent_custum_drawal * $reel_amount;
+                $this->commission_transaction_drawal = (float) $commission_transaction->percent_with_drawal * $reel_amount;
+                $this->commission_transaction_val_nat_receive = (float) $reel_amount - $this->commission_transaction_val_admin_receive;
+            }
+        }
+    }
     /**
      * Write code on Method
      *
@@ -2205,7 +2272,6 @@ class Transfers extends Component
                                         $amount_cost = $amount_user->comission_distributer * $reel_amount;
                                         $commissionCompanie = $amount_user->percent_companie * $percent_valeur;
                                         $amountReceved = (float)$reel_amount;
-
                                     } else {
                                         $amount_verify = $reel_amount;
                                         $valuer_admin_com =  $amount_user->percent * $reel_amount;
@@ -2223,7 +2289,7 @@ class Transfers extends Component
                                         $valuer_deposit_com = $amount_user->comission_distributer;
                                         $valuer_admin_com = $reel_amount - $valuer_deposit_com;
                                         $amount_cost = $amount_user->comission_distributer;
-                                        $commissionCompanie = $amount_user->percent_companie ;
+                                        $commissionCompanie = $amount_user->percent_companie;
                                         $amountReceved = (float)$reel_amount;
                                     } else {
                                         $amount_verify = (float)$reel_amount;
@@ -2283,7 +2349,7 @@ class Transfers extends Component
 
 
                                     if ($walletReloadCard != null) {
-                                        $this->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $walletUser, $amount_verify , $commissionCompanie);
+                                        $this->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $walletUser, $amount_verify, $commissionCompanie);
                                     }
 
                                     event(new CreateWalletReloadCardEvent($walletReloadCard));
@@ -5066,6 +5132,9 @@ class Transfers extends Component
             'amount_phone_credit_val_nat_receive' => $commission_phone_credit_val_nat_receive,
             'amount_paiemet_frais_receive' => $commission_paiement_invoice_val_nat_pay_frais,
             'amount_received_canal' => $amount_received_canal,
+            'amount_transaction_nat_val_percent' => $this->commission_transaction_val_admin_receive,
+            'amount_transaction_nat_val_receive' => $this->commission_transaction_val_nat_receive,
+            'amount_transaction_nat_val_drawal' => $this->commission_transaction_drawal,
             'code_valided' => $code_validated_val_nat,
             'code_valided_inter' => $code_validated_val_nat,
             'withdrawal_robus' => Provider::whereStatus(true)
@@ -5116,9 +5185,9 @@ class Transfers extends Component
             'provider_virements' => $this->VirementTransaction,
             'provider_reloads' => $this->ReloadTransaction,
             'provider_credits' => $this->PhoneCreditTransaction,
-            'usersCountry' => Auth::guard('web')->user()->wallet->currencie->code,
+            'usersCountry' => sabdy()->wallet->currencie->code,
             'user_auth' => $walletUser,
-            'user_send' => Auth::guard('web')->user(),
+            'user_send' => sabdy(),
         ]);
     }
 
@@ -5557,7 +5626,7 @@ class Transfers extends Component
         );
     }
 
-    protected function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $walletUser, $amount_verify , $commissionCompanie)
+    protected function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $walletUser, $amount_verify, $commissionCompanie)
     {
 
 
@@ -5943,6 +6012,47 @@ class Transfers extends Component
         ]);
     }
 
+    protected function commissionAdminDrawal($admin_civ, $admin_commission, $walletTransaction)
+    {
+
+        $valuer_deposit =  $admin_commission;
+
+        //  Send valeur in Admin
+        if ($admin_civ->count() > 0) {
+
+            $count_admin = $admin_civ->count();
+
+            $valeur_single = $valuer_deposit / $count_admin;
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+
+                AdminsCom::create([
+                    'amount' =>   $valeur_single,
+                    'sid_user_id' =>   $admin_single->id,
+                    'wallet_transaction_id' => $walletTransaction->id,
+                    'wallet_bank_id' => null,
+                    'wallet_deposit_id' => null,
+                    'wallet_inter_id' =>  null,
+                    'wallet_payment_id' => null,
+                    'wallet_phone_credit_id' => null,
+                    'wallet_reload_id' => null,
+                    'bank_card_id' => null,
+                    'description' => 'Commission administrateur',
+                ]);
+
+                $admin_single->wallet->update([
+                    'reload_by' =>  Auth::guard('web')->user()->firstname .
+                        ' ' .
+                        Auth::guard('web')->user()->lastname,
+                    'sid_user_relod' =>  Auth::guard('web')->user()->id,
+                    'amount' => DB::raw('amount+' . $valeur_single),
+                ]);
+            }
+        }
+    }
+
+
     protected function updatePaiementWithdrawalWallet($wallet_search, $commission_send)
     {
 
@@ -5953,13 +6063,15 @@ class Transfers extends Component
         ]);
     }
 
-    protected function updateVerifyCodeWallet($verify_code)
+    protected function updateVerifyCodeWallet($verify_code, $amount_solde, $amount_solde_drawal)
     {
 
         return  $verify_code->update([
             'type_transaction' => 'Retrait',
             'status' => 'SUCCESS',
             'code_validated' => null,
+            'amount_solde'  => $amount_solde ?? null,
+            'amount_solde_drawal' => $amount_solde_drawal ?? null,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
     }
@@ -5978,12 +6090,21 @@ class Transfers extends Component
         ]);
     }
 
-    protected function updateWalletCommissions($verify_code, $valuer_with_drawal)
+    protected function updateWalletCommissions($verify_code, $valuer_with_drawal, $percent_robus, $valeur_percent_admin)
     {
 
-        return  $verify_code->update([
+        $verify_code->update([
             'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
         ]);
+
+        $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+        if ($account_accepted) {
+            $valuer_companie = $percent_robus->percent_custum_drawal_companie * $valeur_percent_admin;
+            $verify_code->increment('commission_companie', $valuer_companie);
+        }
+
+        return true;
     }
 
 

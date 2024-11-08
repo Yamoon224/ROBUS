@@ -50,7 +50,6 @@ class CheckAppComZones extends Command
                 if ($currentHour >= $robus_hour_begin && $currentHour <= $robus_hour_end) {
                     // Utilisation de la classe DB
                     DB::table('app_com_zone_statuses')->truncate();
-                    // Ou utilisation de la classe DB avec une requête SQL brute
                     DB::statement('TRUNCATE TABLE app_com_zone_statuses');
 
                 } else {

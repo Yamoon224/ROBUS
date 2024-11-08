@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\AppCompanyStatus;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,19 +18,19 @@ class CompanyMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        if (Auth::check()) {
-
-            // Vérifie le rôle de l'utilisateur
-            if (!sabdyCompanyVerify()) {
-                // Si la vérification échoue, renvoie une réponse avec le code de statut 403 (Interdit)
-                return response()->view('errors.599', [], 599);
-            }
-
-        } else {
-            // Si l'utilisateur n'est pas connecté, redirige-le vers la page de connexion
-            return $next($request);
-        }
+        $appStatus = AppCompanyStatus::latest()->first();
         
+        if ($appStatus !== null && $appStatus->status_app === 'closed') {
+            return response()->view('errors.599', [
+                'message' => $appStatus->description,
+                'dateOpen' => $appStatus->time_start,
+                'dateClose' => $appStatus->time_end,
+            ], 599);
+        }
+        if (Auth::check() && !sabdyCompanyVerify()) {
+            return response()->view('errors.599', [], 599);
+        }
+
         return $next($request);
     }
 }

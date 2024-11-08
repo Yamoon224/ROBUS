@@ -124,6 +124,41 @@ class UnderDistributors extends Component
         }
     }
 
+    public function editUpdateCommission($data)
+    {
+
+        $sid_user = $data['user_id'];
+
+        $operator_id = $data['operator_id'];
+
+        $check_user = SidUser::whereId($sid_user)->first();
+
+        $check_operator = Operator::whereId($operator_id)->first();
+
+        $old_operators = OperatorService::where('sid_user_id', $check_user->id)
+            ->where('operator_id', $check_operator->id)
+            ->first();
+
+        if (!empty($old_operators)) {
+
+            $old_operators->forcedelete();
+            event(new assignementEvent($old_operators));
+            $this->resetdesableField();
+            $this->emit('modal-hide', 'hide');
+            $this->emit('success', 'Liste des operateurs mise à jour !');
+        } else {
+
+            $operator_service = new OperatorService;
+            $operator_service->sid_user_id = $check_user->id;
+            $operator_service->operator_id  = $check_operator->id;
+            $operator_service->save();
+            event(new assignementEvent($operator_service));
+
+            $this->resetdesableField();
+            $this->emit('modal-hide', 'hide');
+            $this->emit('success', 'Liste des operateurs mise à jour !');
+        }
+    }
     public function resetdesableField()
     {
         $this->emit('modal-hide', 'hide');
@@ -337,6 +372,7 @@ class UnderDistributors extends Component
             "users" => $users->where('is_under_distributer', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->whereIsUnder(true)->orderBy("name", 'desc')->get(),
+            "operatorsCommissions" => Operator::whereStatus(true)->whereIsCommission(true)->orderBy("name", 'desc')->get(),
         ]);
     }
 }
