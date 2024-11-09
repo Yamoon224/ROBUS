@@ -275,7 +275,7 @@ class TransactionCiv extends Component
         $valeur_max_send  =  sabdy()->country->amount_max_send;
         $provider = Provider::whereId($this->provider_transaction)->first();
 
-        try {
+        // try {
 
 
             $this->validate(
@@ -356,12 +356,12 @@ class TransactionCiv extends Component
 
                                                     $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
-                                                    if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+                                                    // if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-                                                        $encode = substr($wallet_search->sidUser->phone,  -10);
+                                                    //     $encode = substr($wallet_search->sidUser->phone,  -10);
 
-                                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                                                    }
+                                                    //     http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                                    // }
 
                                                     if ($wallet_search->sidUser->email != null) {
 
@@ -421,6 +421,7 @@ class TransactionCiv extends Component
                                     $walletAmountSend = Wallet::where('wallet_id',  $this->compte_number_robus)->first();
 
                                     if ($walletAmountSend) {
+
                                         $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
 
@@ -441,7 +442,7 @@ class TransactionCiv extends Component
 
                                                 Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
                                             }
-                                            if ($this->updateAmountRobusReceivedDistributer($this->compte_number_robus, $walletTransaction, $valeur_received)) {
+                                            if ($this->updateAmountRobusReceivedDistributer($this->compte_number_robus, $walletTransaction)) {
                                                 if ($this->processCommissionsRobusDistributer($reel_amount)) {
                                                     $this->sendNotification($walletTransaction);
                                                     $this->resetTransactionField();
@@ -718,11 +719,11 @@ class TransactionCiv extends Component
                 $this->emit('modal-hide-transfers');
                 $this->emit('error', 'Merci de bien vouloir vérifier votre mot de passe, s\'il vous plaît.!');
             }
-        } catch (\Exception $exception) {
-            $this->resetTransactionField();
-            $this->emit('modal-hide-inters');
-            $this->emit('error', 'Error de message demande a l\'admin !');
-        }
+        // } catch (\Exception $exception) {
+        //     $this->resetTransactionField();
+        //     $this->emit('modal-hide-inters');
+        //     $this->emit('error', 'Error de message demande a l\'admin !');
+        // }
     }
 
     public function render()
@@ -1258,11 +1259,11 @@ class TransactionCiv extends Component
         }
     }
 
-    private function updateAmountRobusReceivedDistributer($walletTransaction, $valeur_received)
+    private function updateAmountRobusReceivedDistributer($compte_number_robus , $walletTransaction)
     {
 
 
-        $wallet_search = Wallet::where('wallet_id', $this->compte_number_robus)
+        $wallet_search = Wallet::where('wallet_id', $compte_number_robus)
             ->where('country_id', sabdy()->country->id)
             //   ->where('status', true)
             ->first();
@@ -1272,19 +1273,16 @@ class TransactionCiv extends Component
         $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
         $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
 
+        if ($walletTransaction) {
 
-        $commission_transaction_val_inter_convertion_send = (float)  $valeur_received;
-
-        if ($commission_transaction_val_inter_convertion_send) {
-
-            $walletTransaction->update(['amount_received' => $commission_transaction_val_inter_convertion_send]);
+            $walletTransaction->update(['amount_received' => $walletTransaction->amount_received]);
 
             if ($wallet_search) {
 
                 $wallet_search->update([
                     'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
                     'sid_user_relod' => sabdy()->id,
-                    'amount' => DB::raw('amount+' . $commission_transaction_val_inter_convertion_send),
+                    'amount' => DB::raw('amount+' . $walletTransaction->amount_received),
                 ]);
             } else {
 
@@ -1632,7 +1630,6 @@ class TransactionCiv extends Component
         $commission =  $this->transaction_amount_robus;
 
         $wallet = sabdy()->wallet;
-
 
         // Préparez les valeurs mises à jour
         $updatedValues = [

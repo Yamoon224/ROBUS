@@ -50,7 +50,6 @@ Route::group(['middleware' => ['auth:company']], function () {
     });
 
 
-
     //Statisques
     Route::prefix('statistics')->group(function () {
         Route::get('/browse', [StatistiqueController::class, 'browse_state_employes'])->name('employes.transactions.historiques.states');

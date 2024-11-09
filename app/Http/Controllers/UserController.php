@@ -63,6 +63,15 @@ class UserController extends Controller
         }
     }
 
+    public function browse_winnings()
+    {
+        // if (Auth::guard('web')->user()->hasPermissionTo('gain-commissions')) {
+
+            return view('pages.custumers.browse_winnings');
+        // } else {
+        //     abort(403);
+        // }
+    }
     public function browse_company()
     {
         if (Auth::guard('web')->user()->hasPermissionTo('voir-clients')) {

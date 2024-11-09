@@ -156,6 +156,9 @@ Route::group(['prefix' => ''], function () {
             Route::post('/update/{id}', [MasterController::class, 'updateunders'])->name('unders.admins.update');
         });
 
+        Route::prefix('winnings')->group(function () {
+            Route::get('/browse', [UserController::class, 'browse_winnings'])->name('unders.browse_winnings');
+        });
         // distributors
         Route::prefix('distribitors')->group(function () {
             Route::get('/browse', [UserController::class, 'browsedistributors'])->name('operators.admins.browse');

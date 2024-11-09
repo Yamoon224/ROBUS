@@ -185,6 +185,9 @@
             $('#update-percent-companie-modal').removeClass('show');
             $('#update-percent-companie-modal').addClass('hide');
 
+            $('#remonte-ccommission-modal').removeClass('show');
+            $('#remonte-ccommission-modal').addClass('hide');
+
             $('#create-reload-company-modal').removeClass('show');
             $('#create-reload-company-modal').addClass('hide');
 
@@ -550,6 +553,11 @@
             // $('body').css('overflow', 'auto');
         });
 
+        
+        Livewire.on('modal-show-remonte-ccommission', () => {
+            $('#remonte-ccommission-modal').removeClass('hide');
+            $('#remonte-ccommission-modal').addClass('show');
+        });
 
         // new modal companies
         Livewire.on('show-update-percent-companie-modal', () => {

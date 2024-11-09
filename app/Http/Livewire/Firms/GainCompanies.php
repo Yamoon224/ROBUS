@@ -82,12 +82,12 @@ class GainCompanies extends Component
 
     public function edit($remonteGain, $typeRemonte, $state)
     {
-        $this->showRemonterTransButton = true;
-        $this->showRemonterCreditButton = true;
-        $this->showRemonterPaiementButton = true;
-        $this->showRemonterInterButton = true;
-        $this->showRemonterRechargementButton = true;
-        $this->showRemonterVirementButton = true;
+        // $this->showRemonterTransButton = true;
+        // $this->showRemonterCreditButton = true;
+        // $this->showRemonterPaiementButton = true;
+        // $this->showRemonterInterButton = true;
+        // $this->showRemonterRechargementButton = true;
+        // $this->showRemonterVirementButton = true;
         $this->gain_amount = $remonteGain;
         $this->typeRemonte = $typeRemonte;
         $this->emit($state);
@@ -96,12 +96,12 @@ class GainCompanies extends Component
 
     public function cancelField()
     {
-        $this->showRemonterTransButton = true;
-        $this->showRemonterCreditButton = true;
-        $this->showRemonterPaiementButton = true;
-        $this->showRemonterInterButton = true;
-        $this->showRemonterRechargementButton = true;
-        $this->showRemonterVirementButton = true;
+        // $this->showRemonterTransButton = true;
+        // $this->showRemonterCreditButton = true;
+        // $this->showRemonterPaiementButton = true;
+        // $this->showRemonterInterButton = true;
+        // $this->showRemonterRechargementButton = true;
+        // $this->showRemonterVirementButton = true;
         $this->gain_amount = null;
         $this->emit('modal-hide', 'hide');
     }

@@ -90,7 +90,7 @@
             @if (Auth::guard('web')->user()->hasPermissionTo('historiques'))
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('historiques*') || request()->is('historicals*') ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('historiques*') || request()->is('winnings*')  || request()->is('historicals*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                 height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" icon-name="clipboard"
@@ -104,9 +104,7 @@
                             <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
                         </div>
                     </a>
-                    <ul
-                        class="{{ request()->is('historiques*') || request()->is('historicals*') ? 'side-menu__sub-open' : '' }}">
-
+                    <ul class="{{ request()->is('historiques*') || request()->is('winnings*') || request()->is('historicals*') ? 'side-menu__sub-open' : '' }}">
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('voir-historique-transfers'))
                             <li>
@@ -118,6 +116,16 @@
                                 </a>
                             </li>
                         @endif
+                        {{-- @if (Auth::guard('web')->user()->hasPermissionTo('gain-commissions')) --}}
+                            <li>
+                                <a href="{{ route('unders.browse_winnings') }}"
+                                    class="side-menu {{ $route == 'unders.browse_winnings' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Gains commissions </div>
+                                </a>
+                            </li>
+                        {{-- @endif --}}
 
                     </ul>
                 </li>
@@ -555,7 +563,6 @@
                             class="{{ request()->is('application*') || request()->is('admin*') || request()->is('operators*') || request()->is('features*') || request()->is('faqs*') || request()->is('roles*') || request()->is('list_countries*') || request()->is('close_app*') ? 'side-menu__sub-open' : '' }}">
 
                             @if (Auth::guard('web')->user()->hasPermissionTo('utilisateurs'))
-
                                 <li>
                                     <a href="{{ route('admin.browse') }}"
                                         class="side-menu {{ $route == 'admin.browse' || $route == 'admin.show' || $route == 'admin.showUpdate' || $route == 'admin.add' || $route == 'admin.activate' ? 'side-menu--active' : '' }}">
@@ -588,15 +595,15 @@
                             @endif
 
                             @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
-                            <li>
-                                <a href="{{ route('browse_companies.browse') }}"
-                                    class="side-menu {{ $route == 'browse_companies.browse' ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-feather="package"
-                                            class="block mx-auto"></i></div>
-                                    <div class="side-menu__title"> App Compagnie </div>
-                                </a>
-                            </li>
-                        @endif
+                                <li>
+                                    <a href="{{ route('browse_companies.browse') }}"
+                                        class="side-menu {{ $route == 'browse_companies.browse' ? 'side-menu--active' : '' }}">
+                                        <div class="side-menu__icon"> <i data-feather="package"
+                                                class="block mx-auto"></i></div>
+                                        <div class="side-menu__title"> App Compagnie </div>
+                                    </a>
+                                </li>
+                            @endif
                             @if (Auth::guard('web')->user()->hasPermissionTo('close-robus'))
                                 <li>
                                     <a href="{{ route('browse_close_app_comzones.browse') }}"
