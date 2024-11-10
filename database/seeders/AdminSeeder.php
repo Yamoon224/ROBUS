@@ -93,3 +93,8 @@ class AdminSeeder extends Seeder
         ]);
     }
 }
+
+// admin = 55,00000000000001
+// Pourcentage S-agent retrait *  = 30
+// Depot 15
+// 1

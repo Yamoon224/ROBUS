@@ -275,7 +275,7 @@ class TransactionCiv extends Component
         $valeur_max_send  =  sabdy()->country->amount_max_send;
         $provider = Provider::whereId($this->provider_transaction)->first();
 
-        // try {
+        try {
 
 
             $this->validate(
@@ -356,12 +356,12 @@ class TransactionCiv extends Component
 
                                                     $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
-                                                    // if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+                                                    if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-                                                    //     $encode = substr($wallet_search->sidUser->phone,  -10);
+                                                        $encode = substr($wallet_search->sidUser->phone,  -10);
 
-                                                    //     http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                                                    // }
+                                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                                    }
 
                                                     if ($wallet_search->sidUser->email != null) {
 
@@ -719,11 +719,11 @@ class TransactionCiv extends Component
                 $this->emit('modal-hide-transfers');
                 $this->emit('error', 'Merci de bien vouloir vérifier votre mot de passe, s\'il vous plaît.!');
             }
-        // } catch (\Exception $exception) {
-        //     $this->resetTransactionField();
-        //     $this->emit('modal-hide-inters');
-        //     $this->emit('error', 'Error de message demande a l\'admin !');
-        // }
+        } catch (\Exception $exception) {
+            $this->resetTransactionField();
+            $this->emit('modal-hide-inters');
+            $this->emit('error', 'Error de message demande a l\'admin !');
+        }
     }
 
     public function render()
@@ -827,7 +827,7 @@ class TransactionCiv extends Component
             case 'AFE':
                 return TransactionCost::whereId(45)->first();
             default:
-                return null; // Handle the default case as needed
+                return null; 
         }
     }
 

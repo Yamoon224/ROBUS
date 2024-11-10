@@ -65,7 +65,7 @@
 
                                 </td>
                                 <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $item->	type_user_event ?? null }}</div>
+                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $item->type_user_event ?? null }}</div>
 
                                 </td>
                             </tr>

@@ -921,14 +921,14 @@ class Transfers extends Component
         $code_valdated = sprintf('%0.4s', str_shuffle($rt . $temps_ecoule . $robus));
         $val_amount = $transaction_amount_robus;
 
-        // if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+        if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-        //     $encode = substr($wallet_search->sidUser->phone,  -10);
+            $encode = substr($wallet_search->sidUser->phone,  -10);
 
-        //     $message = 'Code de validation : ' . $code_valdated  . ' . Ne partagez ce code qu\'avec un agent ROBUS lors d\'une transaction ' . ' Expire dans 5 min';
+            $message = 'Code de validation : ' . $code_valdated  . ' . Ne partagez ce code qu\'avec un agent ROBUS lors d\'une transaction ' . ' Expire dans 5 min';
 
-        //     http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-        // }
+            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        }
 
         if ($wallet_search->sidUser->email != null) {
 
@@ -2172,6 +2172,7 @@ class Transfers extends Component
             } else {
                 $this->emit('error', 'Rechargement  existante !');
             }
+            
         } catch (\Exception $exception) {
             $this->resetReloadCardField();
             $this->emit('modal-hide-reloadCard');
@@ -6068,6 +6069,7 @@ class Transfers extends Component
 
         return  $verify_code->update([
             'type_transaction' => 'Retrait',
+            'type_received' => 'Transfert',
             'status' => 'SUCCESS',
             'code_validated' => null,
             'amount_solde'  => $amount_solde ?? null,

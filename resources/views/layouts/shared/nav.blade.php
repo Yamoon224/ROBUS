@@ -402,7 +402,7 @@
                                 class="side-menu {{ $route == 'commissions.browse_companies' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
                                 </div>
-                                <div class="side-menu__title">Companies</div>
+                                <div class="side-menu__title">Compagnies</div>
                             </a>
                         </li>
 

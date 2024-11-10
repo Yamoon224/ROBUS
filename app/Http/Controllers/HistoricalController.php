@@ -689,6 +689,17 @@ class HistoricalController extends Controller
 
     }
 
+
+    public function getTransactionDate($wallets, $searchDateBegin, $searchDateEnd)
+    {
+        return $wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->get();
+    }
+
+    public function getTransactionCount($wallets, $status, $searchDateBegin, $searchDateEnd)
+    {
+        return $wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('status', $status)->count();
+    }
+
     public function walletTransactionsDays($wallets, $searchDateBegin, $searchDateEnd)
     {
 

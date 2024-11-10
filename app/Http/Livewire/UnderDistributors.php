@@ -356,11 +356,14 @@ class UnderDistributors extends Component
             $this->resetPage();
 
             $users->where('is_under_distributer', true)
-                ->orwhere("firstname", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("lastname", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("phone", "LIKE",  "%" . $this->search . "%")
-                ->orWhere("email", "LIKE",  "%" . $this->search . "%")
-                ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
+                ->when($this->search, function ($query) {
+                    $query->where(function ($query) {
+                        $query->where("firstname", "LIKE", "%" . $this->search . "%")
+                            ->orWhere("lastname", "LIKE", "%" . $this->search . "%")
+                            ->orWhere("phone", "LIKE", "%" . $this->search . "%")
+                            ->orWhere("email", "LIKE", "%" . $this->search . "%");
+                    });
+                })
                 ->paginate($this->perPage);
         }
 

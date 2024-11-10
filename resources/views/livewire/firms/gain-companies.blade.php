@@ -3,7 +3,7 @@
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
 
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-pendd">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style-pendd">
             <div>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -77,9 +77,9 @@
         </div>
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-error">
 
-            @if ($showRemonterTransButton)
+            @if ($showRemonterDepotButton)
                 <a id="modify-button"
-                    wire:click="edit({{ $gain_transactions }} , 'Transactions' , 'modal-show-remonte-ccommission')"
+                    wire:click="edit({{ $gain_depots ??  null}} , 'Depots' , 'modal-show-remonte-ccommission')"
                     class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" class="w-6 h-6 mr-3">
@@ -105,13 +105,85 @@
                 </a>
             @endif
 
-            <div class="font-medium text-historique mt-6">Transactions</div>
+            <div class="font-medium text-historique mt-6">Dépot Robus</div>
             <div class="text-slate-500 mt-3">
-                {{ number_format($gain_transactions, 2, ',', ' ') ?? null }} {{ $user_currencie }}
+                {{ number_format($gain_depots, 2, ',', ' ') ?? null }} {{ $user_currencie }}
             </div>
         </div>
 
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-4 box p-5 cursor-pointer zoom-in style_user1">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
+
+            @if ($showRemonterRetraitButton)
+                <a id="modify-button"
+                    wire:click="edit({{ $gain_retraits ??  null}} , 'Retraits' , 'modal-show-remonte-ccommission')"
+                    class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </a>
+            @else
+                <a class="btn btn-danger mr-1 mb-2 btn-sm" href="javascript:;" title="Bloquer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6 mr-3">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 4a4 4 0 014 4v2h2a1 1 0 011 1v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9a1 1 0 011-1h2V8a4 4 0 014-4zM9 10v-2a3 3 0 016 0v2" />
+                    </svg>
+                    Bloquer
+                </a>
+            @endif
+
+            <div class="font-medium text-historique mt-6">Rétrait Robus</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($gain_retraits, 2, ',', ' ') ?? null }} {{ $user_currencie }}
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-error">
+
+            @if ($showRemonterMoneyButton)
+                <a id="modify-button"
+                    wire:click="edit({{ $gain_moneys ??  null}} , 'Moneys' , 'modal-show-remonte-ccommission')"
+                    class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                            stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                            stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </a>
+            @else
+                <a class="btn btn-danger mr-1 mb-2 btn-sm" href="javascript:;" title="Bloquer">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="w-6 h-6 mr-3">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 4a4 4 0 014 4v2h2a1 1 0 011 1v9a1 1 0 01-1 1H5a1 1 0 01-1-1v-9a1 1 0 011-1h2V8a4 4 0 014-4zM9 10v-2a3 3 0 016 0v2" />
+                    </svg>
+                    Bloquer
+                </a>
+            @endif
+
+            <div class="font-medium text-historique mt-6">Mobile Money</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($gain_moneys, 2, ',', ' ') ?? null }} {{ $user_currencie }}
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_user1">
 
             @if ($showRemonterCreditButton)
                 <a wire:click="edit({{ $gain_phone_credits }} , 'Crédits' , 'modal-show-remonte-ccommission')"
@@ -145,7 +217,7 @@
                 {{ $user_currencie }}</div>
 
         </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
             @if ($showRemonterInterButton)
                 <a wire:click="edit({{ $gain_inters }} , 'International' , 'modal-show-remonte-ccommission')"
                     class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
@@ -178,7 +250,7 @@
                     {{ number_format($gain_inters, 2, ',', ' ') ?? null }}
                     {{ $user_currencie }}</div>
         </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table2">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_table2">
             @if ($showRemonterVirementButton)
                 <a wire:click="edit({{ $gain_banks }} , 'Virements' , 'modal-show-remonte-ccommission')"
                     class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
@@ -212,7 +284,7 @@
                     {{ $user_currencie }}</div>
         </div>
 
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_table_factures">
 
             @if ($showRemonterRechargementButton)
                 <a wire:click="edit({{ $gain_deposits }} , 'Rechargements' , 'modal-show-remonte-ccommission')"
@@ -249,7 +321,7 @@
 
                 </div>
         </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table4">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_table4">
 
             @if ($showRemonterTransButton)
                 <a wire:click="edit({{ $gainEmpl_transactions }} , 'Transactions Salaire' , 'modal-show-remonte-ccommission')"

@@ -36,6 +36,9 @@ class GainCompanies extends Component
     public $gain_amount;
     public $payement_gain;
     public $transaction_gain;
+    public $transaction_gain_mobile;
+    public $transaction_gain_depot;
+    public $transaction_gain_retrait;
     public $phonecredit_gain;
     public $inter_gain;
     public $bank_gain;
@@ -48,12 +51,17 @@ class GainCompanies extends Component
     public $showRemonterInterButton = false;
     public $showRemonterRechargementButton = false;
     public $showRemonterVirementButton = false;
+    public $showRemonterDepotButton = false;
+    public $showRemonterRetraitButton = false;
+    public $showRemonterMoneyButton = false;
 
     public function mount()
     {
         $this->deposit_gain = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
         $this->payement_gain = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class);
-        $this->transaction_gain = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class);
+        $this->transaction_gain_mobile = $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class);
+        $this->transaction_gain_depot = $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class);
+        $this->transaction_gain_retrait = $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class);
         $this->transaction_gain_empl = $this->getEmployerTransactionCommission(WalletTransaction::class);
         $this->phonecredit_gain = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class);
         $this->inter_gain = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class);
@@ -67,6 +75,9 @@ class GainCompanies extends Component
             'Active International' => 'showRemonterInterButton',
             'Active Rechargements' => 'showRemonterRechargementButton',
             'Active Virements' => 'showRemonterVirementButton',
+            'Active Depot' => 'showRemonterDepotButton',
+            'Active Retrait' => 'showRemonterRetraitButton',
+            'Active Money' => 'showRemonterMoneyButton',
         ];
 
         foreach ($this->operators as $operator) {
@@ -141,6 +152,15 @@ class GainCompanies extends Component
             } else if ($this->typeRemonte == "Rechargements") {
 
                 $this->gain_amount =  $this->deposit_gain;
+            } else if ($this->typeRemonte == "Depots") {
+
+                $this->gain_amount =  $this->transaction_gain_depot;
+            } else if ($this->typeRemonte == "Retraits") {
+
+                $this->gain_amount =  $this->transaction_gain_retrait;
+            } else if ($this->typeRemonte == "Moneys") {
+
+                $this->gain_amount =  $this->transaction_gain_mobile;
             } else if ($this->typeRemonte == "Transactions Salaire") {
 
                 $this->gain_amount =  $this->transaction_gain_empl;
@@ -158,21 +178,37 @@ class GainCompanies extends Component
                 if ($this->typeRemonte == "Paiements") {
 
                     $this->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class);
+                    $this->payement_gain = 0;
                 } else if ($this->typeRemonte == "Transactions") {
 
                     $this->getUpdateTransactionCommissionAmountNullTotal(WalletTransaction::class);
                 } else if ($this->typeRemonte == "Crédits") {
                     $this->getUpdateTransactionCommissionAmountNullTotal(WalletPhoneCredit::class);
+                    $this->phonecredit_gain = 0;
                 } else if ($this->typeRemonte == "International") {
                     $this->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class);
+                    $this->inter_gain = 0;
                 } else if ($this->typeRemonte == "Virements") {
                     $this->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class);
+                    $this->bank_gain = 0;
                 } else if ($this->typeRemonte == "Rechargements") {
 
                     $this->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class);
+                    $this->deposit_gain = 0;
+                } else if ($this->typeRemonte == "Depots") {
+                    $this->getUpdateTransactionDepotRobusCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_depot = 0;
+                } else if ($this->typeRemonte == "Retraits") {
+                    $this->getUpdateTransactionRetraitRobusCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_retrait = 0;
+                } else if ($this->typeRemonte == "Moneys") {
+
+                    $this->getUpdateTransactionMoneyCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_mobile = 0;
                 } else if ($this->typeRemonte == "Transactions Salaire") {
 
                     $this->getUpdateTransactionEmplCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_empl = 0;
                 } else {
                     $this->emit('error', 'Type de remontée invalide');
                     return;
@@ -261,6 +297,9 @@ class GainCompanies extends Component
             'showRemonterInterButton' => $this->showRemonterInterButton,
             'showRemonterRechargementButton' => $this->showRemonterRechargementButton,
             'showRemonterVirementButton' => $this->showRemonterVirementButton,
+            'showRemonterMoneyButton' => $this->showRemonterMoneyButton,
+            'showRemonterRetraitButton' => $this->showRemonterRetraitButton,
+            'showRemonterDepotButton' => $this->showRemonterDepotButton,
             // Gains
             'gain_payments' => $this->payement_gain,
             'gain_transactions' => $this->transaction_gain,
@@ -268,6 +307,9 @@ class GainCompanies extends Component
             'gain_inters' => $this->inter_gain,
             'gain_banks' => $this->bank_gain,
             'gain_deposits' => $this->deposit_gain,
+            'gain_depots' => $this->transaction_gain_depot,
+            'gain_retraits' => $this->transaction_gain_retrait,
+            'gain_moneys' => $this->transaction_gain_mobile,
             'gainEmpl_transactions' => $this->transaction_gain_empl,
             // Commissions remonte
             'remonteDays' => $this->RealodsAdminDaysGain,
@@ -395,6 +437,89 @@ class GainCompanies extends Component
         return $totalAmount;
     }
 
+    public function getTodayTransactionRobusRetraitCommissionAmountTotal($walletModel)
+    {
+
+        $sidUsers = SidUser::where('company_id',  firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Retrait')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionRobusDepotCommissionAmountTotal($walletModel)
+    {
+
+        $sidUsers = SidUser::where('company_id',  firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Depot')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionMobileCommissionAmountTotal($walletModel)
+    {
+
+        $sidUsers = SidUser::where('company_id',  firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', '!=', 9)
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
 
     public function getUpdateTransactionCommissionAmountNullTotal($walletModel)
     {
@@ -416,6 +541,95 @@ class GainCompanies extends Component
 
             $walletModel::where('wallet_id', $sidUserId)
                 ->whereStatus('SUCCESS')
+                ->update(['commission_companie' => 0]);
+        }
+
+        return $totalAmount;
+    }
+
+    public function getUpdateTransactionMoneyCommissionAmountNullTotal($walletModel)
+    {
+        $sidUsers = SidUser::where('company_id', firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+            $sidUserId = $sidUser->wallet->id;
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', '!=', 9)
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+
+            $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', '!=', 9)
+                ->update(['commission_companie' => 0]);
+        }
+
+        return $totalAmount;
+    }
+
+
+    public function getUpdateTransactionDepotRobusCommissionAmountNullTotal($walletModel)
+    {
+        $sidUsers = SidUser::where('company_id', firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+            $sidUserId = $sidUser->wallet->id;
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Depot')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+
+            $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Depot')
+                ->update(['commission_companie' => 0]);
+        }
+
+        return $totalAmount;
+    }
+
+    public function getUpdateTransactionRetraitRobusCommissionAmountNullTotal($walletModel)
+    {
+        $sidUsers = SidUser::where('company_id', firm()->company->id)
+            ->where('id', '!=', firm()->id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+            $sidUserId = $sidUser->wallet->id;
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Retrait')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+
+            $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Retrait')
                 ->update(['commission_companie' => 0]);
         }
 

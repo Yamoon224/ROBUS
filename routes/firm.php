@@ -40,7 +40,7 @@ Route::group(['middleware' => ['auth:company']], function () {
         Route::get('/show/{id}', [FirmController::class, 'show__underdistributors'])->name('underdistributors.companies.show');
     });
 
-    //   Users
+    //Users
     Route::prefix('categories')->group(function () {
         Route::get('/browse', [FirmController::class, 'browse_categories'])->name('categories.employers.browse');
     });
