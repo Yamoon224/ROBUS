@@ -235,40 +235,51 @@
                             </div>
                         </div>
                         <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-                            @if (!is_null($amount_phone_credit))
-                                <div class="col-span-6 mt-3">
-                                    <label for="amount_phone_credit" class="form-label">Montant à payer<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    @if ($amount_phone_credit == '')
-                                        <div class="text-gray-500 text-sm">
-                                            Entrer le montant
-                                        </div>
-                                    @else
-                                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                            style="font-size: 25px; color:white;">
-                                            {{ $amount_phone_credit_val_nat_pay ?? null }}
-                                            {{ $usersCountry }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="col-span-6 mt-3">
-                                    <label for="amount_phone_credit" class="form-label">Montant à
-                                        recevoir<span class="text-danger">
-                                            *</span></label>
-                                    @if ($amount_phone_credit == '')
-                                        <div class="text-gray-500 text-sm">
-                                            Entrer le montant
-                                        </div>
-                                    @else
-                                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                            style="font-size: 25px; color:white;">
-                                            {{ $amount_phone_credit_val_nat_receive ?? null }}
-                                            {{ $usersCountry }}
-                                        </div>
-                                    @endif
-                                </div>
+
+                            @if ($amount_phone_credit)
+                                @php
+
+                                    $amount_to_pay = $amount_transaction_nat_val_phone_percent;
+                                    $amount_to_receive = $amount_transaction_nat_val_phone_receive;
+                                    $commission = $amount_transaction_nat_val_phone_commission;
+                                    $frais = $amount_transaction_nat_val_phone_percent;
+                                @endphp
+
+                                @if (sabdy()->is_under_distributer == 1)
+
+                                    <x-transaction-detail title="Commission" value="{{ $commission }}"
+                                        country="{{ $usersCountry }}" />
+
+                                    {{-- Montant à recevoir --}}
+                                    <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
+                                        country="{{ $usersCountry }}" />
+
+                                    <div class="col-span-12 mt-3">
+                                        <label for="amount_phone_credit" class="form-label">Montant à
+                                            Payer<span class="text-danger">
+                                                *</span></label>
+                                        @if ($amount_phone_credit == '')
+                                            <div class="text-gray-500 text-sm">
+                                                Entrer le montant
+                                            </div>
+                                        @else
+                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                style="font-size: 25px; color:white;">
+                                                {{ $frais ?? null }}
+                                                {{ $usersCountry }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                @else
+                                    <x-transaction-detail title="Montant à payer" value="{{ $amount_to_pay }}"
+                                        country="{{ $usersCountry }}" />
+
+                                    {{-- Montant à recevoir --}}
+                                    <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
+                                        country="{{ $usersCountry }}" />
+                                @endif
                             @endif
+
                         </div>
                     @endif
                 @endif
@@ -329,7 +340,7 @@
 
                     </div>
                     <div class="col-span-12 mt-1" wire:loading.class="hidden" wire:target="addValidatedPhoneCredit">
-                       
+
                         <x-password-input />
 
                     </div>
@@ -341,17 +352,17 @@
                         wire:target="addValidatedPhoneCredit">Annuler</button>
 
 
-            
+
                     @if ($isPasswordValid)
-                    <button wire:click="addValidatedPhoneCredit" type="button" wire:loading.attr="disabled"
-                        class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
-                        Validez la demande
-                    </button>
+                        <button wire:click="addValidatedPhoneCredit" type="button" wire:loading.attr="disabled"
+                            class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
+                            Validez la demande
+                        </button>
                     @else
-                    <p class="text-danger mt-2">
-                        Veuillez entrer un mot de passe valide pour activer le bouton de validation.
-                    </p>
-                @endif
+                        <p class="text-danger mt-2">
+                            Veuillez entrer un mot de passe valide pour activer le bouton de validation.
+                        </p>
+                    @endif
 
                     <div wire:loading.flex wire:target="addValidatedPhoneCredit"
                         class="flex items-center justify-center">

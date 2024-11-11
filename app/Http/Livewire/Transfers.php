@@ -34,6 +34,7 @@ use App\Models\Invoices\InvoicePhoneCredit;
 use App\Models\Invoices\InvoiceTransaction;
 use App\Models\Moneys\LevelMoney;
 use App\Models\Offer;
+use App\Models\OperatorService;
 use App\Models\Payments\Deposit;
 use App\Models\Payments\Payment;
 use App\Models\Payments\PaymentBank;
@@ -354,8 +355,37 @@ class Transfers extends Component
     public $commission_transaction_val_nat_pay;
     public $commission_transaction_val_admin_receive;
     public $commission_transaction_val_nat_receive;
+
+    // Phone credit
+    public $commission_transaction_val_nat_phone_pay;
+    public $commission_transaction_val_admin_phone_receive;
+    public $commission_transaction_val_nat_phone_receive;
     public $commission_transaction_drawal;
 
+    // Transaction Bloque
+    public $showRemonterTransButton = false;
+    public $showRemonterCreditButton = false;
+    public $showRemonterPaiementButton = false;
+    public $showRemonterInterButton = false;
+    public $showRemonterRechargementButton = false;
+    public $showRemonterVirementButton = false;
+    public $showRemonterDepotButton = false;
+    public $showRemonterRetraitButton = false;
+    public $showRemonterMoneyButton = false;
+
+    // Transactions
+    public $showTransButton = false;
+    public $showCreditButton = false;
+    public $showPaiementButton = false;
+    public $showInterButton = false;
+    public $showRechargementButton = false;
+    public $showVirementButton = false;
+    public $showDepotButton = false;
+    public $showRetraitButton = false;
+    public $showMoneyButton = false;
+
+    public $operators;
+    public $operatorsTransaction;
 
     protected $listeners = [
         '' => 'transactionInterReload',
@@ -391,6 +421,56 @@ class Transfers extends Component
     ];
 
 
+    public function mount()
+    {
+
+        $this->operators = OperatorService::getOperatorsWithCommissions(sabdy()->id);
+        $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
+        // $this->resetValeurReload();
+        // $this->updateProviderTransaction();
+
+        $restrictionMap = [
+            'Active Transactions' => 'showRemonterTransButton',
+            'Active Crédits' => 'showRemonterCreditButton',
+            'Active Paiements' => 'showRemonterPaiementButton',
+            'Active International' => 'showRemonterInterButton',
+            'Active Rechargements' => 'showRemonterRechargementButton',
+            'Active Virements' => 'showRemonterVirementButton',
+            'Active Depot' => 'showRemonterDepotButton',
+            'Active Retrait' => 'showRemonterRetraitButton',
+            'Active Money' => 'showRemonterMoneyButton',
+        ];
+
+        $restrictionMapTransaction = [
+            'TRANSFERT CREDIT' => 'showCreditButton',
+            'PAIEMENT DE FACTURE' => 'showPaiementButton',
+            'TRANSFERT INTERNATIONNAL MOBILE MONEY' => 'showInterButton',
+            'RECHARGEMENT DE CARTE' => 'showRechargementButton',
+            'VERSEMENT BANCAIRE' => 'showVirementButton',
+            'RETRAIT' => 'showRetraitButton',
+            'DEPOT ET TRANSFERT MOBILE MONEY' => 'showMoneyButton',
+        ];
+
+        foreach ($this->operatorsTransaction as $operator) {
+            $restrictions = explode(',', $operator->name);
+            
+            foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+
+        foreach ($this->operators as $operator) {
+            $restrictions = explode(',', $operator->name);
+
+            foreach ($restrictionMap as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+    }
 
     public function checkPassword()
     {
@@ -1119,7 +1199,11 @@ class Transfers extends Component
 
                             $amount_payment_drawal = $verify_code->amount + $percent_drawal;
 
+                            $amount_payment_receved = $verify_code->amount - $percent_drawal;
+
                             $valuer_with_drawal = $percent_robus->percent_with_drawal * $commission_valeur;
+
+                            $valuer_with_drawal_s = $percent_robus->percent_with_drawal * $verify_code->amount;
 
                             $walletAmountSend = Wallet::where('wallet_id',  $verify_code->num_wallet)->first();
 
@@ -1127,7 +1211,12 @@ class Transfers extends Component
 
                             $amount_solde = (float)sabdy()->wallet->amount + (float)$verify_code->amount;
 
+                            $verify_code->update([
+                                'amount_received'  => $amount_payment_receved ?? null,
+                            ]);
+
                             $this->updateVerifyCodeWallet($verify_code, $amount_solde, $amount_solde_drawal);
+
 
                             $validated_transaction =   $this->updatePaiementWithdrawalWallet($wallet_user, $amount_payment_drawal);
 
@@ -1137,50 +1226,59 @@ class Transfers extends Component
 
                                 $this->createInvoiceTransactionDrawal($transaction, $verify_code);
 
-                                $this->TransactionDistributorDrawal(
-                                    $valuer_with_drawal,
-                                    $admin_civ,
-                                    $verify_code
-                                );
 
                                 $amountAccountDrawal = $this->updatePaiementDrawalWallet($walletUser,  $verify_code->amount);
 
                                 if ($amountAccountDrawal) {
 
 
-                                    $updateWallet =  $this->updateWalletCommissions($verify_code,  $valuer_with_drawal, $percent_robus, $verify_code->amount);
+                                    if ($verify_code->type_transaction == "Retrait") {
 
+                                        $verify_code->update([
+                                            'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
+                                        ]);
 
-                                    if ($updateWallet) {
+                                        $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                                        $this->commissionAdminDrawal($admin_civ, $commissionAdmin_drawal, $verify_code);
-
-                                        event(new CreateWalletTransfersEvent($verify_code));
-
-                                        $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $verify_code->amount . $wallet_search->currencie->code . ' chez ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
-
-                                        if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
-
-                                            $encode = substr($wallet_search->sidUser->phone,  -10);
-
-                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                        if ($account_accepted) {
+                                            $valuer_companie = $percent_robus->percent_custum_drawal_companie * $valeur_percent_admin;
+                                            $verify_code->increment('commission_companie', $valuer_companie);
                                         }
 
-                                        if ($wallet_search->sidUser->email != null) {
-
-                                            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
-                                        }
-
-                                        $this->notifyCreateUsers($walletUser, $admins, 'Transactions', 'Demande de retrait est en cours de validation', 'Demande de Retrait effectuer par  ' . ' ' . $verify_code->wallet->sidUser->firstname);
-
-                                        if ($admins->count() > 0) {
-                                            $this->notifyAdmins($admins);
-                                        }
-
-                                        $this->resetTransactionField();
-                                        $this->emit('modal-hide-transfers');
-                                        $this->emit('success', 'Retrait effectué !');
+                                        $this->TransactionDistributorDrawal(
+                                            $valuer_with_drawal,
+                                            $admin_civ,
+                                            $verify_code
+                                        );
                                     }
+
+                                    $this->commissionAdminDrawal($admin_civ, $commissionAdmin_drawal, $verify_code);
+
+                                    event(new CreateWalletTransfersEvent($verify_code));
+
+                                    $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $verify_code->amount . $wallet_search->currencie->code . ' chez ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                    if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                        $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                    }
+
+                                    if ($wallet_search->sidUser->email != null) {
+
+                                        Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
+                                    }
+
+                                    $this->notifyCreateUsers($walletUser, $admins, 'Transactions', 'Demande de retrait est en cours de validation', 'Demande de Retrait effectuer par  ' . ' ' . $verify_code->wallet->sidUser->firstname);
+
+                                    if ($admins->count() > 0) {
+                                        $this->notifyAdmins($admins);
+                                    }
+
+                                    $this->resetTransactionField();
+                                    $this->emit('modal-hide-transfers');
+                                    $this->emit('success', 'Retrait effectué !');
                                 } else {
                                     $this->resetTransactionField();
                                     $this->emit('modal-hide-transfers');
@@ -1218,6 +1316,11 @@ class Transfers extends Component
     }
 
 
+    public function updatedAmountPhoneCredit()
+    {
+        $this->calculateAmountPhoneCredits();
+    }
+
     public function updatedTransactionAmountRobus()
     {
         $this->calculateAmounts();
@@ -1237,12 +1340,40 @@ class Transfers extends Component
 
             if ($reel_amount != '') {
 
+
                 $commission_transaction = $this->getRobusPercentageSDistributers();
 
+                $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+
                 // Calculs
-                $this->commission_transaction_val_admin_receive = (float) $commission_transaction->percent_custum_drawal * $reel_amount;
-                $this->commission_transaction_drawal = (float) $commission_transaction->percent_with_drawal * $reel_amount;
+                $this->commission_transaction_val_admin_receive = (float) $commission_transaction->percent_custum_drawal * $commission_percent_transaction;
+                $this->commission_transaction_drawal = (float) $commission_transaction->percent_with_drawal * $commission_percent_transaction;
                 $this->commission_transaction_val_nat_receive = (float) $reel_amount - $this->commission_transaction_val_admin_receive;
+            }
+        }
+    }
+
+    public function calculateAmountPhoneCredits()
+    {
+
+        $this->commission_transaction_val_admin_phone_receive = 0;
+        $this->commission_transaction_val_nat_phone_receive = 0;
+        $this->commission_transaction_val_nat_phone_pay = 0;
+
+
+        if ($this->amount_phone_credit) {
+            // Calcul pour les transactions Robus
+            $reel_amount = $this->search_amount($this->amount_phone_credit);
+
+            if ($reel_amount != '') {
+
+                $commission_transaction = PhoneCreditCost::whereId(1)->first();
+
+                $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+                // Calculs
+                $this->commission_transaction_val_admin_phone_receive = (float) $commission_transaction->percent_merchands * $commission_percent_transaction;
+                $this->commission_transaction_val_nat_phone_receive = (float) $reel_amount;
+                $this->commission_transaction_val_nat_phone_pay = (float) $commission_percent_transaction;
             }
         }
     }
@@ -2172,7 +2303,6 @@ class Transfers extends Component
             } else {
                 $this->emit('error', 'Rechargement  existante !');
             }
-            
         } catch (\Exception $exception) {
             $this->resetReloadCardField();
             $this->emit('modal-hide-reloadCard');
@@ -4979,23 +5109,6 @@ class Transfers extends Component
             }
         }
 
-        if ($this->amount_phone_credit != '') {
-
-            $commission_phone_credit = PhoneCreditCost::whereId(1)->first();
-
-            $commission_phone_credit_val_nat_pay = (float) $this->amount_phone_credit * (float) $commission_phone_credit->percent;
-
-            $valeur_receive = (float) $this->amount_phone_credit;
-
-
-            if ($valeur_receive < 0) {
-
-                $commission_phone_credit_val_nat_receive = "Montant negatif";
-            } else {
-
-                $commission_phone_credit_val_nat_receive =  $valeur_receive;
-            }
-        }
 
         // Transactions
         $transactions = $transaction->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
@@ -5136,6 +5249,11 @@ class Transfers extends Component
             'amount_transaction_nat_val_percent' => $this->commission_transaction_val_admin_receive,
             'amount_transaction_nat_val_receive' => $this->commission_transaction_val_nat_receive,
             'amount_transaction_nat_val_drawal' => $this->commission_transaction_drawal,
+            // Phone credit
+            'amount_transaction_nat_val_phone_percent' => $this->commission_transaction_val_nat_phone_pay,
+            'amount_transaction_nat_val_phone_receive' => $this->commission_transaction_val_nat_phone_receive,
+            'amount_transaction_nat_val_phone_commission' => $this->commission_transaction_val_admin_phone_receive,
+
             'code_valided' => $code_validated_val_nat,
             'code_valided_inter' => $code_validated_val_nat,
             'withdrawal_robus' => Provider::whereStatus(true)
@@ -5187,6 +5305,17 @@ class Transfers extends Component
             'provider_reloads' => $this->ReloadTransaction,
             'provider_credits' => $this->PhoneCreditTransaction,
             'usersCountry' => sabdy()->wallet->currencie->code,
+            // Bloque valeurs
+            'showTransButton' => $this->showTransButton,
+            'showCreditButton' => $this->showCreditButton,
+            'showPaiementButton' => $this->showPaiementButton,
+            'showInterButton' => $this->showInterButton,
+            'showRechargementButton' => $this->showRechargementButton,
+            'showVirementButton' => $this->showVirementButton,
+            'showMoneyButton' => $this->showMoneyButton,
+            'showRetraitButton' => $this->showRetraitButton,
+            'showDepotButton' => $this->showRemonterDepotButton,
+
             'user_auth' => $walletUser,
             'user_send' => sabdy(),
         ]);
@@ -5329,17 +5458,20 @@ class Transfers extends Component
 
         if (sabdy()->is_under_distributer) {
 
-            $valuer_deposit =  $amount_user->comission_distributer;
+            if ($this->showRemonterVirementButton) {
 
-            $walletBank->update([
-                'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
-            ]);
+                $valuer_deposit =  $amount_user->comission_distributer;
 
-            $account_accepted = sabdy()->is_accepted_companie ?? false;
+                $walletBank->update([
+                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
+                ]);
 
-            if ($account_accepted) {
-                $valuer_companie = $amount_user->percent_companie;
-                $walletBank->increment('commission_companie', $valuer_companie);
+                $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+                if ($account_accepted) {
+                    $valuer_companie = $amount_user->percent_companie;
+                    $walletBank->increment('commission_companie', $valuer_companie);
+                }
             }
         } else {
 
@@ -5402,6 +5534,10 @@ class Transfers extends Component
     public function updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser, $amount)
     {
 
+        $amount_percent = $percent_robus->percent * $amount;
+
+        $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
+
         $amount_commission = $amount + ($percent_robus->percent * $amount);
 
         $amount_solde = sabdy()->wallet->amount - $amount_commission;
@@ -5410,29 +5546,84 @@ class Transfers extends Component
             'amount_solde' => $amount_solde,
         ]);
 
-
         $this->updatePaiementWallet($walletUser, $amount_commission);
 
+        if (sabdy()->is_under_distributer) {
 
-        $admin_valeur =  $amount * $percent_robus->percent;
+            if ($this->showRemonterCreditButton) {
 
-        //  Send valeur in Admin
-        if ($admin_civ->count() > 0) {
+                $valuer_companie = $percent_robus->percent_companie * $amount;
 
-            $count_admin = $admin_civ->count();
+                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
 
-            $valeur_single = $admin_valeur / $count_admin;
+                $admin_valeur = (float) $amount_percent - (float) $cumul_valeurs;
 
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_phone_credit_id' => $walletPhone->id,
-                    'description' => 'Commission administrateur',
-                ]);
+                $walletPhone->increment('commissions', $valuer_deposit);
+
+                $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+                if ($account_accepted) {
+                    $walletPhone->increment('commission_companie', $valuer_companie);
+                }
+
+                if ($admin_civ->count() > 0) {
+
+                    $count_admin = $admin_civ->count();
+
+                    $valeur_single = $admin_valeur / $count_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $admin_single = SidUser::find($user->id);
+                        AdminsCom::create([
+                            'amount' =>   $valeur_single,
+                            'sid_user_id' =>   $admin_single->id,
+                            'wallet_phone_credit_id' => $walletPhone->id,
+                            'description' => 'Commission administrateur',
+                        ]);
+                    }
+                }
+            } else {
+
+                //  Send valeur in Admin
+                if ($admin_civ->count() > 0) {
+
+                    $count_admin = $admin_civ->count();
+
+                    $valeur_single = $amount_percent / $count_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $admin_single = SidUser::find($user->id);
+                        AdminsCom::create([
+                            'amount' =>   $valeur_single,
+                            'sid_user_id' =>   $admin_single->id,
+                            'wallet_phone_credit_id' => $walletPhone->id,
+                            'description' => 'Commission administrateur',
+                        ]);
+                    }
+                }
+            }
+        } else {
+
+            //  Send valeur in Admin
+            if ($admin_civ->count() > 0) {
+
+                $count_admin = $admin_civ->count();
+
+                $valeur_single = $amount_percent / $count_admin;
+
+                foreach ($admin_civ as $user) {
+                    $admin_single = SidUser::find($user->id);
+                    AdminsCom::create([
+                        'amount' =>   $valeur_single,
+                        'sid_user_id' =>   $admin_single->id,
+                        'wallet_phone_credit_id' => $walletPhone->id,
+                        'description' => 'Commission administrateur',
+                    ]);
+                }
             }
         }
+
+
 
         return true;
     }
@@ -5633,17 +5824,20 @@ class Transfers extends Component
 
         if (sabdy()->is_under_distributer) {
 
-            $valuer_deposit =  $percent_merchands;
+            if ($this->showRemonterRechargementButton) {
 
-            $walletOrderCard->update([
-                'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
-            ]);
+                $valuer_deposit =  $percent_merchands;
 
-            $account_accepted = sabdy()->is_accepted_companie ?? false;
+                $walletOrderCard->update([
+                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
+                ]);
 
-            if ($account_accepted) {
-                $valuer_companie = $commissionCompanie;
-                $walletOrderCard->increment('commission_companie', $valuer_companie);
+                $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+                if ($account_accepted) {
+                    $valuer_companie = $commissionCompanie;
+                    $walletOrderCard->increment('commission_companie', $valuer_companie);
+                }
             }
         }
 
@@ -5932,17 +6126,20 @@ class Transfers extends Component
 
             $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
 
-            $walletPayment->update([
-                'commissions' => $valuer_deposit,
-            ]);
+            if ($this->showRemonterPaiementButton) {
 
-            $account_accepted = sabdy()->is_accepted_companie ?? false;
+                $walletPayment->update([
+                    'commissions' => $valuer_deposit,
+                ]);
 
-            if ($account_accepted) {
+                $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                $valuer_companie = $percent_robus->percent_companie;
+                if ($account_accepted) {
 
-                $walletPayment->increment('commission_companie', $valuer_companie);
+                    $valuer_companie = $percent_robus->percent_companie;
+
+                    $walletPayment->increment('commission_companie', $valuer_companie);
+                }
             }
         } else {
 
@@ -5965,13 +6162,25 @@ class Transfers extends Component
 
         if (sabdy()->is_under_distributer) {
 
-            $valuer_deposit =  $percent_robus->comission_canal;
+            if ($this->showRemonterPaiementButton) {
 
-            $admin_valeur =  $percent_robus->amount_canal -  $percent_robus->comission_canal;
+                $valuer_deposit =  $percent_robus->comission_canal;
 
-            $walletPayment->update([
-                'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
-            ]);
+                $admin_valeur =  $percent_robus->amount_canal -  $percent_robus->comission_canal;
+
+                $walletPayment->update([
+                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
+                ]);
+
+                $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+                if ($account_accepted) {
+
+                    $valuer_companie = $percent_robus->percent_companie;
+
+                    $walletPayment->increment('commission_companie', $valuer_companie);
+                };
+            }
         } else {
 
             $admin_valeur =  $percent_robus->amount_canal;
@@ -6072,6 +6281,7 @@ class Transfers extends Component
             'type_received' => 'Transfert',
             'status' => 'SUCCESS',
             'code_validated' => null,
+            'amount_received' => null,
             'amount_solde'  => $amount_solde ?? null,
             'amount_solde_drawal' => $amount_solde_drawal ?? null,
             'created_by' => Auth::guard('web')->user()->id,
@@ -6095,16 +6305,20 @@ class Transfers extends Component
     protected function updateWalletCommissions($verify_code, $valuer_with_drawal, $percent_robus, $valeur_percent_admin)
     {
 
-        $verify_code->update([
-            'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
-        ]);
+        if ($verify_code->type_transaction == "Retrait") {
 
-        $account_accepted = sabdy()->is_accepted_companie ?? false;
+            $verify_code->update([
+                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
+            ]);
 
-        if ($account_accepted) {
-            $valuer_companie = $percent_robus->percent_custum_drawal_companie * $valeur_percent_admin;
-            $verify_code->increment('commission_companie', $valuer_companie);
+            $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+                $valuer_companie = $percent_robus->percent_custum_drawal_companie * $valeur_percent_admin;
+                $verify_code->increment('commission_companie', $valuer_companie);
+            }
         }
+
 
         return true;
     }

@@ -380,90 +380,7 @@
                     </div>
                 </div>
             </div>
-            {{-- <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in ">
-                    <div class="box p-wallet style_table1">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $xbets_success }}
 
-                                </div>
-                            </div>
-                            <div class="ml-auto">
-
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $xbets_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $xbets_error }}
-
-                                </div>
-
-                            </div>
-
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $walletsXbets ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Service 1Xbets {{ $usersCountry }} </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in ">
-                    <div class="box p-wallet style_table1">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $waves_success }}
-
-                                </div>
-                            </div>
-                            <div class="ml-auto">
-
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $waves_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $waves_error }}
-
-                                </div>
-
-                            </div>
-
-                        </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $walletsXbets ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Achat UV Waves {{ $usersCountry }} </div>
-                    </div>
-                </div>
-            </div> --}}
         </div>
 
 
@@ -472,59 +389,132 @@
 
             @if (sabdy()->country->code == 'CI')
 
-                @if (sabdy()->hasPermissionTo('transfers-argent'))
-                    <button class="btn btn-transuv w-22 mr-1 mb-1"
-                        wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
-                        {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
-                    </button>
-                @endif
-                @if (sabdy()->hasPermissionTo('paiement-factures'))
-                    <button class="btn btn-invoice w-22 mr-1 mb-1"
-                        wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">Paiements
-                        facture</button>
-                @endif
-                @if (sabdy()->hasPermissionTo('virement-compte'))
-                    <button class="btn btn-virement w-22 mr-1 mb-1"
-                        wire:click="$emit('modal-virements-show' , 'create-virementBank-modal')">Virement
-                        bancaire</button>
-                @endif
-                @if (sabdy()->hasPermissionTo('rechargement-carte'))
-                    <button class="btn btn-reload w-22 mr-1 mb-1"
-                        wire:click="$emit('modal-reloadCards-show' , 'create-reloadCards-modal')">Rechargement de
-                        carte</button>
-                @endif
-                @if (sabdy()->hasPermissionTo('rechargement-credit'))
-                    <button class="btn btn-pending w-22 mr-1 mb-1"
-                        wire:click="$emit('modal-phoneCredit-show' , 'create-phoneCredit-modal')">Credit
-                        telephonique</button>
-                @endif
-                @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                    <button class="btn btn-inter w-22 mr-1 mb-1"
-                        wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                @if ($is_under)
+
+                    @if ($showMoneyButton)
+                        @if (sabdy()->hasPermissionTo('transfers-argent'))
+                            <button class="btn btn-transuv w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
+                                {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
+                            </button>
+                        @endif
+
+                    @endif
+
+                    @if ($showPaiementButton)
+
+
+                        @if (sabdy()->hasPermissionTo('paiement-factures'))
+                            <button class="btn btn-invoice w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">Paiements
+                                facture</button>
+                        @endif
+
+                    @endif
+
+                    @if ($showVirementButton)
+
+                        @if (sabdy()->hasPermissionTo('virement-compte'))
+                            <button class="btn btn-virement w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-virements-show' , 'create-virementBank-modal')">Virement
+                                bancaire</button>
+                        @endif
+                    @endif
+
+
+                    @if ($showRechargementButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-carte'))
+                            <button class="btn btn-reload w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-reloadCards-show' , 'create-reloadCards-modal')">Rechargement
+                                de
+                                carte</button>
+                        @endif
+                    @endif
+
+                    @if ($showCreditButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-credit'))
+                            <button class="btn btn-pending w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-phoneCredit-show' , 'create-phoneCredit-modal')">Credit
+                                telephonique</button>
+                        @endif
+                    @endif
+
+                    @if ($showInterButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-inters'))
+                            <button class="btn btn-inter w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                        @endif
+                    @endif
+                @else
+                
+                    @if (sabdy()->hasPermissionTo('transfers-argent'))
+                        <button class="btn btn-transuv w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
+                            {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
+                        </button>
+                    @endif
+
+                    @if (sabdy()->hasPermissionTo('paiement-factures'))
+                        <button class="btn btn-invoice w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">Paiements
+                            facture</button>
+                    @endif
+                    @if (sabdy()->hasPermissionTo('virement-compte'))
+                        <button class="btn btn-virement w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-virements-show' , 'create-virementBank-modal')">Virement
+                            bancaire</button>
+                    @endif
+                    @if (sabdy()->hasPermissionTo('rechargement-carte'))
+                        <button class="btn btn-reload w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-reloadCards-show' , 'create-reloadCards-modal')">Rechargement de
+                            carte</button>
+                    @endif
+                    @if (sabdy()->hasPermissionTo('rechargement-credit'))
+                        <button class="btn btn-pending w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-phoneCredit-show' , 'create-phoneCredit-modal')">Credit
+                            telephonique</button>
+                    @endif
+                    @if (sabdy()->hasPermissionTo('rechargement-inters'))
+                        <button class="btn btn-inter w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                    @endif
+
                 @endif
             @else
                 @if ($is_under)
 
-                    @if (sabdy()->hasPermissionTo('transfers-argent'))
-                        <button class="btn btn-transuv w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-transfers-show' , 'create-transfersUV-modal')">Transfert
-                            d'argent</button>
+                    @if ($showMoneyButton)
+                        @if (sabdy()->hasPermissionTo('transfers-argent'))
+                            <button class="btn btn-transuv w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
+                                {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
+                            </button>
+                        @endif
+
                     @endif
 
-                    @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                        <button class="btn btn-inter w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-inters-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                    @if ($showInterButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-inters'))
+                            <button class="btn btn-inter w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                        @endif
                     @endif
                 @else
-                    @if (sabdy()->hasPermissionTo('transfers-argent'))
-                        <button class="btn btn-transuv w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-transfers-show' , 'create-transfersUV-modal')">Transfert
-                            d'argent</button>
+                    @if ($showMoneyButton)
+                        @if (sabdy()->hasPermissionTo('transfers-argent'))
+                            <button class="btn btn-transuv w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
+                                {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
+                            </button>
+                        @endif
+
                     @endif
 
-                    @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                        <button class="btn btn-inter w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-inters-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                    @if ($showInterButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-inters'))
+                            <button class="btn btn-inter w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                        @endif
                     @endif
 
 

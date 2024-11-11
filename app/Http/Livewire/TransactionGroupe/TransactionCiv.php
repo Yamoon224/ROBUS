@@ -5,12 +5,14 @@ namespace App\Http\Livewire\TransactionGroupe;
 use App\Events\AdminNotifEvent;
 use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
+use App\Mail\CodeValidated;
 use App\Models\AdminsCom;
 use App\Models\Banks\BankCard;
 use App\Models\Costs\TransactionCost;
 use App\Models\Custumers\Country;
 use App\Models\Invoices\InvoiceTransaction;
 use App\Models\Moneys\LevelMoney;
+use App\Models\OperatorService;
 use App\Models\Payments\Transaction;
 use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
@@ -28,10 +30,9 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\CodeValidated;
 
 class TransactionCiv extends Component
 {
@@ -60,9 +61,123 @@ class TransactionCiv extends Component
     public $password_validated;
     public $showPasswordField = 1;
     public $isPasswordValid = false;
+    public $transaction_gain_empl;
+    public $showRemonterTransButton = false;
+    public $showRemonterCreditButton = false;
+    public $showRemonterPaiementButton = false;
+    public $showRemonterInterButton = false;
+    public $showRemonterRechargementButton = false;
+    public $showRemonterVirementButton = false;
+    public $showRemonterDepotButton = false;
+    public $showRemonterRetraitButton = false;
+    public $showRemonterMoneyButton = false;
+    public $operators;
+
+
+    public function mount()
+    {
+      
+        $this->operators = OperatorService::getOperatorsWithCommissions(sabdy()->id);
+        $this->resetValeurReload();
+        $this->updateProviderTransaction();
+
+        $restrictionMap = [
+            'Active Transactions' => 'showRemonterTransButton',
+            'Active Crédits' => 'showRemonterCreditButton',
+            'Active Paiements' => 'showRemonterPaiementButton',
+            'Active International' => 'showRemonterInterButton',
+            'Active Rechargements' => 'showRemonterRechargementButton',
+            'Active Virements' => 'showRemonterVirementButton',
+            'Active Depot' => 'showRemonterDepotButton',
+            'Active Retrait' => 'showRemonterRetraitButton',
+            'Active Money' => 'showRemonterMoneyButton',
+        ];
+
+        foreach ($this->operators as $operator) {
+            $restrictions = explode(',', $operator->name);
+
+            foreach ($restrictionMap as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+    }
+
+
+    public function getTodayTransactionCommissionAmountTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', sabdy()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionMobileCommissionAmountTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionRobusDepotCommissionAmountTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
 
 
 
+    public function getTodayTransactionRobusRetraitCommissionAmountTotal($walletModel)
+    {
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', sabdy()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
     public function updatedTransactionAmountRobus()
     {
         // Si la valeur change, mettez à jour les montants
@@ -173,11 +288,7 @@ class TransactionCiv extends Component
         $this->emit('modal-hide-transfers');
         $this->emit('transaction_national');
     }
-    public function mount()
-    {
-        $this->resetValeurReload();
-        $this->updateProviderTransaction();
-    }
+
 
     public function cancelTransactionField()
     {
@@ -274,6 +385,7 @@ class TransactionCiv extends Component
         $valeur_ceiling = sabdy()->silver_ceiling;
         $valeur_max_send  =  sabdy()->country->amount_max_send;
         $provider = Provider::whereId($this->provider_transaction)->first();
+
 
         try {
 
@@ -752,6 +864,15 @@ class TransactionCiv extends Component
             'amount_transaction_nat_money_val_percent' => $this->commission_transaction_money_val_admin_receive,
             'amount_transaction_nat_money_val_receive' => $this->commission_transaction_money_val_nat_receive,
             'usersCountry' => sabdy()->wallet->currencie->code,
+            'showRemonterTransButton' => $this->showRemonterTransButton,
+            'showRemonterCreditButton' => $this->showRemonterCreditButton,
+            'showRemonterPaiementButton' => $this->showRemonterPaiementButton,
+            'showRemonterInterButton' => $this->showRemonterInterButton,
+            'showRemonterRechargementButton' => $this->showRemonterRechargementButton,
+            'showRemonterVirementButton' => $this->showRemonterVirementButton,
+            'showRemonterMoneyButton' => $this->showRemonterMoneyButton,
+            'showRemonterRetraitButton' => $this->showRemonterRetraitButton,
+            'showRemonterDepotButton' => $this->showRemonterDepotButton,
             'countrie_number_local' => sabdy()->country
                 ->indecative,
 
@@ -827,7 +948,7 @@ class TransactionCiv extends Component
             case 'AFE':
                 return TransactionCost::whereId(45)->first();
             default:
-                return null; 
+                return null;
         }
     }
 
@@ -1159,14 +1280,15 @@ class TransactionCiv extends Component
 
         $wallet->update($updatedValues);
 
-        // Gestion des commissions d'intermédiaires
         $valeur_percent_admin = $percent_robus->percent * $transaction_amount_robus;
 
         if (sabdy()->is_under_distributer) {
 
+
             $valeur_admin = $percent_robus->percent_admin * $valeur_percent_admin;
             $valuer_deposit = $percent_robus->percent_deposit * $valeur_percent_admin;
             $valuer_with_drawal = $percent_robus->percent_with_drawal * $valeur_percent_admin;
+
             if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)sabdy()->country->currencie->value;
                 $admin_valeur_convertion = (float)$valeur_admin * (float)sabdy()->country->currencie->value;
@@ -1178,21 +1300,60 @@ class TransactionCiv extends Component
                 $admin_valeur_convertion = (float)$valeur_admin * (float)sabdy()->country->currencie->value;
             }
 
-            $walletTransaction->increment('commissions', $valuer_deposit);
+            if ($walletTransaction->type_transaction == "Depot") {
 
-            $account_accepted = sabdy()->is_accepted_companie ?? false;
+                if ($this->showRemonterDepotButton) {
 
-            if ($account_accepted) {
-                $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
-                $walletTransaction->increment('commission_companie', $valuer_companie);
-            }
+                    $walletTransaction->increment('commissions', $valuer_deposit);
 
-            if ($admin_civ->count() > 0) {
-                $nmbre_admin = $admin_civ->count();
-                $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
+                    $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                foreach ($admin_civ as $user) {
-                    $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                    if ($account_accepted) {
+                        $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
+                        $walletTransaction->increment('commission_companie', $valuer_companie);
+                    }
+
+                    if ($admin_civ->count() > 0) {
+                        $nmbre_admin = $admin_civ->count();
+                        $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
+    
+                        foreach ($admin_civ as $user) {
+                            $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                        }
+                    }
+                }
+            } elseif ($walletTransaction->type_transaction == "Retrait") {
+
+                if ($this->showRemonterRetraitButton) 
+                {
+                    $walletTransaction->increment('commissions', $valuer_deposit);
+
+                    $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+                    if ($account_accepted) {
+                        $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
+                        $walletTransaction->increment('commission_companie', $valuer_companie);
+                    }
+
+                    if ($admin_civ->count() > 0) {
+                        $nmbre_admin = $admin_civ->count();
+                        $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
+    
+                        foreach ($admin_civ as $user) {
+                            $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                        }
+                    }
+                }
+
+            } else {
+
+                if ($admin_civ->count() > 0) {
+                    $nmbre_admin = $admin_civ->count();
+                    $valeur_single = ($valeur_percent_admin) / $nmbre_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                    }
                 }
             }
         } else {
@@ -1259,7 +1420,7 @@ class TransactionCiv extends Component
         }
     }
 
-    private function updateAmountRobusReceivedDistributer($compte_number_robus , $walletTransaction)
+    private function updateAmountRobusReceivedDistributer($compte_number_robus, $walletTransaction)
     {
 
 
@@ -1408,68 +1569,92 @@ class TransactionCiv extends Component
         // Commissions Inters 
         if (sabdy()->is_under_distributer == 1) {
 
-            // 50 %
+            // Calcul des valeurs de commissions
             $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
-
-            // 20%
-            $valuer_deposit = $percent_robus->percent_deposit *  $valeur_percent_valeur;
+            $valuer_deposit = $percent_robus->percent_deposit * $valeur_percent_valeur;
 
 
             if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
-
-                //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
-
                 $percent_valeur_convertion =   (float)  $valuer_admin *   (float) sabdy()->country->currencie->value;
             } elseif ($country_civ->currencie->value == sabdy()->country->currencie->value) {
-                //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit;
-
                 $percent_valeur_convertion =   (float)  $valuer_admin;
             } else {
-                //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
-
                 $percent_valeur_convertion =   (float)  $valuer_admin *   (float) sabdy()->country->currencie->value;
             }
 
+            if ($this->showRemonterMoneyButton) {
 
-            $walletTransaction->update([
-                'commissions' => DB::raw('commissions+'  . $admin_valeur_convertion),
-            ]);
 
-            $account_accepted = sabdy()->is_accepted_companie ?? false;
+                $walletTransaction->update([
+                    'commissions' => DB::raw('commissions+'  . $admin_valeur_convertion),
+                ]);
 
-            if ($account_accepted) {
-                $valuer_companie = $percent_robus->percent_companie * $valeur_percent_valeur;
-                $walletTransaction->increment('commission_companie', $valuer_companie);
-            }
+                $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-            if ($admin_civ->count() > 0) {
+                if ($account_accepted) {
+                    $valuer_companie = $percent_robus->percent_companie * $valeur_percent_valeur;
+                    $walletTransaction->increment('commission_companie', $valuer_companie);
+                }
 
-                $nmbre_admin = $admin_civ->count();
+                if ($admin_civ->count() > 0) {
 
-                $valeur_single = sabdy()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $admin_valeur_convertion / $nmbre_admin;
+                    $nmbre_admin = $admin_civ->count();
 
-                foreach ($admin_civ as $user) {
-                    $admin_single = SidUser::find($user->id);
+                    $valeur_single = sabdy()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $admin_valeur_convertion / $nmbre_admin;
 
-                    AdminsCom::create([
-                        'amount' =>   $valeur_single,
-                        'sid_user_id' =>   $admin_single->id,
-                        'wallet_transaction_id' => $walletTransaction->id,
-                        'wallet_bank_id' => null,
-                        'wallet_deposit_id' => null,
-                        'amount_with_draw' =>  0,
-                        'wallet_inter_id' => null,
-                        'wallet_payment_id' => null,
-                        'wallet_phone_credit_id' => null,
-                        'wallet_reload_id' => null,
-                        'bank_card_id' => null,
-                        'description' => sabdy()->country->name_groupe == 'MAG' ? 'Paiement commission sous-distributer' : 'Commission administrateur',
-                        'amount_under' =>  sabdy()->is_under_distributer ? $valuer_deposit : 0,
-                        'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
-                    ]);
+                    foreach ($admin_civ as $user) {
+                        $admin_single = SidUser::find($user->id);
+
+                        AdminsCom::create([
+                            'amount' =>   $valeur_single,
+                            'sid_user_id' =>   $admin_single->id,
+                            'wallet_transaction_id' => $walletTransaction->id,
+                            'wallet_bank_id' => null,
+                            'wallet_deposit_id' => null,
+                            'amount_with_draw' =>  0,
+                            'wallet_inter_id' => null,
+                            'wallet_payment_id' => null,
+                            'wallet_phone_credit_id' => null,
+                            'wallet_reload_id' => null,
+                            'bank_card_id' => null,
+                            'description' => sabdy()->country->name_groupe == 'MAG' ? 'Paiement commission sous-distributer' : 'Commission administrateur',
+                            'amount_under' =>  sabdy()->is_under_distributer ? $valuer_deposit : 0,
+                            'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                        ]);
+                    }
+                }
+            } else {
+
+
+                if ($admin_civ->count() > 0) {
+
+                    $nmbre_admin = $admin_civ->count();
+
+                    $valeur_single = sabdy()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $percent_valeur_convertion / $nmbre_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $admin_single = SidUser::find($user->id);
+
+                        AdminsCom::create([
+                            'amount' =>   $valeur_single,
+                            'sid_user_id' =>   $admin_single->id,
+                            'wallet_transaction_id' => $walletTransaction->id,
+                            'wallet_bank_id' => null,
+                            'wallet_deposit_id' => null,
+                            'amount_with_draw' =>  0,
+                            'wallet_inter_id' => null,
+                            'wallet_payment_id' => null,
+                            'wallet_phone_credit_id' => null,
+                            'wallet_reload_id' => null,
+                            'bank_card_id' => null,
+                            'description' =>  'Commission administrateur',
+                            'amount_under' =>   0,
+                            'description_underdistributer' =>  null
+                        ]);
+                    }
                 }
             }
         }

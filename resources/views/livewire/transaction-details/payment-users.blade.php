@@ -165,8 +165,7 @@
                                                     @elseif ($item->status == 'SUCCESS')
                                                         @if (!firm())
                                                             @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                <a target="_bank"
-                                                                    href="{{ route('all_payments.invoice.print', $item->id) }}"
+                                                                <a target="_bank" 
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                     title="Facture">
                                                                     Facture

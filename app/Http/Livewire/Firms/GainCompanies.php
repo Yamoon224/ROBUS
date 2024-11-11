@@ -60,6 +60,7 @@ class GainCompanies extends Component
         $this->deposit_gain = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
         $this->payement_gain = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class);
         $this->transaction_gain_mobile = $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class);
+        $this->transaction_gain = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class);
         $this->transaction_gain_depot = $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class);
         $this->transaction_gain_retrait = $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class);
         $this->transaction_gain_empl = $this->getEmployerTransactionCommission(WalletTransaction::class);
