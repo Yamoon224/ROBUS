@@ -1,6 +1,6 @@
 @extends('layouts.master')
 
-@section('title', 'Details du sous distributeurs')
+@section('title', 'Details des operatrices')
 
 @php
 
@@ -19,7 +19,7 @@
             </div>
             <div class="font-medium text-historique mt-6">Montant total reçu des rechargements</div>
             <div class="text-slate-500 mt-3">
-
+                
                 {{ number_format($sum_wallet_reload_received, 2, ',', ' ') ?? null }}
                 {{ $currencie ?? null }}
 
@@ -573,7 +573,7 @@
 
     <div class="tab-content mt-6">
 
-        {{-- <div id="doc" class="tab-pane active" role="tabpanel" aria-labelledby="doc-tab">
+      <div id="doc" class="tab-pane active" role="tabpanel" aria-labelledby="doc-tab">
 
             <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
                 <div class="hidden md:block mx-auto text-slate-500"></div>
@@ -699,7 +699,7 @@
 
 
             </div>
-        </div> --}}
+        </div> 
         <div id="reload" class="tab-pane" role="tabpanel" aria-labelledby="reload-tab">
 
             @livewire('transaction-details.reload-transactions', ['walletAllReloads' => $user->id])
@@ -737,9 +737,9 @@
         </div>
 
 
-        <div id="xbet" class="tab-pane" role="tabpanel" aria-labelledby="xbet-tab">
+        {{-- <div id="xbet" class="tab-pane" role="tabpanel" aria-labelledby="xbet-tab">
             @livewire('transaction-details.xbets-users', ['walletAllXbets' => $user->id])
-        </div>
+        </div> --}}
 
 
 

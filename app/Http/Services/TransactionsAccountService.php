@@ -542,4 +542,77 @@ class TransactionsAccountService
 
         return $under_distributors;
     }
+
+    public function getTodayTransactionCommissionAmountTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionRobusRetraitCommissionAmountTotal($walletModel)
+    {
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionRobusDepotCommissionAmountTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id',  robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionMobileCommissionAmountTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id',  robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
 }

@@ -41,7 +41,7 @@ use App\Http\Resources\PhoneCreditSingleCollection;
 use App\Http\Resources\TransactionSingleCollection;
 use App\Http\Resources\InterTransactionSingleCollection;
 
-class UserController extends Controller
+class UserControllerAncien extends Controller
 {
 
     /**

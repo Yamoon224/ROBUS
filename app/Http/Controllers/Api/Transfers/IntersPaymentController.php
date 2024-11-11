@@ -1202,7 +1202,6 @@ class IntersPaymentController extends Controller
         return json_message_response(false, "Pas de plage de dates chez nous !", 300);
     }
 
-
     /**
      * Delete Inter transaction
      * @OA\Delete (
@@ -2644,6 +2643,7 @@ class IntersPaymentController extends Controller
             }
         }
     }
+
     public function search_payment_mooney_inter($amount_paiement_mooney)
     {
 
@@ -2843,6 +2843,7 @@ class IntersPaymentController extends Controller
             ], 200);
         }
     }
+
     public function paiement_invoice_inter($amount_invoice_inter)
     {
 

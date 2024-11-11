@@ -75,6 +75,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         Route::prefix('user')->group(function () {
 
             Route::get('dashboard', [UserController::class, 'dashboard']);
+            Route::get('dashboardCommissions', [UserController::class, 'dashboardCommissions']);
             Route::get('historicals', [UserController::class, 'dashboard_historique']);
             Route::get('info', [UserController::class, 'info']);
             Route::get('info/kyc', [UserController::class, 'kyc']);
@@ -113,7 +114,6 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('search_payment_received/{amount_received}', [PaymentController::class, 'search_payment_received']);
             Route::get('search_payment_offer/{commission_id}', [PaymentController::class, 'search_payment_offer']);
 
-
             // Reload cards
             Route::post('reload_cards/store', [ReloadCardController::class, 'create_reload_card']);
             Route::get('reload_card/show/{id}', [ReloadCardController::class, 'reload_card_show']);
@@ -125,6 +125,8 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('order_cards/store', [BankCardController::class, 'create_order_card']);
             Route::get('order_card/show/{id}', [BankCardController::class, 'order_card_show']);
             Route::post('order_cards_other/create', [BankCardController::class, 'create_order_card_other']);
+
+            Route::post('remonte_commissions/{gain_amount}/{commissions}/create', [UserController::class, 'remonteCommissions']);
 
             // Phone credit
             Route::post('phone_credits/store', [PhoneCreditController::class, 'create_phone_credit']);
@@ -156,7 +158,6 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('search_payment_inter_out/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_robus_inter']);
             Route::get('search_payment_inter_out_received/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_robus_inter_out']);
 
-
             // Drawal transaction
             Route::post('transactions/first_step', [TransactionController::class, 'first_withdrawal']);
             Route::post('transactions/second_step', [TransactionController::class, 'second_withdrawal']);
@@ -170,7 +171,6 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('search_transaction/{commission_id}', [TransactionController::class, 'search_transaction_money_commission']);
             Route::get('search_transaction_received/{commission_id}', [TransactionController::class, 'search_transaction_money_commission_received']);
             Route::get('search_transaction_robus_commission/{wallet}/{commission_id}', [TransactionController::class, 'search_transaction_commission_robus']);
-
 
             // Notifications
             Route::get('notifications', [NotificationController::class, 'index']);

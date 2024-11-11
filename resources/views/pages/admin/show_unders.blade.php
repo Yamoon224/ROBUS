@@ -754,10 +754,10 @@
         </div>
 
 
-        <div id="xbet" class="tab-pane" role="tabpanel" aria-labelledby="xbet-tab">
+        {{-- <div id="xbet" class="tab-pane" role="tabpanel" aria-labelledby="xbet-tab">
             @livewire('transaction-details.xbets-users', ['walletAllXbets' => $user->id])
 
-        </div>
+        </div> --}}
 
         <div id="wave" class="tab-pane" role="tabpanel" aria-labelledby="wave-tab">
             @livewire('transaction-details.waves-users', ['walletWave' => $user->id])

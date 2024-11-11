@@ -54,7 +54,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
 
-class UserControllerDemoli extends Controller
+class UserController extends Controller
 {
 
 
@@ -113,6 +113,7 @@ class UserControllerDemoli extends Controller
     public function dashboard()
     {
 
+
         // Vérifier l'état de l'application
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
@@ -123,27 +124,16 @@ class UserControllerDemoli extends Controller
 
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
-
         $walletTransaction = $this->transactionAccount->getUserTransactions(WalletTransaction::class, $wallet_solde, 'num_wallet');
-
         $walletPayment = $this->transactionAccount->getUserAllTransactions(WalletPayment::class, $wallet_solde);
-
         $walletBank = $this->transactionAccount->getUserAllTransactions(WalletBank::class, $wallet_solde);
-
         $walletPhone = $this->transactionAccount->getUserAllTransactions(WalletPhoneCredit::class, $wallet_solde);
-
         $walletReload = $this->transactionAccount->getUserTransactions(WalletReload::class, $wallet_solde, 'account_wallet');
-
         $walletReloadCard = $this->transactionAccount->getUserAllTransactions(WalletDeposit::class, $wallet_solde);
-
         $walletInter = $this->transactionAccount->getUserTransactions(WalletInter::class, $wallet_solde, 'number_compte');
-
         $walletOrderCarte = $this->transactionAccount->getUserAllTransactions(BankCard::class, $wallet_solde);
-
         $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, $wallet_solde);
-
         $wallet1xbets = $this->transactionAccount->getUserAllTransactions(WalletXbet::class, $wallet_solde);
-
         $walletWave = $this->transactionAccount->getUserAllTransactions(WalletWave::class, $wallet_solde);
 
 
@@ -166,12 +156,161 @@ class UserControllerDemoli extends Controller
         $dashboard_data['Achat UV wave'] = WaveSingleCollection::collection($walletWave);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
         $is_under = robus()->is_under_distributer;
+
         return response()->json([
             'success' => true,
             'historicals' =>  $dashboard_data,
             'som_commission' => $is_under ? $som_commissions . ' ' . robus()->wallet->currencie->code  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
         ], 200);
+
     }
+
+    public function dashboardCommissions()
+    {
+
+
+        $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
+        $walletTransactionDepot = $this->transactionAccount->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class);
+        $walletTransactionRetrait = $this->transactionAccount->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class);
+        $walletTransactionMobile = $this->transactionAccount->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class);
+        $walletPayment = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPayment::class);
+        $walletBank = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBank::class);
+        $walletPhone = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class);
+        $walletReloadCard = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
+        $walletInter = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletInter::class);
+        $walletOrderCarte = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(BankCard::class);
+        // $wallet1xbets = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletXbet::class);
+        // $walletWave = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletWave::class);
+        $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, $wallet_solde);
+
+
+        $dashboard_data['Depots'] = TransactionSingleCollection::collection($walletTransactionDepot);
+        $dashboard_data['Retraits'] = TransactionSingleCollection::collection($walletTransactionRetrait);
+        $dashboard_data['Moneys'] = TransactionSingleCollection::collection($walletTransactionMobile);
+        $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
+        $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);
+        $dashboard_data['Credit telephoniques'] = PhoneCreditSingleCollection::collection($walletPhone);
+        $dashboard_data['Rechargement de carte'] = ReloadCardSingle::collection($walletReloadCard);
+        $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
+        $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
+        // $dashboard_data['Achat UV wave'] = WaveSingleCollection::collection($walletWave);
+        $dashboard_data['Transferts inters'] = InterTransactionSingleCollection::collection($walletInter);
+        $is_under = robus()->is_under_distributer;
+
+        return response()->json([
+            'success' => true,
+            'commissions' => $is_under ?  $dashboard_data  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
+        ], 200);
+        
+    }
+
+    public function remonteCommissions($gain_amount , $commissions)
+    {
+
+        $check = SidUser::find(sabdy()->id);
+
+        if (!empty($check)) {
+
+            $amount_solde = (float)sabdy()->wallet->amount + (float)$this->gain_amount;
+
+            if ($this->gain_amount <= 0) {
+                $this->emit('modal-hide', 'hide');
+
+                $this->emit('error', 'Le montant de la commission est invalide ou null !!');
+                return;
+            }
+
+            if ($this->typeRemonte == "Paiements") {
+
+                $this->gain_amount =  $this->payement_gain;
+            } else if ($this->typeRemonte == "Transactions") {
+
+                $this->gain_amount =  $this->transaction_gain;
+            } else if ($this->typeRemonte == "Crédits") {
+
+                $this->gain_amount =  $this->phonecredit_gain;
+            } else if ($this->typeRemonte == "International") {
+
+                $this->gain_amount =  $this->inter_gain;
+            } else if ($this->typeRemonte == "Virements") {
+
+                $this->gain_amount =  $this->bank_gain;
+            } else if ($this->typeRemonte == "Rechargements") {
+
+                $this->gain_amount =  $this->deposit_gain;
+            } else if ($this->typeRemonte == "Depots") {
+
+                $this->gain_amount =  $this->transaction_gain_depot;
+            } else if ($this->typeRemonte == "Retraits") {
+
+                $this->gain_amount =  $this->transaction_gain_retrait;
+            } else if ($this->typeRemonte == "Moneys") {
+
+                $this->gain_amount =  $this->transaction_gain_mobile;
+            } else if ($this->typeRemonte == "Transactions Salaire") {
+
+                $this->gain_amount =  $this->transaction_gain_empl;
+            } else {
+                $this->emit('error', 'Type de remontée invalide');
+                return;
+            }
+
+            $withRemonte = $this->createWithCommission($amount_solde, $this->gain_amount,  $this->typeRemonte);
+
+            if ($withRemonte !== null) {
+
+                $this->updateWallet($withRemonte);
+
+                if ($this->typeRemonte == "Paiements") {
+
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class);
+                    $this->payement_gain = 0;
+                } else if ($this->typeRemonte == "Transactions") {
+
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletTransaction::class);
+                } else if ($this->typeRemonte == "Crédits") {
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPhoneCredit::class);
+                    $this->phonecredit_gain = 0;
+                } else if ($this->typeRemonte == "International") {
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class);
+                    $this->inter_gain = 0;
+                } else if ($this->typeRemonte == "Virements") {
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class);
+                    $this->bank_gain = 0;
+                } else if ($this->typeRemonte == "Rechargements") {
+
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class);
+                    $this->deposit_gain = 0;
+                } else if ($this->typeRemonte == "Depots") {
+                    $this->getUpdateTransactionDepotRobusCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_depot = 0;
+                } else if ($this->typeRemonte == "Retraits") {
+                    $this->getUpdateTransactionRetraitRobusCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_retrait = 0;
+                } else if ($this->typeRemonte == "Moneys") {
+
+                    $this->getUpdateTransactionMoneyCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_mobile = 0;
+                } else if ($this->typeRemonte == "Transactions Salaire") {
+
+                    $this->getUpdateTransactionEmplCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_empl = 0;
+                } else {
+                    $this->emit('error', 'Type de remontée invalide');
+                    return;
+                }
+                $msg = 'Vous avez transferé vos commission sur votre compte';
+                $msg_title = 'Transfert de la commission ';
+                $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $this->emit('modal-hide', 'hide');
+                $this->emit('success', 'Votre commission a été remonté avec success !!');
+            } else {
+                $this->emit('modal-hide', 'hide');
+                $this->emit('error', 'Erreur de recuperation du montant de la commission !');
+            }
+        }
+    }
+
 
     /**
      * @CrossOrigin
@@ -470,6 +609,7 @@ class UserControllerDemoli extends Controller
         ]);
 
         if (!empty($user->forget_password)) {
+
             $ancient_password = $request->currency_password;
 
             if ($ancient_password == $user->forget_password) {
@@ -478,7 +618,9 @@ class UserControllerDemoli extends Controller
                     'password' => Hash::make($request->password),
                 ]);
             }
+
         } else {
+
             $ancient_password = $request->currency_password;
 
             if ($ancient_password == $user->password) {
@@ -740,6 +882,7 @@ class UserControllerDemoli extends Controller
     // ACOUNT Transaction Historique Distributer
     public function historical_distributer()
     {
+       
         return response()->json([
             'success' => true,
             'sum_transaction_days' =>
@@ -972,21 +1115,13 @@ class UserControllerDemoli extends Controller
             $wallet_user = robus();
 
             // $wallet_banks =  $this->transactionAccount->getUserAllCumulTransactions(WalletBank::class);
-
             // $wallet_deposits =  $this->transactionAccount->getUserAllCumulTransactions(WalletDeposit::class);
-
             // $wallet_payments =  $this->transactionAccount->getUserAllCumulTransactions(WalletPayment::class);
-
             // $wallet_transactions =  $this->transactionAccount->getUserAllCumulTransactions(WalletTransaction::class);
-
             // $wallet_inters =  $this->transactionAccount->getUserAllCumulTransactions(WalletInter::class);
-
             // $wallet_phone_credits =  $this->transactionAccount->getUserAllCumulTransactions(WalletPhoneCredit::class);
-
             // $wallet_reloads =  $this->transactionAccount->getUserAllCumulTransactions(WalletReload::class);
-
             // $order_banks =  $this->transactionAccount->getUserAllCumulOrderTransactions(BankCard::class);
-
 
             $transactionTypes = [
                 WalletBank::class,
@@ -1073,7 +1208,6 @@ class UserControllerDemoli extends Controller
             return json_message_response(false, $message, 333);
         }
     }
-
 
 
     public function drawal_commission_masters()
@@ -1180,7 +1314,6 @@ class UserControllerDemoli extends Controller
             'under_distributors' => robus()->is_master ?  new UnderCollection($under_distributors) : " Vous devez etre un Masters"
         ]);
     }
-
 
 
     public function comzone_under_distributors()
