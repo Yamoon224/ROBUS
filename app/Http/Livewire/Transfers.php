@@ -1241,7 +1241,7 @@ class Transfers extends Component
                                         $account_accepted = sabdy()->is_accepted_companie ?? false;
 
                                         if ($account_accepted) {
-                                            $valuer_companie = $percent_robus->percent_custum_drawal_companie * $valeur_percent_admin;
+                                            $valuer_companie = $percent_robus->percent_custum_drawal_companie * $commission_valeur;
                                             $verify_code->increment('commission_companie', $valuer_companie);
                                         }
 
@@ -2954,7 +2954,6 @@ class Transfers extends Component
         $admins = $transactionData['admins'];
         $admin_civ = $transactionData['admin_civ'];
         $percent_robus = PhoneCreditCost::whereId(1)->first();
-
 
         try {
 
