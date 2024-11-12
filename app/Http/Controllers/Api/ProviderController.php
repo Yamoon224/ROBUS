@@ -57,10 +57,10 @@ class ProviderController extends Controller
         $this->percentRobus = $percentRobus;
     }
 
-    public function index()
+    public function indexAncien()
     {
-        $walletUser  =  Auth::guard('api')->user();
 
+        $walletUser  =  Auth::guard('api')->user();
         $walletTransaction =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 1);
         $walletPayment =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 2);
         $walletPaymentInter =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 7);
@@ -137,6 +137,106 @@ class ProviderController extends Controller
             ], 333);
         }
     }
+
+    public function index()
+    {
+        $assignations = $this->percentRobus->operatorServices();
+
+        $restrictionMapTransaction = [
+            'TRANSFERT CREDIT' => 'showCreditButton',
+            'PAIEMENT DE FACTURE' => 'showPaiementButton',
+            'TRANSFERT INTERNATIONNAL MOBILE MONEY' => 'showInterButton',
+            'RECHARGEMENT DE CARTE' => 'showRechargementButton',
+            'VERSEMENT BANCAIRE' => 'showVirementButton',
+            'RETRAIT' => 'showRetraitButton',
+            'DEPOTS' => 'showDepotButton',
+            'MOBILE MONEY' => 'showMobileButton',
+            'DEPOT ET TRANSFERT MOBILE MONEY' => 'showMoneyButton',
+            'TRANSFERT A INTER' => 'showTransacInterButton',
+            'CREDIT TELEPHONIQUE A INTER' => 'showTelInterButton',
+            'VERSEMENT BANCAIRE A INTER' => 'showBancInterButton',
+            'RECHARGEMENT DE CARTE A INTER' => 'showCarteInterButton',
+            'PAIMENT FACTURE A INTER' => 'showFacInterButton',
+        ];
+
+        $activeButtons = [];
+
+        foreach ($assignations as $operator) {
+            $restrictions = explode(',', $operator->name);
+            foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $activeButtons[$buttonVar] = true;
+                }
+            }
+        }
+
+        $dashboard_data = [];
+        $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, robus()->country->id, 1);
+        $walletTransactionMoney = $this->percentRobus->getProvidersMoneyByType(new Provider, robus()->country->id, 1);
+        $walletPayment = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 2);
+        $walletPaymentInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 7);
+        $walletRetrait = Provider::whereId(9)->whereStatus(true)->get();
+        $walletBank = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 4);
+        $walletPhone = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 6);
+        $walletReloadCard = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 5);
+        $walletInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 8);
+        $walletPhoneInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 9);
+        $walletVirementBank = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 10);
+        $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 11);
+
+        try {
+
+            if (!empty($activeButtons['showCreditButton'])) {
+                $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
+            }
+
+            if (!empty($activeButtons['showPaiementButton'])) {
+                $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
+            }
+
+            if (!empty($activeButtons['showInterButton'])) {
+                $dashboard_data['Transfert international'] = [
+                    "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($walletPaymentInter) : [],
+                    "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($walletInter) : [],
+                    "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($walletPhoneInter) : [],
+                    "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($walletVirementBank) : [],
+                    "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
+                ];
+            }
+
+            if (!empty($activeButtons['showVirementButton'])) {
+                $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
+            }
+
+            if (!empty($activeButtons['showRechargementButton'])) {
+                $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
+            }
+
+            if (!empty($activeButtons['showMoneyButton'])) {
+                $dashboard_data['Transfert mobile'] = [
+                    "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($walletTransactionDepot) : [],
+                    "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($walletTransactionMoney) : [],
+                ];
+            }
+
+            if (!empty($activeButtons['showRetraitButton'])) {
+                $dashboard_data['Retraits'] = ProviderSingleCollection::collection($walletRetrait);
+            }
+
+            return response()->json([
+                'success' => true,
+                'Wallets' => $dashboard_data,
+            ], 200);
+            
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => "Une erreur inattendue s'est produite. Veuillez informer le support client ROBUS.",
+            ], 500);
+        }
+    }
+
+
 
 
     public function offers()

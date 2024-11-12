@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Repositories\TransactionRepository;
 
 
-class MobileWalletTransactionService
+class MobileWalletTransactionServiceAncien
 {
 
     /** @var  TransactionRepository */

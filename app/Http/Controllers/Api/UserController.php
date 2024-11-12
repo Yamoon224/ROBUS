@@ -162,152 +162,157 @@ class UserController extends Controller
             'historicals' =>  $dashboard_data,
             'som_commission' => $is_under ? $som_commissions . ' ' . robus()->wallet->currencie->code  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
         ], 200);
-
     }
 
     public function dashboardCommissions()
     {
 
 
-        $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
-        $walletTransactionDepot = $this->transactionAccount->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class);
-        $walletTransactionRetrait = $this->transactionAccount->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class);
-        $walletTransactionMobile = $this->transactionAccount->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class);
-        $walletPayment = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPayment::class);
-        $walletBank = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBank::class);
-        $walletPhone = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class);
-        $walletReloadCard = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
-        $walletInter = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletInter::class);
-        $walletOrderCarte = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(BankCard::class);
-        // $wallet1xbets = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletXbet::class);
-        // $walletWave = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletWave::class);
-        $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, $wallet_solde);
 
+        $commissions = [
+            'Depots' => $this->transactionAccount->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class),
+            'Retraits' => $this->transactionAccount->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class),
+            'Moneys' => $this->transactionAccount->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class),
+            'Paiements' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPayment::class),
+            'Virements' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBank::class),
+            'Crédits' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class),
+            'Rechargements' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDeposit::class),
+            'Commande de carte' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(BankCard::class),
+            'International' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletInter::class),
+            'Commission remonté' => RemonteSingleCollection::collection($this->transactionAccount->getUserRemonte(WithMerchant::class, robus()->id)),
+        ];
 
-        $dashboard_data['Depots'] = TransactionSingleCollection::collection($walletTransactionDepot);
-        $dashboard_data['Retraits'] = TransactionSingleCollection::collection($walletTransactionRetrait);
-        $dashboard_data['Moneys'] = TransactionSingleCollection::collection($walletTransactionMobile);
-        $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
-        $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);
-        $dashboard_data['Credit telephoniques'] = PhoneCreditSingleCollection::collection($walletPhone);
-        $dashboard_data['Rechargement de carte'] = ReloadCardSingle::collection($walletReloadCard);
-        $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
-        $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
-        // $dashboard_data['Achat UV wave'] = WaveSingleCollection::collection($walletWave);
-        $dashboard_data['Transferts inters'] = InterTransactionSingleCollection::collection($walletInter);
         $is_under = robus()->is_under_distributer;
-
         return response()->json([
             'success' => true,
-            'commissions' => $is_under ?  $dashboard_data  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
+            'commissions' => $is_under ? $commissions : "Vous devez être un sous-distributeur pour accéder à ce tableau de bord.",
         ], 200);
-        
     }
 
-    public function remonteCommissions($gain_amount , $commissions)
+    public function remonteCommissions($gain_amount, $commissions)
     {
 
-        $check = SidUser::find(sabdy()->id);
 
-        if (!empty($check)) {
+        try {
 
-            $amount_solde = (float)sabdy()->wallet->amount + (float)$this->gain_amount;
 
-            if ($this->gain_amount <= 0) {
-                $this->emit('modal-hide', 'hide');
+            $check = SidUser::find(robus()->id);
 
-                $this->emit('error', 'Le montant de la commission est invalide ou null !!');
-                return;
+            if (!$check) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Utilisateur non trouvé.',
+                ]);
             }
 
-            if ($this->typeRemonte == "Paiements") {
+            $amount_solde = (float)robus()->wallet->amount + (float)$gain_amount;
+            $walletTransactionDepot = $this->transactionAccount->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class);
+            $walletTransactionRetrait = $this->transactionAccount->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class);
+            $walletTransactionMobile = $this->transactionAccount->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class);
+            $walletPayment = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPayment::class);
+            $walletBank = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBank::class);
+            $walletPhone = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class);
+            $walletReloadCard = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
+            $walletInter = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletInter::class);
+            $walletOrderCarte = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(BankCard::class);
 
-                $this->gain_amount =  $this->payement_gain;
-            } else if ($this->typeRemonte == "Transactions") {
+            if ($gain_amount <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => ('Le montant de la commission est invalide ou null !!')
+                ]);
+            }
 
-                $this->gain_amount =  $this->transaction_gain;
-            } else if ($this->typeRemonte == "Crédits") {
+            
+            if ($commissions == "Paiements" &&  $walletPayment !=0) {
 
-                $this->gain_amount =  $this->phonecredit_gain;
-            } else if ($this->typeRemonte == "International") {
+                $gain_amount =  $walletPayment;
+            } else if ($commissions == "Crédits" &&  $walletPhone !=0) {
 
-                $this->gain_amount =  $this->inter_gain;
-            } else if ($this->typeRemonte == "Virements") {
+                $gain_amount =  $walletPhone;
+            } else if ($commissions == "International" &&  $walletInter !=0) {
 
-                $this->gain_amount =  $this->bank_gain;
-            } else if ($this->typeRemonte == "Rechargements") {
+                $gain_amount =  $walletInter;
+            } else if ($commissions == "Virements" &&  $walletBank !=0) {
 
-                $this->gain_amount =  $this->deposit_gain;
-            } else if ($this->typeRemonte == "Depots") {
+                $gain_amount =  $walletBank;
+            } else if ($commissions == "Rechargements" &&  $walletReloadCard !=0) {
 
-                $this->gain_amount =  $this->transaction_gain_depot;
-            } else if ($this->typeRemonte == "Retraits") {
+                $gain_amount =  $walletReloadCard;
+            } else if ($commissions == "Depots" &&  $walletTransactionDepot !=0) {
+                $gain_amount =  $walletTransactionDepot;
+            } else if ($commissions == "Retraits" &&  $walletTransactionRetrait !=0) {
 
-                $this->gain_amount =  $this->transaction_gain_retrait;
-            } else if ($this->typeRemonte == "Moneys") {
+                $gain_amount =  $walletTransactionRetrait;
+            } else if ($commissions == "Moneys" &&  $walletTransactionMobile !=0) {
 
-                $this->gain_amount =  $this->transaction_gain_mobile;
-            } else if ($this->typeRemonte == "Transactions Salaire") {
+                $gain_amount =  $walletTransactionMobile;
+            } else if ($commissions == "Commande de carte" &&  $walletOrderCarte !=0) {
 
-                $this->gain_amount =  $this->transaction_gain_empl;
+                $gain_amount =  $walletOrderCarte;
             } else {
-                $this->emit('error', 'Type de remontée invalide');
-                return;
+                return response()->json([
+                    'success' => false,
+                    'message' => ('Il est essentiel de connaître le type de commission et le montant !')
+                ]);
             }
 
-            $withRemonte = $this->createWithCommission($amount_solde, $this->gain_amount,  $this->typeRemonte);
+            $withRemonte = $this->transactionAccount->createWithCommission($amount_solde, $gain_amount,  $commissions);
 
             if ($withRemonte !== null) {
 
-                $this->updateWallet($withRemonte);
+                $this->transactionAccount->updateWallet($withRemonte);
 
-                if ($this->typeRemonte == "Paiements") {
-
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class);
-                    $this->payement_gain = 0;
-                } else if ($this->typeRemonte == "Transactions") {
-
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletTransaction::class);
-                } else if ($this->typeRemonte == "Crédits") {
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPhoneCredit::class);
-                    $this->phonecredit_gain = 0;
-                } else if ($this->typeRemonte == "International") {
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class);
-                    $this->inter_gain = 0;
-                } else if ($this->typeRemonte == "Virements") {
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class);
-                    $this->bank_gain = 0;
-                } else if ($this->typeRemonte == "Rechargements") {
-
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class);
-                    $this->deposit_gain = 0;
-                } else if ($this->typeRemonte == "Depots") {
-                    $this->getUpdateTransactionDepotRobusCommissionAmountNullTotal(WalletTransaction::class);
-                    $this->transaction_gain_depot = 0;
-                } else if ($this->typeRemonte == "Retraits") {
-                    $this->getUpdateTransactionRetraitRobusCommissionAmountNullTotal(WalletTransaction::class);
-                    $this->transaction_gain_retrait = 0;
-                } else if ($this->typeRemonte == "Moneys") {
-
-                    $this->getUpdateTransactionMoneyCommissionAmountNullTotal(WalletTransaction::class);
-                    $this->transaction_gain_mobile = 0;
-                } else if ($this->typeRemonte == "Transactions Salaire") {
-
-                    $this->getUpdateTransactionEmplCommissionAmountNullTotal(WalletTransaction::class);
-                    $this->transaction_gain_empl = 0;
+                if ($commissions == "Paiements") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class);
+                } else if ($commissions == "Transactions") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletTransaction::class);
+                } else if ($commissions == "Crédits") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletPhoneCredit::class);
+                } else if ($commissions == "International") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class);
+                } else if ($commissions == "Virements") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class);
+                } else if ($commissions == "Rechargements") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class);
+                } else if ($commissions == "Depots") {
+                    $this->transactionAccount->getUpdateTransactionDepotRobusCommissionAmountNullTotal(WalletTransaction::class);
+                } else if ($commissions == "Retraits") {
+                    $this->transactionAccount->getUpdateTransactionRetraitRobusCommissionAmountNullTotal(WalletTransaction::class);
+                } else if ($commissions == "Moneys") {
+                    $this->transactionAccount->getUpdateTransactionMoneyCommissionAmountNullTotal(WalletTransaction::class);
+                } else if ($commissions == "Commande de carte") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(BankCard::class);
                 } else {
-                    $this->emit('error', 'Type de remontée invalide');
-                    return;
+
+                    return response()->json([
+                        'success' => false,
+                        'message' =>  "Il est essentiel de connaître le type de commission !",
+                    ], 400);
                 }
                 $msg = 'Vous avez transferé vos commission sur votre compte';
                 $msg_title = 'Transfert de la commission ';
                 $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                $this->emit('modal-hide', 'hide');
-                $this->emit('success', 'Votre commission a été remonté avec success !!');
+
+                if (robus()->email != null) {
+
+                    Mail::to(robus()->email)->send(new UvSend('Vous avez transferé une commission de ' . $withRemonte->amount_with_draw . ' ' . robus()->wallet->currencie->code . ' le '
+                        . $withRemonte->created_at  . ' Robus vous remercie'));
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Votre commission a été remonté avec success !! ' . $withRemonte->amount_with_draw . ' ' . robus()->wallet->currencie->code,
+                ], 200);
             } else {
-                $this->emit('modal-hide', 'hide');
-                $this->emit('error', 'Erreur de recuperation du montant de la commission !');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Erreur de récupération du montant de la commission !',
+                ]);
             }
+        } catch (\Exception $exception) {
+            $message = __('message.is not Une erreur est survenue. Veuillez réessayer.');
+            return json_message_response(false, $message, 333);
         }
     }
 
@@ -618,7 +623,6 @@ class UserController extends Controller
                     'password' => Hash::make($request->password),
                 ]);
             }
-
         } else {
 
             $ancient_password = $request->currency_password;
@@ -882,7 +886,7 @@ class UserController extends Controller
     // ACOUNT Transaction Historique Distributer
     public function historical_distributer()
     {
-       
+
         return response()->json([
             'success' => true,
             'sum_transaction_days' =>

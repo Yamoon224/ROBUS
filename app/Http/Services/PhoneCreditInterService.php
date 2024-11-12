@@ -8,6 +8,7 @@ use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\DB;
 use App\Models\Wallets\WalletInter;
 use App\Repositories\IntersRepository;
+use App\Http\Services\OperatorRestrictionService;
 
 class PhoneCreditInterService
 {
@@ -16,14 +17,19 @@ class PhoneCreditInterService
     /** @var  IntersRepository */
     public $intersRepository;
     public $convertionService;
+    protected $operatorRestrictionService;
 
-    public function __construct(IntersRepository $inter_Reposi, ConvertionService $convertionService)
-    {
+    public function __construct(
+        IntersRepository $inter_Reposi,
+        ConvertionService $convertionService,
+        OperatorRestrictionService $operatorRestrictionService,
+    ) {
         $this->intersRepository = $inter_Reposi;
         $this->convertionService = $convertionService;
+        $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
-    
+
     public function createRobusWalletTransactionCreditPayment(
         $val_amount,
         $percent_robus,
@@ -81,9 +87,45 @@ class PhoneCreditInterService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        $admin_valeur =  $amount * $percent_robus->percent;
+        $amount_percent =  $amount * $percent_robus->percent;
 
-        $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($admin_valeur);
+        $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
+
+        $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($amount_percent);
+
+        $commission_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
+
+        if (robus()->is_under_distributer) {
+
+            if (!empty($activeButtons['showRemonterInterButton'])) {
+
+                $valuer_companie = $percent_robus->percent_companie * $amount;
+
+                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
+
+                $admin_valeur = (float) $amount_percent - (float) $cumul_valeurs;
+
+               $admin_convertion =  $this->convertionService->convertAdminCommission($admin_valeur);
+
+                $walletPhone->increment('commissions', $valuer_deposit);
+
+                $account_accepted = robus()->is_accepted_companie ?? false;
+
+                if ($account_accepted) {
+                    $walletPhone->increment('commission_companie', $valuer_companie);
+                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletPhone, $admin_convertion, $valuer_deposit);
+                } else {
+                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletPhone, $commission_convertion, $valuer_deposit);
+                }
+            } else {
+
+                $this->distributeAdminCommissions($admin_civ, $walletPhone, $admin_valeur_convertion);
+            }
+        } else {
+
+            $this->distributeAdminCommissions($admin_civ, $walletPhone, $admin_valeur_convertion);
+        }
+
 
         //  Send valeur in Admin
         if ($admin_civ->count() > 0) {
@@ -100,15 +142,49 @@ class PhoneCreditInterService
                     'wallet_inter_id' => $walletPhone->id,
                     'description' => 'Commission administrateur',
                 ]);
-
-                // $admin_single->wallet->update([
-                //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-                //     'sid_user_relod' => robus()->id,
-                //     'amount' => DB::raw('amount+' . $valeur_single),
-                // ]);
             }
         }
 
         return true;
+    }
+
+    private function distributeAdminCommissions($adminCiv, $walletPhone, $totalCommission)
+    {
+        if ($adminCiv->count() > 0) {
+            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create([
+                    'amount' =>   $commissionPerAdmin,
+                    'sid_user_id' =>   $adminUser->id,
+                    'wallet_inter_id' => $walletPhone->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' =>  0,
+                    'description_underdistributer' =>  null
+                ]);
+            }
+        }
+    }
+
+    private function distributeAdminCommissionAccepteds($adminCiv, $walletPhone, $totalCommission, $amountDeposit)
+    {
+        if ($adminCiv->count() > 0) {
+            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create([
+                    'amount' => $commissionPerAdmin,
+                    'sid_user_id' => $adminUser->id,
+                    'wallet_inter_id' => $walletPhone->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' =>  robus()->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                ]);
+            }
+        }
     }
 }

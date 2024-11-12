@@ -128,6 +128,7 @@ class Employers extends Component
                     [
                         'company_id' => firm()->company->id,
                         'categorie_id'  => $this->categorieId_add,
+                        'is_accepted_companie'  =>true,
                     ]
                 );
 

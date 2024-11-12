@@ -125,7 +125,6 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('order_cards/store', [BankCardController::class, 'create_order_card']);
             Route::get('order_card/show/{id}', [BankCardController::class, 'order_card_show']);
             Route::post('order_cards_other/create', [BankCardController::class, 'create_order_card_other']);
-
             Route::post('remonte_commissions/{gain_amount}/{commissions}/create', [UserController::class, 'remonteCommissions']);
 
             // Phone credit

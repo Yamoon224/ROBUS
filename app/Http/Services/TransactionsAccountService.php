@@ -4,7 +4,10 @@ namespace App\Http\Services;
 
 use App\Models\Custumers\Zone;
 use App\Models\Sid\SidUser;
+use App\Models\WithMerchant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class TransactionsAccountService
 {
@@ -23,6 +26,15 @@ class TransactionsAccountService
             ->orderBy('created_at', 'desc')->paginate(20);
     }
 
+
+    public function updateWallet($withRemonte)
+    {
+        robus()->wallet->update([
+            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+            'sid_user_relod' => robus()->id,
+            'amount' => DB::raw('amount+'  .  $withRemonte->amount_with_draw),
+        ]);
+    }
 
     public function getTransactionWalletDetailsCount($wallet, $id, $status)
     {
@@ -356,10 +368,22 @@ class TransactionsAccountService
             ->get();
     }
 
-
-    public function getUserRemonte($wallets, $wallet_solde)
+    public function createWithCommission($amount_solde, $gain_amount, $typeRemonte)
     {
-        return   $wallets::where('sid_user_id', $wallet_solde->id)
+        return WithMerchant::create([
+            'amount_with_draw' =>  $gain_amount,
+            'sid_user_id' =>   robus()->id,
+            'amount_solde' =>   $amount_solde,
+            'type_transaction' => $typeRemonte,
+            'status' =>  "SUCCESS",
+            'date_removed' => Carbon::now(),
+        ]);
+    }
+
+
+    public function getUserRemonte($wallets, $userId)
+    {
+        return   $wallets::where('sid_user_id', $userId)
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -614,5 +638,103 @@ class TransactionsAccountService
 
         return $totalAmount;
     }
+
+    public function getUpdateTransactionCommissionAmountNullTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->update(['commissions' => 0]);
+
+        return $totalAmount;
+    }
+
+
+
+    public function getUpdateTransactionMoneyCommissionAmountNullTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->update(['commissions' => 0]);
+
+        return $totalAmount;
+    }
+
+
+    public function getUpdateTransactionDepotRobusCommissionAmountNullTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->update(['commissions' => 0]);
+
+        return $totalAmount;
+    }
+
+    public function getUpdateTransactionRetraitRobusCommissionAmountNullTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->update(['commissions' => 0]);
+
+        return $totalAmount;
+    }
+
 
 }

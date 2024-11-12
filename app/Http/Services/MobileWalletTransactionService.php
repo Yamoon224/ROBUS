@@ -7,6 +7,7 @@ use App\Models\Sid\SidUser;
 use App\Models\Custumers\Country;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\TransactionRepository;
+use App\Http\Services\OperatorRestrictionService;
 
 
 class MobileWalletTransactionService
@@ -14,10 +15,14 @@ class MobileWalletTransactionService
 
     /** @var  TransactionRepository */
     private $transctionRepository;
+    protected $operatorRestrictionService;
 
-    public function __construct(TransactionRepository $transactionReposi)
-    {
+    public function __construct(
+        TransactionRepository $transactionReposi,
+        OperatorRestrictionService $operatorRestrictionService,
+    ) {
         $this->transctionRepository = $transactionReposi;
+        $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
     public function createRobusWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone)
@@ -86,7 +91,7 @@ class MobileWalletTransactionService
         $wallet->update($updatedValues);
 
         $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
-        
+
         $valuer_deposit = $percent_robus->percent_deposit *  $valeur_percent_valeur;
         // Commissions Inters 
         if (robus()->is_under_distributer == 1) {
@@ -113,8 +118,6 @@ class MobileWalletTransactionService
             $walletTransaction->update([
                 'commissions' => DB::raw('commissions+'  . $valuer_deposit),
             ]);
-
-     
         } else {
 
 
@@ -156,7 +159,7 @@ class MobileWalletTransactionService
                     'wallet_reload_id' => null,
                     'bank_card_id' => null,
                     'description' => 'Commission administrateur',
-                    'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
+                    'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
                     'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ]);
             }
@@ -171,9 +174,9 @@ class MobileWalletTransactionService
         $commission =  $transaction_amount_money;
         $country_civ = Country::whereId(107)
             ->first();
-
         $wallet = robus()->wallet;
-
+        $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
 
         // Préparez les valeurs mises à jour
         $updatedValues = [
@@ -195,57 +198,101 @@ class MobileWalletTransactionService
             // 20%
             $valuer_deposit = $percent_robus->percent_deposit *  $valeur_percent_valeur;
 
+            $valuer_companie = $percent_robus->percent_companie * $valeur_percent_valeur;
+
 
             if ($country_civ->currencie->value > robus()->country->currencie->value) {
 
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
-
                 $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
+                $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
+                $percents =   (float)  $valeur_percent_valeur *   (float) robus()->country->currencie->value;
 
             } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit;
-
                 $percent_valeur_convertion =   (float)  $valuer_admin;
+                $percent_valeur_compagnie =   (float)  $valuer_companie;
+                $percents =   (float)  $valeur_percent_valeur ;
             } else {
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
-
                 $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
+                $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
+                $percents =   (float)  $valeur_percent_valeur *   (float) robus()->country->currencie->value;
+
             }
 
+            if (!empty($activeButtons['showRemonterMoneyButton'])) {
 
-            $walletTransaction->update([
-                'commissions' => DB::raw('commissions+'  . $admin_valeur_convertion),
-            ]);
+                $walletTransaction->update([
+                    'commissions' => DB::raw('commissions+'  . $admin_valeur_convertion),
+                ]);
 
-            if ($admin_civ->count() > 0) {
+                $account_accepted = robus()->is_accepted_companie ?? false;
 
-                $nmbre_admin = $admin_civ->count();
-               
-                $valeur_single = robus()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $admin_valeur_convertion / $nmbre_admin;
+                if ($account_accepted) {
 
-                foreach ($admin_civ as $user) {
-                    $admin_single = SidUser::find($user->id);
+                    $walletTransaction->increment('commission_companie', $percent_valeur_compagnie);
+                }
 
-                    AdminsCom::create([
-                        'amount' =>   $valeur_single,
-                        'sid_user_id' =>   $admin_single->id,
-                        'wallet_transaction_id' => $walletTransaction->id,
-                        'wallet_bank_id' => null,
-                        'wallet_deposit_id' => null,
-                        'amount_with_draw' =>  0,
-                        'wallet_inter_id' => null,
-                        'wallet_payment_id' => null,
-                        'wallet_phone_credit_id' => null,
-                        'wallet_reload_id' => null,
-                        'bank_card_id' => null,
-                        'description' => robus()->country->name_groupe == 'MAG' ? 'Paiement commission sous-distributer' : 'Commission administrateur',
-                        'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                        'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
-                    ]);
+                if ($admin_civ->count() > 0) {
 
+                    $nmbre_admin = $admin_civ->count();
+
+                    $valeur_single = robus()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $admin_valeur_convertion / $nmbre_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $admin_single = SidUser::find($user->id);
+
+                        AdminsCom::create([
+                            'amount' =>   $valeur_single,
+                            'sid_user_id' =>   $admin_single->id,
+                            'wallet_transaction_id' => $walletTransaction->id,
+                            'wallet_bank_id' => null,
+                            'wallet_deposit_id' => null,
+                            'amount_with_draw' =>  0,
+                            'wallet_inter_id' => null,
+                            'wallet_payment_id' => null,
+                            'wallet_phone_credit_id' => null,
+                            'wallet_reload_id' => null,
+                            'bank_card_id' => null,
+                            'description' => robus()->country->name_groupe == 'MAG' ? 'Paiement commission sous-distributer' : 'Commission administrateur',
+                            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
+                            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                        ]);
+                    }
+                }
+            } else {
+
+
+                if ($admin_civ->count() > 0) {
+
+                    $nmbre_admin = $admin_civ->count();
+
+                    $valeur_single = $percents / $nmbre_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $admin_single = SidUser::find($user->id);
+
+                        AdminsCom::create([
+                            'amount' =>   $valeur_single,
+                            'sid_user_id' =>   $admin_single->id,
+                            'wallet_transaction_id' => $walletTransaction->id,
+                            'wallet_bank_id' => null,
+                            'wallet_deposit_id' => null,
+                            'amount_with_draw' =>  0,
+                            'wallet_inter_id' => null,
+                            'wallet_payment_id' => null,
+                            'wallet_phone_credit_id' => null,
+                            'wallet_reload_id' => null,
+                            'bank_card_id' => null,
+                            'description' =>  'Commission administrateur',
+                            'amount_under' =>   0,
+                            'description_underdistributer' =>  null
+                        ]);
+                    }
                 }
             }
         }

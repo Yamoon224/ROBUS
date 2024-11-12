@@ -868,10 +868,13 @@ class IntersPaymentController extends Controller
                                                     if (robus()->is_under_distributer) {
 
                                                         $comission_distributer = $amount_user->comission_distributer * $amount_request;
+                                                
+                                                        $comission_compagnie = $amount_user->percent_companie * $amount_request;
                                                     } else {
 
                                                         $amount_payment = (float)$amount_user->percent  * $amount_request;
 
+                                                        $comission_compagnie = 0;
 
                                                         $comission_distributer = $amount_payment;
                                                     }
@@ -884,6 +887,8 @@ class IntersPaymentController extends Controller
 
                                                     $amount_commission_convertion =  $this->convertionservice->convertAdminCommissionPayment($comission_distributer);
 
+                                                    $amount_commission_compagnie =  $this->convertionservice->convertAdminCommissionPayment($comission_compagnie);
+
                                                     $amount_commission_convertion_percent =  $this->convertionservice->convertAdminCommissionPayment($percent_distr_cfa);
 
                                                     $valeur_convertion_amount_receved =   $amount_receved_valeur;
@@ -894,7 +899,7 @@ class IntersPaymentController extends Controller
 
                                                     if ($walletVirement != null) {
 
-                                                        if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion, $walletVirement, $amount_valeur_convertion_send, $percent_distr_cfa)) {
+                                                        if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion, $walletVirement, $amount_valeur_convertion_send, $percent_distr_cfa , $amount_commission_compagnie)) {
                                                             $this->interServices->sendNotificationPayment($walletVirement);
                                                             return $this->messageAfterValidated($walletVirement);
                                                         }

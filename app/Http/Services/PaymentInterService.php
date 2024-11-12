@@ -16,6 +16,7 @@ use App\Http\Services\ConvertionService;
 use App\Notifications\AdminNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Admin\MailController;
+use App\Http\Services\OperatorRestrictionService;
 
 class PaymentInterService
 {
@@ -23,11 +24,17 @@ class PaymentInterService
     /** @var  IntersRepository */
     public $intersRepository;
     public $convertionService;
+    protected $operatorRestrictionService;
 
-    public function __construct(IntersRepository $inter_Reposi, ConvertionService $convertionService)
+    public function __construct(IntersRepository $inter_Reposi,
+     ConvertionService $convertionService ,
+     OperatorRestrictionService $operatorRestrictionService,
+
+     )
     {
         $this->intersRepository = $inter_Reposi;
         $this->convertionService = $convertionService;
+        $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
     public function createRobusWalletTransactionPayment(
@@ -122,30 +129,12 @@ class PaymentInterService
 
         $amount_commission =  $amount;
 
-        if (robus()->is_under_distributer) {
-
-            $valuer_deposit_amount =  $percent_robus->comission_auther;
-
-            $valuer_deposit =  $this->convertionService->convertAdminCommissionInvoice($valuer_deposit_amount);
-
-            $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
-
-            $walletPayment->update([
-                'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
-            ]);
-
-           
-        } else {
-
-            $admin_valeur =  $percent_robus->amount_auther;
-        }
+        $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
 
         $walletPayment->update([
             'amount_solde' => $amount_solde,
         ]);
-
-
-        // $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($admin_valeur);
 
         robus()->wallet->update([
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,
@@ -153,64 +142,105 @@ class PaymentInterService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
+        if (robus()->is_under_distributer) {
 
-        //  Send valeur in Admin
-        if ($admin_civ->count() > 0) {
+            $valuer_deposit_amount =  $percent_robus->comission_auther;
+            $admin_nocomission =  $percent_robus->amount_auther;
+            $valuer_companie = $percent_robus->percent_companie;
 
-            $count_admin = $admin_civ->count();
+            $valuer_deposit =  $this->convertionService->convertAdminCommissionInvoice($valuer_deposit_amount);
+            $amountCompConvert =  $this->convertionService->convertAdminCommissionInvoice($valuer_companie);
 
-            $valeur_single = $admin_valeur / $count_admin;
+            $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
 
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_inter_id' => $walletPayment->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+            if (!empty($activeButtons['showRemonterPaiementButton']))
+            {
+                $walletPayment->update([
+                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
                 ]);
 
-                // $admin_single->wallet->update([
-                //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-                //     'sid_user_relod' => robus()->id,
-                //     'amount' => DB::raw('amount+' . $valeur_single),
-                // ]);
+                $account_accepted = robus()->is_accepted_companie ?? false;
+
+                if ($account_accepted) {
+
+                    $compagnie_amount =  $percent_robus->percent_companie +  $percent_robus->comission_auther;
+
+                    $walletPayment->increment('commission_companie', $amountCompConvert);
+
+                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletPayment, $compagnie_amount, $valuer_deposit);
+                } else {
+                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletPayment, $admin_valeur, $valuer_deposit);
+                }
+
+            }else {
+                $this->distributeAdminCommissions($admin_civ, $walletPayment, $admin_nocomission);
+
             }
+         
+        } else {
+            $admin_valeur =  $percent_robus->amount_auther;
+            $this->distributeAdminCommissions($admin_civ, $walletPayment, $admin_valeur);
+
         }
 
+
         return true;
+    }
+
+
+    private function distributeAdminCommissions($adminCiv, $walletPayment, $totalCommission)
+    {
+        if ($adminCiv->count() > 0) {
+            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create([
+                    'amount' =>   $commissionPerAdmin,
+                    'sid_user_id' =>   $adminUser->id,
+                    'wallet_inter_id' => $walletPayment->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' =>  0,
+                    'description_underdistributer' =>  null
+                ]);
+            }
+        }
+    }
+
+    private function distributeAdminCommissionAccepteds($adminCiv, $walletPayment, $totalCommission, $amountDeposit)
+    {
+        if ($adminCiv->count() > 0) {
+            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create([
+                    'amount' => $commissionPerAdmin,
+                    'sid_user_id' => $adminUser->id,
+                    'wallet_inter_id' => $walletPayment->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' =>  robus()->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                ]);
+            }
+        }
     }
 
     public function updateAmountPaymentOfferReceveid($admin_civ, $percent_robus, $walletPayment, $amount)
     {
 
         $amount_solde = robus()->wallet->amount - $amount;
-
         $amount_commission =  $amount;
 
-        if (robus()->is_under_distributer) {
-
-            $valuer_deposit_amount =  $percent_robus->comission_auther;
-
-            $valuer_deposit =  $this->convertionService->convertAdminCommissionInvoice($valuer_deposit_amount);
-
-            $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
-
-            $walletPayment->update([
-                'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
-            ]);
-
-           
-        } else {
-
-            $admin_valeur =  $percent_robus->amount_canal;
-        }
+        $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
 
         $walletPayment->update([
             'amount_solde' => $amount_solde,
         ]);
+
 
         robus()->wallet->update([
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,
@@ -218,28 +248,52 @@ class PaymentInterService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($admin_valeur);
 
-        //  Send valeur in Admin
-        if ($admin_civ->count() > 0) {
+        if (robus()->is_under_distributer) {
 
-            $count_admin = $admin_civ->count();
+            $valuer_companie = $percent_robus->percent_companie;
+            $valuer_deposit_amount =  $percent_robus->comission_auther;
+            $valuer_deposit =  $this->convertionService->convertAdminCommissionInvoice($valuer_deposit_amount);
+            $amountCompConvert =  $this->convertionService->convertAdminCommissionInvoice($valuer_companie);
+            $admin_nocomission =  $percent_robus->amount_canal;
 
-            $valeur_single = $admin_valeur / $count_admin;
+            $admin_valeur =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
 
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_inter_id' => $walletPayment->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+            if (!empty($activeButtons['showRemonterPaiementButton']))
+            {
+
+                $walletPayment->update([
+                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
                 ]);
+
+                $account_accepted = robus()->is_accepted_companie ?? false;
+
+                if ($account_accepted) {
+
+                    $compagnie_amount =  $percent_robus->percent_companie +  $percent_robus->comission_auther;
+
+                    $walletPayment->increment('commission_companie', $amountCompConvert);
+
+                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletPayment, $compagnie_amount, $valuer_deposit);
+                } else {
+                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletPayment, $admin_valeur, $valuer_deposit);
+                }
+
+            }else {
+                $this->distributeAdminCommissions($admin_civ, $walletPayment, $admin_nocomission);
+
             }
+
+           
+        } else {
+
+            $admin_valeur =  $percent_robus->amount_canal;
+
+            $this->distributeAdminCommissions($admin_civ, $walletPayment, $admin_valeur);
+
         }
 
+       
         return true;
     }
 

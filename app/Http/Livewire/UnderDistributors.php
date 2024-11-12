@@ -2,7 +2,9 @@
 
 namespace App\Http\Livewire;
 
+use App\Events\assignementEvent;
 use App\Mail\UvSend;
+use App\Models\Company;
 use App\Models\Custumers\Country;
 use App\Models\Operator;
 use App\Models\OperatorService;
@@ -11,8 +13,6 @@ use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Events\assignementEvent;
-use App\Models\Company;
 
 class UnderDistributors extends Component
 {
@@ -54,6 +54,40 @@ class UnderDistributors extends Component
         $this->emit($state);
     }
 
+
+    public function activeAll()
+    {
+  
+        OperatorService::truncate();
+        $utilisateurs = SidUser::where('is_under_distributer' , true)->get();
+        $operations = Operator::whereIsCommission(true)->get();
+
+        foreach ($utilisateurs as $utilisateur) {
+            foreach ($operations as $operation) {
+                OperatorService::create([
+                    'sid_user_id' => $utilisateur->id,
+                    'operator_id' => $operation->id,
+                ]);
+            }
+        }
+    }
+
+    public function activeAllOPerators()
+    {
+  
+    
+        $utilisateurs = SidUser::where('is_under_distributer' , true)->get();
+        $operations = Operator::whereIsUnder(true)->get();
+
+        foreach ($utilisateurs as $utilisateur) {
+            foreach ($operations as $operation) {
+                OperatorService::create([
+                    'sid_user_id' => $utilisateur->id,
+                    'operator_id' => $operation->id,
+                ]);
+            }
+        }
+    }
 
     public function editConnectedCompanie($id, $state)
     {

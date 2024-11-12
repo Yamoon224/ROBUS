@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\NotificationSendService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\RobusTransactionService;
+use App\Http\Services\OperatorRestrictionService;
 use App\Http\Services\SearchTransactionService;
 use App\Http\Services\ValidateDailyLimitService;
 use App\Http\Services\MobileWalletTransactionService;
@@ -400,9 +401,8 @@ class TransactionController extends Controller
             } else {
 
                 if (robus()->is_under_distributer) {
-
-
-
+            
+             
                     $validator = Validator::make(
 
                         $request->all(),

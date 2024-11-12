@@ -115,8 +115,7 @@
                                         <td class="table-report__action w-35">
 
                                             @if ($item->company_id != null && $item->company_id != 1)
-                                                <div
-                                                    class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
+                                                <div  class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
 
                                                     @if ($item->is_accepted_companie == '1')
                                                         @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))

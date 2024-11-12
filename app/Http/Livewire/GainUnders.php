@@ -134,6 +134,7 @@ class GainUnders extends Component
             if ($this->typeRemonte == "Paiements") {
 
                 $this->gain_amount =  $this->payement_gain;
+                
             } else if ($this->typeRemonte == "Transactions") {
 
                 $this->gain_amount =  $this->transaction_gain;

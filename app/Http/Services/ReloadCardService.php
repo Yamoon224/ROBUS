@@ -8,20 +8,25 @@ use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\DB;
 use App\Repositories\ReloadCardRepository;
 use App\Http\Services\MasterService;
+use App\Http\Services\OperatorRestrictionService;
 
 class ReloadCardService
 {
 
     /** @var  ReloadCardRepository */
     public $reloadCardRepository;
-    private $robusMasterTransaction;
+    // private $robusMasterTransaction;
+    protected $operatorRestrictionService;
 
-    public function __construct(ReloadCardRepository $reloadCardReposi ,
-    MasterService $robusMasterTransaction
-    )
-    {
+    public function __construct(
+        ReloadCardRepository $reloadCardReposi,
+        // MasterService $robusMasterTransaction
+        OperatorRestrictionService $operatorRestrictionService,
+
+    ) {
         $this->reloadCardRepository = $reloadCardReposi;
-        $this->robusMasterTransaction = $robusMasterTransaction;
+        // $this->robusMasterTransaction = $robusMasterTransaction;
+        $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
 
@@ -47,37 +52,14 @@ class ReloadCardService
     }
 
 
-    public function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $amount_verify , $amount_master)
+    public function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $amount_verify, $commissionCompanie)
     {
 
         $amount_solde = robus()->wallet->amount - $amount_verify;
 
-        $master_id = $this->robusMasterTransaction->mastersId();
-
-
-        if (robus()->is_under_distributer) {
-
-            $valuer_deposit =  $percent_merchands;
-
-            $admin_valeur =  $valuer_deposit;
-
-            $walletOrderCard->update([
-                'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
-            ]);
-
-            $walletOrderCard->update([
-                'commission_masters' => DB::raw('commission_masters+'  .  $amount_master),
-            ]);
-
-        } else {
-
-            $admin_valeur =  $amount_commission;
-
-            $walletOrderCard->update([
-                'commission_masters' => DB::raw('commission_masters+'  .  $amount_master),
-            ]);
-        }
-
+        // $master_id = $this->robusMasterTransaction->mastersId();
+        $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
 
         $walletOrderCard->update([
             'amount_solde' => $amount_solde,
@@ -90,35 +72,85 @@ class ReloadCardService
         ]);
 
 
-        if ($admin_civ->count() > 0) {
+        if (robus()->is_under_distributer) {
 
-            $count_admin = $admin_civ->count();
-            $valeur_single = $admin_valeur / $count_admin;
+            $valuer_deposit =  $percent_merchands;
 
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-                $description = robus()->is_under_distributer
-                    ? 'Paiement commission sous-distributer'
-                    : 'Commission administrateur';
+            $admin_valeur =  $valuer_deposit  + $commissionCompanie;
 
-                AdminsCom::create([
-                    'amount' => $valeur_single,
-                    'sid_user_id' => $admin_single->id,
-                    'wallet_deposit_id' =>  $walletOrderCard->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+            $admin_valeur_no =  $amount_commission;
+
+            if (!empty($activeButtons['showRemonterRechargementButton'])) {
+
+                $walletOrderCard->update([
+                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
                 ]);
 
-                // $reloadAmount = robus()->is_under_distributer ? 'amount-' : 'amount+';
-                // $admin_single->wallet->update([
-                //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-                //     'sid_user_relod' => robus()->id,
-                //     'amount' => DB::raw($reloadAmount . $valeur_single),
-                // ]);
+                $account_accepted = robus()->is_accepted_companie ?? false;
+
+                if ($account_accepted) {
+                    $valuer_companie = $commissionCompanie;
+                    $walletOrderCard->increment('commission_companie', $valuer_companie);
+                }
+
+                if ($admin_civ->count() > 0) {
+
+                    $count_admin = $admin_civ->count();
+                    $valeur_single = $admin_valeur / $count_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $admin_single = SidUser::find($user->id);
+
+                        AdminsCom::create([
+                            'amount' => $valeur_single,
+                            'sid_user_id' => $admin_single->id,
+                            'wallet_deposit_id' =>  $walletOrderCard->id,
+                            'description' => 'Commission administrateur',
+                            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
+                            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                        ]);
+                    }
+                }
+            } else {
+
+                $this->distributeAdminCommissions($admin_civ, $walletOrderCard, $admin_valeur_no);
             }
+
+            // $walletOrderCard->update([
+            //     'commission_masters' => DB::raw('commission_masters+'  .  $amount_master),
+            // ]);
+
+        } else {
+
+            $admin_valeur =  $amount_commission;
+
+            // $walletOrderCard->update([
+            //     'commission_masters' => DB::raw('commission_masters+'  .  $amount_master),
+            // ]);
+
+            $this->distributeAdminCommissions($admin_civ, $walletOrderCard, $admin_valeur);
         }
 
         return true;
+    }
+
+    private function distributeAdminCommissions($adminCiv, $walletOrderCard, $totalCommission)
+    {
+        if ($adminCiv->count() > 0) {
+            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create([
+                    'amount' => $commissionPerAdmin,
+                    'sid_user_id' => $adminUser->id,
+                    'wallet_deposit_id' => $walletOrderCard->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' =>  0,
+                    'description_underdistributer' => null,
+                ]);
+            }
+        }
     }
 }

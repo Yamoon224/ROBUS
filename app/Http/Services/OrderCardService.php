@@ -15,14 +15,18 @@ class OrderCardService
 
     /** @var  OrderCardRepository */
     public $orderCardRepository;
-    private $robusMasterTransaction;
+    // private $robusMasterTransaction;
+    protected $operatorRestrictionService;
 
     public function __construct(
         OrderCardRepository $orderCardReposi,
-        MasterService $robusMasterTransaction
+        // MasterService $robusMasterTransaction,
+        OperatorRestrictionService $operatorRestrictionService,
+
     ) {
         $this->orderCardRepository = $orderCardReposi;
-        $this->robusMasterTransaction = $robusMasterTransaction;
+        // $this->robusMasterTransaction = $robusMasterTransaction;
+        $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
 
@@ -103,66 +107,9 @@ class OrderCardService
     public function updateamountOrderCardReceveid($admin_civ, $percent_robus, $walletOrderCard, $amount_commission)
     {
 
-        $master_id = $this->robusMasterTransaction->mastersId();
-
-
-        if (robus()->is_under_distributer) {
-
-
-            $valuer_master =  $master_id ? $percent_robus->percent_masters  : 0;
-
-            $valuer_deposit = (float) $percent_robus->percent_merchands - (float) $valuer_master;
-
-            // Convertion in devise Use send
-            $convertion_commission = $this->convertAdminCommission($valuer_deposit);
-
-            $convertion_commission_master = $this->convertAdminCommission($valuer_master);
-
-            $admin_valeur =  $amount_commission -  $percent_robus->percent_merchands;
-
-            $walletOrderCard->update([
-                'commissions' => DB::raw('commissions+'  .  $convertion_commission),
-                'commission_masters' => DB::raw('commission_masters+'  .  $convertion_commission_master),
-            ]);
-
-
-            if ($admin_civ->count() > 0) {
-
-                $nmbre_admin = $admin_civ->count();
-
-                $valeur_single = $admin_valeur / $nmbre_admin;
-
-                foreach ($admin_civ as $user) {
-                    $admin_single = SidUser::find($user->id);
-
-                    AdminsCom::create([
-                        'amount' =>   $admin_valeur,
-                        'sid_user_id' =>   $admin_single->id,
-                        'bank_card_id' =>  $walletOrderCard->id,
-                        'description' => 'Commission administrateur',
-                        'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                        'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
-                    ]);
-                }
-            }
-        } else {
-
-            $valuer_master =  $master_id ? $percent_robus->percent_masters  : 0;
-
-            $admin_valeur = (float) $amount_commission - (float) $valuer_master;
-
-
-            $convertion_commission_master = $this->convertAdminCommission($valuer_master);
-
-
-            $walletOrderCard->update([
-                'commission_masters' => DB::raw('commission_masters+'  .  $convertion_commission_master),
-            ]);
-        }
-
-
-        $admin_valeur_convertion = $this->convertAdminCommission($admin_valeur);
-
+        // $master_id = $this->robusMasterTransaction->mastersId();
+        $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
 
         robus()->wallet->update([
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,
@@ -170,24 +117,100 @@ class OrderCardService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
+        if (robus()->is_under_distributer) {
 
-        //  Send valeur in Admin
-        if ($admin_civ->count() > 0) {
 
-            $count_admin = $admin_civ->count();
+            $valuer_deposit = (float) $percent_robus->percent_merchands;
+            // Convertion in devise Use send
+            $convertion_commission = $this->convertAdminCommission($valuer_deposit);
+            $admin_valeur =  $amount_commission -  $percent_robus->percent_merchands;
+            // $admin_valeur_convertion = $this->convertAdminCommission($admin_valeur);
 
-            $valeur_single = $admin_valeur_convertion / $count_admin;
+            if (!empty($activeButtons['showRemonterOrderButton'])) {
 
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'bank_card_id' =>  $walletOrderCard->id,
-                    'description' => 'Commission administrateur',
+
+                $walletOrderCard->update([
+                    'commissions' => DB::raw('commissions+'  .  $convertion_commission),
                 ]);
+
+                $account_accepted = robus()->is_accepted_companie ?? false;
+
+                if ($account_accepted) {
+
+                    $valuer_companie = $percent_robus->percent_companie;
+
+                    $convertion_commission_compagnie = $this->convertAdminCommission($valuer_companie);
+
+                    $walletOrderCard->increment('commission_companie', $convertion_commission_compagnie);
+                }
+
+                if ($admin_civ->count() > 0) {
+
+                    $nmbre_admin = $admin_civ->count();
+
+                    $valeur_single = $admin_valeur / $nmbre_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $admin_single = SidUser::find($user->id);
+
+                        AdminsCom::create([
+                            'amount' =>   $admin_valeur,
+                            'sid_user_id' =>   $admin_single->id,
+                            'bank_card_id' =>  $walletOrderCard->id,
+                            'description' => 'Commission administrateur',
+                            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
+                            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                        ]);
+                    }
+                }
+            } else {
+
+                if ($admin_civ->count() > 0) {
+
+                    $nmbre_admin = $admin_civ->count();
+
+                    $valeur_single = $amount_commission / $nmbre_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $admin_single = SidUser::find($user->id);
+
+                        AdminsCom::create([
+                            'amount' =>   $amount_commission,
+                            'sid_user_id' =>   $admin_single->id,
+                            'bank_card_id' =>  $walletOrderCard->id,
+                            'description' => 'Commission administrateur',
+                            'amount_under' =>  0,
+                            'description_underdistributer' =>  null
+                        ]);
+                    }
+                }
+            }
+        } else {
+
+            // $valuer_master =  $master_id ? $percent_robus->percent_masters  : 0;
+
+            $admin_valeur = (float) $amount_commission;
+
+            $admin_valeur_convertion = $this->convertAdminCommission($admin_valeur);
+
+            if ($admin_civ->count() > 0) {
+
+                $count_admin = $admin_civ->count();
+
+                $valeur_single = $admin_valeur_convertion / $count_admin;
+
+                foreach ($admin_civ as $user) {
+                    $admin_single = SidUser::find($user->id);
+                    AdminsCom::create([
+                        'amount' =>   $valeur_single,
+                        'sid_user_id' =>   $admin_single->id,
+                        'bank_card_id' =>  $walletOrderCard->id,
+                        'description' => 'Commission administrateur',
+                    ]);
+                }
             }
         }
+
 
         return true;
     }

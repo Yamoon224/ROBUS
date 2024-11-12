@@ -16,11 +16,23 @@ class ProvidersService
     public function operatorServices()
     {
 
-        $operatorServices = OperatorService::where('sid_user_id', robus()->id)->get();
+        $operatorServices = OperatorService::getOperatorsWithTranactions(robus()->id);
         event(new assignementEvent($operatorServices));
 
         return $operatorServices;
     }
+
+
+    public function operatorServiceCommissions()
+    {
+
+        $operatorServices = OperatorService::getOperatorsWithCommissions(robus()->id);
+        event(new assignementEvent($operatorServices));
+
+        return $operatorServices;
+    }
+
+
 
     public function getProvidersForCountry()
     {
@@ -236,6 +248,36 @@ class ProvidersService
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
             ->where('providers.status', true)
+            ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+    }
+
+    public static function getProvidersDepotByType($query, $countryId, $providerType)
+    {
+
+
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->where('providers.id' , 9)
+            ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+    }
+
+    public static function getProvidersMoneyByType($query, $countryId, $providerType)
+    {
+
+
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->where('providers.id', '!=' , 9)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
