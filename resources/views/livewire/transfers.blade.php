@@ -391,7 +391,7 @@
 
                 @if ($is_under)
 
-                    @if ($showMoneyButton)
+                    @if ($showDepotButton)
                         @if (sabdy()->hasPermissionTo('transfers-argent'))
                             <button class="btn btn-transuv w-22 mr-1 mb-1"
                                 wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">

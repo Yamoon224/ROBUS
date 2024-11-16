@@ -8,6 +8,7 @@
 @endphp
 
 @section('content')
+
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_table_factures">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -264,6 +265,234 @@
             <div class="font-medium text-historique mt-6">Echec</div>
             <div class="text-slate-500 mt-3">
                 {{ $sum_error ?? null }}
+            </div>
+        </div>
+
+    </div>
+    <h2 class="text-lg font-medium truncate mr-5 mt-6">Liste des gains a remonté</h2>
+    <div class="intro-y grid grid-cols-12 gap-5 mt-5">
+
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                    class="lucide lucide-credit-card report-box__icon text-secondary">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                    </rect>
+                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Total Gain</div>
+
+            <div class="text-slate-500 mt-3">
+                {{ number_format($company_gains, 2, ',', ' ') ?? null }}
+                {{ $currencie }}</div>
+
+        </div>
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box bg-primary p-5 cursor-pointer zoom-in style-success">
+
+            <a wire:click="edit({{ $gain_payments }} , 'Paiements' , 'modal-show-remonte-ccommission')"
+                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mr-3">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Rémonter
+            </a>
+
+
+            <div class="font-medium text-historique text-white mt-6">Paiements</div>
+
+
+            <div class="text-slate-500 mt-3">
+                {{ number_format($gain_payments, 2, ',', ' ') ?? null }}
+                {{ $currencie }}</div>
+
+        </div>
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-error">
+
+
+            <a id="modify-button"
+                wire:click="edit({{ $gain_depots ?? null }} , 'Depots' , 'modal-show-remonte-ccommission')"
+                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mr-3">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Rémonter
+            </a>
+
+
+            <div class="font-medium text-historique mt-6">Dépot Robus</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($gain_depots, 2, ',', ' ') ?? null }} {{ $currencie }}
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
+
+            <a id="modify-button"
+                wire:click="edit({{ $gain_retraits ?? null }} , 'Retraits' , 'modal-show-remonte-ccommission')"
+                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mr-3">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Rémonter
+            </a>
+
+
+            <div class="font-medium text-historique mt-6">Rétrait Robus</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($gain_retraits, 2, ',', ' ') ?? null }} {{ $currencie }}
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style-error">
+
+            <a id="modify-button"
+                wire:click="edit({{ $gain_moneys ?? null }} , 'Moneys' , 'modal-show-remonte-ccommission')"
+                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mr-3">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Rémonter
+            </a>
+
+
+            <div class="font-medium text-historique mt-6">Mobile Money</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($gain_moneys, 2, ',', ' ') ?? null }} {{ $currencie }}
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_user1">
+
+            <a wire:click="edit({{ $gain_phone_credits }} , 'Crédits' , 'modal-show-remonte-ccommission')"
+                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mr-3">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Rémonter
+            </a>
+
+
+            <div class="font-medium text-historique mt-6">Credits</div>
+            <div class="text-slate-500 mt-3"> {{ number_format($gain_phone_credits, 2, ',', ' ') ?? null }}
+                {{ $currencie }}</div>
+
+        </div>
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
+            <a wire:click="edit({{ $gain_inters }} , 'International' , 'modal-show-remonte-ccommission')"
+                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mr-3">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Rémonter
+            </a>
+
+
+            <div class="font-medium text-historique mt-6">Inters</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($gain_inters, 2, ',', ' ') ?? null }}
+                {{ $currencie }}</div>
+        </div>
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table2">
+            <a wire:click="edit({{ $gain_banks }} , 'Virements' , 'modal-show-remonte-ccommission')"
+                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mr-3">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Rémonter
+            </a>
+
+
+            <div class="font-medium text-historique mt-6">Virements</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($gain_banks, 2, ',', ' ') ?? null }}
+                {{ $currencie }}</div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
+
+            <a wire:click="edit({{ $gain_deposits }} , 'Rechargements' , 'modal-show-remonte-ccommission')"
+                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6 mr-3">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                        stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                </svg>
+                Rémonter
+            </a>
+
+
+            <div class="font-medium text-historique mt-6">Réchargements cartes</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($gain_deposits, 2, ',', ' ') ?? null }}
+                {{ $currencie }}
+
+
             </div>
         </div>
 

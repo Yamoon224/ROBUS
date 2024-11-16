@@ -72,7 +72,23 @@ class TransactionCiv extends Component
     public $showRemonterRetraitButton = false;
     public $showRemonterMoneyButton = false;
     public $operators;
+    public $operatorsTransaction;
 
+    public $showTransButton = false;
+    public $showCreditButton = false;
+    public $showPaiementButton = false;
+    public $showInterButton = false;
+    public $showRechargementButton = false;
+    public $showVirementButton = false;
+    public $showTelInterButton = false;
+    public $showRetraitButton = false;
+    public $showDepotButton = false;
+    public $showMobileButton = false;
+    public $showTransacInterButton = false;
+    public $showMoneyButton = false;
+    public $showBancInterButton = false;
+    public $showCarteInterButton = false;
+    public $showFacInterButton = false;
 
     public function mount()
     {
@@ -80,6 +96,7 @@ class TransactionCiv extends Component
         $this->operators = OperatorService::getOperatorsWithCommissions(sabdy()->id);
         $this->resetValeurReload();
         $this->updateProviderTransaction();
+        $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
 
         $restrictionMap = [
             'Active Transactions' => 'showRemonterTransButton',
@@ -93,6 +110,33 @@ class TransactionCiv extends Component
             'Active Money' => 'showRemonterMoneyButton',
         ];
 
+               
+        $restrictionMapTransaction = [
+            'TRANSFERT CREDIT' => 'showCreditButton',
+            'PAIEMENT DE FACTURE' => 'showPaiementButton',
+            'TRANSFERT INTERNATIONNAL MOBILE MONEY' => 'showInterButton',
+            'RECHARGEMENT DE CARTE' => 'showRechargementButton',
+            'VERSEMENT BANCAIRE' => 'showVirementButton',
+            'RETRAIT' => 'showRetraitButton',
+            'DEPOTS' => 'showDepotButton',
+            'MOBILE MONEY' => 'showMoneyButton',
+            // 'DEPOT ET TRANSFERT MOBILE MONEY' => 'showMoneyButton',
+            'TRANSFERT A INTER' => 'showTransacInterButton',
+            'CREDIT TELEPHONIQUE A INTER' => 'showTelInterButton',
+            'VERSEMENT BANCAIRE A INTER' => 'showBancInterButton',
+            'RECHARGEMENT DE CARTE A INTER' => 'showCarteInterButton',
+            'PAIMENT FACTURE A INTER' => 'showFacInterButton',
+        ];
+
+        foreach ($this->operatorsTransaction as $operator) {
+            $restrictions = explode(',', $operator->name);
+            foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+
         foreach ($this->operators as $operator) {
             $restrictions = explode(',', $operator->name);
 
@@ -102,6 +146,10 @@ class TransactionCiv extends Component
                 }
             }
         }
+
+
+        // dd( $this->showDepotButton);
+
     }
 
 
@@ -466,7 +514,7 @@ class TransactionCiv extends Component
 
                                                 if ($this->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
 
-                                                    $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                                    $message = 'Vous venez de recevoir un montant de ' . $reel_amount . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
                                                     if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
@@ -843,7 +891,7 @@ class TransactionCiv extends Component
 
 
         $transaction = WalletTransaction::query();
-
+        
 
         return view('livewire.transaction-groupe.transaction-civ', [
             'walletSolde' => Wallet::where(
@@ -873,6 +921,23 @@ class TransactionCiv extends Component
             'showRemonterMoneyButton' => $this->showRemonterMoneyButton,
             'showRemonterRetraitButton' => $this->showRemonterRetraitButton,
             'showRemonterDepotButton' => $this->showRemonterDepotButton,
+            'showTransButton' => $this->showTransButton,
+            'showCreditButton' => $this->showCreditButton,
+            'showPaiementButton' => $this->showPaiementButton,
+            'showInterButton' => $this->showInterButton,
+            'showRechargementButton' => $this->showRechargementButton,
+            'showVirementButton' => $this->showVirementButton,
+            'showMoneyButton' => $this->showMoneyButton,
+            'showRetraitButton' => $this->showRetraitButton,
+            'showDepotButton' => $this->showDepotButton,
+            'showTransacInterButton' => $this->showTransacInterButton,
+            'showTelInterButton' => $this->showTelInterButton,
+            'showBancInterButton' => $this->showBancInterButton,
+            'showCarteInterButton' => $this->showCarteInterButton,
+            'showFacInterButton' => $this->showFacInterButton,
+            'providersMoney' =>  $this->getProvidersMoneyByType(new Provider, 1),
+            'providersAlls' =>  $this->getProvidersByAllType(new Provider, 1),
+            'providersDepot' =>  $this->getProvidersByType(new Provider, 1),
             'countrie_number_local' => sabdy()->country
                 ->indecative,
 
@@ -981,7 +1046,9 @@ class TransactionCiv extends Component
     public function updateProviderTransaction()
     {
 
-        $this->providerCountries = $this->getProvidersByType(new Provider, 1);
+     
+   
+        $this->providerCountries = $this->getProvidersByType(new Provider, 1);    
         $this->compte_number_robus = '';
         $this->transaction_amount_robus = '';
         $this->transaction_amount_money = '';
@@ -994,6 +1061,23 @@ class TransactionCiv extends Component
     }
 
 
+    public static function getProvidersByAllType($query, $providerType)
+    {
+
+        $providers = $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', sabdy()->country->id)
+            ->where('providers.status', true)
+            // ->where('providers.id' , 9)
+            ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+
+
+        return $providers;
+    }
+
     public static function getProvidersByType($query, $providerType)
     {
 
@@ -1001,6 +1085,25 @@ class TransactionCiv extends Component
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', sabdy()->country->id)
             ->where('providers.status', true)
+            ->where('providers.id' , 9)
+            ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+
+
+        return $providers;
+    }
+
+
+    public static function getProvidersMoneyByType($query, $providerType)
+    {
+
+        $providers = $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', sabdy()->country->id)
+            ->where('providers.status', true)
+            ->where('providers.id' , '!=' , 9)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')

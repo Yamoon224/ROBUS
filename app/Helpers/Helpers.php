@@ -16,6 +16,37 @@ use Illuminate\Support\Facades\Http;
 
 
 
+if (! function_exists('applyRestrictionMap')) {
+    function applyRestrictionMap($operators, &$component)
+    {
+        $restrictionMapTransaction = [
+            'TRANSFERT CREDIT' => 'showCreditButton',
+            'PAIEMENT DE FACTURE' => 'showPaiementButton',
+            'TRANSFERT INTERNATIONNAL MOBILE MONEY' => 'showInterButton',
+            'RECHARGEMENT DE CARTE' => 'showRechargementButton',
+            'VERSEMENT BANCAIRE' => 'showVirementButton',
+            'RETRAIT' => 'showRetraitButton',
+            'DEPOTS' => 'showDepotButton',
+            'MOBILE MONEY' => 'showMobileButton',
+            'DEPOT ET TRANSFERT MOBILE MONEY' => 'showMoneyButton',
+            'TRANSFERT A INTER' => 'showTransacInterButton',
+            'CREDIT TELEPHONIQUE A INTER' => 'showTelInterButton',
+            'VERSEMENT BANCAIRE A INTER' => 'showBancInterButton',
+            'RECHARGEMENT DE CARTE A INTER' => 'showCarteInterButton',
+            'PAIMENT FACTURE A INTER' => 'showFacInterButton',
+        ];
+
+        foreach ($operators as $operator) {
+            $restrictions = explode(',', $operator->name);
+            foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $component->{$buttonVar} = true;
+                }
+            }
+        }
+    }
+}
+
 
 function reloadCardPercent()
 {
@@ -100,7 +131,7 @@ if (!function_exists('appDispoRobus')) {
     function appDispoRobus($model)
     {
         Artisan::call('app:close-company-status');
-        
+
         $appStatus = $model::latest()->first();
 
         if ($appStatus && $appStatus->status_app === 'closed') {

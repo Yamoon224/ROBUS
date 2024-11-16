@@ -272,6 +272,8 @@ Route::group(['prefix' => ''], function () {
             Route::get('/transactions/tunisie/inter_civ', [CommissionController::class, 'browse_transactions_inter_tunisie_civ'])->name('commissions.browse_transactions_inter_tunisie_civ');
         });
 
+        Route::post('remote/commissions/{amount}/{type}/{id}', [AdminController::class, 'remonteCommission'])->name('remonte.commissions.unders');
+
         Route::prefix('pays_commissions')->group(function () {
 
             Route::get('/west_africa', [CommissionController::class, 'browse_mobile_money'])->name('commissions.west_africa');

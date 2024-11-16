@@ -380,9 +380,15 @@ class Transfers extends Component
     public $showInterButton = false;
     public $showRechargementButton = false;
     public $showVirementButton = false;
-    public $showDepotButton = false;
+    public $showTelInterButton = false;
     public $showRetraitButton = false;
+    public $showDepotButton = false;
+    public $showMobileButton = false;
+    public $showTransacInterButton = false;
     public $showMoneyButton = false;
+    public $showBancInterButton = false;
+    public $showCarteInterButton = false;
+    public $showFacInterButton = false;
 
     public $operators;
     public $operatorsTransaction;
@@ -441,6 +447,7 @@ class Transfers extends Component
             'Active Money' => 'showRemonterMoneyButton',
         ];
 
+        
         $restrictionMapTransaction = [
             'TRANSFERT CREDIT' => 'showCreditButton',
             'PAIEMENT DE FACTURE' => 'showPaiementButton',
@@ -448,12 +455,18 @@ class Transfers extends Component
             'RECHARGEMENT DE CARTE' => 'showRechargementButton',
             'VERSEMENT BANCAIRE' => 'showVirementButton',
             'RETRAIT' => 'showRetraitButton',
-            'DEPOT ET TRANSFERT MOBILE MONEY' => 'showMoneyButton',
+            'DEPOT ET TRANSFERT MOBILE MONEY' => 'showDepotButton',
+            'MOBILE MONEY' => 'showMobileButton',
+            // 'DEPOT ET TRANSFERT MOBILE MONEY' => 'showMoneyButton',
+            'TRANSFERT A INTER' => 'showTransacInterButton',
+            'CREDIT TELEPHONIQUE A INTER' => 'showTelInterButton',
+            'VERSEMENT BANCAIRE A INTER' => 'showBancInterButton',
+            'RECHARGEMENT DE CARTE A INTER' => 'showCarteInterButton',
+            'PAIMENT FACTURE A INTER' => 'showFacInterButton',
         ];
 
         foreach ($this->operatorsTransaction as $operator) {
             $restrictions = explode(',', $operator->name);
-            
             foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
                 if (in_array($restriction, $restrictions)) {
                     $this->{$buttonVar} = true;
@@ -5313,8 +5326,12 @@ class Transfers extends Component
             'showVirementButton' => $this->showVirementButton,
             'showMoneyButton' => $this->showMoneyButton,
             'showRetraitButton' => $this->showRetraitButton,
-            'showDepotButton' => $this->showRemonterDepotButton,
-
+            'showDepotButton' => $this->showDepotButton,
+            'showTransacInterButton' => $this->showTransacInterButton,
+            'showTelInterButton' => $this->showTelInterButton,
+            'showBancInterButton' => $this->showBancInterButton,
+            'showCarteInterButton' => $this->showCarteInterButton,
+            'showFacInterButton' => $this->showFacInterButton,
             'user_auth' => $walletUser,
             'user_send' => sabdy(),
         ]);

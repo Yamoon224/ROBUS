@@ -250,7 +250,7 @@ class TransactionController extends Controller
                                                 $this->notifications->sendNotification($walletTransaction);
                                                 return $this->messageAfterValidated($walletTransaction);
                                             } else {
-
+                                                
                                                 return  json_message_response(false, "Error de transferts du montant!", 333);
                                             }
                                         }

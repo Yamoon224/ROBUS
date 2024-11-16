@@ -1,6 +1,7 @@
 <div>
     @if ($step === 1)
-        <div  class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+        <div
+            class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
             <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                 <a href="#step-1"
                     class="w-10 h-10 rounded-full btn btn-circle {{ $step != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
@@ -9,24 +10,43 @@
             </div>
 
         </div>
+
+
         <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
             <div class="col-span-12">
-                <label for="modal-form-1" class="form-label">Canal transfert d'argent <span class="text-danger">
-                        *</span></label>
+                <label for="modal-form-1" class="form-label">
+                    Canal transfert d'argent
+                    <span class="text-danger">*</span>
+                </label>
                 <select wire:model.debounce.300ms="provider_transaction" wire:change="updateProviderTransaction"
                     id="modal-form-1" class="form-control">
-                    <option value="null" disabled>Selectionnez le canal</option>
-                    @foreach ($providerCountries as $item)
-                        <option value="{{ $item->id }}">{{ $item->name }}</option>
-                    @endforeach
+                    <option value="null" disabled selected>Selectionnez le canal</option>
+
+                    {{-- Vérification des options disponibles --}}
+                    @if ($showDepotButton && $showMoneyButton)
+                        @foreach ($providersAlls as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    @elseif ($showDepotButton)
+                        @foreach ($providersDepot as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    @elseif ($showMoneyButton)
+                        @foreach ($providersMoney as $item)
+                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                        @endforeach
+                    @else
+                        <option value="null" disabled>Pas disponible pour vous</option>
+                    @endif
                 </select>
 
+                {{-- Affichage des erreurs --}}
                 @error('provider_transaction')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
-
             </div>
         </div>
+
         @if (!is_null($provider_transaction))
 
             @php
@@ -164,7 +184,6 @@
                                 : $commission_transaction_money_val_admin_receive;
                         @endphp
                         @if (sabdy()->is_under_distributer == 1)
-                        
                             <x-transaction-detail title="Commission" value="{{ $commission }}"
                                 country="{{ $usersCountry }}" />
 
@@ -218,7 +237,6 @@
 
 
             @if ($provider_transaction == 9)
-            
                 <div class="col-span-6 mt-space-padding">
                     <label for="number_phone_credit_edit" class="form-label">Montant de la transaction Robus<span
                             class="text-danger">
@@ -299,7 +317,7 @@
                     class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
                     Validez la demande
                 </button>
-                @else
+            @else
                 <p class="text-danger mt-2">
                     Veuillez entrer un mot de passe valide pour activer le bouton de validation.
                 </p>

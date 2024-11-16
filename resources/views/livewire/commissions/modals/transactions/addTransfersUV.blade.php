@@ -1,4 +1,9 @@
 <!-- Modal -->
+@php
+
+    $is_under = sabdy()->is_under_distributer;
+    $is_distributer = sabdy()->is_distributer;
+@endphp
 <div wire:ignore.self id="create-transfersUV-modal" class="modal hide overflow-y-auto" data-tw-backdrop="static"
     style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000; display: block;">
     <div class="modal-dialog modal-lg">
@@ -19,30 +24,63 @@
 
                 @if (sabdy()->is_distributer != 1)
                     <!-- Option 1: Transferts -->
-                    <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2"
-                        @if ($choose_type_transaction == 2) style="display: none;" @endif>
-                        <input id="bordered-radio-6" type="radio" wire:model.debounce.10ms="choose_type_transaction"
-                            value="1"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="bordered-radio-6"
-                            class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Transferts</label>
-                        @error('choose_type_transaction')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
 
-                    <!-- Option 2: Retraits -->
-                    <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2"
-                        @if ($choose_type_transaction == 1) style="display: none;" @endif>
-                        <input id="bordered-radio-7" type="radio" wire:model.debounce.10ms="choose_type_transaction"
-                            value="2"
-                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                        <label for="bordered-radio-7"
-                            class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Retraits</label>
-                        @error('choose_type_transaction')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
+                    @if ($is_under)
+
+                    
+                        @if ($showDepotButton)
+                            <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2"
+                                @if ($choose_type_transaction == 2) style="display: none;" @endif>
+                                <input id="bordered-radio-6" type="radio"
+                                    wire:model.debounce.10ms="choose_type_transaction" value="1"
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="bordered-radio-6"
+                                    class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Transferts</label>
+                                @error('choose_type_transaction')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        @endif
+
+
+                        @if ($showRetraitButton)
+                            <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2"
+                                @if ($choose_type_transaction == 1) style="display: none;" @endif>
+                                <input id="bordered-radio-7" type="radio"
+                                    wire:model.debounce.10ms="choose_type_transaction" value="2"
+                                    class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                <label for="bordered-radio-7"
+                                    class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Retraits</label>
+                                @error('choose_type_transaction')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        @endif
+                    @else
+                        <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2"
+                            @if ($choose_type_transaction == 2) style="display: none;" @endif>
+                            <input id="bordered-radio-6" type="radio"
+                                wire:model.debounce.10ms="choose_type_transaction" value="1"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="bordered-radio-6"
+                                class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Transferts</label>
+                            @error('choose_type_transaction')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+
+                        <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2"
+                            @if ($choose_type_transaction == 1) style="display: none;" @endif>
+                            <input id="bordered-radio-7" type="radio"
+                                wire:model.debounce.10ms="choose_type_transaction" value="2"
+                                class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                            <label for="bordered-radio-7"
+                                class="w-full py-4 ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Retraits</label>
+                            @error('choose_type_transaction')
+                                <span class="text-danger">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    @endif
                 @else
                     <div
                         class="col-span-12 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2 ">
@@ -66,7 +104,8 @@
                     @livewire('transaction-groupe.transaction-civ')
                 @else
                     @if ($currentStep == 1)
-                        <div class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+                        <div
+                            class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
                             <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                                 <a href="#step-1"
                                     class="w-10 h-10 rounded-full btn btn-circle {{ $currentStep != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
@@ -75,7 +114,8 @@
                             </div>
                         </div>
                     @else
-                        <div class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
+                        <div
+                            class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
                             <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                                 <a href="#step-2"
                                     class="w-10 h-10 rounded-full btn btn-circle {{ $currentStep != 2 ? 'btn-default' : 'btn-secondary' }}">2</a>
@@ -206,8 +246,6 @@
                                                 <x-transaction-detail title="Montant à remettre"
                                                     value="{{ $amount_to_receive }}"
                                                     country="{{ $usersCountry }}" />
-
-                                                    
                                             @endif
                                         @endif
 

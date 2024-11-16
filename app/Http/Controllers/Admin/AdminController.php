@@ -1285,6 +1285,20 @@ class AdminController extends Controller
         $sum_success    = $this->getCountWalletTransaction($wallet_solde->id, 'SUCCESS');
         $pending_success    = $this->getCountWalletTransaction($wallet_solde->id, 'PENDING');
         $totalSumAmounts = $this->getTotalSumTransactionsAmount($wallet_solde);
+
+        // Gains
+        $gain_deposits = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class ,$user->id);
+        $gain_payments = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class , $user->id);
+        $gain_transactions = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class , $user->id);
+        $gain_moneys = $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class , $user->id);
+        $gain_depots = $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class , $user->id);
+        $gain_retraits = $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class ,$user->id);
+        $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class ,  $user->id);
+        $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class , $user->id);
+        $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class , $user->id);
+
+        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
+
         // Execeptions
         $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
 
@@ -1298,9 +1312,195 @@ class AdminController extends Controller
             'countries',
             'usersCountry',
             'totalSumAmounts',
-            'kycs'
+            'kycs',
+            'gain_payments',
+            'gain_transactions',
+            'gain_phone_credits' ,
+            'gain_inters' ,
+            'gain_banks',
+            'gain_deposits',
+            'gain_depots' ,
+            'gain_retraits',
+            'gain_moneys',
+            'company_gains'
 
         ));
+    }
+
+    public function remonteCommission(int $id, Request $request)
+    {
+
+        $check = SidUser::find($id);
+
+        if (!empty($check)) {
+
+            $amount_solde = (float)$check->wallet->amount + (float)$request->gain_amount;
+
+            if ($request->gain_amount <= 0) {
+                $request->emit('modal-hide', 'hide');
+
+                $request->emit('error', 'Le montant de la commission est invalide ou null !!');
+                return;
+            }
+
+            if ($request->typeRemonte == "Paiements") {
+
+                $request->gain_amount =  $request->payement_gain;
+                
+            } else if ($request->typeRemonte == "Transactions") {
+
+                $request->gain_amount =  $request->transaction_gain;
+            } else if ($request->typeRemonte == "Crédits") {
+
+                $request->gain_amount =  $request->phonecredit_gain;
+            } else if ($request->typeRemonte == "International") {
+
+                $request->gain_amount =  $request->inter_gain;
+            } else if ($request->typeRemonte == "Virements") {
+
+                $request->gain_amount =  $request->bank_gain;
+            } else if ($request->typeRemonte == "Rechargements") {
+
+                $request->gain_amount =  $request->deposit_gain;
+            } else if ($request->typeRemonte == "Depots") {
+
+                $request->gain_amount =  $request->transaction_gain_depot;
+            } else if ($request->typeRemonte == "Retraits") {
+
+                $request->gain_amount =  $request->transaction_gain_retrait;
+            } else if ($request->typeRemonte == "Moneys") {
+
+                $request->gain_amount =  $request->transaction_gain_mobile;
+            } else {
+                $request->emit('error', 'Type de remontée invalide');
+                return;
+            }
+
+            $withRemonte = $this->createWithCommission($amount_solde, $this->gain_amount,  $this->typeRemonte);
+
+            if ($withRemonte !== null) {
+
+                $this->updateWallet($withRemonte);
+
+                if ($this->typeRemonte == "Paiements") {
+
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class);
+                    $this->payement_gain = 0;
+                } else if ($this->typeRemonte == "Transactions") {
+
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletTransaction::class);
+                } else if ($this->typeRemonte == "Crédits") {
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPhoneCredit::class);
+                    $this->phonecredit_gain = 0;
+                } else if ($this->typeRemonte == "International") {
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class);
+                    $this->inter_gain = 0;
+                } else if ($this->typeRemonte == "Virements") {
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class);
+                    $this->bank_gain = 0;
+                } else if ($this->typeRemonte == "Rechargements") {
+
+                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class);
+                    $this->deposit_gain = 0;
+                } else if ($this->typeRemonte == "Depots") {
+                    $this->getUpdateTransactionDepotRobusCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_depot = 0;
+                } else if ($this->typeRemonte == "Retraits") {
+                    $this->getUpdateTransactionRetraitRobusCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_retrait = 0;
+                } else if ($this->typeRemonte == "Moneys") {
+
+                    $this->getUpdateTransactionMoneyCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_mobile = 0;
+                } else if ($this->typeRemonte == "Transactions Salaire") {
+
+                    $this->getUpdateTransactionEmplCommissionAmountNullTotal(WalletTransaction::class);
+                    $this->transaction_gain_empl = 0;
+                } else {
+                    $this->emit('error', 'Type de remontée invalide');
+                    return;
+                }
+                $msg = 'Vous avez transferé vos commission sur votre compte';
+                $msg_title = 'Transfert de la commission ';
+                $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                $this->emit('modal-hide', 'hide');
+                $this->emit('success', 'Votre commission a été remonté avec success !!');
+            } else {
+                $this->emit('modal-hide', 'hide');
+                $this->emit('error', 'Erreur de recuperation du montant de la commission !');
+            }
+        }
+    }
+    public function getTodayTransactionCommissionAmountTotal($walletModel , $userID)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', $userID)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionRobusRetraitCommissionAmountTotal($walletModel, $userID)
+    {
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', $userID)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionRobusDepotCommissionAmountTotal($walletModel , $userID)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id',  $userID)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionMobileCommissionAmountTotal($walletModel, $userID)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id',  $userID)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
     }
 
     public function showdistributors(int $id, Request $request)
