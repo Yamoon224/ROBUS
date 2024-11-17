@@ -73,7 +73,22 @@ class TransactionCiv extends Component
     public $showRemonterRetraitButton = false;
     public $showRemonterMoneyButton = false;
     public $operators;
-
+    public $operatorsTransaction;
+    public $showTransButton = false;
+    public $showCreditButton = false;
+    public $showPaiementButton = false;
+    public $showInterButton = false;
+    public $showRechargementButton = false;
+    public $showVirementButton = false;
+    public $showTelInterButton = false;
+    public $showRetraitButton = false;
+    public $showDepotButton = false;
+    public $showMobileButton = false;
+    public $showTransacInterButton = false;
+    public $showMoneyButton = false;
+    public $showBancInterButton = false;
+    public $showCarteInterButton = false;
+    public $showFacInterButton = false;
 
     public function resetValeurReload()
     {
@@ -96,6 +111,7 @@ class TransactionCiv extends Component
         $this->resetValeurReload();
         $this->commission_transaction_val_inter_pay = 0;
         $this->commission_transaction_val_inter_convertion_send = 0;
+        $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
 
         $restrictionMap = [
             'Active Transactions' => 'showRemonterTransButton',
@@ -109,10 +125,37 @@ class TransactionCiv extends Component
             'Active Money' => 'showRemonterMoneyButton',
         ];
 
+        $restrictionMapTransaction = [
+            'TRANSFERT CREDIT' => 'showCreditButton',
+            'PAIEMENT DE FACTURE' => 'showPaiementButton',
+            'TRANSFERT INTERNATIONNAL MOBILE MONEY' => 'showInterButton',
+            'RECHARGEMENT DE CARTE' => 'showRechargementButton',
+            'VERSEMENT BANCAIRE' => 'showVirementButton',
+            'RETRAIT' => 'showRetraitButton',
+            'DEPOTS' => 'showDepotButton',
+            'MOBILE MONEY' => 'showMoneyButton',
+            // 'DEPOT ET TRANSFERT MOBILE MONEY' => 'showMoneyButton',
+            'TRANSFERT A INTER' => 'showTransacInterButton',
+            'CREDIT TELEPHONIQUE A INTER' => 'showTelInterButton',
+            'VERSEMENT BANCAIRE A INTER' => 'showBancInterButton',
+            'RECHARGEMENT DE CARTE A INTER' => 'showCarteInterButton',
+            'PAIMENT FACTURE A INTER' => 'showFacInterButton',
+        ];
+
         foreach ($this->operators as $operator) {
             $restrictions = explode(',', $operator->name);
 
             foreach ($restrictionMap as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+
+      
+        foreach ($this->operatorsTransaction as $operator) {
+            $restrictions = explode(',', $operator->name);
+            foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
                 if (in_array($restriction, $restrictions)) {
                     $this->{$buttonVar} = true;
                 }
@@ -812,6 +855,8 @@ class TransactionCiv extends Component
             'countrie_number_local' => sabdy()->country
                 ->indecative,
             'countrie_inter_ivoires' => $this->ProvidersForCountryInters,
+            'showRemonterInterButton' => $this->showRemonterInterButton,
+            'showTransacInterButton' => $this->showTransacInterButton,
 
         ]);
     }
@@ -2375,7 +2420,7 @@ class TransactionCiv extends Component
 
                     25 => ($provider_valeur != 51) ? 515 : 403, // Benin
                     36 => ($provider_valeur != 51) ? 516 : 404, // BF
-                    133 => ($provider_valeur != 51) ? 4575 : 4048, // Mali
+                    133 => ($provider_valeur != 51) ? 7120 : 7121, // Mali
                     214 => ($provider_valeur != 51) ? 518 : 406, // Togo
                     188 => ($provider_valeur != 51) ? 519 : 407, // Senegal
                     83 => ($provider_valeur != 51) ? 520 : 408, // Ghana

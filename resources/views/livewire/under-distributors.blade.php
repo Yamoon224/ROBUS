@@ -3,6 +3,17 @@
     <h2 class="intro-y text-lg font-medium mt-10">
         Liste des sous distributeurs
     </h2>
+
+
+    <!-- Bouton pour activer tous les opérateurs avec commission -->
+    {{-- <button wire:click="activeAll" class="btn btn-primary">
+        Activer tous les opérateurs (avec commission)
+    </button>
+
+    <!-- Bouton pour activer tous les opérateurs -->
+    <button wire:click="activeAllOperators" class="btn btn-secondary">
+        Activer tous les opérateurs
+    </button> --}}
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))

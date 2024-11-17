@@ -111,15 +111,28 @@
 
                                 @if (!is_null($offer_paiement))
                                     @if ($user_auth->is_under_distributer == 1)
-                                        <div class="col-span-6 mt-3">
-                                            <label for="offer_paiement" class="form-label">Commission<span
-                                                    class="text-danger">*</span></label>
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                                style="font-size: 25px; color:white;">
-                                                {{ $amount_paiement_invoice_canal_inter ?? null }}
-                                                {{ $usersCountry }}
+
+                                        @if ($showRemonterPaiementButton)
+                                            <div class="col-span-6 mt-3">
+                                                <label for="offer_paiement" class="form-label">Commission<span
+                                                        class="text-danger">*</span></label>
+                                                <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+                                                    {{ $amount_paiement_invoice_canal_inter ?? null }}
+                                                    {{ $usersCountry }}
+                                                </div>
                                             </div>
-                                        </div>
+                                        @else
+                                            <div class="col-span-6 mt-3">
+                                                <label class="form-label">Pas de commission<span class="text-danger">
+                                                        *</span></label>
+                                                <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+
+                                                </div>
+                                            </div>
+                                        @endif
+
                                         <div class="col-span-6 mt-3">
                                             <label for="offer_paiement" class="form-label">Montant à payer<span
                                                     class="text-danger">*</span></label>
@@ -237,16 +250,29 @@
                                 </div>
                                 @if (!is_null($paiement_amount_total))
                                     @if ($user_auth->is_under_distributer == 1)
-                                        <div class="col-span-6 mt-3">
-                                            <label for="paiement_amount_total" class="form-label">Commission<span
-                                                    class="text-danger">
-                                                    *</span></label>
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                                style="font-size: 25px; color:white;">
-                                                {{ $amount_paiement_invoice_auther_pay ?? null }}
-                                                {{ $usersCountry }}
+                                        @if ($showRemonterPaiementButton)
+                                            <div class="col-span-6 mt-3">
+                                                <label for="paiement_amount_total" class="form-label">Commission<span
+                                                        class="text-danger">
+                                                        *</span></label>
+                                                <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+                                                    {{ $amount_paiement_invoice_auther_pay ?? null }}
+                                                    {{ $usersCountry }}
+                                                </div>
                                             </div>
-                                        </div>
+                                        @else
+                                            <div class="col-span-6 mt-3">
+                                                <label class="form-label">Pas de commission<span class="text-danger">
+                                                        *</span></label>
+                                                <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+
+                                                </div>
+                                            </div>
+                                        @endif
+
+
                                         <div class="col-span-6 mt-3">
                                             <label for="paiement_amount_total" class="form-label">Frais<span
                                                     class="text-danger">
@@ -342,16 +368,29 @@
                             </div>
                             @if (!is_null($paiement_amount_t_sodecie))
                                 @if ($user_auth->is_under_distributer == 1)
-                                    <div class="col-span-6 mt-3">
-                                        <label for="paiement_amount_t_sodecie" class="form-label">Commission<span
-                                                class="text-danger">
-                                                *</span></label>
-                                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                            style="font-size: 25px; color:white;">
-                                            {{ $amount_paiement_invoice_auther_pay ?? null }}
-                                            {{ $usersCountry }}
+                                    @if ($showRemonterPaiementButton)
+                                        <div class="col-span-6 mt-3">
+                                            <label for="paiement_amount_t_sodecie" class="form-label">Commission<span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                style="font-size: 25px; color:white;">
+                                                {{ $amount_paiement_invoice_auther_pay ?? null }}
+                                                {{ $usersCountry }}
+                                            </div>
                                         </div>
-                                    </div>
+                                    @else
+                                        <div class="col-span-6 mt-3">
+                                            <label class="form-label">Pas de commission<span class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
+                                                style="font-size: 25px; color:white;">
+
+                                            </div>
+                                        </div>
+                                    @endif
+
+
                                     <div class="col-span-6 mt-3">
                                         <label for="paiement_amount_t_sodecie" class="form-label">Frais<span
                                                 class="text-danger">

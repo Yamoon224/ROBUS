@@ -27,7 +27,7 @@
 
                     @if ($is_under)
 
-                    
+
                         @if ($showDepotButton)
                             <div class="col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700 form-check mr-2"
                                 @if ($choose_type_transaction == 2) style="display: none;" @endif>
@@ -240,8 +240,21 @@
                                             @endphp
 
                                             @if (sabdy()->is_under_distributer == 1)
-                                                <x-transaction-detail title="Commission" value="{{ $commission }}"
-                                                    country="{{ $usersCountry }}" />
+
+                                                @if ($showRemonterRetraitButton)
+                                                    <x-transaction-detail title="Commission"
+                                                        value="{{ $commission }}" country="{{ $usersCountry }}" />
+                                                @else
+                                                    <div class="col-span-6 mt-3">
+                                                        <label class="form-label">Pas de commission<span
+                                                                class="text-danger"> *</span></label>
+                                                        <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
+                                                            style="font-size: 25px; color:white;">
+
+                                                        </div>
+                                                    </div>
+                                                @endif
+
 
                                                 <x-transaction-detail title="Montant à remettre"
                                                     value="{{ $amount_to_receive }}"

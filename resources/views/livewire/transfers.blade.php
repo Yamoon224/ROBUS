@@ -439,7 +439,7 @@
                         @endif
                     @endif
 
-                    @if ($showInterButton)
+                    @if ($showTransacInterButton)
                         @if (sabdy()->hasPermissionTo('rechargement-inters'))
                             <button class="btn btn-inter w-22 mr-1 mb-1"
                                 wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>

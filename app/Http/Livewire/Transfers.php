@@ -5332,6 +5332,17 @@ class Transfers extends Component
             'showBancInterButton' => $this->showBancInterButton,
             'showCarteInterButton' => $this->showCarteInterButton,
             'showFacInterButton' => $this->showFacInterButton,
+            // Remote commissions
+            'showRemonterTransButton' => $this->showRemonterTransButton,
+            'showRemonterCreditButton' => $this->showRemonterCreditButton,
+            'showRemonterPaiementButton' => $this->showRemonterPaiementButton,
+            'showRemonterInterButton' => $this->showRemonterInterButton,
+            'showRemonterRechargementButton' => $this->showRemonterRechargementButton,
+            'showRemonterVirementButton' => $this->showRemonterVirementButton,
+            'showRemonterDepotButton' => $this->showRemonterDepotButton,
+            'showRemonterRetraitButton' => $this->showRemonterRetraitButton,
+            'showRemonterMoneyButton' => $this->showRemonterMoneyButton,
+
             'user_auth' => $walletUser,
             'user_send' => sabdy(),
         ]);

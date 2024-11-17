@@ -88,22 +88,34 @@
                             @if (!is_null($amount_reloadcard))
 
                                 @if ($user_auth->is_under_distributer == 1)
-                                    <div class="col-span-6 mt-3">
-                                        <label for="amount_reloadcard" class="form-label">Montant commission<span
-                                                class="text-danger">
-                                                *</span></label>
-                                        @if ($amount_reloadcard == '')
-                                            <div class="text-gray-500 text-sm">
-                                                Entrer le montant
-                                            </div>
-                                        @else
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+
+                                    @if ($showRemonterRechargementButton)
+                                        <div class="col-span-6 mt-3">
+                                            <label for="amount_reloadcard" class="form-label">Montant commission<span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            @if ($amount_reloadcard == '')
+                                                <div class="text-gray-500 text-sm">
+                                                    Entrer le montant
+                                                </div>
+                                            @else
+                                                <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+                                                    {{ $amount_deposit_nation_pay ?? null }}
+                                                    {{ $usersCountry }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="col-span-6 mt-3">
+                                            <label class="form-label">Pas de commission<span class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
                                                 style="font-size: 25px; color:white;">
-                                                {{ $amount_deposit_nation_pay ?? null }}
-                                                {{ $usersCountry }}
+
                                             </div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="col-span-6 mt-3">
                                         <label for="amount_reloadcard" class="form-label">Montant à payer<span
@@ -185,22 +197,33 @@
                             @if (!is_null($amount_reloadcard))
                                 @if ($user_auth->is_under_distributer == 1)
 
-                                    <div class="col-span-6 mt-3">
-                                        <label for="amount_reloadcard" class="form-label">Montant commission<span
-                                                class="text-danger">
-                                                *</span></label>
-                                        @if ($amount_reloadcard == '')
-                                            <div class="text-gray-500 text-sm">
-                                                Entrer le montant
-                                            </div>
-                                        @else
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                    @if ($showRemonterRechargementButton)
+                                        <div class="col-span-6 mt-3">
+                                            <label for="amount_reloadcard" class="form-label">Montant commission<span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            @if ($amount_reloadcard == '')
+                                                <div class="text-gray-500 text-sm">
+                                                    Entrer le montant
+                                                </div>
+                                            @else
+                                                <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+                                                    {{ $amount_deposit_nation_pay ?? null }}
+                                                    {{ $usersCountry }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="col-span-6 mt-3">
+                                            <label class="form-label">Pas de commission<span class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
                                                 style="font-size: 25px; color:white;">
-                                                {{ $amount_deposit_nation_pay ?? null }}
-                                                {{ $usersCountry }}
+
                                             </div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="col-span-6 mt-3">
                                         <label for="amount_reloadcard" class="form-label">Montant à payer <span
@@ -281,22 +304,33 @@
                             @if (!is_null($amount_reloadcard))
 
                                 @if ($user_auth->is_under_distributer == 1)
-                                    <div class="col-span-6 mt-3">
-                                        <label for="amount_reloadcard" class="form-label">Montant commission<span
-                                                class="text-danger">
-                                                *</span></label>
-                                        @if ($amount_reloadcard == '')
-                                            <div class="text-gray-500 text-sm">
-                                                Entrer le montant
-                                            </div>
-                                        @else
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                    @if ($showRemonterRechargementButton)
+                                        <div class="col-span-6 mt-3">
+                                            <label for="amount_reloadcard" class="form-label">Montant commission<span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            @if ($amount_reloadcard == '')
+                                                <div class="text-gray-500 text-sm">
+                                                    Entrer le montant
+                                                </div>
+                                            @else
+                                                <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+                                                    {{ $amount_deposit_nation_pay ?? null }}
+                                                    {{ $usersCountry }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="col-span-6 mt-3">
+                                            <label class="form-label">Pas de commission<span class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
                                                 style="font-size: 25px; color:white;">
-                                                {{ $amount_deposit_nation_pay ?? null }}
-                                                {{ $usersCountry }}
+
                                             </div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="col-span-6 mt-3">
                                         <label for="amount_reloadcard" class="form-label">Montant à payer<span
@@ -376,22 +410,33 @@
                             </div>
                             @if (!is_null($amount_reloadcard))
                                 @if ($user_auth->is_under_distributer == 1)
-                                    <div class="col-span-6 mt-3">
-                                        <label for="amount_reloadcard" class="form-label">Montant commission<span
-                                                class="text-danger">
-                                                *</span></label>
-                                        @if ($amount_reloadcard == '')
-                                            <div class="text-gray-500 text-sm">
-                                                Entrer le montant
-                                            </div>
-                                        @else
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                    @if ($showRemonterRechargementButton)
+                                        <div class="col-span-6 mt-3">
+                                            <label for="amount_reloadcard" class="form-label">Montant commission<span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            @if ($amount_reloadcard == '')
+                                                <div class="text-gray-500 text-sm">
+                                                    Entrer le montant
+                                                </div>
+                                            @else
+                                                <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+                                                    {{ $amount_deposit_nation_pay ?? null }}
+                                                    {{ $usersCountry }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="col-span-6 mt-3">
+                                            <label class="form-label">Pas de commission<span class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
                                                 style="font-size: 25px; color:white;">
-                                                {{ $amount_deposit_nation_pay ?? null }}
-                                                {{ $usersCountry }}
+
                                             </div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="col-span-6 mt-3">
                                         <label for="amount_reloadcard" class="form-label">Montant à payer<span
@@ -473,22 +518,33 @@
                             @if (!is_null($amount_reloadcard))
 
                                 @if ($user_auth->is_under_distributer == 1)
-                                    <div class="col-span-6 mt-3">
-                                        <label for="amount_reloadcard" class="form-label">Montant commission<span
-                                                class="text-danger">
-                                                *</span></label>
-                                        @if ($amount_reloadcard == '')
-                                            <div class="text-gray-500 text-sm">
-                                                Entrer le montant
-                                            </div>
-                                        @else
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                    @if ($showRemonterRechargementButton)
+                                        <div class="col-span-6 mt-3">
+                                            <label for="amount_reloadcard" class="form-label">Montant commission<span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            @if ($amount_reloadcard == '')
+                                                <div class="text-gray-500 text-sm">
+                                                    Entrer le montant
+                                                </div>
+                                            @else
+                                                <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+                                                    {{ $amount_deposit_nation_pay ?? null }}
+                                                    {{ $usersCountry }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="col-span-6 mt-3">
+                                            <label class="form-label">Pas de commission<span class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
                                                 style="font-size: 25px; color:white;">
-                                                {{ $amount_deposit_nation_pay ?? null }}
-                                                {{ $usersCountry }}
+
                                             </div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="col-span-6 mt-3">
                                         <label for="amount_reloadcard" class="form-label">Montant à payer<span
@@ -592,21 +648,20 @@
 
                 <div class="modal-footer style-foo">
                     <button wire:click="cancelReloadCardField" type="button"
-                        class="btn btn-outline-secondary w-20 mr-1"
-                        wire:loading.class="hidden" wire:target="addValidatedReloadCard"
-                        >Annuler</button>
+                        class="btn btn-outline-secondary w-20 mr-1" wire:loading.class="hidden"
+                        wire:target="addValidatedReloadCard">Annuler</button>
 
 
                     @if ($isPasswordValid)
-                    <button wire:click="addValidatedReloadCard" type="button" wire:loading.attr="disabled"
-                        class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
-                        Validez la demande
-                    </button>
+                        <button wire:click="addValidatedReloadCard" type="button" wire:loading.attr="disabled"
+                            class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">
+                            Validez la demande
+                        </button>
                     @else
-                    <p class="text-danger mt-2">
-                        Veuillez entrer un mot de passe valide pour activer le bouton de validation.
-                    </p>
-                @endif
+                        <p class="text-danger mt-2">
+                            Veuillez entrer un mot de passe valide pour activer le bouton de validation.
+                        </p>
+                    @endif
 
 
                     <div wire:loading.flex wire:target="addValidatedReloadCard"
@@ -629,8 +684,8 @@
                             }
 
                             .hidden {
-                display: none;
-            }
+                                display: none;
+                            }
                         </style>
                         <p>Traitement en cours...</p>
                     </div>

@@ -1729,7 +1729,7 @@ class PercentRobusAuthService
 
                     25 => ($provider_valeur != 51) ? 515 : 403, // Benin
                     36 => ($provider_valeur != 51) ? 516 : 404, // BF
-                    133 => ($provider_valeur != 51) ? 4575 : 4048, // Mali
+                    133 => ($provider_valeur != 51) ? 7120 : 7121, // Mali
                     214 => ($provider_valeur != 51) ? 518 : 406, // Togo
                     188 => ($provider_valeur != 51) ? 519 : 407, // Senegal
                     83 => ($provider_valeur != 51) ? 520 : 408, // Ghana

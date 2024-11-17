@@ -247,29 +247,26 @@
 
                                 @if (sabdy()->is_under_distributer == 1)
 
-                                    <x-transaction-detail title="Commission" value="{{ $commission }}"
-                                        country="{{ $usersCountry }}" />
+                                    @if ($showRemonterCreditButton)
+                                        <x-transaction-detail title="Commission" value="{{ $commission }}"
+                                            country="{{ $usersCountry }}" />
+                                    @else
+                                        <div class="col-span-6 mt-3">
+                                            <label class="form-label">Pas de commission<span class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
+                                                style="font-size: 25px; color:white;">
+
+                                            </div>
+                                        </div>
+                                    @endif
+
 
                                     {{-- Montant à recevoir --}}
                                     <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
                                         country="{{ $usersCountry }}" />
 
-                                    <div class="col-span-12 mt-3">
-                                        <label for="amount_phone_credit" class="form-label">Montant à
-                                            Payer<span class="text-danger">
-                                                *</span></label>
-                                        @if ($amount_phone_credit == '')
-                                            <div class="text-gray-500 text-sm">
-                                                Entrer le montant
-                                            </div>
-                                        @else
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                                style="font-size: 25px; color:white;">
-                                                {{ $frais ?? null }}
-                                                {{ $usersCountry }}
-                                            </div>
-                                        @endif
-                                    </div>
+                               
                                 @else
                                     <x-transaction-detail title="Montant à payer" value="{{ $amount_to_pay }}"
                                         country="{{ $usersCountry }}" />

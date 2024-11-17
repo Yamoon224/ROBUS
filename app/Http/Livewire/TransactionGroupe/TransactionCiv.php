@@ -92,7 +92,7 @@ class TransactionCiv extends Component
 
     public function mount()
     {
-      
+
         $this->operators = OperatorService::getOperatorsWithCommissions(sabdy()->id);
         $this->resetValeurReload();
         $this->updateProviderTransaction();
@@ -110,7 +110,7 @@ class TransactionCiv extends Component
             'Active Money' => 'showRemonterMoneyButton',
         ];
 
-               
+
         $restrictionMapTransaction = [
             'TRANSFERT CREDIT' => 'showCreditButton',
             'PAIEMENT DE FACTURE' => 'showPaiementButton',
@@ -891,7 +891,7 @@ class TransactionCiv extends Component
 
 
         $transaction = WalletTransaction::query();
-        
+
 
         return view('livewire.transaction-groupe.transaction-civ', [
             'walletSolde' => Wallet::where(
@@ -1046,9 +1046,9 @@ class TransactionCiv extends Component
     public function updateProviderTransaction()
     {
 
-     
-   
-        $this->providerCountries = $this->getProvidersByType(new Provider, 1);    
+
+
+        $this->providerCountries = $this->getProvidersByType(new Provider, 1);
         $this->compte_number_robus = '';
         $this->transaction_amount_robus = '';
         $this->transaction_amount_money = '';
@@ -1085,7 +1085,7 @@ class TransactionCiv extends Component
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', sabdy()->country->id)
             ->where('providers.status', true)
-            ->where('providers.id' , 9)
+            ->where('providers.id', 9)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
@@ -1103,7 +1103,7 @@ class TransactionCiv extends Component
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', sabdy()->country->id)
             ->where('providers.status', true)
-            ->where('providers.id' , '!=' , 9)
+            ->where('providers.id', '!=', 9)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
@@ -1419,7 +1419,7 @@ class TransactionCiv extends Component
                     if ($admin_civ->count() > 0) {
                         $nmbre_admin = $admin_civ->count();
                         $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
-    
+
                         foreach ($admin_civ as $user) {
                             $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
@@ -1427,8 +1427,7 @@ class TransactionCiv extends Component
                 }
             } elseif ($walletTransaction->type_transaction == "Retrait") {
 
-                if ($this->showRemonterRetraitButton) 
-                {
+                if ($this->showRemonterRetraitButton) {
                     $walletTransaction->increment('commissions', $valuer_deposit);
 
                     $account_accepted = sabdy()->is_accepted_companie ?? false;
@@ -1441,13 +1440,12 @@ class TransactionCiv extends Component
                     if ($admin_civ->count() > 0) {
                         $nmbre_admin = $admin_civ->count();
                         $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
-    
+
                         foreach ($admin_civ as $user) {
                             $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
                 }
-
             } else {
 
                 if ($admin_civ->count() > 0) {

@@ -184,8 +184,21 @@
                                 : $commission_transaction_money_val_admin_receive;
                         @endphp
                         @if (sabdy()->is_under_distributer == 1)
-                            <x-transaction-detail title="Commission" value="{{ $commission }}"
-                                country="{{ $usersCountry }}" />
+
+                            @if ($provider['name'] == 'Robus' && $showRemonterDepotButton ||  $provider['name'] != 'Robus' && $showRemonterMoneyButton)
+                                <x-transaction-detail title="Commission" value="{{ $commission }}"
+                                    country="{{ $usersCountry }}" />
+                            @else
+                                <div class="col-span-6 mt-3">
+                                    <label class="form-label">Pas de commission<span class="text-danger">
+                                            *</span></label>
+                                    <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
+                                        style="font-size: 25px; color:white;">
+
+                                    </div>
+                                </div>
+                            @endif
+
 
                             {{-- Montant à recevoir --}}
                             <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"

@@ -109,22 +109,34 @@
                             </div>
                             @if (!is_null($amount_virement))
                                 @if ($user_auth->is_under_distributer == 1)
-                                    <div class="col-span-6 mt-3">
-                                        <label for="amount_virement" class="form-label">Montant commission<span
-                                                class="text-danger">
-                                                *</span></label>
-                                        @if ($amount_virement == '')
-                                            <div class="text-gray-500 text-sm">
-                                                Entrer le montant
-                                            </div>
-                                        @else
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+
+                                    @if ($showRemonterVirementButton)
+                                        <div class="col-span-6 mt-3">
+                                            <label for="amount_virement" class="form-label">Montant commission<span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            @if ($amount_virement == '')
+                                                <div class="text-gray-500 text-sm">
+                                                    Entrer le montant
+                                                </div>
+                                            @else
+                                                <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+                                                    {{ $amount_virement_nation_pay ?? null }}
+                                                    {{ $usersCountry }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="col-span-6 mt-3">
+                                            <label class="form-label">Pas de commission<span class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
                                                 style="font-size: 25px; color:white;">
-                                                {{ $amount_virement_nation_pay ?? null }}
-                                                {{ $usersCountry }}
+
                                             </div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="col-span-6 mt-3">
                                         <label for="amount_virement" class="form-label">Montant à payer<span
@@ -226,22 +238,33 @@
                             </div>
                             @if (!is_null($amount_virement))
                                 @if ($user_auth->is_under_distributer == 1)
-                                    <div class="col-span-6 mt-3">
-                                        <label for="amount_virement" class="form-label">Montant commission<span
-                                                class="text-danger">
-                                                *</span></label>
-                                        @if ($amount_virement == '')
-                                            <div class="text-gray-500 text-sm">
-                                                Entrer le montant
-                                            </div>
-                                        @else
-                                            <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                    @if ($showRemonterVirementButton)
+                                        <div class="col-span-6 mt-3">
+                                            <label for="amount_virement" class="form-label">Montant commission<span
+                                                    class="text-danger">
+                                                    *</span></label>
+                                            @if ($amount_virement == '')
+                                                <div class="text-gray-500 text-sm">
+                                                    Entrer le montant
+                                                </div>
+                                            @else
+                                                <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
+                                                    style="font-size: 25px; color:white;">
+                                                    {{ $amount_virement_nation_pay ?? null }}
+                                                    {{ $usersCountry }}
+                                                </div>
+                                            @endif
+                                        </div>
+                                    @else
+                                        <div class="col-span-6 mt-3">
+                                            <label class="form-label">Pas de commission<span class="text-danger">
+                                                    *</span></label>
+                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
                                                 style="font-size: 25px; color:white;">
-                                                {{ $amount_virement_nation_pay ?? null }}
-                                                {{ $usersCountry }}
+
                                             </div>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @endif
                                 @else
                                     <div class="col-span-6 mt-3">
                                         <label for="amount_virement" class="form-label">Montant à payer<span
