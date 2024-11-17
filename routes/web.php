@@ -273,6 +273,8 @@ Route::group(['prefix' => ''], function () {
         });
 
         Route::post('remote/commissions/{amount}/{type}/{id}', [AdminController::class, 'remonteCommission'])->name('remonte.commissions.unders');
+        Route::post('remote/commissionalls/{amount}/{type}/{id}', [AdminController::class, 'remonteAllCommission'])->name('remonte.remonteAllCommission.unders');
+
 
         Route::prefix('pays_commissions')->group(function () {
 

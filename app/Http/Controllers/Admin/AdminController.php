@@ -29,8 +29,10 @@ use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
+use App\Notifications\UserNotification;
 use App\Rules\MatchOldPassword;
 use App\Tools\Image;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
@@ -1081,7 +1083,6 @@ class AdminController extends Controller
                     'phone'  =>   $user->country->indecative . $user->phone,
                     'silver_ceiling'  =>   $user->country->silver_ceiling
                 ]);
-
             } else {
 
                 $msg = "Societe crée avec succès";
@@ -1287,15 +1288,15 @@ class AdminController extends Controller
         $totalSumAmounts = $this->getTotalSumTransactionsAmount($wallet_solde);
 
         // Gains
-        $gain_deposits = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class ,$user->id);
-        $gain_payments = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class , $user->id);
-        $gain_transactions = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class , $user->id);
-        $gain_moneys = $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class , $user->id);
-        $gain_depots = $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class , $user->id);
-        $gain_retraits = $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class ,$user->id);
-        $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class ,  $user->id);
-        $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class , $user->id);
-        $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class , $user->id);
+        $gain_deposits = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id);
+        $gain_payments = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id);
+        $gain_transactions = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+        $gain_moneys = $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+        $gain_depots = $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+        $gain_retraits = $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+        $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
+        $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
+        $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
 
         $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
 
@@ -1315,11 +1316,11 @@ class AdminController extends Controller
             'kycs',
             'gain_payments',
             'gain_transactions',
-            'gain_phone_credits' ,
-            'gain_inters' ,
+            'gain_phone_credits',
+            'gain_inters',
             'gain_banks',
             'gain_deposits',
-            'gain_depots' ,
+            'gain_depots',
             'gain_retraits',
             'gain_moneys',
             'company_gains'
@@ -1327,111 +1328,321 @@ class AdminController extends Controller
         ));
     }
 
-    public function remonteCommission(int $id, Request $request)
+    public function remonteCommission($amount , $typeRemonte ,int $id)
     {
 
-        $check = SidUser::find($id);
+ 
+        $user = SidUser::find($id);
 
-        if (!empty($check)) {
 
-            $amount_solde = (float)$check->wallet->amount + (float)$request->gain_amount;
+        if (!$user) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Utilisateur introuvable !!')
+                ->withInput();
+        }
 
-            if ($request->gain_amount <= 0) {
-                $request->emit('modal-hide', 'hide');
+        $gainMappings = [
+            "Paiements" => $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id),
+            "Transactions" => $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Crédits" => $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class, $user->wallet->id),
+            "International" => $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id),
+            "Virements" => $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id),
+            "Rechargements" => $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id),
+            "Depots" => $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Retraits" => $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Moneys" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+        ];
 
-                $request->emit('error', 'Le montant de la commission est invalide ou null !!');
-                return;
-            }
+        $resetMappings = [
+            "Paiements" => WalletPayment::class,
+            "Transactions" => WalletTransaction::class,
+            "Crédits" => WalletPhoneCredit::class,
+            "International" => WalletInter::class,
+            "Virements" => WalletBank::class,
+            "Rechargements" => WalletDeposit::class,
+            "Depots" => WalletTransaction::class,
+            "Retraits" => WalletTransaction::class,
+            "Moneys" => WalletTransaction::class,
+        ];
 
-            if ($request->typeRemonte == "Paiements") {
 
-                $request->gain_amount =  $request->payement_gain;
-                
-            } else if ($request->typeRemonte == "Transactions") {
+        $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
-                $request->gain_amount =  $request->transaction_gain;
-            } else if ($request->typeRemonte == "Crédits") {
 
-                $request->gain_amount =  $request->phonecredit_gain;
-            } else if ($request->typeRemonte == "International") {
+        if ($amount <= 0) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Le montant de la commission est invalide ou null !!')
+                ->withInput();
+        }
 
-                $request->gain_amount =  $request->inter_gain;
-            } else if ($request->typeRemonte == "Virements") {
 
-                $request->gain_amount =  $request->bank_gain;
-            } else if ($request->typeRemonte == "Rechargements") {
+        if (!isset($gainMappings[$typeRemonte])) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Type de remontée invalide !!')
+                ->withInput();
+        }
 
-                $request->gain_amount =  $request->deposit_gain;
-            } else if ($request->typeRemonte == "Depots") {
+        $calculatedGainAmount = $gainMappings[$typeRemonte];
 
-                $request->gain_amount =  $request->transaction_gain_depot;
-            } else if ($request->typeRemonte == "Retraits") {
 
-                $request->gain_amount =  $request->transaction_gain_retrait;
-            } else if ($request->typeRemonte == "Moneys") {
+        if ((float)$amount !== $calculatedGainAmount) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Montant de la commission invalide !!')
+                ->withInput();
+        }
 
-                $request->gain_amount =  $request->transaction_gain_mobile;
-            } else {
-                $request->emit('error', 'Type de remontée invalide');
-                return;
-            }
+        $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
-            $withRemonte = $this->createWithCommission($amount_solde, $this->gain_amount,  $this->typeRemonte);
+        $withRemonte = $this->createWithCommission($amount_solde, $amount , $user->id ,  $typeRemonte);
 
-            if ($withRemonte !== null) {
+        if ($withRemonte !== null) {
 
-                $this->updateWallet($withRemonte);
+            $user->wallet->update([
+                'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                'sid_user_relod' => sabdy()->id,
+                'amount' => DB::raw('amount+'  .  $withRemonte->amount_with_draw),
+            ]);
 
-                if ($this->typeRemonte == "Paiements") {
+            if (isset($resetMappings[$typeRemonte])) {
 
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class);
-                    $this->payement_gain = 0;
-                } else if ($this->typeRemonte == "Transactions") {
+                $resetClass = $resetMappings[$typeRemonte];
 
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletTransaction::class);
-                } else if ($this->typeRemonte == "Crédits") {
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletPhoneCredit::class);
-                    $this->phonecredit_gain = 0;
-                } else if ($this->typeRemonte == "International") {
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class);
-                    $this->inter_gain = 0;
-                } else if ($this->typeRemonte == "Virements") {
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class);
-                    $this->bank_gain = 0;
-                } else if ($this->typeRemonte == "Rechargements") {
-
-                    $this->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class);
-                    $this->deposit_gain = 0;
-                } else if ($this->typeRemonte == "Depots") {
-                    $this->getUpdateTransactionDepotRobusCommissionAmountNullTotal(WalletTransaction::class);
-                    $this->transaction_gain_depot = 0;
-                } else if ($this->typeRemonte == "Retraits") {
-                    $this->getUpdateTransactionRetraitRobusCommissionAmountNullTotal(WalletTransaction::class);
-                    $this->transaction_gain_retrait = 0;
-                } else if ($this->typeRemonte == "Moneys") {
-
-                    $this->getUpdateTransactionMoneyCommissionAmountNullTotal(WalletTransaction::class);
-                    $this->transaction_gain_mobile = 0;
-                } else if ($this->typeRemonte == "Transactions Salaire") {
-
-                    $this->getUpdateTransactionEmplCommissionAmountNullTotal(WalletTransaction::class);
-                    $this->transaction_gain_empl = 0;
+                if ($typeRemonte === "Depots") {
+                    $this->getUpdateTransactionDepotRobusCommissionAmountNullTotal($resetClass, $user->wallet->id);
+                } elseif ($typeRemonte === "Retraits") {
+                    $this->getUpdateTransactionRetraitRobusCommissionAmountNullTotal($resetClass, $user->wallet->id);
+                } elseif ($typeRemonte === "Moneys") {
+                    $this->getUpdateTransactionMoneyCommissionAmountNullTotal($resetClass, $user->wallet->id);
                 } else {
-                    $this->emit('error', 'Type de remontée invalide');
-                    return;
+                    $this->getUpdateTransactionCommissionAmountNullTotal($resetClass, $user->wallet->id);
                 }
-                $msg = 'Vous avez transferé vos commission sur votre compte';
-                $msg_title = 'Transfert de la commission ';
-                $check->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-                $this->emit('modal-hide', 'hide');
-                $this->emit('success', 'Votre commission a été remonté avec success !!');
-            } else {
-                $this->emit('modal-hide', 'hide');
-                $this->emit('error', 'Erreur de recuperation du montant de la commission !');
             }
+
+            $msg = 'Vous avez transféré vos commissions sur votre compte';
+            $msg_title = 'Transfert de la commission';
+            $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+
+            return back()
+                ->with('color', 'success')
+                ->with('status', 'Votre commission a été remontée avec succès !!')
+                ->withInput();
+
+        } else {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de recuperation du montant de la commission !!')
+                ->withInput();
         }
     }
-    public function getTodayTransactionCommissionAmountTotal($walletModel , $userID)
+
+    public function remonteAllCommission($amount , $typeRemonte ,int $id)
+    {
+
+ 
+        $user = SidUser::find($id);
+
+
+        if (!$user) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Utilisateur introuvable !!')
+                ->withInput();
+        }
+
+        $gain_deposits = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id);
+        $gain_payments = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id);
+        $gain_transactions = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+        $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
+        $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
+        $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
+
+        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
+
+        if ($amount <= 0) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Le montant de la commission est invalide ou null !!')
+                ->withInput();
+        }
+
+
+        if ((float)$amount !== $company_gains) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Montant de la commission invalide !!')
+                ->withInput();
+        }
+
+        $amount_solde = (float)$user->wallet->amount + (float)$amount;
+
+        $withRemonte = $this->createWithCommission($amount_solde, $amount , $user->id ,  $typeRemonte);
+
+        if ($withRemonte !== null) {
+
+            $user->wallet->update([
+                'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                'sid_user_relod' => sabdy()->id,
+                'amount' => DB::raw('amount+'  .  $withRemonte->amount_with_draw),
+            ]);
+
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletTransaction::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletPhoneCredit::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class, $user->wallet->id);
+
+            $msg = 'Vous avez transféré vos commissions sur votre compte';
+            $msg_title = 'Transfert de la commission';
+            $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+
+            return back()
+                ->with('color', 'success')
+                ->with('status', 'Votre commission a été remontée avec succès !!')
+                ->withInput();
+                
+        } else {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de recuperation du montant de la commission !!')
+                ->withInput();
+        }
+    }
+
+
+    public function getUpdateTransactionCommissionAmountNullTotal($walletModel, $sidUserId)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->update(['commissions' => 0]);
+
+        return $totalAmount;
+    }
+
+
+    public function getUpdateTransactionDepotRobusCommissionAmountNullTotal($walletModel, $sidUserId)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->update(['commissions' => 0]);
+
+        return $totalAmount;
+    }
+
+    public function getUpdateTransactionRetraitRobusCommissionAmountNullTotal($walletModel, $sidUserId)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->update(['commissions' => 0]);
+
+        return $totalAmount;
+    }
+
+    public function getUpdateTransactionMoneyCommissionAmountNullTotal($walletModel, $sidUserId)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->update(['commissions' => 0]);
+
+        return $totalAmount;
+    }
+
+    public function getUpdateTransactionEmplCommissionAmountNullTotal($walletModel, $sidUserId)
+    {
+
+        $transactions = $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($transactions as $transaction) {
+            if ($transaction->commissions !== null) {
+                $totalAmount += $transaction->commissions;
+                $transaction->commissions = null;
+                $transaction->save();
+            }
+        }
+
+        return $totalAmount;
+    }
+
+
+
+    private function createWithCommission($amount_solde, $gain_amount , $userId, $typeRemonte)
+    {
+        return WithMerchant::create([
+            'amount_with_draw' =>  $gain_amount,
+            'sid_user_id' =>   $userId,
+            'amount_solde' =>   $amount_solde,
+            'type_transaction' => $typeRemonte,
+            'status' =>  "SUCCESS",
+            'date_removed' => Carbon::now(),
+        ]);
+    }
+    public function getTodayTransactionCommissionAmountTotal($walletModel, $userID)
     {
 
 
@@ -1466,7 +1677,7 @@ class AdminController extends Controller
         return $totalAmount;
     }
 
-    public function getTodayTransactionRobusDepotCommissionAmountTotal($walletModel , $userID)
+    public function getTodayTransactionRobusDepotCommissionAmountTotal($walletModel, $userID)
     {
 
 

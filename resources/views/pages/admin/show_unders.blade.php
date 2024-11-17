@@ -274,16 +274,19 @@
 
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                    class="lucide lucide-credit-card report-box__icon text-secondary">
-                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                    </rect>
-                    <line x1="1" y1="10" x2="23" y2="10"></line>
-                </svg>
-            </div>
+            <form method="POST" action="{{ route('remonte.remonteAllCommission.unders', ['amount' => $gain_payments, 'type' => 'COMMISSION', 'id' => $user->id]) }}">
+                @csrf
+                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </button>
+            </form>
+
             <div class="font-medium text-historique mt-6">Total Gain</div>
 
             <div class="text-slate-500 mt-3">
@@ -293,22 +296,18 @@
         </div>
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box bg-primary p-5 cursor-pointer zoom-in style-success">
 
-            <a wire:click="edit({{ $gain_payments }} , 'Paiements' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
-
+            <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_payments, 'type' => 'Paiements', 'id' => $user->id]) }}">
+                @csrf
+                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </button>
+            </form>
 
             <div class="font-medium text-historique text-white mt-6">Paiements</div>
 
@@ -320,23 +319,18 @@
         </div>
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-error">
 
-
-            <a id="modify-button"
-                wire:click="edit({{ $gain_depots ?? null }} , 'Depots' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
+            <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_depots, 'type' => 'Depots', 'id' => $user->id]) }}">
+                @csrf
+                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </button>
+            </form>
 
 
             <div class="font-medium text-historique mt-6">Dépot Robus</div>
@@ -347,22 +341,18 @@
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
 
-            <a id="modify-button"
-                wire:click="edit({{ $gain_retraits ?? null }} , 'Retraits' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
+            <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_retraits, 'type' => 'Retraits', 'id' => $user->id]) }}">
+                @csrf
+                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </button>
+            </form>
 
 
             <div class="font-medium text-historique mt-6">Rétrait Robus</div>
@@ -373,22 +363,18 @@
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style-error">
 
-            <a id="modify-button"
-                wire:click="edit({{ $gain_moneys ?? null }} , 'Moneys' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
+            <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_moneys, 'type' => 'Moneys', 'id' => $user->id]) }}">
+                @csrf
+                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </button>
+            </form>
 
 
             <div class="font-medium text-historique mt-6">Mobile Money</div>
@@ -399,22 +385,18 @@
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_user1">
 
-            <a wire:click="edit({{ $gain_phone_credits }} , 'Crédits' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
-
+            <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_phone_credits, 'type' => 'Crédits', 'id' => $user->id]) }}">
+                @csrf
+                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </button>
+            </form>
 
             <div class="font-medium text-historique mt-6">Credits</div>
             <div class="text-slate-500 mt-3"> {{ number_format($gain_phone_credits, 2, ',', ' ') ?? null }}
@@ -422,22 +404,19 @@
 
         </div>
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
-            <a wire:click="edit({{ $gain_inters }} , 'International' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
 
+            <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_inters, 'type' => 'International', 'id' => $user->id]) }}">
+                @csrf
+                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </button>
+            </form>
 
             <div class="font-medium text-historique mt-6">Inters</div>
             <div class="text-slate-500 mt-3">
@@ -445,22 +424,19 @@
                 {{ $currencie }}</div>
         </div>
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table2">
-            <a wire:click="edit({{ $gain_banks }} , 'Virements' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
-
+           
+            <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_banks, 'type' => 'Virements', 'id' => $user->id]) }}">
+                @csrf
+                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </button>
+            </form>
 
             <div class="font-medium text-historique mt-6">Virements</div>
             <div class="text-slate-500 mt-3">
@@ -470,21 +446,19 @@
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
 
-            <a wire:click="edit({{ $gain_deposits }} , 'Rechargements' , 'modal-show-remonte-ccommission')"
-                class="btn btn-warning mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="w-6 h-6 mr-3">
-                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
-                        stroke-linecap="round" stroke-linejoin="round" />
-                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-                Rémonter
-            </a>
+            <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_deposits, 'type' => 'Rechargements', 'id' => $user->id]) }}">
+                @csrf
+                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Rémonter
+                </button>
+            </form>
+
 
 
             <div class="font-medium text-historique mt-6">Réchargements cartes</div>
