@@ -735,10 +735,12 @@ class TransactionController extends Controller
 
 
                 if ($verify_code->status == "SUCCESS") {
+
                     return response()->json([
                         'success' => false,
                         'message' => ('Vous avez déjà fait un retrait par rapport à ce chiffre.')
                     ], 200);
+
                 } else {
 
                     $ecoule = strtotime($verify_code->created_at);
@@ -749,7 +751,6 @@ class TransactionController extends Controller
 
                     $ecoule_min = date('i:s', $temps_ecoule);
 
-                    // Verifie valeur code validation delete temps Elapsed 
                     if ($ecoule_min > '05:20') {
 
                         $verify_code->delete();
@@ -785,7 +786,7 @@ class TransactionController extends Controller
 
                                 $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$verify_code->amount;
 
-                                if ($this->transactionWalletDrawal->updateDrawalTransaction($verify_code, $walletUserSearch, $valuer_with_drawal)) {
+                                if ($this->transactionWalletDrawal->updateDrawalTransaction($verify_code, $walletUserSearch, $valuer_with_drawal , $percent_robus , $admin_civ)) {
 
                                     $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $verify_code->amount . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
@@ -801,7 +802,7 @@ class TransactionController extends Controller
                                         Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
                                     }
 
-                                    return $this->transactionWalletDrawal->sendNotificationWithDrawal($verify_code, $admin_civ, $valuer_with_drawal, $walletUserSearch, $admins);
+                                    return $this->transactionWalletDrawal->sendNotificationWithDrawal($verify_code , $walletUserSearch, $admins);
                                 } else {
 
                                     return  json_message_response(false, "Erreur de demande de retait ! ", 333);
@@ -813,7 +814,7 @@ class TransactionController extends Controller
                             return  json_message_response(false, "Désolé vous ne pouvez pas faire de retrait ! ", 333);
                         }
                     }
-                }
+                }php
             } else {
                 return response()->json([
                     'success' => false,

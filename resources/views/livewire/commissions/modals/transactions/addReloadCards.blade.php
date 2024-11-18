@@ -667,7 +667,7 @@
                     <div wire:loading.flex wire:target="addValidatedReloadCard"
                         class="flex items-center justify-center">
                         <div class="loader"></div> <!-- Ajoutez votre loader ici -->
-                        <style>
+                        {{-- <style>
                             .loader {
                                 border: 4px solid rgba(0, 0, 0, 0.1);
                                 border-left-color: #09f;
@@ -686,7 +686,7 @@
                             .hidden {
                                 display: none;
                             }
-                        </style>
+                        </style> --}}
                         <p>Traitement en cours...</p>
                     </div>
                 </div>

@@ -86,7 +86,7 @@
                             </div>
                         </div>
 
-                        <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                        {{-- <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                             @if (!is_null($amount_phone_credit))
                                 <div class="col-span-6 mt-3">
                                     <label for="amount_phone_credit" class="form-label">Montant à payer<span
@@ -121,7 +121,7 @@
                                     @endif
                                 </div>
                             @endif
-                        </div>
+                        </div> --}}
                     @elseif ($provider_phone_credit == 20)
                         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 style_image_providers">
                             <div class="col-span-12">
@@ -129,7 +129,6 @@
                                     src="{{ asset('public/dist/providers/moov.png') }}" alt="Orange money">
                             </div>
                         </div>
-
                         <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                             <div class="col-span-6">
                                 <label for="number_phone_credit" class="form-label">Numero<span class="text-danger">
@@ -161,42 +160,7 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-                            @if (!is_null($amount_phone_credit))
-                                <div class="col-span-6 mt-3">
-                                    <label for="amount_phone_credit" class="form-label">Montant à payer<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    @if ($amount_phone_credit == '')
-                                        <div class="text-gray-500 text-sm">
-                                            Entrer le montant
-                                        </div>
-                                    @else
-                                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-primary   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                            style="font-size: 25px; color:white;">
-                                            {{ $amount_phone_credit_val_nat_pay ?? null }}
-                                            {{ $usersCountry }}
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="col-span-6 mt-3">
-                                    <label for="amount_phone_credit" class="form-label">Montant à
-                                        recevoir<span class="text-danger">
-                                            *</span></label>
-                                    @if ($amount_phone_credit == '')
-                                        <div class="text-gray-500 text-sm">
-                                            Entrer le montant
-                                        </div>
-                                    @else
-                                        <div class="px-5 py-3  flex-1 zoom-in  alert alert-success   relative  font-medium leading-6 pl-3 2xl:pl-4"
-                                            style="font-size: 25px; color:white;">
-                                            {{ $amount_phone_credit_val_nat_receive ?? null }}
-                                            {{ $usersCountry }}
-                                        </div>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
+             
                     @elseif ($provider_phone_credit == 18)
                         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 style_image_providers">
                             <div class="col-span-12">
@@ -234,51 +198,53 @@
                                 @enderror
                             </div>
                         </div>
-                        <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-
-                            @if ($amount_phone_credit)
-                                @php
-
-                                    $amount_to_pay = $amount_transaction_nat_val_phone_percent;
-                                    $amount_to_receive = $amount_transaction_nat_val_phone_receive;
-                                    $commission = $amount_transaction_nat_val_phone_commission;
-                                    $frais = $amount_transaction_nat_val_phone_percent;
-                                @endphp
-
-                                @if (sabdy()->is_under_distributer == 1)
-
-                                    @if ($showRemonterCreditButton)
-                                        <x-transaction-detail title="Commission" value="{{ $commission }}"
-                                            country="{{ $usersCountry }}" />
-                                    @else
-                                        <div class="col-span-6 mt-3">
-                                            <label class="form-label">Pas de commission<span class="text-danger">
-                                                    *</span></label>
-                                            <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
-                                                style="font-size: 25px; color:white;">
-
-                                            </div>
-                                        </div>
-                                    @endif
-
-
-                                    {{-- Montant à recevoir --}}
-                                    <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
-                                        country="{{ $usersCountry }}" />
-
-                               
-                                @else
-                                    <x-transaction-detail title="Montant à payer" value="{{ $amount_to_pay }}"
-                                        country="{{ $usersCountry }}" />
-
-                                    {{-- Montant à recevoir --}}
-                                    <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
-                                        country="{{ $usersCountry }}" />
-                                @endif
-                            @endif
-
-                        </div>
+                     
                     @endif
+
+                    <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+
+                        @if ($amount_phone_credit)
+                            @php
+
+                                $amount_to_pay = $amount_transaction_nat_val_phone_percent;
+                                $amount_to_receive = $amount_transaction_nat_val_phone_receive;
+                                $commission = $amount_transaction_nat_val_phone_commission;
+                                $frais = $amount_transaction_nat_val_phone_percent;
+                            @endphp
+
+                            @if (sabdy()->is_under_distributer == 1)
+
+                                @if ($showRemonterCreditButton)
+                                    <x-transaction-detail title="Commission" value="{{ $commission }}"
+                                        country="{{ $usersCountry }}" />
+                                @else
+                                    <div class="col-span-6 mt-3">
+                                        <label class="form-label">Pas de commission<span class="text-danger">
+                                                *</span></label>
+                                        <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
+                                            style="font-size: 25px; color:white;">
+
+                                        </div>
+                                    </div>
+                                @endif
+
+
+                                {{-- Montant à recevoir --}}
+                                <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
+                                    country="{{ $usersCountry }}" />
+
+                           
+                            @else
+                                <x-transaction-detail title="Montant à payer" value="{{ $amount_to_pay }}"
+                                    country="{{ $usersCountry }}" />
+
+                                {{-- Montant à recevoir --}}
+                                <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
+                                    country="{{ $usersCountry }}" />
+                            @endif
+                        @endif
+
+                    </div>
                 @endif
                 <div class="modal-footer style-foo">
                     <button wire:click="cancelPhoneCreditField" type="button"

@@ -53,6 +53,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Services\OperatorRestrictionService;
 
 class UserController extends Controller
 {
@@ -63,18 +64,22 @@ class UserController extends Controller
     protected $validatedamountDays;
     protected $robusTransactionService;
     protected $authService;
+    protected $operatorRestrictionService;
 
     public function __construct(
         TransactionsAccountService $transactionAccount,
         ValidateDailyLimitService $validatedamountDays,
         RobusTransactionService $robusTransactionService,
-        AuthenticationService $authService
+        AuthenticationService $authService,
+        OperatorRestrictionService $operatorRestrictionService,
+
 
     ) {
         $this->transactionAccount = $transactionAccount;
         $this->validatedamountDays = $validatedamountDays;
         $this->robusTransactionService = $robusTransactionService;
         $this->authService = $authService;
+        $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
     /**
@@ -168,7 +173,6 @@ class UserController extends Controller
     {
 
 
-
         $commissions = [
             'Depots' => $this->transactionAccount->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class),
             'Retraits' => $this->transactionAccount->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class),
@@ -186,6 +190,29 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'commissions' => $is_under ? $commissions : "Vous devez être un sous-distributeur pour accéder à ce tableau de bord.",
+        ], 200);
+    }
+
+
+    public function BlockCommissions()
+    {
+     
+        $userId = robus()->id;
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Utilisateur non trouvé.',
+            ], 404);
+        }
+
+        $commissions = $this->operatorRestrictionService->getActiveButtons($userId);
+
+        $is_under = robus()->is_under_distributer;
+
+        return response()->json([
+            'success' => true,
+            'blockCommissions' => $is_under ? $commissions : "Vous devez être un sous-distributeur pour accéder à ce tableau de bord.",
         ], 200);
     }
 
@@ -223,31 +250,31 @@ class UserController extends Controller
                 ]);
             }
 
-            
-            if ($commissions == "Paiements" &&  $walletPayment !=0) {
+
+            if ($commissions == "Paiements" &&  $walletPayment != 0) {
 
                 $gain_amount =  $walletPayment;
-            } else if ($commissions == "Crédits" &&  $walletPhone !=0) {
+            } else if ($commissions == "Crédits" &&  $walletPhone != 0) {
 
                 $gain_amount =  $walletPhone;
-            } else if ($commissions == "International" &&  $walletInter !=0) {
+            } else if ($commissions == "International" &&  $walletInter != 0) {
 
                 $gain_amount =  $walletInter;
-            } else if ($commissions == "Virements" &&  $walletBank !=0) {
+            } else if ($commissions == "Virements" &&  $walletBank != 0) {
 
                 $gain_amount =  $walletBank;
-            } else if ($commissions == "Rechargements" &&  $walletReloadCard !=0) {
+            } else if ($commissions == "Rechargements" &&  $walletReloadCard != 0) {
 
                 $gain_amount =  $walletReloadCard;
-            } else if ($commissions == "Depots" &&  $walletTransactionDepot !=0) {
+            } else if ($commissions == "Depots" &&  $walletTransactionDepot != 0) {
                 $gain_amount =  $walletTransactionDepot;
-            } else if ($commissions == "Retraits" &&  $walletTransactionRetrait !=0) {
+            } else if ($commissions == "Retraits" &&  $walletTransactionRetrait != 0) {
 
                 $gain_amount =  $walletTransactionRetrait;
-            } else if ($commissions == "Moneys" &&  $walletTransactionMobile !=0) {
+            } else if ($commissions == "Moneys" &&  $walletTransactionMobile != 0) {
 
                 $gain_amount =  $walletTransactionMobile;
-            } else if ($commissions == "Commande de carte" &&  $walletOrderCarte !=0) {
+            } else if ($commissions == "Commande de carte" &&  $walletOrderCarte != 0) {
 
                 $gain_amount =  $walletOrderCarte;
             } else {

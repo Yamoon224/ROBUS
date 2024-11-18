@@ -1199,7 +1199,7 @@ class Transfers extends Component
                     $this->emit('error', 'Les 5 min son ecoule !');
                 } else {
 
-
+                  
                     if ($percent_robus != null) {
 
                         if ($walletUser->is_under_distributer == 1) {
@@ -1247,25 +1247,32 @@ class Transfers extends Component
 
                                     if ($verify_code->type_transaction == "Retrait") {
 
-                                        $verify_code->update([
-                                            'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
-                                        ]);
+                                        if($this->showRemonterRetraitButton)
+                                        {
+                                            $verify_code->update([
+                                                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
+                                            ]);
+    
+                                            $account_accepted = sabdy()->is_accepted_companie ?? false;
+    
+                                            if ($account_accepted) {
+                                                $valuer_companie = $percent_robus->percent_custum_drawal_companie * $commission_valeur;
+                                                $verify_code->increment('commission_companie', $valuer_companie);
+                                                $this->commissionAdminDrawal($admin_civ, $commissionAdmin_drawal, $verify_code);
+                                            }else{
+                                               $this->commissionAdminDrawal($admin_civ, $percent_drawal, $verify_code);
+                                            }
 
-                                        $account_accepted = sabdy()->is_accepted_companie ?? false;
-
-                                        if ($account_accepted) {
-                                            $valuer_companie = $percent_robus->percent_custum_drawal_companie * $commission_valeur;
-                                            $verify_code->increment('commission_companie', $valuer_companie);
+                                            $this->TransactionDistributorDrawal(
+                                                $valuer_with_drawal,
+                                                $admin_civ,
+                                                $verify_code
+                                            );
                                         }
 
-                                        $this->TransactionDistributorDrawal(
-                                            $valuer_with_drawal,
-                                            $admin_civ,
-                                            $verify_code
-                                        );
+                                   
                                     }
 
-                                    $this->commissionAdminDrawal($admin_civ, $commissionAdmin_drawal, $verify_code);
 
                                     event(new CreateWalletTransfersEvent($verify_code));
 
@@ -4905,7 +4912,6 @@ class Transfers extends Component
                         if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
 
 
-
                             if ($amount_comission->amount == null) {
 
                                 $percent_admin =  $amount_comission->percent * $this->amount_reloadcard;
@@ -4913,7 +4919,7 @@ class Transfers extends Component
                                 $admin_valeur = $percent_admin * $amount_comission->admin_percent;
 
                                 // Commission valuer ROBUS
-                                $commission_reload_val_nat_true_pay = $amount_comission->comission_distributer * $admin_valeur;
+                                $commission_reload_val_nat_true_pay = $amount_comission->comission_distributer * $this->amount_reloadcard;
 
 
                                 $valeur_receive = (float) $this->amount_reloadcard;

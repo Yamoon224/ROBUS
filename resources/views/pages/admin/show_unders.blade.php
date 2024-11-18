@@ -403,6 +403,7 @@
                 {{ $currencie }}</div>
 
         </div>
+        {{-- luiscrepin@gmail.com --}}
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
 
             <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_inters, 'type' => 'International', 'id' => $user->id]) }}">

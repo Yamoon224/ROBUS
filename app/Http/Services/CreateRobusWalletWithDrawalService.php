@@ -21,16 +21,21 @@ use App\Models\Invoices\InvoiceTransaction;
 use App\Repositories\TransactionRepository;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Admin\MailController;
+use App\Http\Services\OperatorRestrictionService;
 
 class CreateRobusWalletWithDrawalService
 {
 
     /** @var  TransactionRepository */
     public $transctionRepository;
+    protected $operatorRestrictionService;
 
-    public function __construct(TransactionRepository $transactionReposi)
-    {
+    public function __construct(
+        TransactionRepository $transactionReposi,
+        OperatorRestrictionService $operatorRestrictionService,
+    ) {
         $this->transctionRepository = $transactionReposi;
+        $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
 
@@ -79,33 +84,45 @@ class CreateRobusWalletWithDrawalService
         ]);
     }
 
-    public function updateDrawalTransaction($verify_code, $wallet_user_search, $valuer_with_drawal)
+    public function updateDrawalTransaction($verify_code, $wallet_user_search, $valuer_with_drawal , $percent_robus , $admin_civ)
     {
 
         $rt = rand(40, 500000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
         $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
-
+        $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
         // Update Info valeurs
         $walletAmountSend = Wallet::where('wallet_id',  $wallet_user_search->wallet_id)->first();
-        
+
         $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$verify_code->amount;
 
         $amount_solde = (float)robus()->wallet->amount + (float)$verify_code->amount;
+
+        $percent_drawal = $percent_robus->percent_custum_drawal * $verify_code->amount;
+
+        $commissionAdmin_drawal =  $percent_robus->percent_custum_drawal_admin * $percent_drawal;
+        
+        $amount_payment_drawal = $verify_code->amount + $percent_drawal;
+
+        $amount_payment_receved = $verify_code->amount - $percent_drawal;
+
+        $commission_valeur = $percent_robus->percent * $verify_code->amount;
 
         $wallet_user_search->update([
             'reload_by' =>  robus()->firstname .
                 ' ' . robus()->lastname,
             'sid_user_relod' => robus()->id,
-            'amount' => DB::raw('amount-' . $verify_code->amount),
+            'amount' => DB::raw('amount-' . $amount_payment_drawal),
         ]);
 
         // Update valeurs WalletTrasaction
         $verify_code->update(
             [
                 'amount_solde'  => $amount_solde ?? null,
-                'amount_solde_drawal' => $amount_solde_drawal ?? null
+                'amount_solde_drawal' => $amount_solde_drawal ?? null,
+                'amount_received'  => $amount_payment_receved ?? null,
             ]
         );
 
@@ -138,70 +155,135 @@ class CreateRobusWalletWithDrawalService
             'amount' => DB::raw('amount+'  .  $verify_code->amount),
         ]);
 
+        if (!empty($activeButtons['showRemonterRetraitButton'])) {
 
-        $verify_code->update([
-            'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
-        ]);
+            $verify_code->update([
+                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
+            ]);
+
+            $account_accepted = robus()->is_accepted_companie ?? false;
+
+            if ($account_accepted) {
+
+                $valuer_companie = $percent_robus->percent_custum_drawal_companie * $commission_valeur;
+
+                $valuer_admimCom = (float)$percent_drawal - (float)$valuer_companie;
+
+                $verify_code->increment('commission_companie', $valuer_companie);
+               
+                $valeur_percent_admin = (float)$commissionAdmin_drawal;
+
+                $admin_valeur_convertion = $this->convertAdminCommission($valuer_admimCom);
+
+                if ($admin_civ->count() > 0) {
+                    $nmbre_admin = $admin_civ->count();
+                    $valeur_single = ($admin_valeur_convertion) / $nmbre_admin;
+                    foreach ($admin_civ as $user) {
+                        $valeur_single = $admin_valeur_convertion / $nmbre_admin;
+                        $this->processAdminCommissionAmountSDistributer($user->id , $valuer_with_drawal, $verify_code);
+                        $this->processAdminCommission($user->id, $verify_code->id, $valeur_single);
+                    }
+                }
+
+            } else {
+
+                $valeur_percent_admin = (float)$percent_drawal;
+                $admin_valeur_convertion = $this->convertAdminCommission($valeur_percent_admin);
+                if ($admin_civ->count() > 0) {
+                    $nmbre_admin = $admin_civ->count();
+                    foreach ($admin_civ as $user) {
+                         $valeur_single = $admin_valeur_convertion / $nmbre_admin;
+                        $this->processAdminCommissionAmountSDistributer($user->id , $valuer_with_drawal, $verify_code);
+                        $this->processAdminCommission($user->id, $verify_code->id, $valeur_single);
+                    }
+                }
+            }
+            
+
+        } else {
+
+                $valeur_percent_admin = (float)$percent_drawal;
+
+                $admin_valeur_convertion = $this->convertAdminCommission($valeur_percent_admin);
+
+                if ($admin_civ->count() > 0) {
+                    $nmbre_admin = $admin_civ->count();
+                    $valeur_single = $admin_valeur_convertion / $nmbre_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $this->processAdminCommission($user->id, $verify_code->id, $valeur_single);
+                    }
+                }
+        }
 
         return true;
     }
 
-    public function sendNotificationWithDrawal($verify_code, $admin_civ, $valuer_with_drawal, $wallet_user_search, $admins)
+    private function processAdminCommission($userId, $walletTransactionId, $amount)
     {
+        $admin_single = SidUser::find($userId);
 
-        $country_civ = Country::whereId(107)
-            ->first();
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'status'  => "SUCCESS",
+            'wallet_transaction_id' => $walletTransactionId,
+            'description' => 'Commission administrateur',
+        ]);
 
+        $admin_single->wallet->increment('amount', $amount);
+    }
+
+
+    private function processAdminCommissionAmountSDistributer($userId, $valeur_single, $verify_code)
+    {
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' =>   $valeur_single,
+            'amount_under' =>   $valeur_single,
+            'sid_user_id' =>   $admin_single->id,
+            'wallet_transaction_id' => $verify_code->id,
+            'wallet_bank_id' => null,
+            'wallet_deposit_id' => null,
+            'wallet_inter_id' =>  null,
+            'wallet_payment_id' => null,
+            'wallet_phone_credit_id' => null,
+            'wallet_reload_id' => null,
+            'bank_card_id' => null,
+            'description' => 'Retrait d\'argent',
+            'status'  => "SUCCESS",
+            'amount_under' =>  robus()->is_under_distributer ? $valeur_single : 0,
+            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+        ]);
+
+        $admin_single->wallet->update([
+            'reload_by' => robus()->firstname .
+                ' ' .
+                robus()->lastname,
+            'sid_user_relod' => robus()->id,
+            'amount' => DB::raw('amount-' . $valeur_single),
+        ]);
+     
+    }
+
+    private function convertAdminCommission($amount)
+    {
+        $country_civ = Country::find(107);
+        $robus_currency = robus()->country->currencie->value;
 
         if ($country_civ->currencie->value > robus()->country->currencie->value) {
-
-            //   Convertion  in CFA
-            $drawal_valeur_commission =   (float)  $valuer_with_drawal *   (float) robus()->country->currencie->value;
+            return $amount * $robus_currency;
         } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
-
-            $drawal_valeur_commission =   (float)  $valuer_with_drawal;
+            return $amount;
         } else {
-
-            $drawal_valeur_commission =   (float)  $valuer_with_drawal *   (float) robus()->country->currencie->value;
+            return $amount * $robus_currency;
         }
+    }
 
+    public function sendNotificationWithDrawal($verify_code, $wallet_user_search, $admins)
+    {
 
-        if ($admin_civ->count() > 0) {
-
-            $nmbre_admin = $admin_civ->count();
-
-            $valeur_single = $drawal_valeur_commission / $nmbre_admin;
-
-            foreach ($admin_civ as $user) {
-
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'amount_under' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_transaction_id' => $verify_code->id,
-                    'wallet_bank_id' => null,
-                    'wallet_deposit_id' => null,
-                    'wallet_inter_id' =>  null,
-                    'wallet_payment_id' => null,
-                    'wallet_phone_credit_id' => null,
-                    'wallet_reload_id' => null,
-                    'bank_card_id' => null,
-                    'description' => 'Retrait d\'argent',
-                    'status'  => "SUCCESS",
-                    'description_underdistributer' => 'Paiement commission sous-distributer',
-                ]);
-
-                $admin_single->wallet->update([
-                    'reload_by' => robus()->firstname .
-                        ' ' .
-                        robus()->lastname,
-                    'sid_user_relod' => robus()->id,
-                    'amount' => DB::raw('amount-' . $valeur_single),
-                ]);
-            }
-        }
 
         // Notify And User an Admins
         $msg_title = 'Transactions';
@@ -212,7 +294,6 @@ class CreateRobusWalletWithDrawalService
         $notifs = $wallet_user_search->sidUser->unreadNotifications;
         event(new CreateWalletTransfersEvent($verify_code));
         Notification::send($admins, new AdminNotification('Retrait effectuer par ' . $verify_code->wallet->sidUser->firstname));
-
 
         if ($admins->count() > 0) {
 

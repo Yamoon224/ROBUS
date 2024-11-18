@@ -1280,7 +1280,6 @@ class AdminController extends Controller
         $roles = Role::all();
 
         $countries = Country::where('status', true)->get();
-
         // Wallet Error and other
         $sum_error    = $this->getCountWalletTransaction($wallet_solde->id, 'ERROR');
         $sum_success    = $this->getCountWalletTransaction($wallet_solde->id, 'SUCCESS');
@@ -1792,7 +1791,7 @@ class AdminController extends Controller
 
     public function getTotalSumTransactionsAmount($wallet_solde)
     {
-        $sum_wallet_transaction = $this->transactionAccountService->getTransactionAmount(WalletTransaction::class, $wallet_solde);
+        $sum_wallet_transaction = $this->transactionAccountService->getTransactionAmount(WalletTransaction::class, $wallet_solde->id);
         $sum_wallet_bank = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $wallet_solde->id);
         $sum_wallet_deposit = $this->transactionAccountService->getTransactionAmount(WalletDeposit::class, $wallet_solde->id);
         $sum_wallet_payment = $this->transactionAccountService->getTransactionAmount(WalletPayment::class, $wallet_solde->id);
@@ -1800,7 +1799,7 @@ class AdminController extends Controller
         $sum_wallet_Reload = $this->transactionAccountService->getTransactionAmount(WalletReload::class, $wallet_solde->id);
         $sum_wallet_xbet_depot = $this->transactionAccountService->getTransactionXbetAmount(WalletXbet::class, $wallet_solde->id, 1);
         $sum_wallet_xbet_retrait = $this->transactionAccountService->getTransactionXbetAmount(WalletXbet::class, $wallet_solde->id, 2);
-        $sum_wallet_Inter = $this->transactionAccountService->getTransactionAmount(WalletInter::class,  $wallet_solde);
+        $sum_wallet_Inter = $this->transactionAccountService->getTransactionAmount(WalletInter::class,  $wallet_solde->id);
         $sum_wallet_Inter_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
         $sum_wallet_reload_received =  $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletReload::class, 'account_wallet', $wallet_solde);
         // Wallet commissions

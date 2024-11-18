@@ -41,7 +41,7 @@ class OperatorRestrictionService
 
             foreach ($this->restrictionMap as $restriction => $buttonVar) {
                 if (in_array($restriction, $restrictions)) {
-                    $activeButtons[$buttonVar] = true;
+                    $activeButtons[$buttonVar] = true ?? false;
                 }
             }
         }

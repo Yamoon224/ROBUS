@@ -213,14 +213,14 @@ class ProviderController extends Controller
             }
 
             if (!empty($activeButtons['showMoneyButton'])) {
-                $dashboard_data['Transfert mobile'] = [
+                $dashboard_data['Transfert national'] = [
                     "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($walletTransactionDepot) : [],
                     "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($walletTransactionMoney) : [],
                 ];
             }
 
             if (!empty($activeButtons['showRetraitButton'])) {
-                $dashboard_data['Retraits'] = ProviderSingleCollection::collection($walletRetrait);
+                $dashboard_data['Retrait'] = ProviderSingleCollection::collection($walletRetrait);
             }
 
             return response()->json([

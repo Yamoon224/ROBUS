@@ -78,18 +78,18 @@ class AuthenticationService
                 try {
                         $user = SidUser::whereStatus(true)->whereEmail($email)->first();
 
-                        // dd($user);
-
                         if (!$user) {
                                 return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée', 'catch' => true ];
                         }
 
                         // Si l'utilisateur a un code d'activation défini, vérifiez-le.
-                        if (!empty($user->activation_code)) {
-                                return $this->attemptActiveCodeLogin($user, $email, $password , $device_meta_data, $code_active);
-                        } else {
-                                return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
-                        }
+                        // if (!empty($user->activation_code)) {
+                        //         return $this->attemptActiveCodeLogin($user, $email, $password , $device_meta_data, $code_active);
+                        // } else {
+                        //         return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
+                        // }
+
+                        return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
                 } catch (\Throwable $th) {
 
                         return ['success' => false , 'catch' => true, 'message' => 'Mauvais identifiants ! Authentification échouée.', 'catch' => true];
@@ -197,7 +197,6 @@ class AuthenticationService
 
                 // Récupérer le statut de l'application
                 $appStatus = $model::latest()->first();
-
 
                 // Vérifier si l'application est fermée
                 if ($appStatus && $appStatus->status_app === 'closed') {
