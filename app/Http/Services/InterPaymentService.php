@@ -117,6 +117,7 @@ class InterPaymentService
                 if ($account_accepted) {
                     $walletInter->increment('commission_companie', $percent_valeur_compagnie);
                 }
+            } else {
             }
         } else {
 
@@ -331,7 +332,6 @@ class InterPaymentService
             $walletInter->update([
                 'commissions' => DB::raw('commissions+'  . $valuer_deposit),
             ]);
-            
         } else {
 
             if (robus()->country->code == 'CI') {
@@ -925,6 +925,18 @@ class InterPaymentService
                     }
                 }
             } else {
+
+                // Percent admin 
+                $valeur_percent_admin  = $percent_robus->percent * $amount_valeur;
+                $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
+                if ($admin_civ->count() > 0) {
+                    $nmbre_admin = $admin_civ->count();
+                    $valeur_single = $admin_valeur_convertion / $nmbre_admin;
+
+                    foreach ($admin_civ as $user) {
+                        $this->processAdminCommission($user->id, $walletInter->id, $valeur_single);
+                    }
+                }
             }
         } else {
 

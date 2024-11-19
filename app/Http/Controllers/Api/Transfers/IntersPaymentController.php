@@ -191,7 +191,7 @@ class IntersPaymentController extends Controller
                         'amount.required' => 'Votre montant est obligatoire',
                         'country.required' => 'Votre pays est obligatoire',
                     ];
-                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94 , 95 , 96 , 97 , 98 , 100, 101,102])) {
+                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 100, 101, 102])) {
 
                     if (robus()->is_under_distributer) {
 
@@ -260,7 +260,7 @@ class IntersPaymentController extends Controller
                             );
                         }
                     }
-                }elseif (in_array($request->provider, [99])) {
+                } elseif (in_array($request->provider, [99])) {
 
                     if (robus()->is_under_distributer) {
 
@@ -280,7 +280,7 @@ class IntersPaymentController extends Controller
                                 'name' => 'required',
                             ],
                             [
-    
+
                                 'phone.required' => 'Votre numero est obligatoire',
                                 'amount.required' => 'Votre montant est obligatoire',
                                 'name_custumer.required' => 'Nom est obligatoire',
@@ -290,10 +290,10 @@ class IntersPaymentController extends Controller
                                 'country.required' => 'Votre pays est obligatoire',
                                 'account_number.required' => 'Numero de compte est obligatoire',
                                 'name.required' => 'Nom de la banque est obligatoire',
-    
+
                             ]
                         );
-    
+
                         if ($validator->fails()) {
                             return response()->json(
                                 [
@@ -320,7 +320,7 @@ class IntersPaymentController extends Controller
                                 // 'name' => 'required',
                             ],
                             [
-    
+
                                 'phone.required' => 'Votre numero est obligatoire',
                                 'amount.required' => 'Votre montant est obligatoire',
                                 // 'name_custumer.required' => 'Nom est obligatoire',
@@ -329,7 +329,7 @@ class IntersPaymentController extends Controller
                                 'country.required' => 'Votre pays est obligatoire',
                                 // 'account_number.required' => 'Numero de compte est obligatoire',
                                 // 'name.required' => 'Nom de la banque est obligatoire',
-    
+
                             ]
                         );
 
@@ -418,7 +418,7 @@ class IntersPaymentController extends Controller
                     } else {
                         return   json_message_response(false, "veuillez selectionnez le pays de destination ou le  Numero ne correspond pas au pays SVP !", 300);
                     }
-                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78 , 93, 94 , 95 , 96 , 97 , 98 , 99 , 100, 101,102])) {
+                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102])) {
 
                     if ($this->interServices->validatePhone($request->phone)) {
 
@@ -440,9 +440,21 @@ class IntersPaymentController extends Controller
                                             $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
                                         }
 
-                                        $walletInter = $this->interServices->createMobileWalletInter($request->amount, $percent_robus, $country_robus, $request->provider, $request->phone,  $request->provider_type,  $request->name_custumer
-                                        , $request->num_piece_custumer, $request->date_piece , $request->name , $request->name_sender , $request->account_number);
-                                        
+                                        $walletInter = $this->interServices->createMobileWalletInter(
+                                            $request->amount,
+                                            $percent_robus,
+                                            $country_robus,
+                                            $request->provider,
+                                            $request->phone,
+                                            $request->provider_type,
+                                            $request->name_custumer,
+                                            $request->num_piece_custumer,
+                                            $request->date_piece,
+                                            $request->name,
+                                            $request->name_sender,
+                                            $request->account_number
+                                        );
+
                                         if ($walletInter != null) {
 
                                             if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
@@ -868,7 +880,7 @@ class IntersPaymentController extends Controller
                                                     if (robus()->is_under_distributer) {
 
                                                         $comission_distributer = $amount_user->comission_distributer * $amount_request;
-                                                
+
                                                         $comission_compagnie = $amount_user->percent_companie * $amount_request;
                                                     } else {
 
@@ -899,7 +911,7 @@ class IntersPaymentController extends Controller
 
                                                     if ($walletVirement != null) {
 
-                                                        if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion, $walletVirement, $amount_valeur_convertion_send, $percent_distr_cfa , $amount_commission_compagnie)) {
+                                                        if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion, $walletVirement, $amount_valeur_convertion_send, $percent_distr_cfa, $amount_commission_compagnie)) {
                                                             $this->interServices->sendNotificationPayment($walletVirement);
                                                             return $this->messageAfterValidated($walletVirement);
                                                         }
@@ -1287,10 +1299,19 @@ class IntersPaymentController extends Controller
     {
 
         $countrie = Country::whereName($countrie_id)->first();
-        // $default_valeur = 2000000;
+
         $valeur_max_send  =  $countrie->amount_max_send;
 
         try {
+
+            if (!$countrie || !$amount_paiement_robus  || !$valeur_max_send) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pays ou montant non valide ou plafond invalide.',
+                ], 400);
+            }
+
+
 
             if ($amount_paiement_robus) {
 
@@ -1301,461 +1322,132 @@ class IntersPaymentController extends Controller
                 $commission_transaction_val_inter_receive = 0;
                 $convertion_transaction_val_inter_receive = 0;
 
-                if ($commission_inter != null) {
 
-                    if ($countrie->id == 107) {
-
-                        if ($provider_inter_out_civ == 51) {
-
-                            if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $amount_paiement_robus;
-                            } else {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                            }
-
-
-                            if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-                               
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
-
-                               
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            }
-                        } else {
-
-
-                            if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $amount_paiement_robus;
-                            } else {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                            }
-
-                            if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-                                $convertion_transaction_countrie = (float)   $amount_paiement_robus /   (float) $countrie->currencie->value;
-
-                                $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                if ($amount_send) {
-
-                                    if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                    } else {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                    }
-
-                                    $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                    //   Convertion  in CFA
-                                    $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                    //   Convertion in Country send
-                                    $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                    if ($valeur_verify < 0) {
-
-                                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                    }
-                                } else {
-                                    return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                }
-                            } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-                                $convertion_transaction_countrie = (float)   $amount_paiement_robus;
-
-                                $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                if ($amount_send) {
-
-                                    if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                    } else {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                    }
-
-                                    $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                    //   Convertion  in CFA
-                                    $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                                    //   Convertion in Country send
-                                    $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa;
-
-                                    if ($valeur_verify < 0) {
-
-                                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                    }
-                                } else {
-                                    return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                }
-                            } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
-
-                                $convertion_transaction_countrie = (float)   $amount_paiement_robus  /   (float) $countrie->currencie->value;
-
-                                $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                if ($amount_send) {
-
-
-                                    if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                    } else {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                    }
-
-                                    $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                    //   Convertion  in CFA
-                                    $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                    //   Convertion in Country send
-                                    $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                    if ($valeur_verify < 0) {
-
-                                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                    }
-                                } else {
-
-                                    return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                }
-                            }
-                        }
+                if (!$commission_inter) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Aucune commission définie pour ce pays est fournisseur.',
+                    ], 400);
+                }
+
+                $is_under_or_distributor = robus()->is_under_distributer == 1 || robus()->is_distributer == 1;
+                $commission_transaction_val_percent_pay = $is_under_or_distributor
+                    ? (float)$commission_inter->percent_under_distributer * (float)$amount_paiement_robus
+                    : (float)$commission_inter->percent * (float)$amount_paiement_robus;
+
+                $exchange_rate_sender = robus()->country->currencie->value;
+                $exchange_rate_receiver = $countrie->currencie->value;
+
+                function calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus)
+                {
+                    return $is_under_or_distributor
+                        ? (float)$commission_inter->percent_deposit_under_distributer * (float)$commission_transaction_val_percent_pay
+                        : (float)$commission_inter->percent * (float)$amount_paiement_robus;
+                }
+
+                function calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus)
+                {
+                    return $is_under_or_distributor
+                        ? (float)$commission_inter->percent_deposit_under_distributer * (float)$amount_paiement_robus
+                        : (float)$commission_inter->percent * (float)$amount_paiement_robus;
+                }
+
+                // Calculer le taux de conversion en CFA et le montant reçu
+                function calculateConversion($valeur_verify, $currencie_sender, $currencie_receiver)
+                {
+                    $conversion_cfa = (float)$valeur_verify * (float)$currencie_sender->value;
+                    return $conversion_cfa / (float)$currencie_receiver->value;
+                }
+
+
+                if (is_string($commission_transaction_val_inter_receive)) {
+                    // Message d'erreur si la conversion échoue
+                    return response()->json([
+                        'success' => false,
+                        'message' => $commission_transaction_val_inter_receive,
+                    ], 400);
+                }
+
+                if ($provider_inter_out_civ == 51) {
+
+                    if ($exchange_rate_sender > $exchange_rate_receiver) {
+
+                        $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus - $commission_transaction_val_inter_pay;
+                        $commission_transaction_val_inter_receive = $valeur_verify < 0
+                            ? "Montant négatif"
+                            : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                    } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
+
+                        $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus - $commission_transaction_val_inter_pay;
+                        $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
                     } else {
 
-                        if ($provider_inter_out_civ == 51) {
-
-                            if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $amount_paiement_robus;
-                            } else {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                            }
-
-                            if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-                               
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_inter_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_inter_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
-
-                                
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_inter_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            }
-                        } else {
-
-
-                            if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $amount_paiement_robus;
-                            } else {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                            }
-
-                            if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-                                $convertion_transaction_countrie = (float)   $amount_paiement_robus /   (float) $countrie->currencie->value;
-
-                                $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                if ($amount_send) {
-
-                                    if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                    } else {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                    }
-
-                                    $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                    //   Convertion  in CFA
-                                    $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                    //   Convertion in Country send
-                                    $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                    if ($valeur_verify < 0) {
-
-                                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                    }
-                                } else {
-                                    return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                }
-                            } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-                                $convertion_transaction_countrie = (float)   $amount_paiement_robus;
-
-                                $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                if ($amount_send) {
-
-                                    if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                    } else {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                    }
-
-                                    $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                    //   Convertion  in CFA
-                                    $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                                    //   Convertion in Country send
-                                    $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa;
-
-                                    if ($valeur_verify < 0) {
-
-                                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                    }
-                                } else {
-                                    return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                }
-                            } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
-
-                                $convertion_transaction_countrie = (float)   $amount_paiement_robus  /   (float) $countrie->currencie->value;
-
-                                $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                if ($amount_send) {
-
-
-                                    if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                    } else {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                    }
-
-                                    $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                    //   Convertion  in CFA
-                                    $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                    //   Convertion in Country send
-                                    $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                    if ($valeur_verify < 0) {
-
-                                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                    }
-                                } else {
-
-                                    return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                }
-                            }
-                        }
+                        // Cas où la devise de l'envoyeur est plus faible
+                        $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus - $commission_transaction_val_inter_pay;
+                        $commission_transaction_val_inter_receive = $valeur_verify < 0
+                            ? "Montant négatif"
+                            : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
                     }
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_commission' => $commission_transaction_val_percent_pay,
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
-                        ],
-                    ], 200);
                 } else {
-                    return response()->json([
-                        'success' =>  false,
-                        'message' => 'Pas de selection du pourcentage',
-                    ], 200);
+
+
+                    if ($exchange_rate_sender > $exchange_rate_receiver) {
+
+                        $convertion_transaction_countrie = (float)   $amount_paiement_robus / (float) $countrie->currencie->value;
+
+                        $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
+
+                        if (!$amount_send) {
+                            return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
+                        }
+
+                        $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus - $commission_transaction_val_inter_pay;
+                        $commission_transaction_val_inter_receive = $valeur_verify < 0
+                            ? "Montant négatif"
+                            : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                    } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
+
+                        $convertion_transaction_countrie = (float)   $amount_paiement_robus;
+
+                        $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
+
+                        if (!$amount_send) {
+                            return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
+                        }
+
+                        $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus - $commission_transaction_val_inter_pay;
+                        $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
+                    } else {
+
+                        $convertion_transaction_countrie = (float)   $amount_paiement_robus / (float) $countrie->currencie->value;
+
+                        $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
+
+                        if (!$amount_send) {
+                            return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
+                        }
+                        // Cas où la devise de l'envoyeur est plus faible
+                        $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus - $commission_transaction_val_inter_pay;
+                        $commission_transaction_val_inter_receive = $valeur_verify < 0
+                            ? "Montant négatif"
+                            : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                    }
                 }
+
+                return response()->json([
+                    'success' => $commission_inter != null ? true : false,
+                    'data' =>  [
+                        'amount_commission' => $commission_transaction_val_percent_pay,
+                        'amount_pay' => $commission_transaction_val_inter_pay,
+                        'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
+                    ],
+                ], 200);
             } else {
                 return response()->json([
                     'success' =>  false,
@@ -1770,624 +1462,167 @@ class IntersPaymentController extends Controller
         }
     }
 
-    public function search_payment_robus_inter_out($amount_paiement_robus, $countrie_id, $provider_inter_out_civ)
+
+    public function search_payment_robus_inter_out($countrie_id, $amount_paiement_robus, $provider_inter_out_civ)
     {
+
         $countrie = Country::whereName($countrie_id)->first();
-        $default_valeur = 2000000;
+
         $valeur_max_send  =  $countrie->amount_max_send;
 
         try {
 
-            if ($amount_paiement_robus) {
-
-                $commission_inter =  $this->percentRobus->getRobusPercentageInter($countrie, $provider_inter_out_civ);
-                $commission_transaction_val_percent_pay = 0;
-                $commission_transaction_val_inter_pay = 0;
-                $commission_transaction_val_inter_pay_after = 0;
-                $commission_transaction_val_inter_receive = 0;
-                $convertion_transaction_val_inter_receive = 0;
-
-                if ($commission_inter != null) {
-
-                    if ($countrie->id == 107) {
-
-                        if ($provider_inter_out_civ == 51) {
-
-                            if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $amount_paiement_robus;
-                            } else {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                            }
-
-
-                            if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-                                $convertion_transaction_val_inter_receive =  $default_valeur;
-
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
-
-                          
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                           
-                            }
-                        } else {
-
-
-                            if (robus()->country->name_groupe == 'URP') {
-
-                                $commission_inter_inter = TransactionCost::whereId(8)->first();
-
-                                $valeur_end = $commission_inter_inter->levelTransactions->last();
-
-                                $conversion_valeur_end =  $valeur_end->amount_end;
-
-                               
-
-                                $valeur_amount =  $amount_paiement_robus;
-
-                                if ($commission_inter_inter) {
-
-                                    foreach ($commission_inter_inter->levelTransactions as $amount_comission) {
-
-                                        if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                                            if ($amount_comission->percent == null) {
-
-                                                $commission_transaction_val_percent_pay =  $amount_comission->amount;
-
-                                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-                                                    $commission_transaction_val_inter_pay_after =  (float)$amount_comission->comission_distributer;
-                                                } else {
-
-                                                    $commission_transaction_val_inter_pay_after =  (float)$amount_comission->amount;
-                                                }
-                                            } else {
-
-                                                $commission_transaction_val_percent_pay = $valeur_amount * $amount_comission->percent;
-
-                                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-                                                    $commission_transaction_val_inter_pay_after =  (float)$amount_comission->comission_distributer  * (float) $valeur_amount;
-                                                } else {
-
-                                                    $commission_transaction_val_inter_pay_after =  (float)$amount_comission->percent * (float) $valeur_amount;
-                                                }
-                                            }
-
-                                            if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-
-                                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                                    $commission_transaction_val_inter_pay =  $commission_transaction_val_inter_pay_after;
-                                                } else {
-
-                                                    $commission_transaction_val_inter_pay =  $commission_transaction_val_inter_pay_after;
-                                                }
-
-                                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                                //   Convertion  in CFA
-                                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                                //   Convertion in Country send
-                                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                                if ($valeur_verify < 0) {
-
-                                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                                } else {
-
-                                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                                }
-                                            } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-                                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                                    $commission_transaction_val_inter_pay =  $commission_transaction_val_inter_pay_after;
-                                                } else {
-
-                                                    $commission_transaction_val_inter_pay =  $commission_transaction_val_inter_pay_after;
-                                                }
-
-                                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                                //   Convertion  in CFA
-                                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                                                //   Convertion in Country send
-                                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa;
-
-
-                                                if ($valeur_verify < 0) {
-
-                                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                                } else {
-
-                                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                                }
-                                            } elseif (robus()->country->currencie->value > $countrie->currencie->value) {
-
-                                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                                    $commission_transaction_val_inter_pay =  $commission_transaction_val_inter_pay_after;
-                                                } else {
-
-                                                    $commission_transaction_val_inter_pay =  $commission_transaction_val_inter_pay_after;
-                                                }
-
-                                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                                //   Convertion  in CFA
-                                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                                //   Convertion in Country send
-                                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                                if ($valeur_verify < 0) {
-
-                                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                                } else {
-
-                                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                                }
-                                            }
-                                        }
-                                    }
-                                } else {
-
-                                    $commission_transaction_val_inter_pay  = "Pas Commission";
-                                    $commission_transaction_val_inter_receive =  "Pas Commission";
-                                }
-                            } else {
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $amount_paiement_robus;
-                                } else {
-
-                                    $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-                                    $convertion_transaction_countrie = (float)   $amount_paiement_robus /   (float) $countrie->currencie->value;
-
-                                    $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                    if ($amount_send) {
-
-                                        if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                            $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                        } else {
-
-                                            $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                        }
-
-                                        $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                        //   Convertion  in CFA
-                                        $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                        //   Convertion in Country send
-                                        $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                        if ($valeur_verify < 0) {
-
-                                            $commission_transaction_val_inter_receive =  "Montant negatif";
-                                        } else {
-
-                                            $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                        }
-                                    } else {
-                                        return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                    }
-                                } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-                                    $convertion_transaction_countrie = (float)   $amount_paiement_robus;
-
-                                    $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                    if ($amount_send) {
-
-                                        if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                            $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                        } else {
-
-                                            $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                        }
-
-                                        $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                        //   Convertion  in CFA
-                                        $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                                        //   Convertion in Country send
-                                        $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa;
-
-                                        if ($valeur_verify < 0) {
-
-                                            $commission_transaction_val_inter_receive =  "Montant negatif";
-                                        } else {
-
-                                            $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                        }
-                                    } else {
-                                        return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                    }
-                                } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
-
-                                    $convertion_transaction_countrie = (float)   $amount_paiement_robus  /   (float) $countrie->currencie->value;
-
-                                    $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                    if ($amount_send) {
-
-
-                                        if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                            $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                        } else {
-
-                                            $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                        }
-
-                                        $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                        //   Convertion  in CFA
-                                        $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                        //   Convertion in Country send
-                                        $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                        if ($valeur_verify < 0) {
-
-                                            $commission_transaction_val_inter_receive =  "Montant negatif";
-                                        } else {
-
-                                            $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                        }
-                                    } else {
-
-                                        return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                    }
-                                }
-                            }
-                        }
-                    } else {
-
-                        if ($provider_inter_out_civ == 51) {
-
-                            if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $amount_paiement_robus;
-                            } else {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                            }
-
-                            if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-                            
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_inter_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-                                $convertion_transaction_val_inter_receive = (float)   $default_valeur;
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_inter_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
-
-                               
-
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $commission_transaction_val_percent_pay;
-                                } else {
-
-                                    $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                }
-
-                                $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_inter_pay;
-
-                                //   Convertion  in CFA
-                                $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                //   Convertion in Country send
-                                $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                if ($valeur_verify < 0) {
-
-                                    $commission_transaction_val_inter_receive =  "Montant negatif";
-                                } else {
-
-                                    $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                }
-                                // }
-                            }
-                        } else {
-
-
-                            if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $amount_paiement_robus;
-                            } else {
-
-                                $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                            }
-
-                            if (robus()->country->currencie->value > $countrie->currencie->value) {
-
-                                $convertion_transaction_countrie = (float)   $amount_paiement_robus /   (float) $countrie->currencie->value;
-
-                                $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                if ($amount_send) {
-
-                                    if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                    } else {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                    }
-
-                                    $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                    //   Convertion  in CFA
-                                    $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                    //   Convertion in Country send
-                                    $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                    if ($valeur_verify < 0) {
-
-                                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                    }
-                                } else {
-                                    return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                }
-                            } elseif (robus()->country->currencie->value == $countrie->currencie->value) {
-
-                                $convertion_transaction_countrie = (float)   $amount_paiement_robus;
-
-                                $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                if ($amount_send) {
-
-                                    if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                    } else {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                    }
-
-                                    $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                    //   Convertion  in CFA
-                                    $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                                    //   Convertion in Country send
-                                    $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa;
-
-                                    if ($valeur_verify < 0) {
-
-                                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                    }
-                                } else {
-                                    return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                }
-                            } elseif (robus()->country->currencie->value < $countrie->currencie->value) {
-
-                                $convertion_transaction_countrie = (float)   $amount_paiement_robus  /   (float) $countrie->currencie->value;
-
-                                $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
-
-                                if ($amount_send) {
-
-
-                                    if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float) $amount_paiement_robus;
-                                    } else {
-
-                                        $commission_transaction_val_inter_pay =  (float)$commission_inter->percent  * (float) $amount_paiement_robus;
-                                    }
-
-                                    $valeur_verify =  (float) $amount_paiement_robus - $commission_transaction_val_percent_pay;
-
-                                    //   Convertion  in CFA
-                                    $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) robus()->country->currencie->value;
-
-                                    //   Convertion in Country send
-                                    $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $countrie->currencie->value;
-
-
-                                    if ($valeur_verify < 0) {
-
-                                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                                    } else {
-
-                                        $commission_transaction_val_inter_receive =  $commission_transaction_val_inter_convertion_send;
-                                    }
-                                } else {
-
-                                    return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
-                                }
-                            }
-                        }
-                    }
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_commission' => $commission_transaction_val_percent_pay,
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
-                        ],
-                    ], 200);
+            if (!$countrie || !$amount_paiement_robus  || !$valeur_max_send) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pays ou montant non valide ou plafond invalide.',
+                ], 400);
+            }
+
+
+            $commission_inter =  $this->percentRobus->getRobusPercentageInter($countrie, $provider_inter_out_civ);
+            $commission_transaction_val_percent_pay = 0;
+            $commission_transaction_val_inter_pay = 0;
+            $commission_transaction_val_inter_pay_after = 0;
+            $commission_transaction_val_inter_receive = 0;
+            $convertion_transaction_val_inter_receive = 0;
+
+
+            if (!$commission_inter) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Aucune commission définie pour ce pays est fournisseur.',
+                ], 400);
+            }
+
+            $is_under_or_distributor = robus()->is_under_distributer == 1 || robus()->is_distributer == 1;
+            $commission_transaction_val_percent_pay = $is_under_or_distributor
+                ? (float)$commission_inter->percent_under_distributer * (float)$amount_paiement_robus
+                : (float)$commission_inter->percent * (float)$amount_paiement_robus;
+
+            $exchange_rate_sender = robus()->country->currencie->value;
+            $exchange_rate_receiver = $countrie->currencie->value;
+
+            function calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus)
+            {
+                return $is_under_or_distributor
+                    ? (float)$commission_inter->percent_deposit_under_distributer * (float)$commission_transaction_val_percent_pay
+                    : (float)$commission_inter->percent * (float)$amount_paiement_robus;
+            }
+
+            function calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus)
+            {
+                return $is_under_or_distributor
+                    ? (float)$commission_inter->percent_deposit_under_distributer * (float)$amount_paiement_robus
+                    : (float)$commission_inter->percent * (float)$amount_paiement_robus;
+            }
+
+            // Calculer le taux de conversion en CFA et le montant reçu
+            function calculateConversion($valeur_verify, $currencie_sender, $currencie_receiver)
+            {
+                $conversion_cfa = (float)$valeur_verify * (float)$currencie_sender->value;
+                return $conversion_cfa / (float)$currencie_receiver->value;
+            }
+
+
+
+            if ($provider_inter_out_civ == 51) {
+
+                if ($exchange_rate_sender > $exchange_rate_receiver) {
+
+                    $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus);
+                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $commission_transaction_val_inter_receive = $valeur_verify < 0
+                        ? "Montant négatif"
+                        : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
+
+                    $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus);
+                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
                 } else {
-                    return response()->json([
-                        'success' =>  false,
-                        'message' => 'Pas de selection du pourcentage',
-                    ], 200);
+
+                    // Cas où la devise de l'envoyeur est plus faible
+                    $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus);
+                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $commission_transaction_val_inter_receive = $valeur_verify < 0
+                        ? "Montant négatif"
+                        : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
                 }
             } else {
-                return response()->json([
-                    'success' =>  false,
-                    'message' => 'Pas d\'utilisateur',
-                ], 200);
+
+
+                if ($exchange_rate_sender > $exchange_rate_receiver) {
+
+                    $convertion_transaction_countrie = (float)   $amount_paiement_robus / (float) $countrie->currencie->value;
+
+                    $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
+
+                    if (!$amount_send) {
+                        return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
+                    }
+
+                    $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
+                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $commission_transaction_val_inter_receive = $valeur_verify < 0
+                        ? "Montant négatif"
+                        : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
+
+                    $convertion_transaction_countrie = (float)   $amount_paiement_robus;
+
+                    $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
+
+                    if (!$amount_send) {
+                        return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
+                    }
+
+                    $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
+                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
+                } else {
+
+                    $convertion_transaction_countrie = (float)   $amount_paiement_robus / (float) $countrie->currencie->value;
+
+                    $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
+
+                    if (!$amount_send) {
+                        return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
+                    }
+                    // Cas où la devise de l'envoyeur est plus faible
+                    $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
+                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $commission_transaction_val_inter_receive = $valeur_verify < 0
+                        ? "Montant négatif"
+                        : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                }
             }
+
+
+            if (is_string($commission_transaction_val_inter_receive)) {
+                // Message d'erreur si la conversion échoue
+                return response()->json([
+                    'success' => false,
+                    'message' => $commission_transaction_val_inter_receive,
+                ], 400);
+            }
+
+            return response()->json([
+                'success' => $commission_inter != null ? true : false,
+                'data' =>  [
+                    'amount_commission' => $commission_transaction_val_percent_pay,
+                    'amount_pay' => $commission_transaction_val_inter_pay,
+                    'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
+                ],
+            ], 200);
         } catch (\Exception $exception) {
             return response()->json([
                 'success' =>  false,
-                'message' => 'Pas d\'utilisateur',
+                'message' => 'Pas Erreur de calcul des commissions',
             ], 200);
         }
     }
+
 
     public function search_payment_inter_CIV($country, $amount_paiement_robus)
     {
@@ -2853,8 +2088,6 @@ class IntersPaymentController extends Controller
     {
 
 
-        $default_valeur = 2000000;
-
         try {
 
             if ($amount_invoice_inter != '') {
@@ -2905,12 +2138,62 @@ class IntersPaymentController extends Controller
 
     }
 
+    public function paiement_invoice_received($amount_invoice_inter)
+    {
+
+
+        try {
+
+            if ($amount_invoice_inter != '') {
+
+                $commission_invoice = PaymentCost::whereId(1)->first();
+
+                $commission_reload_inter_val_inter_percent_pay = 0;
+
+                if (robus()->is_under_distributer) {
+                    $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_auther);
+
+                    $commission_reload_inter_val_inter_percent_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther);
+                } else {
+
+                    $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther);
+
+                    $commission_reload_inter_val_inter_percent_pay = $commission_paiement_invoice_val_inter_pay;
+                }
+
+                $valeur_receive =  (float) $amount_invoice_inter +   (float)$commission_invoice->amount_auther;
+
+                if ($valeur_receive < 0) {
+
+                    $commission_paiement_invoice_val_inter_receive = "Montant negatif";
+                } else {
+
+                    $commission_paiement_invoice_val_inter_receive =  $valeur_receive;
+                }
+
+                return response()->json([
+                    'success' => $commission_invoice != null ? true : false,
+                    'data' =>  [
+                        'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
+                        'amount_pay' => $commission_paiement_invoice_val_inter_pay,
+                        'amount_receive' => $commission_paiement_invoice_val_inter_receive,
+                    ],
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+
+        // Invoice inter Inter
+
+    }
+
     public function paiement_virement_inter($amount_virement_inter)
     {
 
-        $wallet_user = Auth::guard('api')->user();
-
-        $default_valeur = 2000000;
 
         $countrie = Country::whereId(107)->first();
 
@@ -2947,8 +2230,6 @@ class IntersPaymentController extends Controller
 
                                 $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
 
-                                // Valeur receive 
-
                                 $receive_valeur = $valeur_amount - $percent_distr_cfa;
 
                                 $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
@@ -2978,6 +2259,121 @@ class IntersPaymentController extends Controller
                                 $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
 
                                 $valeur_cfa_receive = $valeur_amount - $percent_distr_cfa;
+
+                                $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+                                // Convertion commission
+
+                                if ($valeur_cfa_receive < 0) {
+                                    $commission_reload_inter_val_inter_receive =  "Montant negatif";
+                                } else {
+
+                                    $commission_reload_inter_val_inter_receive = $valeur_cfa_receive;
+                                }
+                            }
+                        }
+                    }
+
+                    return response()->json([
+                        'success' => $commission_inter != null ? true : false,
+                        'data' =>  [
+                            'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
+                            'amount_pay' => $commission_reload_inter_val_inter_pay,
+                            'amount_receive' => $commission_reload_inter_val_inter_receive . ' ' .  $countrie->currencie->code,
+                        ],
+                    ], 200);
+                } else {
+                    return response()->json([
+                        'success' =>  false,
+                        'message' => 'Donnez le montant',
+                    ], 200);
+                }
+            } else {
+
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Pas de valeur disponible',
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+
+        // Invoice inter Inter
+
+    }
+
+    public function paiement_virement_received($amount_virement_inter)
+    {
+
+
+        $countrie = Country::whereId(107)->first();
+
+        try {
+
+            // Calcul valeur commissions virement Bank Inter
+
+            if ($amount_virement_inter != null) {
+
+
+                $valeur_amount =   $this->convertionservice->convertAdminCommission($amount_virement_inter);
+
+                if ($valeur_amount) {
+
+                    $commission_inter = BankCost::whereId(1)->first();
+
+                    $commission_reload_inter_val_inter_percent_pay = 0;
+
+                    foreach ($commission_inter->levelBanks as $amount_comission) {
+
+                        if ($valeur_amount >= $amount_comission->amount_begin &&  $valeur_amount <= $amount_comission->amount_end) {
+
+                            if ($amount_comission->amount == null) {
+
+                                $percent_distr_cfa =   $amount_comission->percent * $valeur_amount;
+
+                                if (robus()->is_under_distributer) {
+
+                                    $valeur_cfa =   $amount_comission->comission_distributer *  $valeur_amount;
+                                } else {
+
+                                    $valeur_cfa =   $amount_comission->percent * $valeur_amount;
+                                }
+
+                                $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
+
+                                $receive_valeur = $valeur_amount + $percent_distr_cfa;
+
+                                $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+
+                                if ($receive_valeur < 0) {
+
+                                    $commission_reload_inter_val_inter_receive = "Montant negatif";
+                                } else {
+
+                                    $commission_reload_inter_val_inter_receive = $receive_valeur;
+                                }
+                            } else {
+
+
+                                $percent_distr_cfa  = $amount_comission->amount;
+
+                                if (robus()->is_under_distributer) {
+
+                                    $valeur_cfa =   $amount_comission->comission_distributer;
+                                } else {
+
+                                    $valeur_cfa = $valeur_amount + $amount_comission->amount;
+                                }
+
+
+                                $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+                                $valeur_cfa_receive = $valeur_amount + $percent_distr_cfa;
 
                                 $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
 
@@ -3067,31 +2463,61 @@ class IntersPaymentController extends Controller
         }
     }
 
+    public function paiement_credit_received($amount_phone_credit)
+    {
+
+        try {
+
+            // Phone inter 
+            if ($amount_phone_credit != '') {
+
+                $commission_phone_credit = PhoneCreditCost::whereId(2)->first();
+
+
+                $commission_phone_credit_val_inter_pay =  $amount_phone_credit *  $commission_phone_credit->percent;
+
+                $valeur_receive =  $amount_phone_credit +  $commission_phone_credit_val_inter_pay;
+
+
+                if ($valeur_receive < 0) {
+
+                    $commission_phone_credit_val_inter_receive = "Montant negatif";
+                } else {
+
+                    $commission_phone_credit_val_inter_receive =  $valeur_receive;
+                }
+
+
+                return response()->json([
+                    'success' => $commission_phone_credit != null ? true : false,
+                    'data' =>  [
+                        'amount_commission' => $commission_phone_credit_val_inter_pay,
+                        'amount_pay' => $commission_phone_credit_val_inter_pay,
+                        'amount_receive' => $commission_phone_credit_val_inter_receive,
+                    ],
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
+
     public function reload_card_inter($amount_reload_card)
     {
 
-
-        $wallet_user = Auth::guard('api')->user();
-
-        $default_valeur = 2000000;
-
-        //Valuer inter  bank
         $commission_inter = DepositCost::whereId(1)->first();
-
 
         try {
 
 
-
             $valeur_amount =   $this->convertionservice->convertAdminCommission($amount_reload_card);
-
-
 
             if ($valeur_amount) {
 
                 $commission_reload_inter_val_inter_percent_pay = 0;
-                // Convertion valeurs Send maxi
-
 
                 foreach ($commission_inter->levelDeposits->where('is_inter_bank', true) as $amount_comission) {
 
@@ -3178,6 +2604,107 @@ class IntersPaymentController extends Controller
             ], 200);
         }
     }
+
+
+    public function paiement_reload_card_received($amount_reload_card)
+    {
+
+        $commission_inter = DepositCost::whereId(1)->first();
+
+        try {
+
+
+            $valeur_amount =   $this->convertionservice->convertAdminCommission($amount_reload_card);
+
+            if ($valeur_amount) {
+
+                $commission_reload_inter_val_inter_percent_pay = 0;
+
+                foreach ($commission_inter->levelDeposits->where('is_inter_bank', true) as $amount_comission) {
+
+                    if ($valeur_amount >= $amount_comission->amount_begin &&  $valeur_amount <= $amount_comission->amount_end) {
+
+                        if ($amount_comission->amount == null) {
+
+                            $percent_distr_cfa =   $amount_comission->percent * $valeur_amount;
+
+                            if (robus()->is_under_distributer) {
+
+                                $valeur_cfa =   $amount_comission->comission_distributer *  $valeur_amount;
+                            } else {
+
+                                $valeur_cfa =   $amount_comission->percent * $valeur_amount;
+                            }
+
+                            $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
+
+                            // Valeur receive 
+
+                            $receive_valeur = $valeur_amount + $percent_distr_cfa;
+
+                            $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+
+                            if ($receive_valeur < 0) {
+
+                                $commission_reload_inter_val_inter_receive = "Montant negatif";
+                            } else {
+
+                                $commission_reload_inter_val_inter_receive = $receive_valeur;
+                            }
+                        } else {
+
+
+                            $percent_distr_cfa  = $amount_comission->amount;
+
+                            if (robus()->is_under_distributer) {
+
+                                $valeur_cfa =   $amount_comission->comission_distributer;
+                            } else {
+
+                                $valeur_cfa = $amount_comission->amount;
+                            }
+
+
+                            $commission_reload_inter_val_inter_pay =  $this->convertionservice->convertAdminCommissionInvoice($valeur_cfa);
+
+                            $valeur_cfa_receive = $valeur_amount + $percent_distr_cfa;
+
+                            $commission_reload_inter_val_inter_percent_pay =  $this->convertionservice->convertAdminCommissionInvoice($percent_distr_cfa);
+
+                            // Convertion commission
+
+                            if ($valeur_cfa_receive < 0) {
+                                $commission_reload_inter_val_inter_receive =  "Montant negatif";
+                            } else {
+
+                                $commission_reload_inter_val_inter_receive = $valeur_cfa_receive;
+                            }
+                        }
+                    }
+                }
+
+                return response()->json([
+                    'success' => $commission_inter != null ? true : false,
+                    'data' =>  [
+                        'amount_commission' => $commission_reload_inter_val_inter_percent_pay,
+                        'amount_pay' => $commission_reload_inter_val_inter_pay,
+                        'amount_receive' => $commission_reload_inter_val_inter_receive,
+                    ],
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Donnez le montant',
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
     // Search wallet id 
     public function search_transaction_inter($search)
     {
@@ -3202,5 +2729,42 @@ class IntersPaymentController extends Controller
                 'message' => 'Pas d\'utilisateur',
             ], 200);
         }
+    }
+
+    /**
+     * Effectue les conversions en fonction des devises des pays.
+     *
+     * @param float $amount
+     * @param float $commission
+     * @param Country $countrie
+     * @param float $max_send
+     * @return float|string
+     */
+    private function calculateConversion(float $amount, float $commission, Country $countrie, float $max_send)
+    {
+        $robus_currency = robus()->country->currencie->value;
+        $target_currency = $countrie->currencie->value;
+
+        $net_amount = $amount - $commission;
+        if ($net_amount < 0) {
+            return 'Montant négatif après déduction de la commission.';
+        }
+
+        if ($robus_currency > $target_currency) {
+            $conversion_cfa = $net_amount * $robus_currency;
+            $converted_amount = $conversion_cfa / $target_currency;
+        } elseif ($robus_currency < $target_currency) {
+            $conversion_cfa = $net_amount * $robus_currency;
+            $converted_amount = $conversion_cfa / $target_currency;
+        } else {
+            $converted_amount = $net_amount;
+        }
+
+        // Vérification de la limite maximale autorisée
+        if ($converted_amount > $max_send) {
+            return "Le montant maximum autorisé est de $max_send " . $countrie->currencie->code;
+        }
+
+        return $converted_amount;
     }
 }

@@ -814,7 +814,7 @@ class TransactionController extends Controller
                             return  json_message_response(false, "Désolé vous ne pouvez pas faire de retrait ! ", 333);
                         }
                     }
-                }php
+                }
             } else {
                 return response()->json([
                     'success' => false,
@@ -961,6 +961,163 @@ class TransactionController extends Controller
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
+
+    public function search_transaction_drawal_robus($amount_transaction)
+    {
+
+
+        try {
+
+            if ($amount_transaction != '') {
+
+
+                $commission_transaction = $this->percentRobus->getRobusPercentageSDistributers();
+                $commission_transaction_val_percent_pay = 0;
+                $commission_transaction_val_nat_pay = 0;
+
+                if ($commission_transaction) {
+
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
+
+                    $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+
+                }
+
+
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'amount_pay' => $commission_transaction_val_percent_pay,
+                        'amount_send' => $commission_transaction_val_percent_pay,
+                        'amount_receive' => $commission_transaction_val_nat_receive,
+                    ],
+                ], 200);
+            }else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Saisie le montant SVP',
+                ], 200); 
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
+
+    public function search_transaction_drawal_received_robus($amount_transaction)
+    {
+
+
+        try {
+
+            if ($amount_transaction != '') {
+
+                $commission_transaction = $this->percentRobus->getRobusPercentageSDistributers();
+                $commission_transaction_val_percent_pay = 0;
+                $commission_transaction_val_nat_pay = 0;
+
+                if ($commission_transaction) {
+
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
+
+                    $commission_transaction_val_nat_receive = (float)$amount_transaction + $commission_transaction_val_percent_pay;
+
+                }
+
+
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'amount_pay' => $commission_transaction_val_percent_pay,
+                        'amount_send' => $commission_transaction_val_percent_pay,
+                        'amount_receive' => $commission_transaction_val_nat_receive,
+                    ],
+                ], 200);
+            }else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Saisie le montant SVP',
+                ], 200); 
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
+
+    public function search_transaction_money_commission_received($amount_transaction)
+    {
+
+
+        $default_valeur = 2000000;
+
+
+        try {
+
+
+            if ($amount_transaction != '') {
+
+                $commission_transaction = $this->searchTransaction->getCommissionTransactionMobileForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
+                $commission_transaction_val_percent_pay = 0;
+                $commission_transaction_val_nat_pay = 0;
+
+                if ($commission_transaction) {
+
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
+
+                    if (robus()->is_under_distributer) {
+
+                        if (robus()->country->name_groupe == 'MAG') {
+
+                            $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+                        } else {
+
+                            $commission_transaction_val_nat_receive = (float)$amount_transaction;
+                        }
+
+                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
+                    } else {
+
+                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent * $amount_transaction;
+
+                        $commission_transaction_val_nat_receive = (float)$amount_transaction + $commission_transaction_val_percent_pay;
+                    }
+
+
+
+                    $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
+
+                    if ($conversion_valeur_end < $amount_transaction) {
+                        $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
+                    }
+                }
+
+
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'amount_pay' => $commission_transaction_val_nat_pay,
+                        'amount_send' => $commission_transaction_val_percent_pay,
+                        'amount_receive' => $commission_transaction_val_nat_receive,
+                    ],
+                ], 200);
+            }else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Saisie le montant SVP',
+                ], 200); 
             }
         } catch (\Exception $exception) {
             return response()->json([

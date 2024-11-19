@@ -126,25 +126,24 @@ class PhoneCreditInterService
             $this->distributeAdminCommissions($admin_civ, $walletPhone, $admin_valeur_convertion);
         }
 
-
         //  Send valeur in Admin
-        if ($admin_civ->count() > 0) {
+        // if ($admin_civ->count() > 0) {
 
-            $count_admin = $admin_civ->count();
+        //     $count_admin = $admin_civ->count();
 
-            $valeur_single = $admin_valeur_convertion / $count_admin;
+        //     $valeur_single = $admin_valeur_convertion / $count_admin;
 
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_inter_id' => $walletPhone->id,
-                    'description' => 'Commission administrateur',
-                ]);
-            }
-        }
-
+        //     foreach ($admin_civ as $user) {
+        //         $admin_single = SidUser::find($user->id);
+        //         AdminsCom::create([
+        //             'amount' =>   $valeur_single,
+        //             'sid_user_id' =>   $admin_single->id,
+        //             'wallet_inter_id' => $walletPhone->id,
+        //             'description' => 'Commission administrateur',
+        //         ]);
+        //     }
+        // }
+        
         return true;
     }
 

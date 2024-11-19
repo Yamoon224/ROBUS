@@ -329,7 +329,7 @@
 
                     <div wire:loading.flex wire:target="addValidatedPhoneCredit"
                         class="flex items-center justify-center">
-                        <div class="loader"></div> <!-- Ajoutez votre loader ici -->
+                        <div class="loader"></div> 
                         <style>
                             .loader {
                                 border: 4px solid rgba(0, 0, 0, 0.1);

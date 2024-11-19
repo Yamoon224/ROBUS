@@ -1395,12 +1395,15 @@ class TransactionCiv extends Component
             if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)sabdy()->country->currencie->value;
                 $admin_valeur_convertion = (float)$valeur_admin * (float)sabdy()->country->currencie->value;
+                $admin_convertion = (float)$valeur_percent_admin * (float)sabdy()->country->currencie->value;
             } elseif ($country_civ->currencie->value == sabdy()->country->currencie->value) {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal;
                 $admin_valeur_convertion = (float)$valeur_admin;
+                $admin_convertion = (float)$valeur_percent_admin;
             } else {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)sabdy()->country->currencie->value;
                 $admin_valeur_convertion = (float)$valeur_admin * (float)sabdy()->country->currencie->value;
+                $admin_convertion = (float)$valeur_percent_admin * (float)sabdy()->country->currencie->value;
             }
 
             if ($walletTransaction->type_transaction == "Depot") {
@@ -1424,6 +1427,16 @@ class TransactionCiv extends Component
                             $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
+                }else {
+
+                    if ($admin_civ->count() > 0) {
+                        $nmbre_admin = $admin_civ->count();
+                        $valeur_single = ($admin_convertion) / $nmbre_admin;
+
+                        foreach ($admin_civ as $user) {
+                            $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                        }
+                    }  
                 }
             } elseif ($walletTransaction->type_transaction == "Retrait") {
 
@@ -1445,12 +1458,22 @@ class TransactionCiv extends Component
                             $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
+                }else {
+
+                    if ($admin_civ->count() > 0) {
+                        $nmbre_admin = $admin_civ->count();
+                        $valeur_single = ($admin_convertion) / $nmbre_admin;
+
+                        foreach ($admin_civ as $user) {
+                            $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                        }
+                    }  
                 }
             } else {
 
                 if ($admin_civ->count() > 0) {
                     $nmbre_admin = $admin_civ->count();
-                    $valeur_single = ($valeur_percent_admin) / $nmbre_admin;
+                    $valeur_single = ($admin_convertion) / $nmbre_admin;
 
                     foreach ($admin_civ as $user) {
                         $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);

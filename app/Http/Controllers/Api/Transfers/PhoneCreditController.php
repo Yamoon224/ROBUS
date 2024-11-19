@@ -325,6 +325,7 @@ class PhoneCreditController extends Controller
                     $commission_phone_credit_val_nat_pay = 0;
                     $commission_phone_credit_val_nat_receive = 0;
                     $commission_virement_val_nat_send = 0;
+                    $commission_phone_credit_commission = 0;
                     //  Conversion valeur
                     $conversion_valeur_end  =  $default_valeur;
 
@@ -335,23 +336,46 @@ class PhoneCreditController extends Controller
                         $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
+                        if(robus()->is_under_distributer)
+                        {
 
-                        $valeur_receive =  $reel_amount - (float) $commission_phone_credit_val_nat_pay;
+                            $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
-                        if ($valeur_receive < 0) {
+                            $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $reel_amount;
 
-                            $commission_phone_credit_val_nat_receive = "Montant negatif";
-                        } else {
+                            $valeur_receive =  $reel_amount - (float) $commission_phone_credit_val_nat_pay;
+    
+                            if ($valeur_receive < 0) {
+    
+                                $commission_phone_credit_val_nat_receive = "Montant negatif";
+                            } else {
+    
+                                $commission_phone_credit_val_nat_receive =  $valeur_receive;
+                            }
 
-                            $commission_phone_credit_val_nat_receive =  $valeur_receive;
+                        }else {
+
+                            $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
+
+                            $commission_phone_credit_commission =   $percent_robus->percent  *  $reel_amount;
+
+                            $valeur_receive =  $reel_amount - (float) $commission_phone_credit_val_nat_pay;
+    
+                            if ($valeur_receive < 0) {
+    
+                                $commission_phone_credit_val_nat_receive = "Montant negatif";
+                            } else {
+    
+                                $commission_phone_credit_val_nat_receive =  $valeur_receive;
+                            }
                         }
+                   
                     }
 
                     return response()->json([
                         'success' => $percent_robus != null ? true : false,
                         'data' =>  [
-                            'amount_pay' => $commission_phone_credit_val_nat_pay,
+                            'amount_pay' => $commission_phone_credit_commission,
                             'amount_send' => $commission_phone_credit_val_nat_pay,
                             'amount_receive' => $commission_phone_credit_val_nat_receive,
                         ],
@@ -389,6 +413,8 @@ class PhoneCreditController extends Controller
                     $commission_phone_credit_val_nat_pay = 0;
                     $commission_phone_credit_val_nat_receive = 0;
                     $commission_virement_val_nat_send = 0;
+                    $commission_phone_credit_commission = 0;
+
                     //  Conversion valeur
                     $conversion_valeur_end  =  $default_valeur;
 
@@ -399,23 +425,48 @@ class PhoneCreditController extends Controller
                         $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
+                        if(robus()->is_under_distributer)
+                        {
 
-                        $valeur_receive =  $reel_amount +  (float) $commission_phone_credit_val_nat_pay;
+                            $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
-                        if ($valeur_receive < 0) {
+                            $valeur_receive =  $reel_amount +  (float) $commission_phone_credit_val_nat_pay;
+    
+                            $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $reel_amount;
 
-                            $commission_phone_credit_val_nat_receive = "Montant negatif";
-                        } else {
+                            if ($valeur_receive < 0) {
+    
+                                $commission_phone_credit_val_nat_receive = "Montant negatif";
+                            } else {
+    
+                                $commission_phone_credit_val_nat_receive =  $valeur_receive;
+                            }
 
-                            $commission_phone_credit_val_nat_receive =  $valeur_receive;
+                        }else {
+
+                            $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
+
+                            $commission_phone_credit_commission =   $percent_robus->percent  *  $reel_amount;
+
+
+                            $valeur_receive =  $reel_amount +  (float) $commission_phone_credit_val_nat_pay;
+    
+                            if ($valeur_receive < 0) {
+    
+                                $commission_phone_credit_val_nat_receive = "Montant negatif";
+                            } else {
+    
+                                $commission_phone_credit_val_nat_receive =  $valeur_receive;
+                            }
                         }
+
+                    
                     }
 
                     return response()->json([
                         'success' => $percent_robus != null ? true : false,
                         'data' =>  [
-                            'amount_pay' => $commission_phone_credit_val_nat_pay,
+                            'amount_pay' => $commission_phone_credit_commission,
                             'amount_send' => $commission_phone_credit_val_nat_pay,
                             'amount_receive' => $commission_phone_credit_val_nat_receive,
                         ],

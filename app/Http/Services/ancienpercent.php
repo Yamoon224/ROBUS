@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\ValidateDailyLimitService;
 
-class InterPaymentService
+class InterPaymentServiceAncien
 {
 
     /** @var  IntersRepository */
