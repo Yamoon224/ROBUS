@@ -90,6 +90,18 @@ class TransactionCiv extends Component
     public $showCarteInterButton = false;
     public $showFacInterButton = false;
 
+    // Compagnies
+    public $showRemonterTransCButton = false;
+    public $showRemonterCreditCButton = false;
+    public $showRemonterPaiementCButton = false;
+    public $showRemonterInterCButton = false;
+    public $showRemonterRechargementCButton = false;
+    public $showRemonterVirementCButton = false;
+    public $showRemonterDepotCButton = false;
+    public $showRemonterRetraitCButton = false;
+    public $showRemonterMoneyCButton = false;
+    public $operatorsCompagnie;
+
     public function resetValeurReload()
     {
 
@@ -113,6 +125,13 @@ class TransactionCiv extends Component
         $this->commission_transaction_val_inter_convertion_send = 0;
         $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
 
+        $account_accepted = sabdy()->is_accepted_companie ?? false;
+        $company_id = sabdy()->company_id ?? null;
+        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+        $this->operatorsCompagnie = OperatorService::getOperatorsWithCommissions(
+            ($account_accepted && $compagnie->id) ? $compagnie->id : null
+        );
+
         $restrictionMap = [
             'Active Transactions' => 'showRemonterTransButton',
             'Active Crédits' => 'showRemonterCreditButton',
@@ -124,6 +143,19 @@ class TransactionCiv extends Component
             'Active Retrait' => 'showRemonterRetraitButton',
             'Active Money' => 'showRemonterMoneyButton',
         ];
+
+        $restrictionCompangieMap = [
+            'Active Transactions' => 'showRemonterTransCButton',
+            'Active Crédits' => 'showRemonterCreditCButton',
+            'Active Paiements' => 'showRemonterPaiementCButton',
+            'Active International' => 'showRemonterInterCButton',
+            'Active Rechargements' => 'showRemonterRechargementCButton',
+            'Active Virements' => 'showRemonterVirementCButton',
+            'Active Depot' => 'showRemonterDepotCButton',
+            'Active Retrait' => 'showRemonterRetraitCButton',
+            'Active Money' => 'showRemonterMoneyCButton',
+        ];
+
 
         $restrictionMapTransaction = [
             'TRANSFERT CREDIT' => 'showCreditButton',
@@ -152,10 +184,20 @@ class TransactionCiv extends Component
             }
         }
 
-      
+
         foreach ($this->operatorsTransaction as $operator) {
             $restrictions = explode(',', $operator->name);
             foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+
+        foreach ($this->operatorsCompagnie as $operator) {
+            $restrictions = explode(',', $operator->name);
+
+            foreach ($restrictionCompangieMap as $restriction => $buttonVar) {
                 if (in_array($restriction, $restrictions)) {
                     $this->{$buttonVar} = true;
                 }
@@ -3957,35 +3999,33 @@ class TransactionCiv extends Component
         $valeur_amount_admin  = $percent_robus->percent_under_distributer * $amount;
 
         $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
- 
+
         // Commissions Inters 
 
         if (sabdy()->is_under_distributer == 1) {
 
-       
+
             if ($this->showRemonterInterButton) {
 
                 if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
 
                     $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) sabdy()->country->currencie->value;
-        
                 } elseif (sabdy()->country->currencie->value == $country_robus->currencie->value) {
-        
+
                     $admin_valeur_convertion =   (float)  $valeur_percent_admin;
-                    
                 } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
-        
+
                     $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) sabdy()->country->currencie->value;
                 }
 
-                
+
                 $walletInter->update([
                     'commissions' => DB::raw('commissions+'  . $valuer_deposit),
                 ]);
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && $this->showRemonterInterCButton) {
                     $valuer_companie = $percent_robus->percent_companie * $amount;
                     $walletInter->increment('commission_companie', $valuer_companie);
                 }
@@ -4014,13 +4054,11 @@ class TransactionCiv extends Component
                 if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
 
                     $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
-        
                 } elseif (sabdy()->country->currencie->value == $country_robus->currencie->value) {
-        
+
                     $admin_valeur_convertion =   (float)  $valuer_deposit;
-                    
                 } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
-        
+
                     $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
                 }
 
@@ -4049,13 +4087,11 @@ class TransactionCiv extends Component
             if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
 
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
-    
             } elseif (sabdy()->country->currencie->value == $country_robus->currencie->value) {
-    
+
                 $admin_valeur_convertion =   (float)  $valuer_deposit;
-                
             } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
-    
+
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
             }
 
@@ -4335,7 +4371,7 @@ class TransactionCiv extends Component
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && $this->showRemonterInterCButton) {
                     $valuer_companie = $percent_robus->percent_companie * $amount_valeur;
                     $walletInter->increment('commission_companie', $valuer_companie);
                 }
@@ -4794,5 +4830,17 @@ class TransactionCiv extends Component
             ->get();
 
         return  $admin_civ;
+    }
+
+    /**
+     * Set the value of showMoneyButton
+     *
+     * @return  self
+     */
+    public function setShowMoneyButton($showMoneyButton)
+    {
+        $this->showMoneyButton = $showMoneyButton;
+
+        return $this;
     }
 }

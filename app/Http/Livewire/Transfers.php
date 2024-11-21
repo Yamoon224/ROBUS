@@ -54,6 +54,7 @@ use App\Models\Wallets\WalletTransaction;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -373,6 +374,17 @@ class Transfers extends Component
     public $showRemonterRetraitButton = false;
     public $showRemonterMoneyButton = false;
 
+    // Compagnies
+    public $showRemonterTransCButton = false;
+    public $showRemonterCreditCButton = false;
+    public $showRemonterPaiementCButton = false;
+    public $showRemonterInterCButton = false;
+    public $showRemonterRechargementCButton = false;
+    public $showRemonterVirementCButton = false;
+    public $showRemonterDepotCButton = false;
+    public $showRemonterRetraitCButton = false;
+    public $showRemonterMoneyCButton = false;
+
     // Transactions
     public $showTransButton = false;
     public $showCreditButton = false;
@@ -391,6 +403,7 @@ class Transfers extends Component
     public $showFacInterButton = false;
 
     public $operators;
+    public $operatorsCompagnie;
     public $operatorsTransaction;
 
     protected $listeners = [
@@ -431,9 +444,13 @@ class Transfers extends Component
     {
 
         $this->operators = OperatorService::getOperatorsWithCommissions(sabdy()->id);
+        $account_accepted = sabdy()->is_accepted_companie ?? false;
+        $company_id = sabdy()->company_id ?? null;
+        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+        $this->operatorsCompagnie = OperatorService::getOperatorsWithCommissions(
+            ($account_accepted && $compagnie->id) ? $compagnie->id : null
+        );
         $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
-        // $this->resetValeurReload();
-        // $this->updateProviderTransaction();
 
         $restrictionMap = [
             'Active Transactions' => 'showRemonterTransButton',
@@ -445,6 +462,18 @@ class Transfers extends Component
             'Active Depot' => 'showRemonterDepotButton',
             'Active Retrait' => 'showRemonterRetraitButton',
             'Active Money' => 'showRemonterMoneyButton',
+        ];
+
+        $restrictionCompangieMap = [
+            'Active Transactions' => 'showRemonterTransCButton',
+            'Active Crédits' => 'showRemonterCreditCButton',
+            'Active Paiements' => 'showRemonterPaiementCButton',
+            'Active International' => 'showRemonterInterCButton',
+            'Active Rechargements' => 'showRemonterRechargementCButton',
+            'Active Virements' => 'showRemonterVirementCButton',
+            'Active Depot' => 'showRemonterDepotCButton',
+            'Active Retrait' => 'showRemonterRetraitCButton',
+            'Active Money' => 'showRemonterMoneyCButton',
         ];
 
 
@@ -478,6 +507,16 @@ class Transfers extends Component
             $restrictions = explode(',', $operator->name);
 
             foreach ($restrictionMap as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+
+        foreach ($this->operatorsCompagnie as $operator) {
+            $restrictions = explode(',', $operator->name);
+
+            foreach ($restrictionCompangieMap as $restriction => $buttonVar) {
                 if (in_array($restriction, $restrictions)) {
                     $this->{$buttonVar} = true;
                 }
@@ -1248,13 +1287,14 @@ class Transfers extends Component
                                     if ($verify_code->type_transaction == "Retrait") {
 
                                         if ($this->showRemonterRetraitButton) {
+                                           
                                             $verify_code->update([
                                                 'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
                                             ]);
 
                                             $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                                            if ($account_accepted) {
+                                            if ($account_accepted && $this->showRemonterRetraitCButton) {
                                                 $valuer_companie = $percent_robus->percent_custum_drawal_companie * $commission_valeur;
                                                 $verify_code->increment('commission_companie', $valuer_companie);
                                                 $this->commissionAdminDrawal($admin_civ, $commissionAdmin_drawal, $verify_code);
@@ -2063,6 +2103,7 @@ class Transfers extends Component
 
     public function addValidatedVirement()
     {
+
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId($this->provider_virement)->first();
         $country_virement = Country::whereId($this->country_virement)
@@ -2637,144 +2678,125 @@ class Transfers extends Component
 
         try {
 
-            if ($provider) {
 
-                $this->validate(
-                    [
-                        'password_validated' => 'required',
-                    ],
-                    [
-                        'password_validated.required' =>
-                        'Mot de passe est obligatoire',
-                    ]
+            if (!$provider) {
+                $this->emit('error', 'Rechargement existant !');
+                return;
+            }
+
+
+            $this->validate([
+                'password_validated' => 'required',
+                'provider_phone_credit' => 'required',
+                'number_phone_credit' => 'required',
+                'amount_phone_credit' => 'required',
+            ], [
+                'password_validated.required' => 'Mot de passe est obligatoire',
+                'provider_phone_credit.required' => 'Fournisseur est obligatoire',
+                'number_phone_credit.required' => 'Numéro est obligatoire',
+                'amount_phone_credit.required' => 'Montant est obligatoire',
+            ]);
+
+            if (!Hash::check($this->password_validated, sabdy()->password)) {
+                $this->resetPhoneCreditField();
+                $this->emit('modal-hide-phoneCredit');
+                $this->emit('error', 'Vérifiez votre mot de passe SVP !');
+                return;
+            }
+
+
+            if ($walletUser->country->code != 'CI') {
+                $this->resetPaiementField();
+                $this->emit('modal-hide-phoneCredit');
+                $this->emit(
+                    'warning',
+                    'Ce réchargement est uniquement pour la CIV !'
+                );
+                return;
+            }
+
+
+            if ($som_transfers >= $valeur_ceiling) {
+                $this->resetPaiementField();
+                $this->emit('modal-hide-phoneCredit');
+                $this->emit('warning', 'Votre montant journier est atteint !');
+                return;
+            }
+
+
+            $reel_amount = $this->search_amount($this->amount_phone_credit);
+            $percent_robus = PhoneCreditCost::find(1); // Utilisation de find() pour un accès direct
+            $val_amount = $reel_amount + $percent_robus->percent * $reel_amount;
+
+            if ($val_amount > $walletUser->wallet->amount) {
+                $this->resetPaiementField();
+                $this->emit('modal-hide-phoneCredit');
+                $this->emit('error', 'Vérifier votre montant SVP !');
+                return;
+            }
+
+            $amount_solde =  $walletUser->wallet->amount -  $val_amount;
+
+            if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
+
+                $amountReceved = $reel_amount;
+
+                $walletPhone = $this->createNewPhoneCredit(
+                    $walletUser,
+                    $reel_amount,
+                    $provider,
+                    $percent_robus,
+                    $this->number_phone_credit,
+                    $amount_solde,
+                    $amountReceved
                 );
 
-
-                if (Hash::check($this->password_validated, sabdy()->password)) {
-                    // Providers MTN , MOOV , ORANGE , Wave
-                    $percent_robus = PhoneCreditCost::whereId(1)->first();
-
-                    if ($walletUser->country->code != 'CI') {
-                        $this->resetPaiementField();
-                        $this->emit('modal-hide-phoneCredit');
-                        $this->emit(
-                            'warning',
-                            'Ce réchargement est uniquement pour la CIV !'
-                        );
-                        return;
-                    }
-
-                    $this->validate(
-                        [
-                            'provider_phone_credit' => 'required',
-                            'number_phone_credit' => 'required',
-                            'amount_phone_credit' => 'required',
-                        ],
-                        [
-                            'provider_phone_credit.required' =>
-                            'Fournisseur est obligatoire',
-                            'number_phone_credit.required' =>
-                            'Numero est obligatoire',
-                            'amount_phone_credit.required' =>
-                            'Montant est obligatoire',
-                        ]
-                    );
+                $message =
+                    'Vous avez effectué un paiement de credit de ' .
+                    $walletPhone->amount .
+                    $walletUser->wallet->currencie->code .
+                    ' ' .
+                    'par ' .
+                    $walletPhone->provider->name .
+                    ' le ' .
+                    $walletPhone->created_at .
+                    ' votre demande est en cours de validation ' .
+                    'Robus vous remercie';
 
 
-                    if ($som_transfers >= $valeur_ceiling) {
+                if ($this->shouldNotifyCreateCI($walletUser)) {
 
-                        $this->resetPaiementField();
-                        $this->emit('modal-hide-phoneCredit');
-                        $this->emit(
-                            'warning',
-                            'Votre montant journier est atteint !'
-                        );
-                        return;
-                    }
-
-                    $reel_amount = $this->search_amount($this->amount_phone_credit);
-
-
-                    $val_amount = $reel_amount +  $percent_robus->percent *  $reel_amount;
-
-                    if ($val_amount > $walletUser->wallet->amount) {
-                        $this->resetPaiementField();
-                        $this->emit('modal-hide-phoneCredit');
-                        $this->emit(
-                            'error',
-                            'Verifier votre montant  svp !'
-                        );
-                        return;
-                    }
-
-                    $amount_solde =  $walletUser->wallet->amount -  $val_amount;
-
-                    if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-
-                        $amountReceved = $reel_amount;
-
-                        $walletPhone = $this->createNewPhoneCredit(
-                            $walletUser,
-                            $reel_amount,
-                            $provider,
-                            $percent_robus,
-                            $this->number_phone_credit,
-                            $amount_solde,
-                            $amountReceved
-                        );
-
-                        $message =
-                            'Vous avez effectué un paiement de credit de ' .
-                            $walletPhone->amount .
-                            $walletUser->wallet->currencie->code .
-                            ' ' .
-                            'par ' .
-                            $walletPhone->provider->name .
-                            ' le ' .
-                            $walletPhone->created_at .
-                            ' votre demande est en cours de validation ' .
-                            'Robus vous remercie';
-
-
-                        if ($this->shouldNotifyCreateCI($walletUser)) {
-
-                            $this->sendSuccessMessageCreateNotification($walletUser, $message);
-                        }
-
-
-                        if ($walletPhone != null) {
-                            $this->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser, $reel_amount);
-                        }
-
-
-                        event(new CreateWalletPhoneCreditEvent($walletPhone));
-
-                        $this->notifyCreateUsers($walletUser, $admins, 'Paiement crédit', 'Demande de paiement de credit est en cours de validation', 'Demande de paiement de ' . ' ' . $walletPhone->wallet->sidUser->firstname);
-
-                        if ($admins->count() > 0) {
-                            $this->notifyAdmins($admins);
-                        }
-
-                        $this->resetPhoneCreditField();
-                        $this->emit('modal-hide-phoneCredit');
-                        $this->emit('success', 'Votre demande de transaction a bien été prise en compte !');
-                        if ($walletUser->email != null) {
-                            $this->sendMailPhoneCreditNotification($walletPhone);
-                        }
-                    } else {
-                        $this->resetPhoneCreditField();
-                        $this->emit('modal-hide-phoneCredit');
-                        $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
-                        return; // Arrête l'exécution si le montant est supérieur au solde
-                    }
-                } else {
-                    $this->resetPhoneCreditField();
-                    $this->emit('modal-hide-phoneCredit');
-                    $this->emit('error', 'VQerifiez votre mot de passe SVP !');
+                    $this->sendSuccessMessageCreateNotification($walletUser, $message);
                 }
+
+
+                if ($walletPhone != null) {
+                    $this->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser, $reel_amount);
+                }
+
+
+                event(new CreateWalletPhoneCreditEvent($walletPhone));
+
+                $this->notifyCreateUsers($walletUser, $admins, 'Paiement crédit', 'Demande de paiement de credit est en cours de validation', 'Demande de paiement de ' . ' ' . $walletPhone->wallet->sidUser->firstname);
+
+                if ($admins->count() > 0) {
+                    $this->handleAdminNotifications();
+                }                
+
+                $this->resetPhoneCreditField();
+                $this->emit('modal-hide-phoneCredit');
+                $this->emit('success', 'Votre demande de transaction a bien été prise en compte !');
+                if ($walletUser->email != null) {
+                    $this->sendMailPhoneCreditNotification($walletPhone);
+                }
+
             } else {
-                $this->emit('error', 'Rechargement  existante !');
+                $this->resetPhoneCreditField();
+                $this->emit('modal-hide-phoneCredit');
+                $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
+                return; // Arrête l'exécution si le montant est supérieur au solde
             }
+
         } catch (\Exception $exception) {
             $this->resetPaiementField();
             $this->emit('modal-hide-phoneCredit');
@@ -2957,7 +2979,6 @@ class Transfers extends Component
         $this->emit($state);
     }
 
-
     // Begin Update informations
 
     public function updatePhoneCredit()
@@ -3019,13 +3040,12 @@ class Transfers extends Component
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
 
                                         $this->handleUnderDistributorCommission($check, $admin_civ);
-                                    
                                     } else {
                                         $this->resetPhoneCreditField();
                                         $this->emit('modal-hide-phoneCredit-validated');
                                         $this->emit('modal-hide-phoneCredit');
                                         $this->emit('success', 'Credit téléphonique Acceptée sans commission sous-distibuteur !');
-                                        return; 
+                                        return;
                                     }
                                 } else {
 
@@ -5031,7 +5051,7 @@ class Transfers extends Component
 
                 $commission_paiement_invoice_val_nat_pay_frais =  (float) $commission_invoice->amount_auther;
 
-                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_total ;
+                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_total;
             }
         }
 
@@ -5046,7 +5066,7 @@ class Transfers extends Component
 
                 $commission_paiement_invoice_val_nat_pay_frais =  (float) $commission_invoice->amount_auther;
 
-                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie ;
+                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie;
             } else {
 
                 $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->amount_auther;
@@ -5514,7 +5534,7 @@ class Transfers extends Component
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && $this->showRemonterVirementCButton) {
                     $valuer_companie = $amount_user->percent_companie;
                     $walletBank->increment('commission_companie', $valuer_companie);
                 }
@@ -5610,7 +5630,7 @@ class Transfers extends Component
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && $this->showRemonterCreditCButton) {
                     $walletPhone->increment('commission_companie', $valuer_companie);
                 }
 
@@ -5882,7 +5902,7 @@ class Transfers extends Component
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && $this->showRemonterRechargementCButton) {
                     $valuer_companie = $commissionCompanie;
                     $walletOrderCard->increment('commission_companie', $valuer_companie);
                 }
@@ -6184,7 +6204,7 @@ class Transfers extends Component
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && $this->showRemonterPaiementCButton) {
 
                     $valuer_companie = $percent_robus->percent_companie;
 
@@ -7162,15 +7182,33 @@ class Transfers extends Component
 
         return $admin_drawal;
     }
+
     public function getAdminCIVProperty()
     {
-
-        $admin_civ =  SidUser::whereStatus(true)
+        return SidUser::whereStatus(true)
             ->whereIsAdmin(true)
             ->where('country_id', 107)
+            ->with('unreadNotifications') // Récupération des notifications non lues directement
             ->get();
+    }
 
-        return  $admin_civ;
+    public function handleAdminNotifications()
+    {
+        // Récupérer les administrateurs
+        $admins = $this->getAdminCIVProperty();
+
+        if ($admins->isNotEmpty()) {
+
+            // Préparer les notifications des administrateurs à envoyer dans un seul événement
+            $notifications = $admins->flatMap(function ($admin) {
+                return $admin->unreadNotifications;
+            });
+
+
+            if ($notifications->isNotEmpty()) {
+                event(new AdminNotifEvent($notifications));
+            }
+        }
     }
 
     public function getSumValTransactionProperty()

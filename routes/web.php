@@ -489,11 +489,23 @@ Route::get('clear-config-robus',  function () {
     Artisan::call('config:clear');
     return "Config clear";
 });
+
+// Route::get('clear-route-queue-robus', function () {
+//     // Lancer le job
+//     Artisan::call('queue:work');
+//     return "Queue work command executed";
+// });
+
+Route::get('/process-queue', function () {
+    Artisan::call('queue:work --stop-when-empty');
+    return response()->json(['status' => 'Queue processed successfully']);
+});
+
+
 Route::get('clear-route-robus',  function () {
     Artisan::call('config:cache');
     return "Config setting update";
 });
-
 
 Route::get('clear-cache-robus',  function () {
     Artisan::call('cache:clear');
@@ -516,9 +528,7 @@ Route::get('/reads_notifications', function () {
 
 Route::get('/reads_applications', function () {
 
-    // Artisan::call('app:close-status');
-    // Artisan::call('app:close-comzone-status');
-    // Artisan::call('app:close-master-status');
+   
     Artisan::call('app:close-company-status');
     
     return 'Artisan commands executed successfully.';

@@ -278,7 +278,7 @@ function sabdyMasterVerify()
 if (!function_exists('asset_url')) {
     function asset_url($path)
     {
-        return asset('public/' . $path);
+        return asset('/' . $path);
     }
 }
 

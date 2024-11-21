@@ -89,6 +89,18 @@ class TransactionCiv extends Component
     public $showBancInterButton = false;
     public $showCarteInterButton = false;
     public $showFacInterButton = false;
+    // Compagnies
+    public $showRemonterTransCButton = false;
+    public $showRemonterCreditCButton = false;
+    public $showRemonterPaiementCButton = false;
+    public $showRemonterInterCButton = false;
+    public $showRemonterRechargementCButton = false;
+    public $showRemonterVirementCButton = false;
+    public $showRemonterDepotCButton = false;
+    public $showRemonterRetraitCButton = false;
+    public $showRemonterMoneyCButton = false;
+    public $operatorsCompagnie;
+
 
     public function mount()
     {
@@ -97,6 +109,12 @@ class TransactionCiv extends Component
         $this->resetValeurReload();
         $this->updateProviderTransaction();
         $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
+        $account_accepted = sabdy()->is_accepted_companie ?? false;
+        $company_id = sabdy()->company_id ?? null;
+        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+        $this->operatorsCompagnie = OperatorService::getOperatorsWithCommissions(
+            ($account_accepted && $compagnie->id) ? $compagnie->id : null
+        );
 
         $restrictionMap = [
             'Active Transactions' => 'showRemonterTransButton',
@@ -108,6 +126,18 @@ class TransactionCiv extends Component
             'Active Depot' => 'showRemonterDepotButton',
             'Active Retrait' => 'showRemonterRetraitButton',
             'Active Money' => 'showRemonterMoneyButton',
+        ];
+
+        $restrictionCompangieMap = [
+            'Active Transactions' => 'showRemonterTransCButton',
+            'Active Crédits' => 'showRemonterCreditCButton',
+            'Active Paiements' => 'showRemonterPaiementCButton',
+            'Active International' => 'showRemonterInterCButton',
+            'Active Rechargements' => 'showRemonterRechargementCButton',
+            'Active Virements' => 'showRemonterVirementCButton',
+            'Active Depot' => 'showRemonterDepotCButton',
+            'Active Retrait' => 'showRemonterRetraitCButton',
+            'Active Money' => 'showRemonterMoneyCButton',
         ];
 
 
@@ -147,8 +177,15 @@ class TransactionCiv extends Component
             }
         }
 
+        foreach ($this->operatorsCompagnie as $operator) {
+            $restrictions = explode(',', $operator->name);
 
-        // dd( $this->showDepotButton);
+            foreach ($restrictionCompangieMap as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
 
     }
 
@@ -1414,8 +1451,9 @@ class TransactionCiv extends Component
 
                     $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                    if ($account_accepted) {
+                    if ($account_accepted && $this->showRemonterDepotCButton) {
                         $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
+
                         $walletTransaction->increment('commission_companie', $valuer_companie);
                     }
 
@@ -1427,7 +1465,7 @@ class TransactionCiv extends Component
                             $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
-                }else {
+                } else {
 
                     if ($admin_civ->count() > 0) {
                         $nmbre_admin = $admin_civ->count();
@@ -1436,7 +1474,7 @@ class TransactionCiv extends Component
                         foreach ($admin_civ as $user) {
                             $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
-                    }  
+                    }
                 }
             } elseif ($walletTransaction->type_transaction == "Retrait") {
 
@@ -1445,7 +1483,7 @@ class TransactionCiv extends Component
 
                     $account_accepted = sabdy()->is_accepted_companie ?? false;
 
-                    if ($account_accepted) {
+                    if ($account_accepted && $this->showRemonterRetraitCButton) {
                         $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
                         $walletTransaction->increment('commission_companie', $valuer_companie);
                     }
@@ -1458,7 +1496,7 @@ class TransactionCiv extends Component
                             $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
-                }else {
+                } else {
 
                     if ($admin_civ->count() > 0) {
                         $nmbre_admin = $admin_civ->count();
@@ -1467,7 +1505,7 @@ class TransactionCiv extends Component
                         foreach ($admin_civ as $user) {
                             $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
-                    }  
+                    }
                 }
             } else {
 

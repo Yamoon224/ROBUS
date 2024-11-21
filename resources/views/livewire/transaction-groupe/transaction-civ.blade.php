@@ -1,3 +1,11 @@
+@php
+
+    $is_under = sabdy()->is_under_distributer;
+    $is_distributer = sabdy()->is_distributer;
+
+@endphp
+
+
 <div>
     @if ($step === 1)
         <div
@@ -21,23 +29,29 @@
                 <select wire:model.debounce.300ms="provider_transaction" wire:change="updateProviderTransaction"
                     id="modal-form-1" class="form-control">
                     <option value="null" disabled selected>Selectionnez le canal</option>
-
-                    {{-- Vérification des options disponibles --}}
-                    @if ($showDepotButton && $showMoneyButton)
+                    @if ($is_under)
+                        @if ($showDepotButton && $showMoneyButton)
+                            @foreach ($providersAlls as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        @elseif ($showDepotButton)
+                            @foreach ($providersDepot as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        @elseif ($showMoneyButton)
+                            @foreach ($providersMoney as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        @else
+                            <option value="null" disabled>Pas disponible pour vous</option>
+                        @endif
+                    @else
                         @foreach ($providersAlls as $item)
                             <option value="{{ $item->id }}">{{ $item->name }}</option>
                         @endforeach
-                    @elseif ($showDepotButton)
-                        @foreach ($providersDepot as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                        @endforeach
-                    @elseif ($showMoneyButton)
-                        @foreach ($providersMoney as $item)
-                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                        @endforeach
-                    @else
-                        <option value="null" disabled>Pas disponible pour vous</option>
+
                     @endif
+
                 </select>
 
                 {{-- Affichage des erreurs --}}
@@ -185,7 +199,9 @@
                         @endphp
                         @if (sabdy()->is_under_distributer == 1)
 
-                            @if ($provider['name'] == 'Robus' && $showRemonterDepotButton ||  $provider['name'] != 'Robus' && $showRemonterMoneyButton)
+                            @if (
+                                ($provider['name'] == 'Robus' && $showRemonterDepotButton) ||
+                                    ($provider['name'] != 'Robus' && $showRemonterMoneyButton))
                                 <x-transaction-detail title="Commission" value="{{ $commission }}"
                                     country="{{ $usersCountry }}" />
                             @else
