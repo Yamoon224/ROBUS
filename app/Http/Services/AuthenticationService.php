@@ -83,13 +83,12 @@ class AuthenticationService
                         }
 
                         // Si l'utilisateur a un code d'activation défini, vérifiez-le.
-                        // if (!empty($user->activation_code)) {
-                        //         return $this->attemptActiveCodeLogin($user, $email, $password , $device_meta_data, $code_active);
-                        // } else {
-                        //         return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
-                        // }
-
-                        return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
+                        if (!empty($user->activation_code)) {
+                                return $this->attemptActiveCodeLogin($user, $email, $password , $device_meta_data, $code_active);
+                        } else {
+                                return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
+                        }
+                //      return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
                 } catch (\Throwable $th) {
 
                         return ['success' => false , 'catch' => true, 'message' => 'Mauvais identifiants ! Authentification échouée.', 'catch' => true];
@@ -135,7 +134,7 @@ class AuthenticationService
                         if ($user->is_under_distributer && Hash::check($password, $user->password)) {
 
                                 // Vérifier l'activation_code
-                                if ($user->device_meta_data === null || $user->device_meta_data === $device_meta_data) {
+                                if (trim($user->device_meta_data) === trim(json_encode($device_meta_data)) ||  $user->device_meta_data === $device_meta_data) {
 
                                         $user->update([
                                                 'last_login' => Carbon::now()->toDateTimeString(),
@@ -157,7 +156,6 @@ class AuthenticationService
                         return ['success' => false, 'message' => 'L\'ecriture du Email ou mot de passe incorrect.' , 'catch' => true];
                 }
         }
-
 
 
         public function custumerLogin($phone, $password)

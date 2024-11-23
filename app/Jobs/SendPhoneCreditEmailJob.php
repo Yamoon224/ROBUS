@@ -16,17 +16,14 @@ class SendPhoneCreditEmailJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $walletPhone;
-
     /**
      * Create a new job instance.
      *
      * @param  WalletPhone  $walletPhone
      * @return void
      */
-    public function __construct($walletPhone)
+    public function __construct()
     {
-        $this->walletPhone = $walletPhone;
     }
 
     /**
@@ -36,9 +33,6 @@ class SendPhoneCreditEmailJob implements ShouldQueue
      */
     public function handle()
     {
-        // $response = Http::get(url('clear-route-queue-robus'));
-        Http::get(url('/process-queue'));
-        $notify = new MailController();
-        $notify->newPhoneCredit($this->walletPhone);
+    
     }
 }

@@ -20,6 +20,20 @@ class OperatorRestrictionService
         'Active Commande' => 'showRemonterOrderButton',
     ];
 
+    protected $restrictionCMap = [
+        'Active Transactions' => 'showRemonterTransCButton',
+        'Active Crédits' => 'showRemonterCreditCButton',
+        'Active Paiements' => 'showRemonterPaiementCButton',
+        'Active International' => 'showRemonterInterCButton',
+        'Active Rechargements' => 'showRemonterRechargementCButton',
+        'Active Virements' => 'showRemonterVirementCButton',
+        'Active Depot' => 'showRemonterDepotCButton',
+        'Active Retrait' => 'showRemonterRetraitCButton',
+        'Active Money' => 'showRemonterMoneyCButton',
+        'Active Commande' => 'showRemonterOrderCButton',
+    ];
+
+
     public function __construct(OperatorService $operatorService)
     {
         $this->operatorService = $operatorService;
@@ -40,6 +54,24 @@ class OperatorRestrictionService
             $restrictions = explode(',', $operator->name);
 
             foreach ($this->restrictionMap as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $activeButtons[$buttonVar] = true ?? false;
+                }
+            }
+        }
+
+        return $activeButtons;
+    }
+
+    public function getActiveCButtons(int $sidUserId): array
+    {
+        $operators = $this->operatorService->getOperatorsWithCommissions($sidUserId);
+        $activeButtons = [];
+
+        foreach ($operators as $operator) {
+            $restrictions = explode(',', $operator->name);
+
+            foreach ($this->restrictionCMap as $restriction => $buttonVar) {
                 if (in_array($restriction, $restrictions)) {
                     $activeButtons[$buttonVar] = true ?? false;
                 }

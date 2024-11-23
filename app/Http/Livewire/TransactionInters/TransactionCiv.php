@@ -44,6 +44,7 @@ class TransactionCiv extends Component
     public $account_number;
     public $providers = [];
     public $transaction_inter_amount_money;
+    public $transaction_inter_amount_money_receved;
 
     public $commission;
     public $commission_transaction_val_inter_pay;
@@ -111,6 +112,7 @@ class TransactionCiv extends Component
         $this->phone_inter_out_civ = '';
         $this->compte_inter_number_robus = '';
         $this->transaction_inter_amount_money = '';
+        $this->transaction_inter_amount_money_receved = '';
         $this->account_number = '';
         // $this->emit('modal-hide-transfers-validated');
         // $this->emit('modal-hide-transfers');
@@ -213,16 +215,16 @@ class TransactionCiv extends Component
         // $this->country_inter_out_civ = null;
         $this->phone_inter_out_civ = '';
         $this->compte_inter_number_robus = '';
-        $this->transaction_inter_amount_money = '';
         $this->name_custumer = '';
         $this->num_piece_custumer = '';
         $this->date_piece = '';
         $this->name = '';
         $this->name_sender = '';
-        $this->phone_inter_out_civ = '';
         $this->transaction_inter_amount_money = '';
+        $this->transaction_inter_amount_money_receved = '';
         $this->account_number = '';
-
+        $this->resetCommissionValues();
+        
         return $this->providers;
     }
 
@@ -241,138 +243,222 @@ class TransactionCiv extends Component
         $this->calculateAmounts();
     }
 
+    public function updatedTransactionInterAmountMoneyReceved()
+    {
+        $this->calculateAmountReceiveds();
+    }
+
     public function updatedTransactionInterAmountMoney()
     {
         $this->calculateAmounts();
     }
 
+
     public function calculateAmounts()
     {
 
-        // Amount Robus
+        $this->resetCommissionValues();
+
+        $countryRobus = Country::find($this->country_inter_out_civ);
+
+        $reelAmount = $this->transaction_inter_amount_money;
+
+        if ($reelAmount !== '') {
+
+            $commissionInter = $this->getRobusPercentageInter($countryRobus, $this->provider_inter_out_civ);
+
+            if ($commissionInter) {
+
+                $this->calculateCommission($commissionInter, $reelAmount);
+
+                // Conversion et validation selon la devise
+                $currencyValue = sabdy()->country->currencie->value;
+                $countryCurrencyValue = $countryRobus->currencie->value;
+
+                if ($currencyValue > $countryCurrencyValue) {
+                    $this->processConversion($reelAmount, $currencyValue, $countryCurrencyValue);
+                } elseif ($currencyValue === $countryCurrencyValue) {
+                    $this->processEqualConversion($reelAmount);
+                } else {
+                    $this->processConversion($reelAmount, $currencyValue, $countryCurrencyValue);
+                }
+            } else {
+                $this->setNoGroupValues();
+            }
+        }
+    }
+
+
+    public function calculateAmountReceiveds()
+    {
+        // Réinitialise le montant à envoyer avant tout calcul
+
+        $this->resetCommissionValues();
+
+        $countryRobus = Country::find($this->country_inter_out_civ);
+
+        $reelAmount = $this->transaction_inter_amount_money_receved;
+
+        if ($reelAmount !== '') {
+
+            $commissionInter = $this->getRobusPercentageInter($countryRobus, $this->provider_inter_out_civ);
+
+            if ($commissionInter) {
+
+                $currencyValue = sabdy()->country->currencie->value;
+                $countryCurrencyValue = $countryRobus->currencie->value;
+
+                $this->calculateCommissionReceved($commissionInter, $reelAmount, $countryRobus);
+
+                if ($currencyValue > $countryCurrencyValue) {
+                    $this->processRececevedConversion($reelAmount, $currencyValue, $countryCurrencyValue);
+                } elseif ($currencyValue === $countryCurrencyValue) {
+                    $this->processEqualRecevedConversion($reelAmount);
+                } else {
+                    $this->processRececevedConversion($reelAmount, $currencyValue, $countryCurrencyValue);
+                }
+            } else {
+                $this->setNoGroupValues();
+            }
+        } else {
+
+            $this->transaction_inter_amount_money = null;
+        }
+    }
+
+
+    private function resetCommissionValues()
+    {
         $this->commission_transaction_val_inter_pay = 0;
         $this->commission_transaction_val_percent_pay = 0;
         $this->commission_transaction_val_inter_admin_receive = 0;
         $this->commission_transaction_val_inter_receive = 0;
         $this->commission_transaction_val_inter_convertion_cfa = 0;
         $this->commission_transaction_val_inter_convertion_send = 0;
+    }
 
+    /**
+     * Calcule les commissions de base
+     */
+    private function calculateCommission($commissionInter, $reelAmount)
+    {
 
-        $country_robus = Country::whereId($this->country_inter_out_civ)
-            // ->whereStatus(true)
-            ->first();
-
-
-        $reel_amount = $this->search_amount($this->transaction_inter_amount_money);
-
-        if ($reel_amount != '') {
-
-
-            $commission_inter =  $this->getRobusPercentageInter($country_robus, $this->provider_inter_out_civ);
-
-
-            if ($commission_inter) {
-
-                if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
-
-
-                    $this->commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $reel_amount;
-                } else {
-
-                    $this->commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $reel_amount;
-                }
-
-                if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
-
-
-                    if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
-
-                        $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $reel_amount;
-                    } else {
-
-                        $this->commission_transaction_val_inter_pay =  $this->commission_transaction_val_percent_pay;
-                    }
-
-                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_percent_pay;
-
-
-                    //   Convertion  in CFA
-                    $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) sabdy()->country->currencie->value;
-
-                    //   Convertion in Country send
-                    $this->commission_transaction_val_inter_convertion_send = (float)    $this->commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
-
-
-
-
-                    if ($valeur_verify < 0) {
-
-                        $this->commission_transaction_val_inter_receive =  "Montant negatif";
-                    } else {
-
-                        $this->commission_transaction_val_inter_receive =   $this->commission_transaction_val_inter_convertion_send;
-                    }
-                } elseif (sabdy()->country->currencie->value == $country_robus->currencie->value) {
-
-                    if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
-
-                        $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $reel_amount;
-                    } else {
-
-                        $this->commission_transaction_val_inter_pay =  $this->commission_transaction_val_percent_pay;
-                    }
-
-
-                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_percent_pay;
-
-                    //   Convertion  in CFA
-                    $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
-
-                    //   Convertion in Country send
-                    $this->commission_transaction_val_inter_convertion_send = (float)    $this->commission_transaction_val_inter_convertion_cfa;
-
-
-                    if ($valeur_verify < 0) {
-
-                        $this->commission_transaction_val_inter_receive =  "Montant negatif";
-                    } else {
-
-                        $this->commission_transaction_val_inter_receive =   $this->commission_transaction_val_inter_convertion_send;
-                    }
-                } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
-
-                    if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
-
-                        $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $reel_amount;
-                    } else {
-
-                        $this->commission_transaction_val_inter_pay =  $this->commission_transaction_val_percent_pay;
-                    }
-
-                    $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_percent_pay;
-
-                    //   Convertion  in CFA
-                    $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) sabdy()->country->currencie->value;
-
-                    //   Convertion in Country send
-                    $this->commission_transaction_val_inter_convertion_send = (float)    $this->commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
-
-
-                    if ($valeur_verify < 0) {
-
-                        $this->commission_transaction_val_inter_receive =  "Montant negatif";
-                    } else {
-
-                        $this->commission_transaction_val_inter_receive =   $this->commission_transaction_val_inter_convertion_send;
-                    }
-                }
-            } else {
-
-                $commission_transaction_val_inter_pay  = "Pas de Groupe";
-                $commission_transaction_val_inter_receive =  "Pas de Groupe";
-            }
+        if (sabdy()->is_under_distributer || sabdy()->is_distributer) {
+            $this->commission_transaction_val_percent_pay = $commissionInter->percent_under_distributer * $reelAmount;
+            $this->commission_transaction_val_inter_pay = $commissionInter->percent_deposit_under_distributer * $reelAmount;
+        } else {
+            $this->commission_transaction_val_percent_pay = $commissionInter->percent * $reelAmount;
+            $this->commission_transaction_val_inter_pay = $this->commission_transaction_val_percent_pay;
         }
     }
+
+    private function calculateCommissionReceved($commissionInter, $reelAmount, $countryRobus)
+    {
+        $currencyValue = sabdy()->country->currencie->value;
+        $countryCurrencyValue = $countryRobus->currencie->value;
+
+        if ($currencyValue > $countryCurrencyValue) {
+            $amountSimple = $reelAmount * $currencyValue;
+            $reelCommissionAmount = $amountSimple * $countryCurrencyValue;
+        } elseif ($currencyValue === $countryCurrencyValue) {
+            $reelCommissionAmount = $reelAmount;
+        } else {
+            $amountSimple = $reelAmount * $currencyValue;
+            $reelCommissionAmount = $amountSimple * $countryCurrencyValue;
+        }
+
+        if (sabdy()->is_under_distributer || sabdy()->is_distributer) {
+            $this->commission_transaction_val_percent_pay = (float) $commissionInter->percent_under_distributer * (float) $reelCommissionAmount;
+            $this->commission_transaction_val_inter_pay = (float)  $commissionInter->percent_deposit_under_distributer * (float) $reelCommissionAmount;
+        } else {
+            $this->commission_transaction_val_percent_pay = (float) $commissionInter->percent * (float) $reelCommissionAmount;
+            $this->commission_transaction_val_inter_pay = $this->commission_transaction_val_percent_pay;
+        }
+    }
+
+
+    /**
+     * Gère les conversions pour différentes devises
+     */
+    private function processConversion($reelAmount, $currencyValue, $countryCurrencyValue)
+    {
+        $valeurVerify = $reelAmount - $this->commission_transaction_val_percent_pay;
+
+        // Conversion en CFA
+        $this->commission_transaction_val_inter_convertion_cfa = $valeurVerify * $currencyValue;
+
+        // Conversion vers la devise du pays de destination
+        $this->commission_transaction_val_inter_convertion_send = $this->commission_transaction_val_inter_convertion_cfa / $countryCurrencyValue;
+
+        $this->commission_transaction_val_inter_receive = $valeurVerify < 0
+            ? "Montant negatif"
+            : $this->commission_transaction_val_inter_convertion_send;
+        $this->transaction_inter_amount_money_receved = $this->commission_transaction_val_inter_convertion_send;
+    }
+
+    private function processRececevedConversion($reelAmount, $currencyValue, $countryCurrencyValue)
+    {
+        
+        if ($currencyValue > $countryCurrencyValue) {
+            $amountSimple = $this->commission_transaction_val_percent_pay * $currencyValue;
+            $reelCommissionAmount = $amountSimple / $countryCurrencyValue;
+        } elseif ($currencyValue === $countryCurrencyValue) {
+            $reelCommissionAmount = $this->commission_transaction_val_percent_pay;
+        } else {
+            $amountSimple = $this->commission_transaction_val_percent_pay * $currencyValue;
+            $reelCommissionAmount = $amountSimple / $countryCurrencyValue;
+        }
+
+        $valeurVerify = $reelAmount + $reelCommissionAmount;
+
+        $this->commission_transaction_val_inter_convertion_cfa = $valeurVerify * $currencyValue;
+
+        $this->commission_transaction_val_inter_convertion_send = $this->commission_transaction_val_inter_convertion_cfa * $countryCurrencyValue;
+
+        $this->commission_transaction_val_inter_receive = $valeurVerify < 0
+            ? "Montant negatif"
+            : $this->commission_transaction_val_inter_convertion_send;
+        $this->transaction_inter_amount_money = $this->commission_transaction_val_inter_convertion_send;
+    }
+
+    /**
+     * Gère les conversions pour des devises égales
+     */
+    private function processEqualConversion($reelAmount)
+    {
+        $valeurVerify = $reelAmount - $this->commission_transaction_val_percent_pay;
+
+        // Pas de conversion nécessaire
+        $this->commission_transaction_val_inter_convertion_cfa = $valeurVerify;
+        $this->commission_transaction_val_inter_convertion_send = $valeurVerify;
+        $this->commission_transaction_val_inter_receive = $valeurVerify < 0
+            ? "Montant negatif"
+            : $this->commission_transaction_val_inter_convertion_send;
+
+        $this->transaction_inter_amount_money_receved = $this->commission_transaction_val_inter_convertion_send;
+    }
+
+    private function processEqualRecevedConversion($reelAmount)
+    {
+
+        $valeurVerify = $reelAmount + $this->commission_transaction_val_percent_pay;
+        $this->commission_transaction_val_inter_convertion_cfa = $valeurVerify;
+        $this->commission_transaction_val_inter_convertion_send = $valeurVerify;
+        $this->commission_transaction_val_inter_receive = $valeurVerify < 0
+            ? "Montant negatif"
+            : $this->commission_transaction_val_inter_convertion_send;
+
+        $this->transaction_inter_amount_money = $this->commission_transaction_val_inter_convertion_send;
+    }
+    /**
+     * Définit les valeurs si aucun groupe n'est trouvé
+     */
+    private function setNoGroupValues()
+    {
+        $this->commission_transaction_val_inter_pay = "Pas de Groupe";
+        $this->commission_transaction_val_inter_receive = "Pas de Groupe";
+    }
+
 
     public function resetInterField()
     {
@@ -387,6 +473,7 @@ class TransactionCiv extends Component
         $this->name_sender = '';
         $this->phone_inter_out_civ = '';
         $this->transaction_inter_amount_money = '';
+        $this->transaction_inter_amount_money_receved = '';
         $this->account_number = '';
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
@@ -414,6 +501,7 @@ class TransactionCiv extends Component
         $this->name = '';
         $this->name_sender = '';
         $this->account_number = '';
+        $this->transaction_inter_amount_money_receved = '';
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
         $this->emit('transaction_inters');

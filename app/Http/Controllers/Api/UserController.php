@@ -193,10 +193,74 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function dashboard_historique()
+    {
+
+        $wallet_user = Auth::guard('api')->user();
+        $wallet_solde = Wallet::where('sid_user_id', $wallet_user->id)->first();
+        $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
+
+
+        $walletTransaction =  WalletTransaction::where('wallet_id', $wallet_solde->id)
+            ->orWhere('num_wallet', $wallet_solde->wallet_id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        $walletPayment = $this->transactionAccount->getTransactionsWallet(WalletPayment::class , $wallet_solde->id);
+
+        $walletBank = $this->transactionAccount->getTransactionsWallet(WalletBank::class , $wallet_solde->id); 
+
+        $walletPhone = $this->transactionAccount->getTransactionsWallet(WalletPhoneCredit::class , $wallet_solde->id); 
+
+        $walletReload = WalletReload::where('wallet_id', $wallet_solde->id)
+            ->orWhere('account_wallet', $wallet_solde->wallet_id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        $walletReloadCard = $this->transactionAccount->getTransactionsWallet(WalletDeposit::class , $wallet_solde->id); 
+
+        $walletInter = WalletInter::where('wallet_id', $wallet_solde->id)
+            ->orWhere('number_compte', $wallet_solde->wallet_id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+        $walletOrderCarte = $this->transactionAccount->getTransactionsWallet(BankCard::class , $wallet_solde->id); ;
+
+
+        $walletRemonte = WithMerchant::where('sid_user_id', $wallet_user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20);
+
+
+        $som_commissions =  $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) + $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPayment::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBank::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPhoneCredit::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDeposit::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(BankCard::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletInter::class);
+
+        $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
+
+        $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
+        $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
+        $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);
+        $dashboard_data['Credit telephoniques'] = PhoneCreditSingleCollection::collection($walletPhone);
+        $dashboard_data['Rechargement de carte'] = ReloadCardSingle::collection($walletReloadCard);
+        $dashboard_data['Rechargement d\'UV'] = ReloadSingleCollection::collection($walletReload);
+        $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
+        $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
+
+
+        return response()->json([
+            'success' => true,
+            'historicals' =>  $dashboard_data,
+            'som_commission' =>  $som_commissions . ' ' . Auth::guard('api')->user()->wallet->currencie->code,
+        ], 200);
+    }
 
     public function BlockCommissions()
     {
-     
+
         $userId = robus()->id;
 
         if (!$userId) {

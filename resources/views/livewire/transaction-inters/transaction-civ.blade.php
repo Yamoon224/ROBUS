@@ -6,10 +6,8 @@
 
     @endphp
 
-
     @if ($stepInter === 1)
         <div id="loader" style="display:none;">
-            <!-- Ici, vous pouvez mettre votre animation de chargement -->
             <p>Chargement en cours...</p>
         </div>
         <div
@@ -64,7 +62,6 @@
                 </div>
             </div>
         @endif
-
 
 
         @if (!is_null($country_inter_out_civ))
@@ -168,7 +165,7 @@
                                 'wallet_name' => $wallet_name,
                             ])
 
-                            @include('ccountrie_inter_ivoiresomponents.transaction-inter-amount-input', [
+                            @include('components.transaction-inter-amount-input', [
                                 'id' => 'transaction_inter_amount_money',
                                 'model' => 'transaction_inter_amount_money',
                                 'label' => 'Montant',
@@ -237,8 +234,6 @@
                                         'error' => 'date_piece',
                                     ])
                                 @else
-
-                                
                                     @include('components.transaction-custumer-input', [
                                         'id' => 'name_custumer',
                                         'model' => 'name_custumer',
@@ -317,9 +312,9 @@
                         @endif
                     </div>
 
-                    @if ($transaction_inter_amount_money)
+                    {{-- @if ($transaction_inter_amount_money) --}}
+
                         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                            {{-- Commission --}}
                             @php
                                 $countrie_indicative = App\Models\Custumers\Country::where(
                                     'id',
@@ -347,26 +342,56 @@
                                     </div>
                                 @endif
 
+                                <div class="col-span-6 mt-3">
+                                    <label for="transaction_inter_amount_money_receved" class="form-label">Montant
+                                        à recevoir<span class="text-danger">*</span></label>
 
-                                <x-transaction-inter-detail title="Montant à recevoir"
-                                    value="{{ $amount_to_receive ?? null }}"
-                                    country=" {{ $countrie_indicative->currencie->code ?? null }} " />
+                                    <div class="flex">
+
+                                        <input wire:model.debounce.500ms="transaction_inter_amount_money_receved"
+                                            id="transaction_inter_amount_money_receved" type="number"
+                                            class="form-control" placeholder="Montant à recevoir">
+                                        <div
+                                            class="px-5 py-3 flex-1 zoom-in alert alert-primary relative font-medium leading-6 pl-3 2xl:pl-4 style-devise">
+                                            {{ $countrie_indicative->currencie->code ?? null }}
+                                        </div>
+                                        @error('transaction_inter_amount_money_receved')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+
                                 <x-transaction-send title="Frais d'envoie" value="{{ $frais ?? null }}"
                                     country="{{ $usersCountry }}" />
                             @else
                                 <x-transaction-inter-detail title="Montant à payer"
                                     value="{{ $amount_to_pay ?? null }}" country="{{ $usersCountry }}" />
 
-                                <x-transaction-inter-detail title="Montant à recevoir"
-                                    value="{{ $amount_to_receive ?? null }}"
-                                    country=" {{ $countrie_indicative->currencie->code ?? null }} " />
+
+                                <div class="col-span-6 mt-3">
+                                    <label for="transaction_inter_amount_money_receved" class="form-label">Montant
+                                        à recevoir<span class="text-danger">*</span></label>
+
+                                    <div class="flex">
+
+                                        <input wire:model.debounce.500ms="transaction_inter_amount_money_receved"
+                                            id="transaction_inter_amount_money_receved" type="number"
+                                            class="form-control" placeholder="Montant à recevoir">
+                                        <div
+                                            class="px-5 py-3 flex-1 zoom-in alert alert-primary relative font-medium leading-6 pl-3 2xl:pl-4 style-devise">
+                                            {{ $countrie_indicative->currencie->code ?? null }}
+                                        </div>
+                                        @error('transaction_inter_amount_money_receved')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
                             @endif
 
-                            {{-- Montant à recevoir --}}
 
                         </div>
-                    @endif
 
+                    {{-- @endif --}}
 
                 @endif
             @endif

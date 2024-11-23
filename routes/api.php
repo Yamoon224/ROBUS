@@ -149,8 +149,8 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('paiement_virement_inter_received/{amount_received}', [IntersPaymentController::class, 'paiement_virement_received']);
             Route::get('paiement_reload_card_inter/{paiement_reload_card_id}', [IntersPaymentController::class, 'reload_card_inter']);
             Route::get('paiement_reload_card_inter_received/{amount_received}', [IntersPaymentController::class, 'paiement_reload_card_received']);
-            Route::get('search_payment_mooney_inter/{paiement_mooney_id}', [IntersPaymentController::class, 'search_payment_mooney_inter']);
-            Route::get('search_payment_inter_CIV/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_payment_inter_CIV']);
+            // New Update annuler
+            Route::get('search_payment_mooney_inter/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_mooney_inter']);
             Route::get('search_payment_inter_out/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_robus_inter']);
             Route::get('search_payment_inter_out_received/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_robus_inter_out']);
 
@@ -166,6 +166,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('search_transaction/{commission_id}', [TransactionController::class, 'search_transaction_money_commission']);
             Route::get('search_transaction_received/{commission_id}', [TransactionController::class, 'search_transaction_money_commission_received']);
             Route::get('search_transaction_robus_commission/{wallet}/{commission_id}', [TransactionController::class, 'search_transaction_commission_robus']);
+            Route::get('search_transaction_robus_received_commission/{wallet}/{commission_id}', [TransactionController::class, 'search_transaction_commission_receved_robus']);
             Route::get('search_transaction_robus_drawals/{commission_id}', [TransactionController::class, 'search_transaction_drawal_robus']);
             Route::get('search_transaction_robus_received_drawals/{commission_id}', [TransactionController::class, 'search_transaction_drawal_received_robus']);
 

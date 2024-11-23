@@ -1149,11 +1149,13 @@ class TransactionController extends Controller
 
                 // Si l'utilisateur est sous distributeur, admin ou distributeur
                 if ($data->sidUser->is_under_distributer || $data->sidUser->is_admin || $data->sidUser->is_distributer) {
+
                     $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
 
                     if ($conversion_valeur_end < $amount_transaction) {
                         $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
                     }
+
                 } else {
 
 
@@ -1167,6 +1169,79 @@ class TransactionController extends Controller
                             $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
                             $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
                             $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+                        }
+
+                        $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
+
+                        if ($conversion_valeur_end < $amount_transaction) {
+                            $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
+                        }
+                    }
+                }
+
+                return response()->json([
+                    'success' => $data != null ? true : false,
+                    'data' => [
+                        'amount_pay' => $commission_transaction_val_percent_pay,
+                        'amount_send' => $commission_transaction_val_nat_pay,
+                        'amount_receive' => $commission_transaction_val_nat_receive,
+                    ],
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Pas de montant',
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
+        }
+    }
+
+    public function search_transaction_commission_receved_robus($wallet, $amount_transaction)
+    {
+
+        $default_valeur = 2000000;
+
+        // valeur amount virement bank
+
+        try {
+
+
+            $data = $this->searchTransaction->searchTransactionWallet($wallet);
+
+            // dd(  $data);
+            if ($amount_transaction != '') {
+
+                $commission_transaction_val_nat_pay = 0;
+                $commission_transaction_val_percent_pay = 0;
+                $commission_transaction_val_nat_receive = (float)$amount_transaction;
+
+                // Si l'utilisateur est sous distributeur, admin ou distributeur
+                if ($data->sidUser->is_under_distributer || $data->sidUser->is_admin || $data->sidUser->is_distributer) {
+                    
+                    $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
+
+                    if ($conversion_valeur_end < $amount_transaction) {
+                        $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
+                    }
+
+                } else {
+
+
+                    // Si l'utilisateur n'est pas sous distributeur, admin ou distributeur
+                    $commission_transaction = $this->searchTransaction->getCommissionTransactionForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
+
+                    if ($commission_transaction) {
+
+                        if ($data->sidUser->is_custumers) {
+
+                            $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
+                            $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
+                            $commission_transaction_val_nat_receive = (float)$amount_transaction + $commission_transaction_val_percent_pay;
                         }
 
                         $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);

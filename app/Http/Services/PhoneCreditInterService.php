@@ -74,8 +74,13 @@ class PhoneCreditInterService
     {
 
         $amount_commission = $amount + ($percent_robus->percent * $amount);
-
         $amount_solde = robus()->wallet->amount - $amount_commission;
+        $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
+        $account_accepted = robus()->is_accepted_companie ?? false;
+        $company_id = robus()->company_id ?? null;
+        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+        $activeCButtons = $this->operatorRestrictionService->getActiveCButtons(($account_accepted && $compagnie->id) ? $compagnie->id : null);
 
         $walletPhone->update([
             'amount_solde' => $amount_solde,
@@ -111,7 +116,7 @@ class PhoneCreditInterService
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
                     $walletPhone->increment('commission_companie', $valuer_companie);
                     $this->distributeAdminCommissionAccepteds($admin_civ, $walletPhone, $admin_convertion, $valuer_deposit);
                 } else {
@@ -126,23 +131,6 @@ class PhoneCreditInterService
             $this->distributeAdminCommissions($admin_civ, $walletPhone, $admin_valeur_convertion);
         }
 
-        //  Send valeur in Admin
-        // if ($admin_civ->count() > 0) {
-
-        //     $count_admin = $admin_civ->count();
-
-        //     $valeur_single = $admin_valeur_convertion / $count_admin;
-
-        //     foreach ($admin_civ as $user) {
-        //         $admin_single = SidUser::find($user->id);
-        //         AdminsCom::create([
-        //             'amount' =>   $valeur_single,
-        //             'sid_user_id' =>   $admin_single->id,
-        //             'wallet_inter_id' => $walletPhone->id,
-        //             'description' => 'Commission administrateur',
-        //         ]);
-        //     }
-        // }
         
         return true;
     }

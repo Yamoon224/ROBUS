@@ -621,6 +621,24 @@ class TransactionsAccountService
         return $totalAmount;
     }
 
+    public function getTransactionCommissionAmountTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id',  robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+    }
+
+
     public function getTodayTransactionMobileCommissionAmountTotal($walletModel)
     {
 

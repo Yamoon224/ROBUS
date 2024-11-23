@@ -51,8 +51,11 @@ class PhoneCreditService
 
         $userId = robus()->id;
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-
-        $amount_commission = $amount + ($percent_robus->percent * $amount);
+        $account_accepted = robus()->is_accepted_companie ?? false;
+        $company_id = robus()->company_id ?? null;
+        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+        $activeCButtons = $this->operatorRestrictionService->getActiveCButtons(($account_accepted && $compagnie->id) ? $compagnie->id : null);
+        $amount_commission = robus()->is_under_distributer ? $amount  : $amount + ($percent_robus->percent * $amount) ;
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
         $walletPhone->update([
@@ -83,7 +86,7 @@ class PhoneCreditService
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && !empty($activeCButtons['showRemonterCreditCButton'])) {
                     $walletPhone->increment('commission_companie', $valuer_companie);
                     $this->distributeAdminCommissionAccepteds($admin_civ, $walletPhone, $admin_valeur, $valuer_deposit);
 

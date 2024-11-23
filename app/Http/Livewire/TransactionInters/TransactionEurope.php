@@ -230,6 +230,134 @@ class TransactionEurope extends Component
             $this->emit('error', 'Error de message demande a l\'admin !');
         }
     }
+
+    // public function calculateAmounts()
+    // {
+
+    //     // Amount Robus
+    //     $this->commission_transaction_val_inter_pay = 0;
+    //     $this->commission_transaction_val_percent_pay = 0;
+    //     $this->commission_transaction_val_inter_admin_receive = 0;
+    //     $this->commission_transaction_val_inter_receive = 0;
+    //     $this->commission_transaction_val_inter_convertion_cfa = 0;
+    //     $this->commission_transaction_val_inter_convertion_send = 0;
+
+
+    //     $country_robus = Country::whereId($this->country_inter_out_civ)
+    //         // ->whereStatus(true)
+    //         ->first();
+
+
+    //     $reel_amount = $this->search_amount($this->transaction_inter_amount_money);
+
+    //     if ($reel_amount != '') {
+
+
+    //         $commission_inter =  $this->getRobusPercentageInter($country_robus, $this->provider_inter_out_civ);
+
+
+    //         if ($commission_inter) {
+
+    //             if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
+
+
+    //                 $this->commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $reel_amount;
+    //             } else {
+
+    //                 $this->commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $reel_amount;
+    //             }
+
+    //             if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
+
+
+    //                 if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
+
+    //                     $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $reel_amount;
+    //                 } else {
+
+    //                     $this->commission_transaction_val_inter_pay =  $this->commission_transaction_val_percent_pay;
+    //                 }
+
+    //                 $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_percent_pay;
+
+
+    //                 //   Convertion  in CFA
+    //                 $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) sabdy()->country->currencie->value;
+
+    //                 //   Convertion in Country send
+    //                 $this->commission_transaction_val_inter_convertion_send = (float)    $this->commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
+
+
+
+
+    //                 if ($valeur_verify < 0) {
+
+    //                     $this->commission_transaction_val_inter_receive =  "Montant negatif";
+    //                 } else {
+
+    //                     $this->commission_transaction_val_inter_receive =   $this->commission_transaction_val_inter_convertion_send;
+    //                 }
+    //             } elseif (sabdy()->country->currencie->value == $country_robus->currencie->value) {
+
+    //                 if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
+
+    //                     $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $reel_amount;
+    //                 } else {
+
+    //                     $this->commission_transaction_val_inter_pay =  $this->commission_transaction_val_percent_pay;
+    //                 }
+
+
+    //                 $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_percent_pay;
+
+    //                 //   Convertion  in CFA
+    //                 $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify;
+
+    //                 //   Convertion in Country send
+    //                 $this->commission_transaction_val_inter_convertion_send = (float)    $this->commission_transaction_val_inter_convertion_cfa;
+
+
+    //                 if ($valeur_verify < 0) {
+
+    //                     $this->commission_transaction_val_inter_receive =  "Montant negatif";
+    //                 } else {
+
+    //                     $this->commission_transaction_val_inter_receive =   $this->commission_transaction_val_inter_convertion_send;
+    //                 }
+    //             } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
+
+    //                 if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
+
+    //                     $this->commission_transaction_val_inter_pay =  (float)$commission_inter->percent_deposit_under_distributer  * (float)  $reel_amount;
+    //                 } else {
+
+    //                     $this->commission_transaction_val_inter_pay =  $this->commission_transaction_val_percent_pay;
+    //                 }
+
+    //                 $valeur_verify =  (float) $reel_amount -  $this->commission_transaction_val_percent_pay;
+
+    //                 //   Convertion  in CFA
+    //                 $this->commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_verify *   (float) sabdy()->country->currencie->value;
+
+    //                 //   Convertion in Country send
+    //                 $this->commission_transaction_val_inter_convertion_send = (float)    $this->commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
+
+
+    //                 if ($valeur_verify < 0) {
+
+    //                     $this->commission_transaction_val_inter_receive =  "Montant negatif";
+    //                 } else {
+
+    //                     $this->commission_transaction_val_inter_receive =   $this->commission_transaction_val_inter_convertion_send;
+    //                 }
+    //             }
+    //         } else {
+
+    //             $commission_transaction_val_inter_pay  = "Pas de Groupe";
+    //             $commission_transaction_val_inter_receive =  "Pas de Groupe";
+    //         }
+    //     }
+    // }
     public function render()
     {
         $default_valeur = 2000000;

@@ -769,7 +769,9 @@ class AuthentificationController extends Controller
         $resend_user = SidUser::where('phone', $request->phone)->orWhere('email', $request->phone)->first();
 
 
+
         try {
+
 
 
             if (!$resend_user) {
@@ -790,9 +792,10 @@ class AuthentificationController extends Controller
 
                 $phone_user = substr($resend_user->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$phone_user&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone_user&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
               
             } else {
+
                 $notify = new MailController;
                 $notify->newOtp($resend_user);
             }

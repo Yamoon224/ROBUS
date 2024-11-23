@@ -1300,7 +1300,7 @@ class IntersPaymentController extends Controller
 
         $countrie = Country::whereName($countrie_id)->first();
 
-        $valeur_max_send  =  $countrie->amount_max_send;
+        $valeur_max_send  =  $countrie->amount_max_send ?? 1000000;
 
         try {
 
@@ -1495,63 +1495,54 @@ class IntersPaymentController extends Controller
                 ], 400);
             }
 
-            $is_under_or_distributor = robus()->is_under_distributer == 1 || robus()->is_distributer == 1;
-            $commission_transaction_val_percent_pay = $is_under_or_distributor
-                ? (float)$commission_inter->percent_under_distributer * (float)$amount_paiement_robus
-                : (float)$commission_inter->percent * (float)$amount_paiement_robus;
 
             $exchange_rate_sender = robus()->country->currencie->value;
             $exchange_rate_receiver = $countrie->currencie->value;
-
-            function calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus)
-            {
-                return $is_under_or_distributor
-                    ? (float)$commission_inter->percent_deposit_under_distributer * (float)$commission_transaction_val_percent_pay
-                    : (float)$commission_inter->percent * (float)$amount_paiement_robus;
+    
+            if ($exchange_rate_sender > $exchange_rate_receiver) {
+                $amountSimple = $amount_paiement_robus * $exchange_rate_sender;
+                $reelCommissionAmount = $amountSimple * $exchange_rate_receiver;
+            } elseif ($exchange_rate_sender === $exchange_rate_receiver) {
+                $reelCommissionAmount = $amount_paiement_robus;
+            } else {
+                $amountSimple = $amount_paiement_robus * $exchange_rate_sender;
+                $reelCommissionAmount = $amountSimple * $exchange_rate_receiver;
             }
+           
 
-            function calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus)
-            {
-                return $is_under_or_distributor
-                    ? (float)$commission_inter->percent_deposit_under_distributer * (float)$amount_paiement_robus
-                    : (float)$commission_inter->percent * (float)$amount_paiement_robus;
+            if (robus()->is_under_distributer == 1 || robus()->is_distributer == 1) {
+                $commission_transaction_val_percent_pay = (float) $commission_inter->percent_under_distributer * (float) $reelCommissionAmount;
+                $commission_transaction_val_inter_pay = (float)  $commission_inter->percent_deposit_under_distributer * (float) $reelCommissionAmount;
+            } else {
+                $commission_transaction_val_percent_pay = (float) $commission_inter->percent * (float) $reelCommissionAmount;
+                $commission_transaction_val_inter_pay = $commission_transaction_val_percent_pay;
             }
-
-            // Calculer le taux de conversion en CFA et le montant reçu
-            function calculateConversion($valeur_verify, $currencie_sender, $currencie_receiver)
-            {
-                $conversion_cfa = (float)$valeur_verify * (float)$currencie_sender->value;
-                return $conversion_cfa / (float)$currencie_receiver->value;
-            }
-
 
 
             if ($provider_inter_out_civ == 51) {
 
                 if ($exchange_rate_sender > $exchange_rate_receiver) {
 
-                    $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus);
-                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
-                        : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                        : $valeur_verify;
+
                 } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
 
-                    $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus);
-                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
+
                 } else {
 
-                    // Cas où la devise de l'envoyeur est plus faible
-                    $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $commission_transaction_val_percent_pay, $amount_paiement_robus);
-                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
-                        : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                        : $valeur_verify;
                 }
             } else {
 
-
+      
                 if ($exchange_rate_sender > $exchange_rate_receiver) {
 
                     $convertion_transaction_countrie = (float)   $amount_paiement_robus / (float) $countrie->currencie->value;
@@ -1562,11 +1553,10 @@ class IntersPaymentController extends Controller
                         return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                     }
 
-                    $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
-                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
-                        : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                        :  $valeur_verify;
                 } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
 
                     $convertion_transaction_countrie = (float)   $amount_paiement_robus;
@@ -1577,24 +1567,23 @@ class IntersPaymentController extends Controller
                         return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                     }
 
-                    $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
-                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+                    $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
                 } else {
 
-                    $convertion_transaction_countrie = (float)   $amount_paiement_robus / (float) $countrie->currencie->value;
+                   
+                    $convertion_transaction_countrie = (float)   $amount_paiement_robus  * (float) $countrie->currencie->value;
 
                     $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
 
                     if (!$amount_send) {
                         return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                     }
-                    // Cas où la devise de l'envoyeur est plus faible
-                    $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
-                    $valeur_verify = (float)$amount_paiement_robus + $commission_transaction_val_inter_pay;
+
+                    $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
-                        : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
+                        : $valeur_verify;
                 }
             }
 
@@ -1610,9 +1599,9 @@ class IntersPaymentController extends Controller
             return response()->json([
                 'success' => $commission_inter != null ? true : false,
                 'data' =>  [
-                    'amount_commission' => $commission_transaction_val_percent_pay,
-                    'amount_pay' => $commission_transaction_val_inter_pay,
-                    'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
+                    'amount_commission' => $commission_transaction_val_inter_pay,
+                    'amount_pay' => $commission_transaction_val_percent_pay,
+                    'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  robus()->country->currencie->code,
                 ],
             ], 200);
         } catch (\Exception $exception) {
@@ -1624,465 +1613,6 @@ class IntersPaymentController extends Controller
     }
 
 
-    public function search_payment_inter_CIV($country, $amount_paiement_robus)
-    {
-
-        $wallet_user = Auth::guard('api')->user();
-
-        $default_valeur = 2000000;
-
-
-        if ($wallet_user->country->code == 'CI') {
-            // Countrie ID 42 is CANTRE AFRIQUE
-            if ($country  == 42) {
-
-                //Valuer inter  transaction
-                $commission_inter = TransactionCost::whereId(5)->first();
-
-                $valeur_amount =  $amount_paiement_robus;
-
-                // Verify valeur amount max in Landing the ROBUS
-                $valeur_end = $commission_inter->levelTransactionIvoireInters->last();
-
-                $conversion_valeur_end =  $valeur_end->amount_end;
-                //Verify amount in transactions 
-                if ($conversion_valeur_end  < $valeur_amount) {
-                    $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive,
-                        ],
-                    ], 200);
-                } else {
-
-                    foreach ($commission_inter->levelTransactionIvoireInters as $amount_comission) {
-                        if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                            $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                            $valeur_verify =   $valeur_amount  -  $commission_transaction_val_inter_pay;
-
-                            if ($valeur_verify < 0) {
-                                $commission_transaction_val_inter_receive = "Montant negatif";
-                            } else {
-
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            }
-
-                            return response()->json([
-                                'success' => $commission_inter != null ? true : false,
-                                'data' =>  [
-                                    'amount_pay' => $commission_transaction_val_inter_pay,
-                                    'amount_receive' => $commission_transaction_val_inter_receive,
-                                ],
-                            ], 200);
-                        }
-                    }
-                }
-            } elseif ($country  == 146) {
-
-                // countries Maroc
-                //Valuer inter  transaction
-                $commission_inter = TransactionCost::whereId(20)->first();
-
-                $valeur_amount =  $amount_paiement_robus;
-
-                // Verify valeur amount max in Landing the ROBUS
-                $valeur_end = $commission_inter->levelTransactionIvoireInters->last();
-
-                $conversion_valeur_end =  $valeur_end->amount_end;
-                //Verify amount in transactions 
-                if ($conversion_valeur_end  < $valeur_amount) {
-                    $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive,
-                        ],
-                    ], 200);
-                } else {
-
-                    foreach ($commission_inter->levelTransactionIvoireInters as $amount_comission) {
-                        if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                            $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                            $valeur_verify =   $valeur_amount  -  $commission_transaction_val_inter_pay;
-
-
-                            if ($valeur_verify < 0) {
-                                $commission_transaction_val_inter_receive = "Montant negatif";
-                            } else {
-
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            }
-
-                            return response()->json([
-                                'success' => $commission_inter != null ? true : false,
-                                'data' =>  [
-                                    'amount_pay' => $commission_transaction_val_inter_pay,
-                                    'amount_receive' => $commission_transaction_val_inter_receive,
-                                ],
-                            ], 200);
-                        }
-                    }
-                }
-            } elseif ($country  == 74) {
-                // Countries FR
-                //Valuer inter  transaction
-                $commission_inter = TransactionCost::whereId(10)->first();
-
-                $valeur_amount =  $amount_paiement_robus;
-
-                // Verify valeur amount max in Landing the ROBUS
-                $valeur_end = $commission_inter->levelTransactionIvoireInters->last();
-
-                $conversion_valeur_end =  $valeur_end->amount_end;
-                //Verify amount in transactions 
-                if ($conversion_valeur_end  < $valeur_amount) {
-                    $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive,
-                        ],
-                    ], 200);
-                } else {
-
-                    foreach ($commission_inter->levelTransactionIvoireInters as $amount_comission) {
-                        if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                            $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                            $valeur_verify =   $valeur_amount  -  $commission_transaction_val_inter_pay;
-
-
-                            if ($valeur_verify < 0) {
-                                $commission_transaction_val_inter_receive = "Montant negatif";
-                            } else {
-
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            }
-
-                            return response()->json([
-                                'success' => $commission_inter != null ? true : false,
-                                'data' =>  [
-                                    'amount_pay' => $commission_transaction_val_inter_pay,
-                                    'amount_receive' => $commission_transaction_val_inter_receive,
-                                ],
-                            ], 200);
-                        }
-                    }
-                }
-            } elseif ($country  == 83) {
-                // Countries Is CHANA
-                $commission_inter = TransactionCost::whereId(15)->first();
-
-                //  Valeur is CFA        
-                if ($default_valeur  < $amount_paiement_robus) {
-
-                    $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive,
-                        ],
-                    ], 200);
-                } else {
-
-                    //Valuer inter  transaction
-                    $commission_inter = TransactionCost::whereId(15)->first();
-
-                    $commission_transaction_val_inter_pay = $commission_inter->percent  *  $amount_paiement_robus;
-
-                    $valeur_verify =   $amount_paiement_robus -  $commission_transaction_val_inter_pay;
-
-                    if ($valeur_verify < 0) {
-                        $commission_transaction_val_inter_receive =  "";
-                    } else {
-
-                        $commission_transaction_val_inter_receive = $valeur_verify;
-                    }
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive,
-                        ],
-                    ], 200);
-                }
-            } elseif ($country  == 218) {
-                // Countries is TUNISIE
-                //Valuer inter  transaction
-                $commission_inter = TransactionCost::whereId(25)->first();
-
-                $valeur_amount =  $amount_paiement_robus;
-
-                // Verify valeur amount max in Landing the ROBUS
-                $valeur_end = $commission_inter->levelTransactionIvoireInters->last();
-
-                $conversion_valeur_end =  $valeur_end->amount_end;
-                //Verify amount in transactions 
-                if ($conversion_valeur_end  < $valeur_amount) {
-                    $commission_transaction_val_inter_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    $commission_transaction_val_inter_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive,
-                        ],
-                    ], 200);
-                } else {
-
-                    foreach ($commission_inter->levelTransactionIvoireInters as $amount_comission) {
-                        if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-                            $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                            $valeur_verify =   $valeur_amount  -  $commission_transaction_val_inter_pay;
-
-
-                            if ($valeur_verify < 0) {
-                                $commission_transaction_val_inter_receive = "Montant negatif";
-                            } else {
-
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            }
-
-                            return response()->json([
-                                'success' => $commission_inter != null ? true : false,
-                                'data' =>  [
-                                    'amount_pay' => $commission_transaction_val_inter_pay,
-                                    'amount_receive' => $commission_transaction_val_inter_receive,
-                                ],
-                            ], 200);
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public function search_payment_mooney_inter($amount_paiement_mooney)
-    {
-
-        $wallet_user = Auth::guard('api')->user();
-
-        $default_valeur = 2000000;
-
-        // valeur amount virement bank
-
-        try {
-
-            // Inter commission transactions 
-
-            if ($amount_paiement_mooney != '') {
-
-
-                if ($wallet_user->country->code == 'CF') {
-                    //Valuer inter  transaction
-                    $commission_inter = TransactionCost::whereId(3)->first();
-
-                    $valeur_amount = $amount_paiement_mooney;
-
-                    foreach ($commission_inter->levelTransactions  as $amount_comission) {
-                        if (
-                            $valeur_amount >= $amount_comission->amount_begin &&
-                            $valeur_amount <= $amount_comission->amount_end
-                        ) {
-
-                            $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                            $valeur_verify =   $valeur_amount - $commission_transaction_val_inter_pay;;
-
-                            if ($valeur_verify < 0) {
-                                $commission_transaction_val_inter_receive =   'La valeur SVP';
-                            } else {
-
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            }
-
-                            return response()->json([
-                                'success' => $commission_inter != null ? true : false,
-                                'data' =>  [
-                                    'amount_pay' => $commission_transaction_val_inter_pay,
-                                    'amount_receive' => $commission_transaction_val_inter_receive,
-                                ],
-                            ], 200);
-                        }
-                    }
-                } elseif ($wallet_user->country->code == 'GH') {
-                    //Countries GHANA 
-                    //  Conversion valeur
-                    $conversion_valeur_end  =  $default_valeur  /  $wallet_user->wallet->currencie->value;
-
-
-                    $commission_inter = TransactionCost::whereId(13)->first();
-
-                    $commission_transaction_val_inter_pay = $commission_inter->percent  *  $amount_paiement_mooney;
-
-                    $valeur_verify =   $amount_paiement_mooney -  $commission_transaction_val_inter_pay;
-
-                    if ($valeur_verify < 0) {
-                        $commission_transaction_val_inter_receive =  "";
-                    } else {
-
-                        $commission_transaction_val_inter_receive = $valeur_verify;
-                    }
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive,
-                        ],
-                    ], 200);
-                } elseif ($wallet_user->country->code == 'MA') {
-                    // Countries Maroc
-                    //  Conversion valeur
-                    $conversion_valeur_end  =  $default_valeur  /  $wallet_user->wallet->currencie->value;
-
-
-                    //Valuer inter  transaction
-                    $commission_inter = TransactionCost::whereId(18)->first();
-
-                    $commission_transaction_val_inter_pay = $commission_inter->percent  *  $amount_paiement_mooney;
-
-                    $valeur_verify =   $amount_paiement_mooney - $commission_transaction_val_inter_pay;
-
-                    if ($valeur_verify < 0) {
-                        $commission_transaction_val_inter_receive =  "";
-                    } else {
-
-                        $commission_transaction_val_inter_receive = $valeur_verify;
-                    }
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive,
-                        ],
-                    ], 200);
-                } elseif ($wallet_user->country->code == 'FR') {
-
-                    //Valuer inter  transaction
-                    $commission_inter = TransactionCost::whereId(8)->first();
-
-                    $valeur_amount =  $amount_paiement_mooney;
-
-                    foreach ($commission_inter->levelTransactions as $amount_comission) {
-                        if ($valeur_amount >= $amount_comission->amount_begin && $valeur_amount <= $amount_comission->amount_end) {
-
-
-                            $valeur_verify = $valeur_amount -  $amount_comission->amount;
-
-                            $commission_transaction_val_inter_pay = $amount_comission->amount;
-
-                            if ($valeur_verify < 0) {
-                                $commission_transaction_val_inter_receive =   "Montant negatif";
-                            } else {
-
-                                $commission_transaction_val_inter_receive = $valeur_verify;
-                            }
-
-                            return response()->json([
-                                'success' => $commission_inter != null ? true : false,
-                                'data' =>  [
-                                    'amount_pay' => $commission_transaction_val_inter_pay,
-                                    'amount_receive' => $commission_transaction_val_inter_receive,
-                                ],
-                            ], 200);
-                        }
-                    }
-                } elseif ($wallet_user->country->code == 'CI') {
-
-                    //Valuer inter  transaction
-                    $commission_inter = TransactionCost::whereId(27)->first();
-
-                    $valeur_amount = $amount_paiement_mooney;
-
-
-                    foreach ($commission_inter->levelTransactions  as $amount_comission) {
-                        if (
-                            $valeur_amount >= $amount_comission->amount_begin &&
-                            $valeur_amount <= $amount_comission->amount_end
-                        ) {
-
-                            $commission_transaction_val_inter_pay =  $amount_comission->amount;
-
-                            $valeur_verify =   $valeur_amount  -  $commission_transaction_val_inter_pay;
-
-                            if ($valeur_verify < 0) {
-                                $commission_transaction_val_inter_receive =   'La valeur SVP';
-                            } else {
-
-                                $commission_transaction_val_inter_receive =   $valeur_verify;
-                            }
-
-                            return response()->json([
-                                'success' => $commission_inter != null ? true : false,
-                                'data' =>  [
-                                    'amount_pay' => $commission_transaction_val_inter_pay,
-                                    'amount_receive' => $commission_transaction_val_inter_receive,
-                                ],
-                            ], 200);
-                        }
-                    }
-                } elseif ($wallet_user->country->code == 'TN') {
-
-                    // Countries TUnisie
-                    //Valuer inter  transaction
-                    $commission_inter = TransactionCost::whereId(23)->first();
-
-                    $commission_transaction_val_inter_pay = $commission_inter->percent  *  $amount_paiement_mooney;
-
-                    $valeur_verify =   $amount_paiement_mooney -   $commission_transaction_val_inter_pay;
-
-                    if ($valeur_verify < 0) {
-                        $commission_transaction_val_inter_receive =  "Montant negatif";
-                    } else {
-
-                        $commission_transaction_val_inter_receive = $valeur_verify;
-                    }
-
-                    return response()->json([
-                        'success' => $commission_inter != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_transaction_val_inter_pay,
-                            'amount_receive' => $commission_transaction_val_inter_receive,
-                        ],
-                    ], 200);
-                }
-            }
-        } catch (\Exception $exception) {
-            return response()->json([
-                'success' =>  false,
-                'message' => 'Pas d\'utilisateur',
-            ], 200);
-        }
-    }
 
     public function paiement_invoice_inter($amount_invoice_inter)
     {
@@ -2097,6 +1627,7 @@ class IntersPaymentController extends Controller
                 $commission_reload_inter_val_inter_percent_pay = 0;
 
                 if (robus()->is_under_distributer) {
+
                     $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_auther);
 
                     $commission_reload_inter_val_inter_percent_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther);

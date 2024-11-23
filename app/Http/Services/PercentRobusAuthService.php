@@ -52,7 +52,7 @@ class PercentRobusAuthService
             case 'AFE':
                 return TransactionCost::whereId(45)->first();
             default:
-                return null; // Handle the default case as needed
+                return null; 
         }
     }
 
@@ -3195,7 +3195,7 @@ class PercentRobusAuthService
         }
 
 
-        $robusId = robus()->country->id; // Pour éviter les appels répétitifs
+        $robusId = robus()->country->id; 
 
         if (isset($countriesLevels[$robusId])) {
             

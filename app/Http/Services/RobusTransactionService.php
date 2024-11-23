@@ -102,6 +102,10 @@ class RobusTransactionService
         $wallet = robus()->wallet;
         // $master_id = $this->robusMasterTransaction->mastersId();
         $userId = robus()->id;
+        $account_accepted = robus()->is_accepted_companie ?? false;
+        $company_id = robus()->company_id ?? null;
+        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+        $activeCButtons = $this->operatorRestrictionService->getActiveCButtons(($account_accepted && $compagnie->id) ? $compagnie->id : null);
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
 
         $updatedValues = [
@@ -144,7 +148,7 @@ class RobusTransactionService
                 // $walletTransaction->increment('commission_masters', $valuer_master);
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && !empty($activeCButtons['showRemonterDepotCButton']) ) {
                     $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
                     $walletTransaction->increment('commission_companie', $valuer_companie);
                     if ($admin_civ->count() > 0) {
@@ -172,7 +176,7 @@ class RobusTransactionService
                 // $walletTransaction->increment('commission_masters', $valuer_master);
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && !empty($activeCButtons['showRemonterRetraitCButton'])) {
                     $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
                     $walletTransaction->increment('commission_companie', $valuer_companie);
                 }
@@ -424,23 +428,22 @@ class RobusTransactionService
         // Percent admin 
         $valeur_percent_admin  = $percent_robus->percent * $transaction_amount_robus;
 
-        $valuer_master =  $master_id ? $percent_robus->percent_masters * $valeur_percent_admin : 0;
+        // $valuer_master =  $master_id ? $percent_robus->percent_masters * $valeur_percent_admin : 0;
 
-        $admin_received = (float)$valeur_percent_admin - $valuer_master;
-
+        // $admin_received = (float)$valeur_percent_admin - $valuer_master;
 
         if ($country_civ->currencie->value > robus()->country->currencie->value) {
 
-            $admin_valeur_convertion =   (float)  $admin_received *   (float) robus()->country->currencie->value;
+            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
         } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
 
-            $admin_valeur_convertion = (float)   $admin_received;
+            $admin_valeur_convertion = (float)   $valeur_percent_admin;
         } else {
 
-            $admin_valeur_convertion =   (float)  $admin_received *   (float) robus()->country->currencie->value;
+            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
         }
 
-        $walletTransaction->increment('commission_masters', $valuer_master);
+        // $walletTransaction->increment('commission_masters', $valuer_master);
 
         if ($admin_civ->count() > 0) {
 
@@ -472,8 +475,7 @@ class RobusTransactionService
             ->first();
 
         $wallet = robus()->wallet;
-
-
+     
         // Préparez les valeurs mises à jour
         $updatedValues = [
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,

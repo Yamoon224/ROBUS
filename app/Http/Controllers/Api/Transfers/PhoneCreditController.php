@@ -179,7 +179,12 @@ class PhoneCreditController extends Controller
 
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
+                            if (robus()->is_under_distributer) {
+                                $val_amount_send = $reel_amount;
+                            } else {
+
+                                $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
+                            }
 
                             $amountReceved = $reel_amount;
 
@@ -336,40 +341,37 @@ class PhoneCreditController extends Controller
                         $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        if(robus()->is_under_distributer)
-                        {
+                        if (robus()->is_under_distributer) {
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
                             $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $reel_amount;
 
-                            $valeur_receive =  $reel_amount - (float) $commission_phone_credit_val_nat_pay;
-    
+                            $valeur_receive =  $reel_amount;
+
                             if ($valeur_receive < 0) {
-    
+
                                 $commission_phone_credit_val_nat_receive = "Montant negatif";
                             } else {
-    
+
                                 $commission_phone_credit_val_nat_receive =  $valeur_receive;
                             }
-
-                        }else {
+                        } else {
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
                             $commission_phone_credit_commission =   $percent_robus->percent  *  $reel_amount;
 
                             $valeur_receive =  $reel_amount - (float) $commission_phone_credit_val_nat_pay;
-    
+
                             if ($valeur_receive < 0) {
-    
+
                                 $commission_phone_credit_val_nat_receive = "Montant negatif";
                             } else {
-    
+
                                 $commission_phone_credit_val_nat_receive =  $valeur_receive;
                             }
                         }
-                   
                     }
 
                     return response()->json([
@@ -425,24 +427,22 @@ class PhoneCreditController extends Controller
                         $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        if(robus()->is_under_distributer)
-                        {
+                        if (robus()->is_under_distributer) {
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
-                            $valeur_receive =  $reel_amount +  (float) $commission_phone_credit_val_nat_pay;
-    
+                            $valeur_receive =  $reel_amount;
+
                             $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $reel_amount;
 
                             if ($valeur_receive < 0) {
-    
+
                                 $commission_phone_credit_val_nat_receive = "Montant negatif";
                             } else {
-    
+
                                 $commission_phone_credit_val_nat_receive =  $valeur_receive;
                             }
-
-                        }else {
+                        } else {
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
@@ -450,17 +450,15 @@ class PhoneCreditController extends Controller
 
 
                             $valeur_receive =  $reel_amount +  (float) $commission_phone_credit_val_nat_pay;
-    
+
                             if ($valeur_receive < 0) {
-    
+
                                 $commission_phone_credit_val_nat_receive = "Montant negatif";
                             } else {
-    
+
                                 $commission_phone_credit_val_nat_receive =  $valeur_receive;
                             }
                         }
-
-                    
                     }
 
                     return response()->json([

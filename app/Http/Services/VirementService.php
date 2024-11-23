@@ -61,7 +61,10 @@ class VirementService
 
         $userId = robus()->id;
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-
+        $account_accepted = robus()->is_accepted_companie ?? false;
+        $company_id = robus()->company_id ?? null;
+        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+        $activeCButtons = $this->operatorRestrictionService->getActiveCButtons(($account_accepted && $compagnie->id) ? $compagnie->id : null);
 
         $amount_commission = $amount_valeur;
 
@@ -87,7 +90,7 @@ class VirementService
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && !empty($activeCButtons['showRemonterVirementCButton'])) {
 
                     if ($admin_civ->count() > 0) {
 

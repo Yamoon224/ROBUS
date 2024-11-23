@@ -183,45 +183,73 @@ class ProviderController extends Controller
         $walletPhoneInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 9);
         $walletVirementBank = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 10);
         $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 11);
+        $walletTransaction =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 1);
 
         try {
 
-            if (!empty($activeButtons['showCreditButton'])) {
-                $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
+
+            if (robus()->is_under_distributer == true) {
+
+                if (!empty($activeButtons['showCreditButton'])) {
+                    $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
+                }
+
+                if (!empty($activeButtons['showPaiementButton'])) {
+                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
+                }
+
+                if (!empty($activeButtons['showInterButton'])) {
+                    $dashboard_data['Transfert international'] = [
+                        "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($walletPaymentInter) : [],
+                        "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($walletInter) : [],
+                        "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($walletPhoneInter) : [],
+                        "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($walletVirementBank) : [],
+                        "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
+                    ];
+                }
+
+                if (!empty($activeButtons['showVirementButton'])) {
+                    $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
+                }
+
+                if (!empty($activeButtons['showRechargementButton'])) {
+                    $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
+                }
+
+                if (!empty($activeButtons['showMoneyButton'])) {
+                    $dashboard_data['Transfert national'] = [
+                        "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($walletTransactionDepot) : [],
+                        "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($walletTransactionMoney) : [],
+                    ];
+                }
+
+                if (!empty($activeButtons['showRetraitButton'])) {
+                    $dashboard_data['Retrait'] = ProviderSingleCollection::collection($walletRetrait);
+                }
+            } else {
+
+                if (robus()->country->code == 'CI') {
+                    $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
+                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
+                    $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
+                    $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
+                    $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
+                    // $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);
+                    $dashboard_data['Transfert international'] = [
+                        "Transfert" => ProviderSingleCollection::collection($walletInter),
+                    ];
+                } else {
+                    $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
+                    $dashboard_data['Transfert international'] = [
+                        "Factures" => ProviderSingleCollection::collection($walletPaymentInter),
+                        "Transfert" => ProviderSingleCollection::collection($walletInter),
+                        "Crédit téléphonique" => ProviderSingleCollection::collection($walletPhoneInter),
+                        "Versement bancaire" => ProviderSingleCollection::collection($walletVirementBank),
+                        "Rechargement de carte" => ProviderSingleCollection::collection($walletReloadCardInter),
+                    ];
+                }
             }
 
-            if (!empty($activeButtons['showPaiementButton'])) {
-                $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
-            }
-
-            if (!empty($activeButtons['showInterButton'])) {
-                $dashboard_data['Transfert international'] = [
-                    "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($walletPaymentInter) : [],
-                    "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($walletInter) : [],
-                    "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($walletPhoneInter) : [],
-                    "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($walletVirementBank) : [],
-                    "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
-                ];
-            }
-
-            if (!empty($activeButtons['showVirementButton'])) {
-                $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
-            }
-
-            if (!empty($activeButtons['showRechargementButton'])) {
-                $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
-            }
-
-            if (!empty($activeButtons['showMoneyButton'])) {
-                $dashboard_data['Transfert national'] = [
-                    "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($walletTransactionDepot) : [],
-                    "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($walletTransactionMoney) : [],
-                ];
-            }
-
-            if (!empty($activeButtons['showRetraitButton'])) {
-                $dashboard_data['Retrait'] = ProviderSingleCollection::collection($walletRetrait);
-            }
 
             return response()->json([
                 'success' => true,

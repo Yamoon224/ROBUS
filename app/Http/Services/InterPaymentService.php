@@ -86,7 +86,10 @@ class InterPaymentService
         $wallet = robus()->wallet;
         $userId = robus()->id;
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-
+        $account_accepted = robus()->is_accepted_companie ?? false;
+        $company_id = robus()->company_id ?? null;
+        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+        $activeCButtons = $this->operatorRestrictionService->getActiveCButtons(($account_accepted && $compagnie->id) ? $compagnie->id : null);
         // Préparez les valeurs mises à jour
         $updatedValues = [
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,
@@ -114,7 +117,7 @@ class InterPaymentService
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
                     $walletInter->increment('commission_companie', $percent_valeur_compagnie);
                 }
             } else {
@@ -860,7 +863,10 @@ class InterPaymentService
         $admin_civ = $this->validatedamountDays->adminCiv();
         $userId = robus()->id;
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-
+        $account_accepted = robus()->is_accepted_companie ?? false;
+        $company_id = robus()->company_id ?? null;
+        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+        $activeCButtons = $this->operatorRestrictionService->getActiveCButtons(($account_accepted && $compagnie->id) ? $compagnie->id : null);
 
         // Préparez les valeurs mises à jour
         $updatedValues = [
@@ -895,7 +901,7 @@ class InterPaymentService
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
-                if ($account_accepted) {
+                if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
 
                     $valuer_companie = $percent_robus->percent_companie * $valeur_amount_admin;
 
