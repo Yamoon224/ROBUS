@@ -693,7 +693,7 @@ class TransactionCiv extends Component
 
                                 if ($this->validateAmount()) {
 
-                                    $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
+                                    $valeur_received = $reel_amount;
 
                                     // Update Info valeurs
                                     $walletAmountSend = Wallet::where('wallet_id',  $this->compte_number_robus)->first();
@@ -1371,7 +1371,6 @@ class TransactionCiv extends Component
         // Percent admin 
         $valeur_percent_admin  = $percent_robus->percent * $transaction_amount_robus;
 
-
         if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
 
             $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) sabdy()->country->currencie->value;
@@ -1383,24 +1382,24 @@ class TransactionCiv extends Component
             $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) sabdy()->country->currencie->value;
         }
 
-        if ($admin_civ->count() > 0) {
+        // if ($admin_civ->count() > 0) {
 
-            $nmbre_admin = $admin_civ->count();
+        //     $nmbre_admin = $admin_civ->count();
 
-            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
+        //     $valeur_single = $admin_valeur_convertion / $nmbre_admin;
 
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
+        //     foreach ($admin_civ as $user) {
+        //         $admin_single = SidUser::find($user->id);
 
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_transaction_id' => $walletTransaction->id,
-                    'amount_with_draw' =>  0,
-                    'description' => 'Commission administrateur',
-                ]);
-            }
-        }
+        //         AdminsCom::create([
+        //             'amount' =>   $valeur_single,
+        //             'sid_user_id' =>   $admin_single->id,
+        //             'wallet_transaction_id' => $walletTransaction->id,
+        //             'amount_with_draw' =>  0,
+        //             'description' => 'Commission administrateur',
+        //         ]);
+        //     }
+        // }
 
 
         return true;

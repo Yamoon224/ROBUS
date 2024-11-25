@@ -73,6 +73,11 @@ class Home extends Component
         // Amount transactions days
         $payement_amount = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
         $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
+        $transaction_amount_robus = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '9');
+        $transaction_amount_moov = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '3');
+        $transaction_amount_wave = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '6');
+        $transaction_amount_orange = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '4');
+        $transaction_amount_mtn = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '1');
         $reload_amount = $this->getTodayReloadAmountTotal(WalletReload::class);
         $phonecredit_amount = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
         $inter_amount = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount');
@@ -164,10 +169,14 @@ class Home extends Component
                 'pendding_inter' => $inter_padding,
 
 
-
                 // 
                 'amount_payment_days' => $payement_amount,
                 'amount_transaction_days' => $transaction_amount,
+                'amount_transaction_robus_days' => $transaction_amount_robus,
+                'amount_transaction_moov_days' => $transaction_amount_moov,
+                'amount_transaction_wave_days' => $transaction_amount_wave,
+                'amount_transaction_orange_days' => $transaction_amount_orange,
+                'amount_transaction_mtn_days' => $transaction_amount_mtn,
                 'amount_reload_days' => $reload_amount,
                 'amount_phone_credit_days' => $phonecredit_amount,
                 'amount_inter_days' => $inter_amount,
@@ -353,6 +362,39 @@ class Home extends Component
 
     }
 
+    public function getTodayTransactionProviderAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount , $providerId)
+    {
+
+        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+        ->whereDate($transaction_days, Carbon::today())
+        ->where('provider_id', $providerId)
+        ->where($transaction_status, 'SUCCESS');
+
+
+        if (sabdy()->is_distributer) {
+            $query->where($walletMy, sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transaction) {
+                $query->where($wallet_transaction, sabdy()->wallet->id);
+            });
+        } else {
+
+            $query->where(function ($query) use ($walletMy) {
+                $query->where($walletMy, sabdy()->id)
+                    ->orWhere($walletMy, '!=', sabdy()->id);
+            })
+                ->where(function ($query) {
+                    $countryId = sabdy()->country->id;
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                });
+        }
+
+       
+        
+            return $query->sum($wallet_amount);
+
+    }
     // Sum amount month valeurs
     public function getDaysTransaction($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
     {

@@ -283,7 +283,7 @@
                         <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
                         <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
-                    Rémonter
+                    Tout remonté
                 </button>
             </form>
 

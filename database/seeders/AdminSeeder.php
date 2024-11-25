@@ -73,7 +73,9 @@ class AdminSeeder extends Seeder
             // - Zambie
             // - Belgique
 
-
+            // 483313210.97302
+            // 483311278.9730161
+            // 483313210.9730161
         DB::table('sid_users')->insert([
             'firstname' => 'Sabdy',
             'lastname' => 'Dev',

@@ -538,20 +538,24 @@ class ReloadCardController extends Controller
 
                     if (robus()->is_under_distributer) {
                         $commission_reload_val_nat_pay = $amount_comission->comission_distributer * $amount_virement;
+                       $receive_valeur =  $amount_virement;
+
                     } else {
                         $commission_reload_val_nat_pay = $amount_comission->percent * $amount_virement;
+                        $receive_valeur =  $amount_virement -  $commission_reload_val_nat_pay;
+
                     }
-                    $receive_valeur =  $amount_virement;
                     $commission_transaction_val_nat_pay = $amount_comission->percent * $amount_virement;
                 } else {
 
                     if (robus()->is_under_distributer) {
                         $commission_reload_val_nat_pay = (float) $amount_comission->comission_distributer;
+                        $receive_valeur = (float) $amount_virement;
                     } else {
 
                         $commission_reload_val_nat_pay = (float) $amount_comission->amount;
+                        $receive_valeur =  $amount_virement - $commission_reload_val_nat_pay;
                     }
-                    $receive_valeur = (float) $amount_virement;
                     $commission_transaction_val_nat_pay = $amount_comission->amount;
                 }
 

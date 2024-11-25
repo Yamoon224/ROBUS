@@ -228,6 +228,7 @@ class ProviderController extends Controller
                 }
             } else {
 
+         
                 if (robus()->country->code == 'CI') {
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
                     $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
@@ -255,7 +256,7 @@ class ProviderController extends Controller
                 'success' => true,
                 'Wallets' => $dashboard_data,
             ], 200);
-            
+
         } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
@@ -263,8 +264,6 @@ class ProviderController extends Controller
             ], 500);
         }
     }
-
-
 
 
     public function offers()

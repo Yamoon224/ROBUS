@@ -186,7 +186,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::prefix('merchants')->group(function () {
                 Route::get('historicals', [UserController::class, 'historical_distributer']);
                 Route::get('historical/evolutions', [UserController::class, 'historical_distributer_evolution']);
-                Route::get('historical/month_evolutions', [UserController::class, '']);
+                Route::get('historical/month_evolutions', [UserController::class, 'historical_month_distributer']);
                 Route::get('historical/year_evolutions', [UserController::class, 'historical_year_distributer']);
                 Route::post('update_drawal/commission_drawal', [UserController::class, 'drawal_commissions']);
             });

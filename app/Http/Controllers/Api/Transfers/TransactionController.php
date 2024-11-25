@@ -985,9 +985,11 @@ class TransactionController extends Controller
 
                 if ($commission_transaction) {
 
-                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $amount_transaction;
 
-                    $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+                    $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
+
+                    $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay_custumer;
 
                 }
 
@@ -996,7 +998,7 @@ class TransactionController extends Controller
                     'success' => true,
                     'data' => [
                         'amount_pay' => $commission_transaction_val_percent_pay,
-                        'amount_send' => $commission_transaction_val_percent_pay,
+                        'amount_send' => $commission_transaction_val_percent_pay_custumer,
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
@@ -1028,9 +1030,12 @@ class TransactionController extends Controller
 
                 if ($commission_transaction) {
 
-                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $amount_transaction;
 
-                    $commission_transaction_val_nat_receive = (float)$amount_transaction + $commission_transaction_val_percent_pay;
+                    $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
+
+
+                    $commission_transaction_val_nat_receive = (float)$amount_transaction + $commission_transaction_val_percent_pay_custumer;
 
                 }
 
@@ -1039,7 +1044,7 @@ class TransactionController extends Controller
                     'success' => true,
                     'data' => [
                         'amount_pay' => $commission_transaction_val_percent_pay,
-                        'amount_send' => $commission_transaction_val_percent_pay,
+                        'amount_send' => $commission_transaction_val_percent_pay_custumer,
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);

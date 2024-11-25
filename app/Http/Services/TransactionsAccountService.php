@@ -354,7 +354,7 @@ class TransactionsAccountService
 
     public function getUserAllCumulTransactions($wallets)
     {
-        return   $wallets::where('created_by', robus()->id)
+        return   $wallets::where('wallet_id', robus()->id)
             ->whereStatus('SUCCESS')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -678,6 +678,26 @@ class TransactionsAccountService
         return $totalAmount;
     }
 
+    public function getUpdateTransactionCommissionCreatedAmountNullTotal($walletModel)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('created_by', robus()->id)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        $walletModel::where('created_by', robus()->id)
+            ->whereStatus('SUCCESS')
+            ->update(['commissions' => 0]);
+
+        return $totalAmount;
+    }
 
 
     public function getUpdateTransactionMoneyCommissionAmountNullTotal($walletModel)

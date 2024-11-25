@@ -137,7 +137,7 @@ class UserController extends Controller
         $walletReloadCard = $this->transactionAccount->getUserAllTransactions(WalletDeposit::class, $wallet_solde);
         $walletInter = $this->transactionAccount->getUserTransactions(WalletInter::class, $wallet_solde, 'number_compte');
         $walletOrderCarte = $this->transactionAccount->getUserAllTransactions(BankCard::class, $wallet_solde);
-        $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, $wallet_solde);
+        $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, robus()->id);
         $wallet1xbets = $this->transactionAccount->getUserAllTransactions(WalletXbet::class, $wallet_solde);
         $walletWave = $this->transactionAccount->getUserAllTransactions(WalletWave::class, $wallet_solde);
 
@@ -206,25 +206,25 @@ class UserController extends Controller
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        $walletPayment = $this->transactionAccount->getTransactionsWallet(WalletPayment::class , $wallet_solde->id);
+        $walletPayment = $this->transactionAccount->getTransactionsWallet(WalletPayment::class, $wallet_solde->id);
 
-        $walletBank = $this->transactionAccount->getTransactionsWallet(WalletBank::class , $wallet_solde->id); 
+        $walletBank = $this->transactionAccount->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
 
-        $walletPhone = $this->transactionAccount->getTransactionsWallet(WalletPhoneCredit::class , $wallet_solde->id); 
+        $walletPhone = $this->transactionAccount->getTransactionsWallet(WalletPhoneCredit::class, $wallet_solde->id);
 
         $walletReload = WalletReload::where('wallet_id', $wallet_solde->id)
             ->orWhere('account_wallet', $wallet_solde->wallet_id)
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        $walletReloadCard = $this->transactionAccount->getTransactionsWallet(WalletDeposit::class , $wallet_solde->id); 
+        $walletReloadCard = $this->transactionAccount->getTransactionsWallet(WalletDeposit::class, $wallet_solde->id);
 
         $walletInter = WalletInter::where('wallet_id', $wallet_solde->id)
             ->orWhere('number_compte', $wallet_solde->wallet_id)
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        $walletOrderCarte = $this->transactionAccount->getTransactionsWallet(BankCard::class , $wallet_solde->id); ;
+        $walletOrderCarte = $this->transactionAccount->getTransactionsWallet(BankCard::class, $wallet_solde->id);;
 
 
         $walletRemonte = WithMerchant::where('sid_user_id', $wallet_user->id)
@@ -1117,6 +1117,99 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function drawal_commissions()
+    {
+
+        try {
+
+        
+
+            $wallet_user = Auth::guard('api')->user();
+
+            $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +  
+            $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +  
+            $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
+            + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) +
+            $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletInter::class) ;
+
+    
+            if ($som_commissions == 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => ('Votre somme de commission est nul .')
+                ]);
+            } else {
+
+
+                $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletTransaction::class);
+                $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletPayment::class);
+                $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletBank::class);
+                $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletPhoneCredit::class);
+                $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletDeposit::class);
+                $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(BankCard::class);
+                $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletInter::class);
+
+                $amount_solde = (float)robus()->wallet->amount + (float)$som_commissions;
+
+                $valeur_received = WithMerchant::create([
+                    'amount_with_draw' =>    $som_commissions,
+                    'sid_user_id' =>   $wallet_user->id,
+                    'amount_solde' =>   $amount_solde,
+                    'type_transaction' =>  "COMMISSION",
+                    'status' =>  "SUCCESS",
+                    'date_removed' => Carbon::now(),
+                ]);
+
+                $wallet_user->wallet->update([
+                    'reload_by' => Auth::guard('api')->user()->firstname . ' ' . Auth::guard('api')->user()->lastname,
+                    'sid_user_relod' => Auth::guard('api')->user()->id,
+                    'amount' => DB::raw('amount+'  .  $valeur_received->amount_with_draw),
+
+                ]);
+
+                $msg = 'Vous avez transferé vos commission sur votre compte';
+                $msg_title = 'Demande de virement';
+
+                $wallet_user->notify(new UserNotification([
+                    'title' => $msg_title,
+                    'message' => $msg,
+                ]));
+
+                if ($wallet_user->country->code == "CI") {
+
+                    $message = 'Vous avez transferé une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                        . $valeur_received->created_at  . ' Robus vous remercie';
+
+                    $encode = substr(Auth::guard('api')->user()->phone,  -10);
+
+                    // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+
+                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                } else {
+
+
+                    if ($wallet_user->email != null) {
+
+                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeur_received->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+                            . $valeur_received->created_at  . ' Robus vous remercie'));
+                    }
+                }
+
+                return response()->json([
+                    'success' => true,
+                    'message' => ('Votre transfert de commission est effectué avec succès.')
+                ]);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => true,
+                'message' => ('Erreur de transfert des commissions.')
+            ]);
+        }
+    }
+    
     public function historical_month_distributer()
     {
 
@@ -1200,109 +1293,109 @@ class UserController extends Controller
         ], 200);
     }
 
-    public function drawal_commissions()
-    {
+    // public function drawal_commissions()
+    // {
 
-        try {
+    //     try {
 
-            $data = [];
+    //         $data = [];
 
-            $wallet_user = robus();
+    //         $wallet_user = robus();
 
-            // $wallet_banks =  $this->transactionAccount->getUserAllCumulTransactions(WalletBank::class);
-            // $wallet_deposits =  $this->transactionAccount->getUserAllCumulTransactions(WalletDeposit::class);
-            // $wallet_payments =  $this->transactionAccount->getUserAllCumulTransactions(WalletPayment::class);
-            // $wallet_transactions =  $this->transactionAccount->getUserAllCumulTransactions(WalletTransaction::class);
-            // $wallet_inters =  $this->transactionAccount->getUserAllCumulTransactions(WalletInter::class);
-            // $wallet_phone_credits =  $this->transactionAccount->getUserAllCumulTransactions(WalletPhoneCredit::class);
-            // $wallet_reloads =  $this->transactionAccount->getUserAllCumulTransactions(WalletReload::class);
-            // $order_banks =  $this->transactionAccount->getUserAllCumulOrderTransactions(BankCard::class);
+    //         // $wallet_banks =  $this->transactionAccount->getUserAllCumulTransactions(WalletBank::class);
+    //         // $wallet_deposits =  $this->transactionAccount->getUserAllCumulTransactions(WalletDeposit::class);
+    //         // $wallet_payments =  $this->transactionAccount->getUserAllCumulTransactions(WalletPayment::class);
+    //         // $wallet_transactions =  $this->transactionAccount->getUserAllCumulTransactions(WalletTransaction::class);
+    //         // $wallet_inters =  $this->transactionAccount->getUserAllCumulTransactions(WalletInter::class);
+    //         // $wallet_phone_credits =  $this->transactionAccount->getUserAllCumulTransactions(WalletPhoneCredit::class);
+    //         // $wallet_reloads =  $this->transactionAccount->getUserAllCumulTransactions(WalletReload::class);
+    //         // $order_banks =  $this->transactionAccount->getUserAllCumulOrderTransactions(BankCard::class);
 
-            $transactionTypes = [
-                WalletBank::class,
-                WalletDeposit::class,
-                WalletPayment::class,
-                WalletTransaction::class,
-                WalletInter::class,
-                WalletPhoneCredit::class,
-                BankCard::class
-            ];
-
-
-            foreach ($transactionTypes as $transactionType) {
-                $transactions = $this->transactionAccount->getUserAllCumulTransactions($transactionType);
-                $totalCommission = $transactions->sum('commissions');
-                $data[] = $totalCommission;
-
-                $transactions->update([
-                    'commissions' => 0,
-                    'commissions_admin' => 0,
-                ]);
-            }
-
-            $totalCommissionSum = array_sum($data);
-
-            if ($totalCommissionSum == 0) {
-                return response()->json([
-                    'success' => false,
-                    'message' => ('Votre somme de commission est nul .')
-                ]);
-            } else {
-
-                // Update Info valeurs
-
-                $amountSolde = (float) $wallet_user->wallet->amount + (float) $totalCommissionSum;
-
-                $valeurReceived = WithMerchant::create([
-                    'amount_with_draw' => $totalCommissionSum,
-                    'sid_user_id' => $wallet_user->id,
-                    'amount_solde' => $amountSolde,
-                    'type_transaction' => "COMMISSION",
-                    'status' => "SUCCESS",
-                    'date_removed' => Carbon::now(),
-                ]);
-
-                $wallet_user->wallet->update([
-                    'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-                    'sid_user_relod' => robus()->id,
-                    'amount' => DB::raw('amount+'  .  $valeurReceived->amount_with_draw),
-                ]);
-
-                $msg = 'Vous avez transferé vos commission sur votre compte';
-                $msg_title = 'Remonté les commissions ';
+    //         $transactionTypes = [
+    //             WalletBank::class,
+    //             WalletDeposit::class,
+    //             WalletPayment::class,
+    //             WalletTransaction::class,
+    //             WalletInter::class,
+    //             WalletPhoneCredit::class,
+    //             BankCard::class
+    //         ];
 
 
-                $wallet_user->notify(new UserNotification([
-                    'title' => $msg_title,
-                    'message' => $msg,
-                ]));
+    //         foreach ($transactionTypes as $transactionType) {
+    //             $transactions = $this->transactionAccount->getUserAllCumulTransactions($transactionType);
+    //             $totalCommission = $transactions->sum('commissions');
+    //             $data[] = $totalCommission;
 
-                if ($wallet_user->country->code == "CI") {
+    //             $transactions->update([
+    //                 'commissions' => 0,
+    //                 'commissions_admin' => 0,
+    //             ]);
+    //         }
 
-                    $message = 'Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                        . $valeurReceived->created_at  . ' Robus vous remercie';
+    //         $totalCommissionSum = array_sum($data);
 
-                    $encode = substr(robus()->phone,  -10);
-                } else {
+    //         if ($totalCommissionSum == 0) {
+    //             return response()->json([
+    //                 'success' => false,
+    //                 'message' => ('Votre somme de commission est nul .')
+    //             ]);
+    //         } else {
+
+    //             // Update Info valeurs
+
+    //             $amountSolde = (float) $wallet_user->wallet->amount + (float) $totalCommissionSum;
+
+    //             $valeurReceived = WithMerchant::create([
+    //                 'amount_with_draw' => $totalCommissionSum,
+    //                 'sid_user_id' => $wallet_user->id,
+    //                 'amount_solde' => $amountSolde,
+    //                 'type_transaction' => "COMMISSION",
+    //                 'status' => "SUCCESS",
+    //                 'date_removed' => Carbon::now(),
+    //             ]);
+
+    //             $wallet_user->wallet->update([
+    //                 'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+    //                 'sid_user_relod' => robus()->id,
+    //                 'amount' => DB::raw('amount+'  .  $valeurReceived->amount_with_draw),
+    //             ]);
+
+    //             $msg = 'Vous avez transferé vos commission sur votre compte';
+    //             $msg_title = 'Remonté les commissions ';
 
 
-                    if ($wallet_user->email != null) {
+    //             $wallet_user->notify(new UserNotification([
+    //                 'title' => $msg_title,
+    //                 'message' => $msg,
+    //             ]));
 
-                        Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
-                            . $valeurReceived->created_at  . ' Robus vous remercie'));
-                    }
-                }
+    //             if ($wallet_user->country->code == "CI") {
 
-                return response()->json([
-                    'success' => true,
-                    'message' => ('Votre transfert de commission est effectué avec succès.')
-                ]);
-            }
-        } catch (\Exception $exception) {
-            $message = __('message.is not providers transactions');
-            return json_message_response(false, $message, 333);
-        }
-    }
+    //                 $message = 'Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+    //                     . $valeurReceived->created_at  . ' Robus vous remercie';
+
+    //                 $encode = substr(robus()->phone,  -10);
+    //             } else {
+
+
+    //                 if ($wallet_user->email != null) {
+
+    //                     Mail::to($wallet_user->email)->send(new UvSend('Vous avez transferé une commission de ' . $valeurReceived->amount_with_draw . ' ' . $wallet_user->wallet->currencie->code . ' le '
+    //                         . $valeurReceived->created_at  . ' Robus vous remercie'));
+    //                 }
+    //             }
+
+    //             return response()->json([
+    //                 'success' => true,
+    //                 'message' => ('Votre transfert de commission est effectué avec succès.')
+    //             ]);
+    //         }
+    //     } catch (\Exception $exception) {
+    //         $message = __('message.is not providers transactions');
+    //         return json_message_response(false, $message, 333);
+    //     }
+    // }
 
 
     public function drawal_commission_masters()

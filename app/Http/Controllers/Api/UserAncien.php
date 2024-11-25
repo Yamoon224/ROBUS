@@ -160,6 +160,25 @@ class UserControllerAncien extends Controller
         $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
 
+        // if ($wallet_user->is_under_distributer) {
+        //     $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
+        // } else {
+        // }
+        // if (robus()->country->name_groupe == 'CIV') {
+        //     $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
+        //     $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);
+        //     $dashboard_data['Credit telephoniques'] = PhoneCreditSingleCollection::collection($walletPhone);
+        //     $dashboard_data['Rechargement de carte'] = ReloadCardSingle::collection($walletReloadCard);
+        //     $dashboard_data['Rechargement d\'UV'] = ReloadSingleCollection::collection($walletReload);
+        //     $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
+        //     if ($wallet_user->is_under_distributer) {
+        //         $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
+        //     } else {
+        //         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
+        //     }
+        // } else {
+        //     $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
+        // }
 
         return response()->json([
             'success' => true,
@@ -895,6 +914,7 @@ class UserControllerAncien extends Controller
                     'reload_by' => Auth::guard('api')->user()->firstname . ' ' . Auth::guard('api')->user()->lastname,
                     'sid_user_relod' => Auth::guard('api')->user()->id,
                     'amount' => DB::raw('amount+'  .  $valeur_received->amount_with_draw),
+
                 ]);
 
                 $msg = 'Vous avez transferé vos commission sur votre compte';
