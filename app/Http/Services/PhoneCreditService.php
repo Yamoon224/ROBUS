@@ -53,8 +53,20 @@ class PhoneCreditService
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
         $account_accepted = robus()->is_accepted_companie ?? false;
         $company_id = robus()->company_id ?? null;
-        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
-        $activeCButtons = $this->operatorRestrictionService->getActiveCButtons(($account_accepted && $compagnie->id) ? $compagnie->id : null);
+        if ($company_id) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+        
+        if ($sidUserId) {
+            $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
+        } else {
+            $activeCButtons = []; 
+        }
+      
         $amount_commission = robus()->is_under_distributer ? $amount  : $amount + ($percent_robus->percent * $amount) ;
         $amount_solde = robus()->wallet->amount - $amount_commission;
 

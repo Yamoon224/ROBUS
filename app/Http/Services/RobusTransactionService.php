@@ -102,11 +102,22 @@ class RobusTransactionService
         $wallet = robus()->wallet;
         // $master_id = $this->robusMasterTransaction->mastersId();
         $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
         $account_accepted = robus()->is_accepted_companie ?? false;
         $company_id = robus()->company_id ?? null;
-        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
-        $activeCButtons = $this->operatorRestrictionService->getActiveCButtons(($account_accepted && $compagnie->id) ? $compagnie->id : null);
-        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
+        if ($company_id) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+        
+        if ($sidUserId) {
+            $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
+        } else {
+            $activeCButtons = []; 
+        }
 
         $updatedValues = [
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,
@@ -414,7 +425,7 @@ class RobusTransactionService
 
         $wallet = robus()->wallet;
 
-        $master_id = $this->robusMasterTransaction->mastersId();
+        // $master_id = $this->robusMasterTransaction->mastersId();
 
         // Préparez les valeurs mises à jour
         $updatedValues = [

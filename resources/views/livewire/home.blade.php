@@ -272,9 +272,7 @@
                             <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $amount_inter_days ?? null }}
-                        </div>
+                        r
                         <div class="text-base text-slate-500 mt-1">International {{ $user_currencie }} </div>
                     </div>
                 </div>
@@ -365,22 +363,22 @@
                             <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                           Robus {{ $amount_transaction_robus_days ?? null }}
+                        <div class="text-base text-slate-500 mt-1">
+                           Robus : {{ $amount_transaction_robus_days ?? null }}
                         </div>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            Moov {{ $amount_transaction_moov_days ?? null }}
+                        <div class="text-base text-slate-500 mt-1">
+                            Moov : {{ $amount_transaction_moov_days ?? null }}
                          </div>
-                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            Wave {{ $amount_transaction_wave_days ?? null }}
+                         <div class="text-base text-slate-500 mt-1">
+                            Wave  : {{ $amount_transaction_wave_days ?? null }}
                          </div>
-                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            Orange {{ $amount_transaction_orange_days ?? null }}
+                         <div class="text-base text-slate-500 mt-1">
+                            Orange : {{ $amount_transaction_orange_days ?? null }}
                          </div>
-                         <div class="text-3xl font-medium leading-8 mt-transactions">
-                            Mtn {{ $amount_transaction_mtn_days ?? null }}
+                         <div class="text-base text-slate-500 mt-1">
+                            Mtn : {{ $amount_transaction_mtn_days ?? null }}
                          </div>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                        <div class="text-base text-slate-500 mt-1">
                            Total {{ $amount_transaction_days ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Transactions {{ $user_currencie }} </div>

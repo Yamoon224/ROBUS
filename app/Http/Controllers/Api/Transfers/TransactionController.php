@@ -772,7 +772,7 @@ class TransactionController extends Controller
 
                                 $commission_valeur = $percent_robus->percent * $verify_code->amount;
 
-                                $valuer_with_drawal = $percent_robus->percent_with_drawal * $commission_valeur;
+                                $valuer_with_drawal = $percent_robus->percent_with_drawal * $verify_code->amount;
 
                                 $verify_code->update([
                                     'type_transaction' => 'Retrait',

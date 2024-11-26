@@ -92,12 +92,23 @@ class CreateRobusWalletWithDrawalService
         $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
         $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
         $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
         $account_accepted = robus()->is_accepted_companie ?? false;
         $company_id = robus()->company_id ?? null;
-        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
-        $activeCButtons = $this->operatorRestrictionService->getActiveCButtons(($account_accepted && $compagnie->id) ? $compagnie->id : null);
-        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-        // Update Info valeurs
+        if ($company_id) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+        
+        if ($sidUserId) {
+            $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
+        } else {
+            $activeCButtons = []; 
+        }
+
         $walletAmountSend = Wallet::where('wallet_id',  $wallet_user_search->wallet_id)->first();
 
         $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$verify_code->amount;

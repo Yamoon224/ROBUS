@@ -1046,8 +1046,10 @@ class IntersPaymentController extends Controller
 
                                             if (robus()->is_under_distributer) {
                                                 $comission_distributer = $amount_user->comission_distributer * $amount_request;
+                                                $comission_compagnie = $amount_user->percent_companie * $amount_request;
                                             } else {
                                                 $comission_distributer = $percent_valeur;
+                                                $comission_compagnie = 0;
                                             }
 
                                             $amount_receved_valeur = $amount_request - $percent_valeur;
@@ -1059,9 +1061,10 @@ class IntersPaymentController extends Controller
 
                                             if (robus()->is_under_distributer) {
                                                 $comission_distributer = $amount_user->comission_distributer;
+                                                $comission_compagnie = $amount_user->percent_companie ;
                                             } else {
-
                                                 $comission_distributer = $amount_user->amount;
+                                                $comission_compagnie = 0;
                                             }
 
                                             $amount_receved_valeur = $amount_request - $amount_user->amount;
@@ -1091,6 +1094,8 @@ class IntersPaymentController extends Controller
 
                                                 $amount_commission_convertion_under =  $this->convertionservice->convertAdminCommissionPayment($comission_distributer);
 
+                                                $amount_commission_convertion_compagnie =  $this->convertionservice->convertAdminCommissionPayment($comission_compagnie);
+
                                                 $amount_conv_countrie =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
 
                                                 // $valeur_convertion_amount_receved =   $this->convertionservice->convertAdminCommission($amount_receved_valeur);
@@ -1099,7 +1104,7 @@ class IntersPaymentController extends Controller
 
                                                 if ($walletReloadCard != null) {
 
-                                                    if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion_under, $walletReloadCard, $amount_valeur_convertion_send, $percent_valeur)) {
+                                                    if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion_under, $walletReloadCard, $amount_valeur_convertion_send, $percent_valeur , $amount_commission_convertion_compagnie)) {
                                                         $this->interServices->sendNotificationPayment($walletReloadCard);
                                                         return $this->messageAfterValidated($walletReloadCard);
                                                     }
@@ -1418,11 +1423,13 @@ class IntersPaymentController extends Controller
 
                         $convertion_transaction_countrie = (float)   $amount_paiement_robus;
 
-                        $valeur_percent = $commission_transaction_percent  *  100 ;
+                        // $valeur_percent = 1 - (float) $commission_transaction_percent ;
 
-                        $calculInitial = (float) ($commission_transaction_val_percent_pay  * 100) / (float) ($valeur_percent);
+                        // $valeur_verify = (float)$amount_paiement_robus - $commission_transaction_val_percent_pay;
 
-                        dd($calculInitial);
+                        // $calculInitial = (float) $valeur_verify  /  (float) ($valeur_percent);
+
+                        // dd($valeur_verify);
 
                         $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
 

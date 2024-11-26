@@ -81,6 +81,13 @@ class Home extends Component
         $reload_amount = $this->getTodayReloadAmountTotal(WalletReload::class);
         $phonecredit_amount = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
         $inter_amount = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount');
+       
+        $inter_amount_moneyRobus = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount' , '1');
+        $inter_amount_cie = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount' , '5');
+        $inter_amount_credit = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount' , '6');
+        $inter_amount_virement = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount' , '7');
+        $inter_amount_rechargement = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount' , '8');
+
         $bank_amount = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $deposit_amount = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
@@ -180,6 +187,12 @@ class Home extends Component
                 'amount_reload_days' => $reload_amount,
                 'amount_phone_credit_days' => $phonecredit_amount,
                 'amount_inter_days' => $inter_amount,
+                // Inters
+                'amount_inter_moneyRobus' => $inter_amount_moneyRobus,
+                'amount_inter_cie' => $inter_amount_cie,
+                'amount_inter_credit' => $inter_amount_credit,
+                'amount_inter_virement' => $inter_amount_virement,
+                'amount_inter_rechargement' => $inter_amount_rechargement,
                 'amount_bank_days' => $bank_amount,
                 'amount_deposit_days' => $deposit_amount,
                 'amount_xbet_days' => $xbet_amount,
@@ -368,6 +381,40 @@ class Home extends Component
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
         ->whereDate($transaction_days, Carbon::today())
         ->where('provider_id', $providerId)
+        ->where($transaction_status, 'SUCCESS');
+
+
+        if (sabdy()->is_distributer) {
+            $query->where($walletMy, sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transaction) {
+                $query->where($wallet_transaction, sabdy()->wallet->id);
+            });
+        } else {
+
+            $query->where(function ($query) use ($walletMy) {
+                $query->where($walletMy, sabdy()->id)
+                    ->orWhere($walletMy, '!=', sabdy()->id);
+            })
+                ->where(function ($query) {
+                    $countryId = sabdy()->country->id;
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                });
+        }
+
+       
+        
+            return $query->sum($wallet_amount);
+
+    }
+
+    public function getTodayTransactionProviderTypeAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount , $providerId)
+    {
+
+        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+        ->whereDate($transaction_days, Carbon::today())
+        ->where('provider_type', $providerId)
         ->where($transaction_status, 'SUCCESS');
 
 
