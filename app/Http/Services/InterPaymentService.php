@@ -77,11 +77,9 @@ class InterPaymentService
         }
     }
 
-    public function processCommissionMobiles($amount, $percent_robus, $country_robus, $walletInter, $admin_civ , $valeur_received)
+    public function processCommissionMobiles($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
     {
 
-        $country_civ = Country::whereId(107)
-            ->first();
 
         $wallet = robus()->wallet;
         $userId = robus()->id;
@@ -112,13 +110,13 @@ class InterPaymentService
         $wallet->update($updatedValues);
 
 
-        $valuer_deposit = $percent_robus->percent_deposit_under_distributer *  $valeur_received;
-        $percent_valeur_compagnie = $percent_robus->percent_companie *  $valeur_received;
+        $valuer_deposit = $percent_robus->percent_deposit_under_distributer *  $amount;
+        $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
 
         // Commissions Inters 
         if (robus()->is_under_distributer == 1) {
 
-            $valeur_amount_admin  = $percent_robus->percent_under_distributer * $valeur_received;
+            $valeur_amount_admin  = $percent_robus->percent_under_distributer * $amount;
             $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
 
             if (!empty($activeButtons['showRemonterInterButton'])) {
@@ -133,6 +131,7 @@ class InterPaymentService
                     $walletInter->increment('commission_companie', $percent_valeur_compagnie);
                 }
             } else {
+               $valeur_percent_admin  = $percent_robus->percent * $amount;
             }
         } else {
 
@@ -867,7 +866,7 @@ class InterPaymentService
         ]);
     }
 
-    public function processCommissionsRobus($amount_valeur, $percent_robus, $walletInter , $valeur_received)
+    public function processCommissionsRobus($amount_valeur, $percent_robus, $walletInter)
     {
 
 
@@ -900,7 +899,7 @@ class InterPaymentService
 
         $wallet->update($updatedValues);
 
-        $valeur_amount_admin  = $percent_robus->percent_under_distributer * $valeur_received;
+        $valeur_amount_admin  = $percent_robus->percent_under_distributer * $amount_valeur;
 
         $valuer_deposit = $percent_robus->percent_deposit_under_distributer *  $valeur_amount_admin;
 

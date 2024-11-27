@@ -138,7 +138,7 @@ class MobileWalletTransactionService
         return true;
     }
 
-    public function processCommissionsMobileDistributer($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ, $valeur_received)
+    public function processCommissionsMobileDistributer($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ)
     {
 
         $commission =  $transaction_amount_money;
@@ -181,9 +181,9 @@ class MobileWalletTransactionService
             $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
 
             // 20%
-            $valuer_deposit = $percent_robus->percent_deposit *  $valeur_received;
+            $valuer_deposit = $percent_robus->percent_deposit *  $commission;
 
-            $valuer_companie = $percent_robus->percent_companie * $valeur_received;
+            $valuer_companie = $percent_robus->percent_companie * $commission;
 
 
             if ($country_civ->currencie->value > robus()->country->currencie->value) {

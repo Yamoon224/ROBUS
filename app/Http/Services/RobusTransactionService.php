@@ -95,7 +95,7 @@ class RobusTransactionService
         );
     }
 
-    public function processCommissionsDistributerRobus($transaction_amount_robus, $percent_robus, $walletTransaction, $admin_civ , $amountReceived)
+    public function processCommissionsDistributerRobus($transaction_amount_robus, $percent_robus, $walletTransaction, $admin_civ)
     {
         $commission = $transaction_amount_robus;
         $country_civ = Country::find(107);
@@ -127,14 +127,13 @@ class RobusTransactionService
 
         $wallet->update($updatedValues);
 
-        $valeur_percent_admin = $percent_robus->percent * $amountReceived;
+        $valeur_percent_admin = $percent_robus->percent * $commission;
 
         if (robus()->is_under_distributer) {
 
             $valeur_admin = $percent_robus->percent_admin * $valeur_percent_admin;
             $valuer_deposit = $percent_robus->percent_deposit * $valeur_percent_admin;
             $valuer_with_drawal = $percent_robus->percent_with_drawal * $valeur_percent_admin;
-
 
             if ($country_civ->currencie->value > robus()->country->currencie->value) {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)robus()->country->currencie->value;

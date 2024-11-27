@@ -375,16 +375,16 @@ class IntersPaymentController extends Controller
 
                                         $percent_amount = $percent_robus->percent_under_distributer * $request->amount;
                                     
-                                        $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+                                        // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                        $valeur_received = $request->amount - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                                        $valeur_received = $request->amount -  $percent_amount ;
                                     } else {
 
                                         $percent_amount = $percent_robus->percent * $request->amount;
                                     
-                                        $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+                                        // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                        $valeur_received = $request->amount - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                                        $valeur_received = $request->amount -  $percent_amount ;
                                     }
 
                                     // Update Info valeurs
@@ -397,7 +397,7 @@ class IntersPaymentController extends Controller
                                     if ($walletInter != null) {
 
                                         if ($this->interServices->updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $request->number_compte)) {
-                                            if ($this->interServices->processCommissionsRobus($request->amount, $percent_robus, $walletInter , $valeur_received)) {
+                                            if ($this->interServices->processCommissionsRobus($request->amount, $percent_robus, $walletInter)) {
                                                 $this->interServices->sendNotificationRobus($walletInter);
                                                 return $this->messageAfterValidated($walletInter);
                                             } else {
@@ -444,16 +444,16 @@ class IntersPaymentController extends Controller
 
                                             $percent_amount = $percent_robus->percent_under_distributer * $request->amount;
                                     
-                                            $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+                                            // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                            $valeur_received = $request->amount - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                                            $valeur_received = $request->amount -  $percent_amount ;
                                         } else {
 
                                             $percent_amount = $percent_robus->percent * $request->amount;
                                     
-                                            $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+                                            // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                            $valeur_received = $request->amount - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                                            $valeur_received = $request->amount -  $percent_amount ;
                                         }
 
                                         $walletInter = $this->interServices->createMobileWalletInter(
@@ -475,7 +475,7 @@ class IntersPaymentController extends Controller
 
                                             if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
 
-                                                if ($this->interServices->processCommissionMobiles($request->amount, $percent_robus, $country_robus, $walletInter, $admin_civ , $valeur_received)) {
+                                                if ($this->interServices->processCommissionMobiles($request->amount, $percent_robus, $country_robus, $walletInter, $admin_civ)) {
                                                     $this->interServices->sendNotificationRobus($walletInter);
                                                     return $this->messageAfterValidated($walletInter);
                                                 } else {
@@ -1356,9 +1356,8 @@ class IntersPaymentController extends Controller
                     ? (float)$commission_inter->percent_under_distributer * (float)$amount_paiement_robus
                     : (float)$commission_inter->percent * (float)$amount_paiement_robus;
 
-                $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_paiement_robus);
+                // $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_paiement_robus);
             
-                // dd($amount_paiement_robus);
                 $exchange_rate_sender = robus()->country->currencie->value;
                 $exchange_rate_receiver = $countrie->currencie->value;
 
@@ -1369,10 +1368,10 @@ class IntersPaymentController extends Controller
                         : (float)$commission_inter->percent * (float)$amount_paiement_robus;
                 }
 
-                function calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus , $percent_real)
+                function calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus)
                 {
                     return $is_under_or_distributor
-                        ? (float)$commission_inter->percent_deposit_under_distributer * $percent_real['amountSend']
+                        ? (float)$commission_inter->percent_deposit_under_distributer *  (float)$amount_paiement_robus
                         : (float)$commission_inter->percent * (float)$amount_paiement_robus;
                 }
 
@@ -1396,22 +1395,22 @@ class IntersPaymentController extends Controller
 
                     if ($exchange_rate_sender > $exchange_rate_receiver) {
 
-                        $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $percent_real['amountSend'], $amount_paiement_robus);
-                        $valeur_verify = (float)$amount_paiement_robus - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                        $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $amount_paiement_robus, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus -  $commission_transaction_val_percent_pay ;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0
                             ? "Montant négatif"
                             : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
                     } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
 
-                        $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $percent_real['amountSend'], $amount_paiement_robus);
+                        $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $amount_paiement_robus, $amount_paiement_robus);
                  
-                        $valeur_verify = (float)$amount_paiement_robus - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                        $valeur_verify = (float)$amount_paiement_robus -  $commission_transaction_val_percent_pay ;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
                     } else {
 
                         // Cas où la devise de l'envoyeur est plus faible
-                        $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $percent_real['amountSend'], $amount_paiement_robus);
-                        $valeur_verify = (float)$amount_paiement_robus - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                        $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $amount_paiement_robus, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus -  $commission_transaction_val_percent_pay ;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0
                             ? "Montant négatif"
                             : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
@@ -1429,14 +1428,14 @@ class IntersPaymentController extends Controller
                             return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                         }
 
-                        $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus , $percent_real);
-                        $valeur_verify = (float)$amount_paiement_robus - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                        $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus -  (float)$commission_transaction_val_percent_pay ;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0
                             ? "Montant négatif"
                             : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
                     } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
 
-                        $convertion_transaction_countrie = (float)   $amount_paiement_robus;
+                        $convertion_transaction_countrie = (float)$amount_paiement_robus;
 
                         $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
 
@@ -1444,13 +1443,13 @@ class IntersPaymentController extends Controller
                             return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                         }
                       
-                        $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus , $percent_real);
-                        $valeur_verify = (float)$amount_paiement_robus - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                        $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus -  (float) $commission_transaction_val_percent_pay ;
                         
                         $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
                     } else {
 
-                        $convertion_transaction_countrie = (float)   $amount_paiement_robus / (float) $countrie->currencie->value;
+                        $convertion_transaction_countrie =  (float)$amount_paiement_robus / (float) $countrie->currencie->value;
 
                         $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
 
@@ -1458,8 +1457,8 @@ class IntersPaymentController extends Controller
                             return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                         }
                         // Cas où la devise de l'envoyeur est plus faible
-                        $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus , $percent_real);
-                        $valeur_verify = (float)$amount_paiement_robus - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                        $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
+                        $valeur_verify = (float)$amount_paiement_robus -  (float) $commission_transaction_val_percent_pay ;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0
                             ? "Montant négatif"
                             : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
@@ -1470,7 +1469,7 @@ class IntersPaymentController extends Controller
                     'success' => $commission_inter != null ? true : false,
                     'data' =>  [
                         'amount_commission' => $commission_transaction_val_inter_pay,
-                        'amount_pay' => ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']),
+                        'amount_pay' =>  $commission_transaction_val_percent_pay ,
                         'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
                     ],
                 ], 200);
@@ -1539,7 +1538,7 @@ class IntersPaymentController extends Controller
             if (robus()->is_under_distributer == 1 || robus()->is_distributer == 1) {
                 $commission_transaction_val_percent_pay = (float) $commission_inter->percent_under_distributer * (float) $reelCommissionAmount;
                 $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $reelCommissionAmount);
-                $commission_transaction_val_inter_pay = (float)  $commission_inter->percent_deposit_under_distributer * $percent_real['amountSend'];
+                $commission_transaction_val_inter_pay = (float)  $commission_inter->percent_deposit_under_distributer * $amount_paiement_robus;
 
             } else {
                 $commission_transaction_val_percent_pay = (float) $commission_inter->percent * (float) $reelCommissionAmount;
@@ -1553,19 +1552,19 @@ class IntersPaymentController extends Controller
 
                 if ($exchange_rate_sender > $exchange_rate_receiver) {
 
-                    $valeur_verify = (float)$reelCommissionAmount + ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                    $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
                         : $valeur_verify;
 
                 } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
 
-                    $valeur_verify = (float)$reelCommissionAmount + ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                    $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
 
                 } else {
 
-                    $valeur_verify = (float)$reelCommissionAmount + ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                    $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
                         : $valeur_verify;
@@ -1583,7 +1582,7 @@ class IntersPaymentController extends Controller
                         return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                     }
 
-                    $valeur_verify = (float)$reelCommissionAmount + ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                    $valeur_verify = (float)$reelCommissionAmount +  $commission_transaction_val_percent_pay ;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
                         :  $valeur_verify;
@@ -1597,7 +1596,7 @@ class IntersPaymentController extends Controller
                         return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                     }
 
-                    $valeur_verify = (float)$reelCommissionAmount + ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                    $valeur_verify = (float)$reelCommissionAmount +  $commission_transaction_val_percent_pay ;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
                     
                 } else {
@@ -1611,7 +1610,7 @@ class IntersPaymentController extends Controller
                         return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                     }
 
-                    $valeur_verify = (float)$reelCommissionAmount + ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+                    $valeur_verify = (float)$reelCommissionAmount +  $commission_transaction_val_percent_pay ;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
                         : $valeur_verify;
@@ -1631,7 +1630,7 @@ class IntersPaymentController extends Controller
                 'success' => $commission_inter != null ? true : false,
                 'data' =>  [
                     'amount_commission' => $commission_transaction_val_inter_pay,
-                    'amount_pay' => ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']),
+                    'amount_pay' =>  $commission_transaction_val_percent_pay ,
                     'amount_receive' => $commission_transaction_val_inter_receive ,
                 ],
             ], 200);

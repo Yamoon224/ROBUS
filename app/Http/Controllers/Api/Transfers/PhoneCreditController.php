@@ -346,9 +346,9 @@ class PhoneCreditController extends Controller
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
-                            $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
+                            // $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
 
-                            $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $percent_real['amountSend'];
+                            $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $reel_amount;
 
                             $valeur_receive =  $reel_amount;
 
@@ -363,11 +363,11 @@ class PhoneCreditController extends Controller
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
-                            $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
+                            // $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
 
-                            $commission_phone_credit_commission =   $percent_robus->percent  *  $percent_real['amountSend'];
+                            $commission_phone_credit_commission =   $percent_robus->percent  *  $reel_amount;
 
-                            $valeur_receive =  $reel_amount - $percent_real['adjust'];
+                            $valeur_receive =  $reel_amount - $commission_phone_credit_val_nat_pay;
 
                             if ($valeur_receive < 0) {
 
@@ -430,17 +430,18 @@ class PhoneCreditController extends Controller
                         $commission_phone_credit_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
 
                         $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+                    
                     } else {
 
                         if (robus()->is_under_distributer) {
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
                             
-                            $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
+                            // $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
 
                             $valeur_receive =  $reel_amount;
 
-                            $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $percent_real['amountSend'];
+                            $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $reel_amount;
 
                             if ($valeur_receive < 0) {
 
@@ -453,12 +454,12 @@ class PhoneCreditController extends Controller
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
-                            $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
+                            // $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
 
-                            $commission_phone_credit_commission =   $percent_robus->percent  *  $percent_real['amountSend'];
+                            $commission_phone_credit_commission =   $percent_robus->percent  *  $reel_amount;
 
 
-                            $valeur_receive =  $reel_amount +  (float) $percent_real['adjust'];
+                            $valeur_receive =  $reel_amount +  (float) $commission_phone_credit_val_nat_pay;
 
                             if ($valeur_receive < 0) {
 
