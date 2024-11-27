@@ -126,13 +126,20 @@ class TransactionCiv extends Component
         $this->commission_transaction_val_inter_pay = 0;
         $this->commission_transaction_val_inter_convertion_send = 0;
         $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
-
         $account_accepted = sabdy()->is_accepted_companie ?? false;
         $company_id = sabdy()->company_id ?? null;
-        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
-        $this->operatorsCompagnie = OperatorService::getOperatorsWithCommissions(
-            ($account_accepted && $compagnie->id) ? $compagnie->id : null
-        );
+        if ($company_id && $company_id != 0 && $company_id != 1) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+        if ($sidUserId) {
+            $this->operatorsCompagnie = OperatorService::getOperatorsWithCommissions($sidUserId);
+        } else {
+            $this->operatorsCompagnie = [];
+        }
 
         $restrictionMap = [
             'Active Transactions' => 'showRemonterTransButton',

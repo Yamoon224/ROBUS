@@ -113,7 +113,7 @@ class CreateRobusWalletWithDrawalService
 
         $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$verify_code->amount;
 
-        $amount_solde = (float)robus()->wallet->amount + (float)$verify_code->amount;
+        $amount_solde = (float)robus()->wallet->amount + (float) $verify_code->amount;
 
         $percent_drawal = $percent_robus->percent_custum_drawal * $verify_code->amount;
 
@@ -122,6 +122,8 @@ class CreateRobusWalletWithDrawalService
         $amount_payment_drawal = $verify_code->amount + $percent_drawal;
 
         $amount_payment_receved = $verify_code->amount - $percent_drawal;
+
+        $percent_under =  $percent_robus->percent_with_drawal  *  $amount_payment_receved; 
 
         $commission_valeur = $percent_robus->percent * $verify_code->amount;
 
@@ -173,14 +175,14 @@ class CreateRobusWalletWithDrawalService
         if (!empty($activeButtons['showRemonterRetraitButton'])) {
 
             $verify_code->update([
-                'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
+                'commissions' => DB::raw('commissions+' . $percent_under),
             ]);
 
             $account_accepted = robus()->is_accepted_companie ?? false;
 
             if ($account_accepted && !empty($activeCButtons['showRemonterRetraitCButton'])) {
 
-                $valuer_companie = $percent_robus->percent_custum_drawal_companie * $commission_valeur;
+                $valuer_companie = $percent_robus->percent_custum_drawal_companie * $amount_payment_receved;
 
                 $valuer_admimCom = (float)$percent_drawal - (float)$valuer_companie;
 

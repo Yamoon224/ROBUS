@@ -95,7 +95,7 @@ class RobusTransactionService
         );
     }
 
-    public function processCommissionsDistributerRobus($transaction_amount_robus, $percent_robus, $walletTransaction, $admin_civ)
+    public function processCommissionsDistributerRobus($transaction_amount_robus, $percent_robus, $walletTransaction, $admin_civ , $amountReceived)
     {
         $commission = $transaction_amount_robus;
         $country_civ = Country::find(107);
@@ -127,8 +127,7 @@ class RobusTransactionService
 
         $wallet->update($updatedValues);
 
-        // Gestion des commissions d'intermédiaires
-        $valeur_percent_admin = $percent_robus->percent * $transaction_amount_robus;
+        $valeur_percent_admin = $percent_robus->percent * $amountReceived;
 
         if (robus()->is_under_distributer) {
 
@@ -136,11 +135,6 @@ class RobusTransactionService
             $valuer_deposit = $percent_robus->percent_deposit * $valeur_percent_admin;
             $valuer_with_drawal = $percent_robus->percent_with_drawal * $valeur_percent_admin;
 
-            // $valeur_admin = $percent_robus->percent_admin * $valeur_percent_admin;
-            // $valuer_deposit = $percent_robus->percent_deposit * $valeur_percent_admin;
-            // $valuer_master =  $master_id ? $percent_robus->percent_masters * $valuer_deposit : 0;
-            // $amount_rec_under = (float)  $valuer_deposit - (float) $valuer_master;
-            // $valuer_with_drawal = $percent_robus->percent_with_drawal * $valeur_percent_admin;
 
             if ($country_civ->currencie->value > robus()->country->currencie->value) {
                 $admin_valeur_convertion_drawal = $valuer_with_drawal * (float)robus()->country->currencie->value;
@@ -156,7 +150,7 @@ class RobusTransactionService
             if (!empty($activeButtons['showRemonterDepotButton'])) {
 
                 $walletTransaction->increment('commissions', $valuer_deposit);
-                // $walletTransaction->increment('commission_masters', $valuer_master);
+
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterDepotCButton']) ) {

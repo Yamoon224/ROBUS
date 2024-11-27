@@ -5,7 +5,7 @@ namespace Database\Seeders\database\seeders;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class SyncSeeder4.php extends Seeder
+class SyncSeeder4 extends Seeder
 {
     /**
      * Run the database seeds.

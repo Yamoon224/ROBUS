@@ -48,6 +48,54 @@ if (! function_exists('applyRestrictionMap')) {
 }
 
 
+function adjustFeesWithRest($fees, $amount)
+{
+
+
+    $fees = round($fees);
+    $adjustfees = floor($fees / 100) * 100;
+    $rest = $fees - $adjustfees;
+
+
+    if ($rest > 0) {
+
+        if ($rest == 1) {
+            $adjustfees += 5; 
+        }
+        elseif ($rest >= 4 && $rest <= 6) {
+            $adjustfees += 5;
+        }
+        elseif ($rest >= 10 && $rest < 30) {
+            $adjustfees += 10;
+        }
+        elseif ($rest >= 30 && $rest < 50) {
+            $adjustfees += 20;
+        } elseif ($rest == 50) {
+            $adjustfees += 50; 
+        } elseif ($rest >= 60 && $rest <= 80) {
+            $adjustfees += 70;
+        } elseif ($rest > 80) {
+            $adjustfees += 100;
+        } elseif ($adjustfees == 0) {
+            $adjustfees =  $fees;
+        }
+    }elseif($rest == 0 && $adjustfees == 0) {
+        $adjustfees = 0;
+        $amount = 0;
+    } else {
+        $adjustfees = $adjustfees;
+    }
+
+    $amountReal = $amount - $adjustfees;
+
+    return [
+        'adjust' => $adjustfees,
+        'rest' => $rest,
+        'amountSend' => $amountReal,
+    ];
+}
+
+
 function reloadCardPercent()
 {
 

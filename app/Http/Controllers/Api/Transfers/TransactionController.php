@@ -220,7 +220,11 @@ class TransactionController extends Controller
 
                                 if ($this->validatedamountDays->validateAmount($request->amount)) {
 
-                                    $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
+                                    $percent_amount = $percent_robus->percent * $request->amount;
+
+                                    $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+
+                                    $valeur_received = $request->amount - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
 
                                     // Update Info valeurs
                                     $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
@@ -246,7 +250,7 @@ class TransactionController extends Controller
                                         }
 
                                         if ($this->robusTransactionService->updateAmountRobusReceived($request->num_wallet, $walletTransaction, $valeur_received)) {
-                                            if ($this->robusTransactionService->processCommissionsDistributerRobus($request->amount, $percent_robus, $walletTransaction, $admin_civ)) {
+                                            if ($this->robusTransactionService->processCommissionsDistributerRobus($request->amount, $percent_robus, $walletTransaction, $admin_civ, $valeur_received)) {
                                                 $this->notifications->sendNotification($walletTransaction);
                                                 return $this->messageAfterValidated($walletTransaction);
                                             } else {
@@ -349,7 +353,11 @@ class TransactionController extends Controller
 
                                 if ($this->validatedamountDays->validateAmount($request->amount)) {
 
-                                    $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
+                                    $percent_amount = $percent_robus->percent * $request->amount;
+                                    
+                                    $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+
+                                    $valeur_received = (float) $request->amount - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
 
                                     // Update Info valeurs
                                     $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
@@ -494,27 +502,35 @@ class TransactionController extends Controller
 
                         if ($this->validatedamountDays->validateAmountSendLimit($request->amount, $valeur_max_send)) {
 
+                            $percent_amount = $percent_robus->percent * $request->amount;
+
+                            $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+                    
                             if (robus()->is_under_distributer) {
 
+
                                 if (robus()->country->name_groupe == 'CIV') {
+
                                     $valeur_received = $request->amount;
 
                                     $amount_payment = $request->amount;
+
                                 } else {
 
-                                    $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
+                                    $valeur_received = $request->amount - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
 
-                                    $amount_payment =  $request->amount + ($percent_robus->percent * $request->amount);
+                                    $amount_payment =  $request->amount + ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
                                 }
 
-                                $cost_payment = $percent_robus->percent *  $request->amount;
+                                $cost_payment = ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
+
                             } else {
 
-                                $valeur_received = $request->amount - ($percent_robus->percent * $request->amount);
+                                $valeur_received = $request->amount - ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
 
-                                $cost_payment = $percent_robus->percent *  $request->amount;
+                                $cost_payment = ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
 
-                                $amount_payment =  $request->amount + ($percent_robus->percent * $request->amount);
+                                $amount_payment =  $request->amount + ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']);
                             }
 
                             if ($this->validatedamountDays->validateAmount($amount_payment)) {
@@ -526,7 +542,7 @@ class TransactionController extends Controller
                                     if ($this->mobileWalletTransactionService->updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)) {
 
                                         if (robus()->is_under_distributer) {
-                                            $processCommission = $this->mobileWalletTransactionService->processCommissionsMobileDistributer($request->amount, $percent_robus, $walletTransaction, $admin_civ);
+                                            $processCommission = $this->mobileWalletTransactionService->processCommissionsMobileDistributer($request->amount, $percent_robus, $walletTransaction, $admin_civ , $valeur_received);
                                         } else {
 
                                             $processCommission = $this->mobileWalletTransactionService->processCommissionsMobile($request->amount, $percent_robus, $walletTransaction, $admin_civ);
@@ -925,25 +941,27 @@ class TransactionController extends Controller
 
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
 
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_transaction);
+
+               
                     if (robus()->is_under_distributer) {
 
                         if (robus()->country->name_groupe == 'MAG') {
 
-                            $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+                            $commission_transaction_val_nat_receive = $percent_real['amountSend'];
                         } else {
 
                             $commission_transaction_val_nat_receive = (float)$amount_transaction;
                         }
 
-                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
+                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $percent_real['amountSend'];
+
                     } else {
 
-                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent * $amount_transaction;
+                        $commission_transaction_val_nat_pay = $percent_real['adjust'] == 0 ? $percent_real['adjust'] : $percent_real['rest'];
 
-                        $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+                        $commission_transaction_val_nat_receive = (float)$amount_transaction - $percent_real['adjust'];
                     }
-
-
 
                     $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
 
@@ -957,7 +975,7 @@ class TransactionController extends Controller
                     'success' => true,
                     'data' => [
                         'amount_pay' => $commission_transaction_val_nat_pay,
-                        'amount_send' => $commission_transaction_val_percent_pay,
+                        'amount_send' => ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']),
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
@@ -985,11 +1003,14 @@ class TransactionController extends Controller
 
                 if ($commission_transaction) {
 
-                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $amount_transaction;
-
                     $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
 
-                    $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay_custumer;
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer , $amount_transaction);
+
+                    $commission_transaction_val_nat_receive = (float)$amount_transaction - ($percent_real['adjust'] == 0 ?  $percent_real['rest'] : $percent_real['adjust']);
+
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $commission_transaction_val_nat_receive;
+
 
                 }
 
@@ -998,7 +1019,7 @@ class TransactionController extends Controller
                     'success' => true,
                     'data' => [
                         'amount_pay' => $commission_transaction_val_percent_pay,
-                        'amount_send' => $commission_transaction_val_percent_pay_custumer,
+                        'amount_send' => ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']),
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
@@ -1030,12 +1051,14 @@ class TransactionController extends Controller
 
                 if ($commission_transaction) {
 
-                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $amount_transaction;
 
                     $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
 
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer , $amount_transaction);
 
-                    $commission_transaction_val_nat_receive = (float)$amount_transaction + $commission_transaction_val_percent_pay_custumer;
+                    $commission_transaction_val_nat_receive = (float)$amount_transaction + ($percent_real['adjust'] == 0 ?  $percent_real['rest'] : $percent_real['adjust']);
+
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $commission_transaction_val_nat_receive;
 
                 }
 
@@ -1044,7 +1067,7 @@ class TransactionController extends Controller
                     'success' => true,
                     'data' => [
                         'amount_pay' => $commission_transaction_val_percent_pay,
-                        'amount_send' => $commission_transaction_val_percent_pay_custumer,
+                        'amount_send' => ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']),
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
@@ -1082,22 +1105,24 @@ class TransactionController extends Controller
 
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
 
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_transaction);
+
                     if (robus()->is_under_distributer) {
 
                         if (robus()->country->name_groupe == 'MAG') {
 
-                            $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+                            $commission_transaction_val_nat_receive =  $percent_real['amountSend'] + ($percent_real['adjust'] == 0 ? $percent_real['adjust'] : $percent_real['rest']);
                         } else {
 
                             $commission_transaction_val_nat_receive = (float)$amount_transaction;
                         }
 
-                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
+                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $percent_real['amountSend'];
                     } else {
 
-                        $commission_transaction_val_nat_pay = (float)$commission_transaction->percent * $amount_transaction;
+                        $commission_transaction_val_nat_pay = $percent_real['adjust'] == 0 ? $percent_real['adjust'] : $percent_real['rest'];
 
-                        $commission_transaction_val_nat_receive = (float)$amount_transaction + $commission_transaction_val_percent_pay;
+                        $commission_transaction_val_nat_receive = $percent_real['amountSend'] + $commission_transaction_val_nat_pay;
                     }
 
 
@@ -1114,7 +1139,7 @@ class TransactionController extends Controller
                     'success' => true,
                     'data' => [
                         'amount_pay' => $commission_transaction_val_nat_pay,
-                        'amount_send' => $commission_transaction_val_percent_pay,
+                        'amount_send' => ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']),
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
@@ -1166,14 +1191,16 @@ class TransactionController extends Controller
 
                     // Si l'utilisateur n'est pas sous distributeur, admin ou distributeur
                     $commission_transaction = $this->searchTransaction->getCommissionTransactionForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_transaction);
 
                     if ($commission_transaction) {
 
                         if ($data->sidUser->is_custumers) {
 
-                            $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
-                            $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
-                            $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay;
+                            $commission_transaction_val_percent_pay = $percent_real['adjust'] == 0 ? $percent_real['adjust'] : $percent_real['rest'];
+                            $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $percent_real['amountSend'];
+                            $commission_transaction_val_nat_receive = $percent_real['amountSend'];
                         }
 
                         $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
@@ -1239,14 +1266,15 @@ class TransactionController extends Controller
 
                     // Si l'utilisateur n'est pas sous distributeur, admin ou distributeur
                     $commission_transaction = $this->searchTransaction->getCommissionTransactionForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
+                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_transaction);
 
                     if ($commission_transaction) {
 
                         if ($data->sidUser->is_custumers) {
 
-                            $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
-                            $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $commission_transaction_val_percent_pay;
-                            $commission_transaction_val_nat_receive = (float)$amount_transaction + $commission_transaction_val_percent_pay;
+                            $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $percent_real['amountSend'];
+                            $commission_transaction_val_nat_receive = $percent_real['amountSend'] + ($percent_real['adjust'] == 0 ? $percent_real['adjust'] : $percent_real['rest']);
                         }
 
                         $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
@@ -1260,7 +1288,7 @@ class TransactionController extends Controller
                 return response()->json([
                     'success' => $data != null ? true : false,
                     'data' => [
-                        'amount_pay' => $commission_transaction_val_percent_pay,
+                        'amount_pay' => ($percent_real['adjust'] == 0 ? $percent_real['rest'] : $percent_real['adjust']),
                         'amount_send' => $commission_transaction_val_nat_pay,
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],

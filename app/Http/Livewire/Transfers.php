@@ -444,13 +444,21 @@ class Transfers extends Component
     {
 
         $this->operators = OperatorService::getOperatorsWithCommissions(sabdy()->id);
+        $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
         $account_accepted = sabdy()->is_accepted_companie ?? false;
         $company_id = sabdy()->company_id ?? null;
-        $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
-        $this->operatorsCompagnie = OperatorService::getOperatorsWithCommissions(
-            ($account_accepted && $compagnie->id) ? $compagnie->id : null
-        );
-        $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
+        if ($company_id && $company_id != 0 && $company_id != 1) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+        if ($sidUserId) {
+            $this->operatorsCompagnie = OperatorService::getOperatorsWithCommissions($sidUserId);
+        } else {
+            $this->operatorsCompagnie = [];
+        }
 
         $restrictionMap = [
             'Active Transactions' => 'showRemonterTransButton',
@@ -1287,7 +1295,7 @@ class Transfers extends Component
                                     if ($verify_code->type_transaction == "Retrait") {
 
                                         if ($this->showRemonterRetraitButton) {
-                                           
+
                                             $verify_code->update([
                                                 'commissions' => DB::raw('commissions+' . $valuer_with_drawal),
                                             ]);
@@ -2781,7 +2789,7 @@ class Transfers extends Component
 
                 if ($admins->count() > 0) {
                     $this->handleAdminNotifications();
-                }                
+                }
 
                 $this->resetPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit');
@@ -2789,14 +2797,12 @@ class Transfers extends Component
                 if ($walletUser->email != null) {
                     $this->sendMailPhoneCreditNotification($walletPhone);
                 }
-
             } else {
                 $this->resetPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
                 return; // Arrête l'exécution si le montant est supérieur au solde
             }
-
         } catch (\Exception $exception) {
             $this->resetPaiementField();
             $this->emit('modal-hide-phoneCredit');

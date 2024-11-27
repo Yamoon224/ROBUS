@@ -93,48 +93,18 @@ class MobileWalletTransactionService
         $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
 
         $valuer_deposit = $percent_robus->percent_deposit *  $valeur_percent_valeur;
-        // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
 
-            // 50 %
-            $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
+        $valuer_admin = $valeur_percent_valeur;
 
-            // 20%
+        if ($country_civ->currencie->value > robus()->country->currencie->value) {
 
+            $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
+        } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
 
-            if ($country_civ->currencie->value > robus()->country->currencie->value) {
-
-                //   Convertion  in CFA
-                $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
-            } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
-                //   Convertion  in CFA
-                $admin_valeur_convertion =   (float)  $valuer_admin;
-            } else {
-                //   Convertion  in CFA
-                $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
-            }
-
-
-            $walletTransaction->update([
-                'commissions' => DB::raw('commissions+'  . $valuer_deposit),
-            ]);
+            $admin_valeur_convertion = (float)   $valuer_admin;
         } else {
 
-
-            // Percent admin 
-
-            $valuer_admin = $valeur_percent_valeur;
-
-            if ($country_civ->currencie->value > robus()->country->currencie->value) {
-
-                $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
-            } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
-
-                $admin_valeur_convertion = (float)   $valuer_admin;
-            } else {
-
-                $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
-            }
+            $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
         }
 
         if ($admin_civ->count() > 0) {
@@ -168,7 +138,7 @@ class MobileWalletTransactionService
         return true;
     }
 
-    public function processCommissionsMobileDistributer($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ)
+    public function processCommissionsMobileDistributer($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ, $valeur_received)
     {
 
         $commission =  $transaction_amount_money;
@@ -186,11 +156,11 @@ class MobileWalletTransactionService
             $compagnie = null;
             $sidUserId = null;
         }
-        
+
         if ($sidUserId) {
             $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
         } else {
-            $activeCButtons = []; 
+            $activeCButtons = [];
         }
 
         // Préparez les valeurs mises à jour
@@ -211,9 +181,9 @@ class MobileWalletTransactionService
             $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
 
             // 20%
-            $valuer_deposit = $percent_robus->percent_deposit *  $valeur_percent_valeur;
+            $valuer_deposit = $percent_robus->percent_deposit *  $valeur_received;
 
-            $valuer_companie = $percent_robus->percent_companie * $valeur_percent_valeur;
+            $valuer_companie = $percent_robus->percent_companie * $valeur_received;
 
 
             if ($country_civ->currencie->value > robus()->country->currencie->value) {
@@ -223,20 +193,18 @@ class MobileWalletTransactionService
                 $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
                 $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
                 $percents =   (float)  $valeur_percent_valeur *   (float) robus()->country->currencie->value;
-
             } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit;
                 $percent_valeur_convertion =   (float)  $valuer_admin;
                 $percent_valeur_compagnie =   (float)  $valuer_companie;
-                $percents =   (float)  $valeur_percent_valeur ;
+                $percents =   (float)  $valeur_percent_valeur;
             } else {
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
                 $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
                 $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
                 $percents =   (float)  $valeur_percent_valeur *   (float) robus()->country->currencie->value;
-
             }
 
             if (!empty($activeButtons['showRemonterMoneyButton'])) {
