@@ -231,13 +231,15 @@ class ReloadCardController extends Controller
                                                 $valuer_admin_com = $percent_valeur - $valuer_deposit_com;
                                                 $amount_cost = $amount_user->comission_distributer * $request->amount;
                                                 $amountReceved = (float)$request->amount;
-                                                $commissionCompanie = $amount_user->percent_companie * $percent_valeur;
+                                                $commissionCompanie = $amount_user->percent_companie * $request->amount;
                                             } else {
                                                 $amount_verify = $request->amount;
                                                 $valuer_admin_com =  $amount_user->percent * $request->amount;
-                                                $amount_cost = $amount_user->percent * $percent_valeur;
+                                                $amount_cost = $percent_valeur;
                                                 $valuer_deposit_com = 0;
                                                 $amountReceved = (float)$request->amount - (float)$percent_valeur;
+                                                $commissionCompanie = $amount_user->percent_companie * $request->amount;
+
                                             }
                                         } else {
 
@@ -257,6 +259,7 @@ class ReloadCardController extends Controller
                                                 $valuer_deposit_com = 0;
                                                 $valuer_admin_com = (float)$amount_user->amount;
                                                 $amountReceved = (float)$request->amount - (float)$amount_user->amount;
+                                                $commissionCompanie = $amount_user->percent_companie;
                                             }
                                         }
 

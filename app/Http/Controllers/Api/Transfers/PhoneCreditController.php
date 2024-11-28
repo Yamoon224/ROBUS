@@ -181,12 +181,13 @@ class PhoneCreditController extends Controller
 
                             if (robus()->is_under_distributer) {
                                 $val_amount_send = $reel_amount;
+                                $amountReceved = $reel_amount;
                             } else {
 
                                 $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
+                                $amountReceved = $reel_amount - (float) ($percent_robus->percent * $reel_amount);
                             }
 
-                            $amountReceved = $reel_amount;
 
                             if ($this->validatedamountDays->validateAmount($val_amount_send)) {
 
@@ -430,13 +431,12 @@ class PhoneCreditController extends Controller
                         $commission_phone_credit_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
 
                         $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                    
                     } else {
 
                         if (robus()->is_under_distributer) {
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
-                            
+
                             // $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
 
                             $valeur_receive =  $reel_amount;
