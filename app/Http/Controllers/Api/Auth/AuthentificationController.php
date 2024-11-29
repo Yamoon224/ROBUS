@@ -773,7 +773,6 @@ class AuthentificationController extends Controller
         try {
 
 
-
             if (!$resend_user) {
                 return response()->json([
                     'success' => false,
@@ -781,11 +780,9 @@ class AuthentificationController extends Controller
                 ], 404);
             }
 
-            // Mise à jour de l'utilisateur avec le nouveau code
             $resend_user->activation_code = $activation_code;
             $resend_user->save();
 
-            // Envoi du code par SMS ou email selon le pays
             if ($resend_user->country->code == "CI") {
 
                 $message = "Votre code d'activation est: {$activation_code}";
@@ -883,7 +880,8 @@ class AuthentificationController extends Controller
                         $user->update(['forget_password' => $activation_code]);
                         $message = 'Utilisez ce mot de passe temporaire pour vous connectez ' .  $activation_code;
                         $phone = $request->phone;
-                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$phone&from=ROBUS&sms=$message");
+                        Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                        // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$phone&from=ROBUS&sms=$message");
                         DB::commit();
                     }
                 } else {

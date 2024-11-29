@@ -1356,8 +1356,16 @@ class IntersPaymentController extends Controller
                     ? (float)$commission_inter->percent_under_distributer * (float)$amount_paiement_robus
                     : (float)$commission_inter->percent * (float)$amount_paiement_robus;
 
-                // $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_paiement_robus);
+                $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_paiement_robus);
             
+                $amount_calcul = $commission_transaction_val_percent_pay + $amount_paiement_robus ;
+
+                $amount_alls = (float) 1 - (float)$commission_inter->percent_under_distributer ;
+     
+                $amount_valeurs = $commission_transaction_val_percent_pay *  $amount_alls ;
+
+                // dd(($amount_valeurs));
+
                 $exchange_rate_sender = robus()->country->currencie->value;
                 $exchange_rate_receiver = $countrie->currencie->value;
 

@@ -53,10 +53,9 @@ function adjustFeesWithRest($fees, $amount)
 
 
     $fees = round($fees);
-    $adjustfees = floor($fees / 100) * 100;
-    $rest = $fees - $adjustfees;
-
-
+    $lastes = $fees % 100;
+    $adjustfees = $fees;
+    $rest = $fees - $lastes;
     if ($rest > 0) {
 
         if ($rest == 1) {
@@ -86,7 +85,7 @@ function adjustFeesWithRest($fees, $amount)
         $adjustfees = $adjustfees;
     }
 
-    $amountReal = $amount - $adjustfees;
+    $amountReal = $amount - $fees;
 
     return [
         'adjust' => $adjustfees,

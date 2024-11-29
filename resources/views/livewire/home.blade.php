@@ -242,7 +242,7 @@
                             <div class="ml-auto">
                                 <div class="report-box__indicator bg-success tooltip cursor-pointer">
                                     Success
-                                    {{ $success_inter ?? null }}
+                                    {{ $success_bank ?? null }}
 
                                 </div>
                             </div>
@@ -250,7 +250,7 @@
 
                                 <div class="report-box__indicator bg-pending tooltip cursor-pointer">
                                     Attente
-                                    {{ $pendding_inter ?? null }}
+                                    {{ $pendding_bank ?? null }}
 
                                 </div>
 
@@ -258,7 +258,7 @@
                             <div class="ml-auto">
                                 <div class="report-box__indicator bg-danger tooltip cursor-pointer">
                                     Echec
-                                    {{ $error_inter ?? null }}
+                                    {{ $error_bank ?? null }}
 
                                 </div>
 
@@ -272,13 +272,13 @@
                             <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
-                        r
-                        <div class="text-base text-slate-500 mt-1">International {{ $user_currencie }} </div>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ $amount_bank_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Transactions Banques {{ $user_currencie }} </div>
                     </div>
                 </div>
             </div>
-
-
         </div>
         <div class="grid grid-cols-12 gap-6 mt-6">
             <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show" id="info-paie-show-1">
@@ -318,8 +318,17 @@
                             <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ number_format($amount_payment_days, 2, ',', ' ') ?? null }}
+                        <div class="text-base text-slate-500 mt-1">
+                            CIE : {{ $amount_payment_cie_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            CANAL : {{ $amount_payment_canal_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            SODECI : {{ $amount_payment_sodeci_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            Total {{ $amount_payment_days ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Paiements {{ $user_currencie }}</div>
                     </div>
@@ -364,27 +373,28 @@
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
                         <div class="text-base text-slate-500 mt-1">
-                           Robus : {{ $amount_transaction_robus_days ?? null }}
+                            Robus : {{ $amount_transaction_robus_days ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">
                             Moov : {{ $amount_transaction_moov_days ?? null }}
-                         </div>
-                         <div class="text-base text-slate-500 mt-1">
-                            Wave  : {{ $amount_transaction_wave_days ?? null }}
-                         </div>
-                         <div class="text-base text-slate-500 mt-1">
-                            Orange : {{ $amount_transaction_orange_days ?? null }}
-                         </div>
-                         <div class="text-base text-slate-500 mt-1">
-                            Mtn : {{ $amount_transaction_mtn_days ?? null }}
-                         </div>
+                        </div>
                         <div class="text-base text-slate-500 mt-1">
-                           Total {{ $amount_transaction_days ?? null }}
+                            Wave : {{ $amount_transaction_wave_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            Orange : {{ $amount_transaction_orange_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            Mtn : {{ $amount_transaction_mtn_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            Total {{ $amount_transaction_days ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Transactions {{ $user_currencie }} </div>
                     </div>
                 </div>
             </div>
+
             <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y " id="info-paie-show-2">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table2">
@@ -392,7 +402,7 @@
                             <div class="ml-auto">
                                 <div class="report-box__indicator bg-success tooltip cursor-pointer">
                                     Success
-                                    {{ $success_bank ?? null }}
+                                    {{ $success_inter ?? null }}
 
                                 </div>
                             </div>
@@ -400,7 +410,7 @@
 
                                 <div class="report-box__indicator bg-pending tooltip cursor-pointer">
                                     Attente
-                                    {{ $pendding_bank ?? null }}
+                                    {{ $pendding_inter ?? null }}
 
                                 </div>
 
@@ -408,7 +418,7 @@
                             <div class="ml-auto">
                                 <div class="report-box__indicator bg-danger tooltip cursor-pointer">
                                     Echec
-                                    {{ $error_bank ?? null }}
+                                    {{ $error_inter ?? null }}
 
                                 </div>
 
@@ -422,13 +432,29 @@
                             <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                             <line x1="1" y1="10" x2="23" y2="10"></line>
                         </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $amount_bank_days ?? null }}
+                        <div class="text-base text-slate-500 mt-1">
+                            Mobiles : {{ $amount_inter_moneyRobus ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Transactions Banques {{ $user_currencie }} </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            Factures : {{ $amount_inter_cie ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            Crédits : {{ $amount_inter_credit ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            Virements : {{ $amount_inter_virement ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            Rechargements : {{ $amount_inter_rechargement ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">
+                            Total : {{ $amount_inter_days ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">International {{ $user_currencie }} </div>
                     </div>
                 </div>
             </div>
+
 
             <div class="col-span-12 sm:col-span-6 xl:col-span-4 intro-y info-paiement-show" id="info-paie-show-2">
                 <div class="report-box zoom-in">

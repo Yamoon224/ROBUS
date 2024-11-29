@@ -332,9 +332,8 @@ class TransactionsAccountService
     public function getUserTransactions($wallets, $wallet_solde, $numWallet)
     {
 
-        // Obtenir le début de la semaine (lundi) et la fin (aujourd'hui)
-        $startOfWeek = Carbon::now()->startOfWeek(); // Début de la semaine (lundi)
-        $endOfWeek = Carbon::now()->endOfDay(); // Fin de la journée actuelle
+        $startOfWeek = Carbon::now()->startOfWeek(); 
+        $endOfWeek = Carbon::now()->endOfDay();
 
         return   $wallets::where('wallet_id', $wallet_solde->id)
             ->orWhere($numWallet, $wallet_solde->wallet_id)
@@ -354,7 +353,7 @@ class TransactionsAccountService
 
     public function getUserAllCumulTransactions($wallets)
     {
-        return   $wallets::where('wallet_id', robus()->id)
+        return   $wallets::where('wallet_id', robus()->wallet->id)
             ->whereStatus('SUCCESS')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -390,14 +389,24 @@ class TransactionsAccountService
 
     public function getWalletSumGainUser($wallet)
     {
+
+
+        $totalAmount = 0;
+
+        $amount = $wallet::where('wallet_id', robus()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
         // Récupérer toutes les commissions des banques avec le statut 'SUCCESS'
-
-        $commissions = $wallet::where('created_by', robus()->id)->whereStatus('SUCCESS')->pluck('commissions');
-
-        // Calculer la somme des commissions
-        $totalCommissions = $commissions->sum();
-
-        return $totalCommissions;
+        // $commissions = $wallet::where('created_by', robus()->id)->whereStatus('SUCCESS')->pluck('commissions');
+        // // Calculer la somme des commissions
+        // $totalCommissions = $commissions->sum();
+        // return $totalCommissions;
     }
 
     public function getWalletSumGainMasterUser($wallet)
@@ -465,26 +474,46 @@ class TransactionsAccountService
     public function getMonthTransactionAmount($walletModel)
     {
 
-        // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
-        $amounts = $walletModel::whereStatus('SUCCESS')->whereMonth('created_at', now()->month)->pluck('amount');
+        $totalAmount = 0;
 
-        // Calculer la somme des amounts
-        $totalAmounts = $amounts->sum();
+        $amount = $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereMonth('created_at', now()->month)
+            ->whereStatus('SUCCESS')
+            ->sum('amount');
 
-        return $totalAmounts;
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
+        // // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
+        // $amounts = $walletModel::whereStatus('SUCCESS')->whereMonth('created_at', now()->month)->pluck('amount');
+        // // Calculer la somme des amounts
+        // $totalAmounts = $amounts->sum();    
+        // return $totalAmounts;
     }
 
 
     public function getMonthTransactionGainUser($walletModel)
     {
 
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', robus()->wallet->id)
+            ->whereMonth('created_at', now()->month)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
         // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
-        $amounts = $walletModel::whereStatus('SUCCESS')->whereMonth('created_at', now()->month)->pluck('commissions');
-
-        // Calculer la somme des amounts
-        $totalAmounts = $amounts->sum();
-
-        return $totalAmounts;
+        // $amounts = $walletModel::whereStatus('SUCCESS')->whereMonth('created_at', now()->month)->pluck('commissions');
+        // // Calculer la somme des amounts
+        // $totalAmounts = $amounts->sum();
+        // return $totalAmounts;
     }
 
     public function getYearTransactionGainUser($walletModel)
@@ -492,15 +521,25 @@ class TransactionsAccountService
 
         $year = Carbon::now()->year;
 
-        // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
-        $amounts = $walletModel::whereStatus('SUCCESS')
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', robus()->wallet->id)
             ->whereYear('created_at', $year)
-            ->pluck('commissions');
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
 
-        // Calculer la somme des amounts
-        $totalAmounts = $amounts->sum();
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
 
-        return $totalAmounts;
+        return $totalAmount;
+        // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
+        // $amounts = $walletModel::whereStatus('SUCCESS')
+        //     ->whereYear('created_at', $year)
+        //     ->pluck('commissions');
+        // // Calculer la somme des amounts
+        // $totalAmounts = $amounts->sum();
+        // return $totalAmounts;
     }
 
 
@@ -773,6 +812,4 @@ class TransactionsAccountService
 
         return $totalAmount;
     }
-
-
 }
