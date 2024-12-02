@@ -1454,6 +1454,7 @@ class AdminController extends Controller
     {
 
  
+       
         $user = SidUser::find($id);
 
 
@@ -1473,6 +1474,7 @@ class AdminController extends Controller
 
         $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
 
+    
         if ($amount <= 0) {
             return back()
                 ->with('color', 'danger')

@@ -240,7 +240,8 @@ class UserController extends Controller
             ->paginate(20);
 
 
-        $som_commissions =  $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) + $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPayment::class) +
+        $som_commissions =  $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) + 
+        $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPayment::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBank::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPhoneCredit::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDeposit::class) +
@@ -248,7 +249,6 @@ class UserController extends Controller
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletInter::class);
 
         $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
-
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
         $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
         $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);

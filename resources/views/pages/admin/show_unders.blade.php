@@ -8,7 +8,7 @@
 @endphp
 
 @section('content')
-
+   
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_table_factures">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
@@ -274,7 +274,7 @@
 
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
-            <form method="POST" action="{{ route('remonte.remonteAllCommission.unders', ['amount' => $gain_payments, 'type' => 'COMMISSION', 'id' => $user->id]) }}">
+            <form method="POST" action="{{ route('remonte.remonteAllCommission.unders', ['amount' => $company_gains, 'type' => 'COMMISSION', 'id' => $user->id]) }}">
                 @csrf
                 <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
