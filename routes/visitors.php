@@ -39,8 +39,6 @@ Route::group(['middleware' => ['auth:web']], function () {
                 Route::post('services/update_web/{id}',  [ServiceController::class, 'updateWeb'])->name('services.update.web');
                 Route::get('pays_visitors/visitors', [CommissionController::class, 'browse_visitors'])->name('commissions.browse_visitors');
 
-                // Historicals
-
                 // Visitors Historicals
                 Route::get('visitors/inters_historical', [HistoricalController::class, 'browse_inter_visitors'])->name('visitors.inters.historical');
                 Route::get('visitors/cartes_historical', [HistoricalController::class, 'browse_carte_visitors'])->name('visitors.cartes.historical');

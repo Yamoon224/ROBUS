@@ -9,6 +9,11 @@
             aria-controls="transfers" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
                 data-feather="shield"></i> Transferts </a>
     </li>
+    <li id="reloads-tab" class="nav-item" role="presentation">
+        <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#reloads"
+            aria-controls="reloads" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                data-feather="shield"></i> Rechargements </a>
+    </li>
     <li id="employers-tab" class="nav-item" role="presentation">
         <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#employers"
             aria-controls="employers" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"

@@ -101,8 +101,7 @@ class Undersdistributors extends Component
                 ->where('country_id', $country_id)
                 ->first();
 
-            if (
-                $wallet_search === null || !$wallet_search->sidUser ||
+            if ($wallet_search === null || !$wallet_search->sidUser ||
                 ($wallet_search->sidUser->is_under_distributer === '1' && $wallet_search->sidUser->company_id == $company_id)
             ) {
                 $this->cancelReload();
@@ -381,7 +380,7 @@ class Undersdistributors extends Component
 
         $this->relaod_uv_amout = '';
         $this->emit('modal-hide', 'hide');
-        $this->emit('warning', 'Le numero doit appartenir a un sousdistributer qui a été accepté  !!');
+        $this->emit('warning', 'Le numero doit appartenir a un sous distributeur qui a été accepté  !!');
     }
 
 

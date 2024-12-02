@@ -34,38 +34,35 @@ class CheckAppStatus extends Command
 
     public function handle()
     {
-        $days_open_robus = CloseApp::whereStatus(true)->get();
+
         $currentDayOfWeek = Carbon::now()->dayOfWeek;
+        $currentHour = Carbon::now()->format('H:i:s');
+        $currentDayOfWeek = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek;
 
-        foreach ($days_open_robus as $robus_app) {
+        $robus_app = CloseApp::whereStatus(true)->where('id', $currentDayOfWeek)->first();
 
-            if ($currentDayOfWeek == $robus_app->id) {
-                
-                $robus_hour_begin = $robus_app->time_start;
-                $robus_hour_end = $robus_app->time_end;
-                $currentHour = Carbon::now()->format('H:i:s');
-                $robus_hour_description = $robus_app->description;
-                $robus_hour_description = $robus_app->description;
-                $robus_day = $robus_app->id;
+        if ($robus_app) {
 
 
-                if ($currentHour >= $robus_hour_begin && $currentHour <= $robus_hour_end) {
-                    // Utilisation de la classe DB
-                    DB::table('app_statuses')->truncate();
-                    // Ou utilisation de la classe DB avec une requête SQL brute
-                    DB::statement('TRUNCATE TABLE app_statuses');
+            $robus_hour_begin = Carbon::createFromFormat('H:i:s', $robus_app->time_start)->format('H:i:s');
+            $robus_hour_end = Carbon::createFromFormat('H:i:s', $robus_app->time_end)->format('H:i:s');
+            $currentHour = Carbon::now()->format('H:i:s');
+            $robus_hour_description = $robus_app->description;
+            $robus_day = $robus_app->day_of_week;
 
-                } else {
-                    // L'application est fermée, enregistrez cet état dans la base de données
-                    AppStatus::create([
-                        'status_app' => 'closed',
-                        'description' => $robus_hour_description,
-                        'time_start' => $robus_hour_begin,
-                        'time_end' => $robus_hour_end,
-                        'day_week' => $robus_day,
-                    ]);
-                }
+            if ($currentHour >= $robus_hour_begin && $currentHour <= $robus_hour_end) {
+                DB::table('app_statuses')->truncate();
+                DB::statement('TRUNCATE TABLE app_statuses');
+            } else {
+                AppStatus::create([
+                    'status_app' => 'closed',
+                    'description' => $robus_hour_description,
+                    'time_start' => $robus_hour_begin,
+                    'time_end' => $robus_hour_end,
+                    'day_week' => $robus_day,
+                ]);
             }
         }
+        
     }
 }

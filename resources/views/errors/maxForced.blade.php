@@ -35,9 +35,8 @@
                    
                     <div class="intro-x text-xl lg:text-3xl font-medium mt-5">{{ $message ?? 'L’application est actuellement hors ligne pour maintenance.' }}</div>
                     <div class="intro-x text-lg mt-3"> 
-                        Robus était disponible aujourd'hui de <strong>{{ $dateOpen }} MN</strong> à <strong>{{ $dateClose }} MN</strong>.
                      </div>
-                    <a href="{{ url('/') }}" class="intro-x btn py-3 px-4 text-white border-white dark:border-darkmode-400 dark:text-slate-200 mt-10"><i class="feather icon-home mr-2"></i> Retour sur votre adresse</a>
+                    <a href="#" class="intro-x btn py-3 px-4 text-white border-white dark:border-darkmode-400 dark:text-slate-200 mt-10"><i class="feather icon-home mr-2"></i> Retour sur votre adresse</a>
                 </div>
             </div>
             <!-- END: Error Page -->

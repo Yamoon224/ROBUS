@@ -80,6 +80,13 @@ class UserController extends Controller
         $this->robusTransactionService = $robusTransactionService;
         $this->authService = $authService;
         $this->operatorRestrictionService = $operatorRestrictionService;
+          // Vérifier l'état de l'application
+        $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+
+          if (!$appStatusResult['success']) {
+              return response()->json($appStatusResult, 200);
+          }
+  
     }
 
     /**
@@ -173,6 +180,7 @@ class UserController extends Controller
     {
 
 
+        
         $commissions = [
             'Depots' => $this->transactionAccount->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class),
             'Retraits' => $this->transactionAccount->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class),

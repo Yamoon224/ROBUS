@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Offer;
-use Illuminate\Http\Request;
-use App\Models\Providers\Provider;
-use App\Models\Costs\OrderCardCost;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Services\ProvidersService;
 use App\Http\Resources\AllOfferCollection;
 use App\Http\Resources\ProviderCollection;
 use App\Http\Resources\ProviderSingleCollection;
+use App\Http\Services\ProvidersService;
+use App\Models\AppStatus;
+use App\Models\Costs\OrderCardCost;
+use App\Models\Offer;
+use App\Models\Providers\Provider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Services\AuthenticationService;
 
 /**
  * @OA\Get(
@@ -50,11 +52,14 @@ class ProviderController extends Controller
 
     /** @var  ReloadCardRepository */
     protected $percentRobus;
+    private $authService;
 
     public function __construct(
         ProvidersService $percentRobus,
+        AuthenticationService $authService
     ) {
         $this->percentRobus = $percentRobus;
+        $this->authService = $authService;
     }
 
     public function indexAncien()
@@ -140,6 +145,14 @@ class ProviderController extends Controller
 
     public function index()
     {
+
+        // Vérifier l'état de l'application
+        $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+
+        if (!$appStatusResult['success']) {
+            return response()->json($appStatusResult, 301);
+        }
+
         $assignations = $this->percentRobus->operatorServices();
 
         $restrictionMapTransaction = [
@@ -228,7 +241,7 @@ class ProviderController extends Controller
                 }
             } else {
 
-         
+
                 if (robus()->country->code == 'CI') {
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
                     $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
@@ -256,7 +269,6 @@ class ProviderController extends Controller
                 'success' => true,
                 'Wallets' => $dashboard_data,
             ], 200);
-
         } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,

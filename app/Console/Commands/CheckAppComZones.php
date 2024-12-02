@@ -32,36 +32,34 @@ class CheckAppComZones extends Command
      */
     public function handle()
     {
-        $days_open_robus = AppCloseCom::whereStatus(true)->get();
+        
         $currentDayOfWeek = Carbon::now()->dayOfWeek;
+        $currentHour = Carbon::now()->format('H:i:s');
+        $currentDayOfWeek = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek;
 
-        foreach ($days_open_robus as $robus_app) {
+        $robus_app = AppCloseCom::whereStatus(true)->where('id', $currentDayOfWeek)->first();
 
-            if ($currentDayOfWeek == $robus_app->id) {
-                
-                $robus_hour_begin = $robus_app->time_start;
-                $robus_hour_end = $robus_app->time_end;
-                $currentHour = Carbon::now()->format('H:i:s');
-                $robus_hour_description = $robus_app->description;
-                $robus_hour_description = $robus_app->description;
-                $robus_day = $robus_app->id;
+        if ($robus_app) {
 
+            $robus_hour_begin = Carbon::createFromFormat('H:i:s', $robus_app->time_start)->format('H:i:s');
+            $robus_hour_end = Carbon::createFromFormat('H:i:s', $robus_app->time_end)->format('H:i:s');
+            $currentHour = Carbon::now()->format('H:i:s');
+            $robus_hour_description = $robus_app->description;
+            $robus_day = $robus_app->day_of_week;
 
-                if ($currentHour >= $robus_hour_begin && $currentHour <= $robus_hour_end) {
-                    // Utilisation de la classe DB
-                    DB::table('app_com_zone_statuses')->truncate();
-                    DB::statement('TRUNCATE TABLE app_com_zone_statuses');
+            if ($currentHour >= $robus_hour_begin && $currentHour <= $robus_hour_end) {
+               // Utilisation de la classe DB
+               DB::table('app_com_zone_statuses')->truncate();
+               DB::statement('TRUNCATE TABLE app_com_zone_statuses');
 
-                } else {
-                    // L'application est fermée, enregistrez cet état dans la base de données
-                    AppComZoneStatus::create([
-                        'status_app' => 'closed',
-                        'description' => $robus_hour_description,
-                        'time_start' => $robus_hour_begin,
-                        'time_end' => $robus_hour_end,
-                        'day_week' => $robus_day,
-                    ]);
-                }
+            } else {
+                AppComZoneStatus::create([
+                    'status_app' => 'closed',
+                    'description' => $robus_hour_description,
+                    'time_start' => $robus_hour_begin,
+                    'time_end' => $robus_hour_end,
+                    'day_week' => $robus_day,
+                ]);
             }
         }
     }

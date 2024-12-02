@@ -141,7 +141,6 @@ class HomeCompany extends Component
         $reload_amount = $this->getTodayReloadAmountTotal(WalletReload::class);
         $phonecredit_amount = $this->getTodayTransactionUndersAmountTotal(WalletPhoneCredit::class);
         $inter_amount = $this->getTodayTransactionUndersAmountTotal(WalletInter::class);
-        // dd( $payement_amount);
         
         $bank_amount = $this->getTodayTransactionUndersAmountTotal(WalletBank::class);
         $deposit_amount = $this->getTodayTransactionUndersAmountTotal(WalletDeposit::class);
@@ -180,7 +179,6 @@ class HomeCompany extends Component
         $transaction_error = $this->getTransactionCount(WalletTransaction::class, 'ERROR', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
         $transaction_padding = $this->getTransactionCount(WalletTransaction::class, 'PENDING', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
         $transaction_success = $this->getTransactionCount(WalletTransaction::class, 'SUCCESS', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
-        $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
         $closeRobus = CloseApp::orderBy('id', 'asc')->get();
         $employers =  SidUser::where('is_custumers', true)->where('company_id', firm()->company_id)->count();
         $underDistributors =  SidUser::where('is_under_distributer', true)->where('company_id', firm()->company_id)->count();

@@ -509,9 +509,7 @@ class CountrieController extends Controller
 
         $countrie = Country::where('name', $code)->first();
 
-
         $get_users =    SidUser::Where('country_id', $countrie->id)->paginate(20);
-
 
 
         $usersCountry = $countrie->currencie->name ?? null;
@@ -621,9 +619,11 @@ class CountrieController extends Controller
             $wallet_inters =  $this->historiqueService->getWalletLimitViews(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.commissions', 'wallet_inters.status',  'wallet_inters.created_at');
             $wallet_phones =  $this->historiqueService->getWalletLimitViews(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.commissions', 'wallet_phone_credits.status',  'wallet_phone_credits.created_at');
             $wallet_xbets =  $this->historiqueService->getWalletLimitViews(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.commissions', 'wallet_xbets.status',  'wallet_xbets.created_at');
+            $sum_wallet_companies = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_company');
 
             $sum_wallet_drawer = $this->getWalletWithMerchantSumUserDaysProperty($countrie->id);
             $With_drawer_merchant = $this->getWalletWithMerchantSumUserDaygetProperty($countrie->id);
+            $With_drawer_compagnie = $this->getWalletWithMerchantCompagnieSumUserDaysProperty($countrie->id);
 
             // Last valeurs
             return view('pages.countries.show_under_distributer', compact(
@@ -631,6 +631,8 @@ class CountrieController extends Controller
                 'cumul_solde',
                 'sum_bank',
                 'sum_deposit',
+                'sum_wallet_companies',
+                'With_drawer_compagnie',
                 'sum_payment',
                 'sum_transaction',
                 'sum_xbet',
@@ -826,6 +828,17 @@ class CountrieController extends Controller
     {
         return WithMerchant::join('sid_users', 'sid_users.id', 'with_merchants.sid_user_id')
             ->where('sid_users.country_id', $countrie)
+            ->where('sid_users.is_under_distributer', true)
+            ->where('with_merchants.date_removed', '!=', null)
+            ->whereDate('with_merchants.date_removed', Carbon::now())
+            ->sum('with_merchants.amount_with_draw');
+    }
+
+    public function getWalletWithMerchantCompagnieSumUserDaysProperty($countrie)
+    {
+        return WithMerchant::join('sid_users', 'sid_users.id', 'with_merchants.sid_user_id')
+            ->where('sid_users.country_id', $countrie)
+            ->where('sid_users.is_company', true)
             ->where('with_merchants.date_removed', '!=', null)
             ->whereDate('with_merchants.date_removed', Carbon::now())
             ->sum('with_merchants.amount_with_draw');

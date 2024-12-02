@@ -83,40 +83,57 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-span-12 sm:col-span-4 xl:col-span-4 intro-y">
+                    <div class="report-box zoom-in">
+                        <div class="box p-5">
+                            <div class="flex">
+                                <i data-feather="users" class="report-box__icon text-secondary"></i>
+                            </div>
+                            <div class="text-3xl font-medium leading-8 mt-6">
+                                {{ $With_drawer_compagnie ?? null }} {{ $countrie->currencie->code ?? null }}
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Rémontée Compagnie</div>
+                        </div>
+                    </div>
+                </div>
                 @php
                     if (sabdy()->country->currencie->value > $countrie->currencie->value) {
                         //   Convertion  in CFA
                         $valeur_amount_receveid = (float) $cumul_solde * (float) $countrie->currencie->value;
 
                         $valeur_amount_remonted = (float) $sum_wallet_drawer * (float) $countrie->currencie->value;
+                        $valeur_amount_compagnie_remonted = (float) $With_drawer_compagnie * (float) $countrie->currencie->value;
                     } elseif (sabdy()->country->currencie->value == $countrie->currencie->value) {
                         $valeur_amount_receveid = $cumul_solde;
                         $valeur_amount_remonted = $sum_wallet_drawer;
+                        $valeur_amount_compagnie_remonted = $With_drawer_compagnie;
                     } elseif (sabdy()->country->currencie->value < $countrie->currencie->value) {
                         $valeur_amount_receveid = (float) $cumul_solde * (float) $countrie->currencie->value;
                         $valeur_amount_remonted = (float) $sum_wallet_drawer * (float) $countrie->currencie->value;
+                        $valeur_amount_compagnie_remonted = (float) $With_drawer_compagnie * (float) $countrie->currencie->value;
                     }
                 @endphp
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in  ">
+                <div class="col-span-12 sm:col-span-4 2xl:col-span-4 box p-5 cursor-pointer zoom-in  style-tran  ">
                     <i data-feather="trending-down" class="font-medium-5"></i>
                     <div class="font-medium text-historique mt-6">Montant commissions en CFA</div>
                     <div class="text-slate-500 mt-3">{{ $valeur_amount_receveid ?? null }} CFA</div>
                 </div>
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style-tran ">
-                    <i data-feather="trending-down" class="font-medium-5"></i>
-                    <div class="font-medium text-historique mt-6">Montant commissions remontée en CFA</div>
-                    <div class="text-slate-500 mt-3">{{ $valeur_amount_remonted ?? null }} CFA</div>
-                </div>
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
+                <div class="col-span-12 sm:col-span-4 2xl:col-span-4 box p-5 cursor-pointer zoom-in ">
                     <i data-feather="trending-down" class="font-medium-5"></i>
                     <div class="font-medium text-historique mt-6">Total UV S-distributeur</div>
                     <div class="text-slate-500 mt-3">{{ $sum_amount_distributer ?? null }}
                         {{ $countrie->currencie->code ?? null }}</div>
                 </div>
-                <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in  style-tran ">
+                <div class="col-span-12 sm:col-span-4 2xl:col-span-6 box p-5 cursor-pointer zoom-in  style-tran ">
                     <i data-feather="trending-down" class="font-medium-5"></i>
                     <div class="font-medium text-historique mt-6">Total Somme UV clients</div>
                     <div class="text-slate-500 mt-3">{{ $sum_amount_custumers ?? null }}
+                        {{ $countrie->currencie->code ?? null }}</div>
+                </div>
+                <div class="col-span-12 sm:col-span-4 2xl:col-span-6 box p-5 cursor-pointer zoom-in">
+                    <i data-feather="trending-down" class="font-medium-5"></i>
+                    <div class="font-medium text-historique mt-6">Total Somme Compagnie</div>
+                    <div class="text-slate-500 mt-3">{{ $sum_wallet_companies ?? null }}
                         {{ $countrie->currencie->code ?? null }}</div>
                 </div>
             @endif

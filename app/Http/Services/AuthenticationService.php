@@ -250,6 +250,44 @@ class AuthenticationService
                 Cache::put('app_status_result', $result, now()->addMinutes(20)); // Mettre en cache pendant 60 minutes
                 return $result;
         }
+
+        public function appDispoCompanieRobus($model)
+        {
+
+        
+
+                $cachedResult = Cache::get('app_compagnie_result');
+
+                if ($cachedResult) {
+                   return $cachedResult;
+                }
+
+
+                Artisan::call('app:close-company-status');
+
+                $appStatus = $model::latest()->first();
+
+                if ($appStatus && $appStatus->status_app === 'closed') {
+
+                        $robus_hour_begin = $appStatus->time_start;
+                        $robus_hour_end = $appStatus->time_end;
+                        $robus_hour_description = $appStatus->description;
+
+
+                        $result = [
+                                'success' => false,
+                                'message' => "L'application ROBUS Compagnie était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour {$robus_hour_description}.",
+                        ];
+
+                        Cache::put('app_compagnie_result', $result, now()->addMinutes(10)); 
+                        return $result;
+                }
+
+                $result = ['success' => true];
+                Cache::put('app_compagnie_result', $result, now()->addMinutes(10)); 
+                return $result;
+        }
+
         public function appDispoMasterRobus($model)
         {
 

@@ -345,7 +345,11 @@ class TransactionsAccountService
 
     public function getUserAllTransactions($wallets, $wallet_solde)
     {
+        $startOfWeek = Carbon::now()->startOfWeek(); 
+        $endOfWeek = Carbon::now()->endOfDay();
+
         return   $wallets::where('wallet_id', $wallet_solde->id)
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -382,7 +386,11 @@ class TransactionsAccountService
 
     public function getUserRemonte($wallets, $userId)
     {
+        $startOfWeek = Carbon::now()->startOfWeek(); 
+        $endOfWeek = Carbon::now()->endOfDay();
+
         return   $wallets::where('sid_user_id', $userId)
+             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
             ->orderBy('created_at', 'desc')
             ->get();
     }

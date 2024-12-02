@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Controllers\Controller;
+use App\Http\Services\AuthenticationService;
 use App\Http\Services\TransactionsAccountService;
 use App\Http\Services\UserCreateService;
 use App\Http\Services\ValidatorService;
 use App\Mail\CodeValidated;
 use App\Mail\NewAdmin;
 use App\Mail\OtpValidated;
+use App\Models\AppCompanyStatus;
 use App\Models\Banks\BankCard;
 use App\Models\Company;
 use App\Models\Custumers\Country;
@@ -36,6 +38,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -50,21 +53,28 @@ class AdminController extends Controller
     protected $transactionAccountService;
     protected $userValidatorService;
     protected $createUserService;
+    private $authService;
+    protected $appStatusResult;
 
     public function __construct(
         TransactionsAccountService $transactionAccountService,
         ValidatorService $userValidatorService,
-        UserCreateService $createUserService
+        UserCreateService $createUserService,
+        AuthenticationService $authService
     ) {
         $this->transactionAccountService = $transactionAccountService;
         $this->userValidatorService = $userValidatorService;
         $this->createUserService = $createUserService;
+        $this->authService = $authService;
+
+    
     }
 
     // Company Infos
 
     public function home_company()
     {
+
         return view('home_company');
     }
 
@@ -423,7 +433,6 @@ class AdminController extends Controller
 
         $roles = Role::whereId(3)->orderBy('created_at', 'desc')->get();
         $currentStep = 1;
-
         $countries = Country::whereRobus(true)->where('indecative', '!=', null)->get();
         return view('pages.admin.add_under_distributer', compact('roles', 'countries', 'currentStep'));
     }
@@ -506,6 +515,7 @@ class AdminController extends Controller
                     ->with('status', 'Email de l\'agent doit etre de Robus ou votre Email n\'est pas correct')
                     ->withInput();
             }
+            
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)
@@ -1326,6 +1336,8 @@ class AdminController extends Controller
 
         ));
     }
+
+
 
     public function remonteCommission($amount , $typeRemonte ,int $id)
     {

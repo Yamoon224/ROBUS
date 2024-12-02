@@ -2,7 +2,12 @@
     $prefix = Request::route()->getPrefix();
     $route = Route::current()->getName();
     $status = appDispoRobus(App\Models\AppCompanyStatus::class);
+   // Vérifier l'état de l'application
+//    $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
+// if (!$appStatusResult['success']) {
+//     return response()->json($appStatusResult, 301);
+// }
 @endphp
 <!-- BEGIN: Side Menu -->
 

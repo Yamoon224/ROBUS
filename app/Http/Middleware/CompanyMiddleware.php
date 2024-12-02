@@ -2,13 +2,29 @@
 
 namespace App\Http\Middleware;
 
+use App\Http\Services\AuthenticationService;
 use App\Models\AppCompanyStatus;
+use App\Models\AppStatus;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CompanyMiddleware
 {
+     /**
+     * @var AuthService
+     */
+    protected $authService;
+
+    /**
+     * Constructor to inject dependencies.
+     *
+     * @param AuthService $authService
+     */
+    public function __construct(AuthenticationService $authService)
+    {
+        $this->authService = $authService;
+    }
     /**
      * Handle an incoming request.
      *
@@ -18,13 +34,13 @@ class CompanyMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $appStatus = AppCompanyStatus::latest()->first();
-        
-        if ($appStatus !== null && $appStatus->status_app === 'closed') {
+   
+      
+        $appStatusResult = $this->authService->appDispoCompanieRobus(AppCompanyStatus::class);
+
+        if (!$appStatusResult['success']) {
             return response()->view('errors.599', [
-                'message' => $appStatus->description,
-                'dateOpen' => $appStatus->time_start,
-                'dateClose' => $appStatus->time_end,
+                'message' => $appStatusResult['message'],
             ], 599);
         }
         if (Auth::check() && !sabdyCompanyVerify()) {

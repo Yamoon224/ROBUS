@@ -23,6 +23,7 @@ use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
+use App\Models\WithMerchant;
 use App\Rules\MatchOldPassword;
 use App\Tools\Image;
 use Illuminate\Database\Eloquent\Model;
@@ -67,7 +68,7 @@ class UserController extends Controller
     {
         // if (Auth::guard('web')->user()->hasPermissionTo('gain-commissions')) {
 
-            return view('pages.custumers.browse_winnings');
+        return view('pages.custumers.browse_winnings');
         // } else {
         //     abort(403);
         // }
@@ -149,19 +150,19 @@ class UserController extends Controller
             $transactions =  $this->transactionAccountService->getTransactionUserWallet(WalletTransaction::class, $wallet_solde->id, 'num_wallet',  $wallet_solde->wallet_id);
 
             $paiements =  $this->transactionAccountService->getTransactionsWallet(WalletPayment::class, $wallet_solde->id);
-    
+
             $virements =  $this->transactionAccountService->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
-    
+
             $phoneCredits =  $this->transactionAccountService->getTransactionsWallet(WalletPhoneCredit::class, $wallet_solde->id);
-    
+
             $reloadCards =  $this->transactionAccountService->getTransactionsWallet(WalletDeposit::class, $wallet_solde->id);
-    
+
             $walletOrderCarte =  $this->transactionAccountService->getTransactionsWallet(BankCard::class, $wallet_solde->id);
-    
+
             $walletxbet =  $this->transactionAccountService->getTransactionsWallet(WalletXbet::class, $wallet_solde->id);
-    
+
             $reaload_uv =  $this->transactionAccountService->getTransactionUserWallet(WalletReload::class, $wallet_solde->id, 'account_wallet',  $wallet_solde->wallet_id);
-    
+
             $Internationals =  $this->transactionAccountService->getTransactionUserWallet(WalletInter::class, $wallet_solde->id, 'number_compte',  $wallet_solde->wallet_id);
 
             // Wallet Error and other
@@ -175,21 +176,21 @@ class UserController extends Controller
             $sum_wallet_transaction = $this->transactionAccountService->getTransactionsTypeAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
 
             $sum_wallet_bank = $this->transactionAccountService->getTransactionAmount(WalletBank::class, $wallet_solde->id);
-    
+
             $sum_wallet_deposit = $this->transactionAccountService->getTransactionAmount(WalletDeposit::class, $wallet_solde->id);
-    
+
             $sum_wallet_payment = $this->transactionAccountService->getTransactionAmount(WalletPayment::class, $wallet_solde->id);
-    
+
             $sum_wallet_phone = $this->transactionAccountService->getTransactionAmount(WalletPhoneCredit::class, $wallet_solde->id);
-    
+
             $sum_wallet_xbet = $this->transactionAccountService->getTransactionAmount(WalletXbet::class, $wallet_solde->id);
-    
+
             $sum_wallet_Inter = $this->transactionAccountService->getTransactionsTypeAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
-    
-      
-    
+
+
+
             $sum_wallet_transaction_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
-    
+
             $sum_wallet_Inter_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletInter::class, 'number_compte', $wallet_solde);
 
             return view('pages.custumers.show', compact(
@@ -238,25 +239,192 @@ class UserController extends Controller
                 // ->orWhere('num_wallet' ,  $wallet_solde->wallet_id)
                 ->orderBy('created_at', 'desc')->paginate(20);
 
+            $walletreloads =  WalletReload::where('wallet_id', $wallet_solde->id)
+                // ->orWhere('num_wallet' ,  $wallet_solde->wallet_id)
+                ->orderBy('created_at', 'desc')->paginate(20);
 
-            $employers =  SidUser::where('is_custumers' ,true)->where('id', '!=', $id)->where('company_id', $user->company_id)->count();
-            $underDistributors =  SidUser::where('is_under_distributer' ,true)->where('id', '!=', $id)->where('company_id', $user->company_id)->count();
+            $employers =  SidUser::where('is_custumers', true)->where('id', '!=', $id)->where('company_id', $user->company_id)->count();
+            $underDistributors =  SidUser::where('is_under_distributer', true)->where('id', '!=', $id)->where('company_id', $user->company_id)->count();
 
             $usersCountry = Auth::guard('web')->user()->country->currencie->name;
+
+            // Gains
+            $gain_deposits = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletDeposit::class , $user->company_id , $user->id);
+            $gain_payments = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletPayment::class, $user->company_id , $user->id);
+            $gain_transactions = $this->getEmployerTransactionCommission(WalletTransaction::class, $user->wallet->id);
+            $gain_moneys = $this->getTodayTransactionCompagnieMCommissionAmountTotal(WalletTransaction::class, $user->company_id , $user->id);
+            $gain_depots = $this->getTodayTransactionCompagnieRobusCommissionAmountTotal(WalletTransaction::class, $user->company_id , $user->id);
+            $gain_retraits = $this->getTodayTransactionCompagnieRetraitCommissionAmountTotal(WalletTransaction::class, $user->company_id , $user->id);
+            $gain_phone_credits = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletPhoneCredit::class , $user->company_id , $user->id);
+            $gain_inters = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletInter::class, $user->company_id , $user->id);
+            $gain_banks = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletBank::class, $user->company_id , $user->id);
+
+            $company_gains = $gain_payments + $gain_moneys  + $gain_depots + $gain_retraits  + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
+
+            // Execeptions
+            $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
 
             return view('pages.custumers.show_company', compact(
                 'user',
                 'transactions',
+                'walletreloads',
                 'usersCountry',
                 'employers',
                 'underDistributors',
+                'company_gains',
+                'gain_deposits',
+                'gain_payments',
+                'gain_transactions',
+                'gain_moneys',
+                'gain_depots',
+                'gain_retraits',
+                'gain_phone_credits',
+                'gain_inters',
+                'gain_banks',
                 'kycs'
             ));
         } else {
             abort(403);
         }
     }
+    public function getWalletWithMerchantSumUserProperty($id)
+    {
 
+
+        $data = [];
+
+        foreach (WithMerchant::where('sid_user_id', $id)->get() as $bank) {
+            $data[] = $bank->amount_with_draw;
+        }
+
+        return array_sum($data);
+    }
+
+    public function getTodayTransactionCompagnieCommissionAmountTotal($walletModel , $idCompagnie ,$id)
+    {
+
+        $sidUsers = SidUser::where('company_id',  $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionCompagnieMCommissionAmountTotal($walletModel , $idCompagnie ,$id)
+    {
+
+        $sidUsers = SidUser::where('company_id',  $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', '!=', 9)
+            ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+    public function getTodayTransactionCompagnieRobusCommissionAmountTotal($walletModel , $idCompagnie ,$id)
+    {
+
+        $sidUsers = SidUser::where('company_id',  $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Depot')
+            ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionCompagnieRetraitCommissionAmountTotal($walletModel , $idCompagnie ,$id)
+    {
+
+        $sidUsers = SidUser::where('company_id',  $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+            ->whereStatus('SUCCESS')
+            ->where('provider_id', 9)
+            ->where('type_transaction', 'Retrait')
+            ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+
+    public function getEmployerTransactionCommission($walletModel , $id)
+    {
+
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', $id)
+            ->whereStatus('SUCCESS')
+            ->sum('commission_companie');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+
+        return $totalAmount;
+    }
     public function getTotalSumTransactionsAmount($wallet_solde)
     {
         $sum_wallet_transaction = $this->transactionAccountService->getTransactionAmount(WalletTransaction::class,  $wallet_solde->id);

@@ -47,6 +47,32 @@ if (! function_exists('applyRestrictionMap')) {
     }
 }
 
+if (!function_exists('appDispoRobus')) {
+    function appDispoRobus($model)
+    {
+
+        Artisan::call('app:close-status');
+
+        // Récupérer le statut de l'application
+        $appStatus = $model::latest()->first();
+
+        // Vérifier si l'application est fermée
+        if ($appStatus && $appStatus->status_app === 'closed') {
+
+            $robus_hour_begin = $appStatus->time_start;
+            $robus_hour_end = $appStatus->time_end;
+            $robus_hour_description = $appStatus->description;
+
+            return [
+                'success' => false,
+                'message' => "L'application ROBUS Sous distributeurs était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour cause de {$robus_hour_description}.",
+            ];
+        }
+
+        return ['success' => true];
+    }
+}
+
 
 function adjustFeesWithRest($fees, $amount)
 {
@@ -59,18 +85,15 @@ function adjustFeesWithRest($fees, $amount)
     if ($rest > 0) {
 
         if ($rest == 1) {
-            $adjustfees += 5; 
-        }
-        elseif ($rest >= 4 && $rest <= 6) {
             $adjustfees += 5;
-        }
-        elseif ($rest >= 10 && $rest < 30) {
+        } elseif ($rest >= 4 && $rest <= 6) {
+            $adjustfees += 5;
+        } elseif ($rest >= 10 && $rest < 30) {
             $adjustfees += 10;
-        }
-        elseif ($rest >= 30 && $rest < 50) {
+        } elseif ($rest >= 30 && $rest < 50) {
             $adjustfees += 20;
         } elseif ($rest == 50) {
-            $adjustfees += 50; 
+            $adjustfees += 50;
         } elseif ($rest >= 60 && $rest <= 80) {
             $adjustfees += 70;
         } elseif ($rest > 80) {
@@ -78,7 +101,7 @@ function adjustFeesWithRest($fees, $amount)
         } elseif ($adjustfees == 0) {
             $adjustfees =  $fees;
         }
-    }elseif($rest == 0 && $adjustfees == 0) {
+    } elseif ($rest == 0 && $adjustfees == 0) {
         $adjustfees = 0;
         $amount = 0;
     } else {
@@ -241,6 +264,7 @@ function getAppCloseWeb()
 
     return CloseAppWeb::whereStatus(true)->whereId($currentDaySearch)->first();
 }
+
 
 
 function getAppCloseTomorowWeb()
