@@ -269,32 +269,33 @@
         </div>
 
     </div>
-    <h2 class="text-lg font-medium truncate mr-5 mt-6">Liste des gains a remonté</h2>
+    <h2 class="text-lg font-medium truncate mr-5 mt-6">Liste des gains à remonter et à retirer</h2>
+    <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
+        <form method="POST" action="{{ route('remonte.remonteAllCommission.unders', ['amount' => $company_gains, 'type' => 'COMMISSION', 'id' => $user->id]) }}">
+            @csrf
+            <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                    <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Tout remonté
+            </button>
+        </form>
+
+        <div class="font-medium text-historique mt-6">Total Gain</div>
+
+        <div class="text-slate-500 mt-3">
+            {{ number_format($company_gains, 2, ',', ' ') ?? null }}
+            {{ $currencie }}</div>
+
+    </div>
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
 
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
-            <form method="POST" action="{{ route('remonte.remonteAllCommission.unders', ['amount' => $company_gains, 'type' => 'COMMISSION', 'id' => $user->id]) }}">
-                @csrf
-                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
-                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
-                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
-                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
-                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
-                    </svg>
-                    Tout remonté
-                </button>
-            </form>
-
-            <div class="font-medium text-historique mt-6">Total Gain</div>
-
-            <div class="text-slate-500 mt-3">
-                {{ number_format($company_gains, 2, ',', ' ') ?? null }}
-                {{ $currencie }}</div>
-
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box bg-primary p-5 cursor-pointer zoom-in style-success">
+        
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box bg-primary p-5 cursor-pointer zoom-in style-success">
 
             <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_payments, 'type' => 'Paiements', 'id' => $user->id]) }}">
                 @csrf
@@ -309,6 +310,28 @@
                 </button>
             </form>
 
+            <form method="POST" action="{{ route('remonte.commissions.admins', ['amount' => $gain_payments, 'type' => 'Retrait Paiements', 'id' => $user->id]) }}">
+                @csrf
+                 
+                <div class="col-span-12 lg:col-span-8">
+                    <label class="form-label">Montant retrait<span
+                            class="text-danger">*</span></label>
+                    <input type="text"
+                        class="form-control @error('amountDrawal') is-invalid @enderror" style="color: black"
+                        name="amountDrawal" id="amountDrawal" 
+                        maxlength="15">
+                </div>
+                <button type="submit" class="btn btn-sm text-dark bg-white border-white mt-3" title="Modifier" style="color: black;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Retrait
+                </button>
+            </form>
+
             <div class="font-medium text-historique text-white mt-6">Paiements</div>
 
 
@@ -317,10 +340,12 @@
                 {{ $currencie }}</div>
 
         </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-error">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style-error">
 
             <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_depots, 'type' => 'Depots', 'id' => $user->id]) }}">
                 @csrf
+
+                
                 <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
                         <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -332,6 +357,26 @@
                 </button>
             </form>
 
+            <form method="POST" action="{{ route('remonte.commissions.admins', ['amount' => $gain_depots, 'type' => 'Retrait Depots', 'id' => $user->id]) }}">
+                @csrf
+                <div class="col-span-12 lg:col-span-8">
+                    <label class="form-label">Montant retrait<span
+                            class="text-danger">*</span></label>
+                    <input type="text"
+                        class="form-control @error('amountDrawal') is-invalid @enderror" style="color: black"
+                        name="amountDrawal" id="amountDrawal" 
+                        maxlength="15">
+                </div>
+                <button type="submit" class="btn btn-success mr-1 mb-2 btn-sm text-white mt-3" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Retrait
+                </button>
+            </form>
 
             <div class="font-medium text-historique mt-6">Dépot Robus</div>
             <div class="text-slate-500 mt-3">
@@ -343,6 +388,8 @@
 
             <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_retraits, 'type' => 'Retraits', 'id' => $user->id]) }}">
                 @csrf
+
+                
                 <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Modifier">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
                         <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -355,6 +402,27 @@
             </form>
 
 
+            <form method="POST" action="{{ route('remonte.commissions.admins', ['amount' => $gain_retraits, 'type' => 'Retrait Retraits', 'id' => $user->id]) }}">
+                @csrf
+
+                <div class="col-span-12 lg:col-span-8">
+                    <label class="form-label">Montant retrait<span
+                            class="text-danger">*</span></label>
+                    <input type="text"
+                        class="form-control @error('amountDrawal') is-invalid @enderror" style="color: black"
+                        name="amountDrawal" id="amountDrawal" 
+                        maxlength="15">
+                </div>
+                <button type="submit" class="btn btn-success mr-1 mb-2 btn-sm text-white mt-3" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Retrait
+                </button>
+            </form>
             <div class="font-medium text-historique mt-6">Rétrait Robus</div>
             <div class="text-slate-500 mt-3">
                 {{ number_format($gain_retraits, 2, ',', ' ') ?? null }} {{ $currencie }}
@@ -377,6 +445,27 @@
             </form>
 
 
+            <form method="POST" action="{{ route('remonte.commissions.admins', ['amount' => $gain_moneys, 'type' => 'Retrait Moneys', 'id' => $user->id]) }}">
+                @csrf
+
+                <div class="col-span-12 lg:col-span-8">
+                    <label class="form-label">Montant retrait<span
+                            class="text-danger">*</span></label>
+                    <input type="text"
+                        class="form-control @error('amountDrawal') is-invalid @enderror" style="color: black"
+                        name="amountDrawal" id="amountDrawal" 
+                        maxlength="15">
+                </div>
+                <button type="submit" class="btn btn-success mr-1 mb-2 btn-sm text-white mt-3" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Retrait
+                </button>
+            </form>
             <div class="font-medium text-historique mt-6">Mobile Money</div>
             <div class="text-slate-500 mt-3">
                 {{ number_format($gain_moneys, 2, ',', ' ') ?? null }} {{ $currencie }}
@@ -397,13 +486,34 @@
                     Rémonter
                 </button>
             </form>
+            <form method="POST" action="{{ route('remonte.commissions.admins', ['amount' => $gain_phone_credits, 'type' => 'Retrait Crédits', 'id' => $user->id]) }}">
+                @csrf
+
+                <div class="col-span-12 lg:col-span-8">
+                    <label class="form-label">Montant retrait<span
+                            class="text-danger">*</span></label>
+                    <input type="text"
+                        class="form-control @error('amountDrawal') is-invalid @enderror" style="color: black"
+                        name="amountDrawal" id="amountDrawal" 
+                        maxlength="15">
+                </div>
+                <button type="submit" class="btn btn-success mr-1 mb-2 btn-sm text-white mt-3" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Retrait
+                </button>
+            </form>
 
             <div class="font-medium text-historique mt-6">Credits</div>
             <div class="text-slate-500 mt-3"> {{ number_format($gain_phone_credits, 2, ',', ' ') ?? null }}
                 {{ $currencie }}</div>
 
         </div>
-        {{-- luiscrepin@gmail.com --}}
+
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
 
             <form method="POST" action="{{ route('remonte.commissions.unders', ['amount' => $gain_inters, 'type' => 'International', 'id' => $user->id]) }}">
@@ -416,6 +526,28 @@
                         <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                     Rémonter
+                </button>
+            </form>
+
+            <form method="POST" action="{{ route('remonte.commissions.admins', ['amount' => $gain_inters, 'type' => 'Retrait International', 'id' => $user->id]) }}">
+                @csrf
+
+                <div class="col-span-12 lg:col-span-8">
+                    <label class="form-label">Montant retrait<span
+                            class="text-danger">*</span></label>
+                    <input type="text"
+                        class="form-control @error('amountDrawal') is-invalid @enderror" style="color: black"
+                        name="amountDrawal" id="amountDrawal" 
+                        maxlength="15">
+                </div>
+                <button type="submit" class="btn btn-success mr-1 mb-2 btn-sm text-white mt-3" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Retrait
                 </button>
             </form>
 
@@ -438,7 +570,27 @@
                     Rémonter
                 </button>
             </form>
+            <form method="POST" action="{{ route('remonte.commissions.admins', ['amount' => $gain_banks, 'type' => 'Retrait Virements', 'id' => $user->id]) }}">
+                @csrf
 
+                <div class="col-span-12 lg:col-span-8">
+                    <label class="form-label">Montant retrait<span
+                            class="text-danger">*</span></label>
+                    <input type="text"
+                        class="form-control @error('amountDrawal') is-invalid @enderror" style="color: black"
+                        name="amountDrawal" id="amountDrawal" 
+                        maxlength="15">
+                </div>
+                <button type="submit" class="btn btn-success mr-1 mb-2 btn-sm text-white mt-3" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Retrait
+                </button>
+            </form>
             <div class="font-medium text-historique mt-6">Virements</div>
             <div class="text-slate-500 mt-3">
                 {{ number_format($gain_banks, 2, ',', ' ') ?? null }}
@@ -460,7 +612,27 @@
                 </button>
             </form>
 
+            <form method="POST" action="{{ route('remonte.commissions.admins', ['amount' => $gain_deposits, 'type' => 'Retrait Rechargements', 'id' => $user->id]) }}">
+                @csrf
 
+                <div class="col-span-12 lg:col-span-8">
+                    <label class="form-label">Montant retrait<span
+                            class="text-danger">*</span></label>
+                    <input type="text"
+                        class="form-control @error('amountDrawal') is-invalid @enderror" style="color: black"
+                        name="amountDrawal" id="amountDrawal" 
+                        maxlength="15">
+                </div>
+                <button type="submit" class="btn btn-success mr-1 mb-2 btn-sm text-white mt-3" title="Modifier">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 mr-3">
+                        <rect x="2" y="5" width="20" height="14" rx="2" ry="2" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="2" y1="10" x2="22" y2="10" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="6" y1="15" x2="10" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                        <line x1="14" y1="15" x2="18" y2="15" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Retrait
+                </button>
+            </form>
 
             <div class="font-medium text-historique mt-6">Réchargements cartes</div>
             <div class="text-slate-500 mt-3">
@@ -940,11 +1112,9 @@
         </div>
         <div id="virement" class="tab-pane" role="tabpanel" aria-labelledby="virement-tab">
             @livewire('transaction-details.virements-users', ['walletAllVirements' => $user->id])
-
         </div>
         <div id="phone" class="tab-pane" role="tabpanel" aria-labelledby="phone-tab">
             @livewire('transaction-details.phone-credit-users', ['walletAllPhoneCredits' => $user->id])
-
         </div>
         <div id="inter" class="tab-pane" role="tabpanel" aria-labelledby="inter-tab">
             @livewire('transaction-details.inters-users', ['walletAllInters' => $user->id])

@@ -191,7 +191,15 @@ class AuthenticationService
         public function appDispoRobus($model)
         {
 
-                Artisan::call('app:close-status');
+
+                $cachedResult = Cache::get('app_status_mobile');
+
+           
+                if ($cachedResult) {
+                        return $cachedResult;
+                }
+
+                // Artisan::call('app:close-status');
 
                 // Récupérer le statut de l'application
                 $appStatus = $model::latest()->first();

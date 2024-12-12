@@ -166,6 +166,12 @@
             $('#disabled-user_admin-modal').addClass('show');
         });
 
+
+        Livewire.on('show-drawals-modal', () => {
+            $('#drawal-unders-modal').removeClass('hide');
+            $('#drawal-unders-modal').addClass('show');
+        });
+
         Livewire.on('show-password-modal', () => {
             $('#validated-password-modal').removeClass('hide');
             $('#validated-password-modal').addClass('show');
@@ -182,6 +188,9 @@
         Livewire.on('modal-hide', () => {
 
             //Update new Companie Modal
+            $('#drawal-unders-modal').removeClass('show');
+            $('#drawal-unders-modal').addClass('hide');
+
             $('#update-percent-companie-modal').removeClass('show');
             $('#update-percent-companie-modal').addClass('hide');
 

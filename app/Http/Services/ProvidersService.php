@@ -12,6 +12,15 @@ class ProvidersService
 {
 
 
+    public function getProvidersByMultipleTypes($providerModel, $types, $countryId)
+    {
+        return $providerModel::whereIn('type', $types)
+            ->where('country_id', $countryId)
+            ->where('status', true)
+            ->get()
+            ->groupBy('type');
+    }
+
 
     public function operatorServices()
     {
@@ -214,18 +223,18 @@ class ProvidersService
 
         if ($isUnderDistributer) {
             if ($countryNameGroup == "CIV") {
-                $providerMap = ['AFL', 'AFC', 'ASIE' , 'AFE'];
+                $providerMap = ['AFL', 'AFC', 'ASIE', 'AFE'];
             } else {
-                $providerMap = ['AFL', 'CIV', 'AFC', 'ASIE' , 'AFE'];
+                $providerMap = ['AFL', 'CIV', 'AFC', 'ASIE', 'AFE'];
             }
         } else {
             $providerMaps = [
-                "CIV" => ['AFL', 'AFC', 'USA', 'MAG', 'URP' , 'ASIE', 'AFE'],
-                "USA" => ['AFL', 'AFC', 'URP', 'MAG', 'CIV' , 'ASIE', 'AFE'],
-                "AFL" => ['AFL', 'AFC', 'URP', 'CIV', 'USA', 'MAG' , 'ASIE' , 'AFE'],
-                "AFC" => ['CIV', 'AFC', 'URP', 'USA', 'MAG', 'AFL' , 'ASIE' , 'AFE'],
-                "URP" => ['CIV', 'AFC', 'AFL', 'USA', 'MAG' , 'ASIE' , 'AFE'],
-                "MAG" => ['CIV', 'AFC', 'URP', 'AFL', 'USA', 'MAG' , 'ASIE', 'AFE'],
+                "CIV" => ['AFL', 'AFC', 'USA', 'MAG', 'URP', 'ASIE', 'AFE'],
+                "USA" => ['AFL', 'AFC', 'URP', 'MAG', 'CIV', 'ASIE', 'AFE'],
+                "AFL" => ['AFL', 'AFC', 'URP', 'CIV', 'USA', 'MAG', 'ASIE', 'AFE'],
+                "AFC" => ['CIV', 'AFC', 'URP', 'USA', 'MAG', 'AFL', 'ASIE', 'AFE'],
+                "URP" => ['CIV', 'AFC', 'AFL', 'USA', 'MAG', 'ASIE', 'AFE'],
+                "MAG" => ['CIV', 'AFC', 'URP', 'AFL', 'USA', 'MAG', 'ASIE', 'AFE'],
             ];
 
             $providerMap = $providerMaps[$countryNameGroup] ?? [];
@@ -262,12 +271,32 @@ class ProvidersService
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
             ->where('providers.status', true)
-            ->where('providers.id' , 9)
+            ->where('providers.id', 9)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
             ->get();
     }
+
+    public static function getProvidersByTypes($query, $countryId, array $providerTypes, $additionalConditions = [])
+    {
+        $query = $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->whereIn('providers.provider_type_id', $providerTypes);
+
+        // Ajout de conditions supplémentaires si nécessaire
+        foreach ($additionalConditions as $field => $value) {
+            $query->where($field, $value);
+        }
+
+        return $query
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+    }
+
 
     public static function getProvidersMoneyByType($query, $countryId, $providerType)
     {
@@ -277,7 +306,7 @@ class ProvidersService
             ->join('country_services', 'country_services.provider_id', 'providers.id')
             ->where('country_services.country_id', $countryId)
             ->where('providers.status', true)
-            ->where('providers.id', '!=' , 9)
+            ->where('providers.id', '!=', 9)
             ->where('providers.provider_type_id', $providerType)
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')

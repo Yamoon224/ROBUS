@@ -11,6 +11,7 @@ use App\Http\Services\ValidatorService;
 use App\Mail\CodeValidated;
 use App\Mail\NewAdmin;
 use App\Mail\OtpValidated;
+use App\Models\AdminsCom;
 use App\Models\AppCompanyStatus;
 use App\Models\Banks\BankCard;
 use App\Models\Company;
@@ -66,8 +67,6 @@ class AdminController extends Controller
         $this->userValidatorService = $userValidatorService;
         $this->createUserService = $createUserService;
         $this->authService = $authService;
-
-    
     }
 
     // Company Infos
@@ -515,7 +514,6 @@ class AdminController extends Controller
                     ->with('status', 'Email de l\'agent doit etre de Robus ou votre Email n\'est pas correct')
                     ->withInput();
             }
-            
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)
@@ -1339,10 +1337,10 @@ class AdminController extends Controller
 
 
 
-    public function remonteCommission($amount , $typeRemonte ,int $id)
+    public function remonteCommission($amount, $typeRemonte, int $id)
     {
 
- 
+
         $user = SidUser::find($id);
 
 
@@ -1408,7 +1406,7 @@ class AdminController extends Controller
 
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
-        $withRemonte = $this->createWithCommission($amount_solde, $amount , $user->id ,  $typeRemonte);
+        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte);
 
         if ($withRemonte !== null) {
 
@@ -1441,7 +1439,6 @@ class AdminController extends Controller
                 ->with('color', 'success')
                 ->with('status', 'Votre commission a été remontée avec succès !!')
                 ->withInput();
-
         } else {
             return back()
                 ->with('color', 'danger')
@@ -1450,11 +1447,157 @@ class AdminController extends Controller
         }
     }
 
-    public function remonteAllCommission($amount , $typeRemonte ,int $id)
+    public  function remonteCommissionAdmins($amount, $typeRemonte, int $id, Request $request)
     {
 
- 
-       
+
+        $user = SidUser::find($id);
+        $admin_civ =  SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->where('country_id', 107)
+            ->get();
+
+        if (!$user) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Utilisateur introuvable !!')
+                ->withInput();
+        }
+
+
+        $gainMappings = [
+            "Retrait Paiements" => $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id),
+            "Retrait Transactions" => $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Retrait Crédits" => $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class, $user->wallet->id),
+            "Retrait International" => $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id),
+            "Retrait Virements" => $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id),
+            "Retrait Rechargements" => $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id),
+            "Retrait Depots" => $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Retrait Retraits" => $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            "Retrait Moneys" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+        ];
+
+        $resetMappings = [
+            "Retrait Paiements" => WalletPayment::class,
+            "Retrait Transactions" => WalletTransaction::class,
+            "Retrait Crédits" => WalletPhoneCredit::class,
+            "Retrait International" => WalletInter::class,
+            "Retrait Virements" => WalletBank::class,
+            "Retrait Rechargements" => WalletDeposit::class,
+            "Retrait Depots" => WalletTransaction::class,
+            "Retrait Retraits" => WalletTransaction::class,
+            "Retrait Moneys" => WalletTransaction::class,
+        ];
+
+
+        $validator = Validator::make(
+
+            $request->all(),
+            [
+                'amountDrawal' => 'required',
+            ],
+            [
+
+                'amountDrawal.required' => 'Votre montant est obligatoire',
+
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Le montant est  obligatoire',
+                    'data' => $validator->errors()
+                ],
+                333
+            );
+        }
+
+        if ($amount <= 0) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Le montant de la commission est invalide ou null !!')
+                ->withInput();
+        }
+
+
+        if (!isset($gainMappings[$typeRemonte])) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Type de remontée invalide !!')
+                ->withInput();
+        }
+
+        $calculatedGainAmount = $gainMappings[$typeRemonte];
+
+        if ((float)$amount !== $calculatedGainAmount) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Montant de la commission invalide !!')
+                ->withInput();
+        }
+
+        $amount_solde = (float)$user->wallet->amount;
+
+        $resetClass = $resetMappings[$typeRemonte];
+
+        $amountDrawa = $this->withdrawCommission($resetClass, $user , $request->amountDrawal);
+
+        if ($amountDrawa === true) {
+
+            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte);
+        
+            if (isset($resetMappings[$typeRemonte])) {
+                if ($admin_civ->count() > 0) {
+                    $nmbre_admin = $admin_civ->count();
+                    $valeur_single = $withRemonte->amount_with_draw / $nmbre_admin;
+        
+                    foreach ($admin_civ as $userAdmin) {
+                        $this->processAdminCommissionSDistributer($userAdmin->id, $withRemonte->id, $valeur_single);
+                    }
+                }
+            }
+        
+            $msg = 'Admins a fait un retrait sur votre commission';
+            $msg_title = 'Transfert de la commission';
+            $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        
+            return back()
+                ->with('color', 'success')
+                ->with('status', 'Votre commission a été retirée avec succès !!')
+                ->withInput();
+        } else {
+            // Il y a eu une erreur
+            return back()
+                ->with('color', 'danger')
+                ->with('status', $amountDrawa) // L'erreur renvoyée par withdrawCommission
+                ->withInput();
+        }
+    }
+
+    private function processAdminCommissionSDistributer($userId, $walletTransactionId, $amount)
+    {
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'with_merchant_id' => $walletTransactionId,
+            'description' => 'remonte commission sous distributeur',
+            'status'  => "SUCCESS",
+            'amount_under' =>  0,
+            'description_underdistributer' =>   null
+        ]);
+
+        $admin_single->wallet->increment('amount', $amount);
+    }
+
+    public function remonteAllCommission($amount, $typeRemonte, int $id)
+    {
+
+
+
         $user = SidUser::find($id);
 
 
@@ -1474,7 +1617,7 @@ class AdminController extends Controller
 
         $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
 
-    
+
         if ($amount <= 0) {
             return back()
                 ->with('color', 'danger')
@@ -1492,7 +1635,7 @@ class AdminController extends Controller
 
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
-        $withRemonte = $this->createWithCommission($amount_solde, $amount , $user->id ,  $typeRemonte);
+        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte);
 
         if ($withRemonte !== null) {
 
@@ -1517,7 +1660,6 @@ class AdminController extends Controller
                 ->with('color', 'success')
                 ->with('status', 'Votre commission a été remontée avec succès !!')
                 ->withInput();
-                
         } else {
             return back()
                 ->with('color', 'danger')
@@ -1553,13 +1695,16 @@ class AdminController extends Controller
     {
 
 
+
+
         $totalAmount = 0;
 
         $amount = $walletModel::where('wallet_id', $sidUserId)
             ->whereStatus('SUCCESS')
-            ->where('provider_id', 9)
+            ->where('provider_id', '=', 9)
             ->where('type_transaction', 'Depot')
             ->sum('commissions');
+
 
         if ($amount !== null) {
             $totalAmount += $amount;
@@ -1567,7 +1712,7 @@ class AdminController extends Controller
 
         $walletModel::where('wallet_id', $sidUserId)
             ->whereStatus('SUCCESS')
-            ->where('provider_id', 9)
+            ->where('provider_id', '=', 9)
             ->where('type_transaction', 'Depot')
             ->update(['commissions' => 0]);
 
@@ -1644,7 +1789,7 @@ class AdminController extends Controller
 
 
 
-    private function createWithCommission($amount_solde, $gain_amount , $userId, $typeRemonte)
+    private function createWithCommission($amount_solde, $gain_amount, $userId, $typeRemonte)
     {
         return WithMerchant::create([
             'amount_with_draw' =>  $gain_amount,
@@ -1671,6 +1816,26 @@ class AdminController extends Controller
 
         return $totalAmount;
     }
+
+    public function withdrawCommission($walletModel, $user, $amount)
+    {
+        $walletTransaction = $walletModel::where('wallet_id', $user->wallet->id)
+            ->where('status', 'SUCCESS')
+            ->whereCommissions($amount)
+            ->first();
+    
+        if ($walletTransaction) {
+            $walletTransaction->commissions -= $amount;
+            if ($walletTransaction->commissions < 0) {
+                return 'Le retrait dépasse la commission disponible.';
+            }
+            $walletTransaction->save();
+            return true; 
+        } else {
+            return 'Aucune transaction trouvée avec ce montant pour ce retrait de ' . $amount;
+        }
+    }
+    
 
     public function getTodayTransactionRobusRetraitCommissionAmountTotal($walletModel, $userID)
     {

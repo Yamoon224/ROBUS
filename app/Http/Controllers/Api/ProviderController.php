@@ -6,14 +6,16 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\AllOfferCollection;
 use App\Http\Resources\ProviderCollection;
 use App\Http\Resources\ProviderSingleCollection;
+use App\Http\Services\AuthenticationService;
 use App\Http\Services\ProvidersService;
 use App\Models\AppStatus;
+use App\Models\AppWebStatus;
 use App\Models\Costs\OrderCardCost;
 use App\Models\Offer;
 use App\Models\Providers\Provider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Services\AuthenticationService;
+use Illuminate\Support\Facades\Cache;
 
 /**
  * @OA\Get(
@@ -53,6 +55,7 @@ class ProviderController extends Controller
     /** @var  ReloadCardRepository */
     protected $percentRobus;
     private $authService;
+    protected $appStatusResult;
 
     public function __construct(
         ProvidersService $percentRobus,
@@ -60,6 +63,12 @@ class ProviderController extends Controller
     ) {
         $this->percentRobus = $percentRobus;
         $this->authService = $authService;
+        $this->appStatusResult = Cache::get('app_status_mobile');
+   
+        if (!$this->appStatusResult) {
+            $this->appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+            Cache::put('app_status_mobile', $this->appStatusResult, now()->addMinutes(30)); 
+        }
     }
 
     public function indexAncien()
@@ -183,20 +192,22 @@ class ProviderController extends Controller
             }
         }
 
+        $countrieId = robus()->country->id;
         $dashboard_data = [];
-        $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, robus()->country->id, 1);
-        $walletTransactionMoney = $this->percentRobus->getProvidersMoneyByType(new Provider, robus()->country->id, 1);
-        $walletPayment = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 2);
-        $walletPaymentInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 7);
+        $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
+        $walletTransactionMoney = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, 1);
+        $walletPayment = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 2);
+        $walletPaymentInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 7);
         $walletRetrait = Provider::whereId(9)->whereStatus(true)->get();
-        $walletBank = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 4);
-        $walletPhone = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 6);
-        $walletReloadCard = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 5);
-        $walletInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 8);
-        $walletPhoneInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 9);
-        $walletVirementBank = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 10);
-        $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 11);
-        $walletTransaction =  $this->percentRobus->getProvidersByType(new Provider, robus()->country->id, 1);
+        $walletBank = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 4);
+        $walletPhone = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 6);
+        $walletReloadCard = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 5);
+        $walletInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 8);
+        $walletPhoneInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 9);
+        $walletVirementBank = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 10);
+        $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 11);
+        $walletTransaction =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 1);
+
 
         try {
 

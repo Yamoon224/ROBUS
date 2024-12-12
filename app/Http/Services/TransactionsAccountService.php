@@ -508,7 +508,7 @@ class TransactionsAccountService
         $totalAmount = 0;
 
         $amount = $walletModel::where('wallet_id', robus()->wallet->id)
-            ->whereMonth('created_at', now()->month)
+            // ->whereMonth('created_at', now()->month)
             ->whereStatus('SUCCESS')
             ->sum('commissions');
 

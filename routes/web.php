@@ -273,6 +273,7 @@ Route::group(['prefix' => ''], function () {
         });
 
         Route::post('remote/commissions/{amount}/{type}/{id}', [AdminController::class, 'remonteCommission'])->name('remonte.commissions.unders');
+        Route::post('remote/admins/commissions/{amount}/{type}/{id}', [AdminController::class, 'remonteCommissionAdmins'])->name('remonte.commissions.admins');
         Route::post('remote/commissionalls/{amount}/{type}/{id}', [AdminController::class, 'remonteAllCommission'])->name('remonte.remonteAllCommission.unders');
 
 
@@ -528,9 +529,10 @@ Route::get('/reads_notifications', function () {
 
 Route::get('/reads_applications', function () {
 
-   
     Artisan::call('app:close-company-status');
-    
+    Artisan::call('app:close-status');
+    // Artisan::call('app:close-web-status');
+    // Artisan::call('app:close-master-status')
     return 'Artisan commands executed successfully.';
 });
 
