@@ -79,19 +79,19 @@ class AuthenticationService
                         $user = SidUser::whereStatus(true)->whereEmail($email)->first();
 
                         if (!$user) {
-                                return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée', 'catch' => true ];
+                                return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée', 'catch' => true];
                         }
 
                         // Si l'utilisateur a un code d'activation défini, vérifiez-le.
                         if (!empty($user->activation_code)) {
-                                return $this->attemptActiveCodeLogin($user, $email, $password , $device_meta_data, $code_active);
+                                return $this->attemptActiveCodeLogin($user, $email, $password, $device_meta_data, $code_active);
                         } else {
                                 return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
                         }
-                //      return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
+                        //      return $this->attemptDeviceLogin($user, $email, $password, $device_meta_data);
                 } catch (\Throwable $th) {
 
-                        return ['success' => false , 'catch' => true, 'message' => 'Mauvais identifiants ! Authentification échouée.', 'catch' => true];
+                        return ['success' => false, 'catch' => true, 'message' => 'Mauvais identifiants ! Authentification échouée.', 'catch' => true];
                 }
         }
 
@@ -114,7 +114,7 @@ class AuthenticationService
 
                                         $token = $user->createToken('auth_token');
 
-                                        return ['success' => true, 'token' => $token , 'user' => $user ];
+                                        return ['success' => true, 'token' => $token, 'user' => $user];
                                 } else {
                                         return ['success' => false, 'message' => 'Votre code OTP d\'activation est incorrecte .', 'catch' => true];
                                 }
@@ -122,7 +122,7 @@ class AuthenticationService
                                 return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée', 'catch' => true];
                         }
                 } else {
-                        return ['success' => false, 'catch' => true, 'message' => 'L\'ecriture du Email ou mot de passe incorrect.' , 'catch' => true];
+                        return ['success' => false, 'catch' => true, 'message' => 'L\'ecriture du Email ou mot de passe incorrect.', 'catch' => true];
                 }
         }
 
@@ -145,15 +145,15 @@ class AuthenticationService
 
                                         $token = $user->createToken('auth_token');
 
-                                        return ['success' => true, 'token' => $token , 'user' => $user ];
+                                        return ['success' => true, 'token' => $token, 'user' => $user];
                                 } else {
-                                        return ['success' => false, 'message' => 'Changement de dispositif détecté ou données du téléphone incorrectes.' , 'catch' => false];
+                                        return ['success' => false, 'message' => 'Changement de dispositif détecté ou données du téléphone incorrectes.', 'catch' => false];
                                 }
                         } else {
                                 return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée', 'catch' => true];
                         }
                 } else {
-                        return ['success' => false, 'message' => 'L\'ecriture du Email ou mot de passe incorrect.' , 'catch' => true];
+                        return ['success' => false, 'message' => 'L\'ecriture du Email ou mot de passe incorrect.', 'catch' => true];
                 }
         }
 
@@ -190,34 +190,57 @@ class AuthenticationService
 
         public function appDispoRobus($model)
         {
+                try {
 
 
-                $cachedResult = Cache::get('app_status_mobile');
+                        // Vérifier si le statut est en cache
+                        $cachedResult = Cache::get('app_status_mobile');
+                        if ($cachedResult) {
+                                return $cachedResult;
+                        }
 
-           
-                if ($cachedResult) {
-                        return $cachedResult;
-                }
+                        // Exécuter la commande Artisan pour mettre à jour les données
+                        Artisan::call('app:close-status');
 
-                // Artisan::call('app:close-status');
+                        // Récupérer le dernier statut de l'application
+                        $appStatus = $model::latest()->first();
 
-                // Récupérer le statut de l'application
-                $appStatus = $model::latest()->first();
+                        if ($appStatus && $appStatus->status_app === 'closed') {
+                                return $this->formatClosedAppResponse($appStatus);
+                        }
 
-                // Vérifier si l'application est fermée
-                if ($appStatus && $appStatus->status_app === 'closed') {
-
-                        $robus_hour_begin = $appStatus->time_start;
-                        $robus_hour_end = $appStatus->time_end;
-                        $robus_hour_description = $appStatus->description;
-
+                        // Si l'application est ouverte, mettre en cache un statut de succès
+                        $successResponse = ['success' => true];
+                        Cache::put('app_status_mobile', $successResponse, now()->addMinutes(20));
+                        return $successResponse;
+                } catch (\Exception $e) {
+                        // Gérer les exceptions et retourner une erreur générique
                         return [
                                 'success' => false,
-                                'message' => "L'application ROBUS Sous distributeurs était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour cause de {$robus_hour_description}.",
+                                'message' => 'Une erreur est survenue lors de la vérification du statut de l\'application.',
+                                'error' => $e->getMessage(),
                         ];
                 }
+        }
 
-                return ['success' => true];
+
+        private function formatClosedAppResponse($appStatus)
+        {
+                $robusHourBegin = $appStatus->time_start;
+                $robusHourEnd = $appStatus->time_end;
+                $robusHourDescription = $appStatus->description;
+
+                $message = "L'application ROBUS Sous distributeurs était ouverte aujourd'hui de {$robusHourBegin} à {$robusHourEnd} et est fermée pour cause de {$robusHourDescription}.";
+
+                $response = [
+                        'success' => false,
+                        'message' => $message,
+                ];
+
+                // Mettre en cache la réponse
+                Cache::put('app_status_mobile', $response, now()->addMinutes(20));
+
+                return $response;
         }
 
 
@@ -262,12 +285,12 @@ class AuthenticationService
         public function appDispoCompanieRobus($model)
         {
 
-        
+
 
                 $cachedResult = Cache::get('app_compagnie_result');
 
                 if ($cachedResult) {
-                   return $cachedResult;
+                        return $cachedResult;
                 }
 
 
@@ -287,12 +310,12 @@ class AuthenticationService
                                 'message' => "L'application ROBUS Compagnie était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour {$robus_hour_description}.",
                         ];
 
-                        Cache::put('app_compagnie_result', $result, now()->addMinutes(10)); 
+                        Cache::put('app_compagnie_result', $result, now()->addMinutes(10));
                         return $result;
                 }
 
                 $result = ['success' => true];
-                Cache::put('app_compagnie_result', $result, now()->addMinutes(10)); 
+                Cache::put('app_compagnie_result', $result, now()->addMinutes(10));
                 return $result;
         }
 

@@ -64,10 +64,16 @@ class ProviderController extends Controller
         $this->percentRobus = $percentRobus;
         $this->authService = $authService;
         $this->appStatusResult = Cache::get('app_status_mobile');
-   
+        $this->initializeAppStatus();
+    }
+
+    private function initializeAppStatus()
+    {
+        $this->appStatusResult = Cache::get('app_status_mobile');
+
         if (!$this->appStatusResult) {
             $this->appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
-            Cache::put('app_status_mobile', $this->appStatusResult, now()->addMinutes(30)); 
+            Cache::put('app_status_mobile', $this->appStatusResult, now()->addMinutes(20));
         }
     }
 

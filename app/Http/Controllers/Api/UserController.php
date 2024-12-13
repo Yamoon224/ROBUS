@@ -5,12 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Events\AdminNotifEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InterTransactionSingleCollection;
+use App\Http\Resources\OneXbetSingleCollection;
 use App\Http\Resources\PaymentSingleCollection;
 use App\Http\Resources\PhoneCreditSingleCollection;
 use App\Http\Resources\ReloadCardSingle;
 use App\Http\Resources\ReloadCartCollection;
-use App\Http\Resources\WaveSingleCollection;
-use App\Http\Resources\OneXbetSingleCollection;
 use App\Http\Resources\ReloadSingleCollection;
 use App\Http\Resources\RemonteSingleCollection;
 use App\Http\Resources\TransactionSingleCollection;
@@ -18,7 +17,9 @@ use App\Http\Resources\UnderCollection;
 use App\Http\Resources\UserSingleCollection;
 use App\Http\Resources\VirementSingleCollection;
 use App\Http\Resources\WalletSingleCollection;
+use App\Http\Resources\WaveSingleCollection;
 use App\Http\Services\AuthenticationService;
+use App\Http\Services\OperatorRestrictionService;
 use App\Http\Services\RobusTransactionService;
 use App\Http\Services\TransactionsAccountService;
 use App\Http\Services\ValidateDailyLimitService;
@@ -47,13 +48,13 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
-use App\Http\Services\OperatorRestrictionService;
 
 class UserController extends Controller
 {
@@ -65,6 +66,7 @@ class UserController extends Controller
     protected $robusTransactionService;
     protected $authService;
     protected $operatorRestrictionService;
+    protected $appStatusResult;
 
     public function __construct(
         TransactionsAccountService $transactionAccount,
@@ -73,22 +75,25 @@ class UserController extends Controller
         AuthenticationService $authService,
         OperatorRestrictionService $operatorRestrictionService,
 
-
     ) {
         $this->transactionAccount = $transactionAccount;
         $this->validatedamountDays = $validatedamountDays;
         $this->robusTransactionService = $robusTransactionService;
         $this->authService = $authService;
         $this->operatorRestrictionService = $operatorRestrictionService;
-          // Vérifier l'état de l'application
-        $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
-
-          if (!$appStatusResult['success']) {
-              return response()->json($appStatusResult, 200);
-          }
+        $this->initializeAppStatus();
   
     }
 
+    private function initializeAppStatus()
+    {
+        $this->appStatusResult = Cache::get('app_status_mobile');
+
+        if (!$this->appStatusResult) {
+            $this->appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+            Cache::put('app_status_mobile', $this->appStatusResult, now()->addMinutes(20));
+        }
+    }
     /**
      * @OA\GET(
      *      path="/user/dashboard",
