@@ -55,10 +55,12 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\InitializeAppStatusTrait;
 
 class UserController extends Controller
 {
 
+    use InitializeAppStatusTrait;
 
     /** @var  TransactionRepository */
     protected $transactionAccount;
@@ -81,19 +83,10 @@ class UserController extends Controller
         $this->robusTransactionService = $robusTransactionService;
         $this->authService = $authService;
         $this->operatorRestrictionService = $operatorRestrictionService;
-        $this->initializeAppStatus();
+        $this->initializeAppStatus($this->authService);
   
     }
 
-    private function initializeAppStatus()
-    {
-        $this->appStatusResult = Cache::get('app_status_mobile');
-
-        if (!$this->appStatusResult) {
-            $this->appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
-            Cache::put('app_status_mobile', $this->appStatusResult, now()->addMinutes(20));
-        }
-    }
     /**
      * @OA\GET(
      *      path="/user/dashboard",

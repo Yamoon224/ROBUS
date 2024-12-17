@@ -26,6 +26,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Cache;
 
 class AuthentificationController extends Controller
 {
@@ -33,13 +34,25 @@ class AuthentificationController extends Controller
     /** @var  RegisterRepository */
     private $registerRepository;
     private $authService;
+    protected $appStatusResult;
 
     public function __construct(RegisterRepository $registerReposi, AuthenticationService $authService)
     {
         $this->registerRepository = $registerReposi;
         $this->authService = $authService;
+        $this->initializeAppStatus();
+
     }
 
+    private function initializeAppStatus()
+    {
+        $this->appStatusResult = Cache::get('app_status_mobile');
+
+        if (!$this->appStatusResult) {
+            $this->appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+            Cache::put('app_status_mobile', $this->appStatusResult, now()->addMinutes(30));
+        }
+    }
     /**
      * @OA\POST(
      *      path="/auth/signUp",

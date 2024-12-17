@@ -16,6 +16,7 @@ use App\Repositories\OnexbetRepository;
 use App\Repositories\WaveRepository;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Traits\InitializeAppStatusTrait;
 
 class WaveTransactionController extends Controller
 {

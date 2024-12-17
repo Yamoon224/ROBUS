@@ -15,9 +15,13 @@ use App\Repositories\ReloadCardRepository;
 use App\Http\Services\NotificationSendService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\ValidateDailyLimitService;
+use App\Traits\InitializeAppStatusTrait;
+use App\Http\Services\AuthenticationService;
 
 class ReloadCardController extends Controller
 {
+
+    use InitializeAppStatusTrait;
 
     /** @var  ReloadCardRepository */
     private $reloadCardRepository;
@@ -26,20 +30,27 @@ class ReloadCardController extends Controller
     protected $validatedamountDays;
     protected $notificationOrderCard;
     protected $reloadCardService;
+    private $authService;
+
+    
     public function __construct(
         ReloadCardRepository $reload_cardReposi,
         DeletedService $deletedService,
         PercentRobusAuthService $percentRobus,
         ValidateDailyLimitService $validatedamountDays,
         NotificationSendService $notificationOrderCard,
-        ReloadCardService $reloadCardService
+        ReloadCardService $reloadCardService,
+        AuthenticationService $authService
     ) {
         $this->reloadCardRepository = $reload_cardReposi;
         $this->deletedService = $deletedService;
         $this->percentRobus = $percentRobus;
+        $this->authService = $authService;
         $this->validatedamountDays = $validatedamountDays;
         $this->notificationOrderCard = $notificationOrderCard;
         $this->reloadCardService = $reloadCardService;
+        $this->initializeAppStatus($this->authService);
+
     }
 
     /**

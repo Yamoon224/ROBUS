@@ -16,7 +16,7 @@ use App\Models\Providers\Provider;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-
+use App\Traits\InitializeAppStatusTrait;
 /**
  * @OA\Get(
  *      path="/provides",
@@ -51,6 +51,7 @@ use Illuminate\Support\Facades\Cache;
 class ProviderController extends Controller
 {
 
+    use InitializeAppStatusTrait;
 
     /** @var  ReloadCardRepository */
     protected $percentRobus;
@@ -63,19 +64,10 @@ class ProviderController extends Controller
     ) {
         $this->percentRobus = $percentRobus;
         $this->authService = $authService;
-        $this->appStatusResult = Cache::get('app_status_mobile');
-        $this->initializeAppStatus();
+        $this->initializeAppStatus($this->authService);
     }
 
-    private function initializeAppStatus()
-    {
-        $this->appStatusResult = Cache::get('app_status_mobile');
 
-        if (!$this->appStatusResult) {
-            $this->appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
-            Cache::put('app_status_mobile', $this->appStatusResult, now()->addMinutes(20));
-        }
-    }
 
     public function indexAncien()
     {

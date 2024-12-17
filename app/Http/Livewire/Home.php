@@ -3,6 +3,7 @@
 namespace App\Http\Livewire;
 
 use App\Models\CloseApp;
+use App\Models\Custumers\Country;
 use App\Models\Payments\Deposit;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
@@ -72,24 +73,24 @@ class Home extends Component
 
         // Amount transactions days
         $payement_amount = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
-        $payement_amount_cie = $this->getTodayTransactionProvidersAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount' , '8');
-        $payement_amount_canal = $this->getTodayTransactionProvidersAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount' , '7');
-        $payement_amount_sodeci = $this->getTodayTransactionProvidersAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount' , '10');
+        $payement_amount_cie = $this->getTodayTransactionProvidersAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount', '8');
+        $payement_amount_canal = $this->getTodayTransactionProvidersAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount', '7');
+        $payement_amount_sodeci = $this->getTodayTransactionProvidersAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount', '10');
         $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount');
-        $transaction_amount_robus = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '9');
-        $transaction_amount_moov = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '3');
-        $transaction_amount_wave = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '6');
-        $transaction_amount_orange = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '4');
-        $transaction_amount_mtn = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount' , '1');
+        $transaction_amount_robus = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount', '9');
+        $transaction_amount_moov = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount', '3');
+        $transaction_amount_wave = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount', '6');
+        $transaction_amount_orange = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount', '4');
+        $transaction_amount_mtn = $this->getTodayTransactionProviderAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount', '1');
         $reload_amount = $this->getTodayReloadAmountTotal(WalletReload::class);
         $phonecredit_amount = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount');
-        $inter_amount = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received');
-       
-        $inter_amount_moneyRobus = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received' , '1');
-        $inter_amount_cie = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received' , '5');
-        $inter_amount_credit = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received' , '6');
-        $inter_amount_virement = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received' , '7');
-        $inter_amount_rechargement = $this->getTodayTransactionProviderTypeAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received' , '8');
+        $inter_amount = $this->getTodayTransactionProviderTypeOneAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received');
+
+        $inter_amount_moneyRobus = $this->getTodayTransactionProviderOneAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received', 1);
+        $inter_amount_cie = $this->getTodayTransactionProviderOneAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received', 5);
+        $inter_amount_credit = $this->getTodayTransactionProviderOneAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received', 6);
+        $inter_amount_virement = $this->getTodayTransactionProviderOneAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received', 7);
+        $inter_amount_rechargement = $this->getTodayTransactionProviderOneAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount_received', 8);
 
         $bank_amount = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $deposit_amount = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
@@ -127,117 +128,116 @@ class Home extends Component
         $companies = $this->getUserTypeTotal('is_company', true);
         // $comzones = $this->getUserTypeTotal('is_com_zone', true);
 
-            return view('livewire.home', [
+        return view('livewire.home', [
 
-                // Users
+            // Users
 
-                // 'is_masters' => $masters,
-                'is_custumers' => $custumers,
-                'is_distributors' => $distributors,
-                'is_underdistributors' => $underDistributors,
-                'is_supervisors' => $supervisors,
-                'is_compagnies' => $companies,
-                // 'is_comzones' => $comzones,
+            // 'is_masters' => $masters,
+            'is_custumers' => $custumers,
+            'is_distributors' => $distributors,
+            'is_underdistributors' => $underDistributors,
+            'is_supervisors' => $supervisors,
+            'is_compagnies' => $companies,
+            // 'is_comzones' => $comzones,
 
-                'user_currencie' => $currencie,
-                'error_payment' => $payment_error,
-                'success_payment' => $payment_success,
-                'pendding_payment' => $payment_padding,
-                // 
-                'error_transaction' => $transaction_error,
-                'success_transaction' => $transaction_success,
-                'pendding_transaction' => $transaction_padding,
-                // 
-                'error_xbet' => $xbet_error,
-                'success_xbet' => $xbet_success,
-                'pendding_xbet' => $xbet_padding,
+            'user_currencie' => $currencie,
+            'error_payment' => $payment_error,
+            'success_payment' => $payment_success,
+            'pendding_payment' => $payment_padding,
+            // 
+            'error_transaction' => $transaction_error,
+            'success_transaction' => $transaction_success,
+            'pendding_transaction' => $transaction_padding,
+            // 
+            'error_xbet' => $xbet_error,
+            'success_xbet' => $xbet_success,
+            'pendding_xbet' => $xbet_padding,
 
-                // 'error_wave' => $wave_error,
-                // 'success_wave' => $wave_success,
-                // 'pendding_wave' => $wave_padding,
+            // 'error_wave' => $wave_error,
+            // 'success_wave' => $wave_success,
+            // 'pendding_wave' => $wave_padding,
 
-                // 
-                'error_bank' => $bank_error,
-                'success_bank' => $bank_success,
-                'pendding_bank' => $bank_padding,
-                // 
-                'error_deposit' => $deposit_error,
-                'success_deposit' => $deposit_success,
-                'pendding_deposit' => $deposit_padding,
+            // 
+            'error_bank' => $bank_error,
+            'success_bank' => $bank_success,
+            'pendding_bank' => $bank_padding,
+            // 
+            'error_deposit' => $deposit_error,
+            'success_deposit' => $deposit_success,
+            'pendding_deposit' => $deposit_padding,
 
-                // 
-                'error_reload' => $reload_error,
-                'success_reload' => $reload_success,
-                'pendding_reload' => $reload_padding,
-                // 
-                'error_phone_credit' => $phone_credit_error,
-                'success_phone_credit' => $phone_credit_success,
-                'pendding_phone_credit' => $phone_credit_padding,
+            // 
+            'error_reload' => $reload_error,
+            'success_reload' => $reload_success,
+            'pendding_reload' => $reload_padding,
+            // 
+            'error_phone_credit' => $phone_credit_error,
+            'success_phone_credit' => $phone_credit_success,
+            'pendding_phone_credit' => $phone_credit_padding,
 
-                'error_inter' => $inter_error,
-                'success_inter' => $inter_success,
-                'pendding_inter' => $inter_padding,
-
-
-                // 
-                'amount_payment_days' => $payement_amount,
-                'amount_payment_cie_days' => $payement_amount_cie,
-                'amount_payment_canal_days' => $payement_amount_canal,
-                'amount_payment_sodeci_days' => $payement_amount_sodeci,
-                'amount_transaction_days' => $transaction_amount,
-                'amount_transaction_robus_days' => $transaction_amount_robus,
-                'amount_transaction_moov_days' => $transaction_amount_moov,
-                'amount_transaction_wave_days' => $transaction_amount_wave,
-                'amount_transaction_orange_days' => $transaction_amount_orange,
-                'amount_transaction_mtn_days' => $transaction_amount_mtn,
-                'amount_reload_days' => $reload_amount,
-                'amount_phone_credit_days' => $phonecredit_amount,
-                'amount_inter_days' => $inter_amount,
-                // Inters
-                'amount_inter_moneyRobus' => $inter_amount_moneyRobus,
-                'amount_inter_cie' => $inter_amount_cie,
-                'amount_inter_credit' => $inter_amount_credit,
-                'amount_inter_virement' => $inter_amount_virement,
-                'amount_inter_rechargement' => $inter_amount_rechargement,
-                'amount_bank_days' => $bank_amount,
-                'amount_deposit_days' => $deposit_amount,
-                'amount_xbet_days' => $xbet_amount,
-                // 'amount_wave_days' => $wave_amount,
+            'error_inter' => $inter_error,
+            'success_inter' => $inter_success,
+            'pendding_inter' => $inter_padding,
 
 
-                'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-                'usersCountry' => $walletUser->country->currencie->name,
-                'sum_bank' => $bank_amount,
-                'sum_deposit' => $deposit_amount,
-                'sum_payment' => $payement_amount,
-                'sum_reload' => $reload_amount,
-                'sum_transaction' => $transaction_amount,
-                'sum_inter' => $inter_amount,
-                'sum_phoneCredit' => $phonecredit_amount,
-                'sum_xbet' => $xbet_amount,
-                // 'sum_wave' => $wave_amount,
-                'sum_bank_month' => $bank_amount_month,
-                'sum_deposit_month' => $deposit_amount_month,
-                'sum_payment_month' => $payment_amount_month,
-                'sum_reload_month' => $reload_amount_month,
-                'sum_transaction_month' => $transaction_amount_month,
-                'sum_inter_month' => $inter_amount_month,
-                'sum_phoneCredit_month' => $phonecredit_amount_month,
-                'sum_xbet_month' => $xbet_amount_month,
-                // 'sum_wave_month' => $wave_amount_month,
-                // Transaction days
-                'account_bank_days' => $bank_amount_days,
-                'account_deposit_days' => $deposit_amount_days,
-                'account_payment_days' => $payment_amount_days,
-                'account_reload_days' => $reload_amount_days,
-                'account_transaction_days' => $transaction_amount_days,
-                'account_inter_days' => $inter_amount_days,
-                'account_phoneCredit_days' => $phone_amount_days,
-                'account_xbet_days' => $xbet_amount_days,
-                // 'account_wave_days' => $wave_amount_days,
-                // 'open_apps' => $closeRobus,
-            ]);
-        
+            // 
+            'amount_payment_days' => $payement_amount,
+            'amount_payment_cie_days' => $payement_amount_cie,
+            'amount_payment_canal_days' => $payement_amount_canal,
+            'amount_payment_sodeci_days' => $payement_amount_sodeci,
+            'amount_transaction_days' => $transaction_amount,
+            'amount_transaction_robus_days' => $transaction_amount_robus,
+            'amount_transaction_moov_days' => $transaction_amount_moov,
+            'amount_transaction_wave_days' => $transaction_amount_wave,
+            'amount_transaction_orange_days' => $transaction_amount_orange,
+            'amount_transaction_mtn_days' => $transaction_amount_mtn,
+            'amount_reload_days' => $reload_amount,
+            'amount_phone_credit_days' => $phonecredit_amount,
+            'amount_inter_days' => $inter_amount,
+            // Inters
+            'amount_inter_moneyRobus' => $inter_amount_moneyRobus,
+            'amount_inter_cie' => $inter_amount_cie,
+            'amount_inter_credit' => $inter_amount_credit,
+            'amount_inter_virement' => $inter_amount_virement,
+            'amount_inter_rechargement' => $inter_amount_rechargement,
+            'amount_bank_days' => $bank_amount,
+            'amount_deposit_days' => $deposit_amount,
+            'amount_xbet_days' => $xbet_amount,
+            // 'amount_wave_days' => $wave_amount,
+
+
+            'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
+            'usersCountry' => $walletUser->country->currencie->name,
+            'sum_bank' => $bank_amount,
+            'sum_deposit' => $deposit_amount,
+            'sum_payment' => $payement_amount,
+            'sum_reload' => $reload_amount,
+            'sum_transaction' => $transaction_amount,
+            'sum_inter' => $inter_amount,
+            'sum_phoneCredit' => $phonecredit_amount,
+            'sum_xbet' => $xbet_amount,
+            // 'sum_wave' => $wave_amount,
+            'sum_bank_month' => $bank_amount_month,
+            'sum_deposit_month' => $deposit_amount_month,
+            'sum_payment_month' => $payment_amount_month,
+            'sum_reload_month' => $reload_amount_month,
+            'sum_transaction_month' => $transaction_amount_month,
+            'sum_inter_month' => $inter_amount_month,
+            'sum_phoneCredit_month' => $phonecredit_amount_month,
+            'sum_xbet_month' => $xbet_amount_month,
+            // 'sum_wave_month' => $wave_amount_month,
+            // Transaction days
+            'account_bank_days' => $bank_amount_days,
+            'account_deposit_days' => $deposit_amount_days,
+            'account_payment_days' => $payment_amount_days,
+            'account_reload_days' => $reload_amount_days,
+            'account_transaction_days' => $transaction_amount_days,
+            'account_inter_days' => $inter_amount_days,
+            'account_phoneCredit_days' => $phone_amount_days,
+            'account_xbet_days' => $xbet_amount_days,
+            // 'account_wave_days' => $wave_amount_days,
+            // 'open_apps' => $closeRobus,
+        ]);
     }
 
 
@@ -288,7 +288,7 @@ class Home extends Component
     }
 
 
-    public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days , $walletMy)
+    public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days, $walletMy)
     {
 
         $countryId = sabdy()->country->id;
@@ -352,8 +352,8 @@ class Home extends Component
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-        ->whereDate($transaction_days, Carbon::today())
-        ->where($transaction_status, 'SUCCESS');
+            ->whereDate($transaction_days, Carbon::today())
+            ->where($transaction_status, 'SUCCESS');
 
 
         if (sabdy()->is_distributer) {
@@ -375,19 +375,18 @@ class Home extends Component
                 });
         }
 
-       
-        
-            return $query->sum($wallet_amount);
 
+
+        return $query->sum($wallet_amount);
     }
 
-    public function getTodayTransactionProvidersAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount , $providers)
+    public function getTodayTransactionProvidersAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $providers)
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-        ->whereDate($transaction_days, Carbon::today())
-        ->where('provider_id', $providers)
-        ->where($transaction_status, 'SUCCESS');
+            ->whereDate($transaction_days, Carbon::today())
+            ->where('provider_id', $providers)
+            ->where($transaction_status, 'SUCCESS');
 
 
         if (sabdy()->is_distributer) {
@@ -409,19 +408,17 @@ class Home extends Component
                 });
         }
 
-       
-        
-            return $query->sum($wallet_amount);
 
+
+        return $query->sum($wallet_amount);
     }
 
-    public function getTodayTransactionProviderAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount , $providerId)
+    public function getTodayTransactionProviderAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $providerId)
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-        ->whereDate($transaction_days, Carbon::today())
-        ->where('provider_id', $providerId)
-        ->where($transaction_status, 'SUCCESS');
+            ->whereDate($transaction_days, Carbon::today())
+            ->where($transaction_status, 'SUCCESS');
 
 
         if (sabdy()->is_distributer) {
@@ -443,21 +440,18 @@ class Home extends Component
                 });
         }
 
-       
-        
-            return $query->sum($wallet_amount);
 
+
+        return $query->sum($wallet_amount);
     }
 
-    public function getTodayTransactionProviderTypeAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount , $providerId)
+    public function getTodayTransactionProviderTypeOneAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
     {
 
-        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-        ->whereDate($transaction_days, Carbon::today())
-        ->where('provider_type', $providerId)
-        ->where($transaction_status, 'SUCCESS');
-
-
+        $query = $walletModel::join('wallets', $wallet_transaction,  'wallets.id')
+            ->whereDate($transaction_days, Carbon::today()) 
+            ->where($transaction_status, 'SUCCESS'); 
+    
         if (sabdy()->is_distributer) {
             $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
@@ -465,30 +459,78 @@ class Home extends Component
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
         } else {
-
+            // Cas où ce n'est ni un distributeur ni un sous-distributeur
             $query->where(function ($query) use ($walletMy) {
                 $query->where($walletMy, sabdy()->id)
                     ->orWhere($walletMy, '!=', sabdy()->id);
             })
-                ->where(function ($query) {
-                    $countryId = sabdy()->country->id;
-                    $query->where('wallets.country_id', '!=', $countryId)
-                        ->orWhere('wallets.country_id', '=', $countryId);
-                });
+            ->where(function ($query) {
+                $countryId = sabdy()->country->id;
+                $query->where('wallets.country_id', '!=', $countryId)
+                    ->orWhere('wallets.country_id', '=', $countryId);
+            });
         }
+    
+        $results = $query->get();
+    
 
-       
-        
-            return $query->sum($wallet_amount);
-
+        $totalAmountConv = 0;
+    
+        foreach ($results as $result) {
+            $countryRobus = $result->country;
+    
+            if (sabdy()->country->currencie->value > $countryRobus->currencie->value) {
+                $wallet_amount_conv = (float)$wallet_amount * (float)sabdy()->country->currencie->value;
+            } elseif (sabdy()->country->currencie->value == $countryRobus->currencie->value) {
+                $wallet_amount_conv = (float)$wallet_amount;
+            } elseif (sabdy()->country->currencie->value < $countryRobus->currencie->value) {
+                $wallet_amount_conv = (float)$wallet_amount * (float)sabdy()->country->currencie->value;
+            }
+    
+            $totalAmountConv += $wallet_amount_conv;
+        }
+    
+        return $totalAmountConv;
     }
+
+    public function getTodayTransactionProviderOneAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $providerId)
+    {
+
+        $query = $walletModel::join('wallets', $wallet_transaction,  'wallets.id')
+            ->whereDate($transaction_days, Carbon::today()) 
+            ->whereProviderType($providerId)
+            ->where($transaction_status, 'SUCCESS'); 
+    
+        if (sabdy()->is_distributer) {
+            $query->where($walletMy, sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transaction) {
+                $query->where($wallet_transaction, sabdy()->wallet->id);
+            });
+        } else {
+            // Cas où ce n'est ni un distributeur ni un sous-distributeur
+            $query->where(function ($query) use ($walletMy) {
+                $query->where($walletMy, sabdy()->id)
+                    ->orWhere($walletMy, '!=', sabdy()->id);
+            })
+            ->where(function ($query) {
+                $countryId = sabdy()->country->id;
+                $query->where('wallets.country_id', '!=', $countryId)
+                    ->orWhere('wallets.country_id', '=', $countryId);
+            });
+        }
+    
+        return $query->sum($wallet_amount);
+    }
+    
+
     // Sum amount month valeurs
     public function getDaysTransaction($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-        ->whereMonth($transaction_days, now()->month)
-        ->where($transaction_status, 'SUCCESS');
+            ->whereMonth($transaction_days, now()->month)
+            ->where($transaction_status, 'SUCCESS');
 
         if (sabdy()->is_distributer) {
             $query->where($walletMy, sabdy()->id);
@@ -508,8 +550,7 @@ class Home extends Component
                         ->orWhere('wallets.country_id', '=', $countryId);
                 });
         }
-        
+
         return $query->sum($wallet_amount);
-    
     }
 }

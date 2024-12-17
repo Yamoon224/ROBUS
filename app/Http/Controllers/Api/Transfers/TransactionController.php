@@ -3,31 +3,37 @@
 namespace App\Http\Controllers\Api\Transfers;
 
 
-use Illuminate\Http\Request;
-use App\Models\Wallets\Wallet;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Services\DeletedService;
-use App\Models\Costs\TransactionCost;
-use App\Models\Wallets\WalletTransaction;
-use Illuminate\Support\Facades\Validator;
-use App\Repositories\TransactionRepository;
 use App\Http\Controllers\Admin\MailController;
+use App\Http\Controllers\Controller;
+use App\Http\Services\AuthenticationService;
+use App\Http\Services\CreateRobusWalletWithDrawalService;
+use App\Http\Services\DeletedService;
+use App\Http\Services\MobileWalletTransactionService;
 use App\Http\Services\NotificationSendService;
+use App\Http\Services\OperatorRestrictionService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\RobusTransactionService;
-use App\Http\Services\OperatorRestrictionService;
 use App\Http\Services\SearchTransactionService;
 use App\Http\Services\ValidateDailyLimitService;
-use App\Http\Services\MobileWalletTransactionService;
-use App\Http\Services\CreateRobusWalletWithDrawalService;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeValidated;
+use App\Models\AppStatus;
+use App\Models\Costs\TransactionCost;
+use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletTransaction;
+use App\Repositories\TransactionRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Validator;
+use App\Traits\InitializeAppStatusTrait;
 
 
 class TransactionController extends Controller
 {
+
+    use InitializeAppStatusTrait;
 
     /** @var  TransactionRepository */
     protected $transctionRepository;
@@ -39,6 +45,8 @@ class TransactionController extends Controller
     protected $deletedService;
     protected $percentRobus;
     protected $searchTransaction;
+    private $authService;
+    protected $appStatusResult;
 
     public function __construct(
         TransactionRepository $transactionReposi,
@@ -49,7 +57,8 @@ class TransactionController extends Controller
         CreateRobusWalletWithDrawalService $transactionWalletDrawal,
         DeletedService $deletedService,
         PercentRobusAuthService $percentRobus,
-        SearchTransactionService $searchTransaction
+        SearchTransactionService $searchTransaction,
+        AuthenticationService $authService
     ) {
         $this->transctionRepository = $transactionReposi;
         $this->mobileWalletTransactionService = $mobileWalletTransactionService;
@@ -60,7 +69,12 @@ class TransactionController extends Controller
         $this->deletedService = $deletedService;
         $this->percentRobus = $percentRobus;
         $this->searchTransaction = $searchTransaction;
+        $this->authService = $authService;
+        $this->initializeAppStatus($this->authService);
+        
     }
+
+ 
     /**
      * @OA\POST(
      *      path="/user/transactions/store",

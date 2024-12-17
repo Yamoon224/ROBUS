@@ -211,18 +211,40 @@ class AuthenticationService
 
                         // Si l'application est ouverte, mettre en cache un statut de succès
                         $successResponse = ['success' => true];
-                        Cache::put('app_status_mobile', $successResponse, now()->addMinutes(20));
+                        Cache::put('app_status_mobile', $successResponse, now()->addMinutes(30));
                         return $successResponse;
                 } catch (\Exception $e) {
                         // Gérer les exceptions et retourner une erreur générique
                         return [
                                 'success' => false,
                                 'message' => 'Une erreur est survenue lors de la vérification du statut de l\'application.',
-                                'error' => $e->getMessage(),
+                                // 'error' => $e->getMessage(),
                         ];
                 }
         }
+        // public function appDispoRobus($model)
+        // {
 
+        //         // Artisan::call('app:close-status');
+
+        //         // Récupérer le statut de l'application
+        //         $appStatus = $model::latest()->first();
+
+        //         // Vérifier si l'application est fermée
+        //         if ($appStatus && $appStatus->status_app === 'closed') {
+
+        //                 $robus_hour_begin = $appStatus->time_start;
+        //                 $robus_hour_end = $appStatus->time_end;
+        //                 $robus_hour_description = $appStatus->description;
+
+        //                 return [
+        //                         'success' => false,
+        //                         'message' => "L'application ROBUS Sous distributeurs était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour cause de {$robus_hour_description}.",
+        //                 ];
+        //         }
+
+        //         return ['success' => true];
+        // }
 
         private function formatClosedAppResponse($appStatus)
         {
@@ -238,7 +260,7 @@ class AuthenticationService
                 ];
 
                 // Mettre en cache la réponse
-                Cache::put('app_status_mobile', $response, now()->addMinutes(20));
+                Cache::put('app_status_mobile', $response, now()->addMinutes(30));
 
                 return $response;
         }

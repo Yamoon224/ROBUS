@@ -16,9 +16,13 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Services\NotificationSendService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\ValidateDailyLimitService;
+use App\Traits\InitializeAppStatusTrait;
+use App\Http\Services\AuthenticationService;
 
 class PaymentController extends Controller
 {
+
+    use InitializeAppStatusTrait;
 
     /** @var  PaymentRepository */
     protected $paymentRepository;
@@ -28,6 +32,7 @@ class PaymentController extends Controller
     protected $notificationPayment;
     protected $paymentService;
     protected $convertionservice;
+    private $authService;
 
     public function __construct(
         PaymentRepository $paymentReposi,
@@ -37,6 +42,7 @@ class PaymentController extends Controller
         NotificationSendService $notificationPayment,
         PaymentService $paymentService,
         ConvertionService $convertionservice,
+        AuthenticationService $authService
 
     ) {
         $this->paymentRepository = $paymentReposi;
@@ -45,7 +51,10 @@ class PaymentController extends Controller
         $this->validatedamountDays = $validatedamountDays;
         $this->notificationPayment = $notificationPayment;
         $this->paymentService = $paymentService;
+        $this->authService = $authService;
         $this->convertionservice = $convertionservice;
+        $this->initializeAppStatus($this->authService);
+
     }
 
     /**

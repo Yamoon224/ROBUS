@@ -2,33 +2,39 @@
 
 namespace App\Http\Controllers\Api\Transfers;
 
-use App\Models\Offer;
-use Illuminate\Http\Request;
-use App\Models\Costs\BankCost;
-use App\Models\Wallets\Wallet;
-use App\Models\Costs\DepositCost;
-use App\Models\Costs\PaymentCost;
-use App\Models\Custumers\Country;
-use App\Models\Wallets\WalletInter;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Services\DeletedService;
-use App\Models\Costs\PhoneCreditCost;
-use App\Models\Costs\TransactionCost;
-use App\Repositories\IntersRepository;
+use App\Http\Services\AuthenticationService;
 use App\Http\Services\ConvertionService;
-use Illuminate\Support\Facades\Validator;
+use App\Http\Services\DeletedService;
 use App\Http\Services\InterPaymentService;
-use App\Http\Services\PaymentInterService;
-use App\Http\Services\VirementInterService;
 use App\Http\Services\NotificationSendService;
+use App\Http\Services\PaymentInterService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\PhoneCreditInterService;
 use App\Http\Services\SearchTransactionService;
 use App\Http\Services\ValidateDailyLimitService;
+use App\Http\Services\VirementInterService;
+use App\Models\AppStatus;
+use App\Models\Costs\BankCost;
+use App\Models\Costs\DepositCost;
+use App\Models\Costs\PaymentCost;
+use App\Models\Costs\PhoneCreditCost;
+use App\Models\Costs\TransactionCost;
+use App\Models\Custumers\Country;
+use App\Models\Offer;
+use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletInter;
+use App\Repositories\IntersRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
+use App\Traits\InitializeAppStatusTrait;
 
 class IntersPaymentController extends Controller
 {
+
+    use InitializeAppStatusTrait;
 
     /** @var  IntersRepository */
     protected $intersRepository;
@@ -42,6 +48,8 @@ class IntersPaymentController extends Controller
     protected $convertionservice;
     protected $virementInterService;
     protected $searchTransaction;
+    private $authService;
+    protected $appStatusResult;
 
     public function __construct(
         IntersRepository $inter_Reposi,
@@ -54,7 +62,9 @@ class IntersPaymentController extends Controller
         ConvertionService $convertionservice,
         NotificationSendService $notificationPayment,
         VirementInterService $virementInterService,
-        SearchTransactionService $searchTransaction
+        SearchTransactionService $searchTransaction,
+        AuthenticationService $authService
+
     ) {
         $this->intersRepository = $inter_Reposi;
         $this->deletedService = $deletedService;
@@ -67,7 +77,12 @@ class IntersPaymentController extends Controller
         $this->notificationPayment = $notificationPayment;
         $this->virementInterService = $virementInterService;
         $this->searchTransaction = $searchTransaction;
+        $this->authService = $authService;
+        $this->initializeAppStatus($this->authService);
+
     }
+
+
 
     /**
      * @OA\POST(

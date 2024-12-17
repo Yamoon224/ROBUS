@@ -38,6 +38,7 @@ class WalletInter extends Model
     protected $casts = [
         'provider_id' => "integer",
         'wallet_id' => "integer",
+        'country_id' => "integer",
         'inter_cost_id' => "integer",
         'created_at' => 'datetime:d-m-Y H:i:s',
         'deleted_at' => 'datetime:d-m-Y H:i:s',

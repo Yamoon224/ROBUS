@@ -47,6 +47,7 @@ class ReloadController extends Controller
     protected $validatedamountDays;
     protected $notificationOrderCard;
     protected $reloadCardService;
+    private $authService;
 
     public function __construct(ReloadRepository $reloadReposi ,     
      DeletedService $deletedService,

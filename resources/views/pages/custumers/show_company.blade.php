@@ -94,6 +94,62 @@
         </div>
 
     </div>
+    <div class="grid grid-cols-12 gap-6 mt-3">
+
+        <div class="intro-y col-span-12 lg:col-span-12">
+            <!-- BEGIN: Form Validation -->
+            <div class="intro-y box">
+
+                <div class="p-5">
+                    <div class="" id="step-2">
+                        @include('components.update_password_form')
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- END: Form Validation -->
+        </div>
+        
+    </div>
+    <div class="grid grid-cols-12 gap-6 mt-3">
+
+        <div class="intro-y col-span-6 lg:col-span-12">
+            <!-- BEGIN: Form Validation -->
+            <div class="intro-y box">
+
+                <div class="p-5">
+                    <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Modification du Numero</h2>
+
+                    <div class="" id="step-2">
+                        @include('components.update_phone_form')
+
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- END: Form Validation -->
+        </div>
+
+        <div class="intro-y col-span-6 lg:col-span-12">
+            <!-- BEGIN: Form Validation -->
+            <div class="intro-y box">
+
+                <div class="p-5">
+                    <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Modification du email</h2>
+
+                    <div class="" id="step-2">
+
+                        @include('components.update_email_form')
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- END: Form Validation -->
+        </div>
+    </div>
     <!-- BEGIN: Profile Info -->
     <div class="intro-y box px-5 pt-5 mt-5">
         <div class="grid grid-cols-12 gap-6">

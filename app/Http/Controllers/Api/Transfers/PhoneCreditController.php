@@ -15,9 +15,13 @@ use App\Repositories\PhoneCreditRepository;
 use App\Http\Services\NotificationSendService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\ValidateDailyLimitService;
+use App\Traits\InitializeAppStatusTrait;
+use App\Http\Services\AuthenticationService;
 
 class PhoneCreditController extends Controller
 {
+
+    use InitializeAppStatusTrait;
 
     /** @var  PhoneCreditRepository */
     protected $phoneCreditRepository;
@@ -26,6 +30,7 @@ class PhoneCreditController extends Controller
     protected $validatedamountDays;
     protected $notificationPhone;
     protected $phoneCreditService;
+    private $authService;
 
     public function __construct(
         PhoneCreditRepository $reload_cardReposi,
@@ -34,13 +39,17 @@ class PhoneCreditController extends Controller
         ValidateDailyLimitService $validatedamountDays,
         NotificationSendService $notificationPhone,
         PhoneCreditService $phoneCreditService,
+        AuthenticationService $authService
     ) {
         $this->phoneCreditRepository = $reload_cardReposi;
         $this->deletedService = $deletedService;
         $this->percentRobus = $percentRobus;
+        $this->authService = $authService;
         $this->validatedamountDays = $validatedamountDays;
         $this->notificationPhone = $notificationPhone;
         $this->phoneCreditService = $phoneCreditService;
+        $this->initializeAppStatus($this->authService);
+
     }
 
     /**

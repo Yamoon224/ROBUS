@@ -13,9 +13,13 @@ use Illuminate\Support\Facades\Validator;
 use App\Http\Services\NotificationSendService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\ValidateDailyLimitService;
+use App\Traits\InitializeAppStatusTrait;
+use App\Http\Services\AuthenticationService;
 
 class VirementController extends Controller
 {
+
+    use InitializeAppStatusTrait;
 
     /** @var  VirementRepository */
     protected $virementRepository;
@@ -24,6 +28,7 @@ class VirementController extends Controller
     protected $percentRobus;
     protected $validatedamountDays;
     protected $notificationVirement;
+    private $authService;
 
     public function __construct(
         VirementRepository $virementReposi,
@@ -32,6 +37,7 @@ class VirementController extends Controller
         PercentRobusAuthService $percentRobus,
         ValidateDailyLimitService $validatedamountDays,
         NotificationSendService $notificationVirement,
+        AuthenticationService $authService
     ) {
         $this->virementRepository = $virementReposi;
         $this->virementServices = $virementServices;
@@ -39,6 +45,9 @@ class VirementController extends Controller
         $this->percentRobus = $percentRobus;
         $this->validatedamountDays = $validatedamountDays;
         $this->notificationVirement = $notificationVirement;
+        $this->authService = $authService;
+        $this->initializeAppStatus($this->authService);
+
     }
 
     /**

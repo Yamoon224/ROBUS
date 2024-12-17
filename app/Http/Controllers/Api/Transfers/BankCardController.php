@@ -3,19 +3,25 @@
 namespace App\Http\Controllers\Api\Transfers;
 
 
-use Illuminate\Http\Request;
-use App\Models\Banks\BankCard;
 use App\Http\Controllers\Controller;
 use App\Http\Services\DeletedService;
-use App\Http\Services\OrderCardService;
-use App\Repositories\OrderCardRepository;
-use Illuminate\Support\Facades\Validator;
 use App\Http\Services\NotificationSendService;
+use App\Http\Services\OrderCardService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\ValidateDailyLimitService;
+use App\Models\AppStatus;
+use App\Models\Banks\BankCard;
+use App\Repositories\OrderCardRepository;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Validator;
+use App\Http\Services\AuthenticationService;
+use App\Traits\InitializeAppStatusTrait;
 
 class BankCardController extends Controller
 {
+
+    use InitializeAppStatusTrait;
 
     /** @var  OrderCardRepository */
     protected $phoneCreditRepository;
@@ -24,6 +30,8 @@ class BankCardController extends Controller
     protected $validatedamountDays;
     protected $notificationOrderCard;
     protected $orderCardService;
+    private $authService;
+    protected $appStatusResult;
 
     public function __construct(
         OrderCardRepository $reload_cardReposi,
@@ -32,6 +40,9 @@ class BankCardController extends Controller
         ValidateDailyLimitService $validatedamountDays,
         NotificationSendService $notificationOrderCard,
         OrderCardService $orderCardService,
+        AuthenticationService $authService
+
+
     ) {
         $this->phoneCreditRepository = $reload_cardReposi;
         $this->deletedService = $deletedService;
@@ -39,6 +50,8 @@ class BankCardController extends Controller
         $this->validatedamountDays = $validatedamountDays;
         $this->notificationOrderCard = $notificationOrderCard;
         $this->orderCardService = $orderCardService;
+        $this->authService = $authService;
+        $this->initializeAppStatus($this->authService);
     }
 
     /**
