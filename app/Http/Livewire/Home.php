@@ -418,6 +418,7 @@ class Home extends Component
 
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
             ->whereDate($transaction_days, Carbon::today())
+            ->where('provider_id', $providerId)
             ->where($transaction_status, 'SUCCESS');
 
 
@@ -448,7 +449,8 @@ class Home extends Component
     public function getTodayTransactionProviderTypeOneAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
     {
 
-        $query = $walletModel::join('wallets', $wallet_transaction,  'wallets.id')
+        $query = $walletModel::join('wallets', 'wallets.id', '=', $wallet_transaction)
+            ->join('countries', 'wallets.country_id', '=', 'countries.id')
             ->whereDate($transaction_days, Carbon::today()) 
             ->where($transaction_status, 'SUCCESS'); 
     
@@ -459,7 +461,7 @@ class Home extends Component
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
         } else {
-            // Cas où ce n'est ni un distributeur ni un sous-distributeur
+
             $query->where(function ($query) use ($walletMy) {
                 $query->where($walletMy, sabdy()->id)
                     ->orWhere($walletMy, '!=', sabdy()->id);
@@ -477,14 +479,17 @@ class Home extends Component
         $totalAmountConv = 0;
     
         foreach ($results as $result) {
+            
             $countryRobus = $result->country;
-    
+
+            $wallet_amount = (float)$result->amount_received;
+
             if (sabdy()->country->currencie->value > $countryRobus->currencie->value) {
-                $wallet_amount_conv = (float)$wallet_amount * (float)sabdy()->country->currencie->value;
+                $wallet_amount_conv = $wallet_amount * sabdy()->country->currencie->value;
             } elseif (sabdy()->country->currencie->value == $countryRobus->currencie->value) {
-                $wallet_amount_conv = (float)$wallet_amount;
+                $wallet_amount_conv = $wallet_amount;
             } elseif (sabdy()->country->currencie->value < $countryRobus->currencie->value) {
-                $wallet_amount_conv = (float)$wallet_amount * (float)sabdy()->country->currencie->value;
+                $wallet_amount_conv = $wallet_amount * sabdy()->country->currencie->value;
             }
     
             $totalAmountConv += $wallet_amount_conv;
