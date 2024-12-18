@@ -449,52 +449,58 @@ class Home extends Component
     public function getTodayTransactionProviderTypeOneAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
     {
 
-        $query = $walletModel::join('wallets', 'wallets.id', '=', $wallet_transaction)
-            ->join('countries', 'wallets.country_id', '=', 'countries.id')
-            ->whereDate($transaction_days, Carbon::today()) 
-            ->where($transaction_status, 'SUCCESS'); 
-    
+
         if (sabdy()->is_distributer) {
+
+            $query = $walletModel::whereDate($transaction_days, Carbon::today())
+                ->where($transaction_status, 'SUCCESS');
+
             $query->where($walletMy, sabdy()->id);
+
         } elseif (sabdy()->is_under_distributer) {
+
+            $query = $walletModel::join('wallets', 'wallets.id', $wallet_transaction)
+                ->whereDate($transaction_days, Carbon::today())
+                ->where($transaction_status, 'SUCCESS');
+
             $query->where(function ($query) use ($wallet_transaction) {
                 $query->where($wallet_transaction, sabdy()->wallet->id);
             });
+
         } else {
+
+            $query = $walletModel::whereDate($transaction_days, Carbon::today())
+                ->where($transaction_status, 'SUCCESS');
 
             $query->where(function ($query) use ($walletMy) {
                 $query->where($walletMy, sabdy()->id)
                     ->orWhere($walletMy, '!=', sabdy()->id);
-            })
-            ->where(function ($query) {
-                $countryId = sabdy()->country->id;
-                $query->where('wallets.country_id', '!=', $countryId)
-                    ->orWhere('wallets.country_id', '=', $countryId);
             });
         }
-    
+
+
         $results = $query->get();
     
 
         $totalAmountConv = 0;
-    
+
         foreach ($results as $result) {
-            
+
             $countryRobus = $result->country;
 
             $wallet_amount = (float)$result->amount_received;
 
             if (sabdy()->country->currencie->value > $countryRobus->currencie->value) {
-                $wallet_amount_conv = $wallet_amount * sabdy()->country->currencie->value;
-            } elseif (sabdy()->country->currencie->value == $countryRobus->currencie->value) {
+                $wallet_amount_conv = $wallet_amount * $countryRobus->currencie->value;
+            } elseif (sabdy()->country->currencie->value == $countryRobus->currencie->value) {               
                 $wallet_amount_conv = $wallet_amount;
             } elseif (sabdy()->country->currencie->value < $countryRobus->currencie->value) {
-                $wallet_amount_conv = $wallet_amount * sabdy()->country->currencie->value;
+                $wallet_amount_conv = $wallet_amount * $countryRobus->currencie->value;
             }
-    
+
             $totalAmountConv += $wallet_amount_conv;
         }
-    
+
         return $totalAmountConv;
     }
 
@@ -502,10 +508,10 @@ class Home extends Component
     {
 
         $query = $walletModel::join('wallets', $wallet_transaction,  'wallets.id')
-            ->whereDate($transaction_days, Carbon::today()) 
+            ->whereDate($transaction_days, Carbon::today())
             ->whereProviderType($providerId)
-            ->where($transaction_status, 'SUCCESS'); 
-    
+            ->where($transaction_status, 'SUCCESS');
+
         if (sabdy()->is_distributer) {
             $query->where($walletMy, sabdy()->id);
         } elseif (sabdy()->is_under_distributer) {
@@ -518,16 +524,16 @@ class Home extends Component
                 $query->where($walletMy, sabdy()->id)
                     ->orWhere($walletMy, '!=', sabdy()->id);
             })
-            ->where(function ($query) {
-                $countryId = sabdy()->country->id;
-                $query->where('wallets.country_id', '!=', $countryId)
-                    ->orWhere('wallets.country_id', '=', $countryId);
-            });
+                ->where(function ($query) {
+                    $countryId = sabdy()->country->id;
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                });
         }
-    
+
         return $query->sum($wallet_amount);
     }
-    
+
 
     // Sum amount month valeurs
     public function getDaysTransaction($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
