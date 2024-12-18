@@ -223,7 +223,7 @@ class ProvidersService
 
         if ($isUnderDistributer) {
             if ($countryNameGroup == "CIV") {
-                $providerMap = ['AFL', 'AFC', 'ASIE', 'AFE'];
+                $providerMap = ['AFL', 'AFC', 'ASIE', 'AFE', 'URP'];
             } else {
                 $providerMap = ['AFL', 'CIV', 'AFC', 'ASIE', 'AFE'];
             }
