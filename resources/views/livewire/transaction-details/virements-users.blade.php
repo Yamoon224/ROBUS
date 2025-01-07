@@ -84,6 +84,9 @@
                                                 <p class="font-medium whitespace-nowrap">
                                                     {{ number_format($item->amount, 2, ',', ' ') ?? null }}
                                                     {{ $item->wallet->currencie->code ?? null }}</p>
+                                                    <p class="font-medium whitespace-nowrap mt-3">
+                                                        Solde déposant : {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
+                                                         {{ $item->wallet->currencie->code ?? null }}</p>
                                             </td>
                                             <td class="w-40">
                                                 <p class="font-medium whitespace-nowrap">

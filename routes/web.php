@@ -221,7 +221,7 @@ Route::group(['prefix' => ''], function () {
             Route::post('/store',  [ServiceController::class, 'store'])->name('services.store');
             Route::get('/browse',  [ServiceController::class, 'browse'])->name('services.browse');
             Route::get('/show/{id}',  [ServiceController::class, 'edit'])->name('services.edit');
-            Route::post('/update/{id}',  [ServiceController::class, 'update'])->name('services.update');
+            Route::post('/update/{id}',  [ServiceController::class, 'e'])->name('services.update');
             Route::get('/offers',  [ServiceController::class, 'browse_offers'])->name('services.offers.browse');
         });
         // Countries Modify
@@ -532,7 +532,7 @@ Route::get('/reads_applications', function () {
     Artisan::call('app:close-company-status');
     Artisan::call('app:close-status');
     // Artisan::call('app:close-web-status');
-    // Artisan::call('app:close-master-status')
+    // Artisan::call('app:close-master-status');
     return 'Artisan commands executed successfully.';
 });
 

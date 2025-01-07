@@ -577,6 +577,9 @@
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ number_format($item->amount, 2, ',', ' ') ?? null }}
                                                             {{ $item->wallet->currencie->code ?? null }}</p>
+                                                            <p class="font-medium whitespace-nowrap mt-3">
+                                                                Solde déposant : {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
+                                                                 {{ $item->wallet->currencie->code ?? null }}</p>
                                                     </td>
                                                     <td>
                                                         <p class="font-medium whitespace-nowrap">
@@ -793,6 +796,9 @@
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ number_format($item->amount, 2, ',', ' ') ?? null }}
                                                             {{ $item->wallet->currencie->code ?? null }}</p>
+                                                            <p class="font-medium whitespace-nowrap mt-3">
+                                                                Solde déposant : {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
+                                                                 {{ $item->wallet->currencie->code ?? null }}</p>
                                                     </td>
                                                     <td class="w-40">
                                                         <p class="font-medium whitespace-nowrap">
@@ -1068,6 +1074,9 @@
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ number_format($item->amount, 2, ',', ' ') ?? null }}
                                                             {{ $item->wallet->currencie->code ?? null }}</p>
+                                                            <p class="font-medium whitespace-nowrap mt-3">
+                                                                Solde déposant : {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
+                                                                 {{ $item->wallet->currencie->code ?? null }}</p>
                                                     </td>
                                                     <td class="w-40">
                                                         <p class="font-medium whitespace-nowrap">
@@ -1618,19 +1627,6 @@
                                                                 style="color: white;">
                                                                 Depot
                                                             </span>
-                                                            <p class="mb-3">
-                                                                Montant envoyé :
-                                                            </p>
-                                                            {{ number_format($item->amount, 2, ',', ' ') ?? null }}
-                                                            {{ $item->wallet->currencie->code ?? null }}
-                                                            <p class="mt-3">
-                                                                Montant reçu
-                                                            </p>
-                                                            <span
-                                                                class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                {{ number_format($item->amount_received, 2, ',', ' ') ?? null }}
-                                                                {{ $item->wallet->currencie->code ?? null }}
-                                                            </span>
                                                         @elseif ($item->type_transaction == 'Transfert')
                                                             <span
                                                                 class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
@@ -1638,19 +1634,7 @@
                                                                 style="color: white;">
                                                                 transfert
                                                             </span>
-                                                            <p class="mb-3">
-                                                                Montant envoyé :
-                                                            </p>
-                                                            {{ number_format($item->amount, 2, ',', ' ') ?? null }}
-                                                            {{ $item->wallet->currencie->code ?? null }}
-                                                            <p class="mt-3">
-                                                                Montant reçu
-                                                            </p>
-                                                            <span
-                                                                class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                {{ number_format($item->amount_received, 2, ',', ' ') ?? null }}
-                                                                {{ $item->wallet->currencie->code ?? null }}
-                                                            </span>
+                                                           
                                                         @else
                                                             <span
                                                                 class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
@@ -1658,13 +1642,17 @@
                                                                 style="color: white;">
                                                                 Retrait
                                                             </span>
-                                                            <p class="mb-3">
-                                                                Montant envoyé :
-                                                            </p>
-                                                            {{ number_format($item->amount, 2, ',', ' ') ?? null }}
-                                                            {{ $item->wallet->currencie->code ?? null }}
                                                         @endif
 
+                                                        <p class="font-medium whitespace-nowrap">
+                                                            {{ number_format($item->amount, 2, ',', ' ') ?? null }}
+                                                            {{ $item->wallet->currencie->code ?? null }}</p>
+                                                        <p class="font-medium whitespace-nowrap mt-3">
+                                                               Solde déposant : {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
+                                                                {{ $item->wallet->currencie->code ?? null }}</p>
+                                                        <p class="font-medium whitespace-nowrap mt-3">
+                                                            Solde bénéficiaire : {{ number_format($item->amount_solde_drawal, 2, ',', ' ') ?? null }}
+                                                                    {{ $item->wallet->currencie->code ?? null }}</p>
 
                                                     </td>
                                                     <td class="w-40">
@@ -1887,6 +1875,9 @@
                                                         <p class="font-medium whitespace-nowrap">
                                                             {{ number_format($item->amount, 2, ',', ' ') ?? null }}
                                                             {{ $item->wallet->currencie->code ?? null }}</p>
+                                                            <p class="font-medium whitespace-nowrap mt-3">
+                                                                Solde déposant : {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
+                                                                 {{ $item->wallet->currencie->code ?? null }}</p>
                                                     </td>
                                                     <td class="w-40">
                                                         <p class="font-medium whitespace-nowrap">

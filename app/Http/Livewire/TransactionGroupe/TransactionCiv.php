@@ -553,13 +553,15 @@ class TransactionCiv extends Component
 
                                             $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
+                                            $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
+
                                             $walletTransaction =  $this->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
 
                                             if ($walletTransaction != null) {
 
                                                 if ($this->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
 
-                                                    $message = 'Vous venez de recevoir un montant de ' . $reel_amount . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                                    $message = 'Vous venez de recevoir un montant de ' . $reel_amount . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
                                                     if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
@@ -629,12 +631,14 @@ class TransactionCiv extends Component
 
                                         $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
+                                        $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
+
 
                                         $walletTransaction =  $this->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
 
                                         if ($walletTransaction != null) {
 
-                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
                                             if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
@@ -708,13 +712,15 @@ class TransactionCiv extends Component
 
                                     $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
+                                    $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
+
                                     if ($walletAmountSend) {
 
                                         $walletTransaction = $this->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
 
                                         if ($walletTransaction != null) {
 
-                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                            $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
                                             if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 

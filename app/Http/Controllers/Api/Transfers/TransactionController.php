@@ -245,11 +245,14 @@ class TransactionController extends Controller
 
                                     $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
+                                    $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
+
+
                                     $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
 
                                     if ($walletTransaction != null) {
 
-                                        $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                        $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
                                         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
@@ -299,11 +302,13 @@ class TransactionController extends Controller
 
                                 $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
+                                $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
+
                                 $walletTransaction =  $this->robusTransactionService->createRobusWalletTransactionDistributer($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
 
                                 if ($walletTransaction != null) {
 
-                                    $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                    $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
                                     if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
@@ -378,11 +383,13 @@ class TransactionController extends Controller
 
                                     $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
+                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
+
                                     $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
 
                                     if ($walletTransaction != null) {
 
-                                        $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                        $message = 'Vous venez de recevoir un montant de ' . $request->amount . ' de la part de ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
                                         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
