@@ -107,8 +107,18 @@
 
                                             </p>
                                             <p class="font-medium whitespace-nowrap mt-3">
-                                                Solde déposant : {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
-                                                 {{ $item->wallet->currencie->code ?? null }}</p>
+                                                Solde déposant :
+                                                {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
+                                                {{ $item->wallet->currencie->code ?? null }}</p>
+
+                                             @php
+                                                $wallet_info = App\Models\wallets\Wallet::where('wallet_id', $item->account_wallet)->first();
+                                            @endphp
+
+                                            <p class="font-medium whitespace-nowrap mt-3">
+                                                Solde bénéficiaire :
+                                                {{ number_format($item->amount_solde_drawal, 2, ',', ' ') ?? null }}
+                                                {{ $wallet_info->currencie->code ?? null }}</p>
                                         </td>
                                         <td class="w-40">
                                             <p class="font-medium whitespace-nowrap">
