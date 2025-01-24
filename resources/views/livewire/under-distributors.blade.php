@@ -376,14 +376,14 @@
                                         </div>
                                     </div>
                                 @endif
-                                @if ($item->status == '1')
+                                @if ($item->is_active == '1')
                                     @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
                                         <div class="flex items-center justify-center text-success">
 
-                                            <a wire:click="edit({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
-                                                href="javascript:;"
-                                                title="@if ($item->status == 1) Désactiver @else Activer @endif">
+                                            <a class="flex items-center mr-3"
+                                                href="{{ route('custumers.activate', ['id' => $item->id]) }}"
+                                                data-message="Etes vous sûr de vouloir effectuer cette action ?"
+                                                onclick="promptAlert(this)">
                                                 <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
                                             </a>
 
@@ -392,10 +392,11 @@
                                 @else
                                     @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
                                         <div class="flex items-center justify-center text-danger">
-                                            <a wire:click="edit({{ $item->id }}, 'show-disabled-modal'); $emit('show-disabled-modal')"
-                                                class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
-                                                href="javascript:;"
-                                                title="@if ($item->status == 1) Désactiver @else Activer @endif">
+                                          
+                                            <a class="flex items-center mr-3"
+                                                href="{{ route('custumers.activate', ['id' => $item->id]) }}"
+                                                data-message="Etes vous sûr de vouloir effectuer cette action ?"
+                                                onclick="promptAlert(this)">
                                                 <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
                                             </a>
 

@@ -5,12 +5,12 @@
     </h2>
 
     <div class="grid grid-cols-12 gap-6 mt-5">
-        
+
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
             <div class="md:block mx-auto text-slate-500">
                 <a class="btn btn-primary mt-3" href="{{ route('custumers.browse_invalidated') }}">Clients invalides</a>
-    
+
             </div>
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
@@ -56,7 +56,7 @@
 
                 @foreach ($users as $item)
                     <tbody>
-                      
+
                         <tr class="intro-x">
                             <td class="w-35">
                                 <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
@@ -136,7 +136,7 @@
 
                                 <div class="text-slate-300 text-xs  mt-0.5 mb-2">
                                     <div class="text-slate-300 text-xs  mt-0.5">{{ $item->email ?? null }}
-                                      </div>
+                                    </div>
                                 </div>
 
                                 <div class="text-slate-300 text-xs mt-3 mb-2">

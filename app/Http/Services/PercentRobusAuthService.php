@@ -182,7 +182,7 @@ class PercentRobusAuthService
         return  PhoneCreditCost::when(robus()->is_under_distributer, function ($query) {
             return $query->whereId(1);
         }, function ($query) {
-            return $query->whereId(1);
+            return $query->whereId(21);
         })->first();
     }
 
@@ -232,8 +232,14 @@ class PercentRobusAuthService
 
     public function getRobusPercentagePhoneInter()
     {
-        return PhoneCreditCost::whereId(2)->first();
+
+        return  PhoneCreditCost::when(robus()->is_under_distributer, function ($query) {
+            return $query->whereId(2);
+        }, function ($query) {
+            return $query->whereId(22);
+        })->first();
     }
+
     public function getRobusPercentagePayment()
     {
         return PaymentCost::whereId(2)->first();

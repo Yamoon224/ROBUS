@@ -41,8 +41,14 @@
                 </thead>
                 <tbody>
                     @if ($centre_afriques->count() > 0)
-                        @foreach ($centre_afriques->where('distributer_custumer', true) as $item)
+                        @foreach ($centre_afriques as $item)
                             <tr class="intro-x">
+                                <td class="w-65">
+                                    {{-- <p class="font-medium whitespace-nowrap"> --}}
+                                    {{ $item->id ?? null }}
+                                    {{-- </p> --}}
+
+                                </td>
                                 <td class="w-65">
                                     {{-- <p class="font-medium whitespace-nowrap"> --}}
                                     {{ $item->name ?? null }}
