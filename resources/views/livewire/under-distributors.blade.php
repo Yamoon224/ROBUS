@@ -160,6 +160,22 @@
                                 @endforeach
                             </td>
                             <td>
+                                @php
+                                    $solde = $item->wallet->amount ?? 0.0;
+                                @endphp
+                                <div class="barre"
+                                    style="height: 20px; 
+                                        background-color: 
+                                            @if ($solde >= 100000)
+                                                yellow;
+                                            @elseif ($solde >= 50000 && $solde < 100000)
+                                                blue;
+                                            @elseif ($solde > 0)
+                                                red;
+                                            @else
+                                                gray; 
+                                            @endif;">
+                                </div>
                                 @if ($item->is_under_distributer)
                                     <div class="font-medium whitespace-nowrap">
                                         <p class="font-medium whitespace-nowrap"> Sous-distributeur</p>
@@ -452,6 +468,18 @@
                                         </div>
                                     @endif
                                     <div class="flex justify-center items-center">
+
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('modifier-utilisateur'))
+                                        <a class="flex items-center mr-3" href="{{ route('unders.show_edit', ['id' => $item->id]) }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                                stroke-linejoin="round" class="lucide lucide-edit block mx-auto h-15 mr-1">
+                                                <path d="M12 20h9"></path>
+                                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                                            </svg>
+                                        </a>
+                                        
+                                    @endif
 
                                         @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
                                             <a class="btn btn-primary mr-1 mb-2 btn-sm"

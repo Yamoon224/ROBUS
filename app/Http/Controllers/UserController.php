@@ -8,7 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Services\TransactionsAccountService;
 use App\Http\Services\UserCreateService;
 use App\Http\Services\ValidatorService;
+use App\Mail\NewAdmin;
 use App\Models\Banks\BankCard;
+use App\Models\Custumers\City;
 use App\Models\Custumers\Country;
 use App\Models\Custumers\Zone;
 use App\Models\Sid\SidUser;
@@ -33,6 +35,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
@@ -217,6 +220,41 @@ class UserController extends Controller
                 'phoneCredits',
                 'usersCountry',
                 'walletOrderCarte',
+            ));
+        } else {
+            abort(403);
+        }
+    }
+
+      /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show_edit(Request $request, int $id)
+    {
+        if (Auth::guard('web')->user()->hasPermissionTo('modifier-utilisateur')) {
+
+
+            $user = SidUser::whereId($id)->first();
+
+            $kycs = $user->kyc()->get() ?? null;
+
+            $countrieId = $user->country_id;
+            
+            $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
+
+            $countrie = Country::whereId($countrieId)->first();
+
+            $cities = City::where('country_id' ,$countrieId)->get();
+
+            return view('pages.custumers.show_edit', compact(
+                'countrie',
+                'cities',
+                'kycs',
+                'user',
+                'wallet_solde'
             ));
         } else {
             abort(403);
@@ -595,6 +633,67 @@ class UserController extends Controller
         }
         return redirect()->back()->with('color', $color)
             ->with('status', $msg);
+    }
+
+    public function edit_custumers($id ,Request $request)
+    {
+
+
+            $validator = $this->userValidatorService->validateUserUpdateDataAdmin($request->all());
+
+            if ($validator->fails()) {
+                return back()
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Champ requise')
+                    ->withInput();
+            }
+
+
+        try {
+
+
+            $response = $this->createUserService->updateUsersWeb(
+                $id,
+                $request->all(),
+                $request->file('image'),
+                $request->file('image_recto'),
+                $request->file('image_verso')
+            );
+
+            $msg =" Modification effectuée avec succès ";
+
+            if ($response['success']) {
+
+                $user = $response['user'];
+
+                $valeur_message = ' Profil ';
+
+                Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
+                    ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+
+                $msg = "Modification de profil avec succès";
+                $color = 'success';
+
+                return redirect(route('custumers.browse'))->with('color', $color)->with('status', $msg);
+
+            } else {
+
+                $message = $response['message'];
+                
+                return back()
+                    ->with('color', 'danger')
+                    ->with('status', $message)
+                    ->withInput();
+            }
+
+        } catch (\Throwable $th) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de création')
+                ->withInput();
+        }
     }
 
     public function activate_wallet(int $id)

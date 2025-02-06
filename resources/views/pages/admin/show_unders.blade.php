@@ -226,7 +226,6 @@
         </div>
 
 
-
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-pendd">
             <div>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
@@ -268,6 +267,61 @@
             </div>
         </div>
 
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Nombre de transactions inters journalières</div>
+            <div class="text-slate-500 mt-3">
+                       {{ $count_days_inters ?? null }}
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_cartes">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Nombre de transactions inters mensuel</div>
+            <div class="text-slate-500 mt-3">
+                  {{ $count_mounth_inters ?? null }}
+            </div>
+        </div>
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_credits">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Montant de transactions inters journalières</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($amount_days_inters, 2, ',', ' ') ?? null }} {{ $currencie ?? null }}
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table2">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Montant de transactions inters mensuel</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($amount_mounth_inters, 2, ',', ' ') ?? null }} {{ $currencie ?? null }}
+            </div>
+        </div>
     </div>
     <h2 class="text-lg font-medium truncate mr-5 mt-6">Liste des gains à remonter et à retirer</h2>
     <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">

@@ -3,11 +3,19 @@
 namespace App\Http\Services;
 
 
+use App\Models\Banks\BankCard;
 use App\Models\Custumers\Country;
 use App\Models\Kyc;
 use App\Models\Master;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletBank;
+use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletInter;
+use App\Models\Wallets\WalletPayment;
+use App\Models\Wallets\WalletPhoneCredit;
+use App\Models\Wallets\WalletTransaction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
@@ -540,7 +548,7 @@ class UserCreateService
                 $user->save();
 
                 if ($imageRecto && $imageVerso) {
-                        
+
                         $destination_path = public_path('kyc_custumers/' . $user->id . '/');
                         $front_file = 'face_' .  date('YmdHis') . "." . $imageRecto->getClientOriginalExtension();
                         $back_file = 'arriere_' . date('YmdHis') . "." . $imageVerso->getClientOriginalExtension();
@@ -913,4 +921,156 @@ class UserCreateService
         {
                 return $this->createUserSupervisorsWeb($requestData, 5, $image, $imageRecto, $imageVerso, true);
         }
+
+        public function updateUsersWeb($id, $requestData, $image, $imageRecto, $imageVerso)
+        {
+                return $this->updateInforUserWeb($id, $requestData, $image, $imageRecto, $imageVerso);
+        }
+
+        public function updateInforUserWeb($id, $requestData, $image, $imageRecto, $imageVerso)
+        {
+                $user = SidUser::findOrFail($id);
+
+                $walletId = Wallet::where('sid_user_id', $user->id)->first();
+                
+                if (!$walletId) {
+                        return ['success' => false, 'message' => 'Aucun portefeuille associé à cet utilisateur.'];
+                 }
+                
+                // $phone_countrie = Country::whereId($user->country_id)->first();
+                // if (!$phone_countrie) {
+                //         return ['success' => false, 'message' => "Pays invalide"];
+                // }
+                // $verify_phone =  SidUser::wherePhone($phone_countrie->indecative . $requestData['phone'])->first();
+                // if ($verify_phone) {
+                //         return ['success' => false, 'message' => "Le numero est déja utilisé par quelqu'un"];
+                // }
+
+                if (!$user->country->currencie) {
+                        return ['success' => false, 'message' => 'Pas de devise dans ce pays. Veuillez activer la devise'];
+                }
+
+                if ($user->email !== $requestData['email']) {
+                        $verify_email = SidUser::whereEmail($requestData['email'])->first();
+                        if ($verify_email) {
+                                return ['success' => false, 'message' => "L'email est déjà utilisé par quelqu'un"];
+                        }
+                }
+
+                $user->update([
+                        'firstname' => $requestData['firstname'],
+                        'lastname' => $requestData['lastname'],
+                        'company_id' => 1,
+                        // 'country_id' => $requestData['country_id'] ?? null,
+                        'city_id' => $requestData['city'] ?? null,
+                        'zone' => $requestData['zone'] ?? null,
+                        'email' => $requestData['email'],
+                        'phone' =>  $requestData['phone'],
+                        'created_by' => sabdy()->id,
+                        // 'password' => Hash::make($requestData['password']),
+                        'silver_ceiling'  =>   $user->country->silver_ceiling
+                ]);
+
+                if (!empty($requestData['password'])) {
+                        $user->password = Hash::make($requestData['password']);
+                        $user->save();
+                }
+
+                if ($image) {
+                        $destination_path = public_path('profil/' . $user->id . '/');
+                        $front_file = date('YmdHis') . "." . $image->getClientOriginalExtension();
+                        $image->move($destination_path, $front_file);
+                        $user->image = env('APP_URL') . "/public/profil/" . $user->id . "/$front_file";
+                        $user->save();
+                }
+
+                if ($imageRecto && $imageVerso) {
+
+                        $destination_path = public_path('kyc_users/' . $user->id . '/');
+                        $front_file = 'face_' .  date('YmdHis') . "." . $imageRecto->getClientOriginalExtension();
+                        $back_file = 'arriere_' . date('YmdHis') . "." . $imageVerso->getClientOriginalExtension();
+                        $imageRecto->move($destination_path, $front_file);
+                        $imageVerso->move($destination_path, $back_file);
+
+                        Kyc::updateOrCreate([
+                                'sid_user_id' => $user->id,
+                                'company_id' =>  $user->company->id
+                        ], [
+                                'motif' => 'Validation de compte',
+                                'screen' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$front_file",
+                                'screen_back' => env('APP_URL') . "/public/kyc_users/" . $user->id . "/$back_file",
+                                'sid_user_id' => $user->id,
+                                'status' => true,
+                                'company_id' =>  $user->company->id
+                        ]);
+                }
+
+                // Histoticals Null valeurs
+                $this->getDeleteTransactionsNullHistorical(WalletPayment::class , $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletTransaction::class , $walletId->id);
+                $this->getDeleteRecevedTransactionsHistorical(WalletTransaction::class , $walletId->wallet_id);
+                $this->getDeleteTransactionsNullHistorical(WalletPhoneCredit::class , $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletInter::class , $walletId->id);
+                $this->getDeleteRecevedInterTransactionsHistorical(WalletInter::class , $walletId->wallet_id);
+                $this->getDeleteTransactionsNullHistorical(WalletBank::class , $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletDeposit::class , $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(BankCard::class , $walletId->id);
+                
+                return ['success' => true, 'user' => $user];
+        }
+
+        public function getDeleteTransactionsNullHistorical($walletModel, $walletId)
+        {
+
+           if (!$walletModel || !$walletId) {
+                return ['success' => false, 'message' => 'Modèle ou ID de portefeuille invalide.'];
+            }
+        
+            $transactions = $walletModel::where('wallet_id', $walletId);
+        
+            if (!$transactions->exists()) {
+                return ['success' => false, 'message' => 'Aucune transaction trouvée pour ce portefeuille.'];
+            }
+        
+            $deleted = $transactions->delete();
+        
+            return ['success' => true, 'deleted_count' => $deleted];
+        }
+
+        public function getDeleteRecevedTransactionsHistorical($walletModel, $walletId)
+        {
+
+           if (!$walletModel || !$walletId) {
+                return ['success' => false, 'message' => 'Modèle ou ID de portefeuille invalide.'];
+            }
+        
+            $transactions = $walletModel::where('num_wallet', $walletId);
+        
+        //     if (!$transactions->exists()) {
+        //         return ['success' => false, 'message' => 'Aucune transaction trouvée pour ce portefeuille.'];
+        //     }
+        
+            $deleted = $transactions->delete();
+        
+            return ['success' => true, 'deleted_count' => $deleted];
+        }
+
+        public function getDeleteRecevedInterTransactionsHistorical($walletModel, $walletId)
+        {
+
+           if (!$walletModel || !$walletId) {
+                return ['success' => false, 'message' => 'Modèle ou ID de portefeuille invalide.'];
+            }
+        
+            $transactions = $walletModel::where('number_compte', $walletId);
+        
+        //     if (!$transactions->exists()) {
+        //         return ['success' => false, 'message' => 'Aucune transaction trouvée pour ce portefeuille.'];
+        //     }
+        
+            $deleted = $transactions->delete();
+        
+            return ['success' => true, 'deleted_count' => $deleted];
+        }
+        
 }

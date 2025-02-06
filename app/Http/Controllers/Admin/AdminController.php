@@ -15,6 +15,7 @@ use App\Models\AdminsCom;
 use App\Models\AppCompanyStatus;
 use App\Models\Banks\BankCard;
 use App\Models\Company;
+use App\Models\Custumers\City;
 use App\Models\Custumers\Country;
 use App\Models\Custumers\Zone;
 use App\Models\Kyc;
@@ -99,6 +100,41 @@ class AdminController extends Controller
         return view('pages.admin.activities');
     }
 
+       /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show_edit(Request $request, int $id)
+    {
+        if (Auth::guard('web')->user()->hasPermissionTo('modifier-utilisateur')) {
+
+
+            $user = SidUser::whereId($id)->first();
+
+            $kycs = $user->kyc()->get() ?? null;
+
+            $countrieId = $user->country_id;
+            
+            $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
+
+            $countrie = Country::whereId($countrieId)->first();
+
+            $cities = City::where('country_id' ,$countrieId)->get();
+
+            return view('pages.custumers.show_under_edit', compact(
+                'countrie',
+                'cities',
+                'kycs',
+                'user',
+                'wallet_solde'
+            ));
+        } else {
+            abort(403);
+        }
+    }
+
     public function check(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -141,6 +177,67 @@ class AdminController extends Controller
                 ->withErrors($validator)
                 ->with('color', 'danger')
                 ->with('status', 'Erreur de connexion')
+                ->withInput();
+        }
+    }
+
+    public function edit_unders($id ,Request $request)
+    {
+
+
+            $validator = $this->userValidatorService->validateUserUpdateDataAdmin($request->all());
+
+            if ($validator->fails()) {
+                return back()
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Champ requise')
+                    ->withInput();
+            }
+
+
+        try {
+
+
+            $response = $this->createUserService->updateUsersWeb(
+                $id,
+                $request->all(),
+                $request->file('image'),
+                $request->file('image_recto'),
+                $request->file('image_verso')
+            );
+
+            $msg =" Modification effectuée avec succès ";
+
+            if ($response['success']) {
+
+                $user = $response['user'];
+
+                $valeur_message = ' Profil ';
+
+                Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
+                    ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+
+                $msg = "Modification de profil avec succès";
+                $color = 'success';
+
+                return redirect(route('unders.admins.browse'))->with('color', $color)->with('status', $msg);
+
+            } else {
+
+                $message = $response['message'];
+                
+                return back()
+                    ->with('color', 'danger')
+                    ->with('status', $message)
+                    ->withInput();
+            }
+
+        } catch (\Throwable $th) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de création')
                 ->withInput();
         }
     }
@@ -1303,6 +1400,12 @@ class AdminController extends Controller
         $gain_retraits = $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
         $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
         $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
+        
+        $count_days_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'daily');
+        $amount_days_inters = $this->getTransactionsAmountTotal(WalletInter::class, $user->wallet->id , 'daily');
+        $count_mounth_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id , 'monthly');
+        $amount_mounth_inters = $this->getTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'monthly');
+
         $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
 
         $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
@@ -1312,6 +1415,10 @@ class AdminController extends Controller
 
         return view('pages.admin.show_unders', compact(
             'user',
+            'count_days_inters',
+            'amount_days_inters',
+            'count_mounth_inters',
+            'amount_mounth_inters',
             'roles',
             'sum_wallet_drawer',
             'sum_error',
@@ -1817,6 +1924,46 @@ class AdminController extends Controller
         return $totalAmount;
     }
 
+    public function getTransactionsAmountTotal($walletModel, $userID, $period = 'daily')
+    {
+       
+        $totalAmount = 0;
+        $query = $walletModel::where('wallet_id', $userID)
+                            ->whereStatus('SUCCESS');
+        
+        if ($period === 'daily') {
+            $query->whereDate('created_at', Carbon::today());
+        } elseif ($period === 'monthly') {
+            $query->whereMonth('created_at', Carbon::now()->month)
+                  ->whereYear('created_at', Carbon::now()->year);
+        }
+    
+        $amount = $query->sum('amount');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+    
+        return $totalAmount;
+    }
+
+    public function getCountsTransactionsAmountTotal($walletModel, $userID, $period = 'daily')
+    {
+       
+
+        $query = $walletModel::where('wallet_id', $userID)
+                            ->whereStatus('SUCCESS');
+        
+        if ($period === 'daily') {
+            $query->whereDate('created_at', Carbon::today());
+        } elseif ($period === 'monthly') {
+            $query->whereMonth('created_at', Carbon::now()->month)
+                  ->whereYear('created_at', Carbon::now()->year);
+        }
+    
+        return $query->count(); 
+    }
+
     public function withdrawCommission($walletModel, $user, $amount)
     {
         $walletTransaction = $walletModel::where('wallet_id', $user->wallet->id)
@@ -1923,9 +2070,19 @@ class AdminController extends Controller
         $sum_wallet_reload_received =  $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletReload::class, 'account_wallet', $wallet_solde);
         $sum_wallet_transaction_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
 
+        $count_days_inters = $this->getCountsValidatedAmountTotal(WalletInter::class, $user->id, 'daily');
+        $amount_days_inters = $this->getTransactionOperatriceAmountTotal(WalletInter::class, $user->id , 'daily');
+        $count_mounth_inters = $this->getCountsValidatedAmountTotal(WalletInter::class, $user->id , 'monthly');
+        $amount_mounth_inters = $this->getTransactionOperatriceAmountTotal(WalletInter::class, $user->id, 'monthly');
+
+
         return view('pages.admin.show_operators', compact(
             'user',
             'roles',
+            'count_days_inters',
+            'amount_days_inters',
+            'count_mounth_inters',
+            'amount_mounth_inters',
             'sum_error',
             'sum_success',
             'pending_success',
@@ -1938,6 +2095,46 @@ class AdminController extends Controller
             'kycs'
 
         ));
+    }
+
+
+    public function getCountsValidatedAmountTotal($walletModel, $userID, $period = 'daily')
+    {
+       
+
+        $query = $walletModel::where('updated_by', $userID);
+        
+        if ($period === 'daily') {
+            $query->whereDate('created_at', Carbon::today());
+        } elseif ($period === 'monthly') {
+            $query->whereMonth('created_at', Carbon::now()->month)
+                  ->whereYear('created_at', Carbon::now()->year);
+        }
+    
+        return $query->count(); 
+    }
+    
+
+    public function getTransactionOperatriceAmountTotal($walletModel, $userID, $period = 'daily')
+    {
+       
+        $totalAmount = 0;
+        $query = $walletModel::where('updated_by', $userID);
+        
+        if ($period === 'daily') {
+            $query->whereDate('created_at', Carbon::today());
+        } elseif ($period === 'monthly') {
+            $query->whereMonth('created_at', Carbon::now()->month)
+                  ->whereYear('created_at', Carbon::now()->year);
+        }
+    
+        $amount = $query->sum('amount');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+    
+        return $totalAmount;
     }
 
     public function getTotalSumTransactionsOperatorsAmount($user)

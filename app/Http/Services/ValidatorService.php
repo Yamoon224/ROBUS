@@ -40,6 +40,23 @@ class ValidatorService
         ]);
     }
 
+    public function validateUserUpdateDataAdmin($data)
+    {
+        return Validator::make($data, [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+            // 'country_id' => 'required',
+            'zone' => 'required',
+            'city' => 'required',
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'phone' => ['required'],
+            'password' => ['required', 'confirmed'],
+            'image' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_recto' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_verso' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+        ]);
+    }
+
     public function validateUserDataMaster($data)
     {
         return Validator::make($data, [

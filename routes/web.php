@@ -151,6 +151,8 @@ Route::group(['prefix' => ''], function () {
         Route::prefix('underdistributors')->group(function () {
             Route::get('/browse', [UserController::class, 'browseunders'])->name('unders.admins.browse');
             Route::get('/add', [AdminController::class, 'addunders'])->name('unders.admins.add');
+            Route::get('/edit/{id}', [AdminController::class, 'show_edit'])->name('unders.show_edit');
+            Route::post('update/{id}/store', [AdminController::class, 'edit_unders'])->name('unders.edit_unders');
             Route::post('/store', [MasterController::class, 'storeunders'])->name('unders.admin.store');
             Route::get('/show/{id}', [AdminController::class, 'showunders'])->name('unders.admins.show');
             Route::post('/update/{id}', [MasterController::class, 'updateunders'])->name('unders.admins.update');
@@ -175,6 +177,8 @@ Route::group(['prefix' => ''], function () {
             // Route::get('/browse_comzone', [UserController::class, 'browse_comzone'])->name('comzone.browse');
             Route::get('/browse_invalidated', [UserController::class, 'browse_invalidated'])->name('custumers.browse_invalidated');
             Route::get('/show/{id}', [UserController::class, 'show'])->name('custumers.show');
+            Route::get('/edit/{id}', [UserController::class, 'show_edit'])->name('custumers.show_edit');
+            Route::post('update/{id}/store', [UserController::class, 'edit_custumers'])->name('custumers.edit_custumers');
             Route::get('/show_company/{id}', [UserController::class, 'show_company'])->name('company.show_company');
             Route::get('/show_comzone/{id}', [UserController::class, 'show_comzone'])->name('comzone.show_comzone');
             Route::post('/update_custumers/{id}', [UserController::class, 'update_custumers'])->name('custumers.update_custumers');

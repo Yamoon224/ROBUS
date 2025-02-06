@@ -1162,6 +1162,197 @@ class IntersPaymentController extends Controller
                 } else {
                     return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                 }
+            } elseif($request->provider_type == 9)
+            {
+                
+                $percent_robus =  $this->percentRobus->getRobusPercentageBankSend();
+
+
+                if (robus()->is_under_distributer) {
+
+
+                    $validator = Validator::make(
+
+                        $request->all(),
+                        [
+                            "phone" => 'required',
+                            "phone_custumer" => 'required',
+                            "amount" => 'required',
+                            "name_custumer" => 'required',
+                            "name_sender" => 'required',
+                            "nationality" => 'required',
+                            "piece_type" => 'required',
+                            "num_piece_custumer" => 'required',
+                            "date_piece" => 'required',
+                            'country' => 'required',
+                            'account_number' => 'required',
+                            'address' => 'required',
+                            'address_account' => 'required',
+                            'city' => 'required',
+                            'name' => 'required',
+                        ],
+                        [
+
+                            'phone.required' => 'Votre numero est obligatoire',
+                            'phone_custumer.required' => 'Votre numero du beneficiaire est obligatoire',
+                            'amount.required' => 'Votre montant est obligatoire',
+                            'name_custumer.required' => 'Nom est obligatoire',
+                            'name_sender.required' => 'Nom expediteur est obligatoire',
+                            'num_piece_custumer.required' => 'Numero piece est obligatoire',
+                            'date_piece.required' => 'date de validité est obligatoire',
+                            'country.required' => 'Votre pays est obligatoire',
+                            'account_number.required' => 'Numero de compte est obligatoire',
+                            'name.required' => 'Nom de la banque est obligatoire',
+                            'address.required' => 'Adresse beneficiaire est obligatoire',
+                            'address_account.required' => 'Adresse du compte est obligatoire',
+                            'city.required' => 'Ville est obligatoire',
+                            'nationality.required' => 'Nationalité est obligatoire',
+                            'piece_type.required' => 'Type de piece  est obligatoire',
+
+                        ]
+                    );
+
+                    if ($validator->fails()) {
+                        return response()->json(
+                            [
+                                'success' => false,
+                                'message' => 'Verifiez les champs',
+                                'data' => $validator->errors()
+                            ],
+                            333
+                        );
+                    }
+                } else {
+
+                    $validator = Validator::make(
+
+                        $request->all(),
+                        [
+                            "phone" => 'required',
+                            "amount" => 'required',
+                            "name_custumer" => 'required',
+                            "nationality" => 'required',
+                            "piece_type" => 'required',
+                            "num_piece_custumer" => 'required',
+                            "date_piece" => 'required',
+                            'country' => 'required',
+                            'account_number' => 'required',
+                            'address' => 'required',
+                            'address_account' => 'required',
+                            'city' => 'required',
+                            'name' => 'required',
+                        ],
+                        [
+
+                            'phone.required' => 'Votre numero est obligatoire',
+                            'amount.required' => 'Votre montant est obligatoire',
+                            'name_custumer.required' => 'Nom est obligatoire',
+                            // 'name_sender.required' => 'Nom expediteur est obligatoire',
+                            'num_piece_custumer.required' => 'Numero piece est obligatoire',
+                            'date_piece.required' => 'date de validité est obligatoire',
+                            'country.required' => 'Votre pays est obligatoire',
+                            'account_number.required' => 'Numero de compte est obligatoire',
+                            'name.required' => 'Nom de la banque est obligatoire',
+                            'address.required' => 'Adresse beneficiaire est obligatoire',
+                            'address_account.required' => 'Adresse du compte est obligatoire',
+                            'city.required' => 'Ville est obligatoire',
+                            'nationality.required' => 'Nationalité est obligatoire',
+                            'piece_type.required' => 'Type de piece  est obligatoire',
+
+                        ]
+                    );
+
+                    if ($validator->fails()) {
+                        return response()->json(
+                            [
+                                'success' => false,
+                                'message' => 'Verifiez les champs',
+                                'data' => $validator->errors()
+                            ],
+                            333
+                        );
+                    }
+                }
+
+                if ($this->interServices->validatePhone($request->phone)) {
+
+                    if ($percent_robus != null) {
+
+                        $valeur_max_send  =  $country_robus->amount_max_send;
+
+                        if ($this->validatedamountDays->validateAmountSendLimit($request->amount, $valeur_max_send)) {
+
+                            if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+
+                                if ($this->validatedamountDays->validateAmount($request->amount)) {
+
+                                    if (robus()->is_under_distributer) {
+
+                                        $percent_amount = $percent_robus->percent_under_distributer * $request->amount;
+                                
+                                        // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+
+                                        $valeur_received = $request->amount -  $percent_amount ;
+                                    } else {
+
+                                        $percent_amount = $percent_robus->percent * $request->amount;
+                                
+                                        // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+
+                                        $valeur_received = $request->amount -  $percent_amount ;
+                                    }
+
+                                    $walletInter = $this->interServices->createMobileWalletInter(
+                                        $request->amount,
+                                        $percent_robus,
+                                        $country_robus,
+                                        $request->provider,
+                                        $request->phone,
+                                        $request->provider_type,
+                                        $request->name_custumer,
+                                        $request->num_piece_custumer,
+                                        $request->date_piece,
+                                        $request->name,
+                                        $request->name_sender,
+                                        $request->account_number
+                                    );
+
+                                    if ($walletInter != null) {
+
+                                        if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
+
+                                            if ($this->interServices->processCommissionMobiles($request->amount, $percent_robus, $country_robus, $walletInter, $admin_civ)) {
+                                                $this->interServices->sendNotificationRobus($walletInter);
+                                                return $this->messageAfterValidated($walletInter);
+                                            } else {
+
+                                                return   json_message_response(false, "Error de transferts du montant !", 300);
+                                            }
+                                        } else {
+
+                                            return   json_message_response(false, "Error de demande transferts  !", 300);
+                                        }
+                                    } else {
+                                        return   json_message_response(false, "Error de demande transferts  !", 300);
+                                    }
+                                } else {
+
+                                    return   json_message_response(false, "Verifier votre Solde SVP !", 300);
+                                }
+                            } else {
+
+                                return   json_message_response(false, "Le  montant maxi jounalier est atteint !", 300);
+                            }
+                        } else {
+
+                            return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $country_robus->currencie->code, 333);
+                        }
+                    } else {
+                        return   json_message_response(false, "Niveau de pourcentage introuvable !", 300);
+                    }
+                } else {
+                    return   json_message_response(false, "veuillez selectionnez le pays de destination SVP !", 300);
+                }
             }
         } catch (\Exception $exception) {
             return response()->json([

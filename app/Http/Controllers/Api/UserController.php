@@ -14,6 +14,7 @@ use App\Http\Resources\ReloadSingleCollection;
 use App\Http\Resources\RemonteSingleCollection;
 use App\Http\Resources\TransactionSingleCollection;
 use App\Http\Resources\UnderCollection;
+use App\Http\Resources\UnderDistributorCollection;
 use App\Http\Resources\UserSingleCollection;
 use App\Http\Resources\VirementSingleCollection;
 use App\Http\Resources\WalletSingleCollection;
@@ -44,6 +45,7 @@ use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
+use App\Traits\InitializeAppStatusTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -55,7 +57,6 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Validator;
-use App\Traits\InitializeAppStatusTrait;
 
 class UserController extends Controller
 {
@@ -84,7 +85,6 @@ class UserController extends Controller
         $this->authService = $authService;
         $this->operatorRestrictionService = $operatorRestrictionService;
         $this->initializeAppStatus($this->authService);
-  
     }
 
     /**
@@ -174,11 +174,45 @@ class UserController extends Controller
         ], 200);
     }
 
+
+    public function locations_unders()
+    {
+
+        try {
+
+            $userId = robus()->id;
+            $is_user = SidUser::find($userId);;
+
+            if (!$is_user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Utilisateur non trouvé'
+                ], 404);
+            }
+
+            $query = SidUser::where('is_under_distributer', true)
+                ->where('country_id', $is_user->country_id)
+                ->groupBy('city_id');
+
+            if ($is_user->city_id !== 2) {
+                $query = $query->get();
+            }
+
+            return response()->json([
+                'success' => true,
+                'user' => new UnderDistributorCollection($query)
+            ]);
+
+        } catch (\Exception $exception) {
+            $message = __('message.is not Une erreur est survenue. Veuillez réessayer.');
+            return json_message_response(false, $message, 333);
+        }
+    }
     public function dashboardCommissions()
     {
 
 
-        
+
         $commissions = [
             'Depots' => $this->transactionAccount->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class),
             'Retraits' => $this->transactionAccount->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class),
@@ -238,8 +272,8 @@ class UserController extends Controller
             ->paginate(20);
 
 
-        $som_commissions =  $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) + 
-        $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPayment::class) +
+        $som_commissions =  $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPayment::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBank::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPhoneCredit::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDeposit::class) +
@@ -1128,19 +1162,19 @@ class UserController extends Controller
 
         try {
 
-        
+
 
             $wallet_user = Auth::guard('api')->user();
 
-            $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +  
-            $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +  
-            $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
-            + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) +
-            $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletInter::class) ;
+            $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +
+                $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
+                $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +
+                $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
+                + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) +
+                $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
+                $this->transactionAccount->getWalletSumGainUser(WalletInter::class);
 
-    
+
             if ($som_commissions == 0) {
                 return response()->json([
                     'success' => false,
@@ -1215,7 +1249,7 @@ class UserController extends Controller
             ]);
         }
     }
-    
+
     public function historical_month_distributer()
     {
 

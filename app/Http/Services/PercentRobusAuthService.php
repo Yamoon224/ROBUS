@@ -260,6 +260,11 @@ class PercentRobusAuthService
         return DepositCost::whereId(1)->first();
     }
 
+    public function getRobusPercentageBankSend()
+    {
+        return DepositCost::whereId(4)->first();
+    }
+
     public function getRobusPercentageInter($countrie, $provider_valeur)
     {
         $levelValeur = 0;

@@ -159,7 +159,7 @@ class AuthentificationController extends Controller
 
             if ($request->has('phone') ||  $request->has('email')) {
 
-                if ($user != null || $user_email != null || $verify_phone) {
+                if ($user != null || $verify_phone) {
                     return response()->json([
                         'success' => false,
                         'message' => 'Utilisateur existe.',
@@ -804,6 +804,9 @@ class AuthentificationController extends Controller
 
                 Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone_user&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
               
+                $notify = new MailController;
+                $notify->newOtp($resend_user);
+
             } else {
 
                 $notify = new MailController;
@@ -895,7 +898,15 @@ class AuthentificationController extends Controller
                         $phone = $request->phone;
                         Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                         // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$phone&from=ROBUS&sms=$message");
+                        
+                        $user = SidUser::whereEmail($request->phone)->first();
+                        if (!empty($user)) {
+                            $user->update(['forget_password' => $activation_code]);
+                            Mail::to($request->phone)->send(new UpdatePassword('Utilisez ce mot de passe temporaire pour vous connectez ' .  $activation_code));
+                        }
+                        
                         DB::commit();
+
                     }
                 } else {
                     $user = SidUser::whereEmail($request->phone)->first();

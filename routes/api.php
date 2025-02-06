@@ -257,6 +257,12 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('add_custumers/store', [ComZoneController::class, 'store_under_custumers']);
             Route::post('add_under_distributors/store', [ComZoneController::class, 'store_under_distributors']);
         });
+
+        // Unders distributors
+        Route::prefix('undersdistributors')->group(function () {
+            Route::get('locations', [UserController::class, 'locations_unders']);
+        });
+
     });
 
 
