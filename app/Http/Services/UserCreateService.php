@@ -14,7 +14,11 @@ use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletInter;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
+use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletWave;
+use App\Models\Wallets\WalletXbet;
+use App\Models\WithMerchant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
@@ -1007,6 +1011,8 @@ class UserCreateService
 
                 // Histoticals Null valeurs
                 $this->getDeleteTransactionsNullHistorical(WalletPayment::class , $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletWave::class , $walletId->id);
+                $this->getDeleteTransactionsNullHistorical(WalletXbet::class , $walletId->id);
                 $this->getDeleteTransactionsNullHistorical(WalletTransaction::class , $walletId->id);
                 $this->getDeleteRecevedTransactionsHistorical(WalletTransaction::class , $walletId->wallet_id);
                 $this->getDeleteTransactionsNullHistorical(WalletPhoneCredit::class , $walletId->id);
@@ -1015,7 +1021,10 @@ class UserCreateService
                 $this->getDeleteTransactionsNullHistorical(WalletBank::class , $walletId->id);
                 $this->getDeleteTransactionsNullHistorical(WalletDeposit::class , $walletId->id);
                 $this->getDeleteTransactionsNullHistorical(BankCard::class , $walletId->id);
-                
+                $this->getDeleteRecevedReloadHistorical(WalletReload::class , $walletId->wallet_id);
+                $this->getDeleteTransactionsNullHistorical(WalletReload::class , $walletId->id);
+                $this->getDeleteRemonteCommissionHistorical(WithMerchant::class , $user->id);
+
                 return ['success' => true, 'user' => $user];
         }
 
@@ -1045,6 +1054,42 @@ class UserCreateService
             }
         
             $transactions = $walletModel::where('num_wallet', $walletId);
+        
+        //     if (!$transactions->exists()) {
+        //         return ['success' => false, 'message' => 'Aucune transaction trouvée pour ce portefeuille.'];
+        //     }
+        
+            $deleted = $transactions->delete();
+        
+            return ['success' => true, 'deleted_count' => $deleted];
+        }
+
+        public function getDeleteRecevedReloadHistorical($walletModel, $walletId)
+        {
+
+           if (!$walletModel || !$walletId) {
+                return ['success' => false, 'message' => 'Modèle ou ID de portefeuille invalide.'];
+            }
+        
+            $transactions = $walletModel::where('account_wallet', $walletId);
+        
+        //     if (!$transactions->exists()) {
+        //         return ['success' => false, 'message' => 'Aucune transaction trouvée pour ce portefeuille.'];
+        //     }
+        
+            $deleted = $transactions->delete();
+        
+            return ['success' => true, 'deleted_count' => $deleted];
+        }
+
+        public function getDeleteRemonteCommissionHistorical($walletModel, $sidUserId)
+        {
+
+           if (!$walletModel || !$sidUserId) {
+                return ['success' => false, 'message' => 'Modèle ou ID de portefeuille invalide.'];
+            }
+        
+            $transactions = $walletModel::where('sid_user_id', $sidUserId);
         
         //     if (!$transactions->exists()) {
         //         return ['success' => false, 'message' => 'Aucune transaction trouvée pour ce portefeuille.'];

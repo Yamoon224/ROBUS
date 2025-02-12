@@ -1451,6 +1451,7 @@ class AdminController extends Controller
         $user = SidUser::find($id);
 
 
+       
         if (!$user) {
             return back()
                 ->with('color', 'danger')
@@ -1460,7 +1461,7 @@ class AdminController extends Controller
 
         $gainMappings = [
             "Paiements" => $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id),
-            "Transactions" => $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            // "Transactions" => $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             "Crédits" => $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class, $user->wallet->id),
             "International" => $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id),
             "Virements" => $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id),
@@ -1470,9 +1471,10 @@ class AdminController extends Controller
             "Moneys" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
         ];
 
+
         $resetMappings = [
             "Paiements" => WalletPayment::class,
-            "Transactions" => WalletTransaction::class,
+            // "Transactions" => WalletTransaction::class,
             "Crédits" => WalletPhoneCredit::class,
             "International" => WalletInter::class,
             "Virements" => WalletBank::class,
@@ -1482,6 +1484,7 @@ class AdminController extends Controller
             "Moneys" => WalletTransaction::class,
         ];
 
+      
 
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
@@ -1502,14 +1505,15 @@ class AdminController extends Controller
         }
 
         $calculatedGainAmount = $gainMappings[$typeRemonte];
+            
 
-
-        if ((float)$amount !== $calculatedGainAmount) {
+        if ((string)$amount !== (string)$calculatedGainAmount) {
             return back()
                 ->with('color', 'danger')
                 ->with('status', 'Montant de la commission invalide !!')
                 ->withInput();
         }
+
 
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
@@ -1638,7 +1642,8 @@ class AdminController extends Controller
 
         $calculatedGainAmount = $gainMappings[$typeRemonte];
 
-        if ((float)$amount !== $calculatedGainAmount) {
+
+        if ((string)$amount !== (string)$calculatedGainAmount) {
             return back()
                 ->with('color', 'danger')
                 ->with('status', 'Montant de la commission invalide !!')
@@ -1733,7 +1738,7 @@ class AdminController extends Controller
         }
 
 
-        if ((float)$amount !== $company_gains) {
+        if ((string)$amount !== (string) $company_gains) {
             return back()
                 ->with('color', 'danger')
                 ->with('status', 'Montant de la commission invalide !!')
@@ -2039,6 +2044,7 @@ class AdminController extends Controller
         return $totalAmount;
     }
 
+
     public function showdistributors(int $id, Request $request)
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur')) {
@@ -2237,11 +2243,12 @@ class AdminController extends Controller
                 ' Votre email : '  . $user_info->email . ' Votre mot de passe : ' . $request->password));
 
             return back()->with('status', 'Mise a jour effectuée avec succès');
+            
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)
                 ->with('color', 'danger')
-                ->with('status', 'Erreur de création')
+                ->with('status', 'Erreur de renitialisation')
                 ->withInput();
         }
     }
