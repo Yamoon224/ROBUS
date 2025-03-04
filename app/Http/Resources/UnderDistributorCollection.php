@@ -30,6 +30,8 @@ class UnderDistributorCollection extends ResourceCollection
                                         'phone' => $data->phone,
                                         'zone' => $data->zone,
                                         'status' => $data->status,
+                                        'longitude' => $data->longitude,
+                                        'latitude' => $data->latitude,
                                         'image' => $data->image,
                                         'type_users' => $is_custumer ? "Client" : ($is_under_distributer ? "Sous distributeur" : "Master"),
                                         'wallet_id' => optional($data->wallet)->wallet_id ?? null,

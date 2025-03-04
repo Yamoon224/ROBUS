@@ -181,6 +181,44 @@ class UserController extends Controller
         try {
 
             $userId = robus()->id;
+            $is_user = SidUser::find($userId);
+
+            if (!$is_user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Utilisateur non trouvé'
+                ], 404);
+            }
+
+            $query = SidUser::where('is_under_distributer', true)
+                ->where('country_id', $is_user->country_id);
+
+            if ($is_user->city_id !== 2) {
+                $query = $query->groupBy('city_id');
+            }else {
+                $query = $query->groupBy('zone');
+            }
+
+            $results = $query->get();
+    
+            return response()->json([
+                'success' => true,
+                'user' => new UnderDistributorCollection($results)
+            ]);
+
+        } catch (\Exception $exception) {
+            $message = __('message.is not Une erreur est survenue. Veuillez réessayer.');
+            return json_message_response(false, $message, 333);
+        }
+    }
+
+    public function locations_unders_zone(string $zone)
+    {
+
+        try {
+
+            
+            $userId = robus()->id;
             $is_user = SidUser::find($userId);;
 
             if (!$is_user) {
@@ -192,10 +230,14 @@ class UserController extends Controller
 
             $query = SidUser::where('is_under_distributer', true)
                 ->where('country_id', $is_user->country_id)
-                ->groupBy('city_id');
+                ->where('zone', $zone)
+                ->get();
 
-            if ($is_user->city_id !== 2) {
-                $query = $query->get();
+            if (!$query) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Pas d\utilisateur dans cette zone'
+                ], 404);
             }
 
             return response()->json([
@@ -208,6 +250,7 @@ class UserController extends Controller
             return json_message_response(false, $message, 333);
         }
     }
+
     public function dashboardCommissions()
     {
 

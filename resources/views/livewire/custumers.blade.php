@@ -63,7 +63,22 @@
 
                             </td>
                             <td class="w-60">
-
+                                @if (Auth::guard('web')->user()->hasPermissionTo('voir-couleurs'))
+                                @php
+                                    $solde = $item->wallet->amount ?? 0.0;
+                                @endphp
+                                <div class="barre mb-3"
+                                    style="height: 20px; 
+                                        background-color: 
+                                            @if ($solde >= 100000) yellow;
+                                            @elseif ($solde >= 50000 && $solde < 100000)
+                                                blue;
+                                            @elseif ($solde > 0)
+                                                red;
+                                            @else
+                                                gray; @endif;">
+                                </div>
+                            @endif
                                 <div class="text-slate-300 text-xs  mt-0.5 mb-2">
                                     <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname }}
                                         {{ $item->lastname }}</div>

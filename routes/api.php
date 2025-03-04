@@ -261,6 +261,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         // Unders distributors
         Route::prefix('undersdistributors')->group(function () {
             Route::get('locations', [UserController::class, 'locations_unders']);
+            Route::get('locations/{id}', [UserController::class, 'locations_unders_zone']);
         });
 
     });
