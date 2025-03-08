@@ -393,7 +393,7 @@
                                         </div>
                                     </div>
                                 @endif
-                                @if ($item->is_active == '1')
+                                @if ($item->is_active == '1' && $item->status == '1')
                                     @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
                                         <div class="flex items-center justify-center text-success">
 

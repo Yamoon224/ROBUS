@@ -126,17 +126,21 @@
                     </div>
                 </div>
             </div>
-            <div
-                class="mt-6 lg:mt-0 flex-1 flex items-center justify-center px-5 border-t lg:border-0 mr-3 border-slate-200/60 dark:border-darkmode-400 pt-5 lg:pt-0 color-wallet">
-                <div class="text-center rounded-md  py-3" style="color: white; font-size: 16px;">
-                    <div class="font-medium text-lg mb-3">Solde Wallet</div>
-                    <div class="font-medium text-primary text-xl" style="color: white;">
-                        {{ number_format($user->wallet()->sum('amount'), 2, ',', ' ') ?? null }}
-                        {{ $user->country->currencie->code ?? null }}
-                    </div>
-                </div>
 
+            @if (Auth::guard('web')->user()->hasPermissionTo('voir-soldes'))
+            <div
+            class="mt-6 lg:mt-0 flex-1 flex items-center justify-center px-5 border-t lg:border-0 mr-3 border-slate-200/60 dark:border-darkmode-400 pt-5 lg:pt-0 color-wallet">
+            <div class="text-center rounded-md  py-3" style="color: white; font-size: 16px;">
+                <div class="font-medium text-lg mb-3">Solde Wallet</div>
+                <div class="font-medium text-primary text-xl" style="color: white;">
+                    {{ number_format($user->wallet()->sum('amount'), 2, ',', ' ') ?? null }}
+                    {{ $user->country->currencie->code ?? null }}
+                </div>
             </div>
+
+        </div>
+            @endif
+          
 
         </div>
         <div class="ml-5">

@@ -581,47 +581,37 @@ class UserController extends Controller
     public function activate(int $id)
     {
         try {
+            
             DB::beginTransaction();
             $user = SidUser::find($id);
 
-            if ($user->is_active == '1') {
+            if ($user->is_active == '1'  &&  $user->status = '1') {
 
                 $user->is_active = '0';
-                $msg = 'Désactivation effectuée avec succès';
-                $message = 'Votre compte a été desactivé avec success';
-
-                if ($user->country->code == "CI") {
-
-                    $message = 'Votre compte a été desactivez avec success';
-
-                    $encode = substr($user->phone,  -10);
-
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                } else {
-
-                    $notify = new MailController;
-                    $notify->activeAccount($user);
-                }
+                $user->status = '0';
+                
             } else {
 
                 $user->is_active = '1';
-                $msg = 'Activation effectuée avec succès';
+                $user->status = '1';
 
-                $message = 'Votre compte a été activé avec succès';
-
-                if ($user->country->code == "CI") {
-
-                    $message = 'Votre compte a été activé avec succès';
-
-                    $encode = substr($user->phone,  -10);
-
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                } else {
-
-                    $notify = new MailController;
-                    $notify->activeAccount($user);
-                }
             }
+
+            $msg = 'Désactivation effectuée avec succès';
+            $message = 'Votre compte a été desactivé avec success';
+
+            if ($user->country->code == "CI") {
+
+                $message = 'Votre compte a été desactivez avec success';
+
+                $encode = substr($user->phone,  -10);
+
+                // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
+            } 
+            $notify = new MailController;
+            $notify->activeAccount($user);
             $user->save();
             DB::commit();
 
