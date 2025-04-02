@@ -872,15 +872,15 @@
             @endphp
             <span
                 class="alert alert-secondary mr-10 inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                Le nom de l'agent qui l'a enregistré : {{ $user_agent->firstname }} {{ $user_agent->lastname }} <br>
+                Le nom de l'agent qui l'a enregistré : {{ $user_agent->firstname ?? null }} {{ $user_agent->lastname ?? null }} <br>
             </span>
             <span
                 class="alert alert-secondary mr-10 inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                Email & phone : {{ $user_agent->email }} {{ $user_agent->phone }}
+                Email & phone : {{ $user_agent->email ?? null }} {{ $user_agent->phone ?? null }}
             </span>
         @endif
         <h2 class="intro-y text-lg font-medium mt-3 text-center">
-            Details sur l'equipe {{ $user->firstname }}
+            Details sur l'equipe {{ $user->firstname  ?? null}}
         </h2>
         <h2 class="font-medium text-base mr-auto mt-3 mb-3">
             <a href="{{ URL::previous() }}" class="btn btn-sm">

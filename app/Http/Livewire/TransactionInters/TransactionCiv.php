@@ -2356,7 +2356,7 @@ class TransactionCiv extends Component
                     158 => ($provider_valeur != 51) ? 5008 : 4480, // Nigeria
                     191 => ($provider_valeur != 51) ? 4960 : 4432, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 638 : 668, // Koweit
-                    212 => ($provider_valeur != 51) ? 639 : 657, // Tanzanie
+                    212 => ($provider_valeur != 51) ? 7123 : 7122, // Tanzanie
                     175 => ($provider_valeur != 51) ? 3010 : 669, // Quatar voirs
                     241 => ($provider_valeur != 51) ? 637 : 660, // Zambie
                     100 => ($provider_valeur != 51) ? 640 : 672, // Inde

@@ -232,14 +232,13 @@ class PercentRobusAuthService
 
     public function getRobusPercentagePhoneInter()
     {
-
         return  PhoneCreditCost::when(robus()->is_under_distributer, function ($query) {
             return $query->whereId(2);
         }, function ($query) {
             return $query->whereId(22);
         })->first();
-    }
 
+    }
     public function getRobusPercentagePayment()
     {
         return PaymentCost::whereId(2)->first();
@@ -258,11 +257,6 @@ class PercentRobusAuthService
     public function getRobusPercentageOrderCard()
     {
         return DepositCost::whereId(1)->first();
-    }
-
-    public function getRobusPercentageBankSend()
-    {
-        return DepositCost::whereId(4)->first();
     }
 
     public function getRobusPercentageInter($countrie, $provider_valeur)
@@ -1539,7 +1533,7 @@ class PercentRobusAuthService
                     158 => ($provider_valeur != 51) ? 5008 : 4480, // Nigeria
                     191 => ($provider_valeur != 51) ? 4960 : 4432, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 638 : 668, // Koweit
-                    212 => ($provider_valeur != 51) ? 639 : 657, // Tanzanie
+                    212 => ($provider_valeur != 51) ? 7123 : 7122, // Tanzanie
                     175 => ($provider_valeur != 51) ? 3010 : 669, // Quatar voirs
                     241 => ($provider_valeur != 51) ? 637 : 660, // Zambie
                     100 => ($provider_valeur != 51) ? 640 : 672, // Inde
