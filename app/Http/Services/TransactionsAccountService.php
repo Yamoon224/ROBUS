@@ -334,12 +334,16 @@ class TransactionsAccountService
 
         $startOfWeek = Carbon::now()->startOfWeek(); 
         $endOfWeek = Carbon::now()->endOfDay();
-
-        return   $wallets::where('wallet_id', $wallet_solde->id)
-            ->orWhere($numWallet, $wallet_solde->wallet_id)
-            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        
+        return $wallets::query()
+                ->where(function ($query) use ($wallet_solde, $numWallet) {
+                    $query->where('wallet_id', $wallet_solde->id)
+                        ->orWhere($numWallet, $wallet_solde->wallet_id);
+                })
+                ->where('created_at', '>=', $startOfWeek)
+                ->where('created_at', '<=', $endOfWeek)
+                ->orderBy('created_at', 'desc')
+                ->get();
     }
 
 
@@ -348,8 +352,12 @@ class TransactionsAccountService
         $startOfWeek = Carbon::now()->startOfWeek(); 
         $endOfWeek = Carbon::now()->endOfDay();
 
-        return   $wallets::where('wallet_id', $wallet_solde->id)
-            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+        return   $wallets::query()
+                ->where(function ($query) use ($wallet_solde) {
+                    $query->where('wallet_id', $wallet_solde->id);
+                })
+            ->where('created_at', '>=', $startOfWeek)
+            ->where('created_at', '<=', $endOfWeek)
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -389,8 +397,13 @@ class TransactionsAccountService
         $startOfWeek = Carbon::now()->startOfWeek(); 
         $endOfWeek = Carbon::now()->endOfDay();
 
-        return   $wallets::where('sid_user_id', $userId)
-             ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+        return    $wallets::query()
+            ->where(function ($query) use ($userId) {
+                $query->where('sid_user_id', $userId);
+            })
+            
+            ->where('created_at', '>=', $startOfWeek)
+            ->where('created_at', '<=', $endOfWeek)
             ->orderBy('created_at', 'desc')
             ->get();
     }
