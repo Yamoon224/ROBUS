@@ -2,6 +2,7 @@
 
 namespace App\Http\Livewire;
 
+use App\Models\Custumers\City;
 use Livewire\Component;
 use App\Models\Sid\SidUser;
 use Livewire\WithPagination;
@@ -31,6 +32,30 @@ class custumers extends Component
     public $master_country;
     public $masters;
     public $company_id;
+    public $countries;
+    public $cities = []; 
+    public $citiesFilter;
+    public $cityNameSearch = ''; 
+    
+    public function mount()
+    {
+        $this->countries = Country::orderBy('name')->get(); 
+    }
+
+
+    public function updatedCountriesFilter($countryId)
+    {
+
+        if ($countryId) {
+            $this->cities = City::where('country_id', $countryId) 
+                                 ->orderBy('name')
+                                 ->get();
+        } else {
+            $this->cities = [];
+        }
+
+        $this->citiesFilter = null;
+    }
 
 
     public function edit($id, $state)
@@ -229,10 +254,31 @@ class custumers extends Component
             $users->where("is_active", $this->statusFilter_active);
         }
 
+     
         if ($this->countriesFilter != "") {
             $users->where("country_id", $this->countriesFilter);
         }
 
+        if (!is_array($this->cities) && !is_object($this->cities)) {
+            $this->cities = [];
+        }
+
+        if ($this->citiesFilter != "") {
+            $users->where("city_id", $this->citiesFilter);
+        }
+
+        if ($this->cityNameSearch != "") {
+
+            $this->resetPage(); 
+            $users->where('is_custumers', true)
+            ->when($this->cityNameSearch, function ($query) {
+                $query->where(function ($query) {
+                    $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
+                });
+            })
+            ->paginate($this->perPage);
+        }
+        
         return view('livewire.custumers', [
             "users" => $users->where('is_custumers', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
             "countries" => Country::where('status', true)->orderBy("name", 'desc')->get()

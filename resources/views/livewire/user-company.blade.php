@@ -5,7 +5,6 @@
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
                 <a class="btn btn-primary shadow-md mr-2" href="{{ route('admin.add_company') }}">Ajouter une
                     sociéte</a>
@@ -15,23 +14,50 @@
                     <a class="dropdown-toggle btn px-2 box" href="{{ route('admin.add_company') }}" aria-expanded="false"
                         data-tw-toggle="dropdown">
                         <span class="w-5 h-5 flex items-center justify-center"> <i class="w-4 h-4"
-                                data-feather="plus"></i> </span>
+                                data-feather="plus"></i>
+                        </span>
                     </a>
                 @endif
+            </div>
+        </div>
+        <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
+
+
+            <div class="hidden md:block mx-auto text-slate-500"></div>
+            <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                    <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par
+                        pays</label>
+                    <select id="countriesFilter" wire:model="countriesFilter" class="form-select py-3 px-4 box w-100"
+                        aria-placeholder="Rechercher par pays">
+                        <option value="" selected>Rechercher par pays</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
             </div>
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-                    <label for="countriesFilter">Filtrer par pays</label>
-                    <select id="countriesFilter" wire:model="countriesFilter"
-                        class="form-select py-3 px-4 box w-full
-                    dark-border-dark-3 mt-lg-0 ms-auto"
-                        aria-placeholder="Rechercher par pays">
-                        <option selected disabled>Rechercher par pays</option>
-                        @foreach ($countries as $coutrie)
-                            <option value="{{ $coutrie->id }}">{{ $coutrie->name }}</option>
+                    <label for="citiesFilter" class="text-gray-700 text-sm font-bold mb-2">Filtrer par ville</label>
+                    <select id="citiesFilter" wire:model="citiesFilter" class="form-select py-3 px-4 box w-100"
+                        aria-placeholder="Rechercher par ville" @if (empty($cities)) disabled @endif>
+                        <option value="" selected>Rechercher par ville</option>
+                        @foreach ($cities as $city)
+                            <option value="{{ $city->id }}">{{ $city->name }}</option>
                         @endforeach
                     </select>
+                </div>
+            </div>
+            <div class="hidden md:block mx-auto text-slate-500"></div>
+            <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
+                <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
+                    <label for="cityNameSearch" class="block text-gray-700 text-sm font-bold mb-2">Rechercher par nom
+                        des zones</label>
+                    <input type="text" id="cityNameSearch" wire:model.live.debounce.300ms="cityNameSearch"
+                        placeholder="Saisir le nom d'une ville..."
+                        class="form-input py-3 px-4 box w-full rounded-md border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500">
                 </div>
             </div>
             <div class="hidden md:block ml-8 text-slate-500"></div>
@@ -71,11 +97,11 @@
                             </td>
                             <td class="w-50">
                                 @if (Auth::guard('web')->user()->hasPermissionTo('voir-couleurs'))
-                                @php
-                                    $solde = $item->wallet->amount ?? 0.0;
-                                @endphp
-                                <div class="barre"
-                                    style="height: 20px; 
+                                    @php
+                                        $solde = $item->wallet->amount ?? 0.0;
+                                    @endphp
+                                    <div class="barre"
+                                        style="height: 20px; 
                                         background-color: 
                                             @if ($solde >= 100000) yellow;
                                             @elseif ($solde >= 50000 && $solde < 100000)
@@ -84,8 +110,8 @@
                                                 red;
                                             @else
                                                 gray; @endif;">
-                                </div>
-                            @endif
+                                    </div>
+                                @endif
                                 <div class="text-slate-300 text-xs  mt-0.5 mb-2">
                                     <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname ?? null }}</div>
                                 </div>
@@ -197,9 +223,9 @@
                                                 </div>
                                                 <a class="dropdown-toggle w-5 h-5 block" href="javascript:;"
                                                     aria-expanded="false" data-tw-toggle="dropdown"> <svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                        stroke-width="2" stroke-linecap="round"
+                                                        xmlns="http://www.w3.org/2000/svg" width="24"
+                                                        height="24" viewBox="0 0 24 24" fill="none"
+                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                                         stroke-linejoin="round" icon-name="more-horizontal"
                                                         data-lucide="more-horizontal"
                                                         class="lucide lucide-more-horizontal w-5 h-5 text-slate-500">
@@ -216,7 +242,8 @@
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
                                                     <div class="dropdown-content">
                                                         @foreach ($operators as $operator)
-                                                            <input  wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                            <input
+                                                                wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
                                                                 value="{{ $operator->id }}" type="checkbox"
                                                                 class="sid-switch"
                                                                 @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
@@ -233,15 +260,16 @@
                                         </div>
                                     @endif
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-utilisateur'))
-                                    <a class="flex items-center mr-3" href="{{ route('unders.show_edit', ['id' => $item->id]) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round" class="lucide lucide-edit block mx-auto h-15 mr-1">
-                                            <path d="M12 20h9"></path>
-                                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                                        </svg>
-                                    </a>
-                                        
+                                        <a class="flex items-center mr-3"
+                                            href="{{ route('unders.show_edit', ['id' => $item->id]) }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-edit block mx-auto h-15 mr-1">
+                                                <path d="M12 20h9"></path>
+                                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                                            </svg>
+                                        </a>
                                     @endif
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
                                         <a class="btn btn-primary mr-1 mb-2 btn-sm"

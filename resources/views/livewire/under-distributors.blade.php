@@ -23,23 +23,44 @@
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
 
+     
+            <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                    <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par pays</label>
+                    <select id="countriesFilter" wire:model="countriesFilter"
+                    class="form-select py-3 px-4 box w-100"
+                    aria-placeholder="Rechercher par pays">
+                    <option value="" selected>Rechercher par pays</option> @foreach ($countries as $country)
+                        <option value="{{ $country->id }}">{{ $country->name }}</option>
+                    @endforeach
+                </select>
+                </div>
+            </div>
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-                    <label for="countriesFilter">Filtrer par pays</label>
-                    <select id="countriesFilter" wire:model="countriesFilter"
-                        class="form-select py-3 px-4 box w-full
-                    dark-border-dark-3 mt-lg-0 ms-auto"
-                        aria-placeholder="Rechercher par pays">
-                        <option selected disabled>Rechercher par pays</option>
-                        @foreach ($countries as $coutrie)
-                            <option value="{{ $coutrie->id }}">{{ $coutrie->name }}</option>
-                        @endforeach
-                    </select>
+                    <label for="citiesFilter" class="text-gray-700 text-sm font-bold mb-2">Filtrer par ville</label>
+                    <select id="citiesFilter" wire:model="citiesFilter"
+                    class="form-select py-3 px-4 box w-100"
+                    aria-placeholder="Rechercher par ville"
+                    @if(empty($cities)) disabled @endif> <option value="" selected>Rechercher par ville</option> @foreach ($cities as $city)
+                        <option value="{{ $city->id }}">{{ $city->name }}</option>
+                    @endforeach
+                </select>
                 </div>
             </div>
+            <div class="hidden md:block mx-auto text-slate-500"></div>
+            <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
+                <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
+                    <label for="cityNameSearch" class="block text-gray-700 text-sm font-bold mb-2">Rechercher par nom des zones</label>
+                    <input type="text" id="cityNameSearch" wire:model.live.debounce.300ms="cityNameSearch"
+                           placeholder="Saisir le nom d'une ville..."
+                           class="form-input py-3 px-4 box w-full rounded-md border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500">
+                </div>
+            </div>
+            
             <div class="hidden md:block ml-8 text-slate-500"></div>
-            <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;">
+            <div class="mt-3 input-group input-group-md" style="margin-top: 13px;width: 250px;">
                 <div class="w-56 relative text-slate-500">
 
                     <input type="text" name="table_search" wire:model="search" class="form-control  w-56 box pr-10"

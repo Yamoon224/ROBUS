@@ -5,29 +5,48 @@
     </h2>
 
     <div class="grid grid-cols-12 gap-6 mt-5">
+        <div class="md:block w-80 mx-auto text-slate-500">
+            <a class="btn btn-primary mt-3" href="{{ route('custumers.browse_invalidated') }}">Clients invalides</a>
 
+        </div>
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
-            <div class="md:block mx-auto text-slate-500">
-                <a class="btn btn-primary mt-3" href="{{ route('custumers.browse_invalidated') }}">Clients invalides</a>
-
-            </div>
+           
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
 
+            <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
+                    <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par pays</label>
+                    <select id="countriesFilter" wire:model="countriesFilter"
+                    class="form-select py-3 px-4 box w-100"
+                    aria-placeholder="Rechercher par pays">
+                    <option value="" selected>Rechercher par pays</option> @foreach ($countries as $country)
+                        <option value="{{ $country->id }}">{{ $country->name }}</option>
+                    @endforeach
+                </select>
+                </div>
+            </div>
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-                    <label for="countriesFilter">Filtrer par pays</label>
-                    <select id="countriesFilter" wire:model="countriesFilter"
-                        class="form-select py-3 px-4 box w-full
-                    dark-border-dark-3 mt-lg-0 ms-auto"
-                        aria-placeholder="Rechercher par pays">
-                        <option selected disabled>Rechercher par pays</option>
-                        @foreach ($countries as $coutrie)
-                            <option value="{{ $coutrie->id }}">{{ $coutrie->name }}</option>
-                        @endforeach
-                    </select>
+                    <label for="citiesFilter" class="text-gray-700 text-sm font-bold mb-2">Filtrer par ville</label>
+                    <select id="citiesFilter" wire:model="citiesFilter"
+                    class="form-select py-3 px-4 box w-100"
+                    aria-placeholder="Rechercher par ville"
+                    @if(empty($cities)) disabled @endif> <option value="" selected>Rechercher par ville</option> @foreach ($cities as $city)
+                        <option value="{{ $city->id }}">{{ $city->name }}</option>
+                    @endforeach
+                </select>
+                </div>
+            </div>
+            <div class="hidden md:block mx-auto text-slate-500"></div>
+            <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
+                <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
+                    <label for="cityNameSearch" class="block text-gray-700 text-sm font-bold mb-2">Rechercher par nom des zones</label>
+                    <input type="text" id="cityNameSearch" wire:model.live.debounce.300ms="cityNameSearch"
+                           placeholder="Saisir le nom d'une ville..."
+                           class="form-input py-3 px-4 box w-full rounded-md border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500">
                 </div>
             </div>
             <div class="hidden md:block ml-8 text-slate-500"></div>

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Mail;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Events\assignementEvent;
+use App\Models\Custumers\City;
 
 class UserCompany extends Component
 {
@@ -24,6 +25,30 @@ class UserCompany extends Component
     public $sortAsc = true;
     public $sidUserId;
     public $sidUserStatus;
+    public $countries;
+    public $cities = []; 
+    public $citiesFilter;
+    public $cityNameSearch = ''; 
+    
+    public function mount()
+    {
+        $this->countries = Country::orderBy('name')->get(); 
+    }
+
+
+    public function updatedCountriesFilter($countryId)
+    {
+
+        if ($countryId) {
+            $this->cities = City::where('country_id', $countryId) 
+                                 ->orderBy('name')
+                                 ->get();
+        } else {
+            $this->cities = [];
+        }
+
+        $this->citiesFilter = null;
+    }
 
     public function edit($id, $state)
     {
@@ -129,8 +154,30 @@ class UserCompany extends Component
             });
         }
     
+
+
         if ($this->countriesFilter != "") {
             $users->where("country_id", $this->countriesFilter);
+        }
+
+        if (!is_array($this->cities) && !is_object($this->cities)) {
+            $this->cities = [];
+        }
+
+        if ($this->citiesFilter != "") {
+            $users->where("city_id", $this->citiesFilter);
+        }
+
+        if ($this->cityNameSearch != "") {
+
+            $this->resetPage(); 
+            $users->where('is_company', true)
+            ->when($this->cityNameSearch, function ($query) {
+                $query->where(function ($query) {
+                    $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
+                });
+            })
+            ->paginate($this->perPage);
         }
     
         $users = $users->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')

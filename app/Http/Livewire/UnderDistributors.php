@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use App\Events\assignementEvent;
 use App\Mail\UvSend;
 use App\Models\Company;
+use App\Models\Custumers\City;
 use App\Models\Custumers\Country;
 use App\Models\Operator;
 use App\Models\OperatorService;
@@ -34,6 +35,31 @@ class UnderDistributors extends Component
     public $underdistributeurDesabled;
     public $master_country;
     public $masters;
+    public $countries;
+    public $cities = []; 
+    public $citiesFilter;
+    public $cityNameSearch = ''; 
+
+
+    public function mount()
+    {
+        $this->countries = Country::orderBy('name')->get(); 
+    }
+
+
+    public function updatedCountriesFilter($countryId)
+    {
+
+        if ($countryId) {
+            $this->cities = City::where('country_id', $countryId) 
+                                 ->orderBy('name')
+                                 ->get();
+        } else {
+            $this->cities = [];
+        }
+
+        $this->citiesFilter = null;
+    }
 
     public function edit($id, $state)
     {
@@ -403,6 +429,26 @@ class UnderDistributors extends Component
 
         if ($this->countriesFilter != "") {
             $users->where("country_id", $this->countriesFilter);
+        }
+
+        if (!is_array($this->cities) && !is_object($this->cities)) {
+            $this->cities = [];
+        }
+
+        if ($this->citiesFilter != "") {
+            $users->where("city_id", $this->citiesFilter);
+        }
+
+        if ($this->cityNameSearch != "") {
+
+            $this->resetPage(); 
+            $users->where('is_under_distributer', true)
+            ->when($this->cityNameSearch, function ($query) {
+                $query->where(function ($query) {
+                    $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
+                });
+            })
+            ->paginate($this->perPage);
         }
 
         return view('livewire.under-distributors', [
