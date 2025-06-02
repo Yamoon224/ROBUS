@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\AppCloseCom;
+use App\Models\AppCloseMaster;
+use App\Models\AppMasterStatus;
 use App\Models\CloseApp;
 use App\Models\CloseAppWeb;
 use App\Models\Costs\DepositCost;
@@ -13,6 +16,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+
+
 
 
 
@@ -73,6 +78,18 @@ if (!function_exists('appDispoRobus')) {
     }
 }
 
+
+if (!function_exists('getCloseMasterRobusData')) {
+    /**
+     * Récupère et retourne les données de AppCloseMaster triées par ID.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    function getCloseMasterRobusData()
+    {
+        return AppCloseMaster::orderBy('id', 'asc')->get();
+    }
+}
 
 function adjustFeesWithRest($fees, $amount)
 {
@@ -265,6 +282,25 @@ function getAppCloseWeb()
     return CloseAppWeb::whereStatus(true)->whereId($currentDaySearch)->first();
 }
 
+function getAppCloseMasterWeb()
+{
+
+    $currentDayOfWeek = Carbon::now()->dayOfWeek;
+
+    $currentDaySearch = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek;
+
+    return AppCloseMaster::whereStatus(true)->whereId($currentDaySearch)->first();
+}
+
+function getAppCloseZoneWeb()
+{
+
+    $currentDayOfWeek = Carbon::now()->dayOfWeek;
+
+    $currentDaySearch = $currentDayOfWeek == 0 ? 7 : $currentDayOfWeek;
+
+    return AppCloseCom::whereStatus(true)->whereId($currentDaySearch)->first();
+}
 
 
 function getAppCloseTomorowWeb()

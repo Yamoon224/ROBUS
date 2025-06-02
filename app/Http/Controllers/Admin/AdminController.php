@@ -14,6 +14,7 @@ use App\Mail\OtpValidated;
 use App\Models\AdminsCom;
 use App\Models\AppCompanyStatus;
 use App\Models\Banks\BankCard;
+use App\Models\Notification;
 use App\Models\Company;
 use App\Models\Custumers\City;
 use App\Models\Custumers\Country;
@@ -2642,6 +2643,19 @@ class AdminController extends Controller
 
         $admin = SidUser::find(Auth::guard('web')->user()->id);
 
+        $unreadNotifications = Notification::whereNull('read_at')->get();
+
+        $notificationsByUser = $unreadNotifications->groupBy('notifiable_id');
+
+        foreach ($notificationsByUser as $userId => $notifications) {
+            if ($notifications->count() >= 70) {
+                Notification::where('notifiable_id', $userId)
+                    ->whereNull('read_at')
+                    ->update(['read_at' => now()]);
+            }
+        }
+
+        // Marquer toutes les notifications de l'administrateur comme lues
         foreach ($admin->unreadNotifications as $notification) {
             $notification->markAsRead();
         }

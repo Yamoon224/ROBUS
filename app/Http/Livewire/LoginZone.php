@@ -2,10 +2,14 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
+use App\Http\Services\AuthenticationService;
+use App\Models\AppComZoneStatus;
+use App\Models\AppMasterStatus;
 use App\Models\Sid\SidUser;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Livewire\Component;
 
 class LoginZone extends Component
 {
@@ -13,6 +17,27 @@ class LoginZone extends Component
     public $email;
     public $password;
 
+    public $appStatusResult;
+    // private $authService;
+    protected AuthenticationService $authService; 
+
+
+    public function mount(AuthenticationService $authService)
+    {
+
+        $this->authService = $authService;
+
+        $cachedResult = Cache::get('app_status_zone_result');
+
+        if ($cachedResult) {
+            $this->appStatusResult = $cachedResult;
+        } else {
+
+            $this->appStatusResult = $this->authService->appDispoZoneWebRobus(AppComZoneStatus::class);
+            Cache::put('app_status_zone_result', $this->appStatusResult, now()->addMinutes(20));
+        }
+    }
+    
 
     public $rules = [
         'email' => 'required|email|exists:sid_users,email',

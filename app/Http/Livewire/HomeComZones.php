@@ -2,7 +2,9 @@
 
 namespace App\Http\Livewire;
 
+use App\Http\Services\AuthenticationService;
 use App\Models\AppCloseCom;
+use App\Models\AppComZoneStatus;
 use App\Models\CloseApp;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\WalletBank;
@@ -14,6 +16,7 @@ use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
@@ -23,6 +26,27 @@ class HomeComZones extends Component
 
     public $startDate = '';
     public $endDate = '';
+
+    public $appStatusResult;
+    // private $authService;
+    protected AuthenticationService $authService; 
+
+
+    public function mount(AuthenticationService $authService)
+    {
+
+        $this->authService = $authService;
+
+        $cachedResult = Cache::get('app_status_zone_result');
+
+        if ($cachedResult) {
+            $this->appStatusResult = $cachedResult;
+        } else {
+
+            $this->appStatusResult = $this->authService->appDispoZoneWebRobus(AppComZoneStatus::class);
+            Cache::put('app_status_zone_result', $this->appStatusResult, now()->addMinutes(20));
+        }
+    }
 
     public function render()
     {

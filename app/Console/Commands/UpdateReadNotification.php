@@ -41,16 +41,17 @@ class UpdateReadNotification extends Command
     public function handle()
     {
 
-        $users_all = SidUser::get();
+        $unreadNotifications = Notification::whereNull('read_at')->get();
 
-        foreach ($users_all  as $user) {
+        $notificationsByUser = $unreadNotifications->groupBy('notifiable_id');
 
-            $notifications = DB::table('notifications')->where('read_at', null)->where('notifiable_id', $user->id)->get();
-
+        foreach ($notificationsByUser as $userId => $notifications) {
             if ($notifications->count() >= 70) {
-                $user->unreadNotifications->markAsRead();
-            } 
-    
+                Notification::where('notifiable_id', $userId)
+                    ->whereNull('read_at')
+                    ->update(['read_at' => now()]);
+            }
         }
+
     }
 }

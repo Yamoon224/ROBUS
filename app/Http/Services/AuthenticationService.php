@@ -304,6 +304,78 @@ class AuthenticationService
                 return $result;
         }
 
+        public function appDispoMasterWebRobus($model)
+        {
+                // Vérifier d'abord si les données sont en cache
+                $cachedResult = Cache::get('app_status_master_result');
+
+                if ($cachedResult) {
+                        return $cachedResult;
+                }
+
+                Artisan::call('app:close-master-status');
+
+                // Récupérer le statut de l'application
+                $appStatus = $model::latest()->first();
+
+                if ($appStatus && $appStatus->status_app === 'closed') {
+
+                        $robus_hour_begin = $appStatus->time_start;
+                        $robus_hour_end = $appStatus->time_end;
+                        $robus_hour_description = $appStatus->description;
+
+                        // Mettre à jour la mise en cache avec le résultat
+                        $result = [
+                                'success' => false,
+                                'message' => "L'application ROBUS Web était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour cause de {$robus_hour_description}.",
+                        ];
+
+                        Cache::put('app_status_master_result', $result, now()->addMinutes(20)); // Mettre en cache pendant 60 minutes
+                        return $result;
+                }
+
+                // Mettre à jour la mise en cache avec le résultat
+                $result = ['success' => true];
+                Cache::put('app_status_master_result', $result, now()->addMinutes(20)); // Mettre en cache pendant 60 minutes
+                return $result;
+        }
+
+        public function appDispoZoneWebRobus($model)
+        {
+                // Vérifier d'abord si les données sont en cache
+                $cachedResult = Cache::get('app_status_zone_result');
+
+                if ($cachedResult) {
+                        return $cachedResult;
+                }
+
+                Artisan::call('app:close-comzone-status');
+
+                // Récupérer le statut de l'application
+                $appStatus = $model::latest()->first();
+
+                if ($appStatus && $appStatus->status_app === 'closed') {
+
+                        $robus_hour_begin = $appStatus->time_start;
+                        $robus_hour_end = $appStatus->time_end;
+                        $robus_hour_description = $appStatus->description;
+
+                        // Mettre à jour la mise en cache avec le résultat
+                        $result = [
+                                'success' => false,
+                                'message' => "L'application ROBUS Web était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour cause de {$robus_hour_description}.",
+                        ];
+
+                        Cache::put('app_status_zone_result', $result, now()->addMinutes(20)); // Mettre en cache pendant 60 minutes
+                        return $result;
+                }
+
+                // Mettre à jour la mise en cache avec le résultat
+                $result = ['success' => true];
+                Cache::put('app_status_zone_result', $result, now()->addMinutes(20)); // Mettre en cache pendant 60 minutes
+                return $result;
+        }
+
         public function appDispoCompanieRobus($model)
         {
 

@@ -18,6 +18,7 @@
     @include('layouts.shared_web.open_days')
 
     @if ($appStatusResult['success'])
+    @
         <section class="contact-info-section style_percent">
 
             <div class="container">

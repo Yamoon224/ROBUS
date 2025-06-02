@@ -13,7 +13,7 @@ class CheckAppStatus extends Command
     /**
      * The name and signature of the console command.
      *
-     * @var string
+     * @var stringreadNotifications
      */
     protected $signature = 'app:close-status';
 
