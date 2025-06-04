@@ -32,6 +32,14 @@
 </template>
 
 <script>
+
+const playNotificationSound = () => {
+        const audio = new Audio('public/sounds/notification.wav');
+        audio.play().catch(() => {
+            console.warn('Son non joué (peut-être bloqué par le navigateur)');
+        });
+};
+
 export default {
     props: ['unreads', 'userid'],
     data() {
@@ -66,13 +74,18 @@ export default {
             .listen('.Events_all_admin', (e) => {
                 if (e.notifications) {
                     Swal.fire({
+                        toast: true,
+                         width: 600,
+                         hight: 600,
                         position: 'top-end',
                         icon: 'success',
-                        timer: 2500,
+                        timer: 2000,
+                        timerProgressBar: true,
                         title: '!!Vous avez une nouvelle notification',
                         showConfirmButton: false,
                     });
                     this.getNotifications();
+                    playNotificationSound();
                 }
                 this.notifications = e.notifications;
             });

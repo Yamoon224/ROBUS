@@ -340,10 +340,11 @@ class TransactionsAccountService
                     $query->where('wallet_id', $wallet_solde->id)
                         ->orWhere($numWallet, $wallet_solde->wallet_id);
                 })
-                ->where('created_at', '>=', $startOfWeek)
-                ->where('created_at', '<=', $endOfWeek)
+        
+                ->limit(6)
                 ->orderBy('created_at', 'desc')
                 ->get();
+
     }
 
 
@@ -356,8 +357,9 @@ class TransactionsAccountService
                 ->where(function ($query) use ($wallet_solde) {
                     $query->where('wallet_id', $wallet_solde->id);
                 })
-            ->where('created_at', '>=', $startOfWeek)
-            ->where('created_at', '<=', $endOfWeek)
+            // ->where('created_at', '>=', $startOfWeek)
+            // ->where('created_at', '<=', $endOfWeek)
+            ->limit(6)
             ->orderBy('created_at', 'desc')
             ->get();
     }
@@ -402,8 +404,9 @@ class TransactionsAccountService
                 $query->where('sid_user_id', $userId);
             })
             
-            ->where('created_at', '>=', $startOfWeek)
-            ->where('created_at', '<=', $endOfWeek)
+            // ->where('created_at', '>=', $startOfWeek)
+            // ->where('created_at', '<=', $endOfWeek)
+            ->limit(6)
             ->orderBy('created_at', 'desc')
             ->get();
     }

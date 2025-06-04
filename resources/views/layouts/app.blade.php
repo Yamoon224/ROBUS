@@ -36,48 +36,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
     <!-- Toastr -->
     @livewireScripts
-    <script>
-        Livewire.on('success', msg => {
-
-            Swal.fire({
-                icon: 'success',
-                width: 600,
-                hight: 600,
-                timer: 2000,
-                color: '#1f2a3c',
-                title: msg,
-                showConfirmButton: false,
-                padding: '3em',
-                timerProgressBar: true,
-                background: '#eff3f7',
-                backdrop: `
-                 rgba(181,4,143,0.1)
-                        right top
-                        no-repeat
-                       `
-            });
-        });
-
-        Livewire.on('error', msg => {
-
-            Swal.fire({
-                width: 600,
-                icon: 'error',
-                timer: 2000,
-                color: '#1f2a3c',
-                title: msg,
-                padding: '3em',
-                timerProgressBar: true,
-                showConfirmButton: false,
-                background: '#eff3f7',
-                backdrop: `
-                 rgba(220,39,39,0.4)
-                        right top
-                        no-repeat
-                       `
-            });
-        });
-    </script>
+    @include('layouts.scripts_toastr')
 </body>
 
 </html>

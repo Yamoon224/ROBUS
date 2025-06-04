@@ -6612,6 +6612,12 @@ class Transfers extends Component
             100,
             101,
             102,
+            53,
+            54,
+            52,
+            56,
+            57,
+            58
         ];
 
         return in_array($providerId, $specialProviders);
