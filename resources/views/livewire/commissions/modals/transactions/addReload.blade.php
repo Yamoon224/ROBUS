@@ -70,7 +70,7 @@
                         <div class="col-span-6">
                             <label for="relaod_uv_amout_robus" class="form-label">Montant<span class="text-danger">
                                     *</span></label>
-                            <input wire:model.debounce.10ms="relaod_uv_amout_robus" id="relaod_uv_amout_robus"
+                            <input wire:model.lazy="relaod_uv_amout_robus" id="relaod_uv_amout_robus"
                             type="number" class="form-control" placeholder="Montant">
                             @error('relaod_uv_amout_robus')
                                 <span class="text-danger">{{ $message }}</span>
