@@ -1109,7 +1109,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 1394 : 1439, // Ethiopie
                     74 => ($provider_valeur != 51) ?  4519 : 3992, // France
                     79 => ($provider_valeur != 51) ? 130 : 179, // Gabon
-                    79 => ($provider_valeur != 51) ? 6340 : 6339, // Gambie
+                    80 => ($provider_valeur != 51) ? 6340 : 6339, // Gambie
                     82 => ($provider_valeur != 51) ?  4522 : 3995, // Allemagne
                     83 => ($provider_valeur != 51) ? 6 : 41, // Ghana
                     91 => ($provider_valeur != 51) ? 8 : 43, // Guinne conakry
@@ -1167,7 +1167,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 4614 : 4086, // Ethiopie
                     74 => ($provider_valeur != 51) ? 4615 : 4087, // France
                     79 => ($provider_valeur != 51) ? 137 : 186, // Gabon
-                    79 => ($provider_valeur != 51) ? 6361 : 6362, // Gambie
+                    80 => ($provider_valeur != 51) ? 6361 : 6362, // Gambie
                     82 => ($provider_valeur != 51) ? 484 : 372, // Allemagne
                     83 => ($provider_valeur != 51) ? 12 : 48, // Ghana
                     91 => ($provider_valeur != 51) ? 14 : 50, // Guinne conakry
@@ -1226,7 +1226,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 1417 : 1462, // Ethiopie
                     74 => ($provider_valeur != 51) ? 4567 : 4040, // France
                     79 => ($provider_valeur != 51) ? 144 : 193, // Gabon
-                    79 => ($provider_valeur != 51) ? 6386 : 6377, // Gambie
+                    80 => ($provider_valeur != 51) ? 6386 : 6377, // Gambie
                     82 => ($provider_valeur != 51) ? 4570 : 4043, // Allemagne
                     83 => ($provider_valeur != 51) ? 18 : 54, // Ghana
                     91 => ($provider_valeur != 51) ? 20 : 56, // Guinne conakry
@@ -1283,7 +1283,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 4662 : 4134, // Ethiopie
                     74 => ($provider_valeur != 51) ? 4663 : 4135, // France
                     79 => ($provider_valeur != 51) ? 151 : 200, // Gabon
-                    79 => ($provider_valeur != 51) ? 6395 : 6404, // Gambie
+                    80 => ($provider_valeur != 51) ? 6395 : 6404, // Gambie
                     82 => ($provider_valeur != 51) ? 4666 : 4138, // Allemagne
                     83 => ($provider_valeur != 51) ? 23 : 59, // Ghana
                     91 => ($provider_valeur != 51) ? 25 : 61, // Guinne conakry
@@ -1341,7 +1341,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 1426 : 1471, // Ethiopie
                     74 => ($provider_valeur != 51) ? 4711 : 4183, // France
                     79 => ($provider_valeur != 51) ? 158 : 207, // Gabon
-                    79 => ($provider_valeur != 51) ? 130 : 179, // Gambie
+                    80 => ($provider_valeur != 51) ? 130 : 179, // Gambie
                     82 => ($provider_valeur != 51) ? 4713 : 4186, // Allemagne
                     83 => ($provider_valeur != 51) ? 27 : 63, // Ghana
                     91 => ($provider_valeur != 51) ? 29 : 65, // Guinne conakry
@@ -1396,7 +1396,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 4758 : 4230, // Ethiopie
                     74 => ($provider_valeur != 51) ? 4759 : 4231, // France
                     79 => ($provider_valeur != 51) ? 165 : 214, // Gabon
-                    79 => ($provider_valeur != 51) ? 6512 : 6422, // Gambie
+                    80 => ($provider_valeur != 51) ? 6512 : 6422, // Gambie
                     82 => ($provider_valeur != 51) ? 4762 : 4234, // Allemagne
                     91 => ($provider_valeur != 51) ? 32 : 68, // Guinne conakry
                     92 => ($provider_valeur != 51) ? 4765 : 4237, // Guinnée Buisso
@@ -1452,7 +1452,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 4806 : 4278, // Ethiopie
                     74 => ($provider_valeur != 51) ? 4807 : 4279, // France
                     79 => ($provider_valeur != 51) ? 577 : 221, // Gabon
-                    79 => ($provider_valeur != 51) ? 6503 : 6431, // Gambie
+                    80 => ($provider_valeur != 51) ? 6503 : 6431, // Gambie
                     82 => ($provider_valeur != 51) ? 4810 : 4282, // Allemagne
                     91 => ($provider_valeur != 51) ? 34 : 70, // Guinne conakry
                     92 => ($provider_valeur != 51) ? 1781 : 1826, // Guinnée Buisso
@@ -1658,7 +1658,7 @@ class TransactionCiv extends Component
                     37 => ($provider_valeur != 51) ? 1936 : 1981, // Burundi
                     39 => ($provider_valeur != 51) ? 1937 : 1982, // Cameroun
                     42 => ($provider_valeur != 51) ? 1938 : 1983, // Afrique centrale
-                    //  UPdate Id Robus
+                    //  UPdate Id sabdy
                     43 => ($provider_valeur != 51) ? 1939 : 1849, // Thacd
                     45 => ($provider_valeur != 51) ? 3228 : 3247, // China
                     50 => ($provider_valeur != 51) ? 1941 : 1986, // COngo Braza
@@ -1779,7 +1779,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 5043 : 5583, // Ethiopie
                     74 => ($provider_valeur != 51) ? 5044 : 5584, // France
                     79 => ($provider_valeur != 51) ? 73 : 101, // Gabon
-                    81 => ($provider_valeur != 51) ? 6539 : 6611, // Gambie (New entry)
+                    80 => ($provider_valeur != 51) ? 6539 : 6611, // Gambie (New entry)
                     82 => ($provider_valeur != 51) ? 524 : 6683, // Allemagne
                     83 => ($provider_valeur != 51) ? 4750 : 4222, // Ghana
                     91 => ($provider_valeur != 51) ? 4846 : 4318, // Guinne conakry
@@ -2114,7 +2114,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 5223 : 5403, // Ethiopie
                     74 => ($provider_valeur != 51) ? 5224 : 5404, // France
                     79 => ($provider_valeur != 51) ? 5073 : 5541, // Gabon
-                    79 => ($provider_valeur != 51) ? 6584 : 6687, // Gambie
+                    80 => ($provider_valeur != 51) ? 6584 : 6687, // Gambie
                     82 => ($provider_valeur != 51) ? 5227 : 5407, // Allemagne
                     91 => ($provider_valeur != 51) ? 4848 : 4320, // Guinne conakry
                     92 => ($provider_valeur != 51) ? 4896 : 4368, // Guinnée Buisso
@@ -2172,7 +2172,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 5259 : 5367, // Ethiopie
                     74 => ($provider_valeur != 51) ? 5260 : 5368, // France
                     79 => ($provider_valeur != 51) ? 5072 : 5540, // Gabon
-                    74 => ($provider_valeur != 51) ? 5261 : 5369, // Gambie
+                    80 => ($provider_valeur != 51) ? 5261 : 5369, // Gambie
                     82 => ($provider_valeur != 51) ? 5263 : 5371, // Allemagne
                     83 => ($provider_valeur != 51) ? 4751 : 4223, // Ghana
                     91 => ($provider_valeur != 51) ? 4847 : 4319, // Guinnée Conakry
@@ -2280,7 +2280,7 @@ class TransactionCiv extends Component
                     69 => ($provider_valeur != 51) ? 3554 : 3574, // Ethiopie
                     74 => ($provider_valeur == 51) ? 2034 : null, // France
                     79 => ($provider_valeur != 51) ? 5297 : 5333, // Gabon
-                    79 => ($provider_valeur != 51) ?  6593 : 6665, // Gambie
+                    80 => ($provider_valeur != 51) ?  6593 : 6665, // Gambie
                     82 => ($provider_valeur == 51) ? 2037 : null, // Allemagne
                     83 => ($provider_valeur != 51) ? 2083 : 2038, // Ghana
                     91 => ($provider_valeur != 51) ? 2084 : 2039, // Guinne conakry
@@ -2374,7 +2374,7 @@ class TransactionCiv extends Component
                     5 => ($provider_valeur != 51) ? 6399 : 6408, // Algerie
                     137 => ($provider_valeur != 51) ? 6715 : 6716, // Mauritanie
                     37 => ($provider_valeur != 51) ? 6717 : 6718, // Burundi
-
+                    80 => ($provider_valeur != 51) ? 7125 : 7124, // Gambie
 
                 ]
             ];
@@ -2400,7 +2400,7 @@ class TransactionCiv extends Component
                     66 => ($provider_valeur != 51) ? 5313 : 5349, // Guinée Équatoriale
                     69 => ($provider_valeur != 51) ? 5671 : 6070, // Éthiopie
                     79 => ($provider_valeur != 51) ? 445 : 322, // Gabon
-                    8 => ($provider_valeur != 51) ? 6728 : 6720, // Gambie
+                    80 => ($provider_valeur != 51) ? 6728 : 6720, // Gambie
                     83 => ($provider_valeur != 51) ? 440 : 317, // Ghana
                     91 => ($provider_valeur != 51) ? 442 : 319, // Guinée Conakry
                     92 => ($provider_valeur != 51) ? 4928 : 4400, // Guinée-Bissau
@@ -3321,7 +3321,7 @@ class TransactionCiv extends Component
                     122 => ($provider_valeur != 51) ? 699 : 727, // Liberia
                     43 => ($provider_valeur != 51) ? 723 : 682, // Thad
                     42 => ($provider_valeur != 51) ? 722 : 681, // Afrique centrale
-                    92 => ($provider_valeur != 51) ? 751 : 692,  // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ? 751 : 692 ,  // Guinnée Buisso 
                     5 => ($provider_valeur != 51) ?  732 : 674, // Algerie
                     180 => ($provider_valeur != 51) ?  3256 : 3276, // Rwanda 
                     158 => ($provider_valeur != 51) ? 737 : 705, // Nigeria
@@ -3331,15 +3331,15 @@ class TransactionCiv extends Component
                     175 => ($provider_valeur != 51) ? 3261 : 707, // Quatar
                     241 => ($provider_valeur != 51) ? 3262 : 3282, // Zambie
                     66 => ($provider_valeur != 51) ?  3263 : 3283, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ? 733 : 675, // Angola
+                    8 => ($provider_valeur != 51) ? 733 : 675 , // Angola
                     225 => ($provider_valeur != 51) ? 3265 : 3285, // Dubai
-                    112 => ($provider_valeur != 51) ? 754 : 695, // Keneya
+                    112 => ($provider_valeur != 51) ? 754 : 695 , // Keneya
                     45 => ($provider_valeur != 51) ?  3267 : 683, // China
                     208 => ($provider_valeur != 51) ? 756 : 712, // Suisse
                     23 => ($provider_valeur != 51) ?  734 : 676, // Belgique
-                    173 => ($provider_valeur != 51) ? 3270 : 706, // Portugal
+                    173 => ($provider_valeur != 51) ? 3270 : 706 , // Portugal
                     219 => ($provider_valeur != 51) ? 3271 : 3291, // Turquie
-                    152 => ($provider_valeur != 51) ?  735 : 703, // Hollande
+                    152 => ($provider_valeur != 51) ?  735 : 703 , // Hollande
                     100 => ($provider_valeur != 51) ? 752 : 693, // Inde
                     69 => ($provider_valeur != 51) ? 3274 : 3294, // Ethiopie
                     120 => ($provider_valeur != 51) ?  726 : 698, // Liban
@@ -3347,8 +3347,8 @@ class TransactionCiv extends Component
                     218 => ($provider_valeur == 51) ? 7073 : 7071, // Tunisia
                     137 => ($provider_valeur != 51) ? 7074 : 7072, // Mauritanie
                     80 => ($provider_valeur != 51) ? 747 : 689, // Gambie
-
-
+                    
+             
                 ],
                 // Is RWANDA
                 180 => [
@@ -3381,19 +3381,19 @@ class TransactionCiv extends Component
                     92 => ($provider_valeur != 51) ? 827 : 782, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3296 : 3316, // Ouganda 
                     158 => ($provider_valeur != 51) ? 839 : 794, // Nigeria
-                    191 => ($provider_valeur != 51) ? 843 : 799, // Sierria Leone
+                    191 => ($provider_valeur != 51) ? 843 : 799 , // Sierria Leone
                     116 => ($provider_valeur != 51) ?  831 : 786, // Koweit
                     212 => ($provider_valeur != 51) ?  846 :  802, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 841 :  796, // Quatar
+                    175 => ($provider_valeur != 51) ? 841 :  796 , // Quatar
                     241 => ($provider_valeur != 51) ? 3302 : 3322, // Zambie
                     66 => ($provider_valeur != 51) ?  3303 : 3323, // Guinnée Equatoriale
                     8 => ($provider_valeur != 51) ?  809 : 764, // Angola
                     225 => ($provider_valeur != 51) ? 3305 : 3325, // Dubai
                     112 => ($provider_valeur != 51) ?  830 : 785, // Keneya
-                    45 => ($provider_valeur != 51) ?  817 : 772, // China
+                    45 => ($provider_valeur != 51) ?  817 : 772  , // China
                     208 => ($provider_valeur != 51) ? 845 : 801, // Suisse
                     23 => ($provider_valeur != 51) ?  810 : 765, // Belgique
-                    173 => ($provider_valeur != 51) ? 3310  : 795, // Portugal
+                    173 => ($provider_valeur != 51) ? 3310  : 795 , // Portugal
                     219 => ($provider_valeur != 51) ?  848 : 804, // Turquie
                     152 => ($provider_valeur != 51) ? 837 : 792, // Hollande
                     100 => ($provider_valeur != 51) ? 828 : 783, // Inde
@@ -3427,7 +3427,7 @@ class TransactionCiv extends Component
                     179 => ($provider_valeur == 51) ? 6101 : 5786, // Russie
                     226 => ($provider_valeur == 51) ?  1389 : 1344, // Royaume Unie
                     106 => ($provider_valeur == 51) ?  1367 : 1322, // Italie
-                    82 => ($provider_valeur != 51) ?  1317 : 1362, // Allemagne
+                    82 => ($provider_valeur != 51) ?  1317 : 1362 , // Allemagne
                     39 => ($provider_valeur != 51) ? 1307 : 1352, // Cameroun
                     79 => ($provider_valeur != 51) ?  1315 : 1360, // Gabon
                     50 => ($provider_valeur != 51) ?  1311 : 1356, // COngo Braza
@@ -3435,7 +3435,7 @@ class TransactionCiv extends Component
                     122 => ($provider_valeur != 51) ?  1326 : 1371, // Liberia
                     43 => ($provider_valeur != 51) ? 1309 : 1354, // Thacd
                     42 => ($provider_valeur != 51) ?  1308 : 1353, // Afrique centrale
-                    92 => ($provider_valeur != 51) ?  1320  : 1365, // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ?  1320  : 1365 , // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3336 : 3356, // Ouganda 
                     180 => ($provider_valeur != 51) ? 1335 : 1380, // Rwanda 
                     158 => ($provider_valeur != 51) ? 1332 : 1377, // Nigeria
@@ -3492,7 +3492,7 @@ class TransactionCiv extends Component
                     42 => ($provider_valeur != 51) ?  1398 : 1443, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 1410 : 1455, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3376 : 3396, // Ouganda 
-                    180 => ($provider_valeur != 51) ?  1425 : 1470, // Rwanda 
+                    180 => ($provider_valeur != 51) ?  1425 : 1470 , // Rwanda 
                     158 => ($provider_valeur != 51) ? 1422 : 1467, // Nigeria
                     191 => ($provider_valeur != 51) ? 1427 : 1472, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 1414 : 1459, // Koweit
@@ -3546,9 +3546,9 @@ class TransactionCiv extends Component
                     42 => ($provider_valeur != 51) ?  1488 : 1533, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 1500 : 1545, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3416 : 3436, // Ouganda 
-                    180 => ($provider_valeur != 51) ? 1515 : 1560, // Rwanda 
+                    180 => ($provider_valeur != 51) ? 1515 : 1560 , // Rwanda 
                     158 => ($provider_valeur != 51) ?  1512 : 1557, // Nigeria
-                    191 => ($provider_valeur != 51) ?  1517 :  1562, // Sierria Leone
+                    191 => ($provider_valeur != 51) ?  1517 :  1562 , // Sierria Leone
                     116 => ($provider_valeur != 51) ? 1504 : 1549, // Koweit
                     212 => ($provider_valeur != 51) ?  3421 : 3441, // Tanzanie
                     175 => ($provider_valeur != 51) ? 1514 : 1559, // Quatar
@@ -3592,7 +3592,7 @@ class TransactionCiv extends Component
                     106 => ($provider_valeur == 51) ? 1637 : 1592, // Italie
                     82 => ($provider_valeur == 51) ? 1632 : 1587, // Allemagne
                     39 => ($provider_valeur != 51) ? 1577 : 1622, // Cameroun
-                    79 => ($provider_valeur != 51) ? 1585  :  1630, // Gabon
+                    79 => ($provider_valeur != 51) ? 1585  :  1630  , // Gabon
                     50 => ($provider_valeur != 51) ? 1581 : 1626, // COngo Braza
                     57 => ($provider_valeur != 51) ? 1582 : 1627, // RDC
                     122 => ($provider_valeur != 51) ? 1596 : 1641, // Liberia
@@ -3600,7 +3600,7 @@ class TransactionCiv extends Component
                     42 => ($provider_valeur != 51) ?  1578 : 1623, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 1590 : 1635, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3456 : 3476, // Ouganda 
-                    180 => ($provider_valeur != 51) ? 1605 :  1650, // Rwanda 
+                    180 => ($provider_valeur != 51) ? 1605 :  1650  , // Rwanda 
                     158 => ($provider_valeur != 51) ?  1602 : 1647, // Nigeria
                     191 => ($provider_valeur != 51) ? 3459 : 3479, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 1594 : 1639, // Koweit
@@ -3633,8 +3633,8 @@ class TransactionCiv extends Component
                     133 => ($provider_valeur != 51) ? 4554 : 4027, // Mali
                     214 => ($provider_valeur != 51) ? 1701 : 1746, // Togo
                     188 => ($provider_valeur != 51) ? 1741 : 1696, // Senegal
-                    83 => ($provider_valeur != 51) ? 1678 :  1723, // Ghana
-                    157 => ($provider_valeur != 51) ? 1691 :  1736, // Niger
+                    83 => ($provider_valeur != 51) ? 1678 :  1723 , // Ghana
+                    157 => ($provider_valeur != 51) ? 1691 :  1736 , // Niger
                     91 => ($provider_valeur != 51) ? 1679 : 1724, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 643 : 661, // CIV
                     1 => ($provider_valeur == 51) ? 1705 : 1660, // USA
@@ -3653,7 +3653,7 @@ class TransactionCiv extends Component
                     122 => ($provider_valeur != 51) ? 1686 : 1731, // Liberia
                     43 => ($provider_valeur != 51) ? 1669 : 1714, // Thacd
                     42 => ($provider_valeur != 51) ?  1668 : 1713, // Afrique centrale
-                    92 => ($provider_valeur != 51) ? 680 : 1725, // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ? 680 :1725 , // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3496 : 3516, // Ouganda 
                     180 => ($provider_valeur != 51) ? 1695 : 1740, // Rwanda 
                     158 => ($provider_valeur != 51) ?  1692 : 1737, // Nigeria
@@ -3776,7 +3776,7 @@ class TransactionCiv extends Component
                     42 => ($provider_valeur != 51) ? 2613 : 2568, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 2625 : 2580, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3776 : 3796, // Ouganda 
-                    180 => ($provider_valeur != 51) ?  2640 : 2595, // Rwanda 
+                    180 => ($provider_valeur != 51) ?  2640 : 2595 , // Rwanda 
                     158 => ($provider_valeur != 51) ?  2645 : 2592, // Nigeria
                     191 => ($provider_valeur != 51) ? 3779 : 3799, // Sierria Leone
                     212 => ($provider_valeur != 51) ?  3780 : 3800, // Tanzanie
@@ -3841,7 +3841,7 @@ class TransactionCiv extends Component
                     225 => ($provider_valeur != 51) ? 2693 : 2738, // Dubai
                     112 => ($provider_valeur != 51) ?  3826 : 3846, // Keneya
                     45 => ($provider_valeur != 51) ? 2660 : 2705, // China
-                    208 => ($provider_valeur != 51) ? 2734 : 5973, // Suisse
+                    208 => ($provider_valeur != 51) ? 2734 : 5973 , // Suisse
                     23 => ($provider_valeur != 51) ?  2653 : 2698, // Belgique
                     173 => ($provider_valeur != 51) ?  2683 : 2728, // Portugal
                     219 => ($provider_valeur != 51) ?  2692 : 2737, // Turquie
@@ -3949,7 +3949,7 @@ class TransactionCiv extends Component
                     8 => ($provider_valeur != 51) ?   3905 : 3925, // Angola
                     225 => ($provider_valeur != 51) ? 3906 : 3926, // Dubai
                     112 => ($provider_valeur != 51) ?  3907 : 3927, // Keneya
-                    208 => ($provider_valeur != 51) ?  2869 : 2914, // Suisse
+                    208 => ($provider_valeur != 51) ?  2869 : 2914 , // Suisse
                     23 => ($provider_valeur != 51) ?  2833 : 2878, // Belgique
                     173 => ($provider_valeur != 51) ?  2863 : 2908, // Portugal
                     219 => ($provider_valeur != 51) ?  2872 : 2917, // Turquie
@@ -4004,7 +4004,7 @@ class TransactionCiv extends Component
                     225 => ($provider_valeur != 51) ? 3946 : 3966, // Dubai
                     112 => ($provider_valeur != 51) ?  3947 : 3967, // Keneya
                     45 => ($provider_valeur != 51) ?  3953 : 3973, // China
-                    208 => ($provider_valeur != 51) ?  5967 : 3004, // Suisse
+                    208 => ($provider_valeur != 51) ?  5967 : 3004 , // Suisse
                     23 => ($provider_valeur != 51) ?  2923 : 2968, // Belgique
                     173 => ($provider_valeur != 51) ?  2953 : 2998, // Portugal
                     219 => ($provider_valeur != 51) ?  2962 : 3007, // Turquie
