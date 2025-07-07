@@ -47,33 +47,46 @@ class AdminHistoriqueController extends Controller
 
         if (sabdy()->is_distributer == true) {
 
-            foreach (WalletBank::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletBank::where('updated_by', $userId);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('updated_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('updated_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('updated_at', '<=', request('endDate'));
             }
 
-            $account_penddings = WalletBank::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'PENDING')->count();
+            $bank_historicals = $query->get();
 
-            $account_success = WalletBank::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->count();
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
 
-            $account_errors = WalletBank::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'ERROR')->count();
-
-            $amount_total = $this->getWalletBankSumDaysProperty($userId);
+            $amount_total = $this->getWalletBankSumDaysProperty($userId , request('startDate'), request('endDate'));
 
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_bank', compact('wallet_user', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_virement.pdf');
+
         } else {
 
-            foreach (WalletBank::where('wallet_id', $id)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletBank::where('wallet_id', $id);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('created_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('created_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('created_at', '<=', request('endDate'));
             }
 
-            $account_penddings = WalletBank::where('wallet_id', $id)->where('status', 'PENDING')->count();
+            $bank_historicals = $query->get();
 
-            $account_success = WalletBank::where('wallet_id', $id)->where('status', 'SUCCESS')->count();
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
 
-            $account_errors = WalletBank::where('wallet_id', $id)->where('status', 'ERROR')->count();
-
-            $amount_total = $this->getWalletBankSumProperty($id);
+            $amount_total = $this->getWalletBankSumProperty($id ,  request('startDate'), request('endDate'));
 
             $pdf = Pdf::loadView('pages.historicals.reports.pdf_bank', compact('wallet_user', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_virement.pdf');
@@ -141,41 +154,31 @@ class AdminHistoriqueController extends Controller
 
         $userId =  $wallet_id->sidUser->id;
 
+        $query = WalletReload::where('account_wallet', $wallet_id->wallet_id);
+
+        if (request()->filled('startDate') && request()->filled('endDate')) {
+            $query->whereBetween('created_at', [request('startDate'), request('endDate')]);
+        } elseif (request()->filled('startDate')) {
+            $query->whereDate('created_at', '>=', request('startDate'));
+        } elseif (request()->filled('endDate')) {
+            $query->whereDate('created_at', '<=', request('endDate'));
+        }
+
+        $bank_historicals = $query->get();
+        $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+        $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+        $account_errors    = (clone $query)->where('status', 'ERROR')->count();
+
+        $amount_send =  $this->walletRelaodSumSendUserProperty($id , request('startDate'), request('endDate'));
+        $amount_receveid =  $this->walletRelaodSumReceivedUserProperty($id, request('startDate'), request('endDate'));
+        $amount_total = $this->walletRelaodSumSendUserProperty($wallet_id->wallet_id , request('startDate'), request('endDate'));
+
         if (sabdy()->is_distributer == true) {
-
-            foreach (WalletReload::where('account_wallet', $wallet_id->wallet_id)->get() as $bank) {
-                $bank_historicals[] = $bank;
-            }
-
-
-            $account_penddings = WalletReload::where('account_wallet', $wallet_id->wallet_id)->where('status', 'PENDING')->count();
-
-            $account_success = WalletReload::where('account_wallet', $wallet_id->wallet_id)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletReload::where('account_wallet', $wallet_id->wallet_id)->where('status', 'ERROR')->count();
-
-            $amount_send =  $this->walletRelaodSumSendUserProperty($id);
-            $amount_receveid =  $this->walletRelaodSumReceivedUserProperty($id);
-            $amount_total = $this->walletRelaodSumSendUserProperty($wallet_id->wallet_id);
 
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_reload', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_rechargment.pdf');
+
         } else {
-
-            foreach (WalletReload::where('account_wallet', $wallet_id->wallet_id)->get() as $bank) {
-                $bank_historicals[] = $bank;
-            }
-
-
-            $account_penddings = WalletReload::where('account_wallet', $wallet_id->wallet_id)->where('status', 'PENDING')->count();
-
-            $account_success = WalletReload::where('account_wallet', $wallet_id->wallet_id)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletReload::where('account_wallet', $wallet_id->wallet_id)->where('status', 'ERROR')->count();
-
-            $amount_send =  $this->walletRelaodSumSendUserProperty($id);
-            $amount_receveid =  $this->walletRelaodSumReceivedUserProperty($id);
-            $amount_total = $this->walletRelaodSumSendUserProperty($wallet_id->wallet_id);
 
             $pdf = Pdf::loadView('pages.historicals.reports.pdf_reload', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_rechargment.pdf');
@@ -193,20 +196,26 @@ class AdminHistoriqueController extends Controller
 
         $bank_historicals = [];
 
-        foreach (WalletTransaction::where('num_wallet', $wallet_id->wallet_id)->get() as $bank) {
-            $bank_historicals[] = $bank;
+        $query = WalletTransaction::where('num_wallet', $wallet_id->wallet_id);
+
+        if (request()->filled('startDate') && request()->filled('endDate')) {
+            $query->whereBetween('created_at', [request('startDate'), request('endDate')]);
+        } elseif (request()->filled('startDate')) {
+            $query->whereDate('created_at', '>=', request('startDate'));
+        } elseif (request()->filled('endDate')) {
+            $query->whereDate('created_at', '<=', request('endDate'));
         }
 
 
-        $account_penddings = WalletTransaction::where('num_wallet', $wallet_id->wallet_id)->where('status', 'PENDING')->count();
+        $bank_historicals = $query->get();
+        
+        $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+        $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+        $account_errors    = (clone $query)->where('status', 'ERROR')->count();
 
-        $account_success = WalletTransaction::where('num_wallet', $wallet_id->wallet_id)->where('status', 'SUCCESS')->count();
-
-        $account_errors = WalletTransaction::where('num_wallet', $wallet_id->wallet_id)->where('status', 'ERROR')->count();
-
-        $amount_send =  $this->walletRelaodSumReceivedTransactionProperty($id);
-        $amount_receveid =  $this->walletRelaodSumReceivedUserProperty($id);
-        $amount_total = $this->walletRelaodSumReceivedTransactionProperty($wallet_id->wallet_id);
+        $amount_send =  $this->walletRelaodSumSendsTransactionProperty($id  , request('startDate'), request('endDate'));
+        $amount_receveid =  $this->walletTransactionSumReceivedUserProperty($id , request('startDate'), request('endDate'));
+        $amount_total = $this->walletRelaodSumReceivedTransactionProperty($wallet_id->wallet_id, request('startDate'), request('endDate'));
 
         $pdf = Pdf::loadView('pages.historicals.reports.pdf_transfer', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
         return $pdf->download('reporting_transfers.pdf');
@@ -737,20 +746,23 @@ class AdminHistoriqueController extends Controller
 
         $bank_historicals = [];
 
-        foreach (WalletReload::where('wallet_id', $id)->get() as $bank) {
-            $bank_historicals[] = $bank;
+        $query = WalletReload::where('wallet_id', $id);
+
+        if (request()->filled('startDate') && request()->filled('endDate')) {
+            $query->whereBetween('created_at', [request('startDate'), request('endDate')]);
+        } elseif (request()->filled('startDate')) {
+            $query->whereDate('created_at', '>=', request('startDate'));
+        } elseif (request()->filled('endDate')) {
+            $query->whereDate('created_at', '<=', request('endDate'));
         }
 
-
-        $account_penddings = WalletReload::where('wallet_id', $id)->where('status', 'PENDING')->count();
-
-        $account_success = WalletReload::where('wallet_id', $id)->where('status', 'SUCCESS')->count();
-
-        $account_errors = WalletReload::where('wallet_id', $id)->where('status', 'ERROR')->count();
-
-        $amount_send =  $this->walletRelaodSumSendUserProperty($id);
-        $amount_receveid =  $this->walletRelaodSumReceivedUserProperty($id);
-        $amount_total = $this->walletRelaodSumUserProperty($id);
+        $bank_historicals = $query->get();
+        $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+        $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+        $account_errors    = (clone $query)->where('status', 'ERROR')->count();
+        $amount_send =  $this->walletRelaodSumSendUserProperty($id , request('startDate'), request('endDate'));
+        $amount_receveid =  $this->walletRelaodSumReceivedUserProperty($id, request('startDate'), request('endDate'));
+        $amount_total = $this->walletRelaodSumSendUserProperty($wallet_id->wallet_id , request('startDate'), request('endDate'));
 
         $pdf = Pdf::loadView('pages.historicals.reports.pdf_reload', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
         return $pdf->download('reporting_rechargment.pdf');
@@ -770,31 +782,39 @@ class AdminHistoriqueController extends Controller
         return array_sum($data);
     }
 
-    public function getWalletBankSumProperty($id)
+    public function getWalletBankSumProperty($id, $startDate = null, $endDate = null)
     {
 
-        $data = [];
+        $query = WalletBank::where('wallet_id', $id)
+        ->where('status', 'SUCCESS');
 
-        foreach (WalletBank::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+            } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+            } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+            }
+    
+            return $query->sum('amount');
     }
 
-    public function getWalletBankSumDaysProperty($id)
+    public function getWalletBankSumDaysProperty($id , $startDate = null, $endDate = null)
     {
 
-        $todays = Carbon::now();
-        $formattedDate = today();
 
-        $data = [];
+        $query = WalletBank::where('updated_by', $id)
+        ->where('status', 'SUCCESS');
 
-        foreach (WalletBank::where('updated_by', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($startDate && $endDate) {
+        $query->whereBetween('updated_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+        $query->whereDate('updated_at', '>=', $startDate);
+        } elseif ($endDate) {
+        $query->whereDate('updated_at', '<=', $endDate);
         }
 
-        return array_sum($data);
+        return $query->sum('amount');
     }
 
     public function getWalletSumDaysProperty($wallet ,$id)
@@ -889,18 +909,21 @@ class AdminHistoriqueController extends Controller
     }
 
     // User 
-    public function walletRelaodSumSendUserProperty($id)
+    public function walletRelaodSumSendUserProperty($id , $startDate = null, $endDate = null)
     {
 
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
+        $query = WalletReload::where('wallet_id', $id)
+        ->where('status', 'SUCCESS');
 
-        $data = [];
-        foreach (WalletReload::where('account_wallet', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($startDate && $endDate) {
+        $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+        $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+        $query->whereDate('created_at', '<=', $endDate);
         }
 
-        return array_sum($data);
+        return $query->sum('amount');
     }
 
     public function walletRelaodSumUserProperty($id)
@@ -917,21 +940,43 @@ class AdminHistoriqueController extends Controller
         return array_sum($data);
     }
 
-    public function walletRelaodSumReceivedUserProperty($id)
+    public function walletRelaodSumReceivedUserProperty($id , $startDate = null, $endDate = null)
     {
 
         $wallet_id = Wallet::whereId($id)->first();
         $todays = Carbon::now();
-        $convertions = $todays->toDateString();
 
-        $data = [];
-        foreach (WalletReload::where('account_wallet', $wallet_id->wallet_id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        $query = WalletReload::where('account_wallet',  $wallet_id->wallet_id)
+        ->where('status', 'SUCCESS');
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
         }
-
-        return array_sum($data);
+    
+        return $query->sum('amount_received');
     }
+    public function walletTransactionSumReceivedUserProperty($id , $startDate = null, $endDate = null)
+    {
 
+        $wallet_id = Wallet::whereId($id)->first();
+
+        $query = WalletTransaction::where('num_wallet',  $wallet_id->wallet_id)
+        ->where('status', 'SUCCESS');
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+    
+        return $query->sum('amount_received');
+    }
 
     public function reporting_card_historical($id)
     {
@@ -944,42 +989,47 @@ class AdminHistoriqueController extends Controller
 
         $userId =  $wallet_id->sidUser->id;
 
+       
+
         if (sabdy()->is_distributer == true) {
 
-            foreach (WalletDeposit::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletDeposit::where('updated_by', $userId);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('updated_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('updated_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('updated_at', '<=', request('endDate'));
             }
 
-            $account_penddings = WalletDeposit::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'PENDING')->count();
-
-            $account_success = WalletDeposit::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletDeposit::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'ERROR')->count();
-
-            $amount_total = $this->walletCardDepositSumUserProperty($userId);
-
+            $bank_historicals = $query->get();
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
+            $amount_total = $this->walletCardDepositSumUserProperty($userId, request('startDate'), request('endDate'));
             $wallet_id = Wallet::whereId($id)->first();
-
-
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_card_bank', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_commande.pdf');
+
         } else {
 
-            foreach (WalletDeposit::where('wallet_id', $id)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletDeposit::where('wallet_id', $id);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('updated_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('updated_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('updated_at', '<=', request('endDate'));
             }
 
-            $account_penddings = WalletDeposit::where('wallet_id', $id)->where('status', 'PENDING')->count();
-
-            $account_success = WalletDeposit::where('wallet_id', $id)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletDeposit::where('wallet_id', $id)->where('status', 'ERROR')->count();
-
-            $amount_total = $this->walletCardDepositSumUserProperty($id);
-
+            $bank_historicals = $query->get();
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
+            $amount_total = $this->walletCardDepositSumUserProperty($id, request('startDate'), request('endDate'));
             $wallet_id = Wallet::whereId($id)->first();
-
-
             $pdf = Pdf::loadView('pages.historicals.reports.pdf_card_bank', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_commande.pdf');
         }
@@ -2112,18 +2162,21 @@ class AdminHistoriqueController extends Controller
     }
 
 
-    public function walletCardDepositSumUserProperty($id)
+    public function walletCardDepositSumUserProperty($id, $startDate = null, $endDate = null)
     {
 
-        $data = [];
-        $todays = Carbon::now();
-        $formattedDate = today();
+        $query = WalletDeposit::where('updated_by',  $id)
+        ->where('status', 'SUCCESS');
 
-        foreach (WalletDeposit::where('updated_by', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($startDate && $endDate) {
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('updated_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('updated_at', '<=', $endDate);
         }
-
-        return array_sum($data);
+    
+        return $query->sum('amount');
     }
 
     public function walletCardDepositSumUserDaysProperty($id)
@@ -2156,64 +2209,83 @@ class AdminHistoriqueController extends Controller
 
         if (sabdy()->is_distributer == true) {
 
-            foreach (WalletInter::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletInter::where('updated_by', $userId);
+
+            $queryReloads = WalletInter::where('number_compte', $wallet_id->wallet_id)->where('updated_by', $userId);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('updated_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('updated_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('updated_at', '<=', request('endDate'));
             }
 
-            $bank_historicalReloads = [];
-
-            foreach (WalletInter::where('number_compte', $wallet_id->wallet_id)->where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
-                $bank_historicalReloads[] = $bank;
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $queryReloads->whereBetween('updated_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $queryReloads->whereDate('updated_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $queryReloads->whereDate('updated_at', '<=', request('endDate'));
             }
+    
+    
+            $bank_historicals = $query->get();
+            $bank_historicalReloads = $queryReloads->get();
 
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
+    
+            $account_relods_penddings = (clone $queryReloads)->where('status', 'PENDING')->count();
+            $account_relods_success   = (clone $queryReloads)->where('status', 'SUCCESS')->count();
+            $account_relods_errors    = (clone $queryReloads)->where('status', 'ERROR')->count();
 
-            $account_penddings = WalletInter::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'PENDING')->count();
+            $amount_total = $this->walletPaymentInterSumSendDaysProperty($userId , request('startDate'), request('endDate'));
 
-            $account_success = WalletInter::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletInter::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'ERROR')->count();
-
-            $account_relods_penddings = WalletInter::where('number_compte', $wallet_id->wallet_id)->where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'PENDING')->count();
-
-            $account_relods_success = WalletInter::where('number_compte', $wallet_id->wallet_id)->where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->count();
-
-            $account_relods_errors = WalletInter::where('number_compte', $wallet_id->wallet_id)->where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'ERROR')->count();
-
-            $amount_total = $this->walletPaymentInterSumSendDaysProperty($userId);
-
-            $amount_recived_total = $this->walletPaymentSumReceivedinterDaysProperty($wallet_id->wallet_id);
+            $amount_recived_total = $this->walletPaymentSumReceivedinterDaysProperty($wallet_id->wallet_id , request('startDate'), request('endDate'));
 
 
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_inter', compact('amount_total', 'amount_recived_total', 'bank_historicalReloads', 'wallet_id', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_inter.pdf');
         } else {
 
-            foreach (WalletInter::where('wallet_id', $id)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletInter::where('wallet_id', $id);
+
+            $queryReloads = WalletInter::where('number_compte', $wallet_id->wallet_id);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('created_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('created_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('created_at', '<=', request('endDate'));
             }
 
-            $bank_historicalReloads = [];
-
-            foreach (WalletInter::where('number_compte', $wallet_id->wallet_id)->get() as $bank) {
-                $bank_historicalReloads[] = $bank;
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $queryReloads->whereBetween('created_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $queryReloads->whereDate('created_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $queryReloads->whereDate('created_at', '<=', request('endDate'));
             }
+    
+
+            $bank_historicals = $query->get();
+            $bank_historicalReloads = $queryReloads->get();
+
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
+    
+            $account_relods_penddings = (clone $queryReloads)->where('status', 'PENDING')->count();
+            $account_relods_success   = (clone $queryReloads)->where('status', 'SUCCESS')->count();
+            $account_relods_errors    = (clone $queryReloads)->where('status', 'ERROR')->count();
 
 
-            $account_penddings = WalletInter::where('wallet_id', $id)->where('status', 'PENDING')->count();
+            $amount_total = $this->walletPaymentInterSumSendProperty($id, request('startDate'), request('endDate'));
 
-            $account_success = WalletInter::where('wallet_id', $id)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletInter::where('wallet_id', $id)->where('status', 'ERROR')->count();
-
-            $account_relods_penddings = WalletInter::where('number_compte', $wallet_id->wallet_id)->where('status', 'PENDING')->count();
-
-            $account_relods_success = WalletInter::where('number_compte', $wallet_id->wallet_id)->where('status', 'SUCCESS')->count();
-
-            $account_relods_errors = WalletInter::where('number_compte', $wallet_id->wallet_id)->where('status', 'ERROR')->count();
-
-            $amount_total = $this->walletPaymentInterSumSendProperty($id);
-
-            $amount_recived_total = $this->walletPaymentSumReceivedinterProperty($wallet_id->wallet_id);
+            $amount_recived_total = $this->walletPaymentSumReceivedinterProperty($wallet_id->wallet_id, request('startDate'), request('endDate'));
 
 
             $pdf = Pdf::loadView('pages.historicals.reports.pdf_inter', compact('amount_total', 'amount_recived_total', 'bank_historicalReloads', 'wallet_id', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
@@ -2221,58 +2293,72 @@ class AdminHistoriqueController extends Controller
         }
     }
 
-    public function walletPaymentInterSumSendProperty($id)
+    public function walletPaymentInterSumSendProperty($id ,  $startDate = null, $endDate = null)
     {
 
-        $todays = Carbon::now();
+        $query = WalletInter::where('wallet_id',  $id)
+        ->where('status', 'SUCCESS');
 
-        $data = [];
-        foreach (WalletInter::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
         }
-
-        return array_sum($data);
+    
+        return $query->sum('amount');
     }
 
-    public function walletPaymentInterSumSendDaysProperty($id)
+    public function walletPaymentInterSumSendDaysProperty($id, $startDate = null, $endDate = null)
     {
+        $query = WalletInter::where('updated_by',  $id)
+        ->where('status', 'SUCCESS');
 
-        $todays = Carbon::now();
-        $formattedDate = today();
-
-        $data = [];
-        foreach (WalletInter::where('updated_by', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($startDate && $endDate) {
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('updated_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('updated_at', '<=', $endDate);
         }
+    
+        return $query->sum('amount');
 
-        return array_sum($data);
     }
 
-    public function walletPaymentSumReceivedinterProperty($id)
+    public function walletPaymentSumReceivedinterProperty($id,  $startDate = null, $endDate = null)
     {
 
-        $todays = Carbon::now();
+        $query = WalletInter::where('number_compte',  $id)
+        ->where('status', 'SUCCESS');
 
-        $data = [];
-        foreach (WalletInter::where('number_compte', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
         }
-
-        return array_sum($data);
+    
+        return $query->sum('amount');
     }
 
-    public function walletPaymentSumReceivedinterDaysProperty($id)
+    public function walletPaymentSumReceivedinterDaysProperty($id, $startDate = null, $endDate = null)
     {
 
-        $todays = Carbon::now();
-        $formattedDate = today();
+        $query = WalletTransaction::where('number_compte',  $id)
+        ->where('status', 'SUCCESS');
 
-        $data = [];
-        foreach (WalletInter::where('number_compte', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($startDate && $endDate) {
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('updated_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('updated_at', '<=', $endDate);
         }
-
-        return array_sum($data);
+    
+        return $query->sum('amount');
     }
     public function reporting_payment_historical($id)
     {
@@ -2367,33 +2453,37 @@ class AdminHistoriqueController extends Controller
 
         if (sabdy()->is_distributer == true) {
 
-            foreach (WalletPhoneCredit::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletPhoneCredit::where('updated_by', $userId);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('updated_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('updated_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('updated_at', '<=', request('endDate'));
             }
 
-            $account_penddings = WalletPhoneCredit::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'PENDING')->count();
+            $bank_historicals = $query->get();
+         
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
 
-            $account_success = WalletPhoneCredit::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletPhoneCredit::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->where('status', 'ERROR')->count();
-
-            $amount_total = $this->walletPhoneSumSendTransactionDaysProperty($id);
+            $amount_total = $this->walletPhoneSumSendTransactionDaysProperty($id, request('startDate'), request('endDate'));
 
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_phone', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_phone.pdf');
         } else {
 
-            foreach (WalletPhoneCredit::where('wallet_id', $id)->get() as $bank) {
-                $bank_historicals[] = $bank;
-            }
+            $query = WalletPhoneCredit::where('wallet_id', $id);
 
-            $account_penddings = WalletPhoneCredit::where('wallet_id', $id)->where('status', 'PENDING')->count();
+            $bank_historicals = $query->get();
 
-            $account_success = WalletPhoneCredit::where('wallet_id', $id)->where('status', 'SUCCESS')->count();
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
 
-            $account_errors = WalletPhoneCredit::where('wallet_id', $id)->where('status', 'ERROR')->count();
-
-            $amount_total = $this->walletPhoneSumSendTransactionProperty($id);
+            $amount_total = $this->walletPhoneSumSendTransactionProperty($id, request('startDate'), request('endDate'));
 
             $pdf = Pdf::loadView('pages.historicals.reports.pdf_phone', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_phone.pdf');
@@ -2401,31 +2491,38 @@ class AdminHistoriqueController extends Controller
     }
 
     // User 
-    public function walletPhoneSumSendTransactionProperty($id)
+    public function walletPhoneSumSendTransactionProperty($id, $startDate = null, $endDate = null)
     {
 
-        $todays = Carbon::now();
-
-        $data = [];
-        foreach (WalletPhoneCredit::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        $query = WalletPhoneCredit::where('wallet_id',  $id)
+        ->where('status', 'SUCCESS');
+        if ($startDate && $endDate) {
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('updated_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('updated_at', '<=', $endDate);
         }
+    
+        return $query->sum('amount');
 
-        return array_sum($data);
     }
 
-    public function walletPhoneSumSendTransactionDaysProperty($id)
+    public function walletPhoneSumSendTransactionDaysProperty($id, $startDate = null, $endDate = null)
     {
 
-        $todays = Carbon::now();
-        $formattedDate = today();
+        $query = WalletPhoneCredit::where('updated_by',  $id)
+        ->where('status', 'SUCCESS');
 
-        $data = [];
-        foreach (WalletPhoneCredit::where('updated_by', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($startDate && $endDate) {
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('updated_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('updated_at', '<=', $endDate);
         }
-
-        return array_sum($data);
+    
+        return $query->sum('amount');
     }
 
     public function reporting_transfer_historical($id)
@@ -2443,66 +2540,73 @@ class AdminHistoriqueController extends Controller
 
         if (sabdy()->is_distributer == true) {
 
-            foreach (WalletTransaction::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletTransaction::where('updated_by', $userId);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('updated_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('updated_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('updated_at', '<=', request('endDate'));
             }
+    
+            $bank_historicals = $query->get();
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
 
 
-            $account_penddings = WalletTransaction::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)
-                ->where('status', 'PENDING')->count();
-            $account_success = WalletTransaction::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)
-                ->where('status', 'SUCCESS')->count();
+            $amount_reload_total = $this->walletRelaodSumReceivedTransactionDaysProperty($userId, request('startDate'), request('endDate'));
 
-            $account_errors = WalletTransaction::where('updated_by', $userId)->whereDate('updated_at', $formattedDate)
-                ->where('status', 'ERROR')->count();
-
-            $amount_reload_total = $this->walletRelaodSumReceivedTransactionDaysProperty($userId);
-
-            $amount_total = $this->walletRelaodSumSendTransactionDaysProperty($userId);
+            $amount_total = $this->walletRelaodSumSendTransactionDaysProperty($userId, request('startDate'), request('endDate'));
 
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_transfer', compact('wallet_id', 'amount_reload_total', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_transfers.pdf');
 
         }elseif(sabdy()->is_under_distributer == true) {
 
-            foreach (WalletTransaction::where('created_by', $userId)->whereDate('updated_at', $formattedDate)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletTransaction::where('created_by', $userId);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('updated_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('updated_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('updated_at', '<=', request('endDate'));
             }
+    
+            $bank_historicals = $query->get();
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
 
+            $amount_reload_total = $this->walletRelaodSumReceivedTransactionDaysProperty($userId , request('startDate'), request('endDate'));
 
-            $account_penddings = WalletTransaction::where('created_by', $userId)->whereDate('updated_at', $formattedDate)
-                ->where('status', 'PENDING')->count();
-            $account_success = WalletTransaction::where('created_by', $userId)->whereDate('updated_at', $formattedDate)
-                ->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletTransaction::where('created_by', $userId)->whereDate('updated_at', $formattedDate)
-                ->where('status', 'ERROR')->count();
-
-            $amount_reload_total = $this->walletRelaodSumReceivedTransactionDaysProperty($userId);
-
-            $amount_total = $this->walletRelaodSumSendTransactionDaysProperty($userId);
+            $amount_total = $this->walletRelaodSumSendTransactionDaysProperty($userId , request('startDate'), request('endDate'));
 
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_transfer', compact('wallet_id', 'amount_reload_total', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_transfers.pdf');
 
         }  else {
 
-            foreach (WalletTransaction::where('wallet_id', $id)->get() as $bank) {
-                $bank_historicals[] = $bank;
+            $query = WalletTransaction::where('wallet_id', $id);
+
+            if (request()->filled('startDate') && request()->filled('endDate')) {
+                $query->whereBetween('created_at', [request('startDate'), request('endDate')]);
+            } elseif (request()->filled('startDate')) {
+                $query->whereDate('created_at', '>=', request('startDate'));
+            } elseif (request()->filled('endDate')) {
+                $query->whereDate('created_at', '<=', request('endDate'));
             }
+    
+            $bank_historicals = $query->get();
+            $account_penddings = (clone $query)->where('status', 'PENDING')->count();
+            $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
+            $account_errors    = (clone $query)->where('status', 'ERROR')->count();
 
+            $amount_reload_total = $this->walletRelaodSumReceivedTransactionProperty($id, request('startDate'), request('endDate'));
 
-            $account_penddings = WalletTransaction::where('wallet_id', $id)
-                ->where('status', 'PENDING')->count();
-            $account_success = WalletTransaction::where('wallet_id', $id)
-                ->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletTransaction::where('wallet_id', $id)
-                ->where('status', 'ERROR')->count();
-
-            $amount_reload_total = $this->walletRelaodSumReceivedTransactionProperty($id);
-
-            $amount_total = $this->walletRelaodSumSendTransactionProperty($id);
+            $amount_total = $this->walletRelaodSumSendTransactionProperty($id, request('startDate'), request('endDate'));
 
             $pdf = Pdf::loadView('pages.historicals.reports.pdf_transfer', compact('wallet_id', 'amount_reload_total', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_transfers.pdf');
@@ -2512,61 +2616,93 @@ class AdminHistoriqueController extends Controller
 
 
     // User 
-    public function walletRelaodSumSendTransactionProperty($id)
+    public function walletRelaodSumSendTransactionProperty($id, $startDate = null, $endDate = null)
     {
 
-        $todays = Carbon::now();
+        $query = WalletTransaction::where('wallet_id',  $id)
+        ->where('status', 'SUCCESS');
 
-        $data = [];
-        foreach (WalletTransaction::where('wallet_id', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
         }
-
-        return array_sum($data);
+    
+        return $query->sum('amount');
     }
 
-    public function walletRelaodSumSendTransactionDaysProperty($id)
+    public function walletRelaodSumSendTransactionDaysProperty($id, $startDate = null, $endDate = null)
     {
 
-        $todays = Carbon::now();
-        $formattedDate = today();
 
-        $data = [];
-        foreach (WalletTransaction::where('updated_by', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        $query = WalletTransaction::where('updated_by',  $id)
+        ->where('status', 'SUCCESS');
+
+       if ($startDate && $endDate) {
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('updated_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('updated_at', '<=', $endDate);
         }
-
-        return array_sum($data);
+    
+        return $query->sum('amount');
     }
 
 
-    public function walletRelaodSumReceivedTransactionProperty($id)
+    public function walletRelaodSumReceivedTransactionProperty($id,$startDate = null, $endDate = null)
+    {
+
+        $query = WalletTransaction::where('num_wallet',  $id)
+        ->where('status', 'SUCCESS');
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+    
+        return $query->sum('amount');
+    }
+
+    public function walletRelaodSumSendsTransactionProperty($id, $startDate = null, $endDate = null)
+    {
+
+        $query = WalletTransaction::where('wallet_id',  $id)
+        ->where('status', 'SUCCESS');
+
+        if ($startDate && $endDate) {
+            $query->whereBetween('created_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('created_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('created_at', '<=', $endDate);
+        }
+    
+        return $query->sum('amount');
+    }
+
+    public function walletRelaodSumReceivedTransactionDaysProperty($id ,  $startDate = null, $endDate = null)
     {
 
         $wallet_id = Wallet::whereId($id)->first();
         $todays = Carbon::now();
-
-        $data = [];
-        foreach (WalletTransaction::where('num_wallet', $id)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function walletRelaodSumReceivedTransactionDaysProperty($id)
-    {
-
-        $wallet_id = Wallet::whereId($id)->first();
-        $todays = Carbon::now();
         $formattedDate = today();
-
-        $data = [];
-        foreach (WalletTransaction::where('updated_by', $id)->whereDate('updated_at', $formattedDate)->where('status', 'SUCCESS')->get() as $bank) {
-            $data[] = $bank->amount;
+        $query = WalletTransaction::where('updated_by',  $id)
+        ->where('status', 'SUCCESS');
+        if ($startDate && $endDate) {
+            $query->whereBetween('updated_at', [$startDate, $endDate]);
+        } elseif ($startDate) {
+            $query->whereDate('updated_at', '>=', $startDate);
+        } elseif ($endDate) {
+            $query->whereDate('updated_at', '<=', $endDate);
         }
-
-        return array_sum($data);
+    
+        return $query->sum('amount');
     }
 
 

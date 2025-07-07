@@ -248,7 +248,6 @@ class TransactionCentrale extends Component
             ->first();
         $transaction = WalletTransaction::query();
 
-        // Nationnal commission transaction
 
         if ($this->amount_inter_out_civ != '') {
 
