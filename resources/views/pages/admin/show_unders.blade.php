@@ -784,7 +784,7 @@
                 Date de début :
             </label>
             <input type="date" id="startDate" name="startDate"
-                   value="{{ request('startDate', date('Y-m-d')) }}"
+            value="{{ request('startDate', \Carbon\Carbon::yesterday()->toDateString()) }}"
                    class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
         </div>
         <div class="w-full sm:w-auto mt-3 mr-6">
@@ -792,7 +792,7 @@
                 Date de fin :
             </label>
             <input type="date" id="endDate" name="endDate"
-                   value="{{ request('endDate', date('Y-m-d')) }}"
+                 value="{{ request('endDate', \Carbon\Carbon::today()->toDateString()) }}"
                    class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
         </div>
     </div>
@@ -835,6 +835,10 @@
                 [
                     'label' => 'Rapport credits',
                     'route' => route('phones.historical.reporting_phone_historical.admins', ['id' => $user->wallet->id]),
+                ],
+                [
+                    'label' => 'Rapport paiements',
+                    'route' => route('payments.historical.reporting_payment_historical.admins', ['id' => $user->wallet->id]),
                 ],
             ];
         @endphp

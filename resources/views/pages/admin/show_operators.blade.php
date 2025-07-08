@@ -19,7 +19,7 @@
             </div>
             <div class="font-medium text-historique mt-6">Montant total reçu des rechargements</div>
             <div class="text-slate-500 mt-3">
-                
+
                 {{ number_format($sum_wallet_reload_received, 2, ',', ' ') ?? null }}
                 {{ $currencie ?? null }}
 
@@ -236,7 +236,7 @@
             </div>
             <div class="font-medium text-historique mt-6">Nombre de transactions validées journalières</div>
             <div class="text-slate-500 mt-3">
-                       {{ $count_days_inters ?? null }}
+                {{ $count_days_inters ?? null }}
             </div>
         </div>
 
@@ -250,7 +250,7 @@
             </div>
             <div class="font-medium text-historique mt-6">Nombre de transactions inters mensuel</div>
             <div class="text-slate-500 mt-3">
-                  {{ $count_mounth_inters ?? null }}
+                {{ $count_mounth_inters ?? null }}
             </div>
         </div>
         <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_credits">
@@ -280,79 +280,93 @@
                 {{ number_format($amount_mounth_inters, 2, ',', ' ') ?? null }} {{ $currencie ?? null }}
             </div>
         </div>
-        
+
     </div>
     <h2 class="text-lg font-medium truncate mr-5 mt-6">Telechargé les differents raports d'activités</h2>
+    <div class="mb-4 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-end">
+        <div class="w-full sm:w-auto mt-3 mr-3">
+            <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Date de début :
+            </label>
+            <input type="date" id="startDate" name="startDate" 
+            value="{{ request('startDate', \Carbon\Carbon::yesterday()->toDateString()) }}"
+                class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="w-full sm:w-auto mt-3 mr-6">
+            <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Date de fin :
+            </label>
+            <input type="date" id="endDate" name="endDate" 
+                value="{{ request('endDate', \Carbon\Carbon::today()->toDateString()) }}"
+                class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+    </div>
+
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('reloads.historical.received.reporting_reload_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport réchargements
-            </a>
-        </div>
-        {{-- New --}}
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('reloads.historical.reporting_reload_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport des comptes réchargés
-            </a>
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('cards.historical.reporting_card_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport rechargement carte
-            </a>
-        </div>
+        @php
+            $routes = [
+                [
+                    'label' => 'Rapport réchargements',
+                    'route' => route('reloads.historical.received.reporting_reload_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
+                ],
+                [
+                    'label' => 'Rapport des comptes rechargés',
+                    'route' => route('reloads.historical.reporting_reload_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
+                ],
+                [
+                    'label' => 'Rapport rechargement carte',
+                    'route' => route('cards.historical.reporting_card_historical.admins', ['id' => $user->wallet->id]),
+                ],
+                [
+                    'label' => 'Rapport virements',
+                    'route' => route('virements.historical.reporting_historical.admins', ['id' => $user->wallet->id]),
+                ],
+                [
+                    'label' => 'Rapport transferts',
+                    'route' => route('transfers.historical.reporting_transfer_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
+                ],
+                [
+                    'label' => 'Rapport transferts récus',
+                    'route' => route('transfers.historical.received.reporting_transfer_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
+                ],
+                [
+                    'label' => 'Rapport paiements',
+                    'route' => route('inters.historical.reporting_inter_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
+                ],
+                [
+                    'label' => 'Rapport credits',
+                    'route' => route('phones.historical.reporting_phone_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
+                ],
+                [
+                    'label' => 'Rapport paiements',
+                    'route' => route('payments.historical.reporting_payment_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
+                ],
+            ];
+        @endphp
 
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('virements.historical.reporting_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport virements
-            </a>
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('transfers.historical.reporting_transfer_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport transferts
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('transfers.historical.received.reporting_transfer_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport transferts récus
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('payments.historical.reporting_payment_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport paiements
-            </a>
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('inters.historical.reporting_inter_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport inter
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary "
-                href="{{ route('phones.historical.reporting_phone_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport credits
-            </a>
-        </div>
+        @foreach ($routes as $report)
+            <div class="col-span-12 sm:col-span-4 2xl:col-span-2">
+                <button class="applyDateFilter flex items-center text-white btn btn-primary w-full"
+                    data-url="{{ $report['route'] }}">
+                    {{ $report['label'] }}
+                </button>
+            </div>
+        @endforeach
 
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 " style="background-color: red">
             <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary text-white"
@@ -583,61 +597,66 @@
                     </div>
 
                     <div class="truncate sm:whitespace-normal flex items-center mt-3"> <svg
-                        xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                        stroke-linejoin="round" icon-name="clock" data-lucide="clock"
-                        class="lucide lucide-clock w-4 h-4 text-slate-500 ml-auto mr-2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <polyline points="12 6 12 12 16 14"></polyline>
-                    </svg> Date deconnexion : {{ $user->last_logout ?? null }}
-                </div>
-                <div class="truncate sm:whitespace-normal flex items-center mt-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span class="alert alert-primary  inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                            xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="clock" data-lucide="clock"
+                            class="lucide lucide-clock w-4 h-4 text-slate-500 ml-auto mr-2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg> Date deconnexion : {{ $user->last_logout ?? null }}
+                    </div>
+                    <div class="truncate sm:whitespace-normal flex items-center mt-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span
+                            class="alert alert-primary  inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
 
-                        Pays : {{ $user->country->name ?? null }}
+                            Pays : {{ $user->country->name ?? null }}
 
-                    </span>
-                </div>
-                <div class="truncate sm:whitespace-normal flex items-center mt-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span class="alert alert-primary  inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">Ville : {{ $user->city->name ?? 'Inconnue' }}</span>
-                </div>
-                 <div class="truncate sm:whitespace-normal flex items-center mt-3">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <span class="alert alert-primary  inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">Zone : {{ $user->zone ?? 'Inconnue' }}</span>
-                </div>
+                        </span>
+                    </div>
+                    <div class="truncate sm:whitespace-normal flex items-center mt-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span
+                            class="alert alert-primary  inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">Ville
+                            : {{ $user->city->name ?? 'Inconnue' }}</span>
+                    </div>
+                    <div class="truncate sm:whitespace-normal flex items-center mt-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 text-gray-500" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.828 0L6.343 16.657a8 8 0 1111.314 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span
+                            class="alert alert-primary  inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">Zone
+                            : {{ $user->zone ?? 'Inconnue' }}</span>
+                    </div>
                 </div>
             </div>
 
             @if (Auth::guard('web')->user()->hasPermissionTo('voir-soldes'))
-            <div
-            class="mt-6 lg:mt-0 flex-1 flex items-center justify-center px-5 border-t lg:border-0 mr-3 border-slate-200/60 dark:border-darkmode-400 pt-5 lg:pt-0 color-wallet">
-            <div class="text-center rounded-md  py-3" style="color: white; font-size: 16px;">
-                <div class="font-medium text-lg mb-3">Solde Wallet</div>
-                <div class="font-medium text-primary text-xl" style="color: white;">
-                    {{ number_format($user->wallet()->sum('amount'), 2, ',', ' ') ?? null }}
-                    {{ $user->country->currencie->code ?? null }}</div>
-            </div>
+                <div
+                    class="mt-6 lg:mt-0 flex-1 flex items-center justify-center px-5 border-t lg:border-0 mr-3 border-slate-200/60 dark:border-darkmode-400 pt-5 lg:pt-0 color-wallet">
+                    <div class="text-center rounded-md  py-3" style="color: white; font-size: 16px;">
+                        <div class="font-medium text-lg mb-3">Solde Wallet</div>
+                        <div class="font-medium text-primary text-xl" style="color: white;">
+                            {{ number_format($user->wallet()->sum('amount'), 2, ',', ' ') ?? null }}
+                            {{ $user->country->currencie->code ?? null }}</div>
+                    </div>
 
-        </div>
+                </div>
             @endif
-       
+
 
         </div>
         @include('components.account_nav')
@@ -647,7 +666,7 @@
 
     <div class="tab-content mt-6">
 
-      <div id="doc" class="tab-pane active" role="tabpanel" aria-labelledby="doc-tab">
+        <div id="doc" class="tab-pane active" role="tabpanel" aria-labelledby="doc-tab">
 
             <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
                 <div class="hidden md:block mx-auto text-slate-500"></div>
@@ -773,7 +792,7 @@
 
 
             </div>
-        </div> 
+        </div>
         <div id="reload" class="tab-pane" role="tabpanel" aria-labelledby="reload-tab">
 
             @livewire('transaction-details.reload-transactions', ['walletAllReloads' => $user->id])
@@ -828,5 +847,21 @@
         function sort_status(el) {
             $('#sort_status').submit();
         }
+    </script>
+
+    <script>
+        document.querySelectorAll('.applyDateFilter').forEach(button => {
+            button.addEventListener('click', function() {
+                const baseUrl = this.dataset.url;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+
+                const url = new URL(baseUrl, window.location.origin);
+                if (startDate) url.searchParams.append('startDate', startDate);
+                if (endDate) url.searchParams.append('endDate', endDate);
+
+                window.location.href = url.toString();
+            });
+        });
     </script>
 @endpush

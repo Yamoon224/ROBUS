@@ -233,77 +233,90 @@
 
     </div>
     <h2 class="text-lg font-medium truncate mr-5 mt-6">Telechargé les differents raports d'activités</h2>
+    
+    <div class="mb-4 flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4 items-end">
+        <div class="w-full sm:w-auto mt-3 mr-3">
+            <label for="startDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Date de début :
+            </label>
+            <input type="date" id="startDate" name="startDate" 
+                  value="{{ request('startDate', \Carbon\Carbon::yesterday()->toDateString()) }}"
+                class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+        <div class="w-full sm:w-auto mt-3 mr-6">
+            <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                Date de fin :
+            </label>
+            <input type="date" id="endDate" name="endDate" 
+                value="{{ request('endDate', \Carbon\Carbon::today()->toDateString()) }}"
+                class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        </div>
+    </div>
+
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('reloads.historical.received.reporting_reload_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport réchargements
-            </a>
-        </div>
-        {{-- New --}}
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('reloads.historical.reporting_reload_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport des comptes réchargés
-            </a>
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('cards.historical.reporting_card_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport rechargement carte
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('virements.historical.reporting_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport virements
-            </a>
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('transfers.historical.reporting_transfer_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport transferts
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('transfers.historical.received.reporting_transfer_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport transferts récus
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('payments.historical.reporting_payment_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport paiements
-            </a>
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('inters.historical.reporting_inter_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport inter
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary "
-                href="{{ route('phones.historical.reporting_phone_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport credits
-            </a>
-        </div>
-
+        @php
+        $routes = [
+            [
+                'label' => 'Rapport réchargements',
+                'route' => route('reloads.historical.received.reporting_reload_historical.admins', [
+                    'id' => $user->wallet->id,
+                ]),
+            ],
+            [
+                'label' => 'Rapport des comptes rechargés',
+                'route' => route('reloads.historical.reporting_reload_historical.admins', [
+                    'id' => $user->wallet->id,
+                ]),
+            ],
+            [
+                'label' => 'Rapport rechargement carte',
+                'route' => route('cards.historical.reporting_card_historical.admins', ['id' => $user->wallet->id]),
+            ],
+            [
+                'label' => 'Rapport virements',
+                'route' => route('virements.historical.reporting_historical.admins', ['id' => $user->wallet->id]),
+            ],
+            [
+                'label' => 'Rapport transferts',
+                'route' => route('transfers.historical.reporting_transfer_historical.admins', [
+                    'id' => $user->wallet->id,
+                ]),
+            ],
+            [
+                'label' => 'Rapport transferts récus',
+                'route' => route('transfers.historical.received.reporting_transfer_historical.admins', [
+                    'id' => $user->wallet->id,
+                ]),
+            ],
+            [
+                'label' => 'Rapport paiements',
+                'route' => route('inters.historical.reporting_inter_historical.admins', [
+                    'id' => $user->wallet->id,
+                ]),
+            ],
+            [
+                'label' => 'Rapport credits',
+                'route' => route('phones.historical.reporting_phone_historical.admins', [
+                    'id' => $user->wallet->id,
+                ]),
+            ],
+            [
+                'label' => 'Rapport paiements',
+                'route' => route('payments.historical.reporting_payment_historical.admins', [
+                    'id' => $user->wallet->id,
+                ]),
+            ],
+        ];
+    @endphp
+          @foreach ($routes as $report)
+          <div class="col-span-12 sm:col-span-4 2xl:col-span-2">
+              <button class="applyDateFilter flex items-center text-white btn btn-primary w-full"
+                  data-url="{{ $report['route'] }}">
+                  {{ $report['label'] }}
+              </button>
+          </div>
+      @endforeach
         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 " style="background-color: red">
             <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary text-white"
                 style="background-color: red"
@@ -2363,5 +2376,20 @@
         function sort_status(el) {
             $('#sort_status').submit();
         }
+    </script>
+       <script>
+        document.querySelectorAll('.applyDateFilter').forEach(button => {
+            button.addEventListener('click', function() {
+                const baseUrl = this.dataset.url;
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+
+                const url = new URL(baseUrl, window.location.origin);
+                if (startDate) url.searchParams.append('startDate', startDate);
+                if (endDate) url.searchParams.append('endDate', endDate);
+
+                window.location.href = url.toString();
+            });
+        });
     </script>
 @endpush
