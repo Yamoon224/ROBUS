@@ -478,6 +478,7 @@ class TransactionCiv extends Component
         $valeur_ceiling = sabdy()->silver_ceiling;
         $valeur_max_send  =  sabdy()->country->amount_max_send;
         $provider = Provider::whereId($this->provider_transaction)->first();
+        DB::beginTransaction();
 
 
         try {
@@ -930,6 +931,7 @@ class TransactionCiv extends Component
                 $this->emit('modal-hide-transfers');
                 $this->emit('error', 'Merci de bien vouloir vérifier votre mot de passe, s\'il vous plaît.!');
             }
+            DB::commit(); 
         } catch (\Exception $exception) {
             $this->resetTransactionField();
             $this->emit('modal-hide-inters');

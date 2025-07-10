@@ -1380,7 +1380,6 @@ class Transfers extends Component
         }
     }
 
-
     public function updatedAmountPhoneCredit()
     {
         $this->calculateAmountPhoneCredits();
@@ -1478,7 +1477,7 @@ class Transfers extends Component
         }
     }
 
-    // Add Paiment
+
     public function addPaiement()
     {
 
@@ -1486,8 +1485,6 @@ class Transfers extends Component
         $provider = Provider::whereId($this->provider_payment)->first();
         $offer = Offer::whereId($this->offer_paiement)->first();
         $som_transfers =  $this->getSumValTransactionProperty();
-
-        // Verify solde of User Auth
         $valeur_ceiling = $walletUser->silver_ceiling;
 
         try {
@@ -1672,9 +1669,8 @@ class Transfers extends Component
         $admins = $this->getAdminValeurProperty();
         $admin_civ = $this->getAdminCIVProperty();
         $som_transfers =  $this->getSumValTransactionProperty();
-
-        // Verify solde of User Auth
         $valeur_ceiling = $walletUser->silver_ceiling;
+        DB::beginTransaction();
 
         try {
 
@@ -2031,6 +2027,8 @@ class Transfers extends Component
             } else {
                 $this->emit('error', 'Paiement existante !');
             }
+            DB::commit(); 
+
         } catch (\Exception $exception) {
             $this->resetPaiementField();
             $this->emit('modal-hide-paiement');
@@ -2038,9 +2036,9 @@ class Transfers extends Component
         }
     }
 
-    // Add Virement 
     public function addVirement()
     {
+
         $walletUser = Auth::guard('web')->user();
         $som_transfers =  $this->getSumValTransactionProperty();
         $valeur_ceiling = $walletUser->silver_ceiling;
@@ -2121,6 +2119,7 @@ class Transfers extends Component
         $admin_civ = $this->getAdminCIVProperty();
         $som_transfers =  $this->getSumValTransactionProperty();
         $valeur_ceiling = $walletUser->silver_ceiling;
+        DB::beginTransaction();
 
         try {
 
@@ -2271,13 +2270,14 @@ class Transfers extends Component
                 $this->emit('modal-hide-virement');
                 $this->emit('error', 'Verifiez votre mot de passe !');
             }
+            DB::commit(); 
         } catch (\Exception $exception) {
             $this->resetVirementField();
             $this->emit('modal-hide-virement');
             $this->emit('error', 'Error de message demande a l\'admin !');
         }
     }
-    // Validators id
+
     protected $validReloadCardProviders = [13, 14, 15, 16, 17];
 
     protected function validateReloadCard()
@@ -2301,6 +2301,7 @@ class Transfers extends Component
         $provider = Provider::whereId($this->provider_reloadcard)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
         $som_transfers =  $this->getSumValTransactionProperty();
+        DB::beginTransaction();
 
         try {
 
@@ -2369,6 +2370,8 @@ class Transfers extends Component
             } else {
                 $this->emit('error', 'Rechargement  existante !');
             }
+            DB::commit(); 
+
         } catch (\Exception $exception) {
             $this->resetReloadCardField();
             $this->emit('modal-hide-reloadCard');
@@ -2384,6 +2387,7 @@ class Transfers extends Component
         $admins = $this->getAdminValeurProperty();
         $admin_civ = $this->getAdminCIVProperty();
         $som_transfers =  $this->getSumValTransactionProperty();
+        DB::beginTransaction();
 
         try {
 
@@ -2545,7 +2549,7 @@ class Transfers extends Component
                                     }
 
 
-                                    if ($walletReloadCard != null) {
+                                    if ($walletReloadCard != null && $walletReloadCard->status != 'PENDING') {
                                         $this->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $walletUser, $amount_verify, $commissionCompanie);
                                     }
 
@@ -2584,6 +2588,8 @@ class Transfers extends Component
                     $this->emit('modal-hide-reloadCard');
                     $this->emit('success', 'Verifiez votre mot de passe svp !');
                 }
+
+              DB::commit(); 
             } else {
                 $this->emit('error', 'Rechargement  existante !');
             }
@@ -2594,7 +2600,7 @@ class Transfers extends Component
         }
     }
 
-    // Add Phone Credit
+
     public function addPhoneCredit()
     {
 
@@ -2683,6 +2689,7 @@ class Transfers extends Component
         $admins = $this->getAdminValeurProperty();
         $admin_civ = $this->getAdminCIVProperty();
         $som_transfers =  $this->getSumValTransactionProperty();
+        DB::beginTransaction();
 
         try {
 
@@ -2776,9 +2783,9 @@ class Transfers extends Component
 
                     $this->sendSuccessMessageCreateNotification($walletUser, $message);
                 }
+         
 
-
-                if ($walletPhone != null) {
+                if ($walletPhone != null  && $walletPhone->status == 'PENDING') {
                     $this->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser, $reel_amount);
                 }
 
@@ -2803,6 +2810,7 @@ class Transfers extends Component
                 $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
                 return; // Arrête l'exécution si le montant est supérieur au solde
             }
+            DB::commit(); 
         } catch (\Exception $exception) {
             $this->resetPaiementField();
             $this->emit('modal-hide-phoneCredit');
@@ -2997,10 +3005,11 @@ class Transfers extends Component
         $admins = $transactionData['admins'];
         $admin_civ = $transactionData['admin_civ'];
         $percent_robus = PhoneCreditCost::whereId(1)->first();
+        DB::beginTransaction();
 
         try {
 
-            if ($check) {
+            if ($check->status == 'PENDING') {
 
                 $this->validate([
                     'phoneCreditStatus' => 'required',
@@ -3171,16 +3180,17 @@ class Transfers extends Component
                 $this->resetPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit-validated');
                 $this->emit('modal-hide-phoneCredit');
-                $this->emit('info', 'Vous avez cliquez deux fois de suite !');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
                 return; // Arrête l'exécution si le montant est supérieur au solde
 
             } else {
                 $this->resetPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('modal-hide-phoneCredit-validated');
-                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite!');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
                 return; // Arrête l'exécution si le montant est supérieur au solde
             }
+            DB::commit();
         } catch (\Exception $exception) {
             $this->resetPhoneCreditField();
             $this->emit('modal-hide-phoneCredit-validated');
@@ -3191,6 +3201,8 @@ class Transfers extends Component
 
     public function updateReloadCard()
     {
+
+        DB::beginTransaction();
         $check = WalletDeposit::whereId($this->reloadcardId)->first();
         $transactionData = $this->generateTransactionData();
         $transactionCode = $transactionData['transactionCode'];
@@ -3201,7 +3213,7 @@ class Transfers extends Component
 
         try {
 
-            if ($check) {
+            if ($check->status == 'PENDING') {
 
                 $this->validate([
                     'reloadcardStatus' => 'required',
@@ -3365,13 +3377,14 @@ class Transfers extends Component
                 $this->resetReloadCardField();
                 $this->emit('modal-hide-reloadCard-validated');
                 $this->emit('modal-hide-reloadCard');
-                $this->emit('info', 'Vous avez cliquez deux fois de suite le boutton !!');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite le boutton ou l\'operation a déja été traitée !!!!');
             } else {
                 $this->resetReloadCardField();
                 $this->emit('modal-hide-reloadCard-validated');
                 $this->emit('modal-hide-reloadCard');
-                $this->emit('error', 'Aucune donnée ou Vous avez cliquez deux fois de suite !');
+                $this->emit('error', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
             }
+            DB::commit();
         } catch (\Exception $exception) {
             $this->resetReloadCardField();
             $this->emit('modal-hide-reloadCard-validated');
@@ -3383,6 +3396,7 @@ class Transfers extends Component
     public function updateTransaction()
     {
 
+        DB::beginTransaction();
         $check = WalletTransaction::whereId($this->transactionId)->first();
         $transactionData = $this->generateTransactionData();
         $transactionCode = $transactionData['transactionCode'];
@@ -3394,7 +3408,7 @@ class Transfers extends Component
         try {
 
 
-            if ($check) {
+            if ($check->status == 'PENDING' && $check->updated_by == Auth::guard('web')->user()->id) {
 
                 $this->validate([
                     'transactionStatus' => 'required',
@@ -3522,30 +3536,29 @@ class Transfers extends Component
                         $this->emit('modal-hide-transfers-validated');
                         $this->emit('modal-hide-transfers');
                         $this->emit('error', 'Aucune donnée !');
-                        return; // Arrête l'exécution si le montant est supérieur au solde
-
+                        return;
                     }
                 } else {
                     $this->cancelTransactionField();
                     $this->emit('modal-hide-transfers-validated');
                     $this->emit('modal-hide-transfers');
                     $this->emit('error', 'Vérifier votre mot de passe !');
-                    return; // Arrête l'exécution si le montant est supérieur au solde
+                    return; 
 
                 }
             } elseif ($this->password_transaction = "") {
                 $this->resetTransactionField();
                 $this->emit('modal-hide-transfers-validated');
                 $this->emit('modal-hide-transfers');
-                $this->emit('info', 'Vous avez cliquez dexu fois le boutton !!');
-                return; // Arrête l'exécution si le montant est supérieur au solde
-
+                $this->emit('info', 'Vous avez cliquez deux fois le boutton ou l\'operation a été déja traitée ou vous devez etre le validateur !!');
+                return;
             } else {
                 $this->resetTransactionField();
                 $this->emit('modal-hide-transfers-validated');
                 $this->emit('modal-hide-transfers');
-                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite !');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
             }
+            DB::commit();
         } catch (\Exception $exception) {
             $this->resetTransactionField();
             $this->emit('modal-hide-transfers-validated');
@@ -3556,6 +3569,8 @@ class Transfers extends Component
 
     public function updateVirement()
     {
+
+        DB::beginTransaction();
         $check = WalletBank::whereId($this->virementId)->first();
         $transactionData = $this->generateTransactionData();
         $transactionCode = $transactionData['transactionCode'];
@@ -3565,7 +3580,7 @@ class Transfers extends Component
         $admin_civ = $transactionData['admin_civ'];
         try {
 
-            if ($check) {
+            if ($check->status == 'PENDING') {
 
                 $this->validate([
                     'virementStatus' => 'required',
@@ -3730,16 +3745,17 @@ class Transfers extends Component
                 $this->resetVirementField();
                 $this->emit('modal-hide-virement-validated');
                 $this->emit('modal-hide-virement');
-                $this->emit('info', 'Vous avez cliquez deux fois de suite !');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !');
                 return; // Arrête l'exécution si le montant est supérieur au solde
 
             } else {
                 $this->resetVirementField();
                 $this->emit('modal-hide-virement-validated');
                 $this->emit('modal-hide-virement');
-                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite!');
-                return; // Arrête l'exécution si le montant est supérieur au solde
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+                return; 
             }
+            DB::commit();
         } catch (\Exception $exception) {
             $this->resetVirementField();
             $this->emit('modal-hide-virement');
@@ -3750,6 +3766,7 @@ class Transfers extends Component
 
     public function updateInter()
     {
+        DB::beginTransaction();
         $check = WalletInter::whereId($this->interId)->first();
         $transactionData = $this->generateTransactionData();
         $transactionCode = $transactionData['transactionCode'];
@@ -3761,7 +3778,7 @@ class Transfers extends Component
         try {
 
 
-            if ($check) {
+            if ($check->status == 'PENDING') {
 
                 $this->validate(
                     [
@@ -3956,8 +3973,8 @@ class Transfers extends Component
                         $this->resetInterField();
                         $this->emit('modal-hide-inters-validated');
                         $this->emit('modal-hide-inters');
-                        $this->emit('error', 'Pas le valideur !');
-                        return; // Arrête l'exécution si le montant est supérieur au solde
+                        $this->emit('error', 'Pas le valideur ou l\'operation a déja été traitée !! !');
+                        return; 
 
                     }
                 } else {
@@ -3965,16 +3982,18 @@ class Transfers extends Component
                     $this->emit('modal-hide-inters');
                     $this->emit('modal-hide-inters-validated');
                     $this->emit('error', 'Mot de passe Incorrect !');
-                    return; // Arrête l'exécution si le montant est supérieur au solde
+                    return;
                 }
             } elseif ($this->password_transaction = "" ||  $this->interStatus = "") {
                 $this->resetInterField();
                 $this->emit('modal-hide-inters-validated');
                 $this->emit('modal-hide-inters');
-                $this->emit('info', 'Vous avez cliquez deux fois de suite !');
-                return; // Arrête l'exécution si le montant est supérieur au solde
+                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !');
+                return; 
 
             }
+            DB::commit();
+
         } catch (\Exception $exception) {
             $this->resetInterField();
             $this->emit('modal-hide-inters-validated');
@@ -3985,6 +4004,8 @@ class Transfers extends Component
 
     public function updatePaiement()
     {
+       
+        DB::beginTransaction();
         $check = WalletPayment::whereId($this->paiementId)->first();
         $transactionData = $this->generateTransactionData();
         $transactionCode = $transactionData['transactionCode'];
@@ -3995,7 +4016,7 @@ class Transfers extends Component
 
         try {
 
-            if ($check) {
+            if ($check->status == 'PENDING') {
 
 
                 $this->validate([
@@ -4151,15 +4172,16 @@ class Transfers extends Component
                 $this->resetPaiementField();
                 $this->emit('modal-hide-paiement');
                 $this->emit('modal-hide-paiement-validated');
-                $this->emit('info', 'Vous avez cliquez deux fois de suite le boutton !!');
-                return; // Arrête l'exécution si le montant est supérieur au solde
+                $this->emit('info', 'Vous avez cliquez deux fois de suite le boutton ou l\'operation a déja été traitée !!');
+                return; 
 
             } else {
                 $this->resetPaiementField();
                 $this->emit('modal-hide-paiement');
                 $this->emit('modal-hide-paiement-validated');
-                $this->emit('error', 'Aucune donnée ou Vous avez cliquez deux fois de suite !');
+                $this->emit('error', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
             }
+            DB::commit();
         } catch (\Exception $exception) {
             $this->resetPaiementField();
             $this->emit('modal-hide-paiement-validated');
@@ -4190,15 +4212,24 @@ class Transfers extends Component
 
     public function ChooseUpdateTransaction($id)
     {
-        $walletUpdate = WalletTransaction::findOrFail($id);
+
+        DB::beginTransaction();
 
         try {
 
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
+            $walletUpdate = WalletTransaction::lockForUpdate()->findOrFail($id);
 
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-transaction-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChooseTransactionEvent($walletUpdate));
+                return;
+            }
+            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
                 $this->updateWallet($walletUpdate, ChooseTransactionEvent::class, 'modal-hide-transfers', 'menu-transaction-active', 'Vous avez choisi transaction');
             } else {
-                $this->emit('menu-inters-active');
+                $this->emit('menu-transaction-active');
                 $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
             }
         } catch (\Exception $exception) {
@@ -4209,11 +4240,22 @@ class Transfers extends Component
 
     public function ChooseUpdatePayment($id)
     {
-        $walletUpdate = WalletPayment::findOrFail($id);
+
+        DB::beginTransaction();
 
         $sidAuth = Auth::guard('web')->user();
 
         try {
+
+            $walletUpdate = WalletPayment::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-paiement-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChoosePaymentEvent($walletUpdate));
+                return;
+            }
 
             if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
 
@@ -4221,7 +4263,6 @@ class Transfers extends Component
 
                     $this->updateWallet($walletUpdate, ChoosePaymentEvent::class, 'modal-hide-paiement', 'menu-paiement-active', 'Vous avez choisi un paiement');
                 } else {
-                    // $this->emit('modal-hide-paiement');
                     $this->emit('menu-paiement-active');
                     $this->emit(
                         'error',
@@ -4240,10 +4281,20 @@ class Transfers extends Component
 
     public function ChooseUpdateInter($id)
     {
-        $walletUpdate = WalletInter::findOrFail($id);
+        DB::beginTransaction();
+
 
         try {
 
+              $walletUpdate = WalletInter::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-inters-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChooseInterEvent($walletUpdate));
+                return;
+            }
             if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
 
                 $this->updateWallet($walletUpdate, ChooseInterEvent::class, 'modal-hide-inters', 'menu-inters-active', 'Vous avez choisi transfert international');
@@ -4258,10 +4309,20 @@ class Transfers extends Component
     }
     public function ChooseUpdateVirement($id)
     {
-        $walletUpdate = WalletBank::findOrFail($id);
+        DB::beginTransaction();
         $sidAuth = Auth::guard('web')->user();
 
         try {
+   
+            $walletUpdate = WalletBank::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING'  && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-virement-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChooseVirementEvent($walletUpdate));
+                return;
+            }
 
             if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
@@ -4289,10 +4350,21 @@ class Transfers extends Component
 
     public function ChooseUpdateReloadCard($id)
     {
-        $walletUpdate = WalletDeposit::findOrFail($id);
+        DB::beginTransaction();
+
         $sidAuth = Auth::guard('web')->user();
 
         try {
+
+            $walletUpdate = WalletDeposit::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-reloadCarte-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChooseReloadCardEvent($walletUpdate));
+                return;
+            }
 
             if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
@@ -4318,11 +4390,22 @@ class Transfers extends Component
 
     public function ChooseUpdatePhoneCredit($id)
     {
-        $walletUpdate = WalletPhoneCredit::findOrFail($id);
+
+        DB::beginPhoneCredit();
 
         $sidAuth = Auth::guard('web')->user();
 
         try {
+
+            $walletUpdate = WalletPhoneCredit::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-phoneCredit-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChoosePhoneCreditEvent($walletUpdate));
+                return;
+            }
 
             if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 

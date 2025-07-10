@@ -189,7 +189,7 @@
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               <a class="flex btn btn-warning items-center  mr-1 mb-2"
                                                                   wire:click="ChooseUpdatePayment({{ $item->id }})">
-                                                                  {{-- <button class="btn btn-warning mr-1 mb-2"> --}}
+
                                                                   Je prends <svg width="25" viewBox="0 0 120 30"
                                                                       xmlns="http://www.w3.org/2000/svg" fill="1a202c"
                                                                       class="w-4 h-4 ml-2">
