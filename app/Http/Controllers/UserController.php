@@ -56,6 +56,22 @@ class UserController extends Controller
         $this->createUserService = $createUserService;
     }
 
+    public function forceLogoutUser($userId)
+    {
+
+        $user = SidUser::findOrFail($userId);
+
+        $user->tokens()->delete();
+
+        activity()
+            ->causedBy(auth()->user())
+            ->log("Déconnexion forcée de l'utilisateur #$userId");
+
+       return back()->with('status', 'Utilisateur déconnecté avec succès.');
+
+    }
+
+
 
     public function browse(Request $request)
     {

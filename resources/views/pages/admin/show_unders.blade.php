@@ -784,19 +784,19 @@
                 Date de début :
             </label>
             <input type="date" id="startDate" name="startDate"
-            value="{{ request('startDate', \Carbon\Carbon::yesterday()->toDateString()) }}"
-                   class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                value="{{ request('startDate', \Carbon\Carbon::yesterday()->toDateString()) }}"
+                class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
         </div>
         <div class="w-full sm:w-auto mt-3 mr-6">
             <label for="endDate" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                 Date de fin :
             </label>
             <input type="date" id="endDate" name="endDate"
-                 value="{{ request('endDate', \Carbon\Carbon::today()->toDateString()) }}"
-                   class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                value="{{ request('endDate', \Carbon\Carbon::today()->toDateString()) }}"
+                class="form-control w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
         </div>
     </div>
-    
+
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
         @php
             $routes = [
@@ -822,23 +822,33 @@
                 ],
                 [
                     'label' => 'Rapport transferts',
-                    'route' => route('transfers.historical.reporting_transfer_historical.admins', ['id' => $user->wallet->id]),
+                    'route' => route('transfers.historical.reporting_transfer_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
                 ],
                 [
                     'label' => 'Rapport transferts récus',
-                    'route' => route('transfers.historical.received.reporting_transfer_historical.admins', ['id' => $user->wallet->id]),
+                    'route' => route('transfers.historical.received.reporting_transfer_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
                 ],
                 [
                     'label' => 'Rapport paiements',
-                    'route' => route('inters.historical.reporting_inter_historical.admins', ['id' => $user->wallet->id]),
+                    'route' => route('inters.historical.reporting_inter_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
                 ],
                 [
                     'label' => 'Rapport credits',
-                    'route' => route('phones.historical.reporting_phone_historical.admins', ['id' => $user->wallet->id]),
+                    'route' => route('phones.historical.reporting_phone_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
                 ],
                 [
                     'label' => 'Rapport paiements',
-                    'route' => route('payments.historical.reporting_payment_historical.admins', ['id' => $user->wallet->id]),
+                    'route' => route('payments.historical.reporting_payment_historical.admins', [
+                        'id' => $user->wallet->id,
+                    ]),
                 ],
             ];
         @endphp
@@ -859,7 +869,7 @@
                 style="color: white;">
                 Rapport des échecs
             </a>
-        </div> 
+        </div>
         {{-- <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
             <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
                 href="{{ route('reloads.historical.received.reporting_reload_historical.admins', ['id' => $user->wallet->id]) }}"
@@ -939,6 +949,11 @@
 
 
     </div>
+
+
+
+
+
 
     @if ($user->password == null)
         <div class="grid grid-cols-12 gap-6 mt-3">

@@ -173,6 +173,7 @@ Route::group(['prefix' => ''], function () {
         //   Users
         Route::prefix('users')->group(function () {
             Route::get('/browse', [UserController::class, 'browse'])->name('custumers.browse');
+            Route::post('/logout-user/{id}', [UserController::class, 'forceLogoutUser'])->name('logoutUsers.browse');
             Route::get('/browse_company', [UserController::class, 'browse_company'])->name('company.browse');
             // Route::get('/browse_comzone', [UserController::class, 'browse_comzone'])->name('comzone.browse');
             Route::get('/browse_invalidated', [UserController::class, 'browse_invalidated'])->name('custumers.browse_invalidated');
