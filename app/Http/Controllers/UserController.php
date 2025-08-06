@@ -38,6 +38,9 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
+
 
 class UserController extends Controller
 {
@@ -61,8 +64,23 @@ class UserController extends Controller
 
         $user = SidUser::findOrFail($userId);
 
-        $user->tokens()->delete();
+        if ($user->tokens()->exists()) {
+            $user->tokens()->delete();
+        }
+    
+        //  Cache::tags("user_{$userId}_data")->flush();
+         Cache::forget('app_status_mobile');
 
+         if ($user->session_id) {
+            Session::getHandler()->destroy($user->session_id);
+         }
+
+         $user->update([
+            'device_meta_data' => null,
+            'activation_code' => null,
+            'last_logout' => now(),
+        ]);
+          
         activity()
             ->causedBy(auth()->user())
             ->log("Déconnexion forcée de l'utilisateur #$userId");

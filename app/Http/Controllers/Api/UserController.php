@@ -127,10 +127,22 @@ class UserController extends Controller
         // Vérifier l'état de l'application
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
+        $userSession = SidUser::findOrFail(robus()->id);
+        
+        if (
+            !$userSession->tokens()->exists() ||
+            !$userSession->session_id
+        ) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Vous avez été déconnecté pour inactivité. Veuillez vous reconnecter pour accéder au service.'
+            ], 333);
+        }        
+
         if (!$appStatusResult['success']) {
             return response()->json($appStatusResult, 200);
         }
-
 
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);

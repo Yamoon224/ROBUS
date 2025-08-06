@@ -208,7 +208,6 @@ class AuthenticationService
                         if ($appStatus && $appStatus->status_app === 'closed') {
                                 return $this->formatClosedAppResponse($appStatus);
                         }
-
                         // Si l'application est ouverte, mettre en cache un statut de succès
                         $successResponse = ['success' => true];
                         Cache::put('app_status_mobile', $successResponse, now()->addMinutes(30));
