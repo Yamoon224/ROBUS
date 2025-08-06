@@ -79,6 +79,8 @@ class UserController extends Controller
             'device_meta_data' => null,
             'activation_code' => null,
             'last_logout' => now(),
+            'session_id' => null,
+            'session_expires_at' => null
         ]);
           
         activity()

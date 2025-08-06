@@ -126,19 +126,36 @@ class UserController extends Controller
 
         // Vérifier l'état de l'application
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
-
         $userSession = SidUser::findOrFail(robus()->id);
-        
-        if (
-            !$userSession->tokens()->exists() ||
-            !$userSession->session_id
-        ) {
+        $is_under = robus()->is_under_distributer;
 
-            return response()->json([
-                'success' => false,
-                'message' => 'Vous avez été déconnecté pour inactivité. Veuillez vous reconnecter pour accéder au service.'
-            ], 333);
-        }        
+        if ($is_under) {
+
+            $userSession = SidUser::findOrFail(robus()->id);
+        
+            if (!$userSession->session_id ) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous avez été déconnecté pour inactivité. Veuillez vous reconnecter pour accéder au service.'
+                ], 333);
+            }
+        
+            // Pas besoin de Carbon::parse si ton champ est bien casté en datetime
+            // $expirationDate = $userSession->session_expires_at;
+            // || !$userSession->session_expires_at
+        
+            // if (now()->gt($expirationDate)) {
+            //     $userSession->update([
+            //         'session_id' => null,
+            //         'session_expires_at' => null
+            //     ]);
+        
+            //     return response()->json([
+            //         'success' => false,
+            //         'message' => 'Session expirée pour inactivité. Veuillez vous reconnecter pour accéder au service.'
+            //     ], 333);
+            // }
+        }
 
         if (!$appStatusResult['success']) {
             return response()->json($appStatusResult, 200);
@@ -177,7 +194,6 @@ class UserController extends Controller
         $dashboard_data['1xbet'] = OneXbetSingleCollection::collection($wallet1xbets);
         $dashboard_data['Achat UV wave'] = WaveSingleCollection::collection($walletWave);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
-        $is_under = robus()->is_under_distributer;
 
         return response()->json([
             'success' => true,
@@ -754,13 +770,20 @@ class UserController extends Controller
                 ]);
             }
         } else {
+
             $ancient_password = $request->currency_password;
 
             if ($ancient_password == $user->password) {
                 $user->update([
                     'password' => Hash::make($request->password),
                 ]);
+            }else {
+
+                $user->update([
+                    'password' => Hash::make($request->password),
+                ]);
             }
+
         }
 
         $user->save();

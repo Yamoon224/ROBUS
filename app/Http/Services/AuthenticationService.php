@@ -109,12 +109,24 @@ class AuthenticationService
                                                 'last_login' => Carbon::now()->toDateTimeString(),
                                                 'last_logout' => null,
                                                 'activation_code' => null,
-                                                'device_meta_data' => $device_meta_data
+                                                'device_meta_data' => $device_meta_data,
+                                                'session_id' => session()->getId(),
+                                                'session_expires_at' => now()->addDays(7) 
                                         ]);
 
-                                        $token = $user->createToken('auth_token');
+                                        $tokenResult = $user->createToken('auth_token');
 
-                                        return ['success' => true, 'token' => $token, 'user' => $user];
+                                        $tokenResult->token->update([
+                                                'expires_at' => now()->addDays(7) 
+                                            ]);
+                            
+                                            Cache::put(
+                                                'user_session_'.$user->id,
+                                                $user->session_id,
+                                                now()->addDays(7) 
+                                        );
+
+                                        return ['success' => true, 'token' => $tokenResult, 'user' => $user];
                                 } else {
                                         return ['success' => false, 'message' => 'Votre code OTP d\'activation est incorrecte .', 'catch' => true];
                                 }
@@ -140,12 +152,24 @@ class AuthenticationService
                                                 'last_login' => Carbon::now()->toDateTimeString(),
                                                 'last_logout' => null,
                                                 'activation_code' => null,
-                                                'device_meta_data' => $device_meta_data
+                                                'device_meta_data' => $device_meta_data,
+                                                'session_id' => session()->getId(),
+                                                'session_expires_at' => now()->addDays(30) 
                                         ]);
 
-                                        $token = $user->createToken('auth_token');
+                                        $tokenResult = $user->createToken('auth_token');
+                                        $tokenResult->token->update([
+                                                'expires_at' => now()->addDays(30) 
+                                            ]);
+                            
+                                            Cache::put(
+                                                'user_session_'.$user->id,
+                                                $user->session_id,
+                                                now()->addDays(7) 
+                                        );
 
-                                        return ['success' => true, 'token' => $token, 'user' => $user];
+
+                                        return ['success' => true, 'token' => $tokenResult, 'user' => $user];
                                 } else {
                                         return ['success' => false, 'message' => 'Changement de dispositif détecté ou données du téléphone incorrectes.', 'catch' => false];
                                 }
@@ -173,9 +197,21 @@ class AuthenticationService
                                 }
 
                                 if ($user->is_custumers && Hash::check($password, $user->password)) {
-                                        Auth::user()->update(['last_login' => Carbon::now()->toDateTimeString(), 'last_logout' => null]);
-                                        $token = $user->createToken('auth_token');
-                                        return ['success' => true, 'token' => $token, 'user' => $user];
+                                        Auth::user()->update(['last_login' => Carbon::now()->toDateTimeString(),
+                                         'last_logout' => null,
+                                         'session_id' => session()->getId()
+                                        ]);
+                                        $tokenResult = $user->createToken('auth_token');
+                                        $tokenResult->token->update([
+                                                'expires_at' => now()->addDays(30) 
+                                            ]);
+                            
+                                            Cache::put(
+                                                'user_session_'.$user->id,
+                                                $user->session_id,
+                                                now()->addDays(30) 
+                                        );
+                                        return ['success' => true, 'token' => $tokenResult, 'user' => $user];
                                 } else {
                                         return ['success' => false, 'message' => 'Mauvais identifiants ! Authentification échouée'];
                                 }

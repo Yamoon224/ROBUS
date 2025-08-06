@@ -561,9 +561,10 @@ class AuthentificationController extends Controller
                 if ($sidUser = SidUser::where($credentials)->first()) {
 
                     $user = $sidUser;
-                    $user->fcm_token = $request->input('fcm_token'); // Utilisation de la fonction input() avec une valeur par défaut
-                    $user->last_login = Carbon::now(); // Mise à jour de la dernière connexion
-                    $user->last_logout = null; // Réinitialisation de la dernière déconnexion
+                    $user->fcm_token = $request->input('fcm_token');
+                    $user->last_login = Carbon::now(); 
+                    $user->last_logout = null; 
+                    // $user->session_id = session()->getId();
                     $user->save();
 
                     if (!$user_data = $this->registerRepository->whereStatus(true)->where('is_custumers', true)->wherePhone($credentials['phone'])->first()) {
@@ -575,6 +576,19 @@ class AuthentificationController extends Controller
                     }
 
                     $tokenResult = $user_data->createToken('auth_token');
+                    $tokenResult->token->update([
+                        'expires_at' => now()->addDays(7) 
+                        ]);
+        
+                        Cache::put(
+                            'user_session_'.$user->id,
+                            $user->session_id,
+                            now()->addDays(7) 
+                    );
+                    $user_data->update([
+                        'session_id' => session()->getId(),
+                        'session_expires_at' => now()->addDays(7) 
+                    ]);
                     $message = 'Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil';
                     $recipient = $user->country->code == 'CI' ? '225' . substr($user->phone, -10) : $user->email;
 
