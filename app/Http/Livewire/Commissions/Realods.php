@@ -5,6 +5,9 @@ namespace App\Http\Livewire\Commissions;
 use Livewire\Component;
 use App\Models\Costs\ReloadCost;
 use Illuminate\Support\Facades\Auth;
+use App\Models\ArgentTresorts;
+use App\Models\DjamoPercents;
+use App\Models\PushPercents;
 
 class Realods extends Component
 {
@@ -115,6 +118,9 @@ class Realods extends Component
     public function render()
     {
         $reload_cost = ReloadCost::query();
+        $reload_argentCost = ArgentTresorts::query();
+        $reload_djamoCost = DjamoPercents::query();
+        $reload_pushCost = PushPercents::query();
 
         if ($this->search != "") {
 
@@ -124,6 +130,9 @@ class Realods extends Component
         }
         return view('livewire.commissions.realods', [
             "realods" => $reload_cost->orderBy('name', 'desc')->latest()->paginate(1),
+            "realodArgents" => $reload_argentCost->orderBy('name', 'desc')->latest()->paginate(10),
+            "realodDjamos" => $reload_djamoCost->orderBy('name', 'desc')->latest()->paginate(10),
+            "realodPushs" => $reload_pushCost->orderBy('name', 'desc')->latest()->paginate(10),
         ]);
     }
 }
