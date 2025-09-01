@@ -13,6 +13,9 @@ use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 // use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Wallets\WalletDjamo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -66,6 +69,23 @@ class AdminsCom extends Model
     public function walletXbet()
     {
         return $this->belongsTo(WalletXbet::class, 'wallet_xbet_id', 'id')->withTrashed();
+    }
+
+
+    public function walletPush()
+    {
+        return $this->belongsTo(WalletPush::class, 'wallet_push_id', 'id')->withTrashed();
+    }
+
+
+    public function walletDjamo()
+    {
+        return $this->belongsTo(WalletDjamo::class, 'wallet_djamo_id', 'id')->withTrashed();
+    }
+
+      public function walletTresort()
+    {
+        return $this->belongsTo(WalletTresortMoney::class, 'wallet_tresort_money_id', 'id')->withTrashed();
     }
 
     // public function walletWave()

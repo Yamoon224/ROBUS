@@ -79,7 +79,6 @@ class IntersPaymentController extends Controller
         $this->searchTransaction = $searchTransaction;
         $this->authService = $authService;
         $this->initializeAppStatus($this->authService);
-
     }
 
 
@@ -206,7 +205,7 @@ class IntersPaymentController extends Controller
                         'amount.required' => 'Votre montant est obligatoire',
                         'country.required' => 'Votre pays est obligatoire',
                     ];
-                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 100, 101, 102 , 103])) {
+                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 100, 101, 102, 103, 105, 106])) {
 
                     if (robus()->is_under_distributer) {
 
@@ -219,6 +218,7 @@ class IntersPaymentController extends Controller
                                 "amount" => 'required',
                                 "name_custumer" => 'required',
                                 "num_piece_custumer" => 'required',
+                                "image_piece" => 'required',
                                 "date_piece" => 'required',
                                 'country' => 'required',
                             ],
@@ -229,6 +229,74 @@ class IntersPaymentController extends Controller
                                 'name_custumer.required' => 'Nom est obligatoire',
                                 'num_piece_custumer.required' => 'Numero piece est obligatoire',
                                 'date_piece.required' => 'date de validité est obligatoire',
+                                'image_piece.required' => 'date de validité est obligatoire',
+                                'country.required' => 'Votre pays est obligatoire',
+
+                            ]
+                        );
+
+                        if ($validator->fails()) {
+                            return response()->json(
+                                [
+                                    'success' => false,
+                                    'message' => 'Verifiez les champs',
+                                    'data' => $validator->errors()
+                                ],
+                                333
+                            );
+                        }
+                    } else {
+
+                        $validator = Validator::make(
+
+                            $request->all(),
+                            [
+                                "phone" => 'required',
+                                "amount" => 'required',
+                                'country' => 'required',
+                            ],
+                            [
+
+                                'phone.required' => 'Votre numero est obligatoire',
+                                'amount.required' => 'Votre montant est obligatoire',
+                                'country.required' => 'Votre pays est obligatoire',
+
+
+                            ]
+                        );
+
+                        if ($validator->fails()) {
+                            return response()->json(
+                                [
+                                    'success' => false,
+                                    'message' => 'Verifiez les champs',
+                                    'data' => $validator->errors()
+                                ],
+                                333
+                            );
+                        }
+                    }
+                } elseif (in_array($request->provider, [104])) {
+
+                    if (robus()->is_under_distributer) {
+
+
+                        $validator = Validator::make(
+
+                            $request->all(),
+                            [
+                                "phone" => 'required',
+                                "amount" => 'required',
+                                "name_custumer" => 'required',
+                                "image_piece" => 'required',
+                                'country' => 'required',
+                            ],
+                            [
+
+                                'phone.required' => 'Votre numero est obligatoire',
+                                'amount.required' => 'Votre montant est obligatoire',
+                                'name_custumer.required' => 'Nom est obligatoire',
+                                'image_piece.required' => 'Numero piece est obligatoire',
                                 'country.required' => 'Votre pays est obligatoire',
 
                             ]
@@ -374,7 +442,7 @@ class IntersPaymentController extends Controller
                 }
 
                 $percent_robus =  $this->percentRobus->getRobusPercentageInter($country_robus, $request->provider);
-
+               
 
                 if ($request->provider == 51) {
 
@@ -389,17 +457,17 @@ class IntersPaymentController extends Controller
                                     if (robus()->is_under_distributer) {
 
                                         $percent_amount = $percent_robus->percent_under_distributer * $request->amount;
-                                    
+
                                         // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                        $valeur_received = $request->amount -  $percent_amount ;
+                                        $valeur_received = $request->amount -  $percent_amount;
                                     } else {
 
                                         $percent_amount = $percent_robus->percent * $request->amount;
-                                    
+
                                         // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                        $valeur_received = $request->amount -  $percent_amount ;
+                                        $valeur_received = $request->amount -  $percent_amount;
                                     }
 
                                     // Update Info valeurs
@@ -441,7 +509,7 @@ class IntersPaymentController extends Controller
                     } else {
                         return   json_message_response(false, "veuillez selectionnez le pays de destination ou le  Numero ne correspond pas au pays SVP !", 300);
                     }
-                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102,103])) {
+                } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103])) {
 
                     if ($this->interServices->validatePhone($request->phone)) {
 
@@ -458,18 +526,42 @@ class IntersPaymentController extends Controller
                                         if (robus()->is_under_distributer) {
 
                                             $percent_amount = $percent_robus->percent_under_distributer * $request->amount;
-                                    
+
                                             // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                            $valeur_received = $request->amount -  $percent_amount ;
+                                            $valeur_received = $request->amount -  $percent_amount;
                                         } else {
 
                                             $percent_amount = $percent_robus->percent * $request->amount;
-                                    
+
                                             // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                            $valeur_received = $request->amount -  $percent_amount ;
+                                            $valeur_received = $request->amount -  $percent_amount;
                                         }
+
+                                        $file_front = $request->file('image_piece');
+                                        $imagePath = null;
+
+                                        if ($file_front) {
+                                            // Chemin de destination
+                                            $destination_path = public_path('image_inters/' . $request->name_custumer . '/');
+
+                                            // Création du dossier si inexistant
+                                            if (!file_exists($destination_path)) {
+                                                mkdir($destination_path, 0777, true);
+                                            }
+
+                                            // Générer un nom unique
+                                            $front_file = date('YmdHis') . "." . $file_front->getClientOriginalExtension();
+
+                                            // Déplacer le fichier
+                                            $file_front->move($destination_path, $front_file);
+
+                                            // Construire l’URL de l’image
+                                            $imagePath = env('APP_URL') . "/image_inters/" . $request->name_custumer . "/$front_file";
+                                        }
+
+
 
                                         $walletInter = $this->interServices->createMobileWalletInter(
                                             $request->amount,
@@ -483,7 +575,8 @@ class IntersPaymentController extends Controller
                                             $request->date_piece,
                                             $request->name,
                                             $request->name_sender,
-                                            $request->account_number
+                                            $request->account_number,
+                                            $imagePath
                                         );
 
                                         if ($walletInter != null) {
@@ -491,6 +584,128 @@ class IntersPaymentController extends Controller
                                             if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
 
                                                 if ($this->interServices->processCommissionMobiles($request->amount, $percent_robus, $country_robus, $walletInter, $admin_civ)) {
+                                                    $this->interServices->sendNotificationRobus($walletInter);
+                                                    return $this->messageAfterValidated($walletInter);
+                                                } else {
+
+                                                    return   json_message_response(false, "Error de transferts du montant !", 300);
+                                                }
+                                            } else {
+
+                                                return   json_message_response(false, "Error de demande transferts  !", 300);
+                                            }
+                                        } else {
+                                            return   json_message_response(false, "Error de demande transferts  !", 300);
+                                        }
+                                    } else {
+
+                                        return   json_message_response(false, "Verifier votre Solde SVP !", 300);
+                                    }
+                                } else {
+
+                                    return   json_message_response(false, "Le  montant maxi jounalier est atteint !", 300);
+                                }
+                            } else {
+
+                                return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $country_robus->currencie->code, 333);
+                            }
+                        } else {
+                            return   json_message_response(false, "Niveau de pourcentage introuvable !", 300);
+                        }
+                    } else {
+                        return   json_message_response(false, "veuillez selectionnez le pays de destination SVP !", 300);
+                    }
+                } elseif (in_array($request->provider, [104 , 105, 106])) {
+
+                    if ($this->interServices->validatePhone($request->phone)) {
+                      
+                        if($request->provider == 104)
+                        {
+                            $percent_djamo =  $this->percentRobus->getRobusPercentageDjamoInter();
+                      
+                        }elseif($request->provider == 105) {
+                             $percent_djamo =  $this->percentRobus->getRobusPercentagePushInter();
+
+                        }elseif($request->provider == 106) {
+                             $percent_djamo =  $this->percentRobus->getRobusPercentageTresortInter();
+                        }
+
+                        if ($percent_djamo != null) {
+
+                            $valeur_max_send  =  $country_robus->amount_max_send;
+
+                            if ($this->validatedamountDays->validateAmountSendLimit($request->amount, $valeur_max_send)) {
+
+                                if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+
+                                    if ($this->validatedamountDays->validateAmount($request->amount)) {
+
+                                        if (robus()->is_under_distributer) {
+
+                                            $percent_amount = $percent_djamo->percent_merchands * $request->amount;
+
+                                            // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+
+                                            $valeur_received = $request->amount -  $percent_amount;
+
+                                            $valeur_amount = $request->amount;
+
+                                        } else {
+
+                                            $percent_amount = $percent_djamo->percent * $request->amount;
+
+                                            // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+
+                                            $valeur_received = $request->amount -  $percent_amount;
+
+                                            $valeur_amount = $request->amount + $percent_amount;
+
+                                        }
+
+                                        $file_front = $request->file('image_piece');
+                                        $imagePath = null;
+
+                                        if ($file_front) {
+                                            // Chemin de destination
+                                            $destination_path = public_path('image_inters/' . $request->name_custumer . '/');
+
+                                            // Création du dossier si inexistant
+                                            if (!file_exists($destination_path)) {
+                                                mkdir($destination_path, 0777, true);
+                                            }
+
+                                            // Générer un nom unique
+                                            $front_file = date('YmdHis') . "." . $file_front->getClientOriginalExtension();
+
+                                            // Déplacer le fichier
+                                            $file_front->move($destination_path, $front_file);
+
+                                            // Construire l’URL de l’image
+                                            $imagePath = env('APP_URL') . "/image_inters/" . $request->name_custumer . "/$front_file";
+                                        }
+
+
+                                        $walletInter = $this->interServices->createWithMobileWalletInter(
+                                            $request->amount,
+                                            $percent_djamo,
+                                            $country_robus,
+                                            $request->provider,
+                                            $request->phone,
+                                            $request->provider_type,
+                                            $request->name_custumer,
+                                            $request->num_piece_custumer,
+                                            $request->date_piece,
+                                            $request->name,
+                                            $request->name_sender,
+                                            $request->account_number,
+                                            $imagePath
+                                        );
+
+                                        if ($walletInter != null) {
+
+                                            if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
+
+                                                if ($this->interServices->processCommissionWithMobiles($valeur_amount, $percent_djamo, $country_robus, $walletInter, $admin_civ)) {
                                                     $this->interServices->sendNotificationRobus($walletInter);
                                                     return $this->messageAfterValidated($walletInter);
                                                 } else {
@@ -1092,7 +1307,7 @@ class IntersPaymentController extends Controller
 
                                             if (robus()->is_under_distributer) {
                                                 $comission_distributer = $amount_user->comission_distributer;
-                                                $comission_compagnie = $amount_user->percent_companie ;
+                                                $comission_compagnie = $amount_user->percent_companie;
                                             } else {
                                                 $comission_distributer = $amount_user->amount;
                                                 $comission_compagnie = 0;
@@ -1135,7 +1350,7 @@ class IntersPaymentController extends Controller
 
                                                 if ($walletReloadCard != null) {
 
-                                                    if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion_under, $walletReloadCard, $amount_valeur_convertion_send, $percent_valeur , $amount_commission_convertion_compagnie)) {
+                                                    if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion_under, $walletReloadCard, $amount_valeur_convertion_send, $percent_valeur, $amount_commission_convertion_compagnie)) {
                                                         $this->interServices->sendNotificationPayment($walletReloadCard);
                                                         return $this->messageAfterValidated($walletReloadCard);
                                                     }
@@ -1162,9 +1377,8 @@ class IntersPaymentController extends Controller
                 } else {
                     return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                 }
-            } elseif($request->provider_type == 9)
-            {
-                
+            } elseif ($request->provider_type == 9) {
+
                 $percent_robus =  $this->percentRobus->getRobusPercentageBankSend();
 
 
@@ -1289,17 +1503,17 @@ class IntersPaymentController extends Controller
                                     if (robus()->is_under_distributer) {
 
                                         $percent_amount = $percent_robus->percent_under_distributer * $request->amount;
-                                
+
                                         // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                        $valeur_received = $request->amount -  $percent_amount ;
+                                        $valeur_received = $request->amount -  $percent_amount;
                                     } else {
 
                                         $percent_amount = $percent_robus->percent * $request->amount;
-                                
+
                                         // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
-                                        $valeur_received = $request->amount -  $percent_amount ;
+                                        $valeur_received = $request->amount -  $percent_amount;
                                     }
 
                                     $walletInter = $this->interServices->createMobileWalletInter(
@@ -1562,13 +1776,13 @@ class IntersPaymentController extends Controller
                     ? (float)$commission_inter->percent_under_distributer * (float)$amount_paiement_robus
                     : (float)$commission_inter->percent * (float)$amount_paiement_robus;
 
-                $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_paiement_robus);
-            
-                $amount_calcul = $commission_transaction_val_percent_pay + $amount_paiement_robus ;
+                $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay, $amount_paiement_robus);
 
-                $amount_alls = (float) 1 - (float)$commission_inter->percent_under_distributer ;
-     
-                $amount_valeurs = $commission_transaction_val_percent_pay *  $amount_alls ;
+                $amount_calcul = $commission_transaction_val_percent_pay + $amount_paiement_robus;
+
+                $amount_alls = (float) 1 - (float)$commission_inter->percent_under_distributer;
+
+                $amount_valeurs = $commission_transaction_val_percent_pay *  $amount_alls;
 
                 // dd(($amount_valeurs));
 
@@ -1610,21 +1824,21 @@ class IntersPaymentController extends Controller
                     if ($exchange_rate_sender > $exchange_rate_receiver) {
 
                         $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $amount_paiement_robus, $amount_paiement_robus);
-                        $valeur_verify = (float)$amount_paiement_robus -  $commission_transaction_val_percent_pay ;
+                        $valeur_verify = (float)$amount_paiement_robus -  $commission_transaction_val_percent_pay;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0
                             ? "Montant négatif"
                             : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
                     } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
 
                         $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $amount_paiement_robus, $amount_paiement_robus);
-                 
-                        $valeur_verify = (float)$amount_paiement_robus -  $commission_transaction_val_percent_pay ;
+
+                        $valeur_verify = (float)$amount_paiement_robus -  $commission_transaction_val_percent_pay;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
                     } else {
 
                         // Cas où la devise de l'envoyeur est plus faible
                         $commission_transaction_val_inter_pay = calculateInterPay($is_under_or_distributor, $commission_inter, $amount_paiement_robus, $amount_paiement_robus);
-                        $valeur_verify = (float)$amount_paiement_robus -  $commission_transaction_val_percent_pay ;
+                        $valeur_verify = (float)$amount_paiement_robus -  $commission_transaction_val_percent_pay;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0
                             ? "Montant négatif"
                             : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
@@ -1643,7 +1857,7 @@ class IntersPaymentController extends Controller
                         }
 
                         $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
-                        $valeur_verify = (float)$amount_paiement_robus -  (float)$commission_transaction_val_percent_pay ;
+                        $valeur_verify = (float)$amount_paiement_robus -  (float)$commission_transaction_val_percent_pay;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0
                             ? "Montant négatif"
                             : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
@@ -1656,10 +1870,10 @@ class IntersPaymentController extends Controller
                         if (!$amount_send) {
                             return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                         }
-                      
+
                         $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
-                        $valeur_verify = (float)$amount_paiement_robus -  (float) $commission_transaction_val_percent_pay ;
-                        
+                        $valeur_verify = (float)$amount_paiement_robus -  (float) $commission_transaction_val_percent_pay;
+
                         $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
                     } else {
 
@@ -1672,7 +1886,7 @@ class IntersPaymentController extends Controller
                         }
                         // Cas où la devise de l'envoyeur est plus faible
                         $commission_transaction_val_inter_pay = calculateInterPayMoney($is_under_or_distributor, $commission_inter, $amount_paiement_robus);
-                        $valeur_verify = (float)$amount_paiement_robus -  (float) $commission_transaction_val_percent_pay ;
+                        $valeur_verify = (float)$amount_paiement_robus -  (float) $commission_transaction_val_percent_pay;
                         $commission_transaction_val_inter_receive = $valeur_verify < 0
                             ? "Montant négatif"
                             : calculateConversion($valeur_verify, robus()->country->currencie, $countrie->currencie);
@@ -1683,7 +1897,7 @@ class IntersPaymentController extends Controller
                     'success' => $commission_inter != null ? true : false,
                     'data' =>  [
                         'amount_commission' => $commission_transaction_val_inter_pay,
-                        'amount_pay' =>  $commission_transaction_val_percent_pay ,
+                        'amount_pay' =>  $commission_transaction_val_percent_pay,
                         'amount_receive' => $commission_transaction_val_inter_receive . ' ' .  $countrie->currencie->code,
                     ],
                 ], 200);
@@ -1747,18 +1961,16 @@ class IntersPaymentController extends Controller
                 $amountSimple = $amount_paiement_robus * $exchange_rate_sender;
                 $reelCommissionAmount = $amountSimple * $exchange_rate_receiver;
             }
-           
+
 
             if (robus()->is_under_distributer == 1 || robus()->is_distributer == 1) {
                 $commission_transaction_val_percent_pay = (float) $commission_inter->percent_under_distributer * (float) $reelCommissionAmount;
-                $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $reelCommissionAmount);
+                $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay, $reelCommissionAmount);
                 $commission_transaction_val_inter_pay = (float)  $commission_inter->percent_deposit_under_distributer * $amount_paiement_robus;
-
             } else {
                 $commission_transaction_val_percent_pay = (float) $commission_inter->percent * (float) $reelCommissionAmount;
                 $commission_transaction_val_inter_pay = $commission_transaction_val_percent_pay;
-                $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $reelCommissionAmount);
-
+                $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay, $reelCommissionAmount);
             }
 
 
@@ -1770,12 +1982,10 @@ class IntersPaymentController extends Controller
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
                         : $valeur_verify;
-
                 } elseif ($exchange_rate_sender == $exchange_rate_receiver) {
 
                     $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
-
                 } else {
 
                     $valeur_verify = (float)$reelCommissionAmount + $commission_transaction_val_percent_pay;
@@ -1785,7 +1995,7 @@ class IntersPaymentController extends Controller
                 }
             } else {
 
-      
+
                 if ($exchange_rate_sender > $exchange_rate_receiver) {
 
                     $convertion_transaction_countrie = (float)   $amount_paiement_robus *  (float) $countrie->currencie->value;
@@ -1796,7 +2006,7 @@ class IntersPaymentController extends Controller
                         return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                     }
 
-                    $valeur_verify = (float)$reelCommissionAmount +  $commission_transaction_val_percent_pay ;
+                    $valeur_verify = (float)$reelCommissionAmount +  $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
                         :  $valeur_verify;
@@ -1810,12 +2020,11 @@ class IntersPaymentController extends Controller
                         return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                     }
 
-                    $valeur_verify = (float)$reelCommissionAmount +  $commission_transaction_val_percent_pay ;
+                    $valeur_verify = (float)$reelCommissionAmount +  $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0 ? "Montant négatif" : $valeur_verify;
-                    
                 } else {
 
-                   
+
                     $convertion_transaction_countrie = (float)   $amount_paiement_robus  * (float) $countrie->currencie->value;
 
                     $amount_send =  $this->validatedamountDays->validateAmountSendLimit($convertion_transaction_countrie, $valeur_max_send);
@@ -1824,7 +2033,7 @@ class IntersPaymentController extends Controller
                         return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $countrie->currencie->code, 333);
                     }
 
-                    $valeur_verify = (float)$reelCommissionAmount +  $commission_transaction_val_percent_pay ;
+                    $valeur_verify = (float)$reelCommissionAmount +  $commission_transaction_val_percent_pay;
                     $commission_transaction_val_inter_receive = $valeur_verify < 0
                         ? "Montant négatif"
                         : $valeur_verify;
@@ -1844,8 +2053,8 @@ class IntersPaymentController extends Controller
                 'success' => $commission_inter != null ? true : false,
                 'data' =>  [
                     'amount_commission' => $commission_transaction_val_inter_pay,
-                    'amount_pay' =>  $commission_transaction_val_percent_pay ,
-                    'amount_receive' => $commission_transaction_val_inter_receive ,
+                    'amount_pay' =>  $commission_transaction_val_percent_pay,
+                    'amount_receive' => $commission_transaction_val_inter_receive,
                 ],
             ], 200);
         } catch (\Exception $exception) {

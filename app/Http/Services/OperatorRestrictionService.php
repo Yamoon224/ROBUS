@@ -18,6 +18,9 @@ class OperatorRestrictionService
         'Active Retrait' => 'showRemonterRetraitButton',
         'Active Money' => 'showRemonterMoneyButton',
         'Active Commande' => 'showRemonterOrderButton',
+        'Active Push' => 'showRemonterPushButton',
+        'Active Xbets' => 'showRemonterXbetButton',
+        'Active Tresort Money' => 'showRemonterTresortButton',
     ];
 
     protected $restrictionCMap = [
@@ -31,6 +34,9 @@ class OperatorRestrictionService
         'Active Retrait' => 'showRemonterRetraitCButton',
         'Active Money' => 'showRemonterMoneyCButton',
         'Active Commande' => 'showRemonterOrderCButton',
+        'Active Push' => 'showRemonterPushCButton',
+        'Active Xbets' => 'showRemonterXbetCButton',
+        'Active Tresort Money' => 'showRemonterTresortCButton',
     ];
 
 

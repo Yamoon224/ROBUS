@@ -12,6 +12,9 @@ use App\Models\Costs\TransactionCost;
 use App\Models\LevelCountry;
 use App\Models\Moneys\LevelMoney;
 use App\Models\Onexbet;
+use App\Models\PushPercent;
+use App\Models\DjamoPercent;
+use App\Models\ArgentTresort;
 use App\Models\Providers\Provider;
 use App\Repositories\TransactionRepository;
 
@@ -52,7 +55,7 @@ class PercentRobusAuthService
             case 'AFE':
                 return TransactionCost::whereId(45)->first();
             default:
-                return null; 
+                return null;
         }
     }
 
@@ -161,6 +164,42 @@ class PercentRobusAuthService
         }
     }
 
+    public function getRobusPercentagePush()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return PushPercent::whereId(1)->first();
+            default:
+                return null;
+        }
+    }
+
+    public function getRobusPercentageDjamo()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return DjamoPercent::whereId(1)->first();
+            default:
+                return null;
+        }
+    }
+
+    public function getRobusPercentageTresort()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return ArgentTresort::whereId(1)->first();
+            default:
+                return null;
+        }
+    }
+
     public function getRobusPercentageOnexbetWeb()
     {
         return Onexbet::whereId(3)->first();
@@ -237,7 +276,6 @@ class PercentRobusAuthService
         }, function ($query) {
             return $query->whereId(22);
         })->first();
-
     }
     public function getRobusPercentagePayment()
     {
@@ -248,6 +286,29 @@ class PercentRobusAuthService
     {
         return PaymentCost::whereId(1)->first();
     }
+
+    public function getRobusPercentagePushInter()
+    {
+        return PushPercent::whereId(2)->first();
+    }
+
+
+    public function getRobusPercentageXbetInter()
+    {
+        return Onexbet::whereId(2)->first();
+    }
+
+
+    public function getRobusPercentageDjamoInter()
+    {
+        return DjamoPercent::whereId(2)->first();
+    }
+
+    public function getRobusPercentageTresortInter()
+    {
+        return ArgentTresort::whereId(2)->first();
+    }
+
 
     public function getRobusPercentageRelaodCard()
     {
@@ -263,13 +324,13 @@ class PercentRobusAuthService
     {
         $levelValeur = 0;
 
-     
 
 
-        $robusId = robus()->country->id; 
+
+        $robusId = robus()->country->id;
 
         if (isset($countriesLevels[$robusId])) {
-            
+
             $specificCountry = $countriesLevels[$robusId][$countrie->id];
 
             if ($specificCountry) {

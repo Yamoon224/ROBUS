@@ -93,13 +93,13 @@ class InterPaymentService
             $compagnie = null;
             $sidUserId = null;
         }
-        
+
         if ($sidUserId) {
             $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
         } else {
-            $activeCButtons = []; 
-        }   
-        
+            $activeCButtons = [];
+        }
+
         // Préparez les valeurs mises à jour
         $updatedValues = [
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,
@@ -131,7 +131,7 @@ class InterPaymentService
                     $walletInter->increment('commission_companie', $percent_valeur_compagnie);
                 }
             } else {
-               $valeur_percent_admin  = $percent_robus->percent * $amount;
+                $valeur_percent_admin  = $percent_robus->percent * $amount;
             }
         } else {
 
@@ -182,6 +182,114 @@ class InterPaymentService
 
         return true;
     }
+
+    public function processCommissionWithMobiles($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
+    {
+
+
+        $wallet = robus()->wallet;
+        $userId = robus()->id;
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
+        $account_accepted = robus()->is_accepted_companie ?? false;
+        $company_id = robus()->company_id ?? null;
+
+        if ($company_id) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+
+        if ($sidUserId) {
+            $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
+        } else {
+            $activeCButtons = [];
+        }
+
+        // Préparez les valeurs mises à jour
+        $updatedValues = [
+            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+            'sid_user_relod' => robus()->id,
+            'amount' => DB::raw('amount - ' . $amount),
+        ];
+
+        $wallet->update($updatedValues);
+
+
+        $valuer_deposit = $percent_robus->percent_merchands *  $amount;
+        $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
+
+        // Commissions Inters 
+        if (robus()->is_under_distributer == 1) {
+
+            $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
+            $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
+
+            if (!empty($activeButtons['showRemonterInterButton'])) {
+
+                $walletInter->update([
+                    'commissions' => DB::raw('commissions+'  . $valuer_deposit),
+                ]);
+
+                $account_accepted = robus()->is_accepted_companie ?? false;
+
+                if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
+                    $walletInter->increment('commission_companie', $percent_valeur_compagnie);
+                }
+            } else {
+                $valeur_percent_admin  = $percent_robus->percent * $amount;
+            }
+        } else {
+
+            if (robus()->country->code == 'CI') {
+
+                $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  robus()->wallet->currencie->code .
+                    ' ' .
+                    'par ' . $walletInter->provider->name .
+                    ' a ' . $walletInter->created_at .
+                    ' votre demande est en-cours de validation ' .
+                    'Robus vous remercie';
+
+                $encode = substr(robus()->phone, -10);
+
+                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+            }
+
+            $valeur_percent_admin  = $percent_robus->percent * $amount;
+        }
+
+        if (robus()->country->currencie->value > $country_robus->currencie->value) {
+            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
+        } elseif (robus()->country->currencie->value == $country_robus->currencie->value) {
+            $admin_valeur_convertion =   (float)  $valeur_percent_admin;
+        } elseif (robus()->country->currencie->value < $country_robus->currencie->value) {
+            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
+        }
+
+        if ($admin_civ->count() > 0) {
+
+            $nmbre_admin = $admin_civ->count();
+
+            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+
+                AdminsCom::create([
+                    'amount' =>   $valeur_single,
+                    'sid_user_id' =>   $admin_single->id,
+                    'wallet_inter_id' =>  $walletInter->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' => $valuer_deposit,
+                    'description_underdistributer' => 'Paiement commission sous-distributer'
+                ]);
+            }
+        }
+
+        return true;
+    }
+
 
     public function processCommissionMobileDistributers($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
     {
@@ -562,7 +670,8 @@ class InterPaymentService
         $date_piece,
         $name,
         $name_sender,
-        $account_number
+        $account_number,
+        $imagePath
     ) {
 
         $amount_solde = robus()->wallet->amount - $amount_transaction;
@@ -587,7 +696,51 @@ class InterPaymentService
             'status' => 'PENDING',
             'country_id' => $country_robus->id,
             'choose_type_transaction' => $provider_type,
-            'amount_solde' => $amount_solde ?? null
+            'amount_solde' => $amount_solde ?? null,
+            'image' => $imagePath ?? null,
+        ]);
+    }
+    public function createWithMobileWalletInter(
+        $amount_transaction,
+        $percent_robus,
+        $country_robus,
+        $provider_payment,
+        $phone,
+        $provider_type,
+        $name_custumers,
+        $num_piece_custumers,
+        $date_piece,
+        $name,
+        $name_sender,
+        $account_number,
+        $imagePath
+
+    ) {
+
+        $amount_solde = robus()->wallet->amount - $amount_transaction;
+
+        return WalletInter::create([
+            'wallet_id' => robus()->wallet->id,
+            'amount' => $amount_transaction,
+            'description' => null,
+            'inter_cost_id' => null,
+            'transaction_cost_id' => $percent_robus->id,
+            'phone' => $country_robus->indecative . $phone ?? null,
+            'number_compte' => $account_number,
+            'created_by' => robus()->id,
+            'provider_id' => $provider_payment,
+            'name_complet' => $name_custumers ?? null,
+            'name' => $name ?? null,
+            'num_piece' => $num_piece_custumers ?? null,
+            'name_benef' => $name_sender ?? null,
+            'validated_date' => $date_piece ?? null,
+            'costs_amount' => robus()->is_under_distributer ? ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'provider_type' => 1,
+            'status' => 'PENDING',
+            'country_id' => $country_robus->id,
+            'choose_type_transaction' => $provider_type,
+            'amount_solde' => $amount_solde ?? null,
+            'image' => $imagePath ?? null,
         ]);
     }
 
@@ -883,11 +1036,11 @@ class InterPaymentService
             $compagnie = null;
             $sidUserId = null;
         }
-        
+
         if ($sidUserId) {
             $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
         } else {
-            $activeCButtons = []; 
+            $activeCButtons = [];
         }
 
         // Préparez les valeurs mises à jour

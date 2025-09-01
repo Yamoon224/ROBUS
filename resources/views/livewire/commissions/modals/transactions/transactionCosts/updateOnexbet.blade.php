@@ -3,7 +3,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="font-medium text-base mr-auto">Modifier la commission 1xbet</h2>
+                <h2 class="font-medium text-base mr-auto">Modifier la commission</h2>
             </div>
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                 <div class="col-span-12">
@@ -18,7 +18,7 @@
                     <label for="modal-form-1" class="form-label">Pourcentage montant<span class="text-danger">
                             *</span></label>
                     <input wire:model.defer="percent_transaction" id="modal-form-1" type="number" class="form-control"
-                        placeholder="Pourcentage montant">
+                        placeholder="Pourcentage ">
                     @error('percent_transaction')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
@@ -32,57 +32,54 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="col-span-12">
+                <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Pourcentage Compagnie<span class="text-danger">
                             *</span></label>
-                    <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number"
-                        class="form-control" placeholder="Pourcentage marchant">
+                    <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage marchant">
                     @error('comissionCompanie')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                @if ($distributer_custumer)
-                    <div class="col-span-6">
-                        <label for="modal-form-1" class="form-label">Pourcentage S-agens depot<span class="text-danger">
-                                *</span></label>
-                        <input wire:model.defer="percent_deposit" id="modal-form-1" type="number" class="form-control"
-                            placeholder="Pourcentage depot">
-                        @error('percent_deposit')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
 
-                    <div class="col-span-6">
-                        <label for="modal-form-1" class="form-label">Pourcentage S-agent retrait<span
-                                class="text-danger">
-                                *</span></label>
-                        <input wire:model.defer="percent_with_drawal" id="modal-form-1" type="number"
-                            class="form-control" placeholder="Pourcentage marchant">
-                        @error('percent_with_drawal')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
-                @else
-                    <div class="col-span-12">
-                        <label for="modal-form-1" class="form-label">Pourcentage S-agent retrait<span
-                                class="text-danger">
-                                *</span></label>
-                        <input wire:model.defer="percent_with_drawal" id="modal-form-1" type="number"
-                            class="form-control" placeholder="Pourcentage marchant">
-                        @error('percent_with_drawal')
-                            <span class="text-danger">{{ $message }}</span>
-                        @enderror
-                    </div>
+                <div class="col-span-6">
+                    <label for="modal-form-1" class="form-label">Pourcentage S-agens depot</label>
+                    <input wire:model.defer="percent_deposit" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage depot">
+                    @error('percent_deposit')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
 
-                   
-                @endif
+                <div class="col-span-12">
+                    <label for="modal-form-1" class="form-label">Pourcentage S-agent retrait<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.defer="percent_with_drawal" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage marchant">
+                    @error('percent_with_drawal')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
 
             </div>
             <div class="modal-footer">
                 <button wire:click="resetField" type="button"
                     class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
-                <button wire:click="update" type="submit" wire:loading.remove
-                    class="btn btn-primary w-20">Modifier</button>
+
+                @if ($editTypeTresort === true)
+                    <button wire:click="updateTresort" type="submit" wire:loading.remove
+                        class="btn btn-primary w-20">Modifier</button>
+                @elseif ($editTypeDjamo === true)
+                    <button wire:click="updateDjamo" type="submit" wire:loading.remove
+                        class="btn btn-primary w-20">Modifier</button>
+                @elseif ($editTypePush === true)
+                    <button wire:click="updatePush" type="submit" wire:loading.remove
+                        class="btn btn-primary w-20">Modifier</button>
+                @else
+                    <button wire:click="update" type="submit" wire:loading.remove
+                        class="btn btn-primary w-20">Modifier</button>
+                @endif
+
                 <button wire:loading.delay wire:target="update" wire:click="update" type="button"
                     class="btn btn-warning w-40"> Traitement ... </button>
             </div>

@@ -22,6 +22,10 @@ class Onexbets extends Component
     public $distributer_custumer;
     public $comission_master;
     public $comissionCompanie;
+    public $editTypeTresort = false;
+    public $editTypePush = false;
+    public $editTypeDjamo = false;
+    public $editTypeXbet = false;
 
 
     public function edit($id, $state)
@@ -30,6 +34,7 @@ class Onexbets extends Component
 
         $this->transaction_id = $check->id;
         $this->transaction_name = $check->name;
+        $this->editTypeXbet = true;
         $this->percent_transaction = $check->percent * 100;
         $this->percent_admin = $check->percent_admin * 100;
         $this->percent_with_drawal = $check->percent_with_drawal * 100;

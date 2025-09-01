@@ -332,6 +332,57 @@ class NotificationSendService
         ], 200);
     }
 
+    public function sendNotificationWiths($walletWith)
+    {
+
+
+        if (robus()->is_custumers) {
+            if (robus()->country->code == "CI") {
+
+                $message = 'Votre demande de ' . $walletWith->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                    . $walletWith->provider->name  .  ' le '
+                    . $walletWith->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+                $encode = substr(robus()->phone,  -10);
+
+                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            }
+        }
+        $admins = $this->getAdminCIVProperty();
+        $msg = 'Demande en cours de validation';
+        $msg_title =  "Réchargement";
+        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletOneXbet($walletWith));
+        Notification::send($admins, new AdminNotification("Demande de rechargement"));
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+
+        if (robus()->email != null) {
+
+            $notify = new MailController;
+            $notify->newPhoneCredit($walletWith);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id'      => $walletWith->id,
+                'amount' => $walletWith->amount,
+                'status' => $walletWith->status,
+            ],
+            'message' => ('Votre demande ce réchargement  est en cours de traitement .')
+        ], 200);
+    }
+
 
     public function sendNotificationWaves($walletWaves)
     {
@@ -396,7 +447,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-               
+
                 http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
@@ -450,7 +501,7 @@ class NotificationSendService
     public function sendNotification($walletTransaction)
     {
 
- 
+
         if (robus()->is_custumers) {
             if (robus()->country->code == "CI") {
 

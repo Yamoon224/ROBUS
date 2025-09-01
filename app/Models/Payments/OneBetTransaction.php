@@ -3,6 +3,9 @@
 namespace App\Models\Payments;
 
 use App\Models\Wallets\WalletXbet;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletTresortMoney;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -32,6 +35,22 @@ class OneBetTransaction extends Model
     public function WalletXbet()
     {
         return $this->belongsTo(WalletXbet::class, 'wallet_xbet_id', 'id')->withTrashed();
+    }
+
+    public function WalletPush()
+    {
+        return $this->belongsTo(WalletPush::class, 'wallet_push_id', 'id')->withTrashed();
+    }
+
+
+    public function WalletDjamo()
+    {
+        return $this->belongsTo(WalletDjamo::class, 'wallet_djamo_id', 'id')->withTrashed();
+    }
+
+    public function WalletTresort()
+    {
+        return $this->belongsTo(WalletTresortMoney::class, 'wallet_tresort_money_id', 'id')->withTrashed();
     }
 
 

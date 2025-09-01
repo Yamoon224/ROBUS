@@ -6,13 +6,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PushPercents extends Model
+class ArgentTresort extends Model
 {
     use HasFactory;
 
      use SoftDeletes;
 
-    protected $table = 'push_percents';
+    protected $table = 'argent_tresorts';
 
     protected $hidden = [
         'created_at',
@@ -23,8 +23,6 @@ class PushPercents extends Model
 
 
     protected $casts = [
-        'percent' => 'double',
-        'percent_merchands' => 'double',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
@@ -51,29 +49,26 @@ class PushPercents extends Model
 
     public function setPercentAttribute($value)
     {
-        $this->attributes['percent'] = json_encode($this->formatPercentage($value));
+        $this->attributes['percent'] = ($value / 100) ? json_encode($value / 100) : null;
 
     }
 
-    // public function setPercentAdminAttribute($value)
-    // {
-    //     $this->attributes['percent_admin'] = json_encode($this->formatPercentage($value));
-    // }
+
 
     public function setPercentMerchandsAttribute($value)
     {
-        $this->attributes['percent_merchands'] = json_encode($this->formatPercentage($value));
+        $this->attributes['percent_merchands'] = ($value / 100) ? json_encode($value / 100) : null;
 
     }
 
     public function setPercentMastersAttribute($value)
     {
-        $this->attributes['percent_masters'] = json_encode($this->formatPercentage($value));
+        $this->attributes['percent_masters'] = ($value / 100) ? json_encode($value / 100) : null;
     }
 
     public function setPercentBanqueAttribute($value)
     {
-        $this->attributes['percent_banque'] = json_encode($this->formatPercentage($value));
+        $this->attributes['percent_banque'] = ($value / 100) ? json_encode($value / 100) : null;
     }
 
 
@@ -85,7 +80,7 @@ class PushPercents extends Model
 
     public function setPercentWithDrawalAttribute($value)
     {
-        $this->attributes['percent_with_drawal'] = json_encode($this->formatPercentage($value));
+        $this->attributes['percent_with_drawal'] = ($value / 100) ? json_encode($value / 100) : null;
     }
 
 
