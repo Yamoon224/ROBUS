@@ -294,8 +294,7 @@ class InterPaymentService
     public function processCommissionMobileDistributers($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
     {
 
-        $country_civ = Country::whereId(107)
-            ->first();
+    
 
         $wallet = robus()->wallet;
 

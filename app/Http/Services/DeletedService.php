@@ -32,6 +32,8 @@ class DeletedService
         return true;
     }
 
+    
+
 
     public function deletedVirement($wallet_reload)
     {

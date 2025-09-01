@@ -16,6 +16,8 @@ use App\Models\Wallets\WalletXbet;
 use App\Models\Wallets\WalletPush;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletCommission;
+use App\Models\Wallets\WalletAdmin;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -75,6 +77,16 @@ class AdminsCom extends Model
     public function walletPush()
     {
         return $this->belongsTo(WalletPush::class, 'wallet_push_id', 'id')->withTrashed();
+    }
+
+    public function walletAdmin()
+    {
+        return $this->belongsTo(WalletAdmin::class, 'wallet_admin_id', 'id')->withTrashed();
+    }
+
+    public function walletCommission()
+    {
+        return $this->belongsTo(WalletCommission::class, 'wallet_commission_id', 'id')->withTrashed();
     }
 
 

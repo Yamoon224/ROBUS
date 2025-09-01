@@ -6,6 +6,8 @@ namespace App\Http\Services;
 use App\Models\AdminsCom;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletCommission;
+use App\Models\Wallets\WalletAdmin;
 use App\Models\Custumers\Country;
 use Illuminate\Support\Facades\DB;
 use App\Models\Payments\Transaction;
@@ -13,24 +15,26 @@ use App\Models\Invoices\InvoiceTransaction;
 use App\Repositories\TransactionRepository;
 use App\Http\Services\MasterService;
 use App\Http\Services\OperatorRestrictionService;
+use App\Http\Services\CommissionService;
 
 class RobusTransactionService
 {
 
     /** @var  TransactionRepository */
     private $transctionRepository;
-    private $robusMasterTransaction;
     protected $operatorRestrictionService;
+    protected $commissionServices;
 
     public function __construct(
         TransactionRepository $transactionReposi,
-        MasterService $robusMasterTransaction,
+        // MasterService $robusMasterTransaction,
         OperatorRestrictionService $operatorRestrictionService,
+        CommissionService $commissionServices
 
     ) {
         $this->transctionRepository = $transactionReposi;
-        $this->robusMasterTransaction = $robusMasterTransaction;
         $this->operatorRestrictionService = $operatorRestrictionService;
+        $this->commissionServices = $commissionServices;
     }
 
     public function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal)
@@ -100,7 +104,6 @@ class RobusTransactionService
         $commission = $transaction_amount_robus;
         $country_civ = Country::find(107);
         $wallet = robus()->wallet;
-        // $master_id = $this->robusMasterTransaction->mastersId();
         $userId = robus()->id;
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
         $account_accepted = robus()->is_accepted_companie ?? false;
@@ -160,7 +163,7 @@ class RobusTransactionService
                         $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
 
                         foreach ($admin_civ as $user) {
-                            $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                            $this->commissionServices->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
                 } else {
@@ -170,14 +173,14 @@ class RobusTransactionService
                         $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
 
                         foreach ($admin_civ as $user) {
-                            $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                            $this->commissionServices->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
                 }
             } elseif (!empty($activeButtons['showRemonterRetraitButton'])) {
 
                 $walletTransaction->increment('commissions', $valuer_deposit);
-                // $walletTransaction->increment('commission_masters', $valuer_master);
+
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterRetraitCButton'])) {
@@ -191,7 +194,7 @@ class RobusTransactionService
                     $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
 
                     foreach ($admin_civ as $user) {
-                        $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                        $this->commissionServices->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                     }
                 }
             } else {
@@ -205,26 +208,24 @@ class RobusTransactionService
                     $valeur_single = $admin_valeur_convertion / $nmbre_admin;
 
                     foreach ($admin_civ as $user) {
-                        $this->processAdminCommission($user->id, $walletTransaction->id, $valeur_single);
+                        $this->commissionServices->processAdminCommission($user->id, $walletTransaction->id, $valeur_single);
                     }
                 }
             }
         } else {
 
-            // $valuer_master =  $master_id ? $percent_robus->percent_masters * $valeur_percent_admin : 0;
 
             $valeur_percent_admin = (float)$valeur_percent_admin;
 
             $admin_valeur_convertion = $this->convertAdminCommission($valeur_percent_admin);
 
-            // $walletTransaction->increment('commission_masters', $valuer_master);
 
             if ($admin_civ->count() > 0) {
                 $nmbre_admin = $admin_civ->count();
                 $valeur_single = $admin_valeur_convertion / $nmbre_admin;
 
                 foreach ($admin_civ as $user) {
-                    $this->processAdminCommission($user->id, $walletTransaction->id, $valeur_single);
+                    $this->commissionServices->processAdminCommission($user->id, $walletTransaction->id, $valeur_single);
                 }
             }
         }
@@ -232,37 +233,7 @@ class RobusTransactionService
         return true;
     }
 
-    private function processAdminCommission($userId, $walletTransactionId, $amount)
-    {
-        $admin_single = SidUser::find($userId);
-
-        AdminsCom::create([
-            'amount' => $amount,
-            'sid_user_id' => $admin_single->id,
-            'status'  => "SUCCESS",
-            'wallet_transaction_id' => $walletTransactionId,
-            'description' => 'Commission administrateur',
-        ]);
-
-        $admin_single->wallet->increment('amount', $amount);
-    }
-
-    private function processAdminCommissionSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
-    {
-        $admin_single = SidUser::find($userId);
-
-        AdminsCom::create([
-            'amount' => $amount,
-            'sid_user_id' => $admin_single->id,
-            'wallet_transaction_id' => $walletTransactionId,
-            'description' => 'Commission administrateur',
-            'status'  => "SUCCESS",
-            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
-        ]);
-
-        $admin_single->wallet->increment('amount', $amount);
-    }
+ 
 
     private function convertAdminCommission($amount)
     {

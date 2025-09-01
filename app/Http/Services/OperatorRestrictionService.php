@@ -19,6 +19,7 @@ class OperatorRestrictionService
         'Active Money' => 'showRemonterMoneyButton',
         'Active Commande' => 'showRemonterOrderButton',
         'Active Push' => 'showRemonterPushButton',
+        'Active Djamo' => 'showRemonterDjamoButton',
         'Active Xbets' => 'showRemonterXbetButton',
         'Active Tresort Money' => 'showRemonterTresortButton',
     ];
@@ -37,6 +38,7 @@ class OperatorRestrictionService
         'Active Push' => 'showRemonterPushCButton',
         'Active Xbets' => 'showRemonterXbetCButton',
         'Active Tresort Money' => 'showRemonterTresortCButton',
+        'Active Djamo' => 'showRemonterDjamoCButton',
     ];
 
 

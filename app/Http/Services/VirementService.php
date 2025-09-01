@@ -6,9 +6,10 @@ namespace App\Http\Services;
 use App\Models\AdminsCom;
 use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\DB;
-use App\Http\Services\MasterService;
 use App\Repositories\VirementRepository;
 use App\Http\Services\OperatorRestrictionService;
+use App\Models\Wallets\WalletCommission;
+use App\Models\Wallets\WalletAdmin;
 
 class VirementService
 {
@@ -134,19 +135,11 @@ class VirementService
             } else {
 
                 $amountDeposit = (float) $amount_user->amount;
-                // $walletBank->update([
-                //     'commission_masters' => DB::raw('commission_masters+'  .  $valuer_master),
-                // ]);
-
                 $this->distributeAdminCommissions($admin_civ, $walletBank, $amountDeposit);
             }
         } else {
 
-            // $valuer_master =  $master_id ? $amount_user->percent_masters  : 0;
             $amountDeposit = (float) $amount_user->amount;
-            // $walletBank->update([
-            //     'commission_masters' => DB::raw('commission_masters+'  .  $valuer_master),
-            // ]);
 
             $this->distributeAdminCommissions($admin_civ, $walletBank, $amountDeposit);
         }

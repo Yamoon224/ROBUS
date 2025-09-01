@@ -644,8 +644,6 @@ class IntersPaymentController extends Controller
 
                                             $percent_amount = $percent_djamo->percent_merchands * $request->amount;
 
-                                            // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
-
                                             $valeur_received = $request->amount -  $percent_amount;
 
                                             $valeur_amount = $request->amount;
@@ -653,8 +651,6 @@ class IntersPaymentController extends Controller
                                         } else {
 
                                             $percent_amount = $percent_djamo->percent * $request->amount;
-
-                                            // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
                                             $valeur_received = $request->amount -  $percent_amount;
 

@@ -14,8 +14,8 @@ return new class extends Migration
     public function up()
     {
         Schema::table('providers', function (Blueprint $table) {
-         $table->unsignedBigInteger('country_id')->nullable();
-        $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
+            $table->unsignedBigInteger('country_id')->nullable();
+            $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade');
         });
     }
 

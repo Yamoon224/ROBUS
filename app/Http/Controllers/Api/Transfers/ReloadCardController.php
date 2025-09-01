@@ -275,7 +275,6 @@ class ReloadCardController extends Controller
                                         }
 
 
-
                                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
 

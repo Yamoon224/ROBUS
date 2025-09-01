@@ -6,7 +6,8 @@ namespace App\Http\Services;
 use App\Models\AdminsCom;
 use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\DB;
-use App\Repositories\VirementRepository;
+use App\Models\Wallets\WalletCommission;
+use App\Models\Wallets\WalletAdmin;
 use App\Repositories\PhoneCreditRepository;
 use App\Http\Services\OperatorRestrictionService;
 
@@ -60,14 +61,14 @@ class PhoneCreditService
             $compagnie = null;
             $sidUserId = null;
         }
-        
+
         if ($sidUserId) {
             $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
         } else {
-            $activeCButtons = []; 
+            $activeCButtons = [];
         }
-      
-        $amount_commission = robus()->is_under_distributer ? $amount  : $amount + ($percent_robus->percent * $amount) ;
+
+        $amount_commission = robus()->is_under_distributer ? $amount  : $amount + ($percent_robus->percent * $amount);
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
         $walletPhone->update([
@@ -100,12 +101,10 @@ class PhoneCreditService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterCreditCButton'])) {
                     $walletPhone->increment('commission_companie', $valuer_companie);
-                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletPhone, $admin_valeur, $valuer_deposit);
-
-                }else {
+                    $this->distributeAdminCommissionAcceptedCompanies($admin_civ, $walletPhone, $valuer_companie, $valuer_deposit);
+                } else {
                     $this->distributeAdminCommissionAccepteds($admin_civ, $walletPhone, $amount_percent, $valuer_deposit);
                 }
-
             } else {
 
                 $admin_valeur =  $amount * $percent_robus->percent;
@@ -139,6 +138,14 @@ class PhoneCreditService
                     'amount_under' =>  0,
                     'description_underdistributer' =>  null
                 ]);
+
+                $walletAdmin = WalletAdmin::find(1);
+
+                if ($walletAdmin && $walletAdmin->amount >= $totalCommission) {
+                    $walletAdmin->increment('amount', $totalCommission);
+                } else {
+                    $adminUser->wallet->increment('amount', $totalCommission);
+                }
             }
         }
     }
@@ -159,6 +166,43 @@ class PhoneCreditService
                     'amount_under' =>  robus()->is_under_distributer ? $amountDeposit : 0,
                     'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ]);
+
+                $walletCommission = WalletCommission::find(1);
+
+                if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
+                    $walletCommission->decrement('amount', $amountDeposit);
+                } else {
+                    $adminUser->wallet->decrement('amount', $totalCommission);
+                }
+            }
+        }
+    }
+    private function distributeAdminCommissionAcceptedCompanies($adminCiv, $walletPayment, $totalCommission, $amountDeposit)
+    {
+
+        if ($adminCiv->count() > 0) {
+
+            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create([
+                    'amount' => $commissionPerAdmin,
+                    'sid_user_id' => $adminUser->id,
+                    'wallet_payment_id' => $walletPayment->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' =>  robus()->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                ]);
+
+                $walletCommission = WalletCommission::find(1);
+                $total_commission = (float) $amountDeposit  + (float) $totalCommission;
+                if ($walletCommission && $walletCommission->amount >= $total_commission) {
+                    $walletCommission->decrement('amount', $total_commission);
+                } else {
+                    $adminUser->wallet->decrement('amount', $total_commission);
+                }
             }
         }
     }
