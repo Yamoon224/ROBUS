@@ -709,7 +709,7 @@ class withTransactionController extends Controller
 
         // search received
 
-         public function search_received_Djamo($amount_send)
+        public function search_received_Djamo($amount_send)
         {
                 return $this->searchAmountReceivedWallet('djamo', $amount_send);
         }
@@ -724,7 +724,7 @@ class withTransactionController extends Controller
                 return $this->searchAmountReceivedWallet('tresort', $amount_send);
         }
 
-     
+
         private function searchWallet(string $type, $amount)
         {
                 try {

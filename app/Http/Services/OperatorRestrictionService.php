@@ -21,7 +21,9 @@ class OperatorRestrictionService
         'Active Push' => 'showRemonterPushButton',
         'Active Djamo' => 'showRemonterDjamoButton',
         'Active Xbets' => 'showRemonterXbetButton',
+        'Active Wave' => 'showRemonterWaveButton',
         'Active Tresort Money' => 'showRemonterTresortButton',
+        'Active Retrait Xbet' => 'showRemonterXbetDrawalButton',
     ];
 
     protected $restrictionCMap = [
@@ -39,6 +41,8 @@ class OperatorRestrictionService
         'Active Xbets' => 'showRemonterXbetCButton',
         'Active Tresort Money' => 'showRemonterTresortCButton',
         'Active Djamo' => 'showRemonterDjamoCButton',
+        'Active Retrait Xbet' => 'showRemonterXbetDrawalCButton',
+        'Active Wave' => 'showRemonterWaveCButton',
     ];
 
 

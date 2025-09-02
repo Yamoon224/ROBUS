@@ -7,13 +7,14 @@ use App\Models\AdminsCom;
 use App\Models\Wallets\WalletCommission;
 use App\Models\Wallets\WalletAdmin;
 use Illuminate\Support\Facades\DB;
+use App\Models\Custumers\Country;
 
 class CommissionService
 {
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
-    public function distributeAdminCommissionAcceptedCompanies($adminCiv, $walletColumn, $walletId, $totalCommission, $amountDeposit)
+    public function distributeAdminCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
     {
 
         if ($adminCiv->isEmpty()) {
@@ -128,7 +129,7 @@ class CommissionService
         }
     }
 
-    public function distributeAdminCommissionAccepteds($adminCiv, $walletColumn, $walletId, $totalCommission, $amountDeposit)
+    public function distributeAdminCommissionAccepteds($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
     {
 
 
@@ -159,6 +160,21 @@ class CommissionService
                     $adminUser->wallet->decrement('amount', $totalCommission);
                 }
             }
+        }
+    }
+
+
+    public function convertAdminCommission($amount)
+    {
+        $country_civ = Country::find(107);
+        $robus_currency = robus()->country->currencie->value;
+
+        if ($country_civ->currencie->value > robus()->country->currencie->value) {
+            return $amount * $robus_currency;
+        } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
+            return $amount;
+        } else {
+            return $amount * $robus_currency;
         }
     }
 }

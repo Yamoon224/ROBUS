@@ -22,17 +22,20 @@ class WithService
     public $djamoRepository;
     public $pushRepository;
     public $operatorRestrictionService;
+    protected $commissionServices;
 
     public function __construct(
         TresortRepository $tresortRepository,
         PushRepository $pushRepository,
         DjamoRepository $djamoRepository,
         OperatorRestrictionService $operatorRestrictionService,
+        CommissionService $commissionServices,
     ) {
         $this->tresortRepository = $tresortRepository;
         $this->djamoRepository = $djamoRepository;
         $this->pushRepository = $pushRepository;
         $this->operatorRestrictionService = $operatorRestrictionService;
+        $this->commissionServices = $commissionServices;
     }
 
 
@@ -155,6 +158,7 @@ class WithService
 
         $valuer_deposit = $percent_robus->percent_merchands *  $amount;
         $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
+        $valeur_percent_no_under  = $percent_robus->percent * $amount;
 
         // Commissions Inters 
         if (robus()->is_under_distributer == 1) {
@@ -172,11 +176,16 @@ class WithService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterPushCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_push_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
                 }
             } else {
-                $valeur_percent_admin  = $percent_robus->percent * $amount;
+
+                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_push_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
             }
         } else {
+
+
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_push_id', $walletWith->id, $valeur_percent_no_under);
 
             if (robus()->country->code == 'CI') {
 
@@ -190,29 +199,6 @@ class WithService
                 $encode = substr(robus()->phone, -10);
 
                 Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-            }
-        }
-
-        $admin_valeur_convertion =   (float)  $valeur_percent_admin;
-
-
-        if ($admin_civ->count() > 0) {
-
-            $nmbre_admin = $admin_civ->count();
-
-            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_push_id' =>  $walletWith->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' => $valuer_deposit,
-                    'description_underdistributer' => 'Paiement commission sous-distributer'
-                ]);
             }
         }
 
@@ -260,6 +246,7 @@ class WithService
 
         $valuer_deposit = $percent_robus->percent_merchands *  $amount;
         $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
+        $valeur_percent_no_under  = $percent_robus->percent * $amount;
 
         // Commissions Inters 
         if (robus()->is_under_distributer == 1) {
@@ -277,11 +264,15 @@ class WithService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterDjamoCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_djamo_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
                 }
             } else {
-                $valeur_percent_admin  = $percent_robus->percent * $amount;
+                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_djamo_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
             }
         } else {
+
+
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_djamo_id', $walletWith->id, $valeur_percent_no_under);
 
             if (robus()->country->code == 'CI') {
 
@@ -298,28 +289,6 @@ class WithService
             }
         }
 
-        $admin_valeur_convertion =   (float)  $valeur_percent_admin;
-
-
-        if ($admin_civ->count() > 0) {
-
-            $nmbre_admin = $admin_civ->count();
-
-            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_djamo_id' =>  $walletWith->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' => $valuer_deposit,
-                    'description_underdistributer' => 'Paiement commission sous-distributer'
-                ]);
-            }
-        }
 
         return true;
     }
@@ -365,6 +334,7 @@ class WithService
 
         $valuer_deposit = $percent_robus->percent_merchands *  $amount;
         $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
+        $valeur_percent_no_under  = $percent_robus->percent * $amount;
 
         // Commissions Inters 
         if (robus()->is_under_distributer == 1) {
@@ -382,11 +352,16 @@ class WithService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterTresortCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
                 }
             } else {
-                $valeur_percent_admin  = $percent_robus->percent * $amount;
+
+                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
+
             }
         } else {
+
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valeur_percent_no_under);
 
             if (robus()->country->code == 'CI') {
 
@@ -403,30 +378,6 @@ class WithService
             }
         }
 
-        $admin_valeur_convertion =   (float)  $valeur_percent_admin;
-
-
-        if ($admin_civ->count() > 0) {
-
-            $nmbre_admin = $admin_civ->count();
-
-            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_tresort_money_id' =>  $walletWith->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' => $valuer_deposit,
-                    'description_underdistributer' => 'Paiement commission sous-distributer'
-                ]);
-            }
-        }
-
         return true;
     }
-
 }

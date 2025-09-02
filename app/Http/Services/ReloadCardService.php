@@ -18,16 +18,19 @@ class ReloadCardService
     public $reloadCardRepository;
     // private $robusMasterTransaction;
     protected $operatorRestrictionService;
+    protected $commissionServices;
 
     public function __construct(
         ReloadCardRepository $reloadCardReposi,
         // MasterService $robusMasterTransaction
         OperatorRestrictionService $operatorRestrictionService,
+        CommissionService $commissionServices
 
     ) {
         $this->reloadCardRepository = $reloadCardReposi;
         // $this->robusMasterTransaction = $robusMasterTransaction;
         $this->operatorRestrictionService = $operatorRestrictionService;
+        $this->commissionServices = $commissionServices;
     }
 
 
@@ -107,7 +110,7 @@ class ReloadCardService
                 if ($account_accepted && !empty($activeCButtons['showRemonterRechargementCButton'])) {
                     $valuer_companie = $commissionCompanie;
                     $walletOrderCard->increment('commission_companie', $valuer_companie);
-                    $this->distributeAdminCommissionAcceptedCompanies($admin_civ, $walletPhone, $valuer_companie, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_deposit_id' , $walletOrderCard->id, $valuer_companie, $valuer_deposit);
 
                 }else {
 
@@ -115,94 +118,16 @@ class ReloadCardService
 
             } else {
 
-                $this->distributeAdminCommissions($admin_civ, $walletOrderCard, $admin_valeur_no);
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id' ,$walletOrderCard->id, $admin_valeur_no);
             }
         } else {
 
             $admin_valeur =  $amount_commission;
 
-            $this->distributeAdminCommissions($admin_civ, $walletOrderCard, $admin_valeur);
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id' ,$walletOrderCard->id, $admin_valeur);
         }
 
         return true;
     }
 
-    private function distributeAdminCommissionAcceptedCompanies($adminCiv, $walletPayment, $totalCommission, $amountDeposit)
-    {
-
-        if ($adminCiv->count() > 0) {
-
-            $commissionPerAdmin = $totalCommission / $adminCiv->count();
-
-            foreach ($adminCiv as $user) {
-                $adminUser = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' => $commissionPerAdmin,
-                    'sid_user_id' => $adminUser->id,
-                    'wallet_payment_id' => $walletPayment->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' =>  robus()->is_under_distributer ? $amountDeposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
-                ]);
-
-                $walletCommission = WalletCommission::find(1);
-                $total_commission = (float) $amountDeposit  + (float) $totalCommission;
-                if ($walletCommission && $walletCommission->amount >= $total_commission) {
-                    $walletCommission->decrement('amount', $total_commission);
-                } else {
-                    $adminUser->wallet->decrement('amount', $total_commission);
-                }
-            }
-        }
-    }
-
-    private function distributeAdminCommissionAccepteds($adminCiv, $walletBank, $totalCommission, $amountDeposit)
-    {
-        if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $totalCommission / $adminCiv->count();
-
-            foreach ($adminCiv as $user) {
-                $adminUser = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' => $commissionPerAdmin,
-                    'sid_user_id' => $adminUser->id,
-                    'wallet_bank_id' => $walletBank->id,
-                    'description' => 'Commission administrateur',
-                    'description' => 'Commission administrateur',
-                    'amount_under' =>  robus()->is_under_distributer ? $amountDeposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
-                ]);
-            }
-        }
-    }
-
-    private function distributeAdminCommissions($adminCiv, $walletOrderCard, $totalCommission)
-    {
-        if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $totalCommission / $adminCiv->count();
-
-            foreach ($adminCiv as $user) {
-                $adminUser = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' => $commissionPerAdmin,
-                    'sid_user_id' => $adminUser->id,
-                    'wallet_deposit_id' => $walletOrderCard->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' =>  0,
-                    'description_underdistributer' => null,
-                ]);
-
-                $walletAdmin = WalletAdmin::find(1);
-
-                if ($walletAdmin && $walletAdmin->amount >= $totalCommission) {
-                    $walletAdmin->increment('amount', $totalCommission);
-                } else {
-                    $adminUser->wallet->increment('amount', $totalCommission);
-                }
-            }
-        }
-    }
 }
