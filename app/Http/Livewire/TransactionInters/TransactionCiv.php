@@ -1086,7 +1086,7 @@ class TransactionCiv extends Component
     {
         $levelValeur = 0;
 
-        if (sabdy()->country->name_groupe == 'AFL') {
+         if (sabdy()->country->name_groupe == 'AFL') {
 
             $countriesLevels = [
 
@@ -2352,7 +2352,7 @@ class TransactionCiv extends Component
                     42 => ($provider_valeur != 51) ? 5266 : 5374, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 4912 : 4384, // Guinnée Buisso voir
                     223 => ($provider_valeur != 51) ? 6712 : 6711, // Ouganda 
-                    223 => ($provider_valeur != 51) ? 6714 : 6713, // Rwanda 
+                    180 => ($provider_valeur != 51) ? 6714 : 6713, // Rwanda 
                     158 => ($provider_valeur != 51) ? 5008 : 4480, // Nigeria
                     191 => ($provider_valeur != 51) ? 4960 : 4432, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 638 : 668, // Koweit
@@ -2470,7 +2470,7 @@ class TransactionCiv extends Component
                     106 => ($provider_valeur == 51) ? 593 : null, // Italie
                     82 => ($provider_valeur == 51) ? 591 : null, // Allemagne
                     223 => ($provider_valeur != 51) ? 745 : 6328, // Ouganda 
-                    223 => ($provider_valeur != 51) ? 634 : 6058, // Rwanda 
+                    180 => ($provider_valeur != 51) ? 634 : 6058, // Rwanda 
                     116 => ($provider_valeur != 51) ? 2618 : 2574, // Koweit
                     212 => ($provider_valeur != 51) ? 6059 : 5702, // Tanzanie
                     175 => ($provider_valeur != 51) ? 5700 : 6057, // Quatar 
@@ -2524,7 +2524,7 @@ class TransactionCiv extends Component
                     42 => ($provider_valeur != 51) ? 498 : 386, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 4906 : 4378, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 748 : 690, // Ouganda 
-                    223 => ($provider_valeur != 51) ? 5722 : 6037, // Rwanda 
+                    180 => ($provider_valeur != 51) ? 5722 : 6037, // Rwanda 
                     158 => ($provider_valeur != 51) ?  5002 : 4474, // Nigeria
                     191 => ($provider_valeur != 51) ? 4954 : 4426, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 5717 : 6032, // Koweit
@@ -4021,7 +4021,7 @@ class TransactionCiv extends Component
         } else {
             return null;
         }
-
+              
 
         $robusId = sabdy()->country->id;
 
