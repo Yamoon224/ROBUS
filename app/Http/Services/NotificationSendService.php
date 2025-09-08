@@ -70,6 +70,52 @@ class NotificationSendService
         ], 200);
     }
 
+      public function sendNotificationVersement($walletPayment)
+    {
+        $msg = 'Demande en cours de validation';
+        $msg_title = 'Versement Bancaire';
+        $admins = $this->getAdminCIVProperty();
+        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletPaiementEvent($walletPayment));
+        Notification::send($admins, new AdminNotification('Demande de versement Bancaire'));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+
+        if (robus()->email != null) {
+
+            $notify = new MailController;
+            $notify->newPaiement($walletPayment);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id'      => $walletPayment->id,
+                'amount' => $walletPayment->amount,
+                // 'provider' => $walletPayment->provider->name,
+                // 'number_decoder' => $walletPayment->number_decoder,
+                // 'id_invoice' => $walletPayment->id_invoice,
+                // 'number_contract' => $walletPayment->number_contract,
+                // 'name' => $walletPayment->name,
+                // 'number_phone' => $walletPayment->number_phone,
+                // 'offer_id' => $walletPayment->offer_id,
+                // 'name' => $walletPayment->name,
+                'status' => $walletPayment->status,
+            ],
+            'message' => ('Votre demande de versement bancaire a bien été prise en compte.')
+        ], 200);
+    }
+
     public function sendNotificationPaymentOffer($walletPayment)
     {
         $msg = 'Demande en cours de validation';

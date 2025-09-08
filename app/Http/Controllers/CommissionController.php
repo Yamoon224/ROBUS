@@ -2086,6 +2086,14 @@ class CommissionController extends Controller
 
     }
 
+    public function browse_versement_banks()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+        return view('pages.commissions.versement_banks'); 
+    }
+
     /**
      * Display a listing of the resource.
      *

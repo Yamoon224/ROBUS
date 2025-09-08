@@ -2425,7 +2425,7 @@ class TransactionCiv extends Component
                     152 => ($provider_valeur != 51) ? 6738 : 6737, // Hollande
                     173 => ($provider_valeur != 51) ? 2328 : 2373, // Portugal
                     175 => ($provider_valeur != 51) ? 5679 : 6078, // Qatar
-                    223 => ($provider_valeur != 51) ? 5680 : 6079, // Rwanda
+                    180 => ($provider_valeur != 51) ? 5680 : 6079, // Rwanda
                     208 => ($provider_valeur != 51) ? 2148 : 2193, // Suisse
                     212 => ($provider_valeur != 51) ? 5681 : 6080, // Tanzanie
                     219 => ($provider_valeur != 51) ? 6736 : 6735, // Turquie

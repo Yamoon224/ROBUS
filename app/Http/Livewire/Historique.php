@@ -16,6 +16,10 @@ use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
+use App\Models\OperatorService;
+use App\Models\Sid\SidUser;
+use App\Models\Wallets\WalletVersement;
+
 
 class Historique extends Component
 {
@@ -23,10 +27,71 @@ class Historique extends Component
     protected $historiqueService;
     public  $startDate = "";
     public  $endDate =  "";
+    // Transactions
+    public $showTransButton = false;
+    public $showCreditButton = false;
+    public $showPaiementButton = false;
+    public $showInterButton = false;
+    public $showRechargementButton = false;
+    public $showVirementButton = false;
+    public $showRetraitButton = false;
+    public $showDepotButton = false;
+    public $showMobileButton = false;
+    public $showXbetButton = false;
+    public $showCommissionButton = false;
+    public $showRecharButton = false;
+    public $showVersementButton = false;
+    public $showWaveButton = false;
+    public $operators;
+    public $operatorsCompagnie;
+    public $operatorsTransaction;
 
     public function mount(HistoriqueService $historiqueService)
     {
+
         $this->historiqueService = $historiqueService;
+
+        $this->operators = OperatorService::getOperatorsWithCommissions(sabdy()->id);
+        $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
+        $account_accepted = sabdy()->is_accepted_companie ?? false;
+        $company_id = sabdy()->company_id ?? null;
+        if ($company_id && $company_id != 0 && $company_id != 1) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+        if ($sidUserId) {
+            $this->operatorsCompagnie = OperatorService::getOperatorsWithCommissions($sidUserId);
+        } else {
+            $this->operatorsCompagnie = [];
+        }
+
+        $restrictionMapTransaction = [
+            'Historiques credit' => 'showCreditButton',
+            'Historiques facture' => 'showPaiementButton',
+            'Historiques international' => 'showInterButton',
+            'Historiques carte' => 'showRechargementButton',
+            'Historiques bancaire' => 'showVirementButton',
+            'Historiques retrait' => 'showRetraitButton',
+            'Historiques mobile money' => 'showDepotButton',
+            'Historiques Xbet' => 'showXbetButton',
+            'Historiques Commission' => 'showCommissionButton',
+            'Historiques Rechargement' => 'showRecharButton',
+            'Historiques Versement' => 'showVersementButton',
+            'Historiques Transfert' => 'showTransButton',
+            'Historiques Wave' => 'showWaveButton',
+        ];
+
+        foreach ($this->operatorsTransaction as $operator) {
+            $restrictions = explode(',', $operator->name);
+            foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
     }
 
 
@@ -215,6 +280,20 @@ class Historique extends Component
                 ->when(sabdy()->is_under_distributer, function ($query) {
                     return $query->where('sid_user_id', sabdy()->id);
                 })->orderBy('date_removed', 'desc')->get(),
+
+            'Wallet_virement_last' => WalletVersement::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
+                ->when(sabdy()->is_under_distributer, function ($query) {
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
+                })->select('wallet_versements.*')->limit(5)->orderBy('wallet_versements.created_at', 'desc')->get(),
             'usersCountry' =>  $walletUser->country->currencie->name,
             'sum_bank' =>  $bank_amount,
             'sum_deposit' => $deposit_amount,
@@ -225,6 +304,20 @@ class Historique extends Component
             'sum_phoneCredit' => $phonecredit_amount,
             'sum_xbets' => $xbet_amount,
             'sum_waves' => $wave_amount,
+            // Bloque valeurs
+            'showTransButton' => $this->showTransButton,
+            'showCreditButton' => $this->showCreditButton,
+            'showPaiementButton' => $this->showPaiementButton,
+            'showInterButton' => $this->showInterButton,
+            'showRechargementButton' => $this->showRechargementButton,
+            'showVirementButton' => $this->showVirementButton,
+            'showRetraitButton' => $this->showRetraitButton,
+            'showDepotButton' => $this->showDepotButton,
+            'showXbetButton' => $this->showXbetButton,
+            'showCommissionButton' => $this->showCommissionButton,
+            'showRecharButton' => $this->showRecharButton,
+            'showWaveButton' => $this->showWaveButton,
+            'showVersementButton' => $this->showVersementButton,
             'sum_under_distributers' => $this->historiqueService->getSDistributeurSumAdmin(),
             'sum_custumers' => $this->historiqueService->getCustumersSumAdmin(),
 

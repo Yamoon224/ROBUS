@@ -4,6 +4,7 @@ namespace App\Models\Invoices;
 
 use Spatie\Activitylog\LogOptions;
 use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletVersement;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -47,6 +48,11 @@ class InvoiceDeposit extends Model
     public function walletDeposit()
     {
         return $this->belongsTo(WalletDeposit::class , 'wallet_deposit_id' , 'id')->withTrashed();
+    }
+
+    public function walletVersement()
+    {
+        return $this->belongsTo(WalletVersement::class , 'wallet_versement_id' , 'id')->withTrashed();
     }
 
     public function getActivitylogOptions(): LogOptions

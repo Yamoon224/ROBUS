@@ -389,7 +389,7 @@
 
             @if (sabdy()->country->code == 'CI')
 
-                @if ($is_under)
+                @if ($is_under || $is_distributer)
 
                     @if ($showDepotButton)
                         @if (sabdy()->hasPermissionTo('transfers-argent'))
@@ -445,8 +445,40 @@
                                 wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
                         @endif
                     @endif
+
+                    @if ($showXbetButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-xbets'))
+                            <button class="btn btn-invoice w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-xbet-show' , 'create-xbet-modal')">Xbets</button>
+                        @endif
+                    @endif
+
+                    @if ($showVersementButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-versements'))
+                            <button class="btn btn-virement w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-versement-show' , 'create-versement-modal')">Versements</button>
+                        @endif
+                    @endif
+                    @if ($showBankSendButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
+                            <button class="btn btn-reload w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-bank-send-show' , 'create-bank-send-modal')">Bank
+                                send</button>
+                        @endif
+                    @endif
+                    @if ($showPushButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-push'))
+                            <button class="btn btn-pending w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-push-show' , 'create-push-modal')">Push</button>
+                        @endif
+                    @endif
+                    @if ($showDjamoButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-djamo'))
+                            <button class="btn btn-inter w-22 mr-1 mb-1"
+                                wire:click="$emit('modal-djamo-show' , 'create-djamo-modal')">Djamo</button>
+                        @endif
+                    @endif
                 @else
-                
                     @if (sabdy()->hasPermissionTo('transfers-argent'))
                         <button class="btn btn-transuv w-22 mr-1 mb-1"
                             wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
@@ -479,9 +511,32 @@
                             wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
                     @endif
 
+                    @if (sabdy()->hasPermissionTo('rechargement-xbets'))
+                        <button class="btn btn-invoice w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-xbet-show' , 'create-xbet-modal')">Xbets</button>
+                    @endif
+
+                    @if (sabdy()->hasPermissionTo('rechargement-versements'))
+                        <button class="btn btn-virement w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-versement-show' , 'create-versement-modal')">Versements</button>
+                    @endif
+
+                    @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
+                        <button class="btn btn-reload w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-bank-send-show' , 'create-bank-send-modal')">Bank send</button>
+                    @endif
+                    @if (sabdy()->hasPermissionTo('rechargement-push'))
+                        <button class="btn btn-pending w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-push-show' , 'create-push-modal')">Push</button>
+                    @endif
+                    @if (sabdy()->hasPermissionTo('rechargement-djamo'))
+                        <button class="btn btn-inter w-22 mr-1 mb-1"
+                            wire:click="$emit('modal-djamo-show' , 'create-djamo-modal')">Djamo</button>
+                    @endif
+
                 @endif
             @else
-                @if ($is_under)
+                @if ($is_under || $is_distributer)
 
                     @if ($showMoneyButton)
                         @if (sabdy()->hasPermissionTo('transfers-argent'))
@@ -530,25 +585,86 @@
 
         <div class="tab-content mt-6">
 
-            @if (sabdy()->hasPermissionTo('transfers-argent'))
-                @include('components.transfer_compo')
+            @if ($is_under || $is_distributer)
+
+                @if ($showDepotButton && sabdy()->hasPermissionTo('transfers-argent'))
+                    @include('components.transfer_compo')
+                @endif
+
+                @if ($showPaiementButton && sabdy()->hasPermissionTo('paiement-factures'))
+                    @include('components.paiement_compo')
+                @endif
+
+                @if ($showVirementButton && sabdy()->hasPermissionTo('virement-compte'))
+                    @include('components.virement_compo')
+                @endif
+
+                @if ($showRechargementButton && sabdy()->hasPermissionTo('rechargement-carte'))
+                    @include('components.carte_compo')
+                @endif
+
+                @if ($showCreditButton && sabdy()->hasPermissionTo('rechargement-credit'))
+                    @include('components.credit_compo')
+                @endif
+
+                @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
+                    @include('components.inter_compo')
+                @endif
+                {{-- Nesw sends --}}
+                @if ($showXbetButton && sabdy()->hasPermissionTo('rechargement-xbets'))
+                    @include('components.xbet_compo')
+                @endif
+                @if ($showVersementButton && sabdy()->hasPermissionTo('rechargement-versements'))
+                    @include('components.versement_compo')
+                @endif
+                @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
+                    @include('components.bank_send_compo')
+                @endif
+                @if ($showPushButton && sabdy()->hasPermissionTo('rechargement-push'))
+                    @include('components.push_compo')
+                @endif
+                @if ($showDjamoButton && sabdy()->hasPermissionTo('rechargement-djamo'))
+                    @include('components.djamo_compo')
+                @endif
+            @else
+                @if (sabdy()->hasPermissionTo('transfers-argent'))
+                    @include('components.transfer_compo')
+                @endif
+
+                @if (sabdy()->hasPermissionTo('paiement-factures'))
+                    @include('components.paiement_compo')
+                @endif
+                @if (sabdy()->hasPermissionTo('virement-compte'))
+                    @include('components.virement_compo')
+                @endif
+                @if (sabdy()->hasPermissionTo('rechargement-carte'))
+                    @include('components.carte_compo')
+                @endif
+                @if (sabdy()->hasPermissionTo('rechargement-credit'))
+                    @include('components.credit_compo')
+                @endif
+                @if (sabdy()->hasPermissionTo('rechargement-inters'))
+                    @include('components.inter_compo')
+                @endif
+                 {{-- Nesw sends --}}
+                @if (sabdy()->hasPermissionTo('rechargement-xbets'))
+                    @include('components.xbet_compo')
+                @endif
+                @if (sabdy()->hasPermissionTo('rechargement-versements'))
+                    @include('components.versement_compo')
+                @endif
+                @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
+                    @include('components.bank_send_compo')
+                @endif
+                @if (sabdy()->hasPermissionTo('rechargement-push'))
+                    @include('components.push_compo')
+                @endif
+                @if (sabdy()->hasPermissionTo('rechargement-djamo'))
+                    @include('components.djamo_compo')
+                @endif
+
             @endif
 
-            @if (sabdy()->hasPermissionTo('paiement-factures'))
-                @include('components.paiement_compo')
-            @endif
-            @if (sabdy()->hasPermissionTo('virement-compte'))
-                @include('components.virement_compo')
-            @endif
-            @if (sabdy()->hasPermissionTo('rechargement-carte'))
-                @include('components.carte_compo')
-            @endif
-            @if (sabdy()->hasPermissionTo('rechargement-credit'))
-                @include('components.credit_compo')
-            @endif
-            @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                @include('components.inter_compo')
-            @endif
 
         </div>
 

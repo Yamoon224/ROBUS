@@ -18,6 +18,7 @@ use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletCommission;
 use App\Models\Wallets\WalletAdmin;
+use App\Models\Wallets\WalletVersement;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -34,6 +35,12 @@ class AdminsCom extends Model
     {
         return $this->belongsTo(WalletBank::class, 'wallet_bank_id', 'id')->withTrashed();
     }
+
+       public function walletVersement()
+    {
+        return $this->belongsTo(WalletVersement::class, 'wallet_versement_id', 'id')->withTrashed();
+    }
+
 
     public function walletDeposit()
     {

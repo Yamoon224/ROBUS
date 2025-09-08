@@ -51,6 +51,11 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletXbet;
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletBankSend;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletVersement;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Carbon;
@@ -401,6 +406,11 @@ class Transfers extends Component
     public $showBancInterButton = false;
     public $showCarteInterButton = false;
     public $showFacInterButton = false;
+    public $showXbetButton = false;
+    public $showVersementButton = false;
+    public $showBankSendButton = false;
+    public $showPushButton = false;
+    public $showDjamoButton = false;
 
     public $operators;
     public $operatorsCompagnie;
@@ -500,6 +510,11 @@ class Transfers extends Component
             'VERSEMENT BANCAIRE A INTER' => 'showBancInterButton',
             'RECHARGEMENT DE CARTE A INTER' => 'showCarteInterButton',
             'PAIMENT FACTURE A INTER' => 'showFacInterButton',
+            'TRANSFERT XBET' => 'showXbetButton',
+            'VERSEMENT' => 'showVersementButton',
+            'TRANSFERT BANK SEND' => 'showBankSendButton',
+            'TRANSFERT PUSH' => 'showPushButton',
+            'TRANSFERT DJAMO' => 'showDjamoButton',
         ];
 
         foreach ($this->operatorsTransaction as $operator) {
@@ -4968,6 +4983,11 @@ class Transfers extends Component
         $inter_search = WalletInter::whereIsWeb(false);
         $reload_card = WalletDeposit::whereIsWeb(false);
         $phone_credit = WalletPhoneCredit::whereIsWeb(false);
+        $xbet = WalletXbet::whereIsWeb(false);
+        $djamo = WalletDjamo::whereIsWeb(false);
+        $bankSend = WalletBankSend::whereIsWeb(false);
+        $push = WalletPush::whereIsWeb(false);
+        $versement = WalletVersement::whereIsWeb(false);
         $walletUser = Auth::guard('web')->user();
         $commission_reload_val_nat_true_pay = null;
         $commission_reload_val_nat_true_receive = null;
@@ -5334,6 +5354,76 @@ class Transfers extends Component
             ->orderBy('wallet_phone_credits.created_at', 'desc')
             ->paginate(15);
 
+        // New valeurs sends
+
+        $xbets = $xbet
+            ->join('wallets', 'wallet_xbets.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_xbets.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $xbets->where('wallet_xbets.wallet_id', $walletUser->wallet->id);
+        }
+
+        $xbets = $xbets->select('wallet_xbets.*')
+            ->orderBy('wallet_xbets.created_at', 'desc')
+            ->paginate(15);
+
+       $djamos = $djamo
+            ->join('wallets', 'wallet_djamos.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_djamos.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $djamos->where('wallet_djamos.wallet_id', $walletUser->wallet->id);
+        }
+
+        $djamos = $djamos->select('wallet_djamos.*')
+            ->orderBy('wallet_djamos.created_at', 'desc')
+            ->paginate(15);
+    
+
+       $bankSends = $bankSend
+            ->join('wallets', 'wallet_bank_sends.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_bank_sends.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $bankSends->where('wallet_bank_sends.wallet_id', $walletUser->wallet->id);
+        }
+
+        $bankSends = $bankSends->select('wallet_bank_sends.*')
+            ->orderBy('wallet_bank_sends.created_at', 'desc')
+            ->paginate(15);
+        
+        $pushs = $push
+            ->join('wallets', 'wallet_pushes.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_pushes.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $pushs->where('wallet_pushes.wallet_id', $walletUser->wallet->id);
+        }
+
+        $pushs = $pushs->select('wallet_pushes.*')
+            ->orderBy('wallet_pushes.created_at', 'desc')
+            ->paginate(15);
+        
+        $versements = $versement
+            ->join('wallets', 'wallet_versements.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_versements.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $versements->where('wallet_versements.wallet_id', $walletUser->wallet->id);
+        }
+
+        $versements = $versements->select('wallet_versements.*')
+            ->orderBy('wallet_versements.created_at', 'desc')
+            ->paginate(15);
+
+
+
         return view('livewire.transfers', [
             'walletSolde' => Wallet::where(
                 'sid_user_id',
@@ -5345,6 +5435,11 @@ class Transfers extends Component
             'Internationals' => $internationals,
             'reloadCards' => $reloadCards,
             'phoneCredits' => $phoneCredits,
+            'xbets' => $xbets,
+            'pushs' => $pushs,
+            'versements' => $versements,
+            'djamos' => $djamos,
+            'bankSends' => $bankSends,
             'countrie_number_local' => Auth::guard('web')->user()->country
                 ->indecative,
             'wallet_search' => $wallet
@@ -5461,6 +5556,12 @@ class Transfers extends Component
             'showBancInterButton' => $this->showBancInterButton,
             'showCarteInterButton' => $this->showCarteInterButton,
             'showFacInterButton' => $this->showFacInterButton,
+            // New sends
+            'showXbetButton' => $this->showXbetButton,
+            'showVersementButton' => $this->showVersementButton,
+            'showBankSendButton' => $this->showBankSendButton,
+            'showPushButton' => $this->showPushButton,
+            'showDjamoButton' => $this->showDjamoButton,
             // Remote commissions
             'showRemonterTransButton' => $this->showRemonterTransButton,
             'showRemonterCreditButton' => $this->showRemonterCreditButton,
