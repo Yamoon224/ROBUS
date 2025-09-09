@@ -128,8 +128,11 @@
     </div>
     <div class="intro-y box px-5 pt-1 mt-1 ">
         <div class="grid grid-cols-12 gap-6 mt-6">
-
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+             
+            @if ($is_under || $is_distributer)
+                
+            @else
+                 <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
                 <div class="report-box zoom-in">
                     <div class="box p-wallet style_table_factures">
                         <div class="flex mb-transactions">
@@ -380,6 +383,218 @@
                     </div>
                 </div>
             </div>
+            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                <div class="report-box zoom-in">
+                    <div class="box p-wallet style_table_factures">
+                        <div class="flex mb-transactions">
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Success {{ $xbet_success }}
+
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente {{ $xbet_pendding }}
+
+                                </div>
+
+                            </div>
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec {{ $xbet_error }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                            class="lucide lucide-credit-card report-box__icon text-secondary">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ $WalletXbets ?? null }}
+
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Xbets {{ $usersCountry }} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                <div class="report-box zoom-in ">
+                    <div class="box p-wallet ">
+                        <div class="flex mb-transactions">
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Success {{ $push_success }}
+
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente {{ $push_pendding }}
+
+                                </div>
+
+                            </div>
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec {{ $push_error }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                            class="lucide lucide-credit-card report-box__icon text-secondary">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ $WalletPushs ?? null }}
+
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Push {{ $usersCountry }} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                <div class="report-box zoom-in">
+                    <div class="box p-wallet ">
+                        <div class="flex mb-transactions">
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Success {{ $djamo_success }}
+
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente {{ $djamo_pendding }}
+
+                                </div>
+
+                            </div>
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec {{ $djamo_error }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                            class="lucide lucide-credit-card report-box__icon text-secondary">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ $WalletDjamos ?? null }}
+
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Djamo {{ $usersCountry }} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                <div class="report-box zoom-in">
+                    <div class="box p-wallet style_table_cartes">
+                        <div class="flex mb-transactions">
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Success {{ $bank_send_success }}
+
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente {{ $bank_send_pendding }}
+
+                                </div>
+
+                            </div>
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec {{ $bank_send_error }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                            class="lucide lucide-credit-card report-box__icon text-secondary">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ $WalletBankSends ?? null }}
+
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Bank send {{ $usersCountry }} </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                <div class="report-box zoom-in">
+                    <div class="box p-wallet style_table_factures">
+                        <div class="flex mb-transactions">
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Success {{ $versement_success }}
+
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente {{ $versement_pendding }}
+
+                                </div>
+
+                            </div>
+                            <div class="ml-auto">
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec {{ $versement_error }}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                            class="lucide lucide-credit-card report-box__icon text-secondary">
+                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                            <line x1="1" y1="10" x2="23" y2="10"></line>
+                        </svg>
+                        <div class="text-3xl font-medium leading-8 mt-transactions">
+                            {{ $WalletVersements ?? null }}
+
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Versements {{ $usersCountry }} </div>
+                    </div>
+                </div>
+            </div>
+            @endif
+           
 
         </div>
 
@@ -646,7 +861,7 @@
                 @if (sabdy()->hasPermissionTo('rechargement-inters'))
                     @include('components.inter_compo')
                 @endif
-                 {{-- Nesw sends --}}
+                {{-- Nesw sends --}}
                 @if (sabdy()->hasPermissionTo('rechargement-xbets'))
                     @include('components.xbet_compo')
                 @endif

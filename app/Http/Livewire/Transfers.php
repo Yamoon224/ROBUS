@@ -68,6 +68,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Http\Services\InterHomeService;
 
 class Transfers extends Component
 {
@@ -2042,8 +2043,7 @@ class Transfers extends Component
             } else {
                 $this->emit('error', 'Paiement existante !');
             }
-            DB::commit(); 
-
+            DB::commit();
         } catch (\Exception $exception) {
             $this->resetPaiementField();
             $this->emit('modal-hide-paiement');
@@ -2285,7 +2285,7 @@ class Transfers extends Component
                 $this->emit('modal-hide-virement');
                 $this->emit('error', 'Verifiez votre mot de passe !');
             }
-            DB::commit(); 
+            DB::commit();
         } catch (\Exception $exception) {
             $this->resetVirementField();
             $this->emit('modal-hide-virement');
@@ -2385,8 +2385,7 @@ class Transfers extends Component
             } else {
                 $this->emit('error', 'Rechargement  existante !');
             }
-            DB::commit(); 
-
+            DB::commit();
         } catch (\Exception $exception) {
             $this->resetReloadCardField();
             $this->emit('modal-hide-reloadCard');
@@ -2604,7 +2603,7 @@ class Transfers extends Component
                     $this->emit('success', 'Verifiez votre mot de passe svp !');
                 }
 
-              DB::commit(); 
+                DB::commit();
             } else {
                 $this->emit('error', 'Rechargement  existante !');
             }
@@ -2798,7 +2797,7 @@ class Transfers extends Component
 
                     $this->sendSuccessMessageCreateNotification($walletUser, $message);
                 }
-         
+
 
                 if ($walletPhone != null  && $walletPhone->status == 'PENDING') {
                     $this->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser, $reel_amount);
@@ -2825,7 +2824,7 @@ class Transfers extends Component
                 $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
                 return; // Arrête l'exécution si le montant est supérieur au solde
             }
-            DB::commit(); 
+            DB::commit();
         } catch (\Exception $exception) {
             $this->resetPaiementField();
             $this->emit('modal-hide-phoneCredit');
@@ -3558,8 +3557,7 @@ class Transfers extends Component
                     $this->emit('modal-hide-transfers-validated');
                     $this->emit('modal-hide-transfers');
                     $this->emit('error', 'Vérifier votre mot de passe !');
-                    return; 
-
+                    return;
                 }
             } elseif ($this->password_transaction = "") {
                 $this->resetTransactionField();
@@ -3768,7 +3766,7 @@ class Transfers extends Component
                 $this->emit('modal-hide-virement-validated');
                 $this->emit('modal-hide-virement');
                 $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
-                return; 
+                return;
             }
             DB::commit();
         } catch (\Exception $exception) {
@@ -3989,8 +3987,7 @@ class Transfers extends Component
                         $this->emit('modal-hide-inters-validated');
                         $this->emit('modal-hide-inters');
                         $this->emit('error', 'Pas le valideur ou l\'operation a déja été traitée !! !');
-                        return; 
-
+                        return;
                     }
                 } else {
                     $this->resetInterField();
@@ -4004,11 +4001,9 @@ class Transfers extends Component
                 $this->emit('modal-hide-inters-validated');
                 $this->emit('modal-hide-inters');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !');
-                return; 
-
+                return;
             }
             DB::commit();
-
         } catch (\Exception $exception) {
             $this->resetInterField();
             $this->emit('modal-hide-inters-validated');
@@ -4019,7 +4014,7 @@ class Transfers extends Component
 
     public function updatePaiement()
     {
-       
+
         DB::beginTransaction();
         $check = WalletPayment::whereId($this->paiementId)->first();
         $transactionData = $this->generateTransactionData();
@@ -4188,8 +4183,7 @@ class Transfers extends Component
                 $this->emit('modal-hide-paiement');
                 $this->emit('modal-hide-paiement-validated');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite le boutton ou l\'operation a déja été traitée !!');
-                return; 
-
+                return;
             } else {
                 $this->resetPaiementField();
                 $this->emit('modal-hide-paiement');
@@ -4301,7 +4295,7 @@ class Transfers extends Component
 
         try {
 
-              $walletUpdate = WalletInter::lockForUpdate()->findOrFail($id);
+            $walletUpdate = WalletInter::lockForUpdate()->findOrFail($id);
 
             if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
                 DB::rollBack();
@@ -4328,7 +4322,7 @@ class Transfers extends Component
         $sidAuth = Auth::guard('web')->user();
 
         try {
-   
+
             $walletUpdate = WalletBank::lockForUpdate()->findOrFail($id);
 
             if ($walletUpdate->status !== 'PENDING'  && $walletUpdate->updated_by !== null) {
@@ -4970,6 +4964,8 @@ class Transfers extends Component
     public function render()
     {
 
+        $interHomeService = app(InterHomeService::class);
+
         $offers = Offer::whereStatus(true)
             ->latest()
             ->orderBy('name', 'asc')
@@ -5369,7 +5365,7 @@ class Transfers extends Component
             ->orderBy('wallet_xbets.created_at', 'desc')
             ->paginate(15);
 
-       $djamos = $djamo
+        $djamos = $djamo
             ->join('wallets', 'wallet_djamos.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
             ->where('wallet_djamos.status', 'PENDING');
@@ -5381,9 +5377,9 @@ class Transfers extends Component
         $djamos = $djamos->select('wallet_djamos.*')
             ->orderBy('wallet_djamos.created_at', 'desc')
             ->paginate(15);
-    
 
-       $bankSends = $bankSend
+
+        $bankSends = $bankSend
             ->join('wallets', 'wallet_bank_sends.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
             ->where('wallet_bank_sends.status', 'PENDING');
@@ -5395,7 +5391,7 @@ class Transfers extends Component
         $bankSends = $bankSends->select('wallet_bank_sends.*')
             ->orderBy('wallet_bank_sends.created_at', 'desc')
             ->paginate(15);
-        
+
         $pushs = $push
             ->join('wallets', 'wallet_pushes.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
@@ -5408,7 +5404,7 @@ class Transfers extends Component
         $pushs = $pushs->select('wallet_pushes.*')
             ->orderBy('wallet_pushes.created_at', 'desc')
             ->paginate(15);
-        
+
         $versements = $versement
             ->join('wallets', 'wallet_versements.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
@@ -5498,34 +5494,63 @@ class Transfers extends Component
             'withdrawal_robus_inter' => Provider::whereStatus(true)
                 ->whereId(51)
                 ->get(),
-            'payment_error' => $this->PaymentError,
-            'payment_success' => $this->PaymentSuccess,
-            'payment_pendding' => $this->PaymentPending,
-            'transaction_error' => $this->TransactionError,
-            'transaction_success' => $this->TransactionSuccess,
-            'transaction_pendding' => $this->TransactionPendding,
-            'WalletReloads' => $this->WalletReloads,
-            'reload_error' => $this->ReloadError,
-            'reload_success' => $this->ReloadSuccess,
-            'reload_pendding' => $this->ReloadPendding,
-            'bank_error' => $this->VirementError,
-            'bank_success' => $this->VirementSuccess,
-            'bank_pendding' => $this->VirementPendding,
-            'inter_error' => $this->InterError,
-            'inter_success' => $this->InterSuccess,
-            'inter_pendding' => $this->InterPendding,
-            'card_error' => $this->DepositError,
-            'card_success' => $this->DepositSuccess,
-            'card_pendding' => $this->DepositPendding,
-            'phone_error' => $this->PhoneCreditError,
-            'phone_success' => $this->PhoneCreditSuccess,
-            'phone_pendding' => $this->PhoneCreditPendding,
-            'WalletBanks' => $this->WalletBanks,
-            'WalletDeposits' => $this->WalletDeposits,
-            'WalletInters' => $this->WalletInters,
-            'WalletPayments' => $this->WalletPayments,
-            'WalletTransactions' => $this->WalletTransactions,
-            'WalletPhoneCredits' => $this->WalletPhoneCredits,
+            // Wallet Status
+            'payment_error' =>  $interHomeService->getPaymentCountByStatus('ERROR'),
+            'payment_success' =>  $interHomeService->getPaymentCountByStatus('SUCCESS'),
+            'payment_pendding' =>  $interHomeService->getPaymentCountByStatus('PENDING'),
+            'transaction_error' => $interHomeService->getTransactionCountByStatus('ERROR'),
+            'transaction_success' => $interHomeService->getTransactionCountByStatus('SUCCESS'),
+            'transaction_pendding' => $interHomeService->getTransactionCountByStatus('PENDING'),
+            'WalletReloads' => $interHomeService->getWalletReloads(),
+            'reload_error' =>  $interHomeService->getReloadCountByStatus('ERROR'),
+            'reload_success' =>  $interHomeService->getReloadCountByStatus('SUCCESS'),
+            'reload_pendding' =>  $interHomeService->getReloadCountByStatus('PENDING'),
+            'bank_error' => $interHomeService->getVirementCountByStatus('ERROR'),
+            'bank_success' => $interHomeService->getVirementCountByStatus('SUCCESS'),
+            'bank_pendding' => $interHomeService->getVirementCountByStatus('PENDING'),
+            'inter_error' => $interHomeService->getInterCountByStatus('ERROR'),
+            'inter_success' => $interHomeService->getInterCountByStatus('SUCCESS'),
+            'inter_pendding' => $interHomeService->getInterCountByStatus('PENDING'),
+            'card_error' => $interHomeService->getDepositCountByStatus('ERROR'),
+            'card_success' =>$interHomeService->getDepositCountByStatus('SUCCESS'),
+            'card_pendding' => $interHomeService->getDepositCountByStatus('PENDING'),
+            'phone_error' => $interHomeService->getPhoneCreditCountByStatus('ERROR'),
+            'phone_success' => $interHomeService->getPhoneCreditCountByStatus('SUCCESS'),
+            'phone_pendding' => $interHomeService->getPhoneCreditCountByStatus('PENDING'),
+
+            'xbet_error' => $interHomeService->getXbetCountByStatus('ERROR'),
+            'xbet_success' => $interHomeService->getXbetCountByStatus('SUCCESS'),
+            'xbet_pendding' => $interHomeService->getXbetCountByStatus('PENDING'),
+            
+            'push_error' => $interHomeService->getPushCountByStatus('ERROR'),
+            'push_success' => $interHomeService->getPushCountByStatus('SUCCESS'),
+            'push_pendding' => $interHomeService->getPushCountByStatus('PENDING'),
+            
+            'djamo_error' => $interHomeService->getDjamoCountByStatus('ERROR'),
+            'djamo_success' => $interHomeService->getDjamoCountByStatus('SUCCESS'),
+            'djamo_pendding' => $interHomeService->getDjamoCountByStatus('PENDING'),
+
+            'bank_send_error' => $interHomeService->getBankSendCountByStatus('ERROR'),
+            'bank_send_success' => $interHomeService->getBankSendCountByStatus('SUCCESS'),
+            'bank_send_pendding' => $interHomeService->getBankSendCountByStatus('PENDING'),
+
+            'versement_error' => $interHomeService->getVersementCountByStatus('ERROR'),
+            'versement_success' => $interHomeService->getVersementCountByStatus('SUCCESS'),
+            'versement_pendding' => $interHomeService->getVersementCountByStatus('PENDING'),
+
+            // Wallets alls infos
+            'WalletBanks' =>  $interHomeService->getWalletDepositSum(WalletBank::class, 'wallet_banks'),
+            'WalletDeposits' => $interHomeService->getWalletDepositSum(WalletDeposit::class, 'wallet_deposits'),
+            'WalletInters' =>  $interHomeService->getWalletDepositSum(WalletInter::class, 'wallet_inters'),
+            'WalletPayments' =>  $interHomeService->getWalletDepositSum(WalletPayment::class, 'wallet_payments'),
+            // New wallets
+            'WalletXbets' =>  $interHomeService->getWalletDepositSum(WalletXbet::class, 'wallet_xbets'),
+            'WalletDjamos' =>  $interHomeService->getWalletDepositSum(WalletDjamo::class, 'wallet_djamos'),
+            'WalletBankSends' =>  $interHomeService->getWalletDepositSum(WalletBankSend::class, 'wallet_bank_sends'),
+            'WalletPushs' => $interHomeService->getWalletDepositSum(WalletPush::class, 'wallet_pushes'),
+            'WalletVersements' =>  $interHomeService->getWalletDepositSum(WalletVersement::class, 'wallet_versements'),
+            'WalletTransactions' => $interHomeService->getWalletDepositSum(WalletTransaction::class, 'wallet_transactions'),
+            'WalletPhoneCredits' => $interHomeService->getWalletDepositSum(WalletPhoneCredit::class, 'wallet_phone_credits'),
             'offers_canal' => $offers,
             'countries' => Country::whereRobus(true)
                 ->orderBy('name', 'asc')
@@ -7491,119 +7516,91 @@ class Transfers extends Component
 
     public function getWalletBanksProperty()
     {
-        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        // Construire la requête de base
-        $walletBankQuery = WalletBank::join('wallets', 'wallet_banks.wallet_id', '=', 'wallets.id')
-            ->where('wallets.country_id', $userCountryId)
-            ->whereDate('wallet_banks.created_at', Carbon::today())
-            ->where('wallet_banks.status', 'SUCCESS');
+        return $this->getWalletDepositSum(WalletBank::class, 'wallet_banks');
+    }
 
-        // Vérifier si l'utilisateur est sous distributeur
-        if (sabdy()->is_under_distributer) {
-            $walletBankQuery->where('wallet_banks.wallet_id', sabdy()->wallet->id);
-        }
+    /**
+     * Propriétés Livewire
+     */
+    public function getWalletXbetsProperty()
+    {
+        return $this->getWalletDepositSum(WalletXbet::class, 'wallet_xbets');
+    }
 
-        // Exécuter la requête et calculer la somme des montants
-        return $walletBankQuery->sum('wallet_banks.amount');
+    public function getWalletDjamosProperty()
+    {
+        return $this->getWalletDepositSum(WalletDjamo::class, 'wallet_djamos');
+    }
+
+    public function getWalletBankSendsProperty()
+    {
+        return $this->getWalletDepositSum(WalletBankSend::class, 'wallet_bank_sends');
+    }
+
+    public function getWalletPushsProperty()
+    {
+        return $this->getWalletDepositSum(WalletPush::class, 'wallet_pushes');
+    }
+
+    public function getWalletVersementsProperty()
+    {
+        return $this->getWalletDepositSum(WalletVersement::class, 'wallet_versements');
     }
 
     public function getWalletDepositsProperty()
     {
-        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        // Construire la requête de base pour les dépôts
-        $walletDepositQuery = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', '=', 'wallets.id')
-            ->where('wallets.country_id', $userCountryId)
-            ->whereDate('wallet_deposits.created_at', Carbon::today())
-            ->where('wallet_deposits.status', 'SUCCESS');
+        return $this->getWalletDepositSum(WalletDeposit::class, 'wallet_deposits');
 
-        // Vérifier si l'utilisateur est sous distributeur
-        if (sabdy()->is_under_distributer) {
-            $walletDepositQuery->where('wallet_deposits.wallet_id', sabdy()->wallet->id);
-        }
-
-        // Retourner la somme des montants des dépôts
-        return $walletDepositQuery->sum('wallet_deposits.amount');
     }
 
     public function getWalletIntersProperty()
     {
-        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        // Construire la requête de base pour les intérêts
-        $walletInterQuery = WalletInter::join('wallets', 'wallet_inters.wallet_id', '=', 'wallets.id')
-            ->where('wallets.country_id', $userCountryId)
-            ->whereDate('wallet_inters.created_at', Carbon::today())
-            ->where('wallet_inters.status', 'SUCCESS');
+        return $this->getWalletDepositSum(WalletInter::class, 'wallet_inters');
 
-        // Vérifier si l'utilisateur est sous distributeur
-        if (sabdy()->is_under_distributer) {
-            $walletInterQuery->where('wallet_inters.wallet_id', sabdy()->wallet->id);
-        }
-
-        // Retourner la somme des montants des intérêts
-        return $walletInterQuery->sum('wallet_inters.amount');
     }
 
 
     public function getWalletPaymentsProperty()
     {
-        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        // Construire la requête de base pour les paiements
-        $walletPaymentQuery = WalletPayment::join('wallets', 'wallet_payments.wallet_id', '=', 'wallets.id')
-            ->where('wallets.country_id', $userCountryId)
-            ->whereDate('wallet_payments.created_at', Carbon::today())
-            ->where('wallet_payments.status', 'SUCCESS');
-
-        // Vérifier si l'utilisateur est sous distributeur
-        if (sabdy()->is_under_distributer) {
-            $walletPaymentQuery->where('wallet_payments.wallet_id', sabdy()->wallet->id);
-        }
-
-        // Retourner la somme des montants des paiements
-        return $walletPaymentQuery->sum('wallet_payments.amount');
+        return $this->getWalletDepositSum(WalletPayment::class, 'wallet_payments');
     }
 
     public function getWalletTransactionsProperty()
     {
-        $userCountryId = Auth::guard('web')->user()->country->id;
-
-        // Construire la requête de base pour les transactions
-        $walletTransactionQuery = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', '=', 'wallets.id')
-            ->where('wallets.country_id', $userCountryId)
-            ->whereDate('wallet_transactions.created_at', Carbon::today())
-            ->where('wallet_transactions.status', 'SUCCESS');
-
-        // Vérifier si l'utilisateur est sous distributeur
-        if (sabdy()->is_under_distributer) {
-            $walletTransactionQuery->where('wallet_transactions.wallet_id', sabdy()->wallet->id);
-        }
-
-        // Retourner la somme des montants des transactions
-        return $walletTransactionQuery->sum('wallet_transactions.amount');
+        
+        return $this->getWalletDepositSum(WalletTransaction::class, 'wallet_transactions');
+        
     }
 
     public function getWalletPhoneCreditsProperty()
     {
-        $userCountryId = Auth::guard('web')->user()->country->id;
 
-        // Construire la requête de base pour les crédits de téléphone
-        $walletPhoneCreditQuery = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', '=', 'wallets.id')
-            ->where('wallets.country_id', $userCountryId)
-            ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-            ->where('wallet_phone_credits.status', 'SUCCESS');
 
-        // Vérifier si l'utilisateur est sous distributeur
-        if (sabdy()->is_under_distributer) {
-            $walletPhoneCreditQuery->where('wallet_phone_credits.wallet_id', sabdy()->wallet->id);
-        }
+        return $this->getWalletDepositSum(WalletPhoneCredit::class, 'wallet_phone_credits');
 
-        // Retourner la somme des montants des crédits de téléphone
-        return $walletPhoneCreditQuery->sum('wallet_phone_credits.amount');
+    
     }
 
+
+    private function getWalletDepositSum(string $model, string $table)
+    {
+        $userCountryId = Auth::guard('web')->user()->country->id;
+
+        $walletDepositQuery = $model::join('wallets', "{$table}.wallet_id", '=', 'wallets.id')
+            ->where('wallets.country_id', $userCountryId)
+            ->whereDate("{$table}.created_at", Carbon::today())
+            ->where("{$table}.status", 'SUCCESS');
+
+        if (sabdy()->is_under_distributer) {
+            $walletDepositQuery->where("{$table}.wallet_id", sabdy()->wallet->id);
+        }
+
+        return $walletDepositQuery->sum("{$table}.amount");
+    }
 
     public function search_amount($amount_received)
     {
@@ -7615,293 +7612,6 @@ class Transfers extends Component
         return $reel_amount;
     }
 
-    public function getWalletReloadsProperty()
-    {
-        $data = [];
+   
 
-        foreach (
-            WalletReload::join(
-                'wallets',
-                'wallet_reloads.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->select('wallet_reloads.*')
-                ->whereDate('wallet_reloads.created_at', Carbon::today())
-                ->select('wallet_reloads.*')
-                ->where('wallet_reloads.status', 'SUCCESS')
-                ->get()
-            as $reload
-        ) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    // Details Transaction Admin
-
-    private function getTransactionCountByStatus($status)
-    {
-        $userCountryId = Auth::guard('web')->user()->country->id;
-
-        if (sabdy()->is_under_distributer) {
-            $walletInfos = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_transactions.status', $status)
-                ->where('wallet_transactions.wallet_id', sabdy()->wallet->id)
-                ->whereDate('wallet_transactions.created_at', Carbon::today())
-                ->count();
-        } else {
-            $walletInfos = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_transactions.status', $status)
-                ->whereDate('wallet_transactions.created_at', Carbon::today())
-                ->count();
-        }
-
-        return  $walletInfos;
-    }
-    public function getTransactionErrorProperty()
-    {
-        return $this->getTransactionCountByStatus('ERROR');
-    }
-
-    public function getTransactionSuccessProperty()
-    {
-        return $this->getTransactionCountByStatus('SUCCESS');
-    }
-
-    public function getTransactionPenddingProperty()
-    {
-        return $this->getTransactionCountByStatus('PENDING');
-    }
-
-    private function getPaymentCountByStatus($status)
-    {
-        $userCountryId = Auth::guard('web')->user()->country->id;
-
-        if (sabdy()->is_under_distributer) {
-            $walletPaiement = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_payments.status', $status)
-                ->where('wallet_payments.wallet_id', sabdy()->wallet->id)
-                ->whereDate('wallet_payments.created_at', Carbon::today())
-                ->count();
-        } else {
-            $walletPaiement = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_payments.status', $status)
-                ->whereDate('wallet_payments.created_at', Carbon::today())
-                ->count();
-        }
-
-        return  $walletPaiement;
-    }
-
-    public function getPaymentErrorProperty()
-    {
-        return $this->getPaymentCountByStatus('ERROR');
-    }
-
-    public function getPaymentSuccessProperty()
-    {
-        return $this->getPaymentCountByStatus('SUCCESS');
-    }
-
-    public function getPaymentPendingProperty()
-    {
-        return $this->getPaymentCountByStatus('PENDING');
-    }
-
-    private function getReloadCountByStatus($status)
-    {
-        $userCountryId = Auth::guard('web')->user()->country->id;
-
-        if (sabdy()->is_under_distributer) {
-            $walletPaiement = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_reloads.status', $status)
-                ->where('wallet_reloads.wallet_id', sabdy()->wallet->id)
-                ->whereDate('wallet_reloads.created_at', Carbon::today())
-                ->count();
-        } else {
-            $walletPaiement = WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_reloads.status', $status)
-                ->whereDate('wallet_reloads.created_at', Carbon::today())
-                ->count();
-        }
-
-        return  $walletPaiement;
-    }
-    public function getReloadErrorProperty()
-    {
-        return $this->getReloadCountByStatus('ERROR');
-    }
-
-    public function getReloadSuccessProperty()
-    {
-
-        return $this->getReloadCountByStatus('SUCCESS');
-    }
-
-    public function getReloadPenddingProperty()
-    {
-
-        return $this->getReloadCountByStatus('PENDING');
-    }
-
-    private function getVirementCountByStatus($status)
-    {
-        $userCountryId = Auth::guard('web')->user()->country->id;
-
-        if (sabdy()->is_under_distributer) {
-            $walletPaiement = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_banks.status', $status)
-                ->where('wallet_banks.wallet_id', sabdy()->wallet->id)
-                ->whereDate('wallet_banks.created_at', Carbon::today())
-                ->count();
-        } else {
-            $walletPaiement = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_banks.status', $status)
-                ->whereDate('wallet_banks.created_at', Carbon::today())
-                ->count();
-        }
-
-        return  $walletPaiement;
-    }
-    public function getVirementSuccessProperty()
-    {
-
-        return $this->getVirementCountByStatus('SUCCESS');
-    }
-
-    public function getVirementPenddingProperty()
-    {
-
-        return $this->getVirementCountByStatus('PENDING');
-    }
-
-    public function getVirementErrorProperty()
-    {
-
-        return $this->getVirementCountByStatus('ERROR');
-    }
-
-    private function getInterCountByStatus($status)
-    {
-        $userCountryId = Auth::guard('web')->user()->country->id;
-
-        if (sabdy()->is_under_distributer) {
-            $walletInters = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_inters.status', $status)
-                ->where('wallet_inters.wallet_id', sabdy()->wallet->id)
-                ->whereDate('wallet_inters.created_at', Carbon::today())
-                ->count();
-        } else {
-            $walletInters = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_inters.status', $status)
-                ->whereDate('wallet_inters.created_at', Carbon::today())
-                ->count();
-        }
-
-        return  $walletInters;
-    }
-
-    public function getInterErrorProperty()
-    {
-        return $this->getInterCountByStatus('ERROR');
-    }
-
-    public function getInterSuccessProperty()
-    {
-        return $this->getInterCountByStatus('SUCCESS');
-    }
-
-    public function getInterPenddingProperty()
-    {
-        return $this->getInterCountByStatus('PENDING');
-    }
-
-    private function getPhoneCreditCountByStatus($status)
-    {
-        $userCountryId = Auth::guard('web')->user()->country->id;
-
-        if (sabdy()->is_under_distributer) {
-            $walletInfos = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_phone_credits.status', $status)
-                ->where('wallet_phone_credits.wallet_id', sabdy()->wallet->id)
-                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-                ->count();
-        } else {
-            $walletInfos = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_phone_credits.status', $status)
-                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-                ->count();
-        }
-
-        return  $walletInfos;
-    }
-
-    public function getPhoneCreditErrorProperty()
-    {
-        return $this->getPhoneCreditCountByStatus('ERROR');
-    }
-
-    public function getPhoneCreditSuccessProperty()
-    {
-        return $this->getPhoneCreditCountByStatus('SUCCESS');
-    }
-
-    public function getPhoneCreditPenddingProperty()
-    {
-        return $this->getPhoneCreditCountByStatus('PENDING');
-    }
-
-    private function getDepositCountByStatus($status)
-    {
-        $userCountryId = Auth::guard('web')->user()->country->id;
-
-        if (sabdy()->is_under_distributer) {
-            $walletInfos = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_deposits.status', $status)
-                ->where('wallet_deposits.wallet_id', sabdy()->wallet->id)
-                ->whereDate('wallet_deposits.created_at', Carbon::today())
-                ->count();
-        } else {
-            $walletInfos = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $userCountryId)
-                ->where('wallet_deposits.status', $status)
-                ->whereDate('wallet_deposits.created_at', Carbon::today())
-                ->count();
-        }
-
-        return  $walletInfos;
-    }
-
-    public function getDepositErrorProperty()
-    {
-        return $this->getDepositCountByStatus('ERROR');
-    }
-
-    public function getDepositSuccessProperty()
-    {
-        return $this->getDepositCountByStatus('SUCCESS');
-    }
-
-    public function getDepositPenddingProperty()
-    {
-        return $this->getDepositCountByStatus('PENDING');
-    }
 }

@@ -3279,8 +3279,6 @@
             $('bank-send-nav').attr('aria-selected', false);
             $('#bank-send').removeClass('active');
 
-
-
             $('#push-nav').removeClass('active');
             $('push-nav').attr('aria-selected', false);
             $('#push').removeClass('active');
