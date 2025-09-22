@@ -52,7 +52,6 @@ class CheckAppStatus extends Command
 
             if ($currentHour >= $robus_hour_begin && $currentHour <= $robus_hour_end) {
                 DB::table('app_statuses')->truncate();
-                DB::statement('TRUNCATE TABLE app_statuses');
             } else {
                 AppStatus::create([
                     'status_app' => 'closed',

@@ -43,6 +43,8 @@ class CheckAppWeb extends  Command implements ShouldQueue
 
                 $robus_app = CloseAppWeb::whereStatus(true)->where('id', $currentDayOfWeek)->first();
 
+                DB::table('app_statuses')->truncate();
+
                 if ($robus_app) {
                         $robus_hour_begin = $robus_app->time_start;
                         $robus_hour_end = $robus_app->time_end;
@@ -53,7 +55,7 @@ class CheckAppWeb extends  Command implements ShouldQueue
                         if ($currentHour >= $robus_hour_begin && $currentHour <= $robus_hour_end) {
                                 // Utilisation de la classe DB pour vider la table des statuts
                                 DB::table('app_web_statuses')->truncate();
-                                DB::statement('TRUNCATE TABLE app_web_statuses');
+                                // DB::statement('TRUNCATE TABLE app_web_statuses');
                         } else {
                                 // L'application est fermée, enregistrez cet état dans la base de données
                                 AppWebStatus::create([
