@@ -19,7 +19,28 @@ class NotificationServiceBackend
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
 
-    public function notificationSmsDepotSend($wallet_search , $message)
+    public function notifyDrawalUsers($walletUser, $wallet_search, $walletTransaction)
+    {
+        if ($wallet_search->sidUser->email != null) {
+
+            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
+        }
+    }
+
+    public function notifyCreateUsers($walletUser, $admins, $msg_title, $msg, $admin_msg)
+    {
+        if ($walletUser) {
+            $walletUser->notify(new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ]));
+        }
+
+        Notification::send($admins, new AdminNotification($admin_msg));
+    }
+
+
+    public function notificationSmsDepotSend($wallet_search, $message)
     {
 
         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {

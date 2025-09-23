@@ -8,6 +8,7 @@ use App\Models\Wallets\WalletCommission;
 use App\Models\Wallets\WalletAdmin;
 use Illuminate\Support\Facades\DB;
 use App\Models\Custumers\Country;
+use Illuminate\Support\Facades\Auth;
 
 class CommissionServiceBackend
 {
@@ -15,7 +16,62 @@ class CommissionServiceBackend
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
 
+    public function handleAdminCommission($check, $admin_civ)
+    {
+        $amountValeur = $check->adminCom->amount;
 
+        $walletAdmin = WalletAdmin::find(1);
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' => $amountValeur,
+                    'sid_user_id' => $admin_single->id,
+                    'description' => 'Commission administrateur',
+                    'status' => "SUCCESS",
+                ]);
+
+                if ($walletAdmin != null) {
+                    $walletAdmin->increment('amount', $amountValeur);
+                } else {
+                    $admin_single->wallet->update([
+                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                        'sid_user_relod' => Auth::guard('web')->user()->id,
+                        'amount' => DB::raw('amount+' . $amountValeur),
+                    ]);
+                }
+            }
+        }
+    }
+
+    public function handleUnderDistributorCommission($check, $admin_civ, $description)
+    {
+        $valeur_amount_com = (float) $check->adminCom->amount + (float)$check->adminCom->amount_compagnie;
+        $walletCommission = WalletCommission::find(1);
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' =>   $valeur_amount_com,
+                    'sid_user_id' =>   $admin_single->id,
+                    'description' => $description,
+                    'status'  => "SUCCESS",
+                    'amount_under' =>  $valeur_amount_com,
+                    'description_underdistributer' =>  $description
+                ]);
+
+                if ($walletCommission && $walletCommission->amount >= $valeur_amount_com) {
+                    $walletCommission->decrement('amount', $valeur_amount_com);
+                } else {
+                    $admin_single->wallet->decrement('amount', $valeur_amount_com);
+                }
+            }
+        }
+    }
 
     public function distributeAdminCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
     {
@@ -26,9 +82,13 @@ class CommissionServiceBackend
 
         $walletCommission = WalletCommission::find(1);
 
+        $walletAdmin = WalletAdmin::find(1);
+
+        $walletAdmin->increment('amount', $amountDeposit);
+
         if ($adminCiv->count() > 0) {
 
-            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+            $commissionPerAdmin = $amountDeposit / $adminCiv->count();
 
             foreach ($adminCiv as $user) {
                 $adminUser = SidUser::find($user->id);
@@ -41,15 +101,43 @@ class CommissionServiceBackend
                     'description_underdistributer' => sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null,
                 ], [$walletColumn => $walletId]));
 
-                $total_commission = (float) $amountDeposit  + (float) $totalCommission;
-                if ($walletCommission && $walletCommission->amount >= $total_commission) {
-                    $walletCommission->decrement('amount', $total_commission);
+                if ($walletCommission && $walletCommission->amount >= $totalCommission) {
+                    $walletCommission->decrement('amount', $totalCommission);
                 } else {
-                    $adminUser->wallet->decrement('amount', $total_commission);
+                    $adminUser->wallet->decrement('amount', $totalCommission);
                 }
             }
         }
     }
+
+    public function distributeAdminNoCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
+    {
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        if ($adminCiv->count() > 0) {
+
+            $amount_compagnie = (float) $totalCommission - (float)$amountDeposit;
+            $commissionPerAdmin = $amountDeposit / $adminCiv->count();
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $commissionPerAdmin,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' => sabdy()->is_under_distributer ? $amountDeposit : 0,
+                    'amount_compagnie' => $amount_compagnie ?? 0,
+                    'amount_total' => $totalCommission ?? 0,
+                    'status'  => "PENDING",
+                    'description_underdistributer' => sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null,
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
+
 
     public function distributeAdminCommissions($adminCiv, $walletColumn, $walletId, $totalCommission)
     {
@@ -81,6 +169,34 @@ class CommissionServiceBackend
                 } else {
                     $adminUser->wallet->increment('amount', $totalCommission);
                 }
+            }
+        }
+    }
+
+    public function distributeAdminNoCommissions($adminCiv, $walletColumn, $walletId, $totalCommission)
+    {
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+
+        $walletAdmin = WalletAdmin::find(1);
+
+        if ($adminCiv->count() > 0) {
+            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $commissionPerAdmin,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' =>  0,
+                    'status'  => "PENDING",
+                    'description_underdistributer' => null,
+                ], [$walletColumn => $walletId]));
             }
         }
     }
@@ -181,6 +297,94 @@ class CommissionServiceBackend
         return true;
     }
 
+    public function processAdminNoCommissionSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
+    {
+
+
+
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'wallet_transaction_id' => $walletTransactionId,
+            'description' => 'Commission administrateur',
+            'status'  => "SUCCESS",
+            'amount_under' =>  sabdy()->is_under_distributer ? $valuer_deposit : 0,
+            'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+        ]);
+
+        $walletCommission = WalletCommission::find(1);
+        $walletAdmin = WalletAdmin::find(1);
+        if ($walletCommission && $walletCommission->amount >= $valuer_deposit) {
+            $walletCommission->decrement('amount', $valuer_deposit);
+        } else {
+            $admin_single->wallet->decrement('amount', $valuer_deposit);
+        }
+
+        $walletAdmin->increment('amount', $amount);
+
+        return true;
+    }
+
+    public function processAdminCommissionDrawalSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
+    {
+
+
+
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'wallet_transaction_id' => $walletTransactionId,
+            'description' => 'Retrait d\'argent',
+            'status'  => "SUCCESS",
+            'amount_under' =>  sabdy()->is_under_distributer ? $valuer_deposit : 0,
+            'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+        ]);
+
+        $walletCommission = WalletCommission::find(1);
+
+        if ($walletCommission && $walletCommission->amount >= $valuer_deposit) {
+            $walletCommission->decrement('amount', $valuer_deposit);
+        } else {
+            $admin_single->wallet->decrement('amount', $valuer_deposit);
+        }
+
+        return true;
+    }
+
+    public function processAdminCommissionDrawalAdmin($userId, $walletTransactionId, $amount, $valuer_deposit)
+    {
+
+
+
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'wallet_transaction_id' => $walletTransactionId,
+            'description' => 'Retrait d\'argent depuis un SD ou Superviseur ou ADMIN',
+            'status'  => "SUCCESS",
+            'amount_under' =>   0,
+            'description_underdistributer' =>  null
+        ]);
+
+        $walletAdmin = WalletAdmin::find(1);
+
+        if ($walletAdmin && $walletAdmin->amount >= $valuer_deposit) {
+            $walletAdmin->decrement('amount', $valuer_deposit);
+        } else {
+            $admin_single->wallet->decrement('amount', $valuer_deposit);
+        }
+
+        return true;
+    }
+
+
+
     public function processAdminCommissionNoDistributer($userId, $walletTransactionId, $amount)
     {
 
@@ -207,6 +411,32 @@ class CommissionServiceBackend
         }
     }
 
+    public function processAdminNoCommissionDistributer($userId, $walletTransactionId, $amount)
+    {
+
+
+
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'wallet_transaction_id' => $walletTransactionId,
+            'description' => 'Commission administrateur',
+            'status'  => "SUCCESS",
+            'amount_under' =>   0,
+            'description_underdistributer' =>   null
+        ]);
+
+        // $walletAdmin = WalletAdmin::find(1);
+        // if ($walletAdmin) {
+        //     // $walletCommission->decrement('amount', $amount);
+        //     $walletAdmin->increment('amount', $amount);
+        // } else {
+        //     $admin_single->wallet->increment('amount', $amount);
+        // }
+    }
+
     public function distributeAdminCommissionAccepteds($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
     {
 
@@ -217,6 +447,8 @@ class CommissionServiceBackend
 
 
         $walletCommission = WalletCommission::find(1);
+        $walletAdmin = WalletAdmin::find(1);
+        $walletAdmin->increment('amount', $totalCommission);
 
         if ($adminCiv->count() > 0) {
             $commissionPerAdmin = $totalCommission / $adminCiv->count();
@@ -235,12 +467,39 @@ class CommissionServiceBackend
                 if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
                     $walletCommission->decrement('amount', $amountDeposit);
                 } else {
-                    $adminUser->wallet->decrement('amount', $totalCommission);
+                    $adminUser->wallet->decrement('amount', $amountDeposit);
                 }
             }
         }
     }
 
+    public function distributeAdminNoCommissionAccepteds($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
+    {
+
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+
+        if ($adminCiv->count() > 0) {
+            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $commissionPerAdmin,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_compagnie' => 0,
+                    'amount_total' => $totalCommission ?? 0,
+                    'amount_under' =>  sabdy()->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                ], [$walletColumn => $walletId]));
+            }
+        }
+    }
 
     public function convertAdminCommission($amount)
     {

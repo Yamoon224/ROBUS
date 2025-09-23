@@ -2,16 +2,7 @@
 
 namespace App\Http\Livewire\TransactionGroupe;
 
-use App\Events\AdminNotifEvent;
-use App\Events\CreateWalletTransfersEvent;
-use App\Http\Controllers\Admin\MailController;
-use App\Mail\CodeValidated;
-use App\Models\AdminsCom;
-use App\Models\Banks\BankCard;
-use App\Models\Costs\TransactionCost;
 use App\Models\Custumers\Country;
-use App\Models\Invoices\InvoiceTransaction;
-use App\Models\Moneys\LevelMoney;
 use App\Models\OperatorService;
 use App\Models\Payments\Transaction;
 use App\Http\Services\CommissionServiceBackend;
@@ -23,18 +14,9 @@ use App\Http\Services\CommissionServicePercentBackend;
 use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
-use App\Models\Wallets\WalletBank;
-use App\Models\Wallets\WalletDeposit;
-use App\Models\Wallets\WalletInter;
-use App\Models\Wallets\WalletPayment;
-use App\Models\Wallets\WalletPhoneCredit;
-use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
 
 class TransactionCiv extends Component
@@ -493,7 +475,7 @@ class TransactionCiv extends Component
 
                                                     $message = 'Vous venez de recevoir un montant de ' . $reel_amount . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
-                                                    app(ServiceTransactionBackend::class)->notificationSmsDepotSend($wallet_search , $message);
+                                                    app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search , $message);
 
                                                     if ($this->processCommissionsDistributerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
                                                         app(NotificationServiceBackend::class)->sendNotification($walletTransaction);
@@ -559,7 +541,7 @@ class TransactionCiv extends Component
                                         if ($walletTransaction != null) {
 
                                             $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
-                                            app(ServiceTransactionBackend::class)->notificationSmsDepotSend($wallet_search , $message);
+                                            app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search , $message);
 
                                             if (app(ServiceTransactionBackend::class)->updateAmountRobusReceivedDistributer($this->compte_number_robus, $walletTransaction)) {
                                                 if (app(ServiceTransactionBackend::class)->processCommissionsRobusDistributer($reel_amount)) {
@@ -631,7 +613,7 @@ class TransactionCiv extends Component
 
                                             $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
-                                            app(ServiceTransactionBackend::class)->notificationSmsDepotSend($wallet_search , $message);
+                                            app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search , $message);
 
                                             if (app(ServiceTransactionBackend::class)->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
                                                 if (app(CommissionServiceBackend::class)->processCommissionsCustumerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
@@ -1037,7 +1019,7 @@ class TransactionCiv extends Component
                             $valeur_single = ($admin_valeur_convertion) / $nmbre_admin;
 
                             foreach ($admin_civ as $user) {
-                                app(CommissionServiceBackend::class)->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $amount_all_commissions);
+                                app(CommissionServiceBackend::class)->processAdminCommissionDrawalSDistributer($user->id, $walletTransaction->id, $valeur_single, $amount_all_commissions);
                             }
                         }
                     } else {
@@ -1047,7 +1029,7 @@ class TransactionCiv extends Component
                             $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
 
                             foreach ($admin_civ as $user) {
-                                app(CommissionServiceBackend::class)->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                                app(CommissionServiceBackend::class)->processAdminCommissionDrawalSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                             }
                         }
                     }
@@ -1168,7 +1150,7 @@ class TransactionCiv extends Component
                         $valeur_single = ($admin_valeur_convertion + $percent_companie_convertion) / $nmbre_admin;
 
                         foreach ($admin_civ as $user) {
-                            app(CommissionServiceBackend::class)->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                            app(CommissionServiceBackend::class)->processAdminNoCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
                 } else {
@@ -1176,7 +1158,7 @@ class TransactionCiv extends Component
                         $nmbre_admin = $admin_civ->count();
                         $valeur_single = ($admin_valeur_convertion) / $nmbre_admin;
                         foreach ($admin_civ as $user) {
-                            app(CommissionServiceBackend::class)->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                            app(CommissionServiceBackend::class)->processAdminNoCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
                 }
@@ -1188,7 +1170,7 @@ class TransactionCiv extends Component
                     $valeur_single = sabdy()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $percent_valeur_convertion / $nmbre_admin;
 
                     foreach ($admin_civ as $user) {
-                        app(CommissionServiceBackend::class)->processAdminCommissionNoDistributer($user->id, $walletTransaction->id, $valeur_single);
+                        app(CommissionServiceBackend::class)->processAdminNoCommissionDistributer($user->id, $walletTransaction->id, $valeur_single);
                     }
                 }
             }
@@ -1238,7 +1220,7 @@ class TransactionCiv extends Component
             $valeur_single = $admin_valeur_convertion / $nmbre_admin;
 
             foreach ($admin_civ as $user) {
-                app(CommissionServiceBackend::class)->processAdminCommissionNoDistributer($user->id, $walletTransaction->id, $valeur_single);
+                app(CommissionServiceBackend::class)->processAdminNoCommissionDistributer($user->id, $walletTransaction->id, $valeur_single);
             }
         }
 
