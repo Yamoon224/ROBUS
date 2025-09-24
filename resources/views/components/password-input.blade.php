@@ -1,7 +1,6 @@
-<div class="mb-1 mt-6 col-span-12" x-data="{ show: true }">
+<div class="mb-1 mt-6 col-span-12 form-group required" x-data="{ show: true }">
     <div class="d-flex justify-content-between">
-        <label class="form-label" for="password_validated">Mot de passe<span class="text-danger">
-                *</span></label>
+        <label class="form-label" for="password_validated">Mot de passe</label>
     </div>
     <div class="input-group input-group-merge form-password-toggle">
         <input wire:model="password_validated" placeholder="mot de passe"

@@ -7,8 +7,10 @@
 
 <div>
     <!-- inject:js -->
-    <script src="{{ asset('public/dist/js/app.js') }}"></script>
-    <script src="{{ asset('public/css/app.css') }}"></script>
+    <script src="{{ asset_url('/dist/js/app.js') }}"></script>
+    <script src="{{ asset_url('/css/app.css') }}"></script>
+    <script src="{{ asset_url('/css/appModal.css') }}"></script>
+
     <h2 class="text-lg font-medium truncate mr-6 mt-6">
 
         <span

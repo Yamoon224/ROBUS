@@ -11,7 +11,7 @@
                 </div>
                 <div class="px-5 pb-8 text-center">
                     <button wire:click="resetField" type="button"
-                        class="btn btn-outline-secondary w-25 mr-1 mb-1">Annuler</button>
+                        class="btn btn-danger-soft w-25 mr-1 mb-1">Annuler</button>
                     <button wire:click="delete" wire:loading.remove type="button"
                         class="btn btn-danger  w-25 mr-1 mb-1">Supprimer</button>
                     <button wire:loading.delay wirea:target="delete" wire:click="delete" type="button"

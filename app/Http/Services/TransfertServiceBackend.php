@@ -3,12 +3,6 @@
 namespace App\Http\Services;
 
 use App\Models\AdminsCom;
-use App\Models\Banks\BankCard;
-use App\Models\Costs\BankCost;
-use App\Models\Costs\DepositCost;
-use App\Models\Costs\PaymentCost;
-use App\Models\Costs\PhoneCreditCost;
-use App\Models\Costs\TransactionCost;
 use App\Models\Custumers\Country;
 use App\Models\Invoices\InvoiceBank;
 use App\Models\Invoices\InvoiceDeposit;
@@ -55,6 +49,419 @@ class TransfertServiceBackend
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
+
+    public function createRobusWalletInter($val_amount, $percent_robus, $country_robus, $provider_payment, $number_compte, $provider_type, $amount_drawal)
+    {
+        $amount_solde = sabdy()->wallet->amount - $val_amount;
+
+        return WalletInter::create([
+            'wallet_id' => sabdy()->wallet->id,
+            'amount' => $val_amount,
+            'description' => "Transfert par Robus",
+            'inter_cost_id' => null,
+            'transaction_cost_id' => $percent_robus->id,
+            'phone' =>  null,
+            'number_compte' => strtoupper($number_compte),
+            'created_by' => sabdy()->id,
+            'provider_id' => $provider_payment,
+            'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->percent_under_distributer * $val_amount) : ($percent_robus->percent * $val_amount),
+            'provider_type' => 1,
+            'type_transaction' => 'Depot',
+            'type_received' => 'Transfert',
+            'status' => 'SUCCESS',
+            'country_id' => $country_robus->id,
+            'choose_type_transaction' => $provider_type,
+            'amount_solde' => $amount_solde ?? null,
+            'amount_solde_drawal' => $amount_drawal ?? null
+        ]);
+    }
+
+    public function updateAmountReceived($walletInter, $country_robus, $valeur_received)
+    {
+
+
+        if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
+
+            //   Convertion  in CFA
+            $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_received *   (float) sabdy()->country->currencie->value;
+            //   Convertion in Country send
+            $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
+        } elseif (sabdy()->country->currencie->value == $country_robus->currencie->value) {
+
+            $commission_transaction_val_inter_convertion_send = (float)   $valeur_received;
+        } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
+
+            //   Convertion  in CFA
+            $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_received *   (float) sabdy()->country->currencie->value;
+
+            //   Convertion in Country send
+            $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
+        }
+
+        if ($commission_transaction_val_inter_convertion_send) {
+
+            $walletInter->update(['amount_received' => $commission_transaction_val_inter_convertion_send]);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+    public function createMobileWalletInter(
+        $amount_transaction,
+        $percent_robus,
+        $country_robus,
+        $provider_payment,
+        $phone,
+        $name_custumers,
+        $num_piece_custumers,
+        $date_piece,
+        $name,
+        $name_sender,
+        $account_number
+    ) {
+
+        $amount_solde = sabdy()->wallet->amount - $amount_transaction;
+
+        return WalletInter::create([
+            'wallet_id' => sabdy()->wallet->id,
+            'amount' => $amount_transaction,
+            'description' => null,
+            'inter_cost_id' => null,
+            'transaction_cost_id' => $percent_robus->id,
+            'phone' => $country_robus->indecative . $phone ?? null,
+            'number_compte' => $account_number,
+            'created_by' => sabdy()->id,
+            'provider_id' => $provider_payment,
+            'name_complet' => $name_custumers ?? null,
+            'name' => $name ?? null,
+            'num_piece' => $num_piece_custumers ?? null,
+            'name_benef' => $name_sender ?? null,
+            'validated_date' => $date_piece ?? null,
+            'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'provider_type' => 1,
+            'status' => 'PENDING',
+            'country_id' => $country_robus->id,
+            'choose_type_transaction' => 1,
+            'amount_solde' => $amount_solde ?? null
+        ]);
+    }
+    public function updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $wallet)
+    {
+
+        $wallet_search = Wallet::where('wallet_id', $wallet)
+            ->where('country_id', $country_robus->id)
+            //   ->where('status', true)
+            ->first();
+
+        $rt = rand(40, 5000) * time();
+        $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
+        $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
+
+
+        if (sabdy()->country->currencie->value != $country_robus->currencie->value) {
+
+            $commission_transaction_val_inter_convertion_cfa = (float) $valeur_received * (float) sabdy()->country->currencie->value;
+
+            $commission_transaction_val_inter_convertion_send = (float) $commission_transaction_val_inter_convertion_cfa / (float) $country_robus->currencie->value;
+        } else {
+
+            $commission_transaction_val_inter_convertion_send = (float) $valeur_received;
+        }
+
+        $walletAmountSend = Wallet::where('wallet_id',  $wallet)->first();
+
+        $amount_solde_drawal = (float)$walletAmountSend->amount + $commission_transaction_val_inter_convertion_send;
+
+        if ($commission_transaction_val_inter_convertion_send) {
+
+            $walletInter->update([
+                'amount_received' => $commission_transaction_val_inter_convertion_send,
+                'amount_solde_drawal' => $amount_solde_drawal
+            ]);
+
+            $wallet_search->update([
+                'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                'sid_user_relod' => sabdy()->id,
+                'amount' => DB::raw('amount+' . $commission_transaction_val_inter_convertion_send),
+            ]);
+
+
+            // Valuer in Ivoice transaction
+            $transaction = TransactionInter::create([
+                'wallet_inter_id' => $walletInter->id,
+                'sid_user_id' => sabdy()->id,
+                'transaction_id' => 'RB_' . $walletInter->provider->name . '_' . $transactionCode,
+                'operator_transaction_name' => $walletInter->provider->name,
+                'trans_comp_id' => 'RB_' . $transactionCompiCode,
+                'pay_amount' => $walletInter->amount,
+                'fee_amount' =>  $walletInter->costs_amount,
+                'received_amount' => $commission_transaction_val_inter_convertion_send,
+                'status' => $walletInter->status,
+            ]);
+
+            InvoiceInter::create([
+                'title' => "Transfers d'argent",
+                'transaction_inter_id' => $transaction->id,
+                'description' => $walletInter->description,
+                'is_send' => true,
+                'status' => $walletInter->status,
+                'created_by' => sabdy()->id,
+            ]);
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function createDeposit($check, $transactionCode, $transactionCompiCode)
+    {
+        return  Deposit::create([
+
+            'wallet_deposit_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' =>  $check->costs_amount,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+
+    public function createInvoiceReloadCard($check, $depositWallet)
+    {
+        return   InvoiceDeposit::create([
+            'title' => 'Rechargement de carte',
+            'wallet_deposit_id' => $check->id,
+            'deposit_id' => $depositWallet->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+    public function createTransaction($check, $transactionCode, $transactionCompiCode)
+    {
+        return Transaction::create([
+            'wallet_transaction_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' =>  $check->costs_amount,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createInvoiceTransaction($check, $transaction)
+    {
+        return  InvoiceTransaction::create([
+            'title' => "Transfers d'argent",
+            'wallet_transaction_id' => $check->id,
+            'transactions_id' => $transaction->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+
+    public function createVirement($check, $transactionCode, $transactionCompiCode)
+    {
+        return PaymentBank::create([
+            'wallet_bank_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount,
+            'received_amount' =>  $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createInvoiceVirement($check, $paymentBank)
+    {
+        return   InvoiceBank::create([
+            'title' => 'Virement bancaire',
+            'wallet_bank_id' => $check->id,
+            'payment_bank_id' => $paymentBank->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+    public function createPayment($check, $transactionCode, $transactionCompiCode)
+    {
+        return Payment::create([
+            'wallet_payment_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode ??  null,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount ?? null,
+            'fee_amount' =>  $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+
+    public function createInvoicePayment($check, $payment)
+    {
+        return  InvoicePayment::create([
+            'title' => 'Paiement de facture ',
+            'wallet_payment_id' => $check->id,
+            'payment_id' => $payment->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+    public function createErrorTransaction($check, $transactionCode, $transactionCompiCode)
+    {
+        return  Transaction::create([
+            'wallet_transaction_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $check->amount + $check->costs_amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode)
+    {
+        return  PaymentPhoneCredit::create([
+            'wallet_phone_credit_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $check->amount + $check->costs_amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createErrorDeposit($check, $transactionCode, $transactionCompiCode)
+    {
+        return  Deposit::create([
+            'wallet_deposit_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name .
+                '_' .
+                $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $check->amount + $check->costs_amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createErrorPayment($check, $transactionCode, $transactionCompiCode)
+    {
+        return Payment::create([
+            'wallet_payment_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' =>
+            'RB_' .
+                $check->provider->name .
+                '_' .
+                $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $check->amount + $check->costs_amount,
+            'status' => $check->status,
+        ]);
+    }
+
+
+    public function createErrorInter($check, $transactionCode, $transactionCompiCode)
+    {
+        return    TransactionInter::create([
+            'wallet_inter_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name .
+                '_' . $transactionCode,
+            'operator_transaction_name' =>
+            $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createErrorVirement($check, $transactionCode, $transactionCompiCode, $commission)
+    {
+        return    PaymentBank::create([
+            'wallet_bank_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $commission,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createInter($check, $transactionCode, $transactionCompiCode)
+    {
+        return TransactionInter::create([
+            'wallet_inter_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $check->provider->name .
+                '_' . $transactionCode,
+            'operator_transaction_name' =>
+            $check->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+
+    public function createInvoiceInter($check, $transaction_inter)
+    {
+        return  InvoiceInter::create([
+            'title' => "Transfers d'argent",
+            // 'transaction_inter_id' => $check->id,
+            'transaction_inter_id' => $transaction_inter->id,
+            // 'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
 
 
     public function updatePaiementWallet($walletUser, $transaction_amount_robus)

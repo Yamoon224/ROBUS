@@ -13,7 +13,7 @@
 
                 <div class="px-5 pb-8 text-center mt-6">
                     <button type="button" wire:click="$emit('modal-hide')"
-                        class="btn btn-outline-secondary w-25 mr-1 mb-1">Annuler</button>
+                        class="btn btn-danger-soft w-25 mr-1 mb-1">Annuler</button>
                     <input wire:click="disable" wire:loading.remove type="button"
                         class="btn btn-danger  w-25 mr-1 mb-1"
                         value="{{ $appStatus == 1 ? 'Désactiver' : 'Activer' }}" />

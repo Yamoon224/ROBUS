@@ -15,14 +15,11 @@ use App\Events\CreateWalletPhoneCreditEvent;
 use App\Events\CreateWalletReloadCardEvent;
 use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
-use App\Http\Services\NotificationSendService;
 use App\Http\Services\NotificationServiceBackend;
 use App\Http\Services\ConvertionPercentBackend;
 use App\Http\Services\TransfertServiceBackend;
 use App\Http\Services\CommissionServiceBackend;
 use App\Http\Services\CommissionServicePercentBackend;
-
-use App\Mail\CodeValidated;
 use App\Models\AdminsCom;
 use App\Models\Banks\BankCard;
 use App\Models\Costs\BankCost;
@@ -31,21 +28,8 @@ use App\Models\Costs\PaymentCost;
 use App\Models\Costs\PhoneCreditCost;
 use App\Models\Costs\TransactionCost;
 use App\Models\Custumers\Country;
-use App\Models\Invoices\InvoiceBank;
-use App\Models\Invoices\InvoiceDeposit;
-use App\Models\Invoices\InvoiceInter;
-use App\Models\Invoices\InvoicePayment;
-use App\Models\Invoices\InvoicePhoneCredit;
-use App\Models\Invoices\InvoiceTransaction;
-use App\Models\Moneys\LevelMoney;
 use App\Models\Offer;
 use App\Models\OperatorService;
-use App\Models\Payments\Deposit;
-use App\Models\Payments\Payment;
-use App\Models\Payments\PaymentBank;
-use App\Models\Payments\PaymentPhoneCredit;
-use App\Models\Payments\Transaction;
-use App\Models\Payments\TransactionInter;
 use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
@@ -64,7 +48,6 @@ use App\Models\Wallets\WalletVersement;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -116,6 +99,7 @@ class Transfers extends Component
     public $currentStep = 1;
     public $code_validated;
     public $code_validated_inter;
+
     // Edit
     public $transaction_description_edit;
     public $transaction_phone_edit;
@@ -600,55 +584,7 @@ class Transfers extends Component
     }
 
     // Initialise valeur after click 
-    public function loadChoose1()
-    {
-        $this->provider_phone_credit_inter = null;
-        $this->provider_payment_inter = null;
-        $this->paiement_decoder_canal_inter = '';
-        $this->paiement_name_cie_inter = '';
-        $this->paiement_id_invoice_inter = '';
-        $this->pre_id_invoice_inter = '';
-        $this->paiement_name_sodecie_inter = '';
-        $this->paiement_num_contrat_inter = '';
-        $this->paiement_amount_t_sodecie_inter = '';
-    }
 
-    public function loadChoose10()
-    {
-        $this->provider_phone_credit_inter = null;
-        $this->provider_payment_inter = null;
-        $this->paiement_decoder_canal_inter = '';
-        $this->paiement_name_cie_inter = '';
-        $this->paiement_id_invoice_inter = '';
-        $this->pre_id_invoice_inter = '';
-        $this->paiement_name_sodecie_inter = '';
-        $this->paiement_num_contrat_inter = '';
-        $this->paiement_amount_t_sodecie_inter = '';
-    }
-
-    public function loadChoose2()
-    {
-        $this->provider_phone_credit_inter = null;
-        $this->number_phone_credit_inter = '';
-        $this->amount_phone_credit_inter = '';
-        $this->provider_inter = null;
-        $this->paiementChoix_phone = null;
-        $this->offer_paiement = null;
-        $this->facture_choix_type = null;
-        $this->choose_type_paiement = null;
-        $this->paiement_amount_total_inter = ' ';
-        $this->paiement_decoder_canal_inter = '';
-        $this->paiement_name_cie_inter = '';
-        $this->paiement_id_invoice_inter = '';
-        $this->pre_id_invoice_inter = '';
-        $this->paiement_name_sodecie_inter = '';
-        $this->paiement_num_contrat_inter = '';
-        $this->paiement_amount_t_sodecie_inter = '';
-        $this->amount_inter = '';
-        $this->account_number_inter = '';
-        $this->phone_inter = '';
-        $this->amount_inter_robus = '';
-    }
 
     public function loadChoose3()
     {
@@ -665,20 +601,6 @@ class Transfers extends Component
         $this->provider_payment_inter = null;
     }
 
-    public function loadChoose8()
-    {
-        $this->provider_inter = null;
-        $this->pre_id_invoice_inter = '';
-        $this->paiement_name_sodecie_inter = '';
-        $this->paiement_num_contrat_inter = '';
-        $this->paiement_amount_t_sodecie_inter = '';
-        $this->amount_inter = '';
-        $this->account_number_inter = '';
-        $this->phone_inter = '';
-        $this->amount_inter_robus = '';
-        $this->country_inter_robus = '';
-        $this->provider_payment_inter = null;
-    }
     //  Notify and real times and active menus
     public function notifyNewBank()
     {
@@ -904,7 +826,6 @@ class Transfers extends Component
             $this->emit('error', 'Error de message demande a l\'admin !');
         }
     }
-
 
 
     private function isUserNotEligible($wallet_search)
@@ -1232,10 +1153,7 @@ class Transfers extends Component
         }
     }
 
-    public function updatedAmountPhoneCredit()
-    {
-        $this->calculateAmountPhoneCredits();
-    }
+
 
     public function updatedTransactionAmountRobus()
     {
@@ -1269,30 +1187,6 @@ class Transfers extends Component
         }
     }
 
-    public function calculateAmountPhoneCredits()
-    {
-
-        $this->commission_transaction_val_admin_phone_receive = 0;
-        $this->commission_transaction_val_nat_phone_receive = 0;
-        $this->commission_transaction_val_nat_phone_pay = 0;
-
-
-        if ($this->amount_phone_credit) {
-            // Calcul pour les transactions Robus
-            $reel_amount = $this->search_amount($this->amount_phone_credit);
-
-            if ($reel_amount != '') {
-
-                $commission_transaction = PhoneCreditCost::whereId(1)->first();
-
-                $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
-                // Calculs
-                $this->commission_transaction_val_admin_phone_receive = (float) $commission_transaction->percent_merchands * $reel_amount;
-                $this->commission_transaction_val_nat_phone_receive = (float) $reel_amount;
-                $this->commission_transaction_val_nat_phone_pay = (float) $commission_percent_transaction;
-            }
-        }
-    }
     /**
      * Write code on Method
      *
@@ -1304,1335 +1198,6 @@ class Transfers extends Component
     }
 
 
-
-    public function addPaiement()
-    {
-
-        $walletUser = Auth::guard('web')->user();
-        $provider = Provider::whereId($this->provider_payment)->first();
-        $offer = Offer::whereId($this->offer_paiement)->first();
-        $som_transfers =  $this->getSumValTransactionProperty();
-        $valeur_ceiling = $walletUser->silver_ceiling;
-
-        try {
-
-            if ($provider) {
-
-                if ($walletUser->country->code == 'CI') {
-
-                    //Provider CIE  
-                    $percent_robus = PaymentCost::whereId(2)->first();
-
-                    if ($this->provider_payment == 8) {
-
-                        // Validation rules and messages
-                        $validationRules = [
-                            'paiement_name_cie' => 'required',
-                            'paiement_amount_total' => 'required',
-                        ];
-                        $validationMessages = [
-                            'paiement_amount_total.required' => 'Votre montant est obligatoire',
-                            'paiement_name_cie.required' => 'Nom est obligatoire',
-                        ];
-
-                        if ($this->facture_choix_type == 1) {
-                            $validationRules['paiement_id_invoice_pre'] = 'required';
-                            $validationMessages['paiement_id_invoice_pre.required'] = 'Numero est obligatoire';
-                        } elseif ($this->facture_choix_type == 2) {
-                            $validationRules['paiement_id_invoice'] = 'required';
-                            $validationMessages['paiement_id_invoice.required'] = 'Numero est obligatoire';
-                        }
-
-                        // Validate the input
-                        $this->validate($validationRules, $validationMessages);
-
-                        if ($som_transfers >= $valeur_ceiling) {
-                            $this->resetPaiementField();
-                            $this->emit('modal-hide-paiement');
-                            $this->emit('warning', 'Votre montant journier est atteint !');
-                            return;
-                        }
-
-                        // dd($this->paiement_amount_total);
-                        $reel_amount =  $this->search_amount($this->paiement_amount_total);
-
-                        // $validatedamountDays->search_amount(2000);
-                        $valAmount = $reel_amount +  $percent_robus->amount_auther;
-
-                        $amount_solde =  $walletUser->wallet->amount -  $valAmount;
-
-                        if ($valAmount > $walletUser->wallet->amount) {
-                            $this->resetPaiementField();
-                            $this->emit('modal-hide-paiement');
-                            $this->emit('error', 'Verifier votre montant  svp !');
-                            return;
-                        }
-
-                        $this->stepPaiment = 2;
-                    } elseif ($this->provider_payment == 10) {
-
-                        //   Provider SODECI
-                        $validationRules = [
-                            'paiement_name_sodecie' => 'required',
-                            'paiement_num_contrat' => 'required|max:9',
-                            'paiement_amount_t_sodecie' => 'required',
-                        ];
-                        $validationMessages = [
-                            'paiement_amount_t_sodecie.required' =>
-                            'Votre montant est obligatoire',
-                            'paiement_name_sodecie.required' =>
-                            'Nom  est obligatoire',
-                            'paiement_num_contrat.required' =>
-                            'Numero  est obligatoire',
-                        ];
-
-
-                        // Validate the input
-                        $this->validate($validationRules, $validationMessages);
-
-                        if ($som_transfers >= $valeur_ceiling) {
-                            $this->resetPaiementField();
-                            $this->emit('modal-hide-paiement');
-                            $this->emit('warning', 'Votre montant journier est atteint !');
-                            return;
-                        }
-
-                        $reel_amount = $this->search_amount($this->paiement_amount_t_sodecie);
-
-                        $valAmount = $reel_amount +  $percent_robus->amount_auther;
-
-                        if ($valAmount > $walletUser->wallet->amount) {
-                            $this->resetPaiementField();
-                            $this->emit('modal-hide-paiement');
-                            $this->emit('error', 'Verifier votre montant  svp !');
-                            return;
-                        }
-
-                        $this->stepPaiment = 2;
-                    } elseif ($this->provider_payment == 7) {
-
-
-                        // Percent commission providers
-                        $val_amount = $offer->amount + $percent_robus->amount_canal;
-
-                        $this->name_canal_send  = $offer->name;
-                        $this->amount_canal_send  = $val_amount;
-
-                        switch ($this->paiementChoix_phone) {
-                            case 1:
-                                $validationRules = [
-                                    'paiement_phone_canal' => 'required',
-                                    'offer_paiement' => 'required',
-                                ];
-                                $validationMessages = [
-                                    'offer_paiement.required' => 'Offre est obligatoire',
-                                    'paiement_phone_canal.required' => 'Numero est obligatoire',
-                                ];
-                                break;
-
-                            case 2:
-                                $validationRules = [
-                                    'paiement_decoder_canal' => 'required',
-                                    'offer_paiement' => 'required',
-                                ];
-                                $validationMessages = [
-                                    'offer_paiement.required' => 'Offre est obligatoire',
-                                    'paiement_decoder_canal.required' => 'Code est obligatoire',
-                                ];
-                                break;
-                        }
-
-                        // Validate the input
-                        $this->validate($validationRules, $validationMessages);
-
-                        if ($som_transfers >= $valeur_ceiling) {
-                            $this->resetPaiementField();
-                            $this->emit('modal-hide-paiement');
-                            $this->emit('warning', 'Votre montant journier est atteint !');
-                            return;
-                        }
-
-
-                        if ($val_amount > $walletUser->wallet->amount) {
-                            $this->resetPaiementField();
-                            $this->emit('modal-hide-paiement');
-                            $this->emit('error', 'Verifier votre montant  svp !');
-                            return;
-                        }
-
-                        $this->stepPaiment = 2;
-                    }
-
-                    if ($som_transfers >= $valeur_ceiling) {
-                        $this->resetPaiementField();
-                        $this->emit('modal-hide-inters');
-                        $this->emit('warning', 'Votre montant journalier est atteint !');
-                        return false;
-                    }
-                } else {
-                    $this->resetPaiementField();
-                    $this->emit('modal-hide-paiement');
-                    $this->emit('warning', 'Vous n\'etes pas en CIV !');
-                }
-            } else {
-                $this->emit('error', 'Paiement existante !');
-            }
-        } catch (\Exception $exception) {
-            $this->resetPaiementField();
-            $this->emit('modal-hide-paiement');
-            $this->emit('error', 'Error de message demande a l\'admin !');
-        }
-    }
-
-    public function addPaiementValidated()
-    {
-
-        $walletUser = Auth::guard('web')->user();
-        $provider = Provider::whereId($this->provider_payment)->first();
-        $offer = Offer::whereId($this->offer_paiement)->first();
-        $admins = $this->getAdminValeurProperty();
-        $admin_civ = $this->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
-        $valeur_ceiling = $walletUser->silver_ceiling;
-        DB::beginTransaction();
-
-        try {
-
-            if ($provider) {
-
-                $this->validate(
-                    [
-                        'password_validated' => 'required',
-                    ],
-                    [
-                        'password_validated.required' =>
-                        'Mot de passe est obligatoire',
-                    ]
-                );
-
-                if (Hash::check($this->password_validated, sabdy()->password)) {
-
-                    if ($walletUser->country->code == 'CI') {
-
-                        //Provider CIE  
-                        $percent_robus = PaymentCost::whereId(2)->first();
-
-                        if ($this->provider_payment == 8) {
-
-                            $validationRules = [
-                                'paiement_name_cie' => 'required',
-                                'paiement_amount_total' => 'required',
-                            ];
-                            $validationMessages = [
-                                'paiement_amount_total.required' => 'Votre montant est obligatoire',
-                                'paiement_name_cie.required' => 'Nom est obligatoire',
-                            ];
-
-                            if ($this->facture_choix_type == 1) {
-                                $validationRules['paiement_id_invoice_pre'] = 'required';
-                                $validationMessages['paiement_id_invoice_pre.required'] = 'Numero est obligatoire';
-                            } elseif ($this->facture_choix_type == 2) {
-                                $validationRules['paiement_id_invoice'] = 'required';
-                                $validationMessages['paiement_id_invoice.required'] = 'Numero est obligatoire';
-                            }
-
-                            // Validate the input
-                            $this->validate($validationRules, $validationMessages);
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
-                                return;
-                            }
-
-                            $reel_amount =  $this->search_amount($this->paiement_amount_total);
-
-                            $valAmount = $reel_amount +  $percent_robus->amount_auther;
-
-                            $amount_solde =  $walletUser->wallet->amount -  $valAmount;
-
-                            if ($valAmount > $walletUser->wallet->amount) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('error', 'Verifier votre montant  svp !');
-                                return;
-                            }
-
-                            if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer || $walletUser->is_under_distributer) {
-
-                                $walletPayment = app(TransfertServiceBackend::class)->createNewPaiement(
-                                    $walletUser,
-                                    $reel_amount,
-                                    $this->paiement_decoder_canal,
-                                    $this->paiement_id_invoice_pre,
-                                    $this->paiement_id_invoice,
-                                    $this->paiement_num_contrat,
-                                    $this->pre_phone_invoice,
-                                    $this->paiement_name_cie,
-                                    $provider,
-                                    $this->paiement_phone_canal,
-                                    $offer,
-                                    $percent_robus,
-                                    $this->paiementChoix_phone,
-                                    $this->paiementChoix_type,
-                                    $this->facture_choix_type,
-                                    $amount_solde,
-                                );
-
-                                $commission =  $walletPayment->amount +  $percent_robus->amount_auther;
-
-                                if ($walletPayment != null) {
-                                    $this->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $commission);
-                                }
-
-                                $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
-                                    $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $walletPayment->provider->name .
-                                    ' le ' .
-                                    $walletPayment->created_at .
-                                    ' votre demande est en cours de validation ' .
-                                    'Robus vous remercie';
-
-                                if ($this->shouldNotifyCreateCI($walletUser)) {
-
-                                    $this->sendSuccessMessageCreateNotification($walletUser, $message);
-                                }
-
-                                event(new CreateWalletPaiementEvent($walletPayment));
-
-                                app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Paiement de facture ', 'Demande de paiement est en cours de validation', 'Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname);
-
-                                if ($admins->count() > 0) {
-                                    $this->notifyAdmins($admins);
-                                }
-
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('success', 'Votre demande de transaction a bien été prise en compte.');
-                                if ($walletUser->email != null) {
-                                    $this->sendMailPaiementNotification($walletPayment);
-                                }
-                            } else {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
-                                return;
-                            }
-                        } elseif ($this->provider_payment == 10) {
-
-                            //   Provider SODECI
-                            $validationRules = [
-                                'paiement_name_sodecie' => 'required',
-                                'paiement_num_contrat' => 'required|max:9',
-                                'paiement_amount_t_sodecie' => 'required',
-                            ];
-                            $validationMessages = [
-                                'paiement_amount_t_sodecie.required' =>
-                                'Votre montant est obligatoire',
-                                'paiement_name_sodecie.required' =>
-                                'Nom  est obligatoire',
-                                'paiement_num_contrat.required' =>
-                                'Numero  est obligatoire',
-                            ];
-
-
-                            // Validate the input
-                            $this->validate($validationRules, $validationMessages);
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
-                                return;
-                            }
-
-                            $reel_amount = $this->search_amount($this->paiement_amount_t_sodecie);
-
-                            $valAmount = $reel_amount +  $percent_robus->amount_auther;
-
-                            $amount_solde =  $walletUser->wallet->amount -  $valAmount;
-
-                            if ($valAmount > $walletUser->wallet->amount) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('error', 'Verifier votre montant  svp !');
-                                return;
-                            }
-
-                            if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-
-                                $walletPayment = app(TransfertServiceBackend::class)->createNewPaiementSodeci(
-                                    $walletUser,
-                                    $reel_amount,
-                                    $this->paiement_amount_p_sodecie,
-                                    $this->paiement_decoder_canal,
-                                    $this->paiement_id_invoice,
-                                    $this->paiement_num_contrat,
-                                    $this->pre_phone_invoice,
-                                    $this->pre_id_invoice,
-                                    $this->paiement_name_sodecie,
-                                    $provider,
-                                    $percent_robus,
-                                    $this->paiement_phone_canal,
-                                    $offer,
-                                    $this->paiementChoix_phone,
-                                    $this->paiementChoix_type,
-                                    $this->facture_choix_type,
-                                    $amount_solde,
-                                );
-
-
-                                $commission =  $walletPayment->amount +  $percent_robus->amount_auther;
-
-                                if ($walletPayment != null) {
-                                    $this->updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $commission);
-                                }
-
-                                $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
-                                    $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $walletPayment->provider->name .
-                                    ' le ' .
-                                    $walletPayment->created_at .
-                                    ' votre demande est en cours de validation ' .
-                                    'Robus vous remercie';
-
-                                if ($this->shouldNotifyCreateCI($walletUser)) {
-
-                                    $this->sendSuccessMessageCreateNotification($walletUser, $message);
-                                }
-
-                                event(new CreateWalletPaiementEvent($walletPayment));
-
-                                app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Paiement de facture ', 'Demande de paiement est en cours de validation', 'Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname);
-
-                                if ($admins->count() > 0) {
-                                    $this->notifyAdmins($admins);
-                                }
-
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('success', 'Votre demande de transaction a bien été prise en compte.');
-                                if ($walletUser->email != null) {
-                                    $this->sendMailPaiementNotification($walletPayment);
-                                }
-                            } else {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
-                                return; // Arrête l'exécution si le montant est supérieur au solde
-                            }
-                        } elseif ($this->provider_payment == 7) {
-
-
-                            // Percent commission providers
-                            $val_amount = $offer->amount + $percent_robus->amount_canal;
-
-                            switch ($this->paiementChoix_phone) {
-                                case 1:
-                                    $validationRules = [
-                                        'paiement_phone_canal' => 'required',
-                                        'offer_paiement' => 'required',
-                                    ];
-                                    $validationMessages = [
-                                        'offer_paiement.required' => 'Offre est obligatoire',
-                                        'paiement_phone_canal.required' => 'Numero est obligatoire',
-                                    ];
-                                    break;
-
-                                case 2:
-                                    $validationRules = [
-                                        'paiement_decoder_canal' => 'required',
-                                        'offer_paiement' => 'required',
-                                    ];
-                                    $validationMessages = [
-                                        'offer_paiement.required' => 'Offre est obligatoire',
-                                        'paiement_decoder_canal.required' => 'Code est obligatoire',
-                                    ];
-                                    break;
-                            }
-
-                            // Validate the input
-                            $this->validate($validationRules, $validationMessages);
-
-                            if ($som_transfers >= $valeur_ceiling) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('warning', 'Votre montant journier est atteint !');
-                                return;
-                            }
-
-                            $amount_solde =  $walletUser->wallet->amount - $val_amount;
-
-                            if ($val_amount > $walletUser->wallet->amount) {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('error', 'Verifier votre montant  svp !');
-                                return;
-                            }
-
-                            if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-
-                                $walletPayment = app(TransfertServiceBackend::class)->createNewPaiementCanal(
-                                    $walletUser,
-                                    $offer,
-                                    $this->paiement_decoder_canal,
-                                    $this->paiement_id_invoice,
-                                    $this->paiement_num_contrat,
-                                    $this->pre_phone_invoice,
-                                    $this->pre_id_invoice,
-                                    $this->paiement_name_sodecie,
-                                    $provider,
-                                    $percent_robus,
-                                    $this->paiement_phone_canal,
-                                    $this->paiementChoix_phone,
-                                    $this->paiementChoix_type,
-                                    $this->facture_choix_type,
-                                    $amount_solde,
-                                );
-
-                                $commission = $walletPayment->amount +  $percent_robus->amount_canal;
-
-                                if ($walletPayment != null) {
-                                    $this->updateAmountPaymentOfferReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $commission);
-                                }
-
-                                $message = 'Vous avez effectué un paiement de ' . $walletPayment->amount .
-                                    $walletUser->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $walletPayment->provider->name .
-                                    ' le ' .
-                                    $walletPayment->created_at .
-                                    ' votre demande est en cours de validation ' .
-                                    'Robus vous remercie';
-
-                                if ($this->shouldNotifyCreateCI($walletUser)) {
-
-                                    $this->sendSuccessMessageCreateNotification($walletUser, $message);
-                                }
-
-                                event(new CreateWalletPaiementEvent($walletPayment));
-                                app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Paiement de facture ', 'Demande de paiement est en cours de validation', 'Demande de paiement de ' . ' ' . $walletPayment->wallet->sidUser->firstname);
-                                if ($admins->count() > 0) {
-                                    $this->notifyAdmins($admins);
-                                }
-
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('success', 'Votre demande de transaction a bien été prise en compte.');
-                                if ($walletUser->email != null) {
-                                    $this->sendMailPaiementNotification($walletPayment);
-                                }
-                            } else {
-                                $this->resetPaiementField();
-                                $this->emit('modal-hide-paiement');
-                                $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
-                                return; // Arrête l'exécution si le montant est supérieur au solde
-                            }
-                        }
-                    } else {
-                        $this->resetPaiementField();
-                        $this->emit('modal-hide-paiement');
-                        $this->emit('warning', 'Vous n\'etes pas en CIV !');
-                    }
-                } else {
-                    $this->resetPaiementField();
-                    $this->emit('modal-hide-paiement');
-                    $this->emit('warning', 'Veirifiez votre mot de passe SVP !');
-                }
-            } else {
-                $this->emit('error', 'Paiement existante !');
-            }
-            DB::commit();
-        } catch (\Exception $exception) {
-            $this->resetPaiementField();
-            $this->emit('modal-hide-paiement');
-            $this->emit('error', 'Error de message demande a l\'admin !');
-        }
-    }
-
-    public function addVirement()
-    {
-
-        $walletUser = Auth::guard('web')->user();
-        $som_transfers =  $this->getSumValTransactionProperty();
-        $valeur_ceiling = $walletUser->silver_ceiling;
-
-        try {
-
-            if ($this->provider_virement == 11 || $this->provider_virement == 12) {
-
-                $this->validate(
-                    [
-                        'firstname_user' => 'required',
-                        'lastname_user' => 'required',
-                        'phone_user' => 'required',
-                        'account_number_user_bank' => 'required',
-                        'amount_virement' => 'required',
-                        'provider_virement' => 'required',
-                    ],
-                    [
-                        'firstname_user.required' => 'Votre nom est obligatoire',
-                        'lastname_user.required' => 'Votre prenom est obligatoire',
-                        'phone_user.required' => 'Votre numero est obligatoire',
-                        'account_number_user_bank.required' =>
-                        'Votre nuomero de compte est obligatoire',
-                        'amount_virement.required' =>
-                        'Votre montant est obligatoire',
-                        'provider_virement;required' =>
-                        'Votre fournisseur est obligatoire',
-                    ]
-                );
-
-                // Percent comission an valeur
-                $percent_robus = BankCost::whereId(2)->first();
-
-                if ($som_transfers >= $valeur_ceiling) {
-                    $this->resetVirementField();
-                    $this->emit('modal-hide-virement');
-                    $this->emit('warning', 'Votre montant journier est atteint !');
-                    return;
-                }
-
-                $valeur_end = $percent_robus->levelBankIvories->last();
-
-                if ($valeur_end->amount_end < $this->amount_inter) {
-                    $this->resetVirementField();
-                    $this->emit('modal-hide-virement');
-                    $this->emit('info', 'Vous avez depasser le montant max !');
-                    return;
-                }
-                $this->stepVirement = 2;
-            } else {
-                $this->emit('error', 'Veuillez selectionnez un virement !');
-            }
-
-            if ($som_transfers >= $valeur_ceiling) {
-                $this->resetVirementField();
-                $this->emit('modal-hide-inters');
-                $this->emit('warning', 'Votre montant journalier est atteint !');
-                return false;
-            }
-        } catch (\Exception $exception) {
-            $this->resetVirementField();
-            $this->emit('modal-hide-virement');
-            $this->emit('error', 'Error de message demande a l\'admin !');
-        }
-    }
-
-
-    public function addValidatedVirement()
-    {
-
-        $walletUser = Auth::guard('web')->user();
-        $provider = Provider::whereId($this->provider_virement)->first();
-        $country_virement = Country::whereId($this->country_virement)
-            ->whereStatus(true)
-            ->first();
-        $admins = $this->getAdminValeurProperty();
-        $admin_civ = $this->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
-        $valeur_ceiling = $walletUser->silver_ceiling;
-        DB::beginTransaction();
-
-        try {
-
-            $this->validate(
-                [
-                    'password_validated' => 'required',
-                ],
-                [
-                    'password_validated.required' =>
-                    'Mot de passe est obligatoire',
-                ]
-            );
-
-            if (Hash::check($this->password_validated, sabdy()->password)) {
-
-                if ($this->provider_virement == 11 || $this->provider_virement == 12) {
-
-                    $this->validate(
-                        [
-                            'firstname_user' => 'required',
-                            'lastname_user' => 'required',
-                            'phone_user' => 'required',
-                            'account_number_user_bank' => 'required',
-                            'amount_virement' => 'required',
-                            'provider_virement' => 'required',
-                        ],
-                        [
-                            'firstname_user.required' => 'Votre nom est obligatoire',
-                            'lastname_user.required' => 'Votre prenom est obligatoire',
-                            'phone_user.required' => 'Votre numero est obligatoire',
-                            'account_number_user_bank.required' =>
-                            'Votre nuomero de compte est obligatoire',
-                            'amount_virement.required' =>
-                            'Votre montant est obligatoire',
-                            'provider_virement;required' =>
-                            'Votre fournisseur est obligatoire',
-                        ]
-                    );
-
-                    // Percent comission an valeur
-                    $percent_robus = BankCost::whereId(2)->first();
-
-                    if ($som_transfers >= $valeur_ceiling) {
-                        $this->resetVirementField();
-                        $this->emit('modal-hide-virement');
-                        $this->emit('warning', 'Votre montant journier est atteint !');
-                        return; // Arrête l'exécution si le montant est supérieur au solde
-                    }
-
-                    $valeur_end = $percent_robus->levelBankIvories->last();
-
-                    if ($valeur_end->amount_end < $this->amount_inter) {
-                        $this->resetVirementField();
-                        $this->emit('modal-hide-virement');
-                        $this->emit('info', 'Vous avez depasser le montant max !');
-                        return;
-                        // Arrête l'exécution si le montant est supérieur au solde
-                    }
-
-                    $reel_amount = $this->search_amount($this->amount_virement);
-
-                    foreach ($percent_robus->levelBankIvories as $amount_user) {
-
-                        if ($reel_amount >= $amount_user->amount_begin && $reel_amount <= $amount_user->amount_end) {
-
-                            $amount_valeur = $walletUser->is_under_distributer == 1 ? $reel_amount : $reel_amount + $amount_user->amount;
-                            $amountReceved = $walletUser->is_under_distributer == 1 ? (float) $reel_amount : (float) $reel_amount -  (float) $amount_user->amount;
-                            $soldeWallet = $walletUser->wallet->amount;
-
-                            if ($amount_valeur > $soldeWallet) {
-
-                                $this->resetVirementField();
-                                $this->emit('modal-hide-virement');
-                                $this->emit('warning', 'Verifier votre montant !');
-                                return;
-                            } else {
-
-                                $amount_solde =  $walletUser->wallet->amount -  $amount_valeur;
-
-                                if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-
-
-
-                                    $walletBank = app(TransfertServiceBackend::class)->createNewVirement(
-                                        $walletUser,
-                                        $reel_amount,
-                                        $this->virementDescription,
-                                        $provider,
-                                        $this->account_number_user_bank,
-                                        $amount_user,
-                                        $this->firstname_user,
-                                        $this->lastname_user,
-                                        $this->phone_user,
-                                        $amount_solde,
-                                        $country_virement,
-                                        $amountReceved
-                                    );
-
-
-                                    $message = 'Vous avez effectué un virement de ' . $walletBank->amount . $walletUser->wallet->currencie->code .
-                                        ' ' .
-                                        'par ' . $walletBank->provider->name .
-                                        ' a ' . $walletBank->firstname .
-                                        ' ' . $walletBank->firstname .
-                                        ' le ' . $walletBank->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
-
-                                    if ($this->shouldNotifyCreateCI($walletUser)) {
-
-                                        $this->sendSuccessMessageCreateNotification($walletUser, $message);
-                                    }
-
-
-                                    if ($walletBank != null) {
-
-                                        $this->updateamountVirementReceveid($admin_civ, $amount_user, $walletBank, $walletUser, $amount_valeur);
-                                    }
-
-                                    event(new CreateWalletBankEvent($walletBank));
-                                } else {
-
-                                    $this->resetVirementField();
-                                    $this->emit('modal-hide-virement');
-                                    $this->emit('error', 'Desolez vous n\'etes pas autorisée !');
-                                    return; // Arrête l'exécution si le montant est supérieur au solde
-                                }
-
-                                app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Virement bancaire', 'Demande de virement est en cours de validation', 'Demande de virement de ' . ' ' . $walletBank->wallet->sidUser->firstname);
-
-                                if ($admins->count() > 0) {
-                                    $this->notifyAdmins($admins);
-                                }
-                                $this->resetVirementField();
-                                $this->emit('modal-hide-virement');
-                                $this->emit('success', 'Votre demande de transaction a bien été prise en compte.');
-                                if ($walletUser->email != null) {
-                                    $this->sendMailVersementNotification($walletBank);
-                                }
-                            }
-                        }
-                    }
-                } else {
-                    $this->emit('error', 'Veuillez selectionnez un virement !');
-                }
-            } else {
-                $this->resetVirementField();
-                $this->emit('modal-hide-virement');
-                $this->emit('error', 'Verifiez votre mot de passe !');
-            }
-            DB::commit();
-        } catch (\Exception $exception) {
-            $this->resetVirementField();
-            $this->emit('modal-hide-virement');
-            $this->emit('error', 'Error de message demande a l\'admin !');
-        }
-    }
-
-    protected $validReloadCardProviders = [13, 14, 15, 16, 17];
-
-    protected function validateReloadCard()
-    {
-        $this->validate([
-            'amount_reloadcard' => 'required|numeric|min:2000',
-            'account_number_reload_card' => 'required',
-            'name_reloadcard' => 'required',
-        ], [
-            'amount_reloadcard.required' => 'Votre montant est obligatoire',
-            'amount_reloadcard.numeric' => 'Le montant doit être numérique',
-            'amount_reloadcard.min' => 'Le montant minimum est de 2000',
-            'name_reloadcard.required' => 'Nom est obligatoire',
-            'account_number_reload_card.required' => 'Numero est obligatoire',
-        ]);
-    }
-    // Add Reload card
-    public function addReloadCard()
-    {
-        $walletUser = Auth::guard('web')->user();
-        $provider = Provider::whereId($this->provider_reloadcard)->first();
-        $valeur_ceiling = $walletUser->silver_ceiling;
-        $som_transfers =  $this->getSumValTransactionProperty();
-        DB::beginTransaction();
-
-        try {
-
-            if ($provider) {
-
-                $percent_robus = DepositCost::whereId(2)->first();
-
-
-                if ($walletUser->country->code != 'CI') {
-                    return $this->emit('error', 'Ce réchargement se fait que en CI !');
-                }
-
-
-                // Provider Bsic and Ecobank
-                if (in_array($this->provider_reloadcard, $this->validReloadCardProviders)) {
-
-                    $this->validateReloadCard();
-
-                    if ($som_transfers >= $valeur_ceiling) {
-                        $this->resetPaiementField();
-                        $this->emit('modal-hide-reloadCard');
-                        $this->emit('warning', 'Votre montant journier est atteint !');
-                        return;
-                    }
-
-
-                    if (sabdy()->is_under_distributer) {
-                        $valeur_first = $percent_robus->levelDepositIvories->where('is_ivoires', true)->first();
-                        $valeur_end = $percent_robus->levelDepositIvories->where('is_ivoires', true)->last();
-                        $all_valeurs = $percent_robus->levelDepositIvories->where('is_ivoires', true);
-                    } else {
-
-                        $valeur_first = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->first();
-                        $valeur_end = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->last();
-                        $all_valeurs = $percent_robus->levelDepositIvories->where('is_inter_bank', true);
-                    }
-
-                    $reel_amount = $this->search_amount($this->amount_reloadcard);
-
-                    if ($valeur_end->amount_end < $reel_amount) {
-                        $this->resetReloadCardField();
-                        $this->emit('modal-hide-reloadCard');
-                        $this->emit('info', 'Vous avez depasser le montant max !'  . $$valeur_end->amount_end);
-                        return;
-                    }
-
-
-                    if ($valeur_first->amount_begin > $reel_amount) {
-                        $this->resetReloadCardField();
-                        $this->emit('modal-hide-reloadCard');
-                        $this->emit('info', 'Vous avez depasser le montant min !' . $valeur_first->amount_begin);
-                        return;
-                    }
-
-                    $this->stepReloadCard = 2;
-                } else {
-                    $this->emit('error', 'Aucune selection !');
-                }
-
-                if ($som_transfers >= $valeur_ceiling) {
-                    $this->resetReloadCardField();
-                    $this->emit('modal-hide-inters');
-                    $this->emit('warning', 'Votre montant journalier est atteint !');
-                    return false;
-                }
-            } else {
-                $this->emit('error', 'Rechargement  existante !');
-            }
-            DB::commit();
-        } catch (\Exception $exception) {
-            $this->resetReloadCardField();
-            $this->emit('modal-hide-reloadCard');
-            $this->emit('error', 'Error de message demande a l\'admin !');
-        }
-    }
-
-    public function addValidatedReloadCard()
-    {
-        $walletUser = Auth::guard('web')->user();
-        $provider = Provider::whereId($this->provider_reloadcard)->first();
-        $valeur_ceiling = $walletUser->silver_ceiling;
-        $admins = $this->getAdminValeurProperty();
-        $admin_civ = $this->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
-        DB::beginTransaction();
-
-        try {
-
-            if ($provider) {
-
-                $percent_robus = DepositCost::whereId(2)->first();
-
-
-                if ($walletUser->country->code != 'CI') {
-                    return $this->emit('error', 'Ce réchargement se fait que en CI !');
-                }
-
-
-                $this->validate(
-                    [
-                        'password_validated' => 'required',
-                    ],
-                    [
-                        'password_validated.required' =>
-                        'Mot de passe est obligatoire',
-                    ]
-                );
-
-                if (Hash::check($this->password_validated, sabdy()->password)) {
-                    // Provider Bsic and Ecobank
-                    if (in_array($this->provider_reloadcard, $this->validReloadCardProviders)) {
-
-                        $this->validateReloadCard();
-
-                        if ($som_transfers >= $valeur_ceiling) {
-                            $this->resetPaiementField();
-                            $this->emit('modal-hide-reloadCard');
-                            $this->emit('warning', 'Votre montant journier est atteint !');
-                            return;
-                        }
-
-
-                        if (sabdy()->is_under_distributer) {
-                            $valeur_first = $percent_robus->levelDepositIvories->where('is_ivoires', true)->first();
-                            $valeur_end = $percent_robus->levelDepositIvories->where('is_ivoires', true)->last();
-                            $all_valeurs = $percent_robus->levelDepositIvories->where('is_ivoires', true);
-                        } else {
-
-                            $valeur_first = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->first();
-                            $valeur_end = $percent_robus->levelDepositIvories->where('is_inter_bank', true)->last();
-                            $all_valeurs = $percent_robus->levelDepositIvories->where('is_inter_bank', true);
-                        }
-
-                        $reel_amount = $this->search_amount($this->amount_reloadcard);
-
-                        if ($valeur_end->amount_end < $reel_amount) {
-                            $this->resetReloadCardField();
-                            $this->emit('modal-hide-reloadCard');
-                            $this->emit('info', 'Vous avez depasser le montant max !'  . $$valeur_end->amount_end);
-                            return;
-                        }
-
-
-                        if ($valeur_first->amount_begin > $reel_amount) {
-                            $this->resetReloadCardField();
-                            $this->emit('modal-hide-reloadCard');
-                            $this->emit('info', 'Vous avez depasser le montant min !' . $valeur_first->amount_begin);
-                            return;
-                        }
-
-
-
-                        foreach ($all_valeurs as $amount_user) {
-
-                            if ($reel_amount >= $amount_user->amount_begin && $reel_amount <= $amount_user->amount_end) {
-
-                                //  If amount is Null
-
-                                if ($amount_user->amount == null) {
-
-                                    $percent_valeur = $amount_user->percent * $reel_amount;
-
-                                    if (sabdy()->is_under_distributer) {
-
-                                        $amount_verify = $reel_amount;
-                                        $valuer_deposit_com = $amount_user->comission_distributer * $reel_amount;
-                                        $valuer_admin_com = $percent_valeur - $valuer_deposit_com;
-                                        $amount_cost = $amount_user->comission_distributer * $reel_amount;
-                                        $commissionCompanie = $amount_user->percent_companie * $percent_valeur;
-                                        $amountReceved = (float)$reel_amount;
-                                    } else {
-                                        $amount_verify = $reel_amount;
-                                        $valuer_admin_com =  $amount_user->percent * $reel_amount;
-                                        $amount_cost = $amount_user->percent * $percent_valeur;
-                                        $valuer_deposit_com = 0;
-                                        $amountReceved = (float)$reel_amount - (float)$percent_valeur;
-                                    }
-                                } else {
-
-                                    $percent_valeur = (float)$amount_user->amount + (float)$reel_amount;
-
-                                    if (sabdy()->is_under_distributer) {
-
-                                        $amount_verify =  (float)$reel_amount;
-                                        $valuer_deposit_com = $amount_user->comission_distributer;
-                                        $valuer_admin_com = $reel_amount - $valuer_deposit_com;
-                                        $amount_cost = $amount_user->comission_distributer;
-                                        $commissionCompanie = $amount_user->percent_companie;
-                                        $amountReceved = (float)$reel_amount;
-                                    } else {
-                                        $amount_verify = (float)$reel_amount;
-                                        $amount_cost = $amount_user->amount;
-                                        $valuer_deposit_com = 0;
-                                        $valuer_admin_com = (float)$amount_user->amount;
-                                        $amountReceved = (float)$reel_amount - (float)$amount_user->amount;
-                                    }
-                                }
-
-
-                                $amount_solde =  $walletUser->wallet->amount -  $amount_verify;
-
-                                $soldeWallet = $walletUser->wallet->amount;
-
-                                if ($amount_verify > $soldeWallet) {
-
-                                    $this->resetReloadCardField();
-                                    $this->emit('modal-hide-reloadCard');
-                                    $this->emit(
-                                        'error',
-                                        'Verifier votre montant  svp ou le montant minimum !'
-                                    );
-                                    return;
-                                }
-
-                                if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-
-                                    $walletReloadCard = app(TransfertServiceBackend::class)->createNewReloadCard(
-                                        $amount_solde,
-                                        $walletUser,
-                                        $reel_amount,
-                                        $this->reloadcard_description,
-                                        $this->account_number_reload_card,
-                                        $this->name_reloadcard,
-                                        $amount_cost,
-                                        $provider,
-                                        $amountReceved,
-                                    );
-
-
-                                    $message = 'Vous avez effectué un rechargement  de ' .
-                                        $walletReloadCard->amount .
-                                        $walletUser->wallet->currencie->code .
-                                        ' ' .
-                                        'par ' .
-                                        $walletReloadCard->provider->name .
-                                        ' le ' .
-                                        $walletReloadCard->created_at .
-                                        ' votre demande est en cours de validation ' .
-                                        'Robus vous remercie';
-
-                                    if ($this->shouldNotifyCreateCI($walletUser)) {
-
-                                        $this->sendSuccessMessageCreateNotification($walletUser, $message);
-                                    }
-
-
-                                    if ($walletReloadCard != null && $walletReloadCard->status != 'PENDING') {
-                                        $this->updateamountReloadCardReceveid($admin_civ, $valuer_deposit_com, $walletReloadCard, $valuer_admin_com, $walletUser, $amount_verify, $commissionCompanie);
-                                    }
-
-                                    event(new CreateWalletReloadCardEvent($walletReloadCard));
-
-                                    app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Rechargement de carte', 'Demande de Rechargement de carte est en cours de validation', 'Demande de Rechargement de carte de ' . ' ' . $walletReloadCard->wallet->sidUser->firstname);
-
-                                    if ($admins->count() > 0) {
-                                        $this->notifyAdmins($admins);
-                                    }
-
-                                    $this->resetReloadCardField();
-                                    $this->emit('modal-hide-reloadCard');
-                                    $this->emit(
-                                        'success',
-                                        'Votre demande de transaction a bien été prise en compte.'
-                                    );
-
-                                    if ($walletUser->email != null) {
-                                        $this->sendMailReloadCardNotification($walletReloadCard);
-                                    }
-                                } else {
-
-                                    $this->resetReloadCardField();
-                                    $this->emit('modal-hide-reloadCard');
-                                    $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
-                                    return; // Arrête l'exécution si le montant est supérieur au solde
-                                }
-                            }
-                        }
-                    } else {
-                        $this->emit('error', 'Aucune selection !');
-                    }
-                } else {
-                    $this->resetReloadCardField();
-                    $this->emit('modal-hide-reloadCard');
-                    $this->emit('success', 'Verifiez votre mot de passe svp !');
-                }
-
-                DB::commit();
-            } else {
-                $this->emit('error', 'Rechargement  existante !');
-            }
-        } catch (\Exception $exception) {
-            $this->resetReloadCardField();
-            $this->emit('modal-hide-reloadCard');
-            $this->emit('error', 'Error de message demande a l\'admin !');
-        }
-    }
-
-
-    public function addPhoneCredit()
-    {
-
-        $walletUser = Auth::guard('web')->user();
-        $provider = Provider::whereId($this->provider_phone_credit)->first();
-        $valeur_ceiling = $walletUser->silver_ceiling;
-        $som_transfers =  $this->getSumValTransactionProperty();
-
-        try {
-
-            if ($provider) {
-
-                // Providers MTN , MOOV , ORANGE , Wave
-                $percent_robus = PhoneCreditCost::whereId(1)->first();
-
-                if ($walletUser->country->code != 'CI') {
-                    $this->resetPaiementField();
-                    $this->emit('modal-hide-phoneCredit');
-                    $this->emit(
-                        'warning',
-                        'Ce réchargement est uniquement pour la CIV !'
-                    );
-                    return;
-                }
-
-                $this->validate(
-                    [
-                        'provider_phone_credit' => 'required',
-                        'number_phone_credit' => 'required',
-                        'amount_phone_credit' => 'required',
-                    ],
-                    [
-                        'provider_phone_credit.required' =>
-                        'Fournisseur est obligatoire',
-                        'number_phone_credit.required' =>
-                        'Numero est obligatoire',
-                        'amount_phone_credit.required' =>
-                        'Montant est obligatoire',
-                    ]
-                );
-
-
-                if ($som_transfers >= $valeur_ceiling) {
-
-                    $this->resetPaiementField();
-                    $this->emit('modal-hide-phoneCredit');
-                    $this->emit(
-                        'warning',
-                        'Votre montant journier est atteint !'
-                    );
-                    return;
-                }
-
-                $reel_amount = $this->search_amount($this->amount_phone_credit);
-
-
-                $val_amount = $reel_amount +  $percent_robus->percent *  $reel_amount;
-
-                if ($val_amount > $walletUser->wallet->amount) {
-                    $this->resetPaiementField();
-                    $this->emit('modal-hide-phoneCredit');
-                    $this->emit(
-                        'error',
-                        'Verifier votre montant  svp !'
-                    );
-                    return;
-                }
-
-                $this->stepPhoneCredit = 2;
-            } else {
-                $this->emit('error', 'Rechargement  existante !');
-            }
-        } catch (\Exception $exception) {
-            $this->resetPaiementField();
-            $this->emit('modal-hide-phoneCredit');
-            $this->emit('error', 'Error de message demande a l\'admin !');
-        }
-    }
-
-    public function addValidatedPhoneCredit()
-    {
-
-        $walletUser = Auth::guard('web')->user();
-        $provider = Provider::whereId($this->provider_phone_credit)->first();
-        $valeur_ceiling = $walletUser->silver_ceiling;
-        $admins = $this->getAdminValeurProperty();
-        $admin_civ = $this->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
-        DB::beginTransaction();
-
-        try {
-
-
-            if (!$provider) {
-                $this->emit('error', 'Rechargement existant !');
-                return;
-            }
-
-
-            $this->validate([
-                'password_validated' => 'required',
-                'provider_phone_credit' => 'required',
-                'number_phone_credit' => 'required',
-                'amount_phone_credit' => 'required',
-            ], [
-                'password_validated.required' => 'Mot de passe est obligatoire',
-                'provider_phone_credit.required' => 'Fournisseur est obligatoire',
-                'number_phone_credit.required' => 'Numéro est obligatoire',
-                'amount_phone_credit.required' => 'Montant est obligatoire',
-            ]);
-
-            if (!Hash::check($this->password_validated, sabdy()->password)) {
-                $this->resetPhoneCreditField();
-                $this->emit('modal-hide-phoneCredit');
-                $this->emit('error', 'Vérifiez votre mot de passe SVP !');
-                return;
-            }
-
-
-            if ($walletUser->country->code != 'CI') {
-                $this->resetPaiementField();
-                $this->emit('modal-hide-phoneCredit');
-                $this->emit(
-                    'warning',
-                    'Ce réchargement est uniquement pour la CIV !'
-                );
-                return;
-            }
-
-
-            if ($som_transfers >= $valeur_ceiling) {
-                $this->resetPaiementField();
-                $this->emit('modal-hide-phoneCredit');
-                $this->emit('warning', 'Votre montant journier est atteint !');
-                return;
-            }
-
-
-            $reel_amount = $this->search_amount($this->amount_phone_credit);
-            $percent_robus = PhoneCreditCost::find(1);
-            $val_amount = $reel_amount + $percent_robus->percent * $reel_amount;
-
-            if ($val_amount > $walletUser->wallet->amount) {
-                $this->resetPaiementField();
-                $this->emit('modal-hide-phoneCredit');
-                $this->emit('error', 'Vérifier votre montant SVP !');
-                return;
-            }
-
-            $amount_solde =  $walletUser->wallet->amount -  $val_amount;
-
-            if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-
-                $amountReceved = $reel_amount;
-
-                $walletPhone =  app(TransfertServiceBackend::class)->createNewPhoneCredit(
-                    $walletUser,
-                    $reel_amount,
-                    $provider,
-                    $percent_robus,
-                    $this->number_phone_credit,
-                    $amount_solde,
-                    $amountReceved
-                );
-
-                $message =
-                    'Vous avez effectué un paiement de credit de ' .
-                    $walletPhone->amount .
-                    $walletUser->wallet->currencie->code .
-                    ' ' .
-                    'par ' .
-                    $walletPhone->provider->name .
-                    ' le ' .
-                    $walletPhone->created_at .
-                    ' votre demande est en cours de validation ' .
-                    'Robus vous remercie';
-
-
-                if ($this->shouldNotifyCreateCI($walletUser)) {
-
-                    $this->sendSuccessMessageCreateNotification($walletUser, $message);
-                }
-
-
-                if ($walletPhone != null  && $walletPhone->status == 'PENDING') {
-                    $this->updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser, $reel_amount);
-                }
-
-
-                event(new CreateWalletPhoneCreditEvent($walletPhone));
-
-                app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Paiement crédit', 'Demande de paiement de credit est en cours de validation', 'Demande de paiement de ' . ' ' . $walletPhone->wallet->sidUser->firstname);
-
-                if ($admins->count() > 0) {
-                    $this->handleAdminNotifications();
-                }
-
-                $this->resetPhoneCreditField();
-                $this->emit('modal-hide-phoneCredit');
-                $this->emit('success', 'Votre demande de transaction a bien été prise en compte !');
-                if ($walletUser->email != null) {
-                    $this->sendMailPhoneCreditNotification($walletPhone);
-                }
-            } else {
-                $this->resetPhoneCreditField();
-                $this->emit('modal-hide-phoneCredit');
-                $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
-                return; // Arrête l'exécution si le montant est supérieur au solde
-            }
-            DB::commit();
-        } catch (\Exception $exception) {
-            $this->resetPaiementField();
-            $this->emit('modal-hide-phoneCredit');
-            $this->emit('error', 'Error de message demande a l\'admin !');
-        }
-    }
     // Begin Edit informations
     public function editReloadCard($id, $state)
     {
@@ -2872,7 +1437,7 @@ class Transfers extends Component
 
                                         app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Credit telephonique");
                                     } else {
-                                        $this->resetPhoneCreditField();
+                                        $this->cancelPhoneCreditField();
                                         $this->emit('modal-hide-phoneCredit-validated');
                                         $this->emit('modal-hide-phoneCredit');
                                         $this->emit('success', 'Credit téléphonique Acceptée sans commission sous-distibuteur !');
@@ -2901,7 +1466,7 @@ class Transfers extends Component
                                     $this->sendSuccessMessageNotification($check, $message);
                                 }
 
-                                $this->resetPhoneCreditField();
+                                $this->cancelPhoneCreditField();
                                 $this->emit('modal-hide-phoneCredit-validated');
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('success', 'Achat de credit accepté !');
@@ -2911,7 +1476,7 @@ class Transfers extends Component
                                 $this->sendMailPhoneCreditNotification($check);
                             } else {
 
-                                $this->resetPhoneCreditField();
+                                $this->cancelPhoneCreditField();
                                 $this->emit('modal-hide-phoneCredit-validated');
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Pas vous le valideur !!');
@@ -2931,7 +1496,7 @@ class Transfers extends Component
 
                                 $this->handleReloadClientCommission($check, $admin_civ);
 
-                                $paymentPhoneCredit  = $this->createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode);
+                                $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode);
 
                                 app(TransfertServiceBackend::class)->createInvoicePhoneCredit($check, $paymentPhoneCredit);
 
@@ -2957,20 +1522,20 @@ class Transfers extends Component
                                     $this->notifyAdmins($admins);
                                 }
 
-                                $this->resetPhoneCreditField();
+                                $this->cancelPhoneCreditField();
                                 $this->emit('modal-hide-phoneCredit-validated');
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Achat de credit refusé !');
                                 $this->sendMailPhoneCreditNotification($check);
                             } else {
-                                $this->resetPhoneCreditField();
+                                $this->cancelPhoneCreditField();
                                 $this->emit('modal-hide-phoneCredit-validated');
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Pas de modification !');
                                 return; // Arrête l'exécution si le montant est supérieur au solde
                             }
                         } else {
-                            $this->resetPhoneCreditField();
+                            $this->cancelPhoneCreditField();
                             $this->emit('modal-hide-phoneCredit-validated');
                             $this->emit('modal-hide-phoneCredit');
                             $this->emit('error', 'Pas de modification !');
@@ -2978,14 +1543,14 @@ class Transfers extends Component
 
                         }
                     } else {
-                        $this->resetPhoneCreditField();
+                        $this->cancelPhoneCreditField();
                         $this->emit('modal-hide-phoneCredit');
                         $this->emit('modal-hide-phoneCredit-validated');
                         $this->emit('error', 'Pas le valideur !');
                         return; // Arrête l'exécution si le montant est supérieur au solde
                     }
                 } else {
-                    $this->resetPhoneCreditField();
+                    $this->cancelPhoneCreditField();
                     $this->emit('modal-hide-phoneCredit');
                     $this->emit('modal-hide-phoneCredit-validated');
                     $this->emit('error', 'Mot de passe Incorrect !');
@@ -2993,14 +1558,14 @@ class Transfers extends Component
 
                 }
             } elseif ($this->password_transaction = "" ||  $this->phoneCreditStatus = "") {
-                $this->resetPhoneCreditField();
+                $this->cancelPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit-validated');
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
                 return; // Arrête l'exécution si le montant est supérieur au solde
 
             } else {
-                $this->resetPhoneCreditField();
+                $this->cancelPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('modal-hide-phoneCredit-validated');
                 $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
@@ -3008,7 +1573,7 @@ class Transfers extends Component
             }
             DB::commit();
         } catch (\Exception $exception) {
-            $this->resetPhoneCreditField();
+            $this->cancelPhoneCreditField();
             $this->emit('modal-hide-phoneCredit-validated');
             $this->emit('modal-hide-phoneCredit');
             $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
@@ -3058,9 +1623,9 @@ class Transfers extends Component
                             $commission_transaction =  $check->amount_received;
 
 
-                            $depositWallet = $this->createDeposit($check, $transactionCode, $transactionCompiCode);
+                            $depositWallet = app(TransfertServiceBackend::class)->createDeposit($check, $transactionCode, $transactionCompiCode);
 
-                            $this->createInvoiceReloadCard($check, $depositWallet);
+                            app(TransfertServiceBackend::class)->createInvoiceReloadCard($check, $depositWallet);
 
                             $this->updateUserWallet($commission_transaction);
 
@@ -3097,7 +1662,7 @@ class Transfers extends Component
 
                                     app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Rechargement de carte");
                                 } else {
-                                    $this->resetReloadCardField();
+                                    $this->cancelReloadCardField();
                                     $this->emit('modal-hide-reloadCard');
                                     $this->emit('modal-hide-reloadCard-validated');
                                     $this->emit('success', 'Rechargement Acceptée sans commission sous-distibuteur !');
@@ -3108,7 +1673,7 @@ class Transfers extends Component
                                 app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                             }
 
-                            $this->resetReloadCardField();
+                            $this->cancelReloadCardField();
                             $this->emit('modal-hide-reloadCard-validated');
                             $this->emit('modal-hide-reloadCard');
                             $this->emit('success', 'Rechargement acceptée !');
@@ -3154,10 +1719,10 @@ class Transfers extends Component
                             }
 
 
-                            $depositWallet = $this->createErrorDeposit($check, $transactionCode, $transactionCompiCode);
+                            $depositWallet = app(TransfertServiceBackend::class)->createErrorDeposit($check, $transactionCode, $transactionCompiCode);
 
-                            $this->createInvoiceReloadCard($check, $depositWallet);
-                            $this->resetReloadCardField();
+                            app(TransfertServiceBackend::class)->createInvoiceReloadCard($check, $depositWallet);
+                            $this->cancelReloadCardField();
                             $this->emit('modal-hide-reloadCard-validated');
                             $this->emit('modal-hide-reloadCard');
                             $this->emit('error', 'Rechargement refusé !');
@@ -3168,14 +1733,14 @@ class Transfers extends Component
 
                             $this->sendMailReloadCardNotification($check);
                         } else {
-                            $this->resetReloadCardField();
+                            $this->cancelReloadCardField();
                             $this->emit('modal-hide-reloadCard-validated');
                             $this->emit('modal-hide-reloadCard');
                             $this->emit('error', 'Pas de modification !');
                             return; // Arrête l'exécution si le montant est supérieur au solde
                         }
                     } else {
-                        $this->resetReloadCardField();
+                        $this->cancelReloadCardField();
                         $this->emit('modal-hide-reloadCard-validated');
                         $this->emit('modal-hide-reloadCard');
                         $this->emit('error', 'Pas le valideur !');
@@ -3183,26 +1748,26 @@ class Transfers extends Component
 
                     }
                 } else {
-                    $this->resetReloadCardField();
+                    $this->cancelReloadCardField();
                     $this->emit('modal-hide-reloadCard-validated');
                     $this->emit('modal-hide-reloadCard');
                     $this->emit('info', 'Vérifier votre mot de passe !');
                     return; // Arrête l'exécution si le montant est supérieur au solde
                 }
             } elseif ($this->password_transaction = "") {
-                $this->resetReloadCardField();
+                $this->cancelReloadCardField();
                 $this->emit('modal-hide-reloadCard-validated');
                 $this->emit('modal-hide-reloadCard');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite le boutton ou l\'operation a déja été traitée !!!!');
             } else {
-                $this->resetReloadCardField();
+                $this->cancelReloadCardField();
                 $this->emit('modal-hide-reloadCard-validated');
                 $this->emit('modal-hide-reloadCard');
                 $this->emit('error', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
             }
             DB::commit();
         } catch (\Exception $exception) {
-            $this->resetReloadCardField();
+            $this->cancelReloadCardField();
             $this->emit('modal-hide-reloadCard-validated');
             $this->emit('modal-hide-reloadCard');
             $this->emit('error', 'Vous avez cliquez deux fois Ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
@@ -3251,8 +1816,8 @@ class Transfers extends Component
                         if ($check->status == 'SUCCESS') {
 
 
-                            $transaction = $this->createTransaction($check, $transactionCode, $transactionCompiCode);
-                            $this->createInvoiceTransaction($check, $transaction);
+                            $transaction =  app(TransfertServiceBackend::class)->createTransaction($check, $transactionCode, $transactionCompiCode);
+                            app(TransfertServiceBackend::class)->createInvoiceTransaction($check, $transaction);
                             $this->updateUserWallet($commission_transaction);
 
                             if (Auth::guard('web')->user()->is_distributer == 1) {
@@ -3327,8 +1892,8 @@ class Transfers extends Component
                                 $this->handleReloadClientCommission($check, $admin_civ);
                             }
 
-                            $transaction = $this->createErrorTransaction($check, $transactionCode, $transactionCompiCode);
-                            $this->createInvoiceTransaction($check, $transaction);
+                            $transaction = app(TransfertServiceBackend::class)->createErrorTransaction($check, $transactionCode, $transactionCompiCode);
+                            app(TransfertServiceBackend::class)->createInvoiceTransaction($check, $transaction);
 
                             $this->notifyUsers($check, $admins, 'Transfers', 'Demande de transfert a été refusé', 'Demande de transfers refusé');
 
@@ -3422,9 +1987,9 @@ class Transfers extends Component
 
                             $commission_transaction = $check->amount_received;
 
-                            $paymentCreated = $this->createVirement($check, $transactionCode, $transactionCompiCode);
+                            $paymentCreated = app(TransfertServiceBackend::class)->createVirement($check, $transactionCode, $transactionCompiCode);
 
-                            $this->createInvoiceVirement($check, $paymentCreated);
+                            app(TransfertServiceBackend::class)->createInvoiceVirement($check, $paymentCreated);
 
                             $this->updateUserWallet($commission_transaction);
 
@@ -3460,7 +2025,7 @@ class Transfers extends Component
 
                                     app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Virement");
                                 } else {
-                                    $this->resetVirementField();
+                                    $this->cancelVirementField();
                                     $this->emit('modal-hide-virement');
                                     $this->emit('modal-hide-virement-validated');
                                     $this->emit('success', 'Versement Acceptée sans commission sous-distibuteur !');
@@ -3475,7 +2040,7 @@ class Transfers extends Component
                                 $this->notifyAdmins($admins);
                             }
 
-                            $this->resetVirementField();
+                            $this->cancelVirementField();
                             $this->emit('modal-hide-virement');
                             $this->emit('modal-hide-virement-validated');
                             $this->emit('success', 'Virement Accepté !');
@@ -3497,9 +2062,9 @@ class Transfers extends Component
 
                             $this->handleReloadClientCommission($check, $admin_civ);
 
-                            $virementWallet  = $this->createErrorVirement($check, $transactionCode, $transactionCompiCode, $commission);
+                            $virementWallet  = app(TransfertServiceBackend::class)->createErrorVirement($check, $transactionCode, $transactionCompiCode, $commission);
 
-                            $this->createInvoiceVirement($check, $virementWallet);
+                            app(TransfertServiceBackend::class)->createInvoiceVirement($check, $virementWallet);
 
                             $this->notifyUsers($check, $admins, 'Versement bancaire', 'Demande de versement a été refusé', 'Demande de versement refusé');
 
@@ -3529,19 +2094,19 @@ class Transfers extends Component
                                 $this->notifyAdmins($admins);
                             }
 
-                            $this->resetVirementField();
+                            $this->cancelVirementField();
                             $this->emit('modal-hide-virement-validated');
                             $this->emit('modal-hide-virement');
                             $this->emit('error', 'Virement refusée !');
                             $this->sendMailVersementNotification($check);
                         } else {
-                            $this->resetVirementField();
+                            $this->cancelVirementField();
                             $this->emit('modal-hide-virement-validated');
                             $this->emit('modal-hide-virement');
                             $this->emit('success', 'Virement modifié !');
                         }
                     } else {
-                        $this->resetVirementField();
+                        $this->cancelVirementField();
                         $this->emit('modal-hide-virement');
                         $this->emit('modal-hide-virement-validated');
                         $this->emit('error', 'Pas vous le valideur !');
@@ -3549,7 +2114,7 @@ class Transfers extends Component
 
                     }
                 } else {
-                    $this->resetVirementField();
+                    $this->cancelVirementField();
                     $this->emit('modal-hide-virement-validated');
                     $this->emit('modal-hide-virement');
                     $this->emit('error', 'Mot de passe Incorrect !');
@@ -3557,14 +2122,14 @@ class Transfers extends Component
 
                 }
             } elseif ($this->password_transaction = "" ||  $this->virementStatus = "") {
-                $this->resetVirementField();
+                $this->cancelVirementField();
                 $this->emit('modal-hide-virement-validated');
                 $this->emit('modal-hide-virement');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !');
                 return; // Arrête l'exécution si le montant est supérieur au solde
 
             } else {
-                $this->resetVirementField();
+                $this->cancelVirementField();
                 $this->emit('modal-hide-virement-validated');
                 $this->emit('modal-hide-virement');
                 $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
@@ -3572,7 +2137,7 @@ class Transfers extends Component
             }
             DB::commit();
         } catch (\Exception $exception) {
-            $this->resetVirementField();
+            $this->cancelVirementField();
             $this->emit('modal-hide-virement');
             $this->emit('modal-hide-virement-validated');
             $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
@@ -3627,8 +2192,8 @@ class Transfers extends Component
                         if ($check->status == 'SUCCESS') {
 
 
-                            $transactionInter = $this->createInter($check, $transactionCode, $transactionCompiCode);
-                            $this->createInvoiceInter($check, $transactionInter);
+                            $transactionInter = app(TransfertServiceBackend::class)->createInter($check, $transactionCode, $transactionCompiCode);
+                            app(TransfertServiceBackend::class)->createInvoiceInter($check, $transactionInter);
 
                             if (sabdy()->country->currencie->value > $check->country->currencie->value) {
                                 //   Convertion  in CFA
@@ -3707,7 +2272,7 @@ class Transfers extends Component
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
                                         $this->handleUnderDistributorInterCommission($check, $admin_civ);
                                     } else {
-                                        $this->resetReloadCardField();
+                                        $this->cancelReloadCardField();
                                         $this->emit('modal-hide-reloadCard');
                                         $this->emit('success', 'Rechargement Acceptée sans commission sous-distibuteur !');
                                         return; // Arrête l'exécution si le montant est supérieur au solde
@@ -3752,9 +2317,9 @@ class Transfers extends Component
 
                             $this->handleReloadClientCommission($check, $admin_civ);
 
-                            $interWallet  = $this->createErrorInter($check, $transactionCode, $transactionCompiCode);
+                            $interWallet  = app(TransfertServiceBackend::class)->createErrorInter($check, $transactionCode, $transactionCompiCode);
 
-                            $this->createInvoiceInter($check, $interWallet);
+                            app(TransfertServiceBackend::class)->createInvoiceInter($check, $interWallet);
 
                             $this->notifyUsers($check, $admins, 'Paiement interbational', 'Demande de paiement international a été refusé', 'Demande de paiement international refusé');
 
@@ -3855,9 +2420,9 @@ class Transfers extends Component
 
                             $commission_transaction =  $check->amount;
 
-                            $paymentCreated = $this->createPayment($check, $transactionCode, $transactionCompiCode);
+                            $paymentCreated = app(TransfertServiceBackend::class)->createPayment($check, $transactionCode, $transactionCompiCode);
 
-                            $this->createInvoicePayment($check, $paymentCreated);
+                            app(TransfertServiceBackend::class)->createInvoicePayment($check, $paymentCreated);
 
                             $this->updateUserWallet($commission_transaction);
 
@@ -3892,7 +2457,7 @@ class Transfers extends Component
 
                                     $this->handleUnderDistributorPaiementCommission($check, $admin_civ);
                                 } else {
-                                    $this->resetPaiementField();
+                                    $this->cancelPaiementField();
                                     $this->emit('modal-hide-paiement');
                                     $this->emit('success', 'Paiement Accepté !');
                                     $this->emit('success', 'Paiement Acceptée sans commission sous-distibuteur !');
@@ -3903,7 +2468,7 @@ class Transfers extends Component
                                 app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                             }
 
-                            $this->resetPaiementField();
+                            $this->cancelPaiementField();
                             $this->emit('modal-hide-paiement');
                             $this->emit('success', 'Paiement Accepté !');
 
@@ -3924,9 +2489,9 @@ class Transfers extends Component
 
                             $this->handleReloadClientCommission($check, $admin_civ);
 
-                            $paymentCreated = $this->createErrorPayment($check, $transactionCode, $transactionCompiCode);
+                            $paymentCreated = app(TransfertServiceBackend::class)->createErrorPayment($check, $transactionCode, $transactionCompiCode);
 
-                            $this->createInvoicePayment($check, $paymentCreated);
+                            app(TransfertServiceBackend::class)->createInvoicePayment($check, $paymentCreated);
 
                             $this->notifyUsers($check, $admins, 'Paiement de facture', 'Demande de paiement de facture a été refusé', 'Demande de paiement de facture refusé');
 
@@ -3950,13 +2515,13 @@ class Transfers extends Component
                                 $this->notifyAdmins($admins);
                             }
 
-                            $this->resetPaiementField();
+                            $this->cancelPaiementField();
                             $this->emit('modal-hide-paiement-validated');
                             $this->emit('modal-hide-paiement');
                             $this->emit('error', 'Payment Refusé !');
                             $this->sendMailPaiementNotification($check);
                         } else {
-                            $this->resetPaiementField();
+                            $this->cancelPaiementField();
                             $this->emit('modal-hide-paiement');
                             $this->emit('modal-hide-paiement-validated');
                             $this->emit('success', 'Payment modifié !');
@@ -3964,7 +2529,7 @@ class Transfers extends Component
 
                         }
                     } else {
-                        $this->resetPaiementField();
+                        $this->cancelPaiementField();
                         $this->emit('modal-hide-paiement');
                         $this->emit('modal-hide-paiement-validated');
                         $this->emit('success', 'Pas vous le valideur !');
@@ -3973,7 +2538,7 @@ class Transfers extends Component
                     }
                 } else {
 
-                    $this->resetPaiementField();
+                    $this->cancelPaiementField();
                     $this->emit('modal-hide-paiement-validated');
                     $this->emit('modal-hide-paiement');
                     $this->emit('info', 'Vérifier votre mot de passe !');
@@ -3981,20 +2546,20 @@ class Transfers extends Component
 
                 }
             } elseif ($this->password_transaction = "") {
-                $this->resetPaiementField();
+                $this->cancelPaiementField();
                 $this->emit('modal-hide-paiement');
                 $this->emit('modal-hide-paiement-validated');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite le boutton ou l\'operation a déja été traitée !!');
                 return;
             } else {
-                $this->resetPaiementField();
+                $this->cancelPaiementField();
                 $this->emit('modal-hide-paiement');
                 $this->emit('modal-hide-paiement-validated');
                 $this->emit('error', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
             }
             DB::commit();
         } catch (\Exception $exception) {
-            $this->resetPaiementField();
+            $this->cancelPaiementField();
             $this->emit('modal-hide-paiement-validated');
             $this->emit('modal-hide-paiement');
             $this->emit('error', 'Vous avez cliquez deux fois Ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
@@ -4202,7 +2767,7 @@ class Transfers extends Component
     public function ChooseUpdatePhoneCredit($id)
     {
 
-        DB::beginPhoneCredit();
+        // DB::beginPhoneCredit();
 
         $sidAuth = Auth::guard('web')->user();
 
@@ -4403,40 +2968,17 @@ class Transfers extends Component
     }
 
 
-    public function resetPhoneCreditField()
-    {
-        $this->provider_phone_credit = null;
-        $this->number_phone_credit = '';
-        $this->amount_phone_credit = '';
-        $this->stepPhoneCredit = 1;
-        $this->emit('modal-hide-phoneCredit-validated');
-        $this->emit('menu-phoneCredit-active');
-        // $this->emit('modal-hide-phoneCredit');
-    }
-
     public function cancelPhoneCreditField()
     {
         $this->provider_phone_credit = null;
         $this->number_phone_credit = '';
         $this->amount_phone_credit = '';
         $this->stepPhoneCredit = 1;
-
-        $this->emit('modal-hide-phoneCredit');
+         $this->emit('modal-hide-phoneCredit');
         $this->emit('modal-hide-phoneCredit-validated');
         $this->emit('menu-phoneCredit-active');
     }
-    public function resetReloadCardField()
-    {
-        $this->reloadcard_description = '';
-        $this->reloadcardStatus = '';
-        $this->provider_reloadcard = null;
-        $this->amount_reloadcard = '';
-        $this->account_number_reload_card = '';
-        $this->name_reloadcard = '';
-        $this->stepReloadCard = 1;
-        $this->emit('modal-hide-reloadCard-validated');
-        $this->emit('menu-reloadCarte-active');
-    }
+
 
     public function cancelReloadCardField()
     {
@@ -4447,12 +2989,12 @@ class Transfers extends Component
         $this->account_number_reload_card = '';
         $this->name_reloadcard = '';
         $this->stepReloadCard = 1;
-        $this->emit('modal-hide-reloadCard');
         $this->emit('modal-hide-reloadCard-validated');
         $this->emit('menu-reloadCarte-active');
     }
 
-    public function resetVirementField()
+
+    public function cancelVirementField()
     {
         $this->virementDescription = '';
         $this->virementId = '';
@@ -4484,21 +3026,6 @@ class Transfers extends Component
         $this->emit('modal-hide-virement');
     }
 
-    public function cancelVirementField()
-    {
-        $this->virementDescription = '';
-        $this->virementId = '';
-        $this->virementStatus = '';
-        $this->provider_virement = null;
-        $this->firstname_user = '';
-        $this->lastname_user = '';
-        $this->phone_user = '';
-        $this->amount_virement = '';
-        $this->account_number_user = '';
-        $this->stepVirement = 1;
-        $this->emit('modal-hide-virement');
-        $this->emit('modal-hide-virement-validated');
-    }
 
     public function resetTransactionField()
     {
@@ -4532,79 +3059,8 @@ class Transfers extends Component
         $this->emit('modal-hide-transfers-validated');
         $this->emit('modal-hide-transfers');
     }
-    public function errorNumberValidated()
-    {
-        $this->transaction_description = '';
-        $this->transaction_phone = '';
-        $this->provider_transaction = null;
-        $this->compte_number_robus = '';
-        $this->transaction_amount_robus = '';
-        $this->transaction_amount_money = '';
-        $this->transaction_description_robus = '';
-        $this->emit('warning', 'Le numero doit corerespondre a la selection !');
-    }
 
-    public function errorNumberUserValidated()
-    {
-        $this->transaction_description = '';
-        $this->transaction_phone = '';
-        $this->provider_transaction = null;
-        $this->compte_number_robus = '';
-        $this->transaction_amount_robus = '';
-        $this->transaction_amount_money = '';
-        $this->transaction_description_robus = '';
-        $this->emit('warning', 'Le numero doit etre pour un client !');
-    }
-
-    public function errorNumberPhoneValidated()
-    {
-        $this->provider_phone_credit = null;
-        $this->number_phone_credit = '';
-        $this->amount_phone_credit = '';
-        $this->emit('warning', 'Le numero doit corerespondre a la selection !');
-    }
-
-    public function errorWalletTransactionAccount()
-    {
-        $this->transaction_description = '';
-        $this->transaction_phone = '';
-        $this->provider_transaction = null;
-        $this->compte_number_robus = '';
-        $this->transaction_amount_robus = '';
-        $this->transaction_amount_money = '';
-        $this->transaction_description_robus = '';
-        $this->emit('warning', 'Ce  numero vous appartient \n !');
-        $this->emit('modal-hide-transfers');
-    }
-
-    public function errorWalletPhoneCreditAccount()
-    {
-        $this->provider_phone_credit = null;
-        $this->number_phone_credit = '';
-        $this->amount_phone_credit = '';
-        $this->emit('modal-hide-phoneCredit');
-        $this->emit(
-            'warning',
-            'Ce  n\'existe pas dans cette base ou vous appartient \n ! ou n\'es pas nationnal'
-        );
-    }
-
-    public function errorWalletTransactionWave()
-    {
-        $this->transaction_description = '';
-        $this->transaction_phone = '';
-        $this->provider_transaction = null;
-        $this->compte_number_robus = '';
-        $this->transaction_amount_robus = '';
-        $this->transaction_amount_money = '';
-        $this->transaction_description_robus = '';
-        $this->emit('modal-hide-transfers');
-        $this->emit(
-            'warning',
-            'Le numero doit etres l\'un des 3 reseaux  ! ou n\'es pas nationnal'
-        );
-    }
-    public function resetPaiementField()
+    public function cancelPaiementField()
     {
 
         $this->provider_payment = null;
@@ -4631,30 +3087,7 @@ class Transfers extends Component
         $this->emit('modal-hide-paiement-validated');
     }
 
-    public function cancelPaiementField()
-    {
-        $this->provider_payment = null;
-        $this->paiement_num_contrat = '';
-        $this->paiement_id_invoice = '';
-        $this->paiement_decoder_canal = '';
-        $this->paiement_name_sodecie = '';
-        $this->paiement_name_cie = '';
-        $this->paiement_amount_Canal = '';
-        $this->paiement_phone_canal = '';
-        $this->paiement_amount_p_sodecie = '';
-        $this->paiement_amount_t_sodecie = '';
-        $this->paiement_amount_total = '';
-        $this->paiement_amount_partiel = '';
-        $this->paiementStatus = '';
-        $this->facture_choix_type = null;
-        $this->paiementChoix_phone = null;
-        $this->pre_phone_invoice = '';
-        $this->pre_id_invoice = '';
-        $this->offer_paiement = '';
-        $this->stepPaiment = 1;
-        $this->emit('modal-hide-paiement');
-        $this->emit('modal-hide-paiement-validated');
-    }
+ 
     //    Paginated
     public function gotoPageTrans($page)
     {
@@ -4949,126 +3382,7 @@ class Transfers extends Component
             }
         }
 
-        if ($this->paiement_amount_total != '') {
-
-            $commission_invoice = PaymentCost::whereId(2)->first();
-
-            if ($walletUser->country->code == 'CI') {
-
-                $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
-
-                $commission_paiement_invoice_val_nat_pay_frais =  (float) $commission_invoice->amount_auther;
-
-                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_total;
-            }
-        }
-
-
-        if ($this->paiement_amount_t_sodecie != '') {
-
-            $commission_invoice = PaymentCost::whereId(2)->first();
-
-            if ($walletUser->wallet->sidUser->is_under_distributer == 1) {
-
-                $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
-
-                $commission_paiement_invoice_val_nat_pay_frais =  (float) $commission_invoice->amount_auther;
-
-                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie;
-            } else {
-
-                $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->amount_auther;
-
-                $commission_paiement_invoice_val_nat_receive =  (float) $this->paiement_amount_t_sodecie;
-
-                $commission_paiement_invoice_val_nat_pay_frais =  (float) $commission_invoice->amount_auther;
-            }
-        }
-
-        // Invoice canal national
-
-        if ($this->offer_paiement != '') {
-
-
-            if (sabdy()->country->id == 107) {
-
-                $commission_invoice = PaymentCost::whereId(2)->first();
-
-                foreach ($offers  as $offer) {
-
-                    $offer_amount = $offer->whereId($this->offer_paiement)->first();
-
-                    if (sabdy()->is_under_distributer == true) {
-
-                        $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
-
-
-                        $commission_paiement_invoice_canal_val_inter = number_format($commission_invoice->comission_canal, 2, ',', ' ');
-                    } else {
-
-                        $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
-
-                        $commission_paiement_invoice_canal_val_inter =  number_format($valeur_offer, 2, ',', ' ');
-                    }
-
-
-                    $amount_received_canal =  $valeur_offer;
-                }
-            }
-        }
-
-        // National virement
-        if ($this->amount_virement != '') {
-
-            $commission_virement = BankCost::whereId(2)->first();
-
-            // Verify valeur amount max in Landing the ROBUS
-            $valeur_end = $commission_virement->levelBankIvories->last();
-
-            //  Conversion valeur
-            $conversion_valeur_end  = $valeur_end->amount_end;
-
-            if ($conversion_valeur_end  < $this->amount_virement) {
-                $commission_virement_val_nat_pay = "Montant maxi est  : " .  $conversion_valeur_end;
-
-                $commission_virement_val_nat_receive = "Montant maxi est  : " .  $conversion_valeur_end;
-            } else {
-
-                foreach ($commission_virement->levelBankIvories as $amount_comission) {
-                    if ($this->amount_virement >= $amount_comission->amount_begin && $this->amount_virement <= $amount_comission->amount_end) {
-                        if ($walletUser->wallet->sidUser->is_under_distributer == 1) {
-
-                            $commission_virement_val_nat_pay = $amount_comission->comission_distributer;
-
-                            $valeur_receive = (float) $this->amount_virement;
-
-                            if ($valeur_receive < 0) {
-
-                                $commission_virement_val_nat_receive = "Montant negatif";
-                            } else {
-
-                                $commission_virement_val_nat_receive = (float) $this->amount_virement;
-                            }
-                        } else {
-
-                            $commission_virement_val_nat_pay = $amount_comission->amount;
-
-                            $valeur_receive = (float) $this->amount_virement;
-
-                            if ($valeur_receive < 0) {
-
-                                $commission_virement_val_nat_receive = "Montant negatif";
-                            } else {
-
-                                $commission_virement_val_nat_receive = (float) $this->amount_virement;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-
+  
         // Transactions
         $transactions = $transaction->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallet_transactions.status', 'PENDING')
@@ -5271,7 +3585,6 @@ class Transfers extends Component
             'amount_paiement_invoice_canal' => $commission_paiement_invoice_canal_val_nat,
             'amount_paiement_invoice_canal_inter' => $commission_paiement_invoice_canal_val_inter,
             'amount_virement_nation_pay' => $commission_virement_val_nat_pay,
-            'amount_virement_nation_receive' => $commission_virement_val_nat_receive,
             'amount_phone_credit_val_pay' => $commission_phone_credit_val_inter_pay,
             'amount_phone_credit_val_receive' => $commission_phone_credit_val_inter_receive,
             'amount_transaction_nat_val_receive' => $commission_transaction_val_nal_receive,
@@ -5406,411 +3719,6 @@ class Transfers extends Component
     }
 
 
-    protected function createTransaction($check, $transactionCode, $transactionCompiCode)
-    {
-        return Transaction::create([
-            'wallet_transaction_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
-            'operator_transaction_name' => $check->provider->name,
-            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-            'pay_amount' => $check->amount,
-            'fee_amount' =>  $check->costs_amount,
-            'received_amount' => $check->amount,
-            'status' => $check->status,
-        ]);
-    }
-
-    protected function createInter($check, $transactionCode, $transactionCompiCode)
-    {
-        return TransactionInter::create([
-            'wallet_inter_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'RB_' . $check->provider->name .
-                '_' . $transactionCode,
-            'operator_transaction_name' =>
-            $check->provider->name,
-            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-            'pay_amount' => $check->amount,
-            'fee_amount' => $check->costs_amount,
-            'received_amount' => $check->amount,
-            'status' => $check->status,
-        ]);
-    }
-
-
-
-    protected function createDeposit($check, $transactionCode, $transactionCompiCode)
-    {
-        return  Deposit::create([
-
-            'wallet_deposit_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
-            'operator_transaction_name' => $check->provider->name,
-            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
-            'pay_amount' => $check->amount,
-            'fee_amount' =>  $check->costs_amount,
-            'received_amount' => $check->amount,
-            'status' => $check->status,
-        ]);
-    }
-
-
-    protected function createPayment($check, $transactionCode, $transactionCompiCode)
-    {
-        return Payment::create([
-            'wallet_payment_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode ??  null,
-            'operator_transaction_name' => $check->provider->name,
-            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-            'pay_amount' => $check->amount ?? null,
-            'fee_amount' =>  $check->costs_amount ?? null,
-            'received_amount' => $check->amount,
-            'status' => $check->status,
-        ]);
-    }
-
-
-
-    protected function createVirement($check, $transactionCode, $transactionCompiCode)
-    {
-        return PaymentBank::create([
-            'wallet_bank_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
-            'operator_transaction_name' => $check->provider->name,
-            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-            'pay_amount' => $check->amount,
-            'fee_amount' => $check->costs_amount,
-            'received_amount' =>  $check->amount,
-            'status' => $check->status,
-        ]);
-    }
-
-
-
-
-    protected function updateamountVirementReceveid($admin_civ, $amount_user, $walletBank, $walletUser, $amount_valeur)
-    {
-
-
-        $adminAmount = $amount_user->amount;
-
-        if (sabdy()->is_under_distributer) {
-
-
-            if ($this->showRemonterVirementButton) {
-
-                $valuer_deposit =  $amount_user->comission_distributer;
-
-                $walletBank->update([
-                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
-                ]);
-
-                $account_accepted = sabdy()->is_accepted_companie ?? false;
-
-                if ($account_accepted && $this->showRemonterVirementCButton) {
-                    $valuer_companie = $amount_user->percent_companie;
-                    $walletBank->increment('commission_companie', $valuer_companie);
-
-                    $totalCommission =  $amount_user->percent_companie +  $valuer_deposit;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_bank_id', $walletBank->id, $totalCommission, $adminAmount);
-                } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_bank_id', $walletBank->id, $adminAmount, $valuer_deposit);
-                }
-            } else {
-
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_bank_id', $walletBank->id, $adminAmount);
-            }
-        } else {
-
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_bank_id', $walletBank->id, $adminAmount);
-        }
-
-        $amount_commission = $amount_valeur;
-
-        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount_commission);
-
-        return true;
-    }
-
-
-
-    public function updateamountPhoneCreditReceveid($admin_civ, $percent_robus, $walletPhone,  $walletUser, $amount)
-    {
-
-        $amount_percent = $percent_robus->percent * $amount;
-
-        $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
-
-        $amount_commission = $amount + ($percent_robus->percent * $amount);
-
-        $amount_solde = sabdy()->wallet->amount - $amount_commission;
-
-        $walletPhone->update([
-            'amount_solde' => $amount_solde,
-        ]);
-
-        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount_commission);
-
-        if (sabdy()->is_under_distributer) {
-
-            if ($this->showRemonterCreditButton) {
-
-                $valuer_companie = $percent_robus->percent_companie * $amount;
-
-                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
-
-                $adminAmount = (float) $amount_percent - (float) $cumul_valeurs;
-
-                $walletPhone->increment('commissions', $valuer_deposit);
-
-                $account_accepted = sabdy()->is_accepted_companie ?? false;
-
-                if ($account_accepted && $this->showRemonterCreditCButton) {
-                    $walletPhone->increment('commission_companie', $valuer_companie);
-
-                    $totalCommission =  $valuer_companie + $valuer_deposit;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $totalCommission, $adminAmount);
-                } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $adminAmount, $valuer_deposit);
-                }
-            } else {
-
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $amount_percent);
-            }
-        } else {
-
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_phone_credit_id', $walletPhone->id, $amount_percent);
-        }
-
-
-        return true;
-    }
-
-
-    protected function updateamountReloadCardReceveid($admin_civ, $percent_merchands, $walletOrderCard, $amount_commission, $walletUser, $amount_verify, $commissionCompanie)
-    {
-
-
-        if (sabdy()->is_under_distributer) {
-
-            if ($this->showRemonterRechargementButton) {
-
-                $valuer_deposit =  $percent_merchands;
-
-                $walletOrderCard->update([
-                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
-                ]);
-
-                $account_accepted = sabdy()->is_accepted_companie ?? false;
-
-                if ($account_accepted && $this->showRemonterRechargementCButton) {
-                    $valuer_companie = $commissionCompanie;
-                    $walletOrderCard->increment('commission_companie', $valuer_companie);
-
-                    $totalCommission =  $percent_merchands +  $valuer_companie;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $totalCommission, $amount_commission);
-                } else {
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $amount_commission, $valuer_deposit);
-                }
-            } else {
-
-                $valuer_deposit =  $amount_commission;
-
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
-            }
-        } else {
-            $valuer_deposit =  $amount_commission;
-
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
-        }
-
-        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount_verify);
-
-
-        return true;
-    }
-
-    protected function createErrorPayment($check, $transactionCode, $transactionCompiCode)
-    {
-        return Payment::create([
-            'wallet_payment_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' =>
-            'RB_' .
-                $check->provider->name .
-                '_' .
-                $transactionCode,
-            'operator_transaction_name' => $check->provider->name,
-            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-            'pay_amount' => 0.0,
-            'fee_amount' => 0.0,
-            'received_amount' => $check->amount + $check->costs_amount,
-            'status' => $check->status,
-        ]);
-    }
-
-    protected function createErrorDeposit($check, $transactionCode, $transactionCompiCode)
-    {
-        return  Deposit::create([
-            'wallet_deposit_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'ROBUS_' . $check->provider->name .
-                '_' .
-                $transactionCode,
-            'operator_transaction_name' => $check->provider->name,
-            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
-            'pay_amount' => 0.0,
-            'fee_amount' => 0.0,
-            'received_amount' => $check->amount + $check->costs_amount,
-            'status' => $check->status,
-        ]);
-    }
-
-    protected function createErrorTransaction($check, $transactionCode, $transactionCompiCode)
-    {
-        return  Transaction::create([
-            'wallet_transaction_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
-            'operator_transaction_name' => $check->provider->name,
-            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-            'pay_amount' => 0.0,
-            'fee_amount' => 0.0,
-            'received_amount' => $check->amount + $check->costs_amount,
-            'status' => $check->status,
-        ]);
-    }
-
-    protected function createErrorPhoneCredit($check, $transactionCode, $transactionCompiCode)
-    {
-        return  PaymentPhoneCredit::create([
-            'wallet_phone_credit_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
-            'operator_transaction_name' => $check->provider->name,
-            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
-            'pay_amount' => 0.0,
-            'fee_amount' => 0.0,
-            'received_amount' => $check->amount + $check->costs_amount,
-            'status' => $check->status,
-        ]);
-    }
-
-    protected function createErrorVirement($check, $transactionCode, $transactionCompiCode, $commission)
-    {
-        return    PaymentBank::create([
-            'wallet_bank_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'RB_' . $check->provider->name . '_' . $transactionCode,
-            'operator_transaction_name' => $check->provider->name,
-            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-            'pay_amount' => 0.0,
-            'fee_amount' => 0.0,
-            'received_amount' => $commission,
-            'status' => $check->status,
-        ]);
-    }
-
-
-    protected function createErrorInter($check, $transactionCode, $transactionCompiCode)
-    {
-        return    TransactionInter::create([
-            'wallet_inter_id' => $check->id,
-            'sid_user_id' => Auth::guard('web')->user()->id,
-            'transaction_id' => 'RB_' . $check->provider->name .
-                '_' . $transactionCode,
-            'operator_transaction_name' =>
-            $check->provider->name,
-            'trans_comp_id' => 'RB_' . $transactionCompiCode,
-            'pay_amount' => $check->amount,
-            'fee_amount' => $check->costs_amount,
-            'received_amount' => $check->amount,
-            'status' => $check->status,
-        ]);
-    }
-
-    // End update Transactions
-
-
-    // Begin CREATED invoices transactions 
-
-    protected function createInvoiceTransaction($check, $transaction)
-    {
-        return  InvoiceTransaction::create([
-            'title' => "Transfers d'argent",
-            'wallet_transaction_id' => $check->id,
-            'transactions_id' => $transaction->id,
-            'company_id' => Auth::guard('web')->user()->company->id,
-            'description' => $check->description,
-            'status' => $check->status,
-            'created_by' => Auth::guard('web')->user()->id,
-        ]);
-    }
-
-
-
-    protected function createInvoiceInter($check, $transaction_inter)
-    {
-        return  InvoiceInter::create([
-            'title' => "Transfers d'argent",
-            // 'transaction_inter_id' => $check->id,
-            'transaction_inter_id' => $transaction_inter->id,
-            // 'company_id' => Auth::guard('web')->user()->company->id,
-            'description' => $check->description,
-            'status' => $check->status,
-            'created_by' => Auth::guard('web')->user()->id,
-        ]);
-    }
-
-
-
-    protected function createInvoiceReloadCard($check, $depositWallet)
-    {
-        return   InvoiceDeposit::create([
-            'title' => 'Rechargement de carte',
-            'wallet_deposit_id' => $check->id,
-            'deposit_id' => $depositWallet->id,
-            'company_id' => Auth::guard('web')->user()->company->id,
-            'description' => $check->description,
-            'status' => $check->status,
-            'created_by' => Auth::guard('web')->user()->id,
-        ]);
-    }
-
-    protected function createInvoicePayment($check, $payment)
-    {
-        return  InvoicePayment::create([
-            'title' => 'Paiement de facture ',
-            'wallet_payment_id' => $check->id,
-            'payment_id' => $payment->id,
-            'company_id' => Auth::guard('web')->user()->company->id,
-            'description' => $check->description,
-            'status' => $check->status,
-            'created_by' => Auth::guard('web')->user()->id,
-        ]);
-    }
-
-    protected function createInvoiceVirement($check, $paymentBank)
-    {
-        return   InvoiceBank::create([
-            'title' => 'Virement bancaire',
-            'wallet_bank_id' => $check->id,
-            'payment_bank_id' => $paymentBank->id,
-            'company_id' => Auth::guard('web')->user()->company->id,
-            'status' => $check->status,
-            'created_by' => Auth::guard('web')->user()->id,
-        ]);
-    }
-
-
     protected function updateUserWallet($commission_transaction)
     {
         return Auth::guard('web')->user()->wallet->update([
@@ -5839,101 +3747,6 @@ class Transfers extends Component
             'amount' => DB::raw('amount-' . $transaction_amount_robus),
         ]);
     }
-
-    // Paiements USERS
-    protected function updateAmountPaymentReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $amount)
-    {
-
-
-        $valuer_deposit = 0;
-
-        if (sabdy()->is_under_distributer) {
-
-            $valuer_deposit =  $percent_robus->comission_auther;
-
-            $adminAmount =  $percent_robus->amount_auther -  $percent_robus->comission_auther;
-
-            if ($this->showRemonterPaiementButton) {
-
-                $walletPayment->update([
-                    'commissions' => $valuer_deposit,
-                ]);
-
-                $account_accepted = sabdy()->is_accepted_companie ?? false;
-
-                if ($account_accepted && $this->showRemonterPaiementCButton) {
-                    $valuer_companie = $percent_robus->percent_companie;
-                    $walletPayment->increment('commission_companie', $valuer_companie);
-
-                    $totalCommission =  $percent_robus->percent_companie +  $percent_robus->comission_auther;
-
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_payment_id', $walletPayment->id, $totalCommission, $adminAmount);
-                } else {
-                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount, $valuer_deposit);
-                }
-            } else {
-                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount);
-            }
-        } else {
-
-            $adminAmount =  $percent_robus->amount_auther;
-            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount);
-        }
-
-        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount);
-
-        return true;
-    }
-
-    protected function updateAmountPaymentOfferReceveid($admin_civ, $percent_robus, $walletPayment, $walletUser, $amount)
-    {
-
-
-        $valuer_deposit = 0;
-
-        if (sabdy()->is_under_distributer) {
-
-            $adminAmount =  $percent_robus->amount_canal -  $percent_robus->comission_canal;
-
-            if ($this->showRemonterPaiementButton) {
-
-                $valuer_deposit =  $percent_robus->comission_canal;
-
-
-                $walletPayment->update([
-                    'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
-                ]);
-
-                $account_accepted = sabdy()->is_accepted_companie ?? false;
-
-                if ($account_accepted) {
-
-                    $valuer_companie = $percent_robus->percent_companie;
-
-                    $walletPayment->increment('commission_companie', $valuer_companie);
-
-                    $totalCommission =  $percent_robus->percent_companie +  $percent_robus->comission_canal;
-
-                    app(CommissionServiceBackend::class)->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_payment_id', $walletPayment->id, $totalCommission, $adminAmount);
-                } else {
-                    app(CommissionServiceBackend::class)->distributeAdminCommissionAccepteds($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount, $valuer_deposit);
-                }
-            } else {
-
-                app(CommissionServiceBackend::class)->distributeAdminCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount);
-            }
-        } else {
-
-            $adminAmount =  $percent_robus->amount_canal;
-            app(CommissionServiceBackend::class)->distributeAdminCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $adminAmount);
-        }
-
-        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount);
-
-        return true;
-    }
-
-
 
 
     protected function commissionAdminDrawal($admin_civ, $admin_commission, $walletTransaction)

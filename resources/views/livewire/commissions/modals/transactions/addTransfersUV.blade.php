@@ -118,7 +118,7 @@
                             class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
                             <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                                 <a href="#step-2"
-                                    class="w-10 h-10 rounded-full btn btn-circle {{ $currentStep != 2 ? 'btn-default' : 'btn-secondary' }}">2</a>
+                                    class="w-10 h-10 rounded-full btn btn-circle {{ $currentStep != 2 ? 'btn-default' : 'btn-tertiary' }}">2</a>
                                 <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Validation retrait
                                 </div>
                             </div>
@@ -174,7 +174,7 @@
                                     <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
                                         <div class="col-span-12">
                                             <img class="object-none object-center bg-yellow-300 w-logo"
-                                                src="{{ asset('public/dist/providers/robus.png') }}"
+                                                src="{{ asset_url('dist/providers/robus.png') }}"
                                                 alt="image"wire:model="image">
                                         </div>
                                     </div>

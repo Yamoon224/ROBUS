@@ -73,6 +73,7 @@ class CommissionServiceBackend
         }
     }
 
+
     public function distributeAdminCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
     {
 

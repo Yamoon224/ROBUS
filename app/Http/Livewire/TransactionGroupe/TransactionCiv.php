@@ -319,65 +319,70 @@ class TransactionCiv extends Component
         // Verifier plafond days
         $valeur_ceiling = sabdy()->silver_ceiling;
 
-        try {
+        $this->validate([
+            'provider_transaction' => 'required',
+        ], [
+            'provider_transaction.required' => 'Veuillez sélectionner un canal',
+        ]);
 
-            if ($provider) {
+        // Récupération du provider
+        $provider = Provider::find($this->provider_transaction);
+        if (!$provider) {
+            $this->emit('error', 'Erreur de choix de canal !');
+            return;
+        }
 
-
-
-                if ($this->provider_transaction == 9) {
-
-                    $this->validate(
-                        [
-                            'transaction_amount_robus' => 'required',
-                            'compte_number_robus' => 'required',
-                        ],
-                        [
-                            'compte_number_robus.exists' =>
-                            'Ce compte n\'existe pas dans chez nous ',
-                            'transaction_amount_robus.required' =>
-                            'Votre montant est obligatoire',
-                            'compte_number_robus.required' =>
-                            'le numero est obligatoire',
-                        ]
-                    );
-
-                    $this->transaction_amount_robus = htmlspecialchars($this->transaction_amount_robus, ENT_QUOTES, 'UTF-8');
-                    $this->compte_number_robus = htmlspecialchars($this->compte_number_robus, ENT_QUOTES, 'UTF-8');
-
-                    $this->step = 2;
-                } else {
-
-                    $this->validate([
-                        'transaction_amount_money' => 'required',
-                        'transaction_phone' => 'required',
-                    ], [
-                        'transaction_amount_money.required' => 'Votre montant est obligatoire',
-                        'transaction_phone.required' => 'le numero est obligatoire',
-
-                    ]);
+        if ($provider) {
 
 
-                    $this->step = 2;
-                }
+            if ($this->provider_transaction == 9) {
 
+                $this->validate(
+                    [
+                        'transaction_amount_robus' => 'required',
+                        'compte_number_robus' => 'required',
+                    ],
+                    [
+                        'compte_number_robus.exists' =>
+                        'Ce compte n\'existe pas dans chez nous ',
+                        'transaction_amount_robus.required' =>
+                        'Votre montant est obligatoire',
+                        'compte_number_robus.required' =>
+                        'le numero est obligatoire',
+                    ]
+                );
 
-                if (!$this->validateAmount()) {
-                    return;
-                }
+                $this->transaction_amount_robus = htmlspecialchars($this->transaction_amount_robus, ENT_QUOTES, 'UTF-8');
+                $this->compte_number_robus = htmlspecialchars($this->compte_number_robus, ENT_QUOTES, 'UTF-8');
 
-                if (!$this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
-                    return;
-                }
+                $this->step = 2;
             } else {
-                $this->resetTransactionField();
-                $this->emit('modal-hide-transfers');
-                $this->emit('error', 'Erreur de choix !');
+
+                $this->validate([
+                    'transaction_amount_money' => 'required',
+                    'transaction_phone' => 'required',
+                ], [
+                    'transaction_amount_money.required' => 'Votre montant est obligatoire',
+                    'transaction_phone.required' => 'le numero est obligatoire',
+
+                ]);
+
+
+                $this->step = 2;
             }
-        } catch (\Exception $exception) {
+
+
+            if (!$this->validateAmount()) {
+                return;
+            }
+
+            if (!$this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
+                return;
+            }
+        } else {
             $this->resetTransactionField();
             $this->emit('modal-hide-transfers');
-            $this->emit('error', 'Error de message demande a l\'admin !');
+            $this->emit('error', 'Erreur de choix !');
         }
     }
 
@@ -475,7 +480,7 @@ class TransactionCiv extends Component
 
                                                     $message = 'Vous venez de recevoir un montant de ' . $reel_amount . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
-                                                    app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search , $message);
+                                                    app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search, $message);
 
                                                     if ($this->processCommissionsDistributerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
                                                         app(NotificationServiceBackend::class)->sendNotification($walletTransaction);
@@ -541,7 +546,7 @@ class TransactionCiv extends Component
                                         if ($walletTransaction != null) {
 
                                             $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
-                                            app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search , $message);
+                                            app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search, $message);
 
                                             if (app(ServiceTransactionBackend::class)->updateAmountRobusReceivedDistributer($this->compte_number_robus, $walletTransaction)) {
                                                 if (app(ServiceTransactionBackend::class)->processCommissionsRobusDistributer($reel_amount)) {
@@ -613,7 +618,7 @@ class TransactionCiv extends Component
 
                                             $message = 'Vous venez de recevoir un montant de ' . $this->compte_number_robus . ' de la part de ' . sabdy()->firstname . ' ' . sabdy()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal_round . $wallet_search->currencie->name . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
-                                            app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search , $message);
+                                            app(NotificationServiceBackend::class)->notificationSmsDepotSend($wallet_search, $message);
 
                                             if (app(ServiceTransactionBackend::class)->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
                                                 if (app(CommissionServiceBackend::class)->processCommissionsCustumerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {

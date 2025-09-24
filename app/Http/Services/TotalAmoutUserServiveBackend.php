@@ -15,13 +15,33 @@ use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Carbon;
 use App\Models\Banks\BankCard;
+use Illuminate\Support\Facades\Auth;
+
 
 class TotalAmoutUserServiveBackend
 {
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
-      // Verify ceilling
+      public function getAdminCIVProperty()
+    {
+        return SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->where('country_id', 107)
+            ->with('unreadNotifications') // Récupération des notifications non lues directement
+            ->get();
+    }
+
+    public function getAdminValeurProperty()
+    {
+
+        $admins = SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->where('country_id', Auth::guard('web')->user()->country->id)
+            ->get();
+
+        return  $admins;
+    }
 
     public function getWalletBanksCeilingProperty()
     {
@@ -235,6 +255,4 @@ class TotalAmoutUserServiveBackend
 
         return array_sum($data);
     }
-
-
 }

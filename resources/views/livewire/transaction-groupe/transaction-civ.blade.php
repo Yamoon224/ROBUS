@@ -21,14 +21,13 @@
 
 
         <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
-            <div class="col-span-12">
+            <div class="col-span-12 form-group required">
                 <label for="modal-form-1" class="form-label">
                     Canal transfert d'argent
-                    <span class="text-danger">*</span>
                 </label>
                 <select wire:model.debounce.300ms="provider_transaction" wire:change="updateProviderTransaction"
-                    id="modal-form-1" class="form-control">
-                    <option value="null" disabled selected>Selectionnez le canal</option>
+                    id="modal-form-1" class="form-control" required>
+                    <option value="" selected>Selectionnez le canal</option>
                     @if ($is_under)
                         @if ($showDepotButton && $showMoneyButton)
                             @foreach ($providersAlls as $item)
@@ -103,7 +102,7 @@
                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 style_image_providers">
                     <div class="col-span-12">
                         <img class="object-none object-center bg-yellow-300 w-logo"
-                            src="{{ asset('public/dist/providers/' . $provider['image']) }}"
+                            src="{{ asset_url('dist/providers/' . $provider['image']) }}"
                             alt="{{ $provider['name'] }}">
                     </div>
                 </div>
@@ -154,7 +153,7 @@
                                 </div>
                             </div>
                         @endif --}}
-                        <div class="col-span-6 mt-3">
+                        <div class="col-span-6 mt-3 form-group required">
                             <label for="transaction_phone" class="form-label">Numero de telephone <span
                                     class="text-danger">*</span></label>
                             <div class="flex">
@@ -163,7 +162,7 @@
                                     {{ $countrie_indicative->indecative ?? null }}
                                 </div>
                                 <input wire:model.defer="transaction_phone" id="transaction_phone" type="number"
-                                    class="form-control" placeholder="Numero" maxlength="15">
+                                    class="form-control" placeholder="Numero" maxlength="15" required>
                             </div>
                             @error('transaction_phone')
                                 <span class="text-danger">{{ $message }}</span>
@@ -181,7 +180,7 @@
 
                 @if ($transaction_amount_robus || $transaction_amount_money)
                     <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                        {{-- Commission --}}
+
                         @php
                             $amount_to_pay = $transaction_amount_robus
                                 ? $amount_transaction_nat_val_percent
@@ -206,8 +205,7 @@
                                     country="{{ $usersCountry }}" />
                             @else
                                 <div class="col-span-6 mt-3">
-                                    <label class="form-label">Pas de commission<span class="text-danger">
-                                            *</span></label>
+                                    <label class="form-label">Pas de commission </label>
                                     <div class="px-5 py-3 flex-1 zoom-in alert alert-secondary relative font-medium leading-6 pl-3 2xl:pl-4"
                                         style="font-size: 25px; color:white;">
 
@@ -216,18 +214,14 @@
                             @endif
 
 
-                            {{-- Montant à recevoir --}}
-                            <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
+                            <x-transaction-detail-received title="Montant à recevoir" value="{{ $amount_to_receive }}"
                                 country="{{ $usersCountry }}" />
-
-                            {{-- <x-transaction-send title="Frais d'envoie" value="{{ $frais ?? null }}"
-                                country="{{ $usersCountry }}" /> --}}
                         @else
                             <x-transaction-detail title="Montant à payer" value="{{ $amount_to_pay }}"
                                 country="{{ $usersCountry }}" />
 
                             {{-- Montant à recevoir --}}
-                            <x-transaction-detail title="Montant à recevoir" value="{{ $amount_to_receive }}"
+                            <x-transaction-detail-received title="Montant à recevoir" value="{{ $amount_to_receive }}"
                                 country="{{ $usersCountry }}" />
                         @endif
 
@@ -243,13 +237,18 @@
             <button wire:click="cancelTransactionField" type="button"
                 class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
 
-
-            <button wire:click="addTransaction" type="button" wire:loading.remove="" wire:loading.attr="disabled"
-                class="btn btn-primary w-50">Envoyer
-                la demande</button>
-            <div wire:loading wire:target="addTransaction">
-                Traitement en cours...
-            </div>
+            @if (!is_null($provider_transaction) && $provider_transaction != '')
+                <button wire:click="addTransaction" type="button" wire:loading.remove="" wire:loading.attr="disabled"
+                    class="btn btn-primary w-50">Envoyer
+                    la demande</button>
+                <div wire:loading wire:target="addTransaction">
+                    Traitement en cours...
+                </div>
+            @else
+                <button type="button" class="btn btn-primary" disabled>
+                    Sélectionnez un canal
+                </button>
+            @endif
 
         </div>
     @elseif ($step === 2)
@@ -257,7 +256,7 @@
             class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
             <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                 <a href="#step-2"
-                    class="w-10 h-10 rounded-full btn btn-circle {{ $step != 2 ? 'btn-default' : 'btn-secondary' }}">2</a>
+                    class="w-10 h-10 rounded-full btn btn-circle {{ $step != 2 ? 'btn-default' : 'btn-tertiary' }}">2</a>
                 <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Validation </div>
             </div>
 
@@ -348,7 +347,7 @@
                 </button>
             @else
                 <p class="text-danger mt-2">
-                    Veuillez entrer un mot de passe valide pour activer le bouton de validation.
+                    Veuillez entrer un mot de passe valide.
                 </p>
             @endif
 

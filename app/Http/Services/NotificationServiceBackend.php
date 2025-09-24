@@ -19,6 +19,46 @@ class NotificationServiceBackend
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
 
+    public function sendMailReloadCardNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newReload($check);
+    }
+    public function notifyAdmins($admins)
+    {
+        foreach ($admins as $user) {
+            $admin_single = SidUser::find($user->id);
+            $notifs = $admin_single->unreadNotifications;
+            event(new AdminNotifEvent($notifs));
+        }
+    }
+
+    protected function sendMailPhoneCreditNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newPhoneCredit($check);
+    }
+
+    public function sendMailVersementNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newVirement($check);
+    }
+
+    public function sendMailPaiementNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newPaiement($check);
+    }
+
+    public function sendSuccessMessageCreateNotification($walletUser, $message)
+    {
+        if ($walletUser->country->code == 'CI' && $walletUser->is_custumers == 1) {
+            $encode = substr($walletUser->phone, -10);
+            http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        }
+    }
+
     public function notifyDrawalUsers($walletUser, $wallet_search, $walletTransaction)
     {
         if ($wallet_search->sidUser->email != null) {

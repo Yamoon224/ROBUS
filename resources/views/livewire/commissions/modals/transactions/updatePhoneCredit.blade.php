@@ -14,7 +14,7 @@
                     <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
             </a>
-            <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Credit telephonique
+            <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Crédit teléphonique
             </div>
             <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                 <div class="col-span-12 ">

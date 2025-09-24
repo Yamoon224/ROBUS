@@ -16,6 +16,7 @@
 
 <!-- End layout styles -->
 <link rel="stylesheet" href="{{ asset_url('css/app.css') }}" />
+{{-- <link rel="stylesheet" href="{{ asset_url('css/appModal.css') }}" /> --}}
 <!-- END: Page CSS-->
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])

@@ -60,7 +60,7 @@
 
                 <div class="px-5 pb-8 text-center mt-6">
                     <button type="button" wire:click="cancelVirementField"
-                        class="btn btn-outline-secondary w-25 mr-1 mb-1" wire:loading.class="hidden"
+                        class="btn btn-danger-soft w-25 mr-1 mb-1" wire:loading.class="hidden"
                         wire:target="updateVirement">Annuler</button>
                     <button wire:click="updateVirement" type="button" wire:loading.attr="disabled"
                         class="btn btn-primary w-50" wire:loading.class="hidden opacity-50 cursor-not-allowed">

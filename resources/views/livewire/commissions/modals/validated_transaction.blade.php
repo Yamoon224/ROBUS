@@ -59,7 +59,7 @@
 
                 <div class="px-5 pb-8 text-center mt-6">
                     <button wire:click="cancelTransactionField" type="button"
-                        class="btn btn-outline-secondary w-20 mr-1"
+                        class="btn btn-danger-soft w-20 mr-1"
                         wire:loading.class="hidden"
                         wire:target="updateTransaction">Annuler</button>
                     <button wire:click="updateTransaction" type="button" wire:loading.attr="disabled"

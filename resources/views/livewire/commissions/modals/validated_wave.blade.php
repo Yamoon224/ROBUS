@@ -59,7 +59,7 @@
 
                     <div class="px-5 pb-8 text-center mt-6">
                         <button type="button" wire:click="cancelWaveField"
-                            class="btn btn-outline-secondary w-25 mr-1 mb-1">Annuler</button>
+                            class="btn btn-danger-soft w-25 mr-1 mb-1">Annuler</button>
                         <button wire:click="updateWave" type="button" wire:loading.remove=""
                             class="btn btn-primary w-50">Validez</button>
                             <div  wire:loading wire:target="updateWave">

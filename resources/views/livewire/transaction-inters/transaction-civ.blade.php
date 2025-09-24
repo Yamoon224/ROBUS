@@ -312,7 +312,6 @@
                         @endif
                     </div>
 
-                    {{-- @if ($transaction_inter_amount_money) --}}
 
                         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
                             @php

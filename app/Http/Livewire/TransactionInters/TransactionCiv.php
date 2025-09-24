@@ -16,6 +16,8 @@ use App\Models\Payments\TransactionInter;
 use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
+use App\Http\Services\CommissionServicePercentBackend;
+use App\Http\Services\TransfertServiceBackend;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletInter;
@@ -272,7 +274,7 @@ class TransactionCiv extends Component
 
         if ($reelAmount !== '') {
 
-            $commissionInter = $this->getRobusPercentageInter($countryRobus, $this->provider_inter_out_civ);
+            $commissionInter = app(CommissionServicePercentBackend::class)->getRobusPercentageInter($countryRobus, $this->provider_inter_out_civ);
 
             if ($commissionInter) {
 
@@ -308,7 +310,7 @@ class TransactionCiv extends Component
 
         if ($reelAmount !== '') {
 
-            $commissionInter = $this->getRobusPercentageInter($countryRobus, $this->provider_inter_out_civ);
+            $commissionInter = app(CommissionServicePercentBackend::class)->getRobusPercentageInter($countryRobus, $this->provider_inter_out_civ);
 
             if ($commissionInter) {
 
@@ -788,7 +790,7 @@ class TransactionCiv extends Component
                     $this->emit('error', 'Ce providers n\'est pas encore disponible chez Robus !');
                 }
 
-                $percent_robus =  $this->getRobusPercentageInter($country_robus, $this->provider_inter_out_civ);
+                $percent_robus =  app(CommissionServicePercentBackend::class)->getRobusPercentageInter($country_robus, $this->provider_inter_out_civ);
                 $reel_amount =  $this->search_amount($this->transaction_inter_amount_money);
 
                 if ($this->provider_inter_out_civ == 51) {
@@ -814,11 +816,11 @@ class TransactionCiv extends Component
 
                                     $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
-                                    $walletInter = $this->createRobusWalletInter($reel_amount, $percent_robus, $country_robus, $this->provider_inter_out_civ, $this->compte_inter_number_robus, $this->provider_inter_out_civ_type, $amount_solde_drawal);
+                                    $walletInter = app(TransfertServiceBackend::class)->createRobusWalletInter($reel_amount, $percent_robus, $country_robus, $this->provider_inter_out_civ, $this->compte_inter_number_robus, $this->provider_inter_out_civ_type, $amount_solde_drawal);
 
                                     if ($walletInter != null) {
 
-                                        if ($this->updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $this->compte_inter_number_robus)) {
+                                        if (app(TransfertServiceBackend::class)->updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $this->compte_inter_number_robus)) {
                                             if ($this->processCommissionsRobus($reel_amount, $percent_robus, $walletInter)) {
                                                 $this->sendNotificationRobus($walletInter);
                                                 $this->resetInterField();
@@ -884,7 +886,7 @@ class TransactionCiv extends Component
                                             $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
                                         }
 
-                                        $walletInter = $this->createMobileWalletInter(
+                                        $walletInter = app(TransfertServiceBackend::class)->createMobileWalletInter(
                                             $reel_amount,
                                             $percent_robus,
                                             $country_robus,
@@ -901,7 +903,7 @@ class TransactionCiv extends Component
                                         if ($walletInter != null) {
 
 
-                                            if ($this->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
+                                            if (app(TransfertServiceBackend::class)->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
 
                                                 if ($this->processCommissionMobiles($reel_amount, $percent_robus, $country_robus, $walletInter, $admin_civ)) {
                                                     $this->sendNotificationRobus($walletInter);
@@ -4041,37 +4043,7 @@ class TransactionCiv extends Component
         return  LevelCountry::whereId($levelValeur)->first();
     }
 
-    private function updateAmountReceived($walletInter, $country_robus, $valeur_received)
-    {
 
-
-        if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
-
-            //   Convertion  in CFA
-            $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_received *   (float) sabdy()->country->currencie->value;
-            //   Convertion in Country send
-            $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
-        } elseif (sabdy()->country->currencie->value == $country_robus->currencie->value) {
-
-            $commission_transaction_val_inter_convertion_send = (float)   $valeur_received;
-        } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
-
-            //   Convertion  in CFA
-            $commission_transaction_val_inter_convertion_cfa =   (float)  $valeur_received *   (float) sabdy()->country->currencie->value;
-
-            //   Convertion in Country send
-            $commission_transaction_val_inter_convertion_send = (float)   $commission_transaction_val_inter_convertion_cfa  /   (float) $country_robus->currencie->value;
-        }
-
-        if ($commission_transaction_val_inter_convertion_send) {
-
-            $walletInter->update(['amount_received' => $commission_transaction_val_inter_convertion_send]);
-
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     private function processCommissionMobiles($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
     {
@@ -4287,144 +4259,7 @@ class TransactionCiv extends Component
     }
 
     // Validated WALLET mobile
-    private function createMobileWalletInter(
-        $amount_transaction,
-        $percent_robus,
-        $country_robus,
-        $provider_payment,
-        $phone,
-        $name_custumers,
-        $num_piece_custumers,
-        $date_piece,
-        $name,
-        $name_sender,
-        $account_number
-    ) {
-
-        $amount_solde = sabdy()->wallet->amount - $amount_transaction;
-
-        return WalletInter::create([
-            'wallet_id' => sabdy()->wallet->id,
-            'amount' => $amount_transaction,
-            'description' => null,
-            'inter_cost_id' => null,
-            'transaction_cost_id' => $percent_robus->id,
-            'phone' => $country_robus->indecative . $phone ?? null,
-            'number_compte' => $account_number,
-            'created_by' => sabdy()->id,
-            'provider_id' => $provider_payment,
-            'name_complet' => $name_custumers ?? null,
-            'name' => $name ?? null,
-            'num_piece' => $num_piece_custumers ?? null,
-            'name_benef' => $name_sender ?? null,
-            'validated_date' => $date_piece ?? null,
-            'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
-            'provider_type' => 1,
-            'status' => 'PENDING',
-            'country_id' => $country_robus->id,
-            'choose_type_transaction' => 1,
-            'amount_solde' => $amount_solde ?? null
-        ]);
-    }
-    // Wallet Robus
-
-    public function updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $wallet)
-    {
-
-        $wallet_search = Wallet::where('wallet_id', $wallet)
-            ->where('country_id', $country_robus->id)
-            //   ->where('status', true)
-            ->first();
-
-        $rt = rand(40, 5000) * time();
-        $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
-        $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
-        $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
-
-
-        if (sabdy()->country->currencie->value != $country_robus->currencie->value) {
-
-            $commission_transaction_val_inter_convertion_cfa = (float) $valeur_received * (float) sabdy()->country->currencie->value;
-
-            $commission_transaction_val_inter_convertion_send = (float) $commission_transaction_val_inter_convertion_cfa / (float) $country_robus->currencie->value;
-        } else {
-
-            $commission_transaction_val_inter_convertion_send = (float) $valeur_received;
-        }
-
-        $walletAmountSend = Wallet::where('wallet_id',  $wallet)->first();
-
-        $amount_solde_drawal = (float)$walletAmountSend->amount + $commission_transaction_val_inter_convertion_send;
-
-        if ($commission_transaction_val_inter_convertion_send) {
-
-            $walletInter->update([
-                'amount_received' => $commission_transaction_val_inter_convertion_send,
-                'amount_solde_drawal' => $amount_solde_drawal
-            ]);
-
-            $wallet_search->update([
-                'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
-                'sid_user_relod' => sabdy()->id,
-                'amount' => DB::raw('amount+' . $commission_transaction_val_inter_convertion_send),
-            ]);
-
-
-            // Valuer in Ivoice transaction
-            $transaction = TransactionInter::create([
-                'wallet_inter_id' => $walletInter->id,
-                'sid_user_id' => sabdy()->id,
-                'transaction_id' => 'RB_' . $walletInter->provider->name . '_' . $transactionCode,
-                'operator_transaction_name' => $walletInter->provider->name,
-                'trans_comp_id' => 'RB_' . $transactionCompiCode,
-                'pay_amount' => $walletInter->amount,
-                'fee_amount' =>  $walletInter->costs_amount,
-                'received_amount' => $commission_transaction_val_inter_convertion_send,
-                'status' => $walletInter->status,
-            ]);
-
-            InvoiceInter::create([
-                'title' => "Transfers d'argent",
-                'transaction_inter_id' => $transaction->id,
-                'description' => $walletInter->description,
-                'is_send' => true,
-                'status' => $walletInter->status,
-                'created_by' => sabdy()->id,
-            ]);
-
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // Validated wallet Robus
-
-    private function createRobusWalletInter($val_amount, $percent_robus, $country_robus, $provider_payment, $number_compte, $provider_type, $amount_drawal)
-    {
-        $amount_solde = sabdy()->wallet->amount - $val_amount;
-
-        return WalletInter::create([
-            'wallet_id' => sabdy()->wallet->id,
-            'amount' => $val_amount,
-            'description' => "Transfert par Robus",
-            'inter_cost_id' => null,
-            'transaction_cost_id' => $percent_robus->id,
-            'phone' =>  null,
-            'number_compte' => strtoupper($number_compte),
-            'created_by' => sabdy()->id,
-            'provider_id' => $provider_payment,
-            'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->percent_under_distributer * $val_amount) : ($percent_robus->percent * $val_amount),
-            'provider_type' => 1,
-            'type_transaction' => 'Depot',
-            'type_received' => 'Transfert',
-            'status' => 'SUCCESS',
-            'country_id' => $country_robus->id,
-            'choose_type_transaction' => $provider_type,
-            'amount_solde' => $amount_solde ?? null,
-            'amount_solde_drawal' => $amount_drawal ?? null
-        ]);
-    }
+ 
 
     private function processCommissionsRobus($amount_valeur, $percent_robus, $walletInter)
     {
