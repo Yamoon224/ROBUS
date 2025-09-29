@@ -7,6 +7,7 @@ use App\Models\CloseApp;
 use Illuminate\Console\Command;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 
 class CheckAppStatus extends Command
 {
@@ -41,11 +42,13 @@ class CheckAppStatus extends Command
 
         $robus_app = CloseApp::whereStatus(true)->where('id', $currentDayOfWeek)->first();
 
+        DB::table('app_statuses')->truncate();
+
         if ($robus_app) {
 
 
-            $robus_hour_begin = Carbon::createFromFormat('H:i:s', $robus_app->time_start)->format('H:i:s');
-            $robus_hour_end = Carbon::createFromFormat('H:i:s', $robus_app->time_end)->format('H:i:s');
+            $robus_hour_begin = $robus_app->time_start;
+            $robus_hour_end = $robus_app->time_end;
             $currentHour = Carbon::now()->format('H:i:s');
             $robus_hour_description = $robus_app->description;
             $robus_day = $robus_app->day_of_week;
@@ -62,6 +65,9 @@ class CheckAppStatus extends Command
                 ]);
             }
         }
-        
+
+        Cache::forget('app_status_mobile');
+        Cache::put('app_status_last_check', now(), now()->addMinutes(5));
+        $this->info('Cache nettoyé et vérification terminée');
     }
 }

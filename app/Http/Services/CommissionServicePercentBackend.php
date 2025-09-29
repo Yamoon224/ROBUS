@@ -5,12 +5,28 @@ namespace App\Http\Services;
 
 use App\Models\Costs\TransactionCost;
 use App\Models\LevelCountry;
+use App\Models\Onexbet;
+
 
 class CommissionServicePercentBackend
 {
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
+
+     public function getRobusPercentageOnexbet()
+    {
+        $countryNameGroup = sabdy()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return Onexbet::whereId(1)->first();
+            default:
+                return null;
+        }
+    }
+    
+
      public function getRobusPercentageCustumers()
     {
         $countryNameGroup = sabdy()->country->name_groupe;

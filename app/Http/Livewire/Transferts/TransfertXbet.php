@@ -1,0 +1,576 @@
+<?php
+
+namespace App\Http\Livewire\Transferts;
+
+
+use App\Models\Custumers\Country;
+use App\Models\OperatorService;
+use App\Models\Payments\Transaction;
+use App\Http\Services\CommissionServiceBackend;
+use App\Http\Services\TotalAmoutUserServiveBackend;
+use App\Http\Services\ServiceProviderBackend;
+use App\Http\Services\ServiceTransactionBackend;
+use App\Http\Services\TransfertServiceBackend;
+use App\Http\Services\NotificationServiceBackend;
+use App\Http\Services\CommissionServicePercentBackend;
+use App\Models\Providers\Provider;
+use App\Models\Sid\SidUser;
+use App\Models\Wallets\Wallet;
+use App\Models\Wallets\WalletTransaction;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use App\Events\CreateWalletXbetEvent;
+use Livewire\Component;
+
+
+class TransfertXbet extends Component
+{
+
+
+    public $operators;
+    public $operatorsTransaction;
+    public $choose_type_transaction;
+    public $id_compte;
+    public $id_compte_retrait;
+    public $amount_xbet;
+    public $full_nameXbet;
+    public $code_compte;
+    public $countrie;
+    public $citie_xbet;
+    public $area_xbet;
+    public $stepXbet = 1;
+
+    public $showTransDepotXbetButton = false;
+    public $showTransRetraitXbetButton = false;
+
+    public $showTransRemonteDepotXbetButton = false;
+    public $showTransRemonteRetraitXbetButton = false;
+    // Compagnies
+    public $showTransRemonteDepotXbetCButton = false;
+    public $showTransRemonteRetraitXbetCButton = false;
+    public $operatorsCompagnie;
+
+    public $isPasswordValid = false;
+    public $password_validated = '';
+    // Phone credit
+    public $commission_transaction_val_nat_xbet_pay;
+    public $commission_transaction_val_admin_xbet_receive;
+    public $commission_transaction_val_nat_xbet_receive;
+    public $commission_transaction_drawal;
+
+    public function mount()
+    {
+
+        $this->operators = OperatorService::getOperatorsWithCommissions(sabdy()->id);
+        $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
+        $account_accepted = sabdy()->is_accepted_companie ?? false;
+        $company_id = sabdy()->company_id ?? null;
+        if ($company_id && $company_id != 0 && $company_id != 1) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+        if ($sidUserId) {
+            $this->operatorsCompagnie = OperatorService::getOperatorsWithCommissions($sidUserId);
+        } else {
+            $this->operatorsCompagnie = [];
+        }
+
+        $restrictionMap = [
+            'Active Xbets' => 'showTransRemonteDepotXbetButton',
+            'Active Retrait Xbet' => 'showTransRemonteRetraitXbetButton'
+        ];
+
+        $restrictionCompangieMap = [
+            'Active Xbets' => 'showTransRemonteDepotXbetCButton',
+            'Active Retrait Xbet' => 'showTransRemonteRetraitXbetCButton'
+        ];
+
+
+        $restrictionMapTransaction = [
+            'TRANSFERT XBET' => 'showTransDepotXbetButton',
+            'RETRAIT XBET' => 'showTransRetraitXbetButton'
+        ];
+
+        foreach ($this->operatorsTransaction as $operator) {
+            $restrictions = explode(',', $operator->name);
+            foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+
+        foreach ($this->operators as $operator) {
+            $restrictions = explode(',', $operator->name);
+
+            foreach ($restrictionMap as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+
+        foreach ($this->operatorsCompagnie as $operator) {
+            $restrictions = explode(',', $operator->name);
+
+            foreach ($restrictionCompangieMap as $restriction => $buttonVar) {
+                if (in_array($restriction, $restrictions)) {
+                    $this->{$buttonVar} = true;
+                }
+            }
+        }
+    }
+
+    public function checkPassword()
+    {
+
+        if (empty($this->password_validated)) {
+            // Gérer le cas où le mot de passe n'est pas valide
+            return;
+        }
+
+        if (Hash::check($this->password_validated, sabdy()->password)) {
+            $this->isPasswordValid = true;
+        } else {
+            $this->isPasswordValid = false;
+        }
+    }
+
+
+    public function addXbetSend()
+    {
+
+        $walletUser = sabdy();
+        $provider = Provider::whereId($this->provider_phone_credit)->first();
+        $valeur_ceiling = $walletUser->silver_ceiling;
+        $som_transfers =  $this->getSumValTransactionProperty();
+
+
+        try {
+
+            if ($provider) {
+
+
+                if ($this->choose_type_transaction == 1) {
+
+                    $this->validate(
+                        [
+                            'amount_xbet' => 'required',
+                            'full_nameXbet' => 'required',
+                            'id_compte' => 'required',
+                        ],
+                        [
+
+                            'amount_xbet.required' =>
+                            'Votre montant est obligatoire',
+                            'full_nameXbet.required' =>
+                            'le nom est obligatoire',
+                            'id_compte.required' =>
+                            'le Id du compte est obligatoire',
+                        ]
+                    );
+
+                    $this->amount_xbet = htmlspecialchars($this->amount_xbet, ENT_QUOTES, 'UTF-8');
+
+                    $this->stepXbet = 2;
+                } else {
+
+                    $this->validate(
+                        [
+                            'citie_xbet' => 'required',
+                            'area_xbet' => 'required',
+                            'code_compte' => 'required',
+                            'amount_xbet' => 'required',
+                            'id_compte' => 'required'
+                        ],
+                        [
+
+                            'citie_xbet.required' =>
+                            'La ville est obligatoire',
+                            'area_xbet.required' =>
+                            'la rue est obligatoire',
+                            'code_compte.required' =>
+                            'le code du compte est obligatoire',
+                            'amount_xbet.required' =>
+                            'Votre montant est obligatoire',
+                            'id_compte.required' =>
+                            'Votre Id du compte est obligatoire',
+                        ]
+                    );
+
+                    $this->amount_xbet = htmlspecialchars($this->amount_xbet, ENT_QUOTES, 'UTF-8');
+
+                    $this->stepXbet = 2;
+                }
+
+                $percent_robus =  app(CommissionServicePercentBackend::class)->getRobusPercentageOnexbet();
+
+
+                if ($som_transfers >= $valeur_ceiling) {
+
+                    $this->resetXbetTransactionField();
+                    $this->emit('modal-hide-xbet');
+                    $this->emit(
+                        'warning',
+                        'Votre montant journier est atteint !'
+                    );
+                    return;
+                }
+
+                $reel_amount = $this->search_amount($this->amount_xbet);
+
+                if ($this->choose_type_transaction === 1) {
+                    $val_amount = $reel_amount +  $percent_robus->percent *  $reel_amount;
+                } else {
+                    $val_amount = $reel_amount +  $percent_robus->percent_with_drawal *  $reel_amount;
+                }
+
+                if ($val_amount > $walletUser->wallet->amount) {
+                    $this->resetXbetTransactionField();
+                    $this->emit('modal-hide-xbet');
+                    $this->emit(
+                        'error',
+                        'Verifier votre montant  svp !'
+                    );
+                    return;
+                }
+
+                $this->stepXbet = 2;
+            } else {
+                $this->emit('error', 'Rechargement  existante !');
+            }
+        } catch (\Exception $exception) {
+            $this->resetXbetTransactionField();
+            $this->emit('modal-hide-xbet');
+            $this->emit('error', 'Error de message demande a l\'admin !');
+        }
+    }
+
+    public function addValidatedXbet()
+    {
+
+        $walletUser = sabdy();
+        $provider = Provider::whereId($this->provider_phone_credit)->first();
+        $valeur_ceiling = $walletUser->silver_ceiling;
+        $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
+        $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
+        $som_transfers =  $this->getSumValTransactionProperty();
+        DB::beginTransaction();
+
+        try {
+
+
+            if (!$provider) {
+                $this->emit('error', 'Rechargement existant !');
+                return;
+            }
+
+
+            $this->validate([
+                'password_validated' => 'required',
+            ], [
+                'password_validated.required' => 'Mot de passe est obligatoire',
+            ]);
+
+            if (!Hash::check($this->password_validated, sabdy()->password)) {
+                $this->resetXbetTransactionField();
+                $this->emit('modal-hide-xbet');
+                $this->emit('error', 'Vérifiez votre mot de passe SVP !');
+                return;
+            }
+
+
+            if ($walletUser->country->code != 'CI') {
+                $this->resetXbetTransactionField();
+                $this->emit('modal-hide-xbet');
+                $this->emit(
+                    'warning',
+                    'Ce réchargement est uniquement pour la CIV !'
+                );
+                return;
+            }
+
+
+            if ($som_transfers >= $valeur_ceiling) {
+                $this->resetXbetTransactionField();
+                $this->emit('modal-hide-xbet');
+                $this->emit('warning', 'Votre montant journier est atteint !');
+                return;
+            }
+
+
+            $reel_amount = $this->search_amount($this->amount_xbet);
+            $percent_robus =  app(CommissionServicePercentBackend::class)->getRobusPercentageOnexbet();
+
+            if ($this->choose_type_transaction === 1) {
+                $val_amount = $reel_amount +  $percent_robus->percent *  $reel_amount;
+            } else {
+                $val_amount = $reel_amount +  $percent_robus->percent_with_drawal *  $reel_amount;
+            }
+
+            if ($val_amount > $walletUser->wallet->amount) {
+                $this->resetXbetTransactionField();
+                $this->emit('modal-hide-xbet');
+                $this->emit('error', 'Vérifier votre montant SVP !');
+                return;
+            }
+
+            $amount_solde =  $walletUser->wallet->amount -  $val_amount;
+
+            if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
+
+                $amountReceved = $reel_amount;
+
+
+                $walletXbet =  app(TransfertServiceBackend::class)->createXbetTransaction(
+                    $reel_amount,
+                    $provider,
+                    $percent_robus,
+                    $amount_solde,
+                    $this->choose_type_transaction,
+                    $this->full_nameXbet,
+                    $this->id_compte,
+                    $this->citie_xbet,
+                    $this->area_xbet,
+                    $this->code_compte,
+                    $amountReceved
+                );
+
+                if ($this->choose_type_transaction == 1) {
+                    $message =
+                        'Vous avez effectué un dépot de ' .
+                        $walletXbet->amount .
+                        $walletUser->wallet->currencie->code .
+                        ' ' .
+                        'par ' .
+                        $walletXbet->provider->name .
+                        ' le ' .
+                        $walletXbet->created_at .
+                        ' votre demande est en cours de validation ' .
+                        'Robus vous remercie';
+                } else {
+
+                    $message =
+                        'Vous avez effectué un rétrait de ' .
+                        $walletXbet->amount .
+                        $walletUser->wallet->currencie->code .
+                        ' ' .
+                        'par ' .
+                        $walletXbet->provider->name .
+                        ' le ' .
+                        $walletXbet->created_at .
+                        ' votre demande est en cours de validation ' .
+                        'Robus vous remercie';
+                }
+
+
+
+                app(NotificationServiceBackend::class)->sendSuccessMessageCreateNotification($walletUser, $message);
+
+
+                if ($walletXbet != null  && $walletXbet->status == 'PENDING') {
+                    $this->updateamountXbetTrasaction($admin_civ, $percent_robus, $walletXbet,  $walletUser, $reel_amount, $this->choose_type_transaction);
+                }
+
+                event(new CreateWalletXbetEvent($walletXbet));
+
+                app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Transaction 1XBET', 'Demande de 1XBET est en cours de validation', 'Demande de transaction 1XBET de ' . ' ' . $walletXbet->wallet->sidUser->firstname);
+
+                if ($admins->count() > 0) {
+                    app(NotificationServiceBackend::class)->notifyAdmins($admins);
+                }
+
+
+                $this->resetXbetTransactionField();
+                $this->emit('modal-hide-xbet');
+                $this->emit('success', 'Votre demande de transaction a bien été prise en compte !');
+                if ($walletUser->email != null) {
+                    app(NotificationServiceBackend::class)->sendMailXbetNotification($walletXbet);
+                }
+            } else {
+                $this->resetXbetTransactionField();
+                $this->emit('modal-hide-xbet');
+                $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
+                return;
+            }
+            DB::commit();
+        } catch (\Exception $exception) {
+            $this->resetXbetTransactionField();
+            $this->emit('modal-hide-xbet');
+            $this->emit('error', 'Error de message demande a l\'admin !');
+        }
+    }
+
+
+    protected function updateamountXbetTrasaction($admin_civ, $amount_user, $walletXbet, $walletUser, $amount_valeur, $choose_type_transaction)
+    {
+
+
+        $adminAmount = $amount_valeur + (float) ($amount_user->percent_admin * $amount_valeur);
+
+        $val_amount_send = $amount_valeur + (float) ($amount_user->percent * $amount_valeur);
+
+        if (sabdy()->is_under_distributer) {
+
+            if ($choose_type_transaction ===  1) {
+
+                if ($this->showTransRemonteDepotXbetButton) {
+
+                    $valuer_deposit = $amount_user->percent_merchands * $amount_valeur;
+
+                    $walletXbet->update([
+                        'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
+                    ]);
+
+                    $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+                    if ($account_accepted && $this->showTransRemonteDepotXbetCButton) {
+                       
+                        $valuer_companie = $amount_user->percent_companie * $amount_valeur;
+
+                        $walletXbet->increment('commission_companie', $valuer_companie);
+
+                        $totalCommission =  (float)($valuer_companie) +  (float)($valuer_deposit);
+
+                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $totalCommission, $adminAmount);
+                    } else {
+                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_xbet_id', $walletXbet->id, $adminAmount, $valuer_deposit);
+                    }
+                } else {
+
+                    app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $val_amount_send);
+                }
+            } else {
+
+                if ($this->showTransRemonteRetraitXbetButton) {
+
+                    $valuer_deposit =  $amount_user->percent_under_drawal * $amount_valeur;
+
+                    $walletXbet->update([
+                        'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
+                    ]);
+
+                    $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+                    if ($account_accepted && $this->showTransRemonteRetraitXbetCButton) {
+                        $valuer_companie =  $amount_user->percent_comp_drawal * $amount_valeur;
+                        $walletXbet->increment('commission_companie', $valuer_companie);
+
+                        $totalCommission =  (float)($valuer_companie) +  (float)($valuer_deposit);
+
+                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_xbet_id', $walletXbet->id, $totalCommission, $adminAmount);
+                    } else {
+                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_xbet_id', $walletXbet->id, $adminAmount, $valuer_deposit);
+                    }
+                } else {
+
+                    app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $val_amount_send);
+                }
+            }
+        } else {
+
+            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_xbet_id', $walletXbet->id, $val_amount_send);
+        }
+
+        $amount_commission = $val_amount_send;
+
+        app(TransfertServiceBackend::class)->updatePaiementWallet($walletUser, $amount_commission);
+
+        return true;
+    }
+
+    public function resetXbetTransactionField()
+    {
+        $this->id_compte = null;
+        $this->amount_xbet = '';
+        $this->full_nameXbet = '';
+        $this->code_compte = '';
+        $this->countrie = '';
+        $this->citie_xbet = '';
+        $this->area_xbet = '';
+        $this->id_compte_retrait = '';
+        $this->choose_type_transaction = null;
+        $this->stepXbet = 1;
+        $this->emit('modal-hide-xbet-validated');
+        $this->emit('modal-hide-xbet');
+        $this->emit('menu-xbet-active');
+    }
+
+
+    public function calculateAmountXbets()
+    {
+
+        $this->commission_transaction_val_admin_xbet_receive = 0;
+        $this->commission_transaction_val_nat_xbet_receive = 0;
+        $this->commission_transaction_val_nat_xbet_pay = 0;
+
+
+        if ($this->amount_xbet) {
+            // Calcul pour les transactions Robus
+            $reel_amount = $this->search_amount($this->amount_xbet);
+
+            if ($reel_amount != '') {
+
+                $commission_transaction = app(CommissionServicePercentBackend::class)->getRobusPercentageOnexbet();
+
+                $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+                // Calculs
+                $this->commission_transaction_val_admin_xbet_receive = (float) $commission_transaction->percent_merchands * $reel_amount;
+                $this->commission_transaction_val_nat_xbet_receive = (float) $reel_amount;
+                $this->commission_transaction_val_nat_xbet_pay = (float) $commission_percent_transaction;
+            }
+        }
+    }
+
+
+    public function updatedAmountXbet()
+    {
+        $this->calculateAmountXbets();
+    }
+
+    public function render()
+    {
+        return view(
+            'livewire.transferts.transfert-xbet',
+            [
+                'showRetraitButton' => $this->showTransDepotXbetButton,
+                'showDepotButton' => $this->showTransRetraitXbetButton,
+                'countrie_number_local' => sabdy()->country
+                    ->indecative,
+                'amount_transaction_nat_val_xbet_percent' => $this->commission_transaction_val_nat_xbet_pay,
+                'amount_transaction_nat_val_xbet_receive' => $this->commission_transaction_val_nat_xbet_receive,
+                'amount_transaction_nat_val_xbet_commission' => $this->commission_transaction_val_admin_xbet_receive,
+                'usersCountry' => sabdy()->wallet->currencie->code,
+            ]
+        );
+    }
+
+    public function getSumValTransactionProperty()
+    {
+        $service = app(TotalAmoutUserServiveBackend::class);
+
+        $somm_valeur = $service->getwalletXbetsCeilingProperty()
+            + $service->getWalletDepositsCeilingProperty()
+            + $service->getWalletIntersCeilingProperty()
+            + $service->getWalletPaymentsCeilingProperty()
+            + $service->getWalletTransactionsCeilingProperty()
+            + $service->getwalletXbetCreditsCeilingProperty()
+            + $service->getWalletReloadsCeilingProperty()
+            + $service->getwalletXbetCardCeilingProperty();
+
+        return $somm_valeur;
+    }
+
+    public function search_amount($amount_received)
+    {
+
+        $reel_amount = str_replace(['.', ','], '', $amount_received);
+
+        $reel_amount = (float) $reel_amount;
+
+        return $reel_amount;
+    }
+}

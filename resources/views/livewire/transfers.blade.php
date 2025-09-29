@@ -895,6 +895,7 @@
     {{-- @include('livewire.commissions.modals.transactions.updateXbet') --}}
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
     @include('livewire.commissions.modals.transactions.addPhoneCredit')
+    @include('livewire.commissions.modals.transactions.addOneXbet')
     @include('livewire.commissions.modals.transactions.addReloadCards')
     @include('livewire.commissions.modals.transactions.addInterTransfer')
     @include('livewire.commissions.modals.transactions.addInterCivTransfer')

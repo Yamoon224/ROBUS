@@ -7,6 +7,7 @@ use App\Mail\NewAdmin;
 use App\Mail\WalletBank;
 use App\Mail\WalletCard;
 use App\Mail\WalletInter;
+use App\Mail\WalletXbet;
 use App\Mail\WalletReload;
 use App\Mail\sendValidated;
 use App\Mail\modifyPassword;
@@ -81,6 +82,14 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletBank($data));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+     public function newXbet($data)
+    {
+        try {
+            Mail::to($data->wallet->sidUser->email)->send(new WalletXbet($data));
         } catch (\Throwable $th) {
             throw $th;
         }

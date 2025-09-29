@@ -76,6 +76,30 @@ class TransfertServiceBackend
         ]);
     }
 
+      public function createXbetTransaction($val_amount , $provider, $percent_robus, $amount_solde , $choose_type_transaction , $fullName , $numberAcompte , $citieXbet , $areaXbet , $codeAcompte, $amountReceved)
+    {
+        
+        return WalletXbet::create([
+            'wallet_id' =>   sabdy()->wallet->id,
+            'amount' => $val_amount,
+            'description'  => 'Demande  de depot 1Xbet',
+            'Onexbet_id' => $choose_type_transaction === 1 ? 1  : 2,
+            'created_by' => sabdy()->id,
+            'amount_solde'  => $amount_solde  ?? null,
+            'provider_id'  =>  $provider,
+            'costs_amount' => ($percent_robus->percent * $val_amount),
+            'choose_type_transaction' => $choose_type_transaction,
+            'num_acompte'  =>  $numberAcompte ?? null,
+            'full_name' =>  $fullName ?? null,
+            'citie_name' =>  $citieXbet ?? null,
+            'area_name' =>  $areaXbet ?? null,
+            'code_acompte' =>  $codeAcompte ?? null,
+            'status'  => "PENDING",
+            'amount_received'  =>  $amountReceved ?? 0.0,
+        ]);
+    }
+
+
     public function updateAmountReceived($walletInter, $country_robus, $valeur_received)
     {
 

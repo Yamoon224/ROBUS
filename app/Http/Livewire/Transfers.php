@@ -9,10 +9,6 @@ use App\Events\ChoosePhoneCreditEvent;
 use App\Events\ChooseReloadCardEvent;
 use App\Events\ChooseTransactionEvent;
 use App\Events\ChooseVirementEvent;
-use App\Events\CreateWalletBankEvent;
-use App\Events\CreateWalletPaiementEvent;
-use App\Events\CreateWalletPhoneCreditEvent;
-use App\Events\CreateWalletReloadCardEvent;
 use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\NotificationServiceBackend;
@@ -20,6 +16,7 @@ use App\Http\Services\ConvertionPercentBackend;
 use App\Http\Services\TransfertServiceBackend;
 use App\Http\Services\CommissionServiceBackend;
 use App\Http\Services\CommissionServicePercentBackend;
+use App\Http\Services\TotalAmoutUserServiveBackend;
 use App\Models\AdminsCom;
 use App\Models\Banks\BankCard;
 use App\Models\Costs\BankCost;
@@ -62,31 +59,113 @@ class Transfers extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
-    public $searchTransaction = '';
-    public $search = '';
-    public $wallet;
-    public $searchPaiment = '';
-    public $searchVirement = '';
-    public $searchUser = '';
-    public $searchInter = '';
-    public $searchReloadCard = '';
-    public $searchPhoneCredit = '';
-    public $statusFilterPaiement = '';
-    public $statusFilterVirement = '';
-    public $statusFilterInter = '';
-    public $statusFilterReloadCard = '';
-    public $statusFilterPhoneCredit = '';
-    public $statusFilterTransaction = '';
-    public $searchRobus = '';
-    public $percent_robus_distri;
-    // Valueur currencie
+ 
+    // Phone Credit Edit valeurs
+    public $phoneCreditId;
+    public $phoneCreditStatus;
+    public $provider_phone_credit_edit;
+    public $number_phone_credit_edit ;
+    public $amount_phone_credit_edit ;
+    public $currency_custumers ;
+    public $description_phone_credit;
+    public $phoneCredit_cost;
+   
+    // Reload Card Edit valeurs
+    public $reloadcardId;
+    public $reloadcard_description_edit ;
+    public $reloadcardStatus ;
+    public $provider_reloadcard_edit ;
+    public $amount_reloadcard_edit;
+    public $account_number_reloadcard_edit ;
+    public $name_reloadcard_edit;
 
-    public $currency_custumers;
+    // Edit Transaction valeurs
+    public $transactionId;
+    public $transactionStatus;
+    public $provider_transaction_edit ;
+    public $transaction_description_edit ;
+    public $transaction_phone_edit;
+    public $compte_number_robus_edit ;
+    public $transaction_amount_robus_edit;
+    public $transaction_amount_money_edit;
+    public $transaction_description_robus_edit ;
+
+    // Edit paiement valeurs 
+    public $paiementId ;
+    public $provider_payment_edit ;
+    public $provider_payment_name ;
+    public $paiement_num_contrat_edit ;
+    public $paiement_id_invoice_edit ;
+    public $paiement_decoder_canal_edit;
+    public $paiement_phone_canal_edit ;
+    public $paiement_name_sodecie_edit;
+    public $paiement_name_cie_edit;
+    public $paiement_amount_t_sodecie_edit;
+    public $paiement_amount_total_edit;
+    public $paiementStatus ;
+    public $facture_choix_type_edit ;
+    public $paiementChoix_phone_edit ;
+    public $offer_paiement_edit ;
+    public $offer_paiement_edit_amount ;
+    public $phone_invoice_pre_edit ;
+    public $pre_id_invoice_edit ;
+    public $devise_user;
+    public $paiement_amount_Canal_edit;
+    public $paiement_amount_p_sodecie_edit;
+    public $paiement_amount_partiel_edit;
+    public $paiementChoix_type_edit;
+
+    // Edit Inter valeurs
+
+    public $interId;
+    public $inter_description_edit ;
+    public $inter_description_robus_edit ;
+    public $interStatus ;
+    public $provider_inter_edit ;
+    public $country_inter_edit;
+    public $amount_inter_edit ;
+    public $account_number_inter_edit ;
+    public $phone_inter_edit ;
+    public $amount_inter_robus_edit ;
+    public $country_inter_robus_edit;
+    //Edit Invoice
+
+    public $choose_type_paiement ;
+    // Edit Phone credit
+    public $provider_phone_credit_inter_edit ;
+    public $number_phone_credit_inter_edit ;
+    public $amount_phone_credit_inter_edit ;
+    public $country_inter_robus_inter_edit;
+
+    // Edit Virement bank
+    public $provider_Inter_virement_edit ;
+    public $firstname_user_inter_edit ;
+    public $name_relo_user_inter_edit ;
+    public $phone_user_inter_edit ;
+    public $amount_virement_inter_edit ;
+    public $account_number_user_bank_inter_edit ;
+    public $amount_virement_nsia_inter_edit ;
+
+    //  Edit Paiment Invoice
+    public $phone_invoice_inter_edit ;
+    public $id_invoice_inter_edit ;
+
+    // Edit valeurs virements
+
+    public $virementId ;
+    public $virementStatus ;
+    public $virementDescription_edit ;
+    public $provider_virement_edit ;
+    public $firstname_user_edit ;
+    public $lastname_user_edit ;
+    public $phone_user_edit ;
+    public $country_virement_edit;
+    public $amount_virement_edit;
+    public $account_number_user_edit;
+
 
     // Transactions
-    public $transactionId;
     public $transaction_description;
-    public $transactionStatus;
     public $transaction_phone;
     public $transaction_cost;
     public $provider_transaction;
@@ -96,266 +175,49 @@ class Transfers extends Component
     public $transaction_description_robus;
     public $password_transaction;
     public $showNTransfersNotification = false;
+    public $showNBankNotification = false;
+    public $showNPaiementNotification = false;
     public $currentStep = 1;
     public $code_validated;
     public $code_validated_inter;
 
-    // Edit
-    public $transaction_description_edit;
-    public $transaction_phone_edit;
-    public $transaction_cost_edit;
-    public $provider_transaction_edit;
-    public $compte_number_robus_edit;
-    public $transaction_amount_robus_edit;
-    public $transaction_amount_money_edit;
-    public $transaction_description_robus_edit;
 
-    // Paiements
-    public $paiementDescription;
-    public $paiementId;
-    public $paiement_cost;
-    public $offer_paiement;
-    public $paiementStatus;
-    public $provider_payment;
-
-    // SODECIE
-    public $paiement_name_sodecie;
-    public $paiement_amount_t_sodecie;
-    public $paiement_amount_p_sodecie;
-    public $paiement_decoder;
-    public $paiement_num_contrat;
-    public $provider_payment_edit;
-
-    public $provider_payment_name;
-
-    // CIE
-    public $paiement_name_cie;
-    public $paiement_id_invoice;
-    public $paiement_amount_total;
-    public $paiement_amount_partiel;
-    public $paiement_id_invoice_pre;
-    public $pre_phone_invoice;
-    public $pre_id_invoice;
-
-    // CANAL
-    public $paiement_phone_canal;
-    public $paiement_decoder_canal;
-    public $paiement_amount_Canal;
 
     // Choise
     public $paiementChoix_phone;
     public $paiementChoix_type;
     public $facture_choix_type;
 
-    // Edit
-    public $paiement_num_contrat_edit;
-    public $paiement_id_invoice_edit;
-    public $paiement_decoder_canal_edit;
-    public $paiement_name_sodecie_edit;
-    public $paiement_name_cie_edit;
-    public $paiement_phone_canal_edit;
-    public $paiement_amount_Canal_edit;
-    public $paiement_amount_p_sodecie_edit;
-    public $paiement_amount_t_sodecie_edit;
-    public $paiement_amount_total_edit;
-    public $paiement_amount_partiel_edit;
-    public $paiementChoix_phone_edit;
-    public $paiementChoix_type_edit;
-    public $offer_paiement_edit;
-    public $facture_choix_type_edit;
-    public $phone_invoice_pre_edit;
-    public $pre_id_invoice_edit;
-    public $name_reloadcard_edit;
-    public $offer_paiement_edit_amount;
-
     // Virement
     public $virementDescription;
-    public $virementId;
     public $virement_cost;
-    public $virementStatus;
     public $provider_virement;
-    public $firstname_user;
-    public $lastname_user;
-    public $phone_user;
-    public $amount_virement;
-    public $account_number_user_bank;
-    public $showNBankNotification = false;
-    public $country_virement;
-    public $account_number_user;
 
-
-    // edit
-    public $virementDescription_edit;
-    public $provider_virement_edit;
-    public $firstname_user_edit;
-    public $lastname_user_edit;
-    public $phone_user_edit;
-    public $amount_virement_edit;
-    public $account_number_user_edit;
-    public $country_virement_edit;
-
-    // Inters
-    public $inter_description;
-    public $inter_description_robus;
-    public $interId;
-    public $inter_cost;
-    public $interStatus;
-    public $provider_inter;
-    public $country_inter;
-    public $amount_inter;
-    public $account_number_inter;
-    public $phone_inter;
-    public $amount_inter_robus;
-    public $country_inter_robus;
-    public $country_inter_out_civ;
-    public $provider_inter_out_civ;
-    public $phone_inter_out_civ;
-    public $amount_inter_out_civ;
-    public $showNPaiementNotification = false;
-    public $choose_type_transaction_inter;
-
-    // Phone credit inter
-    public $provider_phone_credit_inter;
-    public $number_phone_credit_inter;
-    public $amount_phone_credit_inter;
-    public $country_inter_robus_inter;
-
-    // Inter edit Phone credit
-    public $provider_phone_credit_inter_edit;
-    public $number_phone_credit_inter_edit;
-    public $amount_phone_credit_inter_edit;
-    public $country_inter_robus_inter_edit;
-
-    // Virment bank inter
-    public $virement_interId;
-    public $virement_inter_Status;
-    public $provider_Inter_virement;
-    public $firstname_user_inter;
-    public $lastname_user_inter;
-    public $phone_user_inter;
-    public $amount_virement_inter;
-    public $account_number_user_bank_inter;
-    public $showNBankNotification_inter = false;
-    public $country_virement_inter;
-    public $account_number_user_inter;
-    public $amount_virement_nsia_inter;
 
     // Edit virement bank Inter
-    public $provider_Inter_virement_edit;
-    public $firstname_user_inter_edit;
+
     public $lastname_user_inter_edit;
-    public $name_relo_user_inter_edit;
-    public $phone_user_inter_edit;
-    public $amount_virement_inter_edit;
-    public $account_number_user_bank_inter_edit;
     public $account_number_user_inter_edit;
-    public $amount_virement_nsia_inter_edit;
-    public $devise_user;
 
-    // Edit Invoice paiement
-    public $phone_invoice_inter_edit;
-    public $id_invoice_inter_edit;
-
-    // Choose Paiement Inter invoice
-    public $choose_type_paiement;
     public $provider_payment_inter;
     public $choose_type_transaction;
 
-    // SODECIE
-    public $paiement_name_sodecie_inter;
-    public $paiement_amount_t_sodecie_inter;
-    public $paiement_amount_p_sodecie_inter;
-    public $paiement_decoder_inter;
-    public $paiement_num_contrat_inter;
-    public $provider_payment_edit_inter;
-
-    // CIE
-    public $paiement_name_cie_inter;
-    public $paiement_id_invoice_inter;
-    public $paiement_amount_total_inter;
-    public $paiement_amount_partiel_inter;
-    public $paiement_id_invoice_pre_inter;
-    public $pre_phone_invoice_inter;
-    public $pre_id_invoice_inter;
-
-    // CANAL
-    public $paiement_phone_canal_inter;
-    public $paiement_decoder_canal_inter;
-    public $paiement_amount_Canal_inter;
-    public $offer_paiement_inter;
-    // edit
-    public $inter_description_edit;
-    public $inter_description_robus_edit;
-    public $provider_inter_edit;
-    public $country_inter_edit;
-    public $amount_inter_edit;
-    public $account_number_inter_edit;
-    public $phone_inter_edit;
-    public $amount_inter_robus_edit;
-    public $country_inter_robus_edit;
     public $payment_description_robus;
 
-    // Relaod cards
-    public $reloadcard_description;
-    public $reloadcardId;
-    public $reloadcard_cost;
-    public $reloadcardStatus;
-    public $provider_reloadcard;
-    public $amount_reloadcard;
-    public $account_number_reload_card;
-    public $name_reloadcard;
-
-    // Reload card inter
-    public $provider_reloadcard_inter;
-    public $amount_reloadcard_inter;
-    public $account_number_reload_card_inter;
-    public $name_reloadcard_inter;
-
-    // edit
-    public $reloadcard_description_edit;
-    public $provider_reloadcard_edit;
-    public $country_reloadcard_edit;
-    public $amount_reloadcard_edit;
-    public $account_number_reloadcard_edit;
-    public $phone_reloadcard_edit;
-    public $amount_reloadcard_robus_edit;
-    public $country_reloadcard_robus_edit;
-
-    // Phone credit
-    public $phoneCreditId;
-    public $phoneCredit_cost;
-    public $phoneCreditStatus;
-    public $provider_phone_credit;
-    public $number_phone_credit;
-    public $amount_phone_credit;
-    public $description_phone_credit;
-
-    // Edit
-    public $provider_phone_credit_edit;
-    public $number_phone_credit_edit;
-    public $amount_phone_credit_edit;
 
     // Protected valeurs Services
     private $phoneCreditService1;
 
     // step valeurs
-    public $stepPaiment = 1;
-    public $stepVirement = 1;
-    public $stepReloadCard = 1;
-    public $stepPhoneCredit = 1;
+
     public $password_validated = '';
     public $amount_canal_send;
     public $name_canal_send;
-    public $password_validated_transaction;
     public $isPasswordValid = false;
     public $commission_transaction_val_nat_pay;
     public $commission_transaction_val_admin_receive;
     public $commission_transaction_val_nat_receive;
 
-    // Phone credit
-    public $commission_transaction_val_nat_phone_pay;
-    public $commission_transaction_val_admin_phone_receive;
-    public $commission_transaction_val_nat_phone_receive;
     public $commission_transaction_drawal;
 
     // Transaction Bloque
@@ -588,16 +450,7 @@ class Transfers extends Component
 
     public function loadChoose3()
     {
-        $this->provider_inter = null;
-        $this->pre_id_invoice_inter = '';
-        $this->paiement_name_sodecie_inter = '';
-        $this->paiement_num_contrat_inter = '';
-        $this->paiement_amount_t_sodecie_inter = '';
-        $this->amount_inter = '';
-        $this->account_number_inter = '';
-        $this->phone_inter = '';
-        $this->amount_inter_robus = '';
-        $this->country_inter_robus = '';
+     
         $this->provider_payment_inter = null;
     }
 
@@ -1480,7 +1333,7 @@ class Transfers extends Component
                                 $this->emit('modal-hide-phoneCredit-validated');
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Pas vous le valideur !!');
-                                return; // Arrête l'exécution si le montant est supérieur au solde
+                                return; 
                             }
                         } elseif ($check->status == 'ERROR') {
 
@@ -1532,14 +1385,14 @@ class Transfers extends Component
                                 $this->emit('modal-hide-phoneCredit-validated');
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Pas de modification !');
-                                return; // Arrête l'exécution si le montant est supérieur au solde
+                                return; 
                             }
                         } else {
                             $this->cancelPhoneCreditField();
                             $this->emit('modal-hide-phoneCredit-validated');
                             $this->emit('modal-hide-phoneCredit');
                             $this->emit('error', 'Pas de modification !');
-                            return; // Arrête l'exécution si le montant est supérieur au solde
+                            return; 
 
                         }
                     } else {
@@ -1547,14 +1400,14 @@ class Transfers extends Component
                         $this->emit('modal-hide-phoneCredit');
                         $this->emit('modal-hide-phoneCredit-validated');
                         $this->emit('error', 'Pas le valideur !');
-                        return; // Arrête l'exécution si le montant est supérieur au solde
+                        return; 
                     }
                 } else {
                     $this->cancelPhoneCreditField();
                     $this->emit('modal-hide-phoneCredit');
                     $this->emit('modal-hide-phoneCredit-validated');
                     $this->emit('error', 'Mot de passe Incorrect !');
-                    return; // Arrête l'exécution si le montant est supérieur au solde
+                    return; 
 
                 }
             } elseif ($this->password_transaction = "" ||  $this->phoneCreditStatus = "") {
@@ -1562,14 +1415,14 @@ class Transfers extends Component
                 $this->emit('modal-hide-phoneCredit-validated');
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
-                return; // Arrête l'exécution si le montant est supérieur au solde
+                return; 
 
             } else {
                 $this->cancelPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('modal-hide-phoneCredit-validated');
                 $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
-                return; // Arrête l'exécution si le montant est supérieur au solde
+                return; 
             }
             DB::commit();
         } catch (\Exception $exception) {
@@ -1666,7 +1519,7 @@ class Transfers extends Component
                                     $this->emit('modal-hide-reloadCard');
                                     $this->emit('modal-hide-reloadCard-validated');
                                     $this->emit('success', 'Rechargement Acceptée sans commission sous-distibuteur !');
-                                    return; // Arrête l'exécution si le montant est supérieur au solde
+                                    return; 
                                 }
                             } else {
 
@@ -1737,14 +1590,14 @@ class Transfers extends Component
                             $this->emit('modal-hide-reloadCard-validated');
                             $this->emit('modal-hide-reloadCard');
                             $this->emit('error', 'Pas de modification !');
-                            return; // Arrête l'exécution si le montant est supérieur au solde
+                            return; 
                         }
                     } else {
                         $this->cancelReloadCardField();
                         $this->emit('modal-hide-reloadCard-validated');
                         $this->emit('modal-hide-reloadCard');
                         $this->emit('error', 'Pas le valideur !');
-                        return; // Arrête l'exécution si le montant est supérieur au solde
+                        return; 
 
                     }
                 } else {
@@ -1752,7 +1605,7 @@ class Transfers extends Component
                     $this->emit('modal-hide-reloadCard-validated');
                     $this->emit('modal-hide-reloadCard');
                     $this->emit('info', 'Vérifier votre mot de passe !');
-                    return; // Arrête l'exécution si le montant est supérieur au solde
+                    return; 
                 }
             } elseif ($this->password_transaction = "") {
                 $this->cancelReloadCardField();
@@ -2029,7 +1882,7 @@ class Transfers extends Component
                                     $this->emit('modal-hide-virement');
                                     $this->emit('modal-hide-virement-validated');
                                     $this->emit('success', 'Versement Acceptée sans commission sous-distibuteur !');
-                                    return; // Arrête l'exécution si le montant est supérieur au solde
+                                    return; 
                                 }
                             } else {
 
@@ -2110,7 +1963,7 @@ class Transfers extends Component
                         $this->emit('modal-hide-virement');
                         $this->emit('modal-hide-virement-validated');
                         $this->emit('error', 'Pas vous le valideur !');
-                        return; // Arrête l'exécution si le montant est supérieur au solde
+                        return; 
 
                     }
                 } else {
@@ -2118,7 +1971,7 @@ class Transfers extends Component
                     $this->emit('modal-hide-virement-validated');
                     $this->emit('modal-hide-virement');
                     $this->emit('error', 'Mot de passe Incorrect !');
-                    return; // Arrête l'exécution si le montant est supérieur au solde
+                    return; 
 
                 }
             } elseif ($this->password_transaction = "" ||  $this->virementStatus = "") {
@@ -2126,7 +1979,7 @@ class Transfers extends Component
                 $this->emit('modal-hide-virement-validated');
                 $this->emit('modal-hide-virement');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !');
-                return; // Arrête l'exécution si le montant est supérieur au solde
+                return; 
 
             } else {
                 $this->cancelVirementField();
@@ -2275,12 +2128,12 @@ class Transfers extends Component
                                         $this->cancelReloadCardField();
                                         $this->emit('modal-hide-reloadCard');
                                         $this->emit('success', 'Rechargement Acceptée sans commission sous-distibuteur !');
-                                        return; // Arrête l'exécution si le montant est supérieur au solde
+                                        return; 
                                     }
-                                    //  Send valeur in Admin
+                                    
                                 } else {
 
-                                    //  Send valeur in Admin
+                                    
                                     app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                                 }
                             } else {
@@ -2461,7 +2314,7 @@ class Transfers extends Component
                                     $this->emit('modal-hide-paiement');
                                     $this->emit('success', 'Paiement Accepté !');
                                     $this->emit('success', 'Paiement Acceptée sans commission sous-distibuteur !');
-                                    return; // Arrête l'exécution si le montant est supérieur au solde
+                                    return; 
                                 }
                             } else {
 
@@ -2525,7 +2378,7 @@ class Transfers extends Component
                             $this->emit('modal-hide-paiement');
                             $this->emit('modal-hide-paiement-validated');
                             $this->emit('success', 'Payment modifié !');
-                            return; // Arrête l'exécution si le montant est supérieur au solde
+                            return; 
 
                         }
                     } else {
@@ -2533,7 +2386,7 @@ class Transfers extends Component
                         $this->emit('modal-hide-paiement');
                         $this->emit('modal-hide-paiement-validated');
                         $this->emit('success', 'Pas vous le valideur !');
-                        return; // Arrête l'exécution si le montant est supérieur au solde
+                        return; 
 
                     }
                 } else {
@@ -2542,7 +2395,7 @@ class Transfers extends Component
                     $this->emit('modal-hide-paiement-validated');
                     $this->emit('modal-hide-paiement');
                     $this->emit('info', 'Vérifier votre mot de passe !');
-                    return; // Arrête l'exécution si le montant est supérieur au solde
+                    return; 
 
                 }
             } elseif ($this->password_transaction = "") {
@@ -2810,111 +2663,15 @@ class Transfers extends Component
     // reset form Field
     public function resetInterField()
     {
-        $this->provider_phone_credit_inter = null;
-        $this->number_phone_credit_inter = '';
-        $this->amount_phone_credit_inter = '';
-        $this->country_inter_robus_inter = null;
-        $this->provider_reloadcard_inter = null;
-        $this->account_number_reload_card_inter = '';
-        $this->choose_type_transaction_inter = ' ';
-        $this->name_reloadcard_inter = '';
-        $this->amount_reloadcard_inter = '';
-        $this->inter_description = '';
-        $this->inter_description_robus = '';
+      
         $this->interId = '';
         $this->interStatus = '';
-        $this->currentStep = 1;
-        $this->provider_inter = null;
         $this->provider_payment_inter = null;
         $this->paiementChoix_phone = null;
-        $this->offer_paiement = null;
         $this->facture_choix_type = null;
-        $this->choose_type_paiement = null;
-        $this->paiement_amount_total_inter = ' ';
-        $this->paiement_name_sodecie_inter = '';
-        $this->country_inter = null;
-        $this->paiement_decoder_canal_inter = '';
-        $this->paiement_name_cie_inter = '';
-        $this->paiement_id_invoice_inter = '';
-        $this->pre_id_invoice_inter = '';
-        $this->paiement_name_sodecie_inter = '';
-        $this->paiement_num_contrat_inter = '';
-        $this->paiement_amount_t_sodecie_inter = '';
-        $this->amount_inter = '';
-        $this->account_number_inter = '';
-        // Provider virement
-        $this->provider_Inter_virement = null;
-        $this->phone_inter = '';
-        $this->firstname_user_inter = '';
-        $this->lastname_user_inter = '';
-        $this->account_number_user_bank_inter = '';
-        $this->phone_user_inter = '';
-        $this->amount_virement_inter = '';
+        $this->choose_type_paiement = null;       
         // Code validated Transactions
         $this->code_validated = '';
-        $this->amount_inter_robus = '';
-        $this->country_inter_robus = null;
-        $this->country_inter_robus = '';
-        // $this->emit('modal-hide', 'hide');
-        $this->emit('modal-hide-inters-validated');
-        $this->emit('menu-inters-active');
-    }
-
-    public function resetInterOutCiv()
-    {
-        $this->amount_inter_out_civ = '';
-        $this->provider_inter_out_civ = null;
-        $this->country_inter_out_civ = null;
-        $this->phone_inter_out_civ = '';
-        // $this->emit('modal-hide', 'hide');
-        $this->choose_type_paiement = null;
-        $this->emit('modal-hide-inters-validated');
-        $this->emit('menu-inters-active');
-    }
-
-    public function cancelCivInterField()
-    {
-        $this->inter_description = '';
-        $this->inter_description_robus = '';
-        $this->interId = '';
-        $this->interStatus = '';
-        $this->provider_inter = null;
-        $this->provider_payment_inter = null;
-        $this->country_inter = '';
-        $this->paiementChoix_phone = null;
-        $this->phone_inter_out_civ = '';
-        $this->offer_paiement = null;
-        $this->facture_choix_type = null;
-        $this->choose_type_paiement = null;
-        $this->paiement_amount_total_inter = ' ';
-        $this->country_inter = null;
-        $this->paiement_decoder_canal_inter = '';
-        $this->paiement_name_cie_inter = '';
-        $this->paiement_id_invoice_inter = '';
-        $this->choose_type_transaction_inter = null;
-        $this->pre_id_invoice_inter = '';
-        $this->currentStep = 1;
-        $this->code_validated = '';
-        $this->paiement_name_sodecie_inter = '';
-        $this->paiement_num_contrat_inter = '';
-        $this->paiement_amount_t_sodecie_inter = '';
-        $this->country_inter_out_civ  = null;
-        $this->amount_inter_out_civ  = '';
-        // Provider virement
-        $this->provider_Inter_virement = null;
-        $this->phone_inter = '';
-        $this->firstname_user_inter = '';
-        $this->lastname_user_inter = '';
-        $this->account_number_user_bank_inter = '';
-        $this->phone_user_inter = '';
-        $this->amount_virement_inter = '';
-        $this->amount_inter = '';
-        $this->account_number_inter = '';
-        $this->phone_inter = '';
-        $this->amount_inter_robus = '';
-        $this->country_inter_robus = null;
-
-        $this->emit('modal-hide-inters');
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
     }
@@ -2922,46 +2679,15 @@ class Transfers extends Component
     // Cancel field
     public function cancelInterField()
     {
-        $this->inter_description = '';
-        $this->inter_description_robus = '';
+       
         $this->interId = '';
         $this->interStatus = '';
-        $this->provider_inter = null;
         $this->provider_payment_inter = null;
-        $this->country_inter = '';
         $this->paiementChoix_phone = null;
-        $this->phone_inter_out_civ = '';
-        $this->offer_paiement = null;
         $this->facture_choix_type = null;
         $this->choose_type_paiement = null;
-        $this->paiement_amount_total_inter = ' ';
-        $this->country_inter = null;
-        $this->paiement_decoder_canal_inter = '';
-        $this->paiement_name_cie_inter = '';
-        $this->paiement_id_invoice_inter = '';
-        $this->choose_type_transaction_inter = null;
-        $this->pre_id_invoice_inter = '';
         $this->currentStep = 1;
         $this->code_validated = '';
-        $this->paiement_name_sodecie_inter = '';
-        $this->paiement_num_contrat_inter = '';
-        $this->paiement_amount_t_sodecie_inter = '';
-        $this->country_inter_out_civ  = null;
-        $this->amount_inter_out_civ  = '';
-        // Provider virement
-        $this->provider_Inter_virement = null;
-        $this->phone_inter = '';
-        $this->firstname_user_inter = '';
-        $this->lastname_user_inter = '';
-        $this->account_number_user_bank_inter = '';
-        $this->phone_user_inter = '';
-        $this->amount_virement_inter = '';
-        $this->amount_inter = '';
-        $this->account_number_inter = '';
-        $this->phone_inter = '';
-        $this->amount_inter_robus = '';
-        $this->country_inter_robus = null;
-
         $this->emit('modal-hide-inters');
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
@@ -2970,10 +2696,7 @@ class Transfers extends Component
 
     public function cancelPhoneCreditField()
     {
-        $this->provider_phone_credit = null;
-        $this->number_phone_credit = '';
-        $this->amount_phone_credit = '';
-        $this->stepPhoneCredit = 1;
+ 
          $this->emit('modal-hide-phoneCredit');
         $this->emit('modal-hide-phoneCredit-validated');
         $this->emit('menu-phoneCredit-active');
@@ -2982,13 +2705,7 @@ class Transfers extends Component
 
     public function cancelReloadCardField()
     {
-        $this->reloadcard_description = '';
-        $this->reloadcardStatus = '';
-        $this->provider_reloadcard = null;
-        $this->amount_reloadcard = '';
-        $this->account_number_reload_card = '';
-        $this->name_reloadcard = '';
-        $this->stepReloadCard = 1;
+     
         $this->emit('modal-hide-reloadCard-validated');
         $this->emit('menu-reloadCarte-active');
     }
@@ -3000,29 +2717,12 @@ class Transfers extends Component
         $this->virementId = '';
         $this->virementStatus = '';
         $this->provider_virement = null;
-        $this->firstname_user = '';
-        $this->lastname_user = '';
-        $this->phone_user = '';
-        $this->amount_virement = '';
-        $this->account_number_user = '';
-        $this->country_virement = null;
-        $this->account_number_user_bank = '';
-        $this->stepVirement = 1;
         $this->emit('modal-hide-virement');
     }
 
     public function resetVirementInterField()
     {
-        $this->virement_interId = '';
-        $this->virement_inter_Status = '';
-        $this->provider_Inter_virement = '';
-        $this->firstname_user_inter = '';
-        $this->lastname_user_inter = '';
-        $this->phone_user_inter = '';
-        $this->amount_virement_inter = '';
-        $this->account_number_user_bank_inter = '';
-        $this->country_virement_inter = '';
-        $this->account_number_user_inter = '';
+     
         $this->emit('modal-hide-virement');
     }
 
@@ -3063,26 +2763,7 @@ class Transfers extends Component
     public function cancelPaiementField()
     {
 
-        $this->provider_payment = null;
         $this->facture_choix_type = null;
-        $this->paiement_num_contrat = '';
-        $this->paiement_id_invoice = '';
-        $this->paiement_decoder_canal = '';
-        $this->paiement_name_sodecie = '';
-        $this->paiement_name_cie = '';
-        $this->paiement_amount_Canal = '';
-        $this->paiement_phone_canal = '';
-        $this->paiement_amount_p_sodecie = '';
-        $this->paiement_amount_t_sodecie = '';
-        $this->paiement_amount_total = '';
-        $this->paiementStatus = '';
-        $this->paiementChoix_phone = null;
-        $this->offer_paiement = null;
-        $this->offer_paiement = null;
-        $this->paiement_id_invoice_pre = '';
-        $this->pre_phone_invoice = '';
-        $this->pre_id_invoice = '';
-        $this->stepPhoneCredit = 1;
         // $this->emit('modal-hide', 'hide');
         $this->emit('modal-hide-paiement-validated');
     }
@@ -3220,24 +2901,9 @@ class Transfers extends Component
         $push = WalletPush::whereIsWeb(false);
         $versement = WalletVersement::whereIsWeb(false);
         $walletUser = Auth::guard('web')->user();
-        $commission_reload_val_nat_true_pay = null;
-        $commission_reload_val_nat_true_receive = null;
-        $commission_paiement_invoice_val_nat_pay = null;
         $commission_paiement_invoice_val_nat_pay_frais = null;
-        $commission_paiement_canal_val_nat_pay_frais = null;
-        $commission_paiement_invoice_val_nat_receive = null;
-        $commission_paiement_invoice_canal_val_nat = null;
-        $commission_paiement_invoice_canal_val_inter = null;
-        $commission_virement_val_nat_pay  = null;
-        $commission_virement_val_nat_receive  = null;
-        $commission_phone_credit_val_inter_pay  = null;
-        $commission_phone_credit_val_inter_receive  = null;
-        $commission_phone_credit_val_nat_pay  = null;
-        $commission_phone_credit_val_nat_receive  = null;
         $commission_transaction_val_nal_pay = null;
-        $commission_transaction_val_nal_receive = null;
         $code_validated_val_nat = null;
-        $amount_received_canal = null;
 
 
         if ($this->code_validated != '') {
@@ -3252,137 +2918,6 @@ class Transfers extends Component
             }
         }
 
-        // True valuer of relaod card
-        if ($this->amount_reloadcard != '') {
-
-
-            $commission_reload = DepositCost::whereId(2)->first();
-
-            if ($walletUser->wallet->sidUser->is_under_distributer == true) {
-                // Verify valeur amount max in Landing the ROBUS
-                $valeur_end = $commission_reload->levelDepositIvories->where('is_ivoires', true)->last();
-
-                $valeur_first = $commission_reload->levelDepositIvories->where('is_ivoires', true)->first();
-
-                //  Conversion valeur
-                $conversion_valeur_end  = $valeur_end->amount_end;
-
-                $conversion_valeur_first  = $valeur_first->amount_begin;
-
-
-                if ($conversion_valeur_first  > $this->amount_reloadcard) {
-                    $commission_reload_val_nat_true_pay = "Montant min est  : " .   number_format($conversion_valeur_first, 2, ',', ' ');
-
-                    $commission_reload_val_nat_true_receive = "Montant min est  : " .  number_format($conversion_valeur_first, 2, ',', ' ');
-                } elseif ($conversion_valeur_end  < $this->amount_reloadcard) {
-
-                    $commission_reload_val_nat_true_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                    $commission_reload_val_nat_true_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                } else {
-
-                    foreach ($commission_reload->levelDepositIvories->where('is_ivoires', true)  as $amount_comission) {
-
-                        if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
-
-
-                            if ($amount_comission->amount == null) {
-
-                                $percent_admin =  $amount_comission->percent * $this->amount_reloadcard;
-
-                                $admin_valeur = $percent_admin * $amount_comission->admin_percent;
-
-                                // Commission valuer ROBUS
-                                $commission_reload_val_nat_true_pay = $amount_comission->comission_distributer * $this->amount_reloadcard;
-
-
-                                $valeur_receive = (float) $this->amount_reloadcard;
-
-                                if ($valeur_receive < 0) {
-
-                                    $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                } else {
-
-                                    $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                }
-                            } else {
-
-                                $commission_reload_val_nat_true_pay = (float) $amount_comission->comission_distributer;
-
-                                $valeur_receive = (float) $this->amount_reloadcard;
-
-                                if ($valeur_receive < 0) {
-
-                                    $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                } else {
-
-                                    $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                }
-                            }
-                        }
-                    }
-                }
-            } else {
-
-                // Verify valeur amount max in Landing the ROBUS
-                $valeur_end = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->last();
-
-                $valeur_first = $commission_reload->levelDepositIvories->where('is_inter_bank', true)->first();
-
-                //  Conversion valeur
-                $conversion_valeur_end  = $valeur_end->amount_end;
-
-                $conversion_valeur_first  = $valeur_first->amount_begin;
-
-
-                if ($conversion_valeur_first  > $this->amount_reloadcard) {
-                    $commission_reload_val_nat_true_pay = "Montant min est  : " .   number_format($conversion_valeur_first, 2, ',', ' ');
-
-                    $commission_reload_val_nat_true_receive = "Montant min est  : " .  number_format($conversion_valeur_first, 2, ',', ' ');
-                } elseif ($conversion_valeur_end  < $this->amount_reloadcard) {
-
-                    $commission_reload_val_nat_true_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-
-                    $commission_reload_val_nat_true_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
-                } else {
-
-                    foreach ($commission_reload->levelDepositIvories->where('is_inter_bank', true)  as $amount_comission) {
-                        if ($this->amount_reloadcard >= $amount_comission->amount_begin &&  $this->amount_reloadcard <= $amount_comission->amount_end) {
-
-                            if ($amount_comission->amount == null) {
-
-                                $commission_reload_val_nat_true_pay = (float) $amount_comission->percent *  $this->amount_reloadcard;
-
-                                $valeur_receive = (float) $this->amount_reloadcard;
-
-                                if ($valeur_receive < 0) {
-
-                                    $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                } else {
-
-                                    $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                }
-                            } else {
-
-                                $commission_reload_val_nat_true_pay = (float) $amount_comission->amount;
-
-                                $valeur_receive = (float) $this->amount_reloadcard;
-
-                                if ($valeur_receive < 0) {
-
-                                    $commission_reload_val_nat_true_receive = 'Montant negatif';
-                                } else {
-
-                                    $commission_reload_val_nat_true_receive = (float) $this->amount_reloadcard;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-  
         // Transactions
         $transactions = $transaction->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
             ->where('wallet_transactions.status', 'PENDING')
@@ -3576,30 +3111,13 @@ class Transfers extends Component
             )->first(),
             'amount_invoice' => PaymentCost::where('status', true)->first(),
             'amount_bank' => BankCost::whereId(2)->first(),
-            'amount_deposit_nation_pay' => $commission_reload_val_nat_true_pay,
-            'amount_deposit_nation_receive' => $commission_reload_val_nat_true_receive,
-            'amount_deposit_nation_true_pay' => $commission_reload_val_nat_true_pay,
-            'amount_deposit_nation_true_receive' => $commission_reload_val_nat_true_receive,
-            'amount_paiement_invoice_auther_pay' => $commission_paiement_invoice_val_nat_pay,
-            'amount_paiement_invoice_auther_receive' => $commission_paiement_invoice_val_nat_receive,
-            'amount_paiement_invoice_canal' => $commission_paiement_invoice_canal_val_nat,
-            'amount_paiement_invoice_canal_inter' => $commission_paiement_invoice_canal_val_inter,
-            'amount_virement_nation_pay' => $commission_virement_val_nat_pay,
-            'amount_phone_credit_val_pay' => $commission_phone_credit_val_inter_pay,
-            'amount_phone_credit_val_receive' => $commission_phone_credit_val_inter_receive,
-            'amount_transaction_nat_val_receive' => $commission_transaction_val_nal_receive,
+          
             'amount_transaction_nat_val_pay' => $commission_transaction_val_nal_pay,
-            'amount_phone_credit_val_nat_pay' => $commission_phone_credit_val_nat_pay,
-            'amount_phone_credit_val_nat_receive' => $commission_phone_credit_val_nat_receive,
             'amount_paiemet_frais_receive' => $commission_paiement_invoice_val_nat_pay_frais,
-            'amount_received_canal' => $amount_received_canal,
             'amount_transaction_nat_val_percent' => $this->commission_transaction_val_admin_receive,
             'amount_transaction_nat_val_receive' => $this->commission_transaction_val_nat_receive,
             'amount_transaction_nat_val_drawal' => $this->commission_transaction_drawal,
-            // Phone credit
-            'amount_transaction_nat_val_phone_percent' => $this->commission_transaction_val_nat_phone_pay,
-            'amount_transaction_nat_val_phone_receive' => $this->commission_transaction_val_nat_phone_receive,
-            'amount_transaction_nat_val_phone_commission' => $this->commission_transaction_val_admin_phone_receive,
+        
 
             'code_valided' => $code_validated_val_nat,
             'code_valided_inter' => $code_validated_val_nat,
@@ -3675,11 +3193,7 @@ class Transfers extends Component
             'wallet_countries_users' => SidUser::where('status', true)
                 ->orderBy('firstname', 'asc')
                 ->get(),
-            'providers' => $this->NationTransaction,
-            'provider_paiements' => $this->PaiementTransaction,
-            'provider_virements' => $this->VirementTransaction,
-            'provider_reloads' => $this->ReloadTransaction,
-            'provider_credits' => $this->PhoneCreditTransaction,
+            'providers' => app(TotalAmoutUserServiveBackend::class)->getNationTransactionProperty(),
             'usersCountry' => sabdy()->wallet->currencie->code,
             // Bloque valeurs
             'showTransButton' => $this->showTransButton,
@@ -4294,223 +3808,7 @@ class Transfers extends Component
         ];
     }
 
-
-    // Verify ceilling
-    public function getWalletBanksCeilingProperty()
-    {
-        $data = [];
-        foreach (
-            WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->where(
-                    'wallet_banks.created_by',
-                    Auth::guard('web')->user()->id
-                )
-                ->whereDate('wallet_banks.created_at', Carbon::today())
-                ->select('wallet_banks.*')
-                ->where('wallet_banks.status', 'SUCCESS')
-                ->get()
-            as $bank
-        ) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletDepositsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletDeposit::join(
-                'wallets',
-                'wallet_deposits.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->where(
-                    'wallet_deposits.created_by',
-                    Auth::guard('web')->user()->id
-                )
-                ->whereDate('wallet_deposits.created_at', Carbon::today())
-                ->select('wallet_deposits.*')
-                ->where('wallet_deposits.status', 'SUCCESS')
-                ->get()
-            as $deposit
-        ) {
-            $data[] = $deposit->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletIntersCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletInter::join(
-                'wallets',
-                'wallet_inters.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->where(
-                    'wallet_inters.created_by',
-                    Auth::guard('web')->user()->id
-                )
-                ->whereDate('wallet_inters.created_at', Carbon::today())
-                ->select('wallet_inters.*')
-                ->where('wallet_inters.status', 'SUCCESS')
-                ->get()
-            as $inter
-        ) {
-            $data[] = $inter->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPaymentsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletPayment::join(
-                'wallets',
-                'wallet_payments.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->where(
-                    'wallet_payments.created_by',
-                    Auth::guard('web')->user()->id
-                )
-                ->whereDate('wallet_payments.created_at', Carbon::today())
-                ->select('wallet_payments.*')
-                ->where('wallet_payments.status', 'SUCCESS')
-                ->get()
-            as $payment
-        ) {
-            $data[] = $payment->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletTransaction::join(
-                'wallets',
-                'wallet_transactions.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->where(
-                    'wallet_transactions.created_by',
-                    Auth::guard('web')->user()->id
-                )
-                ->whereDate('wallet_transactions.created_at', Carbon::today())
-                ->select('wallet_transactions.*')
-                ->where('wallet_transactions.status', 'SUCCESS')
-                ->get()
-            as $transaction
-        ) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPhoneCreditsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletPhoneCredit::join(
-                'wallets',
-                'wallet_phone_credits.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->where(
-                    'wallet_phone_credits.created_by',
-                    Auth::guard('web')->user()->id
-                )
-                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-                ->select('wallet_phone_credits.*')
-                ->where('wallet_phone_credits.status', 'SUCCESS')
-                ->get()
-            as $phone
-        ) {
-            $data[] = $phone->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletBankCardCeilingProperty()
-    {
-        $data = [];
-        foreach (
-            BankCard::where('created_by', Auth::guard('web')->user()->id)
-                ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank
-        ) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletReloadsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )->where(
-                    'wallet_reloads.created_by',
-                    Auth::guard('web')->user()->id
-                )
-                ->whereDate('wallet_reloads.created_at', Carbon::today())
-                ->select('wallet_reloads.*')
-                ->where('wallet_reloads.status', 'SUCCESS')
-                ->get()
-            as $reload
-        ) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    // Provider property
-
+ 
     public function getNationTransactionProperty()
     {
         $walletUser = Auth::guard('web')->user();
@@ -4624,15 +3922,18 @@ class Transfers extends Component
 
     public function getSumValTransactionProperty()
     {
+        $service = app(TotalAmoutUserServiveBackend::class);
 
-        $somm_valeur =  $this->WalletBanksCeiling + $this->WalletDepositsCeiling +
-            $this->WalletIntersCeiling +
-            $this->WalletPaymentsCeiling +
-            $this->WalletTransactionsCeiling +
-            $this->WalletPhoneCreditsCeiling +
-            $this->WalletReloadsCeiling + $this->WalletBankCardCeiling;
+        $somm_valeur = $service->getWalletBanksCeilingProperty()
+            + $service->getWalletDepositsCeilingProperty()
+            + $service->getWalletIntersCeilingProperty()
+            + $service->getWalletPaymentsCeilingProperty()
+            + $service->getWalletTransactionsCeilingProperty()
+            + $service->getWalletPhoneCreditsCeilingProperty()
+            + $service->getWalletReloadsCeilingProperty()
+            + $service->getWalletBankCardCeilingProperty();
 
-        return  $somm_valeur;
+        return $somm_valeur;
     }
 
 
@@ -4675,32 +3976,6 @@ class Transfers extends Component
         return $phone_transaction;
     }
 
-
-
-    // Sum Seilver Ceiling
-    public function getWalletBanksSeilverCeilingProperty()
-    {
-        $data = [];
-        foreach (
-            WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where(
-                    'wallets.country_id',
-                    Auth::guard('web')->user()->country->id
-                )
-                ->where(
-                    'wallet_banks.created_by',
-                    Auth::guard('web')->user()->id
-                )
-                ->whereDate('wallet_banks.created_at', Carbon::today())
-                ->select('wallet_banks.*')
-                ->get()
-            as $bank
-        ) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
-    }
     // Admin
 
     public function getWalletBanksProperty()

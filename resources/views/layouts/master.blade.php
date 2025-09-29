@@ -1342,6 +1342,9 @@
             $('#update-xbet-modal').removeClass('show');
             $('#update-xbet-modal').addClass('hide');
 
+            $('#create-xbet-modal').removeClass('show');
+            $('#create-xbet-modal').addClass('hide');
+
             $('#reload-nav').removeClass('active');
             $('reload-nav').attr('aria-selected', false);
             $('#reload').removeClass('active');

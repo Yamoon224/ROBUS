@@ -6,6 +6,7 @@ use App\Models\Sid\SidUser;
 use App\Events\AdminNotifEvent;
 use App\Notifications\UserNotification;
 use App\Events\CreateWalletTransfersEvent;
+use App\Events\CreateWalletInterEvent;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\AdminNotification;
@@ -18,6 +19,43 @@ class NotificationServiceBackend
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
+
+    public function sendNotificationRobus($walletInter)
+    {
+
+        $msg_title = 'Transfert internationnal Robus';
+        $msg = 'Votre transfert vers Robus effectué avec success ';
+        sabdy()->notify(
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg,
+            ])
+        );
+        $notifs = sabdy()->unreadNotifications;
+        event(new CreateWalletInterEvent($walletInter));
+        $admins = SidUser::whereStatus(true)->whereIsAdmin(true)->where('country_id', $walletInter->country_id)->get();
+        Notification::send(
+            $admins,
+            new AdminNotification(
+                'Transfert  Robus de ' .
+                    ' ' . $walletInter->wallet->sidUser->firstname
+            )
+        );
+        Notification::send($admins, new AdminNotification('Transfers d\'argent Robus de ' .
+            ' ' . $walletInter->wallet->sidUser->firstname));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+    }
 
     public function sendMailReloadCardNotification($check)
     {
@@ -43,6 +81,11 @@ class NotificationServiceBackend
     {
         $notify = new MailController;
         $notify->newVirement($check);
+    }
+      public function sendMailXbetNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newXbet($check);
     }
 
     public function sendMailPaiementNotification($check)
@@ -94,6 +137,18 @@ class NotificationServiceBackend
 
             Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
         }
+    }
+
+    public function notificationRobusSend($message)
+    {
+
+        if (sabdy()->country->code == 'CI') {
+
+            $encode = substr(sabdy()->phone, -10);
+
+            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        }
+
     }
     public function sendNotification($walletTransaction)
     {

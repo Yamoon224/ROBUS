@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
+use App\Models\CloseApp;
 
 
 class AuthenticationService
@@ -111,19 +112,19 @@ class AuthenticationService
                                                 'activation_code' => null,
                                                 'device_meta_data' => $device_meta_data,
                                                 'session_id' => session()->getId(),
-                                                'session_expires_at' => now()->addDays(7) 
+                                                'session_expires_at' => now()->addDays(7)
                                         ]);
 
                                         $tokenResult = $user->createToken('auth_token');
 
                                         $tokenResult->token->update([
-                                                'expires_at' => now()->addDays(7) 
-                                            ]);
-                            
-                                            Cache::put(
-                                                'user_session_'.$user->id,
+                                                'expires_at' => now()->addDays(7)
+                                        ]);
+
+                                        Cache::put(
+                                                'user_session_' . $user->id,
                                                 $user->session_id,
-                                                now()->addDays(7) 
+                                                now()->addDays(7)
                                         );
 
                                         return ['success' => true, 'token' => $tokenResult, 'user' => $user];
@@ -154,18 +155,18 @@ class AuthenticationService
                                                 'activation_code' => null,
                                                 'device_meta_data' => $device_meta_data,
                                                 'session_id' => session()->getId(),
-                                                'session_expires_at' => now()->addDays(30) 
+                                                'session_expires_at' => now()->addDays(30)
                                         ]);
 
                                         $tokenResult = $user->createToken('auth_token');
                                         $tokenResult->token->update([
-                                                'expires_at' => now()->addDays(30) 
-                                            ]);
-                            
-                                            Cache::put(
-                                                'user_session_'.$user->id,
+                                                'expires_at' => now()->addDays(30)
+                                        ]);
+
+                                        Cache::put(
+                                                'user_session_' . $user->id,
                                                 $user->session_id,
-                                                now()->addDays(7) 
+                                                now()->addDays(7)
                                         );
 
 
@@ -197,19 +198,20 @@ class AuthenticationService
                                 }
 
                                 if ($user->is_custumers && Hash::check($password, $user->password)) {
-                                        Auth::user()->update(['last_login' => Carbon::now()->toDateTimeString(),
-                                         'last_logout' => null,
-                                         'session_id' => session()->getId()
+                                        Auth::user()->update([
+                                                'last_login' => Carbon::now()->toDateTimeString(),
+                                                'last_logout' => null,
+                                                'session_id' => session()->getId()
                                         ]);
                                         $tokenResult = $user->createToken('auth_token');
                                         $tokenResult->token->update([
-                                                'expires_at' => now()->addDays(30) 
-                                            ]);
-                            
-                                            Cache::put(
-                                                'user_session_'.$user->id,
+                                                'expires_at' => now()->addDays(30)
+                                        ]);
+
+                                        Cache::put(
+                                                'user_session_' . $user->id,
                                                 $user->session_id,
-                                                now()->addDays(30) 
+                                                now()->addDays(30)
                                         );
                                         return ['success' => true, 'token' => $tokenResult, 'user' => $user];
                                 } else {
@@ -229,24 +231,39 @@ class AuthenticationService
                 try {
 
 
-                        // Vérifier si le statut est en cache
-                        $cachedResult = Cache::get('app_status_mobile');
+                        $cacheKey = 'app_status_mobile';
+                        $cacheDuration = 5;
+
+                        if (Cache::has($cacheKey)) {
+                                return Cache::get($cacheKey);
+                        }
+
+                        if ($this->shouldCheckAppStatus()) {
+                                Artisan::call('app:close-status');
+                        }
+
+
+                        $appStatus = $model::latest()->first();
+
+                        if ($appStatus && $appStatus->status_app === 'closed') {
+                                $response = $this->formatClosedAppResponse($appStatus);
+                                Cache::put($cacheKey, $response, now()->addMinutes($cacheDuration));
+                                return $response;
+                        }
+
+                        // Vérifier le cache
+                        $cachedResult = Cache::get($cacheKey);
+
                         if ($cachedResult) {
                                 return $cachedResult;
                         }
 
-                        // Exécuter la commande Artisan pour mettre à jour les données
-                        Artisan::call('app:close-status');
-
-                        // Récupérer le dernier statut de l'application
-                        $appStatus = $model::latest()->first();
-
                         if ($appStatus && $appStatus->status_app === 'closed') {
                                 return $this->formatClosedAppResponse($appStatus);
                         }
-                        // Si l'application est ouverte, mettre en cache un statut de succès
+
                         $successResponse = ['success' => true];
-                        Cache::put('app_status_mobile', $successResponse, now()->addMinutes(30));
+                        Cache::put('app_status_mobile', $successResponse, now()->addMinutes($cacheDuration));
                         return $successResponse;
                 } catch (\Exception $e) {
                         // Gérer les exceptions et retourner une erreur générique
@@ -257,29 +274,20 @@ class AuthenticationService
                         ];
                 }
         }
-        // public function appDispoRobus($model)
-        // {
 
-        //         // Artisan::call('app:close-status');
 
-        //         // Récupérer le statut de l'application
-        //         $appStatus = $model::latest()->first();
+        public function shouldCheckAppStatus()
+        {
+                $lastCheck = Cache::get('last_app_status_check');
 
-        //         // Vérifier si l'application est fermée
-        //         if ($appStatus && $appStatus->status_app === 'closed') {
+                // Vérifier toutes les 5 minutes
+                if (!$lastCheck || now()->diffInMinutes($lastCheck) >= 5) {
+                        Cache::put('last_app_status_check', now(), now()->addMinutes(5));
+                        return true;
+                }
 
-        //                 $robus_hour_begin = $appStatus->time_start;
-        //                 $robus_hour_end = $appStatus->time_end;
-        //                 $robus_hour_description = $appStatus->description;
-
-        //                 return [
-        //                         'success' => false,
-        //                         'message' => "L'application ROBUS Sous distributeurs était ouverte aujourd'hui de {$robus_hour_begin} à {$robus_hour_end} et est fermée pour cause de {$robus_hour_description}.",
-        //                 ];
-        //         }
-
-        //         return ['success' => true];
-        // }
+                return false;
+        }
 
         private function formatClosedAppResponse($appStatus)
         {

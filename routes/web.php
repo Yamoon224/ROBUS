@@ -538,6 +538,7 @@ Route::get('/reads_applications', function () {
     Artisan::call('app:close-company-status');
     Artisan::call('app:close-status');
     // Artisan::call('app:close-web-status');
+    // Artisan::call('app:close-web-status');
     // Artisan::call('app:close-master-status');
     return 'Artisan commands executed successfully.';
 });

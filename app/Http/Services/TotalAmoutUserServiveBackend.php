@@ -16,6 +16,7 @@ use App\Notifications\UserNotification;
 use Illuminate\Support\Carbon;
 use App\Models\Banks\BankCard;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Providers\Provider;
 
 
 class TotalAmoutUserServiveBackend
@@ -23,6 +24,102 @@ class TotalAmoutUserServiveBackend
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
+      public function getNationTransactionProperty()
+    {
+        $walletUser = Auth::guard('web')->user();
+
+        $transaction_nationnal = Provider::join(
+            'country_services',
+            'country_services.provider_id',
+            'providers.id'
+        )
+            ->where('country_services.country_id', $walletUser->country->id)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', 1)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+
+        return $transaction_nationnal;
+    }
+
+        public function getPaiementTransactionProperty()
+    {
+        $walletUser = Auth::guard('web')->user();
+
+        $payments = Provider::join(
+            'country_services',
+            'country_services.provider_id',
+            'providers.id'
+        )
+            ->where('country_services.country_id', $walletUser->country->id)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', 2)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+
+        return $payments;
+    }
+
+      public function getVirementTransactionProperty()
+    {
+        $walletUser = Auth::guard('web')->user();
+
+        $virement_transaction = Provider::join(
+            'country_services',
+            'country_services.provider_id',
+            'providers.id'
+        )
+            ->where('country_services.country_id', $walletUser->country->id)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', 4)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+
+        return $virement_transaction;
+    }
+
+       public function getReloadTransactionProperty()
+    {
+        $walletUser = Auth::guard('web')->user();
+
+        $reload_transaction = Provider::join(
+            'country_services',
+            'country_services.provider_id',
+            'providers.id'
+        )
+            ->where('country_services.country_id', $walletUser->country->id)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', 5)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+
+        return $reload_transaction;
+    }
+
+
+    public function getPhoneCreditTransactionProperty()
+    {
+        $walletUser = Auth::guard('web')->user();
+
+        $phone_transaction = Provider::join(
+            'country_services',
+            'country_services.provider_id',
+            'providers.id'
+        )
+            ->where('country_services.country_id', $walletUser->country->id)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', 6)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+
+        return $phone_transaction;
+    }
+
       public function getAdminCIVProperty()
     {
         return SidUser::whereStatus(true)

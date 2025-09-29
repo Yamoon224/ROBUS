@@ -293,7 +293,7 @@ class TransfertPhoneCredit extends Component
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('success', 'Votre demande de transaction a bien été prise en compte !');
                 if ($walletUser->email != null) {
-                    // app(NotificationServiceBackend::class)->sendMailPhoneCreditNotification($walletPhone);
+                    app(NotificationServiceBackend::class)->sendMailPhoneCreditNotification($walletPhone);
                 }
             } else {
                 $this->resetPhoneCreditField();
