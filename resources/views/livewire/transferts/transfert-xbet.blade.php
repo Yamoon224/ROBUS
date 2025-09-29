@@ -146,12 +146,11 @@
                     </div>
                 @else
                     <!-- Formulaire Retrait -->
-                    <div
-                        class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20">
-                        <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
-                            <a href="#step-1" class="w-10 h-10 rounded-full btn btn-circle btn-primary">Retrait</a>
-                        </div>
+                    <div class="col-span-12">
+                        <img class="object-none object-center bg-yellow-300 w-logo"
+                            src="{{ asset_url('dist/providers/xbet.png') }}" alt="Provider Xbet">
                     </div>
+
 
                     @if ($is_distributer != 1)
                         <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
@@ -163,10 +162,10 @@
                             ])
 
                             @include('components.transaction-text-input', [
-                                'id' => 'id_compte_retrait',
-                                'model' => 'id_compte_retrait',
+                                'id' => 'id_compte',
+                                'model' => 'id_compte',
                                 'label' => 'Id du compte',
-                                'error' => 'id_compte_retrait',
+                                'error' => 'id_compte',
                             ])
 
 
@@ -198,24 +197,35 @@
                     @endif
                 @endif
 
-                <!-- Section Montants et commissions -->
                 @if ($amount_xbet)
                     @php
                         $amount_to_pay = $amount_transaction_nat_val_xbet_percent;
                         $amount_to_receive = $amount_transaction_nat_val_xbet_receive;
                         $commission = $amount_transaction_nat_val_xbet_commission;
+                        $commission_under = $amount_transaction_nat_val_xbet_commission_under;
                     @endphp
 
-                    <div class="modal-body grid grid-cols-12 gap-4 gap-y-3 mt-4">
+                    <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                         @if ($is_under)
-                            @if ($showRemonterCreditButton)
-                                <x-transaction-detail title="Commission" value="{{ $commission }}"
-                                    country="{{ $usersCountry }}" />
+                            @if ($choose_type_transaction == 1)
+                                @if ($showDepotRemonteButton)
+                                    <x-transaction-detail title="Commission" value="{{ $commission_under }}"
+                                        country="{{ $usersCountry }}" />
+                                @else
+                                    <x-transaction-detail title="Pas de commission" value="" />
+                                @endif
+                                <x-transaction-detail-received title="Montant à recevoir"
+                                    value="{{ $amount_to_receive }}" country="{{ $usersCountry }}" />
                             @else
-                                <x-transaction-detail title="Pas de commission" value="" />
+                                @if ($showRetraitRemonteButton)
+                                    <x-transaction-detail title="Commission" value="{{ $commission_under }}"
+                                        country="{{ $usersCountry }}" />
+                                @else
+                                    <x-transaction-detail title="Pas de commission" value="" />
+                                @endif
+                                <x-transaction-detail-received title="Montant à recevoir"
+                                    value="{{ $amount_to_receive }}" country="{{ $usersCountry }}" />
                             @endif
-                            <x-transaction-detail-received title="Montant à recevoir" value="{{ $amount_to_receive }}"
-                                country="{{ $usersCountry }}" />
                         @else
                             <x-transaction-detail title="Montant à payer" value="{{ $amount_to_pay }}"
                                 country="{{ $usersCountry }}" />
@@ -304,14 +314,14 @@
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $amount_xbet ?? null }}
+                                {{ $amount_xbet ?? null }} {{ $usersCountry ?? null }}
                             </div>
                         </div>
 
 
                     </div>
                 @else
-                    <div class="col-span-6 mt-3">
+                    <div class="col-span-6 mt-1">
                         <label class="form-label">Numero du compte</label>
 
                         <div class="flex">
@@ -324,7 +334,7 @@
 
 
                     </div>
-                      <div class="col-span-6 mt-3">
+                    <div class="col-span-6 mt-1">
                         <label class="form-label">Code du compte</label>
 
                         <div class="flex">
@@ -337,20 +347,20 @@
 
 
                     </div>
-                    <div class="col-span-6 mt-3">
+                    <div class="col-span-6 mt-1">
                         <label class="form-label">Numero du compte rétrait</label>
 
                         <div class="flex">
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $id_compte_retrait ?? null }}
+                                {{ $id_compte ?? null }}
                             </div>
                         </div>
 
 
                     </div>
-                    <div class="col-span-6 mt-3">
+                    <div class="col-span-6 mt-1">
                         <label class="form-label">Ville</label>
 
                         <div class="flex">
@@ -363,7 +373,7 @@
 
 
                     </div>
-                     <div class="col-span-6 mt-3">
+                    <div class="col-span-6 mt-1">
                         <label class="form-label">Zone</label>
 
                         <div class="flex">
@@ -376,14 +386,14 @@
 
 
                     </div>
-                    <div class="col-span-12 mt-3">
+                    <div class="col-span-6 mt-1">
                         <label class="form-label">Montant</label>
 
                         <div class="flex">
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $amount_xbet ?? null }}
+                                {{ $amount_xbet ?? null }} {{ $usersCountry ?? null }}
                             </div>
                         </div>
 

@@ -86,7 +86,7 @@ class TransfertServiceBackend
             'Onexbet_id' => $choose_type_transaction === 1 ? 1  : 2,
             'created_by' => sabdy()->id,
             'amount_solde'  => $amount_solde  ?? null,
-            'provider_id'  =>  $provider,
+            'provider_id'  =>  $provider->id,
             'costs_amount' => ($percent_robus->percent * $val_amount),
             'choose_type_transaction' => $choose_type_transaction,
             'num_acompte'  =>  $numberAcompte ?? null,

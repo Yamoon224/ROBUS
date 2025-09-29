@@ -81,6 +81,25 @@ class TotalAmoutUserServiveBackend
         return $virement_transaction;
     }
 
+       public function getwalletXbetsCeilingProperty()
+    {
+        $walletUser = Auth::guard('web')->user();
+
+        $virement_transaction = Provider::join(
+            'country_services',
+            'country_services.provider_id',
+            'providers.id'
+        )
+            ->where('country_services.country_id', $walletUser->country->id)
+            ->where('providers.status', true)
+            ->where('providers.provider_type_id', 13)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+
+        return $virement_transaction;
+    }
+
        public function getReloadTransactionProperty()
     {
         $walletUser = Auth::guard('web')->user();

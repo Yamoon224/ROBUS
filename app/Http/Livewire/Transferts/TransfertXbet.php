@@ -56,6 +56,7 @@ class TransfertXbet extends Component
     public $commission_transaction_val_nat_xbet_pay;
     public $commission_transaction_val_admin_xbet_receive;
     public $commission_transaction_val_nat_xbet_receive;
+    public $commission_transaction_val_nat_xbet_com;
     public $commission_transaction_drawal;
 
     public function mount()
@@ -128,7 +129,6 @@ class TransfertXbet extends Component
     {
 
         if (empty($this->password_validated)) {
-            // Gérer le cas où le mot de passe n'est pas valide
             return;
         }
 
@@ -144,7 +144,7 @@ class TransfertXbet extends Component
     {
 
         $walletUser = sabdy();
-        $provider = Provider::whereId($this->provider_phone_credit)->first();
+        $provider = Provider::whereId(87)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
         $som_transfers =  $this->getSumValTransactionProperty();
 
@@ -253,20 +253,14 @@ class TransfertXbet extends Component
     {
 
         $walletUser = sabdy();
-        $provider = Provider::whereId($this->provider_phone_credit)->first();
+        $provider = Provider::whereId(87)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
         $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
         $som_transfers =  $this->getSumValTransactionProperty();
-        DB::beginTransaction();
 
         try {
 
-
-            if (!$provider) {
-                $this->emit('error', 'Rechargement existant !');
-                return;
-            }
 
 
             $this->validate([
@@ -383,7 +377,6 @@ class TransfertXbet extends Component
                     app(NotificationServiceBackend::class)->notifyAdmins($admins);
                 }
 
-
                 $this->resetXbetTransactionField();
                 $this->emit('modal-hide-xbet');
                 $this->emit('success', 'Votre demande de transaction a bien été prise en compte !');
@@ -403,7 +396,6 @@ class TransfertXbet extends Component
             $this->emit('error', 'Error de message demande a l\'admin !');
         }
     }
-
 
     protected function updateamountXbetTrasaction($admin_civ, $amount_user, $walletXbet, $walletUser, $amount_valeur, $choose_type_transaction)
     {
@@ -428,7 +420,7 @@ class TransfertXbet extends Component
                     $account_accepted = sabdy()->is_accepted_companie ?? false;
 
                     if ($account_accepted && $this->showTransRemonteDepotXbetCButton) {
-                       
+
                         $valuer_companie = $amount_user->percent_companie * $amount_valeur;
 
                         $walletXbet->increment('commission_companie', $valuer_companie);
@@ -509,18 +501,27 @@ class TransfertXbet extends Component
 
 
         if ($this->amount_xbet) {
-            // Calcul pour les transactions Robus
+
             $reel_amount = $this->search_amount($this->amount_xbet);
 
             if ($reel_amount != '') {
 
                 $commission_transaction = app(CommissionServicePercentBackend::class)->getRobusPercentageOnexbet();
 
-                $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
-                // Calculs
-                $this->commission_transaction_val_admin_xbet_receive = (float) $commission_transaction->percent_merchands * $reel_amount;
-                $this->commission_transaction_val_nat_xbet_receive = (float) $reel_amount;
-                $this->commission_transaction_val_nat_xbet_pay = (float) $commission_percent_transaction;
+                if ($this->choose_type_transaction === 1) {
+                    $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+                    $this->commission_transaction_val_admin_xbet_receive = (float) $commission_transaction->percent_admin * $reel_amount;
+                    $this->commission_transaction_val_nat_xbet_receive = (float) $reel_amount;
+                    $this->commission_transaction_val_nat_xbet_pay = (float) $commission_percent_transaction;
+                    $this->commission_transaction_val_nat_xbet_com = (float) $commission_transaction->percent_merchands * $reel_amount;
+                
+                } else {
+                    $commission_percent_transaction = (float) $commission_transaction->percent_with_drawal * $reel_amount;
+                    $this->commission_transaction_val_admin_xbet_receive = (float) $commission_transaction->percent_admin * $reel_amount;
+                    $this->commission_transaction_val_nat_xbet_receive = (float) $reel_amount;
+                    $this->commission_transaction_val_nat_xbet_pay = (float) $commission_percent_transaction;
+                    $this->commission_transaction_val_nat_xbet_com = (float) $commission_transaction->percent_under_drawal * $reel_amount;
+                }
             }
         }
     }
@@ -538,11 +539,14 @@ class TransfertXbet extends Component
             [
                 'showRetraitButton' => $this->showTransDepotXbetButton,
                 'showDepotButton' => $this->showTransRetraitXbetButton,
+                'showDepotRemonteButton' => $this->showTransRemonteDepotXbetButton,
+                'showRetraitRemonteButton' => $this->showTransRemonteRetraitXbetButton,
                 'countrie_number_local' => sabdy()->country
                     ->indecative,
                 'amount_transaction_nat_val_xbet_percent' => $this->commission_transaction_val_nat_xbet_pay,
                 'amount_transaction_nat_val_xbet_receive' => $this->commission_transaction_val_nat_xbet_receive,
                 'amount_transaction_nat_val_xbet_commission' => $this->commission_transaction_val_admin_xbet_receive,
+                'amount_transaction_nat_val_xbet_commission_under' => $this->commission_transaction_val_nat_xbet_com,
                 'usersCountry' => sabdy()->wallet->currencie->code,
             ]
         );
@@ -552,15 +556,14 @@ class TransfertXbet extends Component
     {
         $service = app(TotalAmoutUserServiveBackend::class);
 
-        $somm_valeur = $service->getwalletXbetsCeilingProperty()
+        $somm_valeur = $service->getWalletBanksCeilingProperty()
             + $service->getWalletDepositsCeilingProperty()
             + $service->getWalletIntersCeilingProperty()
             + $service->getWalletPaymentsCeilingProperty()
             + $service->getWalletTransactionsCeilingProperty()
-            + $service->getwalletXbetCreditsCeilingProperty()
+            + $service->getWalletPhoneCreditsCeilingProperty()
             + $service->getWalletReloadsCeilingProperty()
-            + $service->getwalletXbetCardCeilingProperty();
-
+            + $service->getWalletBankCardCeilingProperty();
         return $somm_valeur;
     }
 

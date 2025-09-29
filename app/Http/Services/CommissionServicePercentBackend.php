@@ -6,6 +6,7 @@ namespace App\Http\Services;
 use App\Models\Costs\TransactionCost;
 use App\Models\LevelCountry;
 use App\Models\Onexbet;
+use App\Models\PushPercent;
 
 
 class CommissionServicePercentBackend
@@ -14,7 +15,7 @@ class CommissionServicePercentBackend
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
 
-     public function getRobusPercentageOnexbet()
+    public function getRobusPercentageOnexbet()
     {
         $countryNameGroup = sabdy()->country->name_groupe;
 
@@ -25,9 +26,21 @@ class CommissionServicePercentBackend
                 return null;
         }
     }
-    
 
-     public function getRobusPercentageCustumers()
+    public function getRobusPercentagePush()
+    {
+        $countryNameGroup = sabdy()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return PushPercent::whereId(1)->first();
+            default:
+                return null;
+        }
+    }
+
+
+    public function getRobusPercentageCustumers()
     {
         $countryNameGroup = sabdy()->country->name_groupe;
 
@@ -53,7 +66,7 @@ class CommissionServicePercentBackend
         }
     }
 
-     public function getRobusPercentageSDistributers()
+    public function getRobusPercentageSDistributers()
     {
         $countryNameGroup = sabdy()->country->name_groupe;
 
@@ -116,11 +129,11 @@ class CommissionServicePercentBackend
         }
     }
 
-     public function getRobusPercentageInter($countrie, $provider_valeur)
+    public function getRobusPercentageInter($countrie, $provider_valeur)
     {
         $levelValeur = 0;
 
-         if (sabdy()->country->name_groupe == 'AFL') {
+        if (sabdy()->country->name_groupe == 'AFL') {
 
             $countriesLevels = [
 
@@ -2355,7 +2368,7 @@ class CommissionServicePercentBackend
                     122 => ($provider_valeur != 51) ? 699 : 727, // Liberia
                     43 => ($provider_valeur != 51) ? 723 : 682, // Thad
                     42 => ($provider_valeur != 51) ? 722 : 681, // Afrique centrale
-                    92 => ($provider_valeur != 51) ? 751 : 692 ,  // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ? 751 : 692,  // Guinnée Buisso 
                     5 => ($provider_valeur != 51) ?  732 : 674, // Algerie
                     180 => ($provider_valeur != 51) ?  3256 : 3276, // Rwanda 
                     158 => ($provider_valeur != 51) ? 737 : 705, // Nigeria
@@ -2365,15 +2378,15 @@ class CommissionServicePercentBackend
                     175 => ($provider_valeur != 51) ? 3261 : 707, // Quatar
                     241 => ($provider_valeur != 51) ? 3262 : 3282, // Zambie
                     66 => ($provider_valeur != 51) ?  3263 : 3283, // Guinnée Equatoriale
-                    8 => ($provider_valeur != 51) ? 733 : 675 , // Angola
+                    8 => ($provider_valeur != 51) ? 733 : 675, // Angola
                     225 => ($provider_valeur != 51) ? 3265 : 3285, // Dubai
-                    112 => ($provider_valeur != 51) ? 754 : 695 , // Keneya
+                    112 => ($provider_valeur != 51) ? 754 : 695, // Keneya
                     45 => ($provider_valeur != 51) ?  3267 : 683, // China
                     208 => ($provider_valeur != 51) ? 756 : 712, // Suisse
                     23 => ($provider_valeur != 51) ?  734 : 676, // Belgique
-                    173 => ($provider_valeur != 51) ? 3270 : 706 , // Portugal
+                    173 => ($provider_valeur != 51) ? 3270 : 706, // Portugal
                     219 => ($provider_valeur != 51) ? 3271 : 3291, // Turquie
-                    152 => ($provider_valeur != 51) ?  735 : 703 , // Hollande
+                    152 => ($provider_valeur != 51) ?  735 : 703, // Hollande
                     100 => ($provider_valeur != 51) ? 752 : 693, // Inde
                     69 => ($provider_valeur != 51) ? 3274 : 3294, // Ethiopie
                     120 => ($provider_valeur != 51) ?  726 : 698, // Liban
@@ -2381,8 +2394,8 @@ class CommissionServicePercentBackend
                     218 => ($provider_valeur == 51) ? 7073 : 7071, // Tunisia
                     137 => ($provider_valeur != 51) ? 7074 : 7072, // Mauritanie
                     80 => ($provider_valeur != 51) ? 747 : 689, // Gambie
-                    
-             
+
+
                 ],
                 // Is RWANDA
                 180 => [
@@ -2415,19 +2428,19 @@ class CommissionServicePercentBackend
                     92 => ($provider_valeur != 51) ? 827 : 782, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3296 : 3316, // Ouganda 
                     158 => ($provider_valeur != 51) ? 839 : 794, // Nigeria
-                    191 => ($provider_valeur != 51) ? 843 : 799 , // Sierria Leone
+                    191 => ($provider_valeur != 51) ? 843 : 799, // Sierria Leone
                     116 => ($provider_valeur != 51) ?  831 : 786, // Koweit
                     212 => ($provider_valeur != 51) ?  846 :  802, // Tanzanie
-                    175 => ($provider_valeur != 51) ? 841 :  796 , // Quatar
+                    175 => ($provider_valeur != 51) ? 841 :  796, // Quatar
                     241 => ($provider_valeur != 51) ? 3302 : 3322, // Zambie
                     66 => ($provider_valeur != 51) ?  3303 : 3323, // Guinnée Equatoriale
                     8 => ($provider_valeur != 51) ?  809 : 764, // Angola
                     225 => ($provider_valeur != 51) ? 3305 : 3325, // Dubai
                     112 => ($provider_valeur != 51) ?  830 : 785, // Keneya
-                    45 => ($provider_valeur != 51) ?  817 : 772  , // China
+                    45 => ($provider_valeur != 51) ?  817 : 772, // China
                     208 => ($provider_valeur != 51) ? 845 : 801, // Suisse
                     23 => ($provider_valeur != 51) ?  810 : 765, // Belgique
-                    173 => ($provider_valeur != 51) ? 3310  : 795 , // Portugal
+                    173 => ($provider_valeur != 51) ? 3310  : 795, // Portugal
                     219 => ($provider_valeur != 51) ?  848 : 804, // Turquie
                     152 => ($provider_valeur != 51) ? 837 : 792, // Hollande
                     100 => ($provider_valeur != 51) ? 828 : 783, // Inde
@@ -2461,7 +2474,7 @@ class CommissionServicePercentBackend
                     179 => ($provider_valeur == 51) ? 6101 : 5786, // Russie
                     226 => ($provider_valeur == 51) ?  1389 : 1344, // Royaume Unie
                     106 => ($provider_valeur == 51) ?  1367 : 1322, // Italie
-                    82 => ($provider_valeur != 51) ?  1317 : 1362 , // Allemagne
+                    82 => ($provider_valeur != 51) ?  1317 : 1362, // Allemagne
                     39 => ($provider_valeur != 51) ? 1307 : 1352, // Cameroun
                     79 => ($provider_valeur != 51) ?  1315 : 1360, // Gabon
                     50 => ($provider_valeur != 51) ?  1311 : 1356, // COngo Braza
@@ -2469,7 +2482,7 @@ class CommissionServicePercentBackend
                     122 => ($provider_valeur != 51) ?  1326 : 1371, // Liberia
                     43 => ($provider_valeur != 51) ? 1309 : 1354, // Thacd
                     42 => ($provider_valeur != 51) ?  1308 : 1353, // Afrique centrale
-                    92 => ($provider_valeur != 51) ?  1320  : 1365 , // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ?  1320  : 1365, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3336 : 3356, // Ouganda 
                     180 => ($provider_valeur != 51) ? 1335 : 1380, // Rwanda 
                     158 => ($provider_valeur != 51) ? 1332 : 1377, // Nigeria
@@ -2526,7 +2539,7 @@ class CommissionServicePercentBackend
                     42 => ($provider_valeur != 51) ?  1398 : 1443, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 1410 : 1455, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3376 : 3396, // Ouganda 
-                    180 => ($provider_valeur != 51) ?  1425 : 1470 , // Rwanda 
+                    180 => ($provider_valeur != 51) ?  1425 : 1470, // Rwanda 
                     158 => ($provider_valeur != 51) ? 1422 : 1467, // Nigeria
                     191 => ($provider_valeur != 51) ? 1427 : 1472, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 1414 : 1459, // Koweit
@@ -2580,9 +2593,9 @@ class CommissionServicePercentBackend
                     42 => ($provider_valeur != 51) ?  1488 : 1533, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 1500 : 1545, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3416 : 3436, // Ouganda 
-                    180 => ($provider_valeur != 51) ? 1515 : 1560 , // Rwanda 
+                    180 => ($provider_valeur != 51) ? 1515 : 1560, // Rwanda 
                     158 => ($provider_valeur != 51) ?  1512 : 1557, // Nigeria
-                    191 => ($provider_valeur != 51) ?  1517 :  1562 , // Sierria Leone
+                    191 => ($provider_valeur != 51) ?  1517 :  1562, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 1504 : 1549, // Koweit
                     212 => ($provider_valeur != 51) ?  3421 : 3441, // Tanzanie
                     175 => ($provider_valeur != 51) ? 1514 : 1559, // Quatar
@@ -2626,7 +2639,7 @@ class CommissionServicePercentBackend
                     106 => ($provider_valeur == 51) ? 1637 : 1592, // Italie
                     82 => ($provider_valeur == 51) ? 1632 : 1587, // Allemagne
                     39 => ($provider_valeur != 51) ? 1577 : 1622, // Cameroun
-                    79 => ($provider_valeur != 51) ? 1585  :  1630  , // Gabon
+                    79 => ($provider_valeur != 51) ? 1585  :  1630, // Gabon
                     50 => ($provider_valeur != 51) ? 1581 : 1626, // COngo Braza
                     57 => ($provider_valeur != 51) ? 1582 : 1627, // RDC
                     122 => ($provider_valeur != 51) ? 1596 : 1641, // Liberia
@@ -2634,7 +2647,7 @@ class CommissionServicePercentBackend
                     42 => ($provider_valeur != 51) ?  1578 : 1623, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 1590 : 1635, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3456 : 3476, // Ouganda 
-                    180 => ($provider_valeur != 51) ? 1605 :  1650  , // Rwanda 
+                    180 => ($provider_valeur != 51) ? 1605 :  1650, // Rwanda 
                     158 => ($provider_valeur != 51) ?  1602 : 1647, // Nigeria
                     191 => ($provider_valeur != 51) ? 3459 : 3479, // Sierria Leone
                     116 => ($provider_valeur != 51) ? 1594 : 1639, // Koweit
@@ -2667,8 +2680,8 @@ class CommissionServicePercentBackend
                     133 => ($provider_valeur != 51) ? 4554 : 4027, // Mali
                     214 => ($provider_valeur != 51) ? 1701 : 1746, // Togo
                     188 => ($provider_valeur != 51) ? 1741 : 1696, // Senegal
-                    83 => ($provider_valeur != 51) ? 1678 :  1723 , // Ghana
-                    157 => ($provider_valeur != 51) ? 1691 :  1736 , // Niger
+                    83 => ($provider_valeur != 51) ? 1678 :  1723, // Ghana
+                    157 => ($provider_valeur != 51) ? 1691 :  1736, // Niger
                     91 => ($provider_valeur != 51) ? 1679 : 1724, // Guinne conakry
                     107 => ($provider_valeur != 51) ? 643 : 661, // CIV
                     1 => ($provider_valeur == 51) ? 1705 : 1660, // USA
@@ -2687,7 +2700,7 @@ class CommissionServicePercentBackend
                     122 => ($provider_valeur != 51) ? 1686 : 1731, // Liberia
                     43 => ($provider_valeur != 51) ? 1669 : 1714, // Thacd
                     42 => ($provider_valeur != 51) ?  1668 : 1713, // Afrique centrale
-                    92 => ($provider_valeur != 51) ? 680 :1725 , // Guinnée Buisso 
+                    92 => ($provider_valeur != 51) ? 680 : 1725, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3496 : 3516, // Ouganda 
                     180 => ($provider_valeur != 51) ? 1695 : 1740, // Rwanda 
                     158 => ($provider_valeur != 51) ?  1692 : 1737, // Nigeria
@@ -2810,7 +2823,7 @@ class CommissionServicePercentBackend
                     42 => ($provider_valeur != 51) ? 2613 : 2568, // Afrique centrale
                     92 => ($provider_valeur != 51) ? 2625 : 2580, // Guinnée Buisso 
                     223 => ($provider_valeur != 51) ? 3776 : 3796, // Ouganda 
-                    180 => ($provider_valeur != 51) ?  2640 : 2595 , // Rwanda 
+                    180 => ($provider_valeur != 51) ?  2640 : 2595, // Rwanda 
                     158 => ($provider_valeur != 51) ?  2645 : 2592, // Nigeria
                     191 => ($provider_valeur != 51) ? 3779 : 3799, // Sierria Leone
                     212 => ($provider_valeur != 51) ?  3780 : 3800, // Tanzanie
@@ -2875,7 +2888,7 @@ class CommissionServicePercentBackend
                     225 => ($provider_valeur != 51) ? 2693 : 2738, // Dubai
                     112 => ($provider_valeur != 51) ?  3826 : 3846, // Keneya
                     45 => ($provider_valeur != 51) ? 2660 : 2705, // China
-                    208 => ($provider_valeur != 51) ? 2734 : 5973 , // Suisse
+                    208 => ($provider_valeur != 51) ? 2734 : 5973, // Suisse
                     23 => ($provider_valeur != 51) ?  2653 : 2698, // Belgique
                     173 => ($provider_valeur != 51) ?  2683 : 2728, // Portugal
                     219 => ($provider_valeur != 51) ?  2692 : 2737, // Turquie
@@ -2983,7 +2996,7 @@ class CommissionServicePercentBackend
                     8 => ($provider_valeur != 51) ?   3905 : 3925, // Angola
                     225 => ($provider_valeur != 51) ? 3906 : 3926, // Dubai
                     112 => ($provider_valeur != 51) ?  3907 : 3927, // Keneya
-                    208 => ($provider_valeur != 51) ?  2869 : 2914 , // Suisse
+                    208 => ($provider_valeur != 51) ?  2869 : 2914, // Suisse
                     23 => ($provider_valeur != 51) ?  2833 : 2878, // Belgique
                     173 => ($provider_valeur != 51) ?  2863 : 2908, // Portugal
                     219 => ($provider_valeur != 51) ?  2872 : 2917, // Turquie
@@ -3038,7 +3051,7 @@ class CommissionServicePercentBackend
                     225 => ($provider_valeur != 51) ? 3946 : 3966, // Dubai
                     112 => ($provider_valeur != 51) ?  3947 : 3967, // Keneya
                     45 => ($provider_valeur != 51) ?  3953 : 3973, // China
-                    208 => ($provider_valeur != 51) ?  5967 : 3004 , // Suisse
+                    208 => ($provider_valeur != 51) ?  5967 : 3004, // Suisse
                     23 => ($provider_valeur != 51) ?  2923 : 2968, // Belgique
                     173 => ($provider_valeur != 51) ?  2953 : 2998, // Portugal
                     219 => ($provider_valeur != 51) ?  2962 : 3007, // Turquie
@@ -3055,7 +3068,7 @@ class CommissionServicePercentBackend
         } else {
             return null;
         }
-              
+
 
         $robusId = sabdy()->country->id;
 
@@ -3074,6 +3087,4 @@ class CommissionServicePercentBackend
 
         return  LevelCountry::whereId($levelValeur)->first();
     }
-
-
 }

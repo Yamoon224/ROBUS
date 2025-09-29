@@ -24,9 +24,7 @@ class TransfertPhoneCredit extends Component
 
     public $stepPhoneCredit = 1;
     // Phone credit
-    public $phoneCreditId;
-    public $phoneCredit_cost;
-    public $phoneCreditStatus;
+
     public $provider_phone_credit;
     public $number_phone_credit;
     public $amount_phone_credit;
@@ -453,7 +451,6 @@ class TransfertPhoneCredit extends Component
             'amount_transaction_nat_val_phone_receive' => $this->commission_transaction_val_nat_phone_receive,
             'amount_transaction_nat_val_phone_commission' => $this->commission_transaction_val_admin_phone_receive,
             'usersCountry' => sabdy()->wallet->currencie->code,
-
         ]);
     }
 

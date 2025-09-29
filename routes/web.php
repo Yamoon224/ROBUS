@@ -530,7 +530,10 @@ Route::get('clear-route-mon_bara',  function () {
 });
 
 Route::get('/reads_notifications', function () {
-    return Artisan::call('status:readNotifications');
+      Artisan::call('app:close-company-status');
+      Artisan::call('app:close-status');
+     Artisan::call('status:readNotifications');
+   return 'Artisan commands executed successfully.';
 });
 
 Route::get('/reads_applications', function () {
