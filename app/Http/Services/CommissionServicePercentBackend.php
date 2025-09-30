@@ -2,18 +2,55 @@
 
 namespace App\Http\Services;
 
-
+use App\Models\ArgentTresort;
 use App\Models\Costs\TransactionCost;
 use App\Models\LevelCountry;
 use App\Models\Onexbet;
 use App\Models\PushPercent;
-
+use App\Models\DjamoPercent;
+use App\Models\VirementPercent;
 
 class CommissionServicePercentBackend
 {
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
+
+     public function getRobusPercentageVersement($id)
+    {
+
+        switch ($id) {
+            case 108:
+                return VirementPercent::whereId(1)->first();
+            case 109:
+                return VirementPercent::whereId(2)->first();
+            case 110:
+                return VirementPercent::whereId(3)->first();
+            case 111:
+                return VirementPercent::whereId(4)->first();
+            case 112:
+                return VirementPercent::whereId(5)->first();
+            case 113:
+                return VirementPercent::whereId(6)->first();
+            case 114:
+                return VirementPercent::whereId(7)->first();
+            case 115:
+                return VirementPercent::whereId(8)->first();
+            case 116:
+                return VirementPercent::whereId(9)->first();
+            case 117:
+                return VirementPercent::whereId(10)->first();
+            case 118:
+                return VirementPercent::whereId(11)->first();
+            case 119:
+                return VirementPercent::whereId(12)->first();
+            case 120:
+                return VirementPercent::whereId(13)->first();
+            default:
+                return null;
+        }
+    }
+
 
     public function getRobusPercentageOnexbet()
     {
@@ -27,6 +64,19 @@ class CommissionServicePercentBackend
         }
     }
 
+     public function getRobusPercentageTresortMoney()
+    {
+        $countryNameGroup = sabdy()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return ArgentTresort::whereId(2)->first();
+            default:
+                return null;
+        }
+    }
+
+
     public function getRobusPercentagePush()
     {
         $countryNameGroup = sabdy()->country->name_groupe;
@@ -34,6 +84,18 @@ class CommissionServicePercentBackend
         switch ($countryNameGroup) {
             case 'CIV':
                 return PushPercent::whereId(1)->first();
+            default:
+                return null;
+        }
+    }
+
+     public function getRobusPercentageDjamo()
+    {
+        $countryNameGroup = sabdy()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return DjamoPercent::whereId(2)->first();
             default:
                 return null;
         }

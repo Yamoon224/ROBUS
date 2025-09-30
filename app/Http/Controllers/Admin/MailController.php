@@ -9,6 +9,8 @@ use App\Mail\WalletCard;
 use App\Mail\WalletInter;
 use App\Mail\WalletXbet;
 use App\Mail\WalletReload;
+use App\Mail\WalletPush;
+use App\Mail\WalletDjamo;
 use App\Mail\sendValidated;
 use App\Mail\modifyPassword;
 use App\Mail\WalletPaiement;
@@ -18,6 +20,7 @@ use App\Mail\authNotification;
 use App\Mail\WalletReloadCard;
 use App\Mail\WalletPhoneCredit;
 use App\Mail\WalletTransaction;
+use App\Mail\WalletVersement;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeValidated;
@@ -62,7 +65,8 @@ class MailController extends Controller
         }
     }
 
-    public function newOtp($data){
+    public function newOtp($data)
+    {
         try {
             Mail::to($data->email)->send(new OtpSend($data));
         } catch (\Throwable $th) {
@@ -70,7 +74,8 @@ class MailController extends Controller
         }
     }
 
-    public function newOtpAgent($data){
+    public function newOtpAgent($data)
+    {
         try {
             Mail::to($data)->send(new OtpSend($data));
         } catch (\Throwable $th) {
@@ -86,10 +91,38 @@ class MailController extends Controller
             throw $th;
         }
     }
-     public function newXbet($data)
+    public function newXbet($data)
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletXbet($data));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    public function newPush($data)
+    {
+        try {
+            Mail::to($data->wallet->sidUser->email)->send(new WalletPush($data));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+      public function newVersementBanque($data)
+    {
+        try {
+            Mail::to($data->wallet->sidUser->email)->send(new WalletVersement($data));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+
+     public function newDjamo($data)
+    {
+        try {
+            Mail::to($data->wallet->sidUser->email)->send(new WalletDjamo($data));
         } catch (\Throwable $th) {
             throw $th;
         }
@@ -158,14 +191,13 @@ class MailController extends Controller
         }
     }
 
-    
-    public function modifyPassword($dt){
+
+    public function modifyPassword($dt)
+    {
         try {
             Mail::to($dt->email)->send(new modifyPassword($dt));
         } catch (\Throwable $th) {
             throw $th;
         }
     }
-
-
 }

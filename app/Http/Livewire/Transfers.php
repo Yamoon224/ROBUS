@@ -35,6 +35,7 @@ use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletInter;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
+use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletXbet;
@@ -59,56 +60,56 @@ class Transfers extends Component
 {
     use WithPagination;
     protected $paginationTheme = 'bootstrap';
- 
+
     // Phone Credit Edit valeurs
     public $phoneCreditId;
     public $phoneCreditStatus;
     public $provider_phone_credit_edit;
-    public $number_phone_credit_edit ;
-    public $amount_phone_credit_edit ;
-    public $currency_custumers ;
+    public $number_phone_credit_edit;
+    public $amount_phone_credit_edit;
+    public $currency_custumers;
     public $description_phone_credit;
     public $phoneCredit_cost;
-   
+
     // Reload Card Edit valeurs
     public $reloadcardId;
-    public $reloadcard_description_edit ;
-    public $reloadcardStatus ;
-    public $provider_reloadcard_edit ;
+    public $reloadcard_description_edit;
+    public $reloadcardStatus;
+    public $provider_reloadcard_edit;
     public $amount_reloadcard_edit;
-    public $account_number_reloadcard_edit ;
+    public $account_number_reloadcard_edit;
     public $name_reloadcard_edit;
 
     // Edit Transaction valeurs
     public $transactionId;
     public $transactionStatus;
-    public $provider_transaction_edit ;
-    public $transaction_description_edit ;
+    public $provider_transaction_edit;
+    public $transaction_description_edit;
     public $transaction_phone_edit;
-    public $compte_number_robus_edit ;
+    public $compte_number_robus_edit;
     public $transaction_amount_robus_edit;
     public $transaction_amount_money_edit;
-    public $transaction_description_robus_edit ;
+    public $transaction_description_robus_edit;
 
     // Edit paiement valeurs 
-    public $paiementId ;
-    public $provider_payment_edit ;
-    public $provider_payment_name ;
-    public $paiement_num_contrat_edit ;
-    public $paiement_id_invoice_edit ;
+    public $paiementId;
+    public $provider_payment_edit;
+    public $provider_payment_name;
+    public $paiement_num_contrat_edit;
+    public $paiement_id_invoice_edit;
     public $paiement_decoder_canal_edit;
-    public $paiement_phone_canal_edit ;
+    public $paiement_phone_canal_edit;
     public $paiement_name_sodecie_edit;
     public $paiement_name_cie_edit;
     public $paiement_amount_t_sodecie_edit;
     public $paiement_amount_total_edit;
-    public $paiementStatus ;
-    public $facture_choix_type_edit ;
-    public $paiementChoix_phone_edit ;
-    public $offer_paiement_edit ;
-    public $offer_paiement_edit_amount ;
-    public $phone_invoice_pre_edit ;
-    public $pre_id_invoice_edit ;
+    public $paiementStatus;
+    public $facture_choix_type_edit;
+    public $paiementChoix_phone_edit;
+    public $offer_paiement_edit;
+    public $offer_paiement_edit_amount;
+    public $phone_invoice_pre_edit;
+    public $pre_id_invoice_edit;
     public $devise_user;
     public $paiement_amount_Canal_edit;
     public $paiement_amount_p_sodecie_edit;
@@ -118,47 +119,47 @@ class Transfers extends Component
     // Edit Inter valeurs
 
     public $interId;
-    public $inter_description_edit ;
-    public $inter_description_robus_edit ;
-    public $interStatus ;
-    public $provider_inter_edit ;
+    public $inter_description_edit;
+    public $inter_description_robus_edit;
+    public $interStatus;
+    public $provider_inter_edit;
     public $country_inter_edit;
-    public $amount_inter_edit ;
-    public $account_number_inter_edit ;
-    public $phone_inter_edit ;
-    public $amount_inter_robus_edit ;
+    public $amount_inter_edit;
+    public $account_number_inter_edit;
+    public $phone_inter_edit;
+    public $amount_inter_robus_edit;
     public $country_inter_robus_edit;
     //Edit Invoice
 
-    public $choose_type_paiement ;
+    public $choose_type_paiement;
     // Edit Phone credit
-    public $provider_phone_credit_inter_edit ;
-    public $number_phone_credit_inter_edit ;
-    public $amount_phone_credit_inter_edit ;
+    public $provider_phone_credit_inter_edit;
+    public $number_phone_credit_inter_edit;
+    public $amount_phone_credit_inter_edit;
     public $country_inter_robus_inter_edit;
 
     // Edit Virement bank
-    public $provider_Inter_virement_edit ;
-    public $firstname_user_inter_edit ;
-    public $name_relo_user_inter_edit ;
-    public $phone_user_inter_edit ;
-    public $amount_virement_inter_edit ;
-    public $account_number_user_bank_inter_edit ;
-    public $amount_virement_nsia_inter_edit ;
+    public $provider_Inter_virement_edit;
+    public $firstname_user_inter_edit;
+    public $name_relo_user_inter_edit;
+    public $phone_user_inter_edit;
+    public $amount_virement_inter_edit;
+    public $account_number_user_bank_inter_edit;
+    public $amount_virement_nsia_inter_edit;
 
     //  Edit Paiment Invoice
-    public $phone_invoice_inter_edit ;
-    public $id_invoice_inter_edit ;
+    public $phone_invoice_inter_edit;
+    public $id_invoice_inter_edit;
 
     // Edit valeurs virements
 
-    public $virementId ;
-    public $virementStatus ;
-    public $virementDescription_edit ;
-    public $provider_virement_edit ;
-    public $firstname_user_edit ;
-    public $lastname_user_edit ;
-    public $phone_user_edit ;
+    public $virementId;
+    public $virementStatus;
+    public $virementDescription_edit;
+    public $provider_virement_edit;
+    public $firstname_user_edit;
+    public $lastname_user_edit;
+    public $phone_user_edit;
     public $country_virement_edit;
     public $amount_virement_edit;
     public $account_number_user_edit;
@@ -230,6 +231,7 @@ class Transfers extends Component
     public $showRemonterDepotButton = false;
     public $showRemonterRetraitButton = false;
     public $showRemonterMoneyButton = false;
+    public $showRemonterTresortMoneyButton = false;
 
     // Compagnies
     public $showRemonterTransCButton = false;
@@ -241,6 +243,7 @@ class Transfers extends Component
     public $showRemonterDepotCButton = false;
     public $showRemonterRetraitCButton = false;
     public $showRemonterMoneyCButton = false;
+    public $showRemonterTresortMoneyCButton = false;
 
     // Transactions
     public $showTransButton = false;
@@ -263,6 +266,7 @@ class Transfers extends Component
     public $showBankSendButton = false;
     public $showPushButton = false;
     public $showDjamoButton = false;
+    public $showTresortButton = false;
 
     public $operators;
     public $operatorsCompagnie;
@@ -332,6 +336,7 @@ class Transfers extends Component
             'Active Depot' => 'showRemonterDepotButton',
             'Active Retrait' => 'showRemonterRetraitButton',
             'Active Money' => 'showRemonterMoneyButton',
+            'Active Tresort Money' => 'showRemonterTresortMoneyButton',
         ];
 
         $restrictionCompangieMap = [
@@ -344,6 +349,7 @@ class Transfers extends Component
             'Active Depot' => 'showRemonterDepotCButton',
             'Active Retrait' => 'showRemonterRetraitCButton',
             'Active Money' => 'showRemonterMoneyCButton',
+            'Active Tresort Money' => 'showRemonterTresortMoneyCButton',
         ];
 
 
@@ -367,6 +373,7 @@ class Transfers extends Component
             'TRANSFERT BANK SEND' => 'showBankSendButton',
             'TRANSFERT PUSH' => 'showPushButton',
             'TRANSFERT DJAMO' => 'showDjamoButton',
+            'TRANSFERT TRESORT' => 'showTresortButton',
         ];
 
         foreach ($this->operatorsTransaction as $operator) {
@@ -403,7 +410,6 @@ class Transfers extends Component
     {
 
         if (empty($this->password_validated)) {
-            // Gérer le cas où le mot de passe n'est pas valide
             return;
         }
 
@@ -450,7 +456,7 @@ class Transfers extends Component
 
     public function loadChoose3()
     {
-     
+
         $this->provider_payment_inter = null;
     }
 
@@ -1333,7 +1339,7 @@ class Transfers extends Component
                                 $this->emit('modal-hide-phoneCredit-validated');
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Pas vous le valideur !!');
-                                return; 
+                                return;
                             }
                         } elseif ($check->status == 'ERROR') {
 
@@ -1385,44 +1391,41 @@ class Transfers extends Component
                                 $this->emit('modal-hide-phoneCredit-validated');
                                 $this->emit('modal-hide-phoneCredit');
                                 $this->emit('error', 'Pas de modification !');
-                                return; 
+                                return;
                             }
                         } else {
                             $this->cancelPhoneCreditField();
                             $this->emit('modal-hide-phoneCredit-validated');
                             $this->emit('modal-hide-phoneCredit');
                             $this->emit('error', 'Pas de modification !');
-                            return; 
-
+                            return;
                         }
                     } else {
                         $this->cancelPhoneCreditField();
                         $this->emit('modal-hide-phoneCredit');
                         $this->emit('modal-hide-phoneCredit-validated');
                         $this->emit('error', 'Pas le valideur !');
-                        return; 
+                        return;
                     }
                 } else {
                     $this->cancelPhoneCreditField();
                     $this->emit('modal-hide-phoneCredit');
                     $this->emit('modal-hide-phoneCredit-validated');
                     $this->emit('error', 'Mot de passe Incorrect !');
-                    return; 
-
+                    return;
                 }
             } elseif ($this->password_transaction = "" ||  $this->phoneCreditStatus = "") {
                 $this->cancelPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit-validated');
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
-                return; 
-
+                return;
             } else {
                 $this->cancelPhoneCreditField();
                 $this->emit('modal-hide-phoneCredit');
                 $this->emit('modal-hide-phoneCredit-validated');
                 $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
-                return; 
+                return;
             }
             DB::commit();
         } catch (\Exception $exception) {
@@ -1519,7 +1522,7 @@ class Transfers extends Component
                                     $this->emit('modal-hide-reloadCard');
                                     $this->emit('modal-hide-reloadCard-validated');
                                     $this->emit('success', 'Rechargement Acceptée sans commission sous-distibuteur !');
-                                    return; 
+                                    return;
                                 }
                             } else {
 
@@ -1590,22 +1593,21 @@ class Transfers extends Component
                             $this->emit('modal-hide-reloadCard-validated');
                             $this->emit('modal-hide-reloadCard');
                             $this->emit('error', 'Pas de modification !');
-                            return; 
+                            return;
                         }
                     } else {
                         $this->cancelReloadCardField();
                         $this->emit('modal-hide-reloadCard-validated');
                         $this->emit('modal-hide-reloadCard');
                         $this->emit('error', 'Pas le valideur !');
-                        return; 
-
+                        return;
                     }
                 } else {
                     $this->cancelReloadCardField();
                     $this->emit('modal-hide-reloadCard-validated');
                     $this->emit('modal-hide-reloadCard');
                     $this->emit('info', 'Vérifier votre mot de passe !');
-                    return; 
+                    return;
                 }
             } elseif ($this->password_transaction = "") {
                 $this->cancelReloadCardField();
@@ -1882,7 +1884,7 @@ class Transfers extends Component
                                     $this->emit('modal-hide-virement');
                                     $this->emit('modal-hide-virement-validated');
                                     $this->emit('success', 'Versement Acceptée sans commission sous-distibuteur !');
-                                    return; 
+                                    return;
                                 }
                             } else {
 
@@ -1963,24 +1965,21 @@ class Transfers extends Component
                         $this->emit('modal-hide-virement');
                         $this->emit('modal-hide-virement-validated');
                         $this->emit('error', 'Pas vous le valideur !');
-                        return; 
-
+                        return;
                     }
                 } else {
                     $this->cancelVirementField();
                     $this->emit('modal-hide-virement-validated');
                     $this->emit('modal-hide-virement');
                     $this->emit('error', 'Mot de passe Incorrect !');
-                    return; 
-
+                    return;
                 }
             } elseif ($this->password_transaction = "" ||  $this->virementStatus = "") {
                 $this->cancelVirementField();
                 $this->emit('modal-hide-virement-validated');
                 $this->emit('modal-hide-virement');
                 $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !');
-                return; 
-
+                return;
             } else {
                 $this->cancelVirementField();
                 $this->emit('modal-hide-virement-validated');
@@ -2128,12 +2127,11 @@ class Transfers extends Component
                                         $this->cancelReloadCardField();
                                         $this->emit('modal-hide-reloadCard');
                                         $this->emit('success', 'Rechargement Acceptée sans commission sous-distibuteur !');
-                                        return; 
+                                        return;
                                     }
-                                    
                                 } else {
 
-                                    
+
                                     app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                                 }
                             } else {
@@ -2314,7 +2312,7 @@ class Transfers extends Component
                                     $this->emit('modal-hide-paiement');
                                     $this->emit('success', 'Paiement Accepté !');
                                     $this->emit('success', 'Paiement Acceptée sans commission sous-distibuteur !');
-                                    return; 
+                                    return;
                                 }
                             } else {
 
@@ -2378,16 +2376,14 @@ class Transfers extends Component
                             $this->emit('modal-hide-paiement');
                             $this->emit('modal-hide-paiement-validated');
                             $this->emit('success', 'Payment modifié !');
-                            return; 
-
+                            return;
                         }
                     } else {
                         $this->cancelPaiementField();
                         $this->emit('modal-hide-paiement');
                         $this->emit('modal-hide-paiement-validated');
                         $this->emit('success', 'Pas vous le valideur !');
-                        return; 
-
+                        return;
                     }
                 } else {
 
@@ -2395,8 +2391,7 @@ class Transfers extends Component
                     $this->emit('modal-hide-paiement-validated');
                     $this->emit('modal-hide-paiement');
                     $this->emit('info', 'Vérifier votre mot de passe !');
-                    return; 
-
+                    return;
                 }
             } elseif ($this->password_transaction = "") {
                 $this->cancelPaiementField();
@@ -2663,13 +2658,13 @@ class Transfers extends Component
     // reset form Field
     public function resetInterField()
     {
-      
+
         $this->interId = '';
         $this->interStatus = '';
         $this->provider_payment_inter = null;
         $this->paiementChoix_phone = null;
         $this->facture_choix_type = null;
-        $this->choose_type_paiement = null;       
+        $this->choose_type_paiement = null;
         // Code validated Transactions
         $this->code_validated = '';
         $this->emit('modal-hide-inters-validated');
@@ -2679,7 +2674,7 @@ class Transfers extends Component
     // Cancel field
     public function cancelInterField()
     {
-       
+
         $this->interId = '';
         $this->interStatus = '';
         $this->provider_payment_inter = null;
@@ -2696,8 +2691,8 @@ class Transfers extends Component
 
     public function cancelPhoneCreditField()
     {
- 
-         $this->emit('modal-hide-phoneCredit');
+
+        $this->emit('modal-hide-phoneCredit');
         $this->emit('modal-hide-phoneCredit-validated');
         $this->emit('menu-phoneCredit-active');
     }
@@ -2705,7 +2700,7 @@ class Transfers extends Component
 
     public function cancelReloadCardField()
     {
-     
+
         $this->emit('modal-hide-reloadCard-validated');
         $this->emit('menu-reloadCarte-active');
     }
@@ -2722,7 +2717,7 @@ class Transfers extends Component
 
     public function resetVirementInterField()
     {
-     
+
         $this->emit('modal-hide-virement');
     }
 
@@ -2768,7 +2763,7 @@ class Transfers extends Component
         $this->emit('modal-hide-paiement-validated');
     }
 
- 
+
     //    Paginated
     public function gotoPageTrans($page)
     {
@@ -2900,6 +2895,7 @@ class Transfers extends Component
         $bankSend = WalletBankSend::whereIsWeb(false);
         $push = WalletPush::whereIsWeb(false);
         $versement = WalletVersement::whereIsWeb(false);
+        $tresortMoney = WalletTresortMoney::whereIsWeb(false);
         $walletUser = Auth::guard('web')->user();
         $commission_paiement_invoice_val_nat_pay_frais = null;
         $commission_transaction_val_nal_pay = null;
@@ -2943,6 +2939,18 @@ class Transfers extends Component
 
         $paiements = $paiements->select('wallet_payments.*')
             ->orderBy('wallet_payments.created_at', 'desc')
+            ->paginate(15);
+
+        $tresortMoneys = $tresortMoney->join('wallets', 'wallet_tresort_money.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where('wallet_tresort_money.status', 'PENDING');
+
+        if ($walletUser->is_under_distributer) {
+            $tresortMoneys->where('wallet_tresort_money.wallet_id', $walletUser->wallet->id);
+        }
+
+        $tresortMoneys = $tresortMoneys->select('wallet_tresort_money.*')
+            ->orderBy('wallet_tresort_money.created_at', 'desc')
             ->paginate(15);
 
         // Virements
@@ -3087,6 +3095,7 @@ class Transfers extends Component
             'versements' => $versements,
             'djamos' => $djamos,
             'bankSends' => $bankSends,
+            'tresortMoneys' => $tresortMoneys,
             'countrie_number_local' => Auth::guard('web')->user()->country
                 ->indecative,
             'wallet_search' => $wallet
@@ -3111,13 +3120,12 @@ class Transfers extends Component
             )->first(),
             'amount_invoice' => PaymentCost::where('status', true)->first(),
             'amount_bank' => BankCost::whereId(2)->first(),
-          
+
             'amount_transaction_nat_val_pay' => $commission_transaction_val_nal_pay,
             'amount_paiemet_frais_receive' => $commission_paiement_invoice_val_nat_pay_frais,
             'amount_transaction_nat_val_percent' => $this->commission_transaction_val_admin_receive,
             'amount_transaction_nat_val_receive' => $this->commission_transaction_val_nat_receive,
             'amount_transaction_nat_val_drawal' => $this->commission_transaction_drawal,
-        
 
             'code_valided' => $code_validated_val_nat,
             'code_valided_inter' => $code_validated_val_nat,
@@ -3171,6 +3179,10 @@ class Transfers extends Component
             'versement_success' => $interHomeService->getVersementCountByStatus('SUCCESS'),
             'versement_pendding' => $interHomeService->getVersementCountByStatus('PENDING'),
 
+            'tresortMoney_error' => $interHomeService->getTresortMoneyCountByStatus('ERROR'),
+            'tresortMoney_success' => $interHomeService->getTresortMoneyCountByStatus('SUCCESS'),
+            'tresortMoney_pendding' => $interHomeService->getTresortMoneyCountByStatus('PENDING'),
+
             // Wallets alls infos
             'WalletBanks' =>  $interHomeService->getWalletDepositSum(WalletBank::class, 'wallet_banks'),
             'WalletDeposits' => $interHomeService->getWalletDepositSum(WalletDeposit::class, 'wallet_deposits'),
@@ -3184,6 +3196,8 @@ class Transfers extends Component
             'WalletVersements' =>  $interHomeService->getWalletDepositSum(WalletVersement::class, 'wallet_versements'),
             'WalletTransactions' => $interHomeService->getWalletDepositSum(WalletTransaction::class, 'wallet_transactions'),
             'WalletPhoneCredits' => $interHomeService->getWalletDepositSum(WalletPhoneCredit::class, 'wallet_phone_credits'),
+            'walletTresortMoneys' => $interHomeService->getWalletDepositSum(WalletTresortMoney::class, 'wallet_tresort_money'),
+
             'offers_canal' => $offers,
             'countries' => Country::whereRobus(true)
                 ->orderBy('name', 'asc')
@@ -3216,6 +3230,7 @@ class Transfers extends Component
             'showBankSendButton' => $this->showBankSendButton,
             'showPushButton' => $this->showPushButton,
             'showDjamoButton' => $this->showDjamoButton,
+            'showTresortButton' => $this->showTresortButton,
             // Remote commissions
             'showRemonterTransButton' => $this->showRemonterTransButton,
             'showRemonterCreditButton' => $this->showRemonterCreditButton,
@@ -3226,6 +3241,7 @@ class Transfers extends Component
             'showRemonterDepotButton' => $this->showRemonterDepotButton,
             'showRemonterRetraitButton' => $this->showRemonterRetraitButton,
             'showRemonterMoneyButton' => $this->showRemonterMoneyButton,
+            'showRemonterTresortMoneyButton' => $this->showRemonterTresortMoneyButton,
 
             'user_auth' => $walletUser,
             'user_send' => sabdy(),
@@ -3808,7 +3824,7 @@ class Transfers extends Component
         ];
     }
 
- 
+
     public function getNationTransactionProperty()
     {
         $walletUser = Auth::guard('web')->user();

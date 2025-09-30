@@ -43,6 +43,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeValidated;
+use App\Models\Wallets\WalletTresortMoney;
 
 class TransfertServiceBackend
 {
@@ -76,9 +77,9 @@ class TransfertServiceBackend
         ]);
     }
 
-      public function createXbetTransaction($val_amount , $provider, $percent_robus, $amount_solde , $choose_type_transaction , $fullName , $numberAcompte , $citieXbet , $areaXbet , $codeAcompte, $amountReceved)
+    public function createXbetTransaction($val_amount, $provider, $percent_robus, $amount_solde, $choose_type_transaction, $fullName, $numberAcompte, $citieXbet, $areaXbet, $codeAcompte, $amountReceved)
     {
-        
+
         return WalletXbet::create([
             'wallet_id' =>   sabdy()->wallet->id,
             'amount' => $val_amount,
@@ -98,6 +99,86 @@ class TransfertServiceBackend
             'amount_received'  =>  $amountReceved ?? 0.0,
         ]);
     }
+
+    public function createPushTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $phoneNumber, $amountReceved)
+    {
+
+        return WalletPush::create([
+            'wallet_id' =>   sabdy()->wallet->id,
+            'amount' => $val_amount,
+            'description'  => 'Demande  de rechargement Push',
+            'push_percent_id' => 1,
+            'created_by' => sabdy()->id,
+            'amount_solde'  => $amount_solde  ?? null,
+            'provider_id'  =>  $provider->id,
+            'costs_amount' => ($percent_robus->percent * $val_amount),
+            'phone'  =>  $phoneNumber ?? null,
+            'full_name' =>  $fullName ?? null,
+            'status'  => "PENDING",
+            'amount_received'  =>  $amountReceved ?? 0.0,
+        ]);
+    }
+
+    public function createTresortTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $phoneNumber, $amountReceved)
+    {
+
+        return WalletTresortMoney::create([
+            'wallet_id' =>   sabdy()->wallet->id,
+            'amount' => $val_amount,
+            'description'  => 'Demande de rechargement Tresort Money',
+            'argent_tresort_id' => 2,
+            'created_by' => sabdy()->id,
+            'amount_solde'  => $amount_solde  ?? null,
+            'provider_id'  =>  $provider->id,
+            'costs_amount' => ($percent_robus->percent * $val_amount),
+            'phone'  =>  $phoneNumber ?? null,
+            'full_name' =>  $fullName ?? null,
+            'status'  => "PENDING",
+            'amount_received'  =>  $amountReceved ?? 0.0,
+        ]);
+    }
+
+     public function createVersementTransaction($val_amount, $provider, $percent_robus, $amount_solde, $numberAccount, $bankCode , $guichetCode , $numberRib, $amountReceved)
+    {
+
+        return WalletVersement::create([
+            'wallet_id' =>   sabdy()->wallet->id,
+            'amount' => $val_amount,
+            'description'  => 'Demande de versement Bancaire',
+            'created_by' => sabdy()->id,
+            'amount_solde'  => $amount_solde  ?? null,
+            'provider_id'  =>  $provider->id,
+            'costs_amount' => ($percent_robus->percent * $val_amount),
+            'virement_percent_id' => $percent_robus->id,
+            'num_accompte'   => $numberAccount ?? null,
+            'bank_code' => $bankCode ?? null,
+            'guichet_code' => $guichetCode ?? null,
+            'num_authers' => $numberRib ?? null,
+            'status'  => "PENDING",
+            'amount_received'  =>  $amountReceved ?? 0.0,
+        ]);
+    }
+
+
+     public function createDjamoTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $image, $amountReceved)
+    {
+
+        return WalletDjamo::create([
+            'wallet_id' =>   sabdy()->wallet->id,
+            'amount' => $val_amount,
+            'description'  => 'Demande de rechargement Djamo',
+            'djamo_percent_id' => 2,
+            'created_by' => sabdy()->id,
+            'amount_solde'  => $amount_solde  ?? null,
+            'provider_id'  =>  $provider->id,
+            'costs_amount' => ($percent_robus->percent * $val_amount),
+            'image'  =>  $image ?? null,
+            'full_name' =>  $fullName ?? null,
+            'status'  => "PENDING",
+            'amount_received'  =>  $amountReceved ?? 0.0,
+        ]);
+    }
+
 
 
     public function updateAmountReceived($walletInter, $country_robus, $valeur_received)

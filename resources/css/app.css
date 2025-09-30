@@ -17,6 +17,226 @@
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
 */
+.menu-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.menu-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 0.6rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.menu-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.menu-badge {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    backdrop-filter: blur(10px);
+}
+
+.nav-container {
+    padding: 1.5rem;
+}
+
+
+
+
+.nav-tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.nav-item {
+    margin: 0;
+}
+
+.nav-link {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    background: #f8fafc;
+    position: relative;
+    overflow: hidden;
+}
+
+.nav-link::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    transition: left 0.6s;
+}
+
+.nav-link:hover::before {
+    left: 100%;
+}
+
+.nav-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.nav-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    margin-right: 1rem;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover .nav-icon {
+    transform: scale(1.1);
+}
+
+.nav-label {
+    font-weight: 600;
+    font-size: 1rem;
+    color: #1e293b;
+    flex: 1;
+    text-align: left;
+}
+
+.nav.nav-link-tabs {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+
+.nav-indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #cbd5e1;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover .nav-indicator {
+    background: #64748b;
+    transform: scale(1.2);
+}
+
+/* Couleurs des liens */
+.nav-link-blue:hover { border-color: #3b82f6; background: #dbeafe; }
+.nav-link-green:hover { border-color: #10b981; background: #d1fae5; }
+.nav-link-purple:hover { border-color: #8b5cf6; background: #ede9fe; }
+.nav-link-orange:hover { border-color: #f59e0b; background: #fef3c7; }
+.nav-link-pink:hover { border-color: #ec4899; background: #fce7f3; }
+.nav-link-indigo:hover { border-color: #6366f1; background: #e0e7ff; }
+.nav-link-red:hover { border-color: #ef4444; background: #fee2e2; }
+.nav-link-teal:hover { border-color: #14b8a6; background: #ccfbf1; }
+.nav-link-cyan:hover { border-color: #06b6d4; background: #cffafe; }
+.nav-link-amber:hover { border-color: #f59e0b; background: #fef3c7; }
+.nav-link-rose:hover { border-color: #f43f5e; background: #ffe4e6; }
+.nav-link-yellow:hover { border-color: #eab308; background: #fef9c3; }
+
+/* Icônes colorées */
+.nav-link-blue .nav-icon { background: #dbeafe; color: #1d4ed8; }
+.nav-link-green .nav-icon { background: #d1fae5; color: #047857; }
+.nav-link-purple .nav-icon { background: #ede9fe; color: #7c3aed; }
+.nav-link-orange .nav-icon { background: #fef3c7; color: #d97706; }
+.nav-link-pink .nav-icon { background: #fce7f3; color: #db2777; }
+.nav-link-indigo .nav-icon { background: #e0e7ff; color: #4f46e5; }
+.nav-link-red .nav-icon { background: #fee2e2; color: #dc2626; }
+.nav-link-teal .nav-icon { background: #ccfbf1; color: #0d9488; }
+.nav-link-cyan .nav-icon { background: #cffafe; color: #0891b2; }
+.nav-link-amber .nav-icon { background: #fef3c7; color: #d97706; }
+.nav-link-rose .nav-icon { background: #ffe4e6; color: #e11d48; }
+.nav-link-yellow .nav-icon { background: #fef9c3; color: #ca8a04; }
+
+.btn-modern {
+    display: flex;
+    align-items: center;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    min-width: 180px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-modern:hover::before {
+    left: 100%;
+}
+
+.btn-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 10px;
+    transition: transform 0.3s ease;
+}
+
+.btn-modern:hover .btn-icon {
+    transform: scale(1.1);
+}
+
+.btn-text {
+    white-space: nowrap;
+}
+
+/* Couleurs des boutons */
+.btn-success { background: linear-gradient(135deg, #10B981, #047857); color: white !important; }
+.btn-info { background: linear-gradient(135deg, #06B6D4, #0E7490); color: white; }
+.btn-warning { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; }
+.btn-purple { background: linear-gradient(135deg, #8B5CF6, #7C3AED); color: white; }
+.btn-indigo { background: linear-gradient(135deg, #6366F1, #4F46E5); color: white; }
+.btn-orange { background: linear-gradient(135deg, #F97316, #EA580C); color: white; }
+.btn-teal { background: linear-gradient(135deg, #14B8A6, #0D9488); color: white; }
+.btn-cyan { background: linear-gradient(135deg, #22D3EE, #0891B2); color: white; }
+.btn-pink { background: linear-gradient(135deg, #EC4899, #DB2777); color: white; }
+.btn-rose { background: linear-gradient(135deg, #F43F5E, #E11D48); color: white; }
+.btn-amber { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; }
+
 
 .form-group.required .form-label::after {
     content: " *";
@@ -328,9 +548,13 @@
 }
 
 .w-logo {
-  width: 5rem;
+  /* width: 5rem; */
   margin-left: auto;
   margin-right: auto;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;  
 }
 
 .info-paiement-vue {
@@ -3779,13 +4003,37 @@ select {
 
 .nav.nav-link-tabs .nav-item .nav-link {
   border-bottom-width: 2px;
-  border-color: transparent;
+  border-color: #806b7940;
 }
 
 .nav.nav-link-tabs .nav-item .nav-link.active {
   --tw-border-opacity: 1;
   border-bottom-color: rgb(var(--color-primary) / var(--tw-border-opacity));
   font-weight: 500;
+  background: linear-gradient(135deg, #10B981, #047857);
+  color: white;
+}
+
+/* Changer la couleur du texte .nav-label lorsque actif */
+.nav.nav-link-tabs .nav-item .nav-link.active .nav-label {
+  color: white !important;
+  font-weight: 600;
+}
+
+.nav.nav-link-tabs .nav-item .nav-link.active.nav-link-yellow .nav-label {
+  color: white !important;
+}
+
+.nav.nav-link-tabs .nav-item .nav-link.active.nav-link-primary .nav-label {
+  color: white !important;
+}
+
+.nav.nav-link-tabs .nav-item .nav-link.active.nav-link-success .nav-label {
+  color: white !important;
+}
+
+.nav.nav-link-tabs .nav-item .nav-link.active.nav-link-indigo .nav-label {
+  color: white !important;
 }
 
 .nav-link {

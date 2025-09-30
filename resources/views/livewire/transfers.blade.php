@@ -130,473 +130,535 @@
     </div>
     <div class="intro-y box px-5 pt-1 mt-1 ">
         <div class="grid grid-cols-12 gap-6 mt-6">
-             
+
             @if ($is_under || $is_distributer)
-                
             @else
-                 <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_table_factures">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $transaction_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in">
+                        <div class="box p-wallet style_table_factures">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $transaction_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $transaction_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $transaction_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $transaction_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $transaction_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
-
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8  mt-transactions">
+                                {{ $WalletTransactions ?? null }}
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Transactions {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8  mt-transactions">
-                            {{ $WalletTransactions ?? null }}
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Transactions {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in ">
-                    <div class="box p-wallet ">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $payment_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in ">
+                        <div class="box p-wallet ">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $payment_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $payment_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $payment_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $payment_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $payment_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletPayments ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Paiements factures {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletPayments ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Paiements factures {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_table_cartes">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $bank_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in">
+                        <div class="box p-wallet style_table_cartes">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $bank_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $bank_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $bank_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $bank_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $bank_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletBanks ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Virement {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletBanks ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Virement {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $inter_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in btn-purple">
+                        <div class="box p-wallet btn-purple">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $inter_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $inter_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $inter_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $inter_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $inter_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletInters ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Inters {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletInters ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Inters {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_table4">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $card_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in">
+                        <div class="box p-wallet style_table4">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $card_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $card_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $card_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $card_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $card_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletDeposits ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Recharges cartes {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletDeposits ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Recharges cartes {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet ">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $phone_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in btn-teal">
+                        <div class="box p-wallet btn-teal">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $phone_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $phone_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $phone_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $phone_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $phone_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletPhoneCredits ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Recharges Credits {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletPhoneCredits ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Recharges Credits {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_table_factures">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $xbet_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in">
+                        <div class="box p-wallet style_table_factures">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $xbet_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $xbet_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $xbet_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $xbet_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $xbet_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletXbets ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Xbets {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletXbets ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Xbets {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in ">
-                    <div class="box p-wallet ">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $push_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in ">
+                        <div class="box p-wallet ">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $push_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $push_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $push_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $push_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $push_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletPushs ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Push {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletPushs ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Push {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet ">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $djamo_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in btn-indigo">
+                        <div class="box p-wallet btn-indigo">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $djamo_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $djamo_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $djamo_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $djamo_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $djamo_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletDjamos ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Djamo {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletDjamos ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Djamo {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_table_cartes">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $bank_send_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in">
+                        <div class="box p-wallet style_table_cartes">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $bank_send_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $bank_send_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $bank_send_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $bank_send_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $bank_send_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletBankSends ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Bank send {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletBankSends ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Bank send {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                <div class="report-box zoom-in">
-                    <div class="box p-wallet style_table_factures">
-                        <div class="flex mb-transactions">
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                    Success {{ $versement_success }}
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in">
+                        <div class="box p-wallet style_table_factures">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $versement_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $versement_pendding }}
+
+                                    </div>
 
                                 </div>
-                            </div>
-                            <div class="ml-auto">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $versement_error }}
 
-                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                    Attente {{ $versement_pendding }}
-
-                                </div>
-
-                            </div>
-                            <div class="ml-auto">
-                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                    Echec {{ $versement_error }}
+                                    </div>
 
                                 </div>
 
                             </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $WalletVersements ?? null }}
 
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Versements {{ $usersCountry }} </div>
                         </div>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                            stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                            class="lucide lucide-credit-card report-box__icon text-secondary">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
-                        <div class="text-3xl font-medium leading-8 mt-transactions">
-                            {{ $WalletVersements ?? null }}
-
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Versements {{ $usersCountry }} </div>
                     </div>
                 </div>
-            </div>
+                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                    <div class="report-box zoom-in">
+                        <div class="box p-wallet btn-cyan">
+                            <div class="flex mb-transactions">
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Success {{ $tresortMoney_success }}
+
+                                    </div>
+                                </div>
+                                <div class="ml-auto">
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente {{ $tresortMoney_pendding }}
+
+                                    </div>
+
+                                </div>
+                                <div class="ml-auto">
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec {{ $tresortMoney_error }}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                                {{ $walletTresortMoneys ?? null }}
+
+                            </div>
+                            <div class="text-base text-slate-500 mt-1">Tresort Money {{ $usersCountry }} </div>
+                        </div>
+                    </div>
+                </div>
             @endif
-           
+
 
         </div>
 
@@ -610,9 +672,17 @@
 
                     @if ($showDepotButton)
                         @if (sabdy()->hasPermissionTo('transfers-argent'))
-                            <button class="btn btn-transuv w-22 mr-1 mb-1"
+                            <button class="btn-modern btn-primary"
                                 wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
-                                {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <span
+                                    class="btn-text">{{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}</span>
                             </button>
                         @endif
 
@@ -622,9 +692,17 @@
 
 
                         @if (sabdy()->hasPermissionTo('paiement-factures'))
-                            <button class="btn btn-invoice w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">Paiements
-                                facture</button>
+                            <button class="btn-modern btn-success"
+                                wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Paiements facture</span>
+                            </button>
                         @endif
 
                     @endif
@@ -632,124 +710,333 @@
                     @if ($showVirementButton)
 
                         @if (sabdy()->hasPermissionTo('virement-compte'))
-                            <button class="btn btn-virement w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-virements-show' , 'create-virementBank-modal')">Virement
-                                bancaire</button>
+                            <button class="btn-modern btn-info"
+                                wire:click="$emit('modal-virements-show' , 'create-virementBank-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Virement bancaire</span>
+                            </button>
                         @endif
                     @endif
 
 
                     @if ($showRechargementButton)
                         @if (sabdy()->hasPermissionTo('rechargement-carte'))
-                            <button class="btn btn-reload w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-reloadCards-show' , 'create-reloadCards-modal')">Rechargement
-                                de
-                                carte</button>
+                            <button class="btn-modern btn-warning"
+                                wire:click="$emit('modal-reloadCards-show' , 'create-reloadCards-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Rechargement de carte</span>
+                            </button>
                         @endif
                     @endif
 
                     @if ($showCreditButton)
                         @if (sabdy()->hasPermissionTo('rechargement-credit'))
-                            <button class="btn btn-pending w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-phoneCredit-show' , 'create-phoneCredit-modal')">Credit
-                                telephonique</button>
+                            <button class="btn-modern btn-purple"
+                                wire:click="$emit('modal-phoneCredit-show' , 'create-phoneCredit-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Crédit téléphonique</span>
+                            </button>
                         @endif
                     @endif
 
                     @if ($showTransacInterButton)
                         @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                            <button class="btn btn-inter w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                            <button class="btn-modern btn-indigo"
+                                wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">International</span>
+                            </button>
                         @endif
                     @endif
 
                     @if ($showXbetButton)
                         @if (sabdy()->hasPermissionTo('rechargement-xbets'))
-                            <button class="btn btn-invoice w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-xbet-show' , 'create-xbet-modal')">Xbets</button>
+                            <button class="btn-modern btn-orange"
+                                wire:click="$emit('modal-xbet-show' , 'create-xbet-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Xbets</span>
+                            </button>
                         @endif
                     @endif
 
                     @if ($showVersementButton)
                         @if (sabdy()->hasPermissionTo('rechargement-versements'))
-                            <button class="btn btn-virement w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-versement-show' , 'create-versement-modal')">Versements</button>
+                            <button class="btn-modern btn-teal"
+                                wire:click="$emit('modal-versement-show' , 'create-versement-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Versements</span>
+                            </button>
                         @endif
                     @endif
                     @if ($showBankSendButton)
                         @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
-                            <button class="btn btn-reload w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-bank-send-show' , 'create-bank-send-modal')">Bank
-                                send</button>
+                            <button class="btn-modern btn-cyan"
+                                wire:click="$emit('modal-bank-send-show' , 'create-bank-send-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Bank send</span>
+                            </button>
                         @endif
                     @endif
                     @if ($showPushButton)
                         @if (sabdy()->hasPermissionTo('rechargement-push'))
-                            <button class="btn btn-pending w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-push-show' , 'create-push-modal')">Push</button>
+                            <button class="btn-modern btn-pink"
+                                wire:click="$emit('modal-push-show' , 'create-push-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Push</span>
+                            </button>
                         @endif
                     @endif
                     @if ($showDjamoButton)
                         @if (sabdy()->hasPermissionTo('rechargement-djamo'))
-                            <button class="btn btn-inter w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-djamo-show' , 'create-djamo-modal')">Djamo</button>
+                            <button class="btn-modern btn-rose"
+                                wire:click="$emit('modal-djamo-show' , 'create-djamo-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Djamo</span>
+                            </button>
+                        @endif
+                    @endif
+                    @if ($showTresortButton)
+                        @if (sabdy()->hasPermissionTo('rechargement-tresort'))
+                            <button class="btn-modern btn-amber"
+                                wire:click="$emit('modal-tresort-show' , 'create-tresort-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Trésor Money</span>
+                            </button>
                         @endif
                     @endif
                 @else
-                    @if (sabdy()->hasPermissionTo('transfers-argent'))
-                        <button class="btn btn-transuv w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
-                            {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
-                        </button>
-                    @endif
+                    <div class="flex flex-wrap gap-3 p-4">
+                        @if (sabdy()->hasPermissionTo('transfers-argent'))
+                            <button class="btn-modern btn-primary"
+                                wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <span
+                                    class="btn-text">{{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}</span>
+                            </button>
+                        @endif
 
-                    @if (sabdy()->hasPermissionTo('paiement-factures'))
-                        <button class="btn btn-invoice w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">Paiements
-                            facture</button>
-                    @endif
-                    @if (sabdy()->hasPermissionTo('virement-compte'))
-                        <button class="btn btn-virement w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-virements-show' , 'create-virementBank-modal')">Virement
-                            bancaire</button>
-                    @endif
-                    @if (sabdy()->hasPermissionTo('rechargement-carte'))
-                        <button class="btn btn-reload w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-reloadCards-show' , 'create-reloadCards-modal')">Rechargement de
-                            carte</button>
-                    @endif
-                    @if (sabdy()->hasPermissionTo('rechargement-credit'))
-                        <button class="btn btn-pending w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-phoneCredit-show' , 'create-phoneCredit-modal')">Credit
-                            telephonique</button>
-                    @endif
-                    @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                        <button class="btn btn-inter w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
-                    @endif
+                        @if (sabdy()->hasPermissionTo('paiement-factures'))
+                            <button class="btn-modern btn-success"
+                                wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Paiements facture</span>
+                            </button>
+                        @endif
 
-                    @if (sabdy()->hasPermissionTo('rechargement-xbets'))
-                        <button class="btn btn-invoice w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-xbet-show' , 'create-xbet-modal')">Xbets</button>
-                    @endif
+                        @if (sabdy()->hasPermissionTo('virement-compte'))
+                            <button class="btn-modern btn-info"
+                                wire:click="$emit('modal-virements-show' , 'create-virementBank-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Virement bancaire</span>
+                            </button>
+                        @endif
 
-                    @if (sabdy()->hasPermissionTo('rechargement-versements'))
-                        <button class="btn btn-virement w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-versement-show' , 'create-versement-modal')">Versements</button>
-                    @endif
+                        @if (sabdy()->hasPermissionTo('rechargement-carte'))
+                            <button class="btn-modern btn-warning"
+                                wire:click="$emit('modal-reloadCards-show' , 'create-reloadCards-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Rechargement de carte</span>
+                            </button>
+                        @endif
 
-                    @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
-                        <button class="btn btn-reload w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-bank-send-show' , 'create-bank-send-modal')">Bank send</button>
-                    @endif
-                    @if (sabdy()->hasPermissionTo('rechargement-push'))
-                        <button class="btn btn-pending w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-push-show' , 'create-push-modal')">Push</button>
-                    @endif
-                    @if (sabdy()->hasPermissionTo('rechargement-djamo'))
-                        <button class="btn btn-inter w-22 mr-1 mb-1"
-                            wire:click="$emit('modal-djamo-show' , 'create-djamo-modal')">Djamo</button>
-                    @endif
+                        @if (sabdy()->hasPermissionTo('rechargement-credit'))
+                            <button class="btn-modern btn-purple"
+                                wire:click="$emit('modal-phoneCredit-show' , 'create-phoneCredit-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Crédit téléphonique</span>
+                            </button>
+                        @endif
+
+                        @if (sabdy()->hasPermissionTo('rechargement-inters'))
+                            <button class="btn-modern btn-indigo"
+                                wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">International</span>
+                            </button>
+                        @endif
+
+                        @if (sabdy()->hasPermissionTo('rechargement-xbets'))
+                            <button class="btn-modern btn-orange"
+                                wire:click="$emit('modal-xbet-show' , 'create-xbet-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Xbets</span>
+                            </button>
+                        @endif
+
+                        @if (sabdy()->hasPermissionTo('rechargement-versements'))
+                            <button class="btn-modern btn-teal"
+                                wire:click="$emit('modal-versement-show' , 'create-versement-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Versements</span>
+                            </button>
+                        @endif
+
+                        @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
+                            <button class="btn-modern btn-cyan"
+                                wire:click="$emit('modal-bank-send-show' , 'create-bank-send-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Bank send</span>
+                            </button>
+                        @endif
+
+                        @if (sabdy()->hasPermissionTo('rechargement-push'))
+                            <button class="btn-modern btn-pink"
+                                wire:click="$emit('modal-push-show' , 'create-push-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Push</span>
+                            </button>
+                        @endif
+
+                        @if (sabdy()->hasPermissionTo('rechargement-djamo'))
+                            <button class="btn-modern btn-rose"
+                                wire:click="$emit('modal-djamo-show' , 'create-djamo-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Djamo</span>
+                            </button>
+                        @endif
+
+                        @if (sabdy()->hasPermissionTo('rechargement-tresort'))
+                            <button class="btn-modern btn-amber"
+                                wire:click="$emit('modal-tresort-show' , 'create-tresort-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">Trésor Money</span>
+                            </button>
+                        @endif
+                    </div>
+
+
 
                 @endif
             @else
@@ -757,9 +1044,17 @@
 
                     @if ($showMoneyButton)
                         @if (sabdy()->hasPermissionTo('transfers-argent'))
-                            <button class="btn btn-transuv w-22 mr-1 mb-1"
+                            <button class="btn-modern btn-primary"
                                 wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
-                                {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <span
+                                    class="btn-text">{{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}</span>
                             </button>
                         @endif
 
@@ -767,16 +1062,33 @@
 
                     @if ($showInterButton)
                         @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                            <button class="btn btn-inter w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                            <button class="btn-modern btn-indigo"
+                                wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9v-9m0-9v9" />
+                                    </svg>
+                                </div>
+                                <span class="btn-text">International</span>
+                            </button>
                         @endif
                     @endif
                 @else
                     @if ($showMoneyButton)
                         @if (sabdy()->hasPermissionTo('transfers-argent'))
-                            <button class="btn btn-transuv w-22 mr-1 mb-1"
+                            <button class="btn-modern btn-primary"
                                 wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
-                                {{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <span
+                                    class="btn-text">{{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}</span>
                             </button>
                         @endif
 
@@ -784,8 +1096,18 @@
 
                     @if ($showInterButton)
                         @if (sabdy()->hasPermissionTo('rechargement-inters'))
-                            <button class="btn btn-inter w-22 mr-1 mb-1"
-                                wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">Internationnal</button>
+                            <button class="btn-modern btn-primary"
+                                wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
+                                <div class="btn-icon">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        stroke-width="1.5">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                    </svg>
+                                </div>
+                                <span
+                                    class="btn-text">{{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}</span>
+                            </button>
                         @endif
                     @endif
 
@@ -795,8 +1117,12 @@
             @endif
 
         </div>
-        <div class="alert alert-dark show ml-6 mr-6 text-center mt-3" role="alert">Liste des operations
+
+        <div class="menu-header mt-3">
+            <h3 class="menu-title">Services Financiers</h3>
+            <div class="menu-badge">{{ sabdy()->country->name }}</div>
         </div>
+
 
         @include('components.transfers_nav')
 
@@ -843,6 +1169,9 @@
                 @if ($showDjamoButton && sabdy()->hasPermissionTo('rechargement-djamo'))
                     @include('components.djamo_compo')
                 @endif
+                @if ($showTresortButton && sabdy()->hasPermissionTo('rechargement-tresort'))
+                    @include('components.tresort_compo')
+                @endif
             @else
                 @if (sabdy()->hasPermissionTo('transfers-argent'))
                     @include('components.transfer_compo')
@@ -880,6 +1209,10 @@
                     @include('components.djamo_compo')
                 @endif
 
+                @if (sabdy()->hasPermissionTo('rechargement-tresort'))
+                    @include('components.tresort_compo')
+                @endif
+
             @endif
 
 
@@ -896,6 +1229,10 @@
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
     @include('livewire.commissions.modals.transactions.addPhoneCredit')
     @include('livewire.commissions.modals.transactions.addOneXbet')
+    @include('livewire.commissions.modals.transactions.addVersement')
+    @include('livewire.commissions.modals.transactions.addPush')
+    @include('livewire.commissions.modals.transactions.addTresort')
+    @include('livewire.commissions.modals.transactions.addDjamo')
     @include('livewire.commissions.modals.transactions.addReloadCards')
     @include('livewire.commissions.modals.transactions.addInterTransfer')
     @include('livewire.commissions.modals.transactions.addInterCivTransfer')

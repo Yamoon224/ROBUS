@@ -82,10 +82,29 @@ class NotificationServiceBackend
         $notify = new MailController;
         $notify->newVirement($check);
     }
-      public function sendMailXbetNotification($check)
+    public function sendMailXbetNotification($check)
     {
         $notify = new MailController;
         $notify->newXbet($check);
+    }
+
+    public function sendMailPushNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newPush($check);
+    }
+
+       public function sendMailVersementBanqueNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newVersementBanque($check);
+    }
+
+
+    public function sendMailDjamoNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newDjamo($check);
     }
 
     public function sendMailPaiementNotification($check)
@@ -148,7 +167,6 @@ class NotificationServiceBackend
 
             http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
         }
-
     }
     public function sendNotification($walletTransaction)
     {

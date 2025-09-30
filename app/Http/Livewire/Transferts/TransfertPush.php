@@ -4,7 +4,6 @@ namespace App\Http\Livewire\Transferts;
 
 use Livewire\Component;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Offer;
 use App\Models\OperatorService;
 use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
@@ -12,12 +11,8 @@ use App\Http\Services\TotalAmoutUserServiveBackend;
 use App\Http\Services\NotificationServiceBackend;
 use App\Http\Services\TransfertServiceBackend;
 use App\Http\Services\CommissionServiceBackend;
-use App\Events\CreateWalletPaiementEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use App\Models\Costs\PhoneCreditCost;
-use App\Events\CreatewalletPushCreditEvent;
-use App\Events\AdminNotifEvent;
 use App\Http\Services\CommissionServicePercentBackend;
 use App\Events\CreateWalletXbetEvent;
 
@@ -34,7 +29,7 @@ class TransfertPush extends Component
     public $operators;
     public $operatorsCompagnie;
     // Compagnies
-    public $showTransRemontePushCButton = false;
+    public $showRemonterPushCButton = false;
     public $operatorsTransaction;
     public $isPasswordValid = false;
     public $showRemonterPushButton = false;
@@ -254,13 +249,13 @@ class TransfertPush extends Component
 
                 $amountReceved = $reel_amount;
 
-                $walletPush =  app(TransfertServiceBackend::class)->createNewPhoneCredit(
-                    $walletUser,
-                    $reel_amount,
+                $walletPush =  app(TransfertServiceBackend::class)->createPushTransaction(
+                    $val_amount,
                     $provider,
                     $percent_robus,
-                    $this->number_phone_credit,
                     $amount_solde,
+                    $this->full_name_push,
+                    $this->number_phone,
                     $amountReceved
                 );
 
@@ -279,7 +274,6 @@ class TransfertPush extends Component
 
                 app(NotificationServiceBackend::class)->sendSuccessMessageCreateNotification($walletUser, $message);
 
-
                 if ($walletPush != null  && $walletPush->status == 'PENDING') {
                     $this->updateamountPushReceveid($admin_civ, $percent_robus, $walletPush,  $walletUser, $reel_amount);
                 }
@@ -294,9 +288,9 @@ class TransfertPush extends Component
 
                 $this->resetPushField();
                 $this->emit('success', 'Votre demande de transaction a bien été prise en compte !');
-                // if ($walletUser->email != null) {
-                //     app(NotificationServiceBackend::class)->sendMailPhoneCreditNotification($walletPush);
-                // }
+                if ($walletUser->email != null) {
+                    app(NotificationServiceBackend::class)->sendMailPushNotification($walletPush);
+                }
             } else {
                 $this->resetPushField();
                 $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
@@ -308,7 +302,6 @@ class TransfertPush extends Component
             $this->emit('error', 'Error de message demande a l\'admin !');
         }
     }
-  
 
 
     public function calculateAmountPushs()
@@ -319,9 +312,9 @@ class TransfertPush extends Component
         $this->commission_transaction_val_nat_push_pay = 0;
 
 
-        if ($this->amount_xbet) {
+        if ($this->amount_push) {
 
-            $reel_amount = $this->search_amount($this->amount_xbet);
+            $reel_amount = $this->search_amount($this->amount_push);
 
             if ($reel_amount != '') {
 
@@ -429,7 +422,7 @@ class TransfertPush extends Component
         return $reel_amount;
     }
 
-    public function getSumValTransactionProperty()
+     public function getSumValTransactionProperty()
     {
         $service = app(TotalAmoutUserServiveBackend::class);
 
@@ -438,10 +431,9 @@ class TransfertPush extends Component
             + $service->getWalletIntersCeilingProperty()
             + $service->getWalletPaymentsCeilingProperty()
             + $service->getWalletTransactionsCeilingProperty()
-            + $service->getwalletPushCreditsCeilingProperty()
+            + $service->getWalletPhoneCreditsCeilingProperty()
             + $service->getWalletReloadsCeilingProperty()
             + $service->getWalletBankCardCeilingProperty();
-
         return $somm_valeur;
     }
 }

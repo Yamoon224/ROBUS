@@ -112,10 +112,11 @@
                 @if ($choose_type_transaction == 1)
 
                     <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 style_image_providers">
-                        <div class="col-span-12">
-                            <img class="object-none object-center bg-yellow-300 w-logo"
+                        <div class="col-span-12 flex justify-center items-center">
+                            <img class="h-20 object-contain rounded-md shadow-md bg-yellow-100 px-3 py-2"
                                 src="{{ asset_url('dist/providers/xbet.png') }}" alt="Provider Xbet">
                         </div>
+
 
                         <div class="col-span-6 mt-1">
                             @include('components.transaction-text-input', [
@@ -146,8 +147,8 @@
                     </div>
                 @else
                     <!-- Formulaire Retrait -->
-                    <div class="col-span-12">
-                        <img class="object-none object-center bg-yellow-300 w-logo"
+                    <div class="col-span-12 flex justify-center items-center">
+                        <img class="h-16 object-contain rounded-md shadow-md bg-yellow-100 px-3 py-2"
                             src="{{ asset_url('dist/providers/xbet.png') }}" alt="Provider Xbet">
                     </div>
 
@@ -412,7 +413,6 @@
             <div class="modal-footer style-foo">
                 <button wire:click="resetXbetTransactionField" type="button" class="btn btn-danger-soft w-20 mr-1"
                     wire:loading.class="hidden" wire:target="addValidatedXbet">Annuler</button>
-
 
 
                 @if ($isPasswordValid)

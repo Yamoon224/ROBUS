@@ -21,6 +21,7 @@ use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletPush;
 use App\Models\Wallets\WalletVersement;
+use App\Models\Wallets\WalletTresortMoney;
 use Illuminate\Support\Facades\Auth;
 
 class InterHomeService
@@ -44,6 +45,11 @@ class InterHomeService
     public function getVersementCountByStatus($status)
     {
         return $this->getCountByStatus(WalletVersement::class, 'wallet_versements', $status);
+    }
+
+     public function getTresortMoneyCountByStatus($status)
+    {
+        return $this->getCountByStatus(WalletTresortMoney::class, 'wallet_tresort_money', $status);
     }
 
     public function getBankSendCountByStatus($status)
