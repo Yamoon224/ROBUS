@@ -10,7 +10,6 @@
                         <a href="#step-1"
                             class="w-10 h-10 rounded-full btn btn-circle {{ $stepVersment != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
                         <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Saisissez les informations
-                            requises
                         </div>
                     </div>
                 </div>
@@ -69,40 +68,32 @@
                             </div>
 
 
-                            <div class="col-span-6 mt-1">
-                                @include('components.transaction-text-input', [
-                                    'id' => 'num_accompte',
-                                    'model' => 'num_accompte',
-                                    'label' => 'Numero du compte',
-                                    'error' => 'num_accompte',
-                                ])
-                            </div>
+                            @include('components.transaction-versement-input', [
+                                'id' => 'num_accompte',
+                                'model' => 'num_accompte',
+                                'label' => 'Numero du compte',
+                                'error' => 'num_accompte',
+                            ])
 
-                            <div class="col-span-6 mt-1">
-                                @include('components.transaction-text-input', [
-                                    'id' => 'bank_code',
-                                    'model' => 'bank_code',
-                                    'label' => 'Code banque',
-                                    'error' => 'bank_code',
-                                ])
-                            </div>
-                            <div class="col-span-6 mt-1">
-                                @include('components.transaction-text-input', [
-                                    'id' => 'guichet_code',
-                                    'model' => 'guichet_code',
-                                    'label' => 'Code Guichet',
-                                    'error' => 'guichet_code',
-                                ])
-                            </div>
+                            @include('components.transaction-versement-input', [
+                                'id' => 'bank_code',
+                                'model' => 'bank_code',
+                                'label' => 'Code banque',
+                                'error' => 'bank_code',
+                            ])
+                            @include('components.transaction-versement-input', [
+                                'id' => 'guichet_code',
+                                'model' => 'guichet_code',
+                                'label' => 'Code Guichet',
+                                'error' => 'guichet_code',
+                            ])
 
-                            <div class="col-span-6 mt-1">
-                                @include('components.transaction-text-input', [
-                                    'id' => 'num_authers',
-                                    'model' => 'num_authers',
-                                    'label' => 'CLE RIB',
-                                    'error' => 'num_authers',
-                                ])
-                            </div>
+                            @include('components.transaction-versementCle-input', [
+                                'id' => 'num_authers',
+                                'model' => 'num_authers',
+                                'label' => 'CLE RIB',
+                                'error' => 'num_authers',
+                            ])
 
                             <div class="col-span-12 mt-1">
                                 @include('components.transaction-amount-input', [
@@ -118,14 +109,14 @@
                     <!-- Montants et commissions -->
                     @if ($amount_versement)
                         @php
-                            $amount_to_pay = $amount_transaction_nat_val_tresort_percent;
-                            $amount_to_receive = $amount_transaction_nat_val_tresort_receive;
-                            $commission = $amount_transaction_nat_val_tresort_commission;
+                            $amount_to_pay = $amount_transaction_nat_val_versement_percent;
+                            $amount_to_receive = $amount_transaction_nat_val_versement_receive;
+                            $commission = $amount_transaction_nat_val_versement_commission;
                         @endphp
 
                         <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                             @if (sabdy()->is_under_distributer == 1)
-                                @if ($showRemonterCreditButton)
+                                @if ($showRemonterVersementButton)
                                     <x-transaction-detail title="Commission" value="{{ $commission }}"
                                         country="{{ $usersCountry }}" />
                                 @else
@@ -184,19 +175,55 @@
                 <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10 mt-3">
 
                     <div class="col-span-6 mt-3">
-                        <label class="form-label">Numero de télephone</label>
+                        <label class="form-label">Numero du compte</label>
 
                         <div class="flex">
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $number_phone_credit ?? null }}
+                                {{ $num_accompte ?? null }}
                             </div>
                         </div>
 
 
                     </div>
-                    <div class="col-span-6 mt-3">Montant<span class="text-danger">
+                     <div class="col-span-6 mt-3">
+                        <label class="form-label">Code de la banque</label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $bank_code ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-span-6 mt-3">
+                        <label class="form-label">Code du Guichet</label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $guichet_code ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-span-6 mt-3">
+                        <label class="form-label">CLE RIB</label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $num_authers ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-span-12 mt-3">Montant<span class="text-danger">
                             *</span></label>
                         <div class="flex">
 

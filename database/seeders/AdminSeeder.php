@@ -89,7 +89,7 @@ class AdminSeeder extends Seeder
             'country_id' => 107,
             // 490 439 000,39
             'city_id' => 1,
-            'remember_token' => null,   
+            'remember_token' => null,
             'created_at' => $time,
             'updated_at' => $time
         ]);

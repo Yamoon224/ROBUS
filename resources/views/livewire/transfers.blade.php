@@ -7,17 +7,27 @@
 
 <div>
     <!-- inject:js -->
-    <script src="{{ asset_url('/dist/js/app.js') }}"></script>
-    <script src="{{ asset_url('/css/app.css') }}"></script>
-    <script src="{{ asset_url('/css/appModal.css') }}"></script>
+    {{-- <script src="{{ asset_url('/dist/js/app.js') }}"></script>
+    <script src="{{ asset_url('/css/app.css') }}"></script> --}}
+    {{-- <script src="{{ asset_url('/css/appModal.css') }}"></script> --}}
+
 
     <h2 class="text-lg font-medium truncate mr-6 mt-6">
 
-        <span
-            class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3  font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
 
-            Solde : {{ $walletSolde ?? null }} {{ $usersCountry }}
-        </span>
+        <div class="amount-section mr-wallet">
+            <div class="amount-label">Solde actuel</div>
+            <div class="amount-balance">
+                <div class="flex items-baseline justify-between">
+                    <span class="amount-balance-value">
+                        {{ $walletSolde ?? null }}
+                    </span>
+                    <span class="amount-balance-currency">
+                        {{ $usersCountry ?? 'CFA' }}
+                    </span>
+                </div>
+            </div>
+        </div>
     </h2>
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
@@ -133,117 +143,146 @@
 
             @if ($is_under || $is_distributer)
             @else
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                     <div class="report-box zoom-in">
                         <div class="box p-wallet style_table_factures">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $transaction_success }}
 
-                                    </div>
+
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès transferts {{ $transaction_success }}
                                 </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $transaction_pendding }}
-
-                                    </div>
-
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente transferts {{ $transaction_pendding }}
                                 </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $transaction_error }}
-
-                                    </div>
-
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec transferts {{ $transaction_error }}
                                 </div>
 
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès crédits {{ $djamo_success }}
+                                </div>
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente crédits {{ $phone_pendding }}
+                                </div>
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec crédits {{ $phone_error }}
+                                </div>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès Cartes {{ $card_success }}
+                                </div>
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente Cartes {{ $card_pendding }}
+                                </div>
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec Cartes {{ $card_error }}
+                                </div>
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès Versements {{ $versement_success }}
+                                </div>
+
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente Versements {{ $versement_pendding }}
+                                </div>
+
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec Versements {{ $versement_error }}
+                                </div>
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"
                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                 stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
                                 class="lucide lucide-credit-card report-box__icon text-secondary">
                                 <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
                                 <line x1="1" y1="10" x2="23" y2="10"></line>
                             </svg>
-                            <div class="text-3xl font-medium leading-8  mt-transactions">
-                                {{ $WalletTransactions ?? null }}
+
+                            <div class="flex flex-wrap items-center gap-4">
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletTransactions ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Transactions {{ $usersCountry }}</div>
+                                </div>
+
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletPhoneCredits ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Achats Crédits téléphoniques
+                                        {{ $usersCountry }}</div>
+                                </div>
                             </div>
-                            <div class="text-base text-slate-500 mt-1">Transactions {{ $usersCountry }} </div>
+                            <div class="flex flex-wrap items-center gap-4 mt-3">
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletDeposits ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Rechargements Cartes {{ $usersCountry }}
+                                    </div>
+                                </div>
+
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletBanks ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Versements bancaires {{ $usersCountry }}
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in ">
-                        <div class="box p-wallet ">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $payment_success }}
-
-                                    </div>
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                    <div class="report-box zoom-in btn-pink">
+                        <div class="box p-wallet btn-pink">
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès Factures {{ $payment_success }}
                                 </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $payment_pendding }}
-
-                                    </div>
-
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente Factures {{ $payment_pendding }}
                                 </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $payment_error }}
-
-                                    </div>
-
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec Factures {{ $payment_error }}
+                                </div>
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès Virements {{ $bank_success }}
                                 </div>
 
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente Virements {{ $bank_pendding }}
+                                </div>
+
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec Virements {{ $bank_error }}
+                                </div>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
-                                class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                </rect>
-                                <line x1="1" y1="10" x2="23" y2="10"></line>
-                            </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $WalletPayments ?? null }}
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès Push {{ $push_success }}
+                                </div>
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente Push {{ $push_pendding }}
+                                </div>
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec Push {{ $push_error }}
+                                </div>
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès Djamo {{ $djamo_success }}
+                                </div>
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente Djamo {{ $djamo_pendding }}
+                                </div>
 
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec Djamo {{ $djamo_error }}
+                                </div>
                             </div>
-                            <div class="text-base text-slate-500 mt-1">Paiements factures {{ $usersCountry }} </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in">
-                        <div class="box p-wallet style_table_cartes">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $bank_success }}
 
-                                    </div>
-                                </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $bank_pendding }}
-
-                                    </div>
-
-                                </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $bank_error }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
@@ -253,41 +292,83 @@
                                 </rect>
                                 <line x1="1" y1="10" x2="23" y2="10"></line>
                             </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $WalletBanks ?? null }}
+                            <div class="flex flex-wrap items-center gap-4">
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletPayments ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Paiements Factures {{ $usersCountry }}</div>
+                                </div>
 
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletBanks ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Virements bancaires {{ $usersCountry }}
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-base text-slate-500 mt-1">Virement {{ $usersCountry }} </div>
+                            <div class="flex flex-wrap items-center gap-4 mt-3">
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletPushs ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Réchargements Push {{ $usersCountry }}</div>
+                                </div>
+
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletDjamos ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Réchargements Djamo {{ $usersCountry }}
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                     <div class="report-box zoom-in btn-purple">
                         <div class="box p-wallet btn-purple">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $inter_success }}
+                            <div class="flex flex-wrap gap-2 mb-transactions">
 
-                                    </div>
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès Tresorts {{ $tresortMoney_success }}
                                 </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $inter_pendding }}
-
-                                    </div>
-
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente Tresorts {{ $tresortMoney_pendding }}
                                 </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $inter_error }}
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec Tresorts {{ $tresortMoney_error }}
+                                </div>
 
-                                    </div>
+                                 <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès 1Xbets {{ $xbet_success }}
+                                </div>
+                                
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente 1Xbets {{ $xbet_pendding }}
+                                </div>
 
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec 1Xbets {{ $xbet_error }}
                                 </div>
 
                             </div>
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès Inters {{ $inter_success }}
+                                </div>
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente Inters {{ $inter_pendding }}
+                                </div>
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec Inters {{ $inter_error }}
+                                </div>
+                            </div>
+
+
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                 viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
@@ -297,363 +378,29 @@
                                 </rect>
                                 <line x1="1" y1="10" x2="23" y2="10"></line>
                             </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
+                            <div class="flex flex-wrap items-center gap-4">
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $walletTresortMoneys ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Tresort Money {{ $usersCountry }}</div>
+                                </div>
+
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletXbets ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Transactions 1Xbets {{ $usersCountry }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-3xl font-medium leading-8 mt-transactions mt-3">
                                 {{ $WalletInters ?? null }}
 
                             </div>
-                            <div class="text-base text-slate-500 mt-1">Inters {{ $usersCountry }} </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in">
-                        <div class="box p-wallet style_table4">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $card_success }}
-
-                                    </div>
-                                </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $card_pendding }}
-
-                                    </div>
-
-                                </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $card_error }}
-
-                                    </div>
-
-                                </div>
-
+                            <div class="text-base text-slate-500 mt-1">Paiements Internationaux {{ $usersCountry }}
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
-                                data-lucide="credit-card"
-                                class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                </rect>
-                                <line x1="1" y1="10" x2="23" y2="10"></line>
-                            </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $WalletDeposits ?? null }}
-
-                            </div>
-                            <div class="text-base text-slate-500 mt-1">Recharges cartes {{ $usersCountry }} </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in btn-teal">
-                        <div class="box p-wallet btn-teal">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $phone_success }}
-
-                                    </div>
-                                </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $phone_pendding }}
-
-                                    </div>
-
-                                </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $phone_error }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
-                                data-lucide="credit-card"
-                                class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                </rect>
-                                <line x1="1" y1="10" x2="23" y2="10"></line>
-                            </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $WalletPhoneCredits ?? null }}
-
-                            </div>
-                            <div class="text-base text-slate-500 mt-1">Recharges Credits {{ $usersCountry }} </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in">
-                        <div class="box p-wallet style_table_factures">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $xbet_success }}
-
-                                    </div>
-                                </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $xbet_pendding }}
-
-                                    </div>
-
-                                </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $xbet_error }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
-                                data-lucide="credit-card"
-                                class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                </rect>
-                                <line x1="1" y1="10" x2="23" y2="10"></line>
-                            </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $WalletXbets ?? null }}
-
-                            </div>
-                            <div class="text-base text-slate-500 mt-1">Xbets {{ $usersCountry }} </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in ">
-                        <div class="box p-wallet ">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $push_success }}
-
-                                    </div>
-                                </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $push_pendding }}
-
-                                    </div>
-
-                                </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $push_error }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
-                                data-lucide="credit-card"
-                                class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                </rect>
-                                <line x1="1" y1="10" x2="23" y2="10"></line>
-                            </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $WalletPushs ?? null }}
-
-                            </div>
-                            <div class="text-base text-slate-500 mt-1">Push {{ $usersCountry }} </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in btn-indigo">
-                        <div class="box p-wallet btn-indigo">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $djamo_success }}
-
-                                    </div>
-                                </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $djamo_pendding }}
-
-                                    </div>
-
-                                </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $djamo_error }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
-                                data-lucide="credit-card"
-                                class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                </rect>
-                                <line x1="1" y1="10" x2="23" y2="10"></line>
-                            </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $WalletDjamos ?? null }}
-
-                            </div>
-                            <div class="text-base text-slate-500 mt-1">Djamo {{ $usersCountry }} </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in">
-                        <div class="box p-wallet style_table_cartes">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $bank_send_success }}
-
-                                    </div>
-                                </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $bank_send_pendding }}
-
-                                    </div>
-
-                                </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $bank_send_error }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
-                                data-lucide="credit-card"
-                                class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                </rect>
-                                <line x1="1" y1="10" x2="23" y2="10"></line>
-                            </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $WalletBankSends ?? null }}
-
-                            </div>
-                            <div class="text-base text-slate-500 mt-1">Bank send {{ $usersCountry }} </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in">
-                        <div class="box p-wallet style_table_factures">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $versement_success }}
-
-                                    </div>
-                                </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $versement_pendding }}
-
-                                    </div>
-
-                                </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $versement_error }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
-                                data-lucide="credit-card"
-                                class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                </rect>
-                                <line x1="1" y1="10" x2="23" y2="10"></line>
-                            </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $WalletVersements ?? null }}
-
-                            </div>
-                            <div class="text-base text-slate-500 mt-1">Versements {{ $usersCountry }} </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
-                    <div class="report-box zoom-in">
-                        <div class="box p-wallet btn-cyan">
-                            <div class="flex mb-transactions">
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
-                                        Success {{ $tresortMoney_success }}
-
-                                    </div>
-                                </div>
-                                <div class="ml-auto">
-
-                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
-                                        Attente {{ $tresortMoney_pendding }}
-
-                                    </div>
-
-                                </div>
-                                <div class="ml-auto">
-                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
-                                        Echec {{ $tresortMoney_error }}
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
-                                data-lucide="credit-card"
-                                class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                </rect>
-                                <line x1="1" y1="10" x2="23" y2="10"></line>
-                            </svg>
-                            <div class="text-3xl font-medium leading-8 mt-transactions">
-                                {{ $walletTresortMoneys ?? null }}
-
-                            </div>
-                            <div class="text-base text-slate-500 mt-1">Tresort Money {{ $usersCountry }} </div>
                         </div>
                     </div>
                 </div>
@@ -804,21 +551,7 @@
                             </button>
                         @endif
                     @endif
-                    @if ($showBankSendButton)
-                        @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
-                            <button class="btn-modern btn-cyan"
-                                wire:click="$emit('modal-bank-send-show' , 'create-bank-send-modal')">
-                                <div class="btn-icon">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                        stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                </div>
-                                <span class="btn-text">Bank send</span>
-                            </button>
-                        @endif
-                    @endif
+
                     @if ($showPushButton)
                         @if (sabdy()->hasPermissionTo('rechargement-push'))
                             <button class="btn-modern btn-pink"
@@ -979,19 +712,7 @@
                             </button>
                         @endif
 
-                        @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
-                            <button class="btn-modern btn-cyan"
-                                wire:click="$emit('modal-bank-send-show' , 'create-bank-send-modal')">
-                                <div class="btn-icon">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                        stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
-                                    </svg>
-                                </div>
-                                <span class="btn-text">Bank send</span>
-                            </button>
-                        @endif
+
 
                         @if (sabdy()->hasPermissionTo('rechargement-push'))
                             <button class="btn-modern btn-pink"
@@ -1160,9 +881,9 @@
                 @if ($showVersementButton && sabdy()->hasPermissionTo('rechargement-versements'))
                     @include('components.versement_compo')
                 @endif
-                @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
+                {{-- @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
                     @include('components.bank_send_compo')
-                @endif
+                @endif --}}
                 @if ($showPushButton && sabdy()->hasPermissionTo('rechargement-push'))
                     @include('components.push_compo')
                 @endif
@@ -1199,9 +920,9 @@
                 @if (sabdy()->hasPermissionTo('rechargement-versements'))
                     @include('components.versement_compo')
                 @endif
-                @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
+                {{-- @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
                     @include('components.bank_send_compo')
-                @endif
+                @endif --}}
                 @if (sabdy()->hasPermissionTo('rechargement-push'))
                     @include('components.push_compo')
                 @endif
@@ -1240,7 +961,5 @@
     @include('livewire.commissions.modals.transactions.addPaiementInvoice')
     @include('livewire.commissions.modals.transactions.addVirementBank')
     @include('livewire.commissions.modals.transactions.reloadModalPage')
-
-</div>
 
 </div>

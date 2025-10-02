@@ -394,8 +394,6 @@
                     </div>
                 </div>
 
-
-
                 <div class="modal-footer style-foo">
                     <button wire:click="cancelPaiementField" type="button"
                         class="btn btn-danger-soft w-20 mr-1" wire:loading.class="hidden"

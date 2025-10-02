@@ -9,7 +9,7 @@
             Echo.channel('wallet-push-created').listen(
                 '.Created_wallet_push',
                 (e) => {
-                    window.livewire.emit('notifyNewPhone:' - e.id);
+                    window.livewire.emit('notifyNewPush:' - e.id);
                 },
             )
 

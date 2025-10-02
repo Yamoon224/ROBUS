@@ -9,6 +9,11 @@ use App\Events\ChoosePhoneCreditEvent;
 use App\Events\ChooseReloadCardEvent;
 use App\Events\ChooseTransactionEvent;
 use App\Events\ChooseVirementEvent;
+use App\Events\ChooseXbetEvent;
+use App\Events\ChooseTresortEvent;
+use App\Events\ChooseDjamoEvent;
+use App\Events\ChooseVersementEvent;
+use App\Events\ChoosePushEvent;
 use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\NotificationServiceBackend;
@@ -182,8 +187,6 @@ class Transfers extends Component
     public $code_validated;
     public $code_validated_inter;
 
-
-
     // Choise
     public $paiementChoix_phone;
     public $paiementChoix_type;
@@ -196,21 +199,14 @@ class Transfers extends Component
 
 
     // Edit virement bank Inter
-
     public $lastname_user_inter_edit;
     public $account_number_user_inter_edit;
-
     public $provider_payment_inter;
     public $choose_type_transaction;
-
     public $payment_description_robus;
-
 
     // Protected valeurs Services
     private $phoneCreditService1;
-
-    // step valeurs
-
     public $password_validated = '';
     public $amount_canal_send;
     public $name_canal_send;
@@ -218,8 +214,21 @@ class Transfers extends Component
     public $commission_transaction_val_nat_pay;
     public $commission_transaction_val_admin_receive;
     public $commission_transaction_val_nat_receive;
-
     public $commission_transaction_drawal;
+
+    // Update Xbet
+    public $choose_type_xbet;
+    public $id_compte;
+    public $xbetId;
+    public $xbetStatus;
+    public $xbetProvider;
+    public $id_compte_retrait;
+    public $amount_xbet;
+    public $full_nameXbet;
+    public $code_compte;
+    public $countrie;
+    public $citie_xbet;
+    public $area_xbet;
 
     // Transaction Bloque
     public $showRemonterTransButton = false;
@@ -267,7 +276,6 @@ class Transfers extends Component
     public $showPushButton = false;
     public $showDjamoButton = false;
     public $showTresortButton = false;
-
     public $operators;
     public $operatorsCompagnie;
     public $operatorsTransaction;
@@ -280,6 +288,14 @@ class Transfers extends Component
         'echo:wallet-bank-created,.Created_wallet_bank' => 'notifyNewBank',
         'echo:updated_bank,.update_wallet_bank' => 'notifyNewBank',
         'echo:wallet-paiement-created,.Created_wallet_paiement' => 'notifyNewPaiement',
+
+        // New element created
+        'echo:wallet-xbet-created,.Created_wallet_xbet' => 'notifyNewXbet',
+        'echo:wallet-versement-created,.Created_wallet_versement' => 'notifyNewVersement',
+        'echo:wallet-tresort-created,.Created_wallet_tresort' => 'notifyNewTresort',
+        'echo:wallet-push-created,.Created_wallet_push' => 'notifyNewPush',
+        'echo:wallet-djamo-created,.Created_wallet_djamo' => 'notifyNewDjamo',
+
         'echo:updated_paiement,.update_wallet_paiement' => 'notifyNewPaiement',
         'echo:wallet-transfers-created,.Created_wallet_transfers' => 'notifyNewTransfers',
         'echo:updated_transfers,.update_wallet_transfers' => 'notifyNewTransfers',
@@ -289,6 +305,7 @@ class Transfers extends Component
         'echo:updated_card,.update_wallet_card' => 'notifyNewCard',
         'echo:wallet-phone-created,.Created_wallet_phone' => 'notifyNewPhone',
         'echo:updated_phone,.update_wallet_phone' => 'notifyNewPhone',
+
         // Choose Event Channel
         'echo:wallet-bank-choose-created,.Created_wallet_bank_choose' =>
         'notifyNewBank',
@@ -300,8 +317,21 @@ class Transfers extends Component
         'notifyNewCard',
         'echo:wallet-inter-choose-created,.Created_wallet_inter_choose' =>
         'notifyNewInter',
+
         'echo:wallet-phone-choose-created,.Created_wallet_phone_choose' =>
         'notifyNewPhone',
+        // New element event
+        'echo:wallet-xbet-choose-created,.Created_wallet_xbet_choose' =>
+        'notifyNewXbet',
+        'echo:wallet-versement-choose-created,.Created_wallet_versement_choose' =>
+        'notifyNewVersement',
+        'echo:wallet-tresort-choose-created,.Created_wallet_tresort_choose' =>
+        'notifyNewTresort',
+        'echo:wallet-push-choose-created,.Created_wallet_push_choose' =>
+        'notifyNewPush',
+        'echo:wallet-djamo-choose-created,.Created_wallet_djamo_choose' =>
+        'notifyNewDjamo',
+
         'cancelTransactionInTransfers' => 'cancelTransactionField'
     ];
 
@@ -507,6 +537,47 @@ class Transfers extends Component
         // $this->emit('modal-hide-phoneCredit');
         $this->emit('menu-phoneCredit-active');
     }
+
+    public function notifyNewXbet()
+    {
+        $this->showNTransfersNotification = true;
+        // $this->emit('modal-hide-phoneCredit');
+        $this->emit('menu-xbet-active');
+    }
+
+
+    // New element add
+    public function notifyNewVersement()
+    {
+        $this->showNTransfersNotification = true;
+        // $this->emit('modal-hide-phoneCredit');
+        $this->emit('menu-versement-active');
+    }
+
+
+    public function notifyNewTresort()
+    {
+        $this->showNTransfersNotification = true;
+        // $this->emit('modal-hide-phoneCredit');
+        $this->emit('menu-tresort-active');
+    }
+
+
+    public function notifyNewPush()
+    {
+        $this->showNTransfersNotification = true;
+        // $this->emit('modal-hide-phoneCredit');
+        $this->emit('menu-push-active');
+    }
+
+
+    public function notifyNewDjamo()
+    {
+        $this->showNTransfersNotification = true;
+        // $this->emit('modal-hide-phoneCredit');
+        $this->emit('menu-djamo-active');
+    }
+
 
     // Sted 1 validated Transaction
     public function firstStepSubmit()
@@ -1054,6 +1125,25 @@ class Transfers extends Component
     public function back($step)
     {
         $this->currentStep = $step;
+    }
+
+    public function editXbet($id, $state)
+    {
+        $check = WalletXbet::whereId($id)->first();
+        $provider = Provider::whereId($check->provider_id)->first();
+        $this->xbetId = $id;
+        $this->xbetStatus = null;
+        $this->xbetProvider = $provider->name;
+        $this->id_compte = $check->num_acompte ?? $check->num_acompte;
+        $this->amount_xbet = $check->amount;
+        $this->full_nameXbet = $check->full_name;
+        $this->code_compte = $check->code_acompte;
+        $this->countrie = $check->countrie;
+        $this->citie_xbet = $check->citie_name;
+        $this->area_xbet = $check->area_name;
+
+        $this->currency_custumers = $check->wallet->currencie->code ?? null;
+        $this->emit($state);
     }
 
 
@@ -2415,17 +2505,17 @@ class Transfers extends Component
     }
 
     //Begin  Choose User adminto validated transactions
-
     protected function updateWallet($walletUpdate, $event, $modalHide, $menuActive, $infoMessage)
     {
         try {
 
             $walletUpdate->update([
-                'updated_by' => Auth::guard('web')->user()->id,
+                'updated_by' => sabdy()->id,
             ]);
 
             event(new $event($walletUpdate));
-            // $this->emit($modalHide);
+            DB::commit();
+            $this->emit($modalHide);
             $this->emit($menuActive);
             $this->emit('info', $infoMessage);
         } catch (\Exception $exception) {
@@ -2458,6 +2548,215 @@ class Transfers extends Component
             }
         } catch (\Exception $exception) {
             $this->emit('menu-transaction-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+    public function ChooseUpdateXbet($id)
+    {
+
+        DB::beginTransaction();
+
+        $sidAuth = Auth::guard('web')->user();
+
+        try {
+
+            $walletUpdate = WalletXBet::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-xbet-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChooseXbetEvent($walletUpdate));
+                return;
+            }
+
+            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
+
+                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+
+                    $this->updateWallet($walletUpdate, ChooseXbetEvent::class, 'modal-hide-xbet', 'menu-xbet-active', 'Vous avez choisi une transaction 1Xbets');
+                } else {
+                    $this->emit('menu-xbet-active');
+                    $this->emit(
+                        'error',
+                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+                    );
+                }
+            } else {
+                $this->emit('menu-xbet-active');
+                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+            }
+        } catch (\Exception $exception) {
+            $this->emit('menu-xbet-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+
+
+    public function ChooseUpdateVersement($id)
+    {
+
+        DB::beginTransaction();
+
+        $sidAuth = Auth::guard('web')->user();
+
+        try {
+
+            $walletUpdate = WalletVersement::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-versement-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChooseVersementEvent($walletUpdate));
+                return;
+            }
+
+            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
+
+                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+
+                    $this->updateWallet($walletUpdate, ChooseVersementEvent::class, 'modal-hide-versement', 'menu-versement-active', 'Vous avez choisi un versement');
+                } else {
+                    $this->emit('menu-versement-active');
+                    $this->emit(
+                        'error',
+                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+                    );
+                }
+            } else {
+                $this->emit('menu-versement-active');
+                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+            }
+        } catch (\Exception $exception) {
+            $this->emit('menu-versement-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+
+    public function ChooseUpdateDjamo($id)
+    {
+
+        DB::beginTransaction();
+
+        $sidAuth = Auth::guard('web')->user();
+
+        try {
+
+            $walletUpdate = WalletDjamo::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-djamo-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChooseDjamoEvent($walletUpdate));
+                return;
+            }
+
+            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
+
+                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+
+                    $this->updateWallet($walletUpdate, ChooseDjamoEvent::class, 'modal-hide-djamo', 'menu-djamo-active', 'Vous avez choisi un djamo');
+                } else {
+                    $this->emit('menu-djamo-active');
+                    $this->emit(
+                        'error',
+                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+                    );
+                }
+            } else {
+                $this->emit('menu-djamo-active');
+                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+            }
+        } catch (\Exception $exception) {
+            $this->emit('menu-djamo-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+    public function ChooseUpdateTresort($id)
+    {
+
+        DB::beginTransaction();
+
+        $sidAuth = Auth::guard('web')->user();
+
+        try {
+
+            $walletUpdate = WalletTresortMoney::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-tresort-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChooseTresortEvent($walletUpdate));
+                return;
+            }
+
+            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
+
+                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+
+                    $this->updateWallet($walletUpdate, ChooseTresortEvent::class, 'modal-hide-tresort', 'menu-tresort-active', 'Vous avez choisi une transaction de Tresort Money');
+                } else {
+                    $this->emit('menu-tresort-active');
+                    $this->emit(
+                        'error',
+                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+                    );
+                }
+            } else {
+                $this->emit('menu-tresort-active');
+                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+            }
+        } catch (\Exception $exception) {
+            $this->emit('menu-tresort-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+
+    public function ChooseUpdatePush($id)
+    {
+
+        DB::beginTransaction();
+
+        $sidAuth = Auth::guard('web')->user();
+
+        try {
+
+            $walletUpdate = WalletPush::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-push-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChoosePushEvent($walletUpdate));
+                return;
+            }
+
+            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
+
+                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+
+                    $this->updateWallet($walletUpdate, ChoosePushEvent::class, 'modal-hide-push', 'menu-push-active', 'Vous avez choisi un réchargement Push');
+                } else {
+                    $this->emit('menu-push-active');
+                    $this->emit(
+                        'error',
+                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+                    );
+                }
+            } else {
+                $this->emit('menu-push-active');
+                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+            }
+        } catch (\Exception $exception) {
+            $this->emit('menu-push-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
     }

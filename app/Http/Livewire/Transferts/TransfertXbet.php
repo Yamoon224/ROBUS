@@ -140,7 +140,7 @@ class TransfertXbet extends Component
         $walletUser = sabdy();
         $provider = Provider::whereId(87)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
 
         try {
@@ -251,7 +251,7 @@ class TransfertXbet extends Component
         $valeur_ceiling = $walletUser->silver_ceiling;
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
         $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
         try {
 

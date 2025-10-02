@@ -52,7 +52,7 @@ class SidUser extends Authenticatable
         return $this->hasMany(Comment::class);
     }
 
-    
+
     public function withMerchants()
     {
         return $this->hasMany(WithMerchant::class);
@@ -81,12 +81,12 @@ class SidUser extends Authenticatable
         return $this->hasOne(Wallet::class)->withTrashed();
     }
 
-    
+
     public function walletDrawal()
     {
         return $this->hasOne(WalletDrawal::class)->withTrashed();
     }
-    
+
     public function city()
     {
         return $this->belongsTo(City::class, 'city_id', 'id')->withTrashed();
@@ -112,6 +112,15 @@ class SidUser extends Authenticatable
     {
         return date_format($this->created_at, 'd-m-y');
     }
+
+    public function getPhoneWithoutIndicativeAttribute()
+    {
+        $countrie = $this->country;
+        if ($countrie && $this->phone && str_starts_with($this->phone, $countrie->indecative)) {
+            return substr($this->phone, strlen($countrie->indecative));
+        }
+        return $this->phone;
+    }
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -128,7 +137,8 @@ class SidUser extends Authenticatable
     }
 
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 
     protected $casts = [

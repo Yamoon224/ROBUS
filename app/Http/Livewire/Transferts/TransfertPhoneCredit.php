@@ -100,7 +100,7 @@ class TransfertPhoneCredit extends Component
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId($this->provider_phone_credit)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers = app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
         $this->validate(
             [
@@ -181,7 +181,7 @@ class TransfertPhoneCredit extends Component
         $valeur_ceiling = $walletUser->silver_ceiling;
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
         $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
         DB::beginTransaction();
 
         try {
@@ -371,21 +371,7 @@ class TransfertPhoneCredit extends Component
         return $reel_amount;
     }
 
-    public function getSumValTransactionProperty()
-    {
-        $service = app(TotalAmoutUserServiveBackend::class);
-
-        $somm_valeur = $service->getWalletBanksCeilingProperty()
-            + $service->getWalletDepositsCeilingProperty()
-            + $service->getWalletIntersCeilingProperty()
-            + $service->getWalletPaymentsCeilingProperty()
-            + $service->getWalletTransactionsCeilingProperty()
-            + $service->getWalletPhoneCreditsCeilingProperty()
-            + $service->getWalletReloadsCeilingProperty()
-            + $service->getWalletBankCardCeilingProperty();
-
-        return $somm_valeur;
-    }
+   
 
     public function cancelPhoneCreditField()
     {

@@ -15,7 +15,7 @@ use App\Http\Services\CommissionServiceBackend;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Services\CommissionServicePercentBackend;
-use App\Events\CreateWalletXbetEvent;
+use App\Events\CreateWalletDjamoEvent;
 use Livewire\WithFileUploads;
 
 class TransfertDjamo extends Component
@@ -115,7 +115,7 @@ class TransfertDjamo extends Component
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId(104)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers = app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
 
         $this->validate(
@@ -192,7 +192,7 @@ class TransfertDjamo extends Component
         $valeur_ceiling = $walletUser->silver_ceiling;
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
         $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
         try {
 
@@ -290,7 +290,7 @@ class TransfertDjamo extends Component
                     $this->updateamountDjamoReceveid($admin_civ, $percent_robus, $walletDjamo,  $walletUser, $reel_amount);
                 }
 
-                event(new CreateWalletXbetEvent($walletDjamo));
+                event(new CreateWalletDjamoEvent($walletDjamo));
 
                 app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Réchargement Push', 'Demande de rechargement push est en cours de validation', 'Demande de paiement de ' . ' ' . $walletDjamo->wallet->sidUser->firstname);
 
@@ -463,18 +463,5 @@ class TransfertDjamo extends Component
         return $reel_amount;
     }
 
-    public function getSumValTransactionProperty()
-    {
-        $service = app(TotalAmoutUserServiveBackend::class);
 
-        $somm_valeur = $service->getWalletBanksCeilingProperty()
-            + $service->getWalletDepositsCeilingProperty()
-            + $service->getWalletIntersCeilingProperty()
-            + $service->getWalletPaymentsCeilingProperty()
-            + $service->getWalletTransactionsCeilingProperty()
-            + $service->getWalletPhoneCreditsCeilingProperty()
-            + $service->getWalletReloadsCeilingProperty()
-            + $service->getWalletBankCardCeilingProperty();
-        return $somm_valeur;
-    }
 }

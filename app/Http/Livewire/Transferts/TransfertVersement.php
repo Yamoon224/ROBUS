@@ -14,7 +14,7 @@ use App\Http\Services\NotificationServiceBackend;
 use App\Http\Services\TransfertServiceBackend;
 use App\Http\Services\CommissionServiceBackend;
 use App\Http\Services\CommissionServicePercentBackend;
-use App\Events\CreateWalletPaiementEvent;
+use App\Events\CreateWalletVersementEvent;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -111,7 +111,7 @@ class TransfertVersement extends Component
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId($this->provider_versement)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers = app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
         $this->validate(
             [
@@ -162,7 +162,7 @@ class TransfertVersement extends Component
                     return;
                 }
 
-                $reel_amount = $this->search_amount($this->amount_tresort);
+                $reel_amount = $this->search_amount($this->amount_versement);
 
                 $val_amount = $reel_amount +  $percent_robus->percent *  $reel_amount;
 
@@ -193,7 +193,7 @@ class TransfertVersement extends Component
         $valeur_ceiling = $walletUser->silver_ceiling;
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
         $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
         try {
 
@@ -249,7 +249,7 @@ class TransfertVersement extends Component
             }
 
 
-            $reel_amount = $this->search_amount($this->amount_tresort);
+            $reel_amount = $this->search_amount($this->amount_versement);
             $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageVersement($provider->id);
 
             $val_amount = $reel_amount;
@@ -297,7 +297,7 @@ class TransfertVersement extends Component
                     $this->updateamountVersementReceveid($admin_civ, $percent_robus, $walletVersement,  $walletUser, $reel_amount);
                 }
 
-                event(new CreateWalletPaiementEvent($walletVersement));
+                event(new CreateWalletVersementEvent($walletVersement));
 
                 app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Versement Bancaire', 'Demande de versement bancaire est en cours de validation', 'Demande de versement bancaire ' . ' ' . $walletVersement->wallet->sidUser->firstname);
 
@@ -323,7 +323,7 @@ class TransfertVersement extends Component
     }
 
 
-    public function calculateAmountTresorts()
+    public function calculateAmountVersements()
     {
 
         $this->commission_transaction_val_admin_versement_receive = 0;
@@ -331,14 +331,13 @@ class TransfertVersement extends Component
         $this->commission_transaction_val_nat_versement_pay = 0;
 
 
-        if ($this->amount_tresort) {
+        if ($this->amount_versement) {
 
-            $reel_amount = $this->search_amount($this->amount_tresort);
+            $reel_amount = $this->search_amount($this->amount_versement);
 
             if ($reel_amount != '') {
 
-                $commission_transaction = app(CommissionServicePercentBackend::class)->getRobusPercentageVersement();
-
+                $commission_transaction = app(CommissionServicePercentBackend::class)->getRobusPercentageVersement($this->provider_versement);
                 $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
                 $this->commission_transaction_val_admin_versement_receive = (float) $commission_percent_transaction;
                 $this->commission_transaction_val_nat_versement_receive = (float) $reel_amount;
@@ -347,9 +346,9 @@ class TransfertVersement extends Component
         }
     }
 
-    public function updatedAmountTresort()
+    public function updatedAmountVersement()
     {
-        $this->calculateAmountTresorts();
+        $this->calculateAmountVersements();
     }
 
 
@@ -360,9 +359,9 @@ class TransfertVersement extends Component
             [
                 'provider_versements' => $this->VersementTransaction,
                 'showRemonterVersementButton' => $this->showRemonterVersementButton,
-                'amount_transaction_nat_val_tresort_percent' => $this->commission_transaction_val_nat_versement_pay,
-                'amount_transaction_nat_val_tresort_receive' => $this->commission_transaction_val_nat_versement_receive,
-                'amount_transaction_nat_val_tresort_commission' => $this->commission_transaction_val_admin_versement_receive,
+                'amount_transaction_nat_val_versement_percent' => $this->commission_transaction_val_nat_versement_pay,
+                'amount_transaction_nat_val_versement_receive' => $this->commission_transaction_val_nat_versement_receive,
+                'amount_transaction_nat_val_versement_commission' => $this->commission_transaction_val_admin_versement_receive,
                 'usersCountry' => sabdy()->wallet->currencie->code,
             ]
         );

@@ -17,9 +17,10 @@
                 <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                     <a href="#step-1"
                         class="w-10 h-10 rounded-full btn btn-circle {{ $stepXbet != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
-                    <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Saisissez les informations
-                        requises
-                    </div>
+                    <h3 class="mb-3 mt-3">
+                         Saisissez les informations
+                        
+                    </h3>
                 </div>
             </div>
             <a wire:click="resetXbetTransactionField"
@@ -131,7 +132,7 @@
                             @include('components.transaction-text-input', [
                                 'id' => 'full_nameXbet',
                                 'model' => 'full_nameXbet',
-                                'label' => 'Nom et Prénom',
+                                'label' => 'Nom et Prénom du compte',
                                 'error' => 'full_nameXbet',
                             ])
                         </div>
@@ -158,14 +159,14 @@
                             @include('components.transaction-text-input', [
                                 'id' => 'code_compte',
                                 'model' => 'code_compte',
-                                'label' => 'Code demande',
+                                'label' => 'Code demande retrait',
                                 'error' => 'code_compte',
                             ])
 
                             @include('components.transaction-text-input', [
                                 'id' => 'id_compte',
                                 'model' => 'id_compte',
-                                'label' => 'Id du compte',
+                                'label' => 'Id du compte 1XBET',
                                 'error' => 'id_compte',
                             ])
 
@@ -240,7 +241,7 @@
             <!-- Footer avec boutons d'action -->
             <div class="modal-footer mt-4">
                 <button wire:click="resetXbetTransactionField" type="button"
-                    class="btn btn-outline-secondary w-20 mr-1">
+                    class="btn btn-danger-soft w-20 mr-1">
                     Annuler
                 </button>
 
@@ -323,7 +324,7 @@
                     </div>
                 @else
                     <div class="col-span-6 mt-1">
-                        <label class="form-label">Numero du compte</label>
+                        <label class="form-label">ID du compte 1XBET</label>
 
                         <div class="flex">
 
@@ -336,26 +337,13 @@
 
                     </div>
                     <div class="col-span-6 mt-1">
-                        <label class="form-label">Code du compte</label>
+                        <label class="form-label">Code demande de retrait</label>
 
                         <div class="flex">
 
                             <div
                                 class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
                                 {{ $code_compte ?? null }}
-                            </div>
-                        </div>
-
-
-                    </div>
-                    <div class="col-span-6 mt-1">
-                        <label class="form-label">Numero du compte rétrait</label>
-
-                        <div class="flex">
-
-                            <div
-                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                                {{ $id_compte ?? null }}
                             </div>
                         </div>
 
@@ -387,7 +375,7 @@
 
 
                     </div>
-                    <div class="col-span-6 mt-1">
+                    <div class="col-span-12 mt-1">
                         <label class="form-label">Montant</label>
 
                         <div class="flex">

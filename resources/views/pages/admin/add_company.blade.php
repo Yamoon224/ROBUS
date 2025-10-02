@@ -84,7 +84,7 @@
                         </div>
 
                         <div class="crud-form-1 mt-3">
-                            <label class="form-label">Nom<span class="text-danger"> *</span></label>
+                            <label class="form-label">Nom de la société<span class="text-danger"> *</span></label>
                             <input type="text" name="firstname"
                                 class="form-control @error('firstname') is-invalid @enderror" value="{{ old('firstname') }}"
                                 required>
@@ -94,8 +94,30 @@
                                 </span>
                             @enderror
                         </div>
+                         <div class="crud-form-1 mt-3">
+                            <label class="form-label">Nom et prénom du gérant(e)</label>
+                            <input type="text" name="firstname_manager"
+                                class="form-control @error('firstname_manager') is-invalid @enderror" value="{{ old('firstname_manager') }}"
+                                required>
+                            @error('firstname_manager')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
+                         <div class="crud-form-1 mt-3">
+                            <label class="form-label">Numéro du gérant(e)</label>
+                            <input type="text" name="phone_gerant"
+                                class="form-control @error('phone_gerant') is-invalid @enderror" value="{{ old('phone_gerant') }}"
+                                required>
+                            @error('phone_gerant')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
                         <div class="crud-form-1 mt-3">
-                            <label class="form-label" for="phone">Téléphone <span class="text-danger"> *</span></label>
+                            <label class="form-label" for="phone">Téléphone de la société <span class="text-danger"> *</span></label>
                             <input type="tel" class="form-control @error('phone') is-invalid @enderror" id="phone"
                                 maxlength="10" name="phone" placeholder="" required />
                             @error('phone')

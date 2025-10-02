@@ -101,7 +101,7 @@ class AdminController extends Controller
         return view('pages.admin.activities');
     }
 
-       /**
+    /**
      * Display the specified resource.
      *
      * @param  int  $id
@@ -117,12 +117,12 @@ class AdminController extends Controller
             $kycs = $user->kyc()->get() ?? null;
 
             $countrieId = $user->country_id;
-            
+
             $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
 
             $countrie = Country::whereId($countrieId)->first();
 
-            $cities = City::where('country_id' ,$countrieId)->get();
+            $cities = City::where('country_id', $countrieId)->get();
 
             return view('pages.custumers.show_under_edit', compact(
                 'countrie',
@@ -182,19 +182,19 @@ class AdminController extends Controller
         }
     }
 
-    public function edit_unders($id ,Request $request)
+    public function edit_unders($id, Request $request)
     {
 
 
-            $validator = $this->userValidatorService->validateUserUpdateDataAdmin($request->all());
+        $validator = $this->userValidatorService->validateUserUpdateDataAdmin($request->all());
 
-            if ($validator->fails()) {
-                return back()
-                    ->withErrors($validator)
-                    ->with('color', 'danger')
-                    ->with('status', 'Champ requise')
-                    ->withInput();
-            }
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Champ requise')
+                ->withInput();
+        }
 
 
         try {
@@ -208,7 +208,7 @@ class AdminController extends Controller
                 $request->file('image_verso')
             );
 
-            $msg =" Modification effectuée avec succès ";
+            $msg = " Modification effectuée avec succès ";
 
             if ($response['success']) {
 
@@ -223,17 +223,15 @@ class AdminController extends Controller
                 $color = 'success';
 
                 return redirect(route('unders.admins.browse'))->with('color', $color)->with('status', $msg);
-
             } else {
 
                 $message = $response['message'];
-                
+
                 return back()
                     ->with('color', 'danger')
                     ->with('status', $message)
                     ->withInput();
             }
-
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)
@@ -469,6 +467,52 @@ class AdminController extends Controller
         $countries = Country::whereRobus(true)
             ->where('indecative', '!=', null)->get();
         return view('pages.admin.add_company', compact('roles', 'countries', 'percentCompanies'));
+    }
+
+    public function edit_company($id)
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur')) {
+            abort(403);
+        }
+
+        $roles = Role::orderBy('created_at', 'desc')->whereId(6)->get();
+        $percentCompanies = PercentCompanie::orderBy('created_at', 'desc')->get();
+        $countries = Country::whereRobus(true)
+            ->where('indecative', '!=', null)->get();
+
+        $user = SidUser::whereId($id)->first();
+
+        $kycs = $user->kyc()->get() ?? null;
+
+        $countrieId = $user->country_id;
+
+        $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
+
+        $countrie = Country::whereId($countrieId)->first();
+
+        $cities = City::where('country_id', $countrieId)->get();
+
+        if ($countrie && $user->phone) {
+            $indicative = $countrie->indecative;
+            if (str_starts_with($user->phone, $indicative)) {
+                $user->phone_without_indicative = substr($user->phone, strlen($indicative));
+            } else {
+                $user->phone_without_indicative = $user->phone;
+            }
+        } else {
+            $user->phone_without_indicative = $user->phone;
+        }
+
+        return view('pages.admin.edit_company', compact(
+            'roles',
+            'countries',
+            'percentCompanies',
+            'countrie',
+            'cities',
+            'kycs',
+            'user',
+            'wallet_solde'
+        ));
     }
 
 
@@ -1052,6 +1096,73 @@ class AdminController extends Controller
         }
     }
 
+    public function update_company($id, Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'firstname' => ['required', 'string', 'max:255'],
+            'zone' => 'required',
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'phone' => ['required'],
+             'percent' => 'required',
+            'password' => ['required', 'confirmed'],
+            'image' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_recto' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+            'image_verso' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Champ requise')
+                ->withInput();
+        }
+
+        try {
+
+
+            $response = $this->createUserService->updateUsersCompany(
+                $id,
+                $request->all(),
+                $request->file('image'),
+                $request->file('image_recto'),
+                $request->file('image_verso')
+            );
+
+            $msg = " Modification effectuée avec succès ";
+
+            if ($response['success']) {
+
+                $user = $response['user'];
+
+                $valeur_message = ' Profil ';
+
+                Mail::to($user->email)->send(new NewAdmin('Vous etes désormais ' . $valeur_message . env('APP_NAME') .
+                    ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+
+                $msg = "Modification de profil avec succès";
+                $color = 'success';
+
+                return redirect(route('company.browse'))->with('color', $color)->with('status', $msg);
+            } else {
+
+                $message = $response['message'];
+
+                return back()
+                    ->with('color', 'danger')
+                    ->with('status', $message)
+                    ->withInput();
+            }
+        } catch (\Throwable $th) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de création')
+                ->withInput();
+        }
+    }
+
     public function store_company(Request $request)
     {
 
@@ -1161,6 +1272,8 @@ class AdminController extends Controller
                 $company_user = Company::create([
                     'city_id' =>   $user->city_id,
                     'name' =>      $user->firstname,
+                    'firstname_manager' => $request->firstname_manager,
+                    'phone_gerant' =>  $request->phone_gerant,
                     'country_id' =>  $user->country_id,
                     'email' =>  $user->email,
                     'phone' =>  $user->country->indecative . $user->phone,
@@ -1198,8 +1311,8 @@ class AdminController extends Controller
 
 
 
-            Mail::to($user->email)->send(new NewAdmin('Vous etes désormais une société ' . env('APP_NAME') .
-                ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
+            // Mail::to($user->email)->send(new NewAdmin('Vous etes désormais une société ' . env('APP_NAME') .
+            //     ' Votre email : '  . $user->email . ' Votre mot de passe : ' . $request->password));
 
             $msg = "Societe crée avec succès";
             $color = 'success';
@@ -1401,10 +1514,10 @@ class AdminController extends Controller
         $gain_retraits = $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
         $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
         $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
-        
+
         $count_days_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'daily');
-        $amount_days_inters = $this->getTransactionsAmountTotal(WalletInter::class, $user->wallet->id , 'daily');
-        $count_mounth_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id , 'monthly');
+        $amount_days_inters = $this->getTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'daily');
+        $count_mounth_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'monthly');
         $amount_mounth_inters = $this->getTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'monthly');
 
         $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
@@ -1452,7 +1565,7 @@ class AdminController extends Controller
         $user = SidUser::find($id);
 
 
-       
+
         if (!$user) {
             return back()
                 ->with('color', 'danger')
@@ -1485,7 +1598,7 @@ class AdminController extends Controller
             "Moneys" => WalletTransaction::class,
         ];
 
-      
+
 
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
@@ -1506,7 +1619,7 @@ class AdminController extends Controller
         }
 
         $calculatedGainAmount = $gainMappings[$typeRemonte];
-            
+
 
         if ((string)$amount !== (string)$calculatedGainAmount) {
             return back()
@@ -1655,27 +1768,27 @@ class AdminController extends Controller
 
         $resetClass = $resetMappings[$typeRemonte];
 
-        $amountDrawa = $this->withdrawCommission($resetClass, $user , $request->amountDrawal);
+        $amountDrawa = $this->withdrawCommission($resetClass, $user, $request->amountDrawal);
 
         if ($amountDrawa === true) {
 
             $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte);
-        
+
             if (isset($resetMappings[$typeRemonte])) {
                 if ($admin_civ->count() > 0) {
                     $nmbre_admin = $admin_civ->count();
                     $valeur_single = $withRemonte->amount_with_draw / $nmbre_admin;
-        
+
                     foreach ($admin_civ as $userAdmin) {
                         $this->processAdminCommissionSDistributer($userAdmin->id, $withRemonte->id, $valeur_single);
                     }
                 }
             }
-        
+
             $msg = 'Admins a fait un retrait sur votre commission';
             $msg_title = 'Transfert de la commission';
             $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-        
+
             return back()
                 ->with('color', 'success')
                 ->with('status', 'Votre commission a été retirée avec succès !!')
@@ -1932,42 +2045,42 @@ class AdminController extends Controller
 
     public function getTransactionsAmountTotal($walletModel, $userID, $period = 'daily')
     {
-       
+
         $totalAmount = 0;
         $query = $walletModel::where('wallet_id', $userID)
-                            ->whereStatus('SUCCESS');
-        
+            ->whereStatus('SUCCESS');
+
         if ($period === 'daily') {
             $query->whereDate('created_at', Carbon::today());
         } elseif ($period === 'monthly') {
             $query->whereMonth('created_at', Carbon::now()->month)
-                  ->whereYear('created_at', Carbon::now()->year);
+                ->whereYear('created_at', Carbon::now()->year);
         }
-    
+
         $amount = $query->sum('amount');
 
         if ($amount !== null) {
             $totalAmount += $amount;
         }
-    
+
         return $totalAmount;
     }
 
     public function getCountsTransactionsAmountTotal($walletModel, $userID, $period = 'daily')
     {
-       
+
 
         $query = $walletModel::where('wallet_id', $userID)
-                            ->whereStatus('SUCCESS');
-        
+            ->whereStatus('SUCCESS');
+
         if ($period === 'daily') {
             $query->whereDate('created_at', Carbon::today());
         } elseif ($period === 'monthly') {
             $query->whereMonth('created_at', Carbon::now()->month)
-                  ->whereYear('created_at', Carbon::now()->year);
+                ->whereYear('created_at', Carbon::now()->year);
         }
-    
-        return $query->count(); 
+
+        return $query->count();
     }
 
     public function withdrawCommission($walletModel, $user, $amount)
@@ -1976,19 +2089,19 @@ class AdminController extends Controller
             ->where('status', 'SUCCESS')
             ->whereCommissions($amount)
             ->first();
-    
+
         if ($walletTransaction) {
             $walletTransaction->commissions -= $amount;
             if ($walletTransaction->commissions < 0) {
                 return 'Le retrait dépasse la commission disponible.';
             }
             $walletTransaction->save();
-            return true; 
+            return true;
         } else {
             return 'Aucune transaction trouvée avec ce montant pour ce retrait de ' . $amount;
         }
     }
-    
+
 
     public function getTodayTransactionRobusRetraitCommissionAmountTotal($walletModel, $userID)
     {
@@ -2078,8 +2191,8 @@ class AdminController extends Controller
         $sum_wallet_transaction_received = $this->transactionAccountService->getTransactionsRecevedAllAmount(WalletTransaction::class, 'num_wallet', $wallet_solde);
 
         $count_days_inters = $this->getCountsValidatedAmountTotal(WalletInter::class, $user->id, 'daily');
-        $amount_days_inters = $this->getTransactionOperatriceAmountTotal(WalletInter::class, $user->id , 'daily');
-        $count_mounth_inters = $this->getCountsValidatedAmountTotal(WalletInter::class, $user->id , 'monthly');
+        $amount_days_inters = $this->getTransactionOperatriceAmountTotal(WalletInter::class, $user->id, 'daily');
+        $count_mounth_inters = $this->getCountsValidatedAmountTotal(WalletInter::class, $user->id, 'monthly');
         $amount_mounth_inters = $this->getTransactionOperatriceAmountTotal(WalletInter::class, $user->id, 'monthly');
 
 
@@ -2107,40 +2220,40 @@ class AdminController extends Controller
 
     public function getCountsValidatedAmountTotal($walletModel, $userID, $period = 'daily')
     {
-       
+
 
         $query = $walletModel::where('updated_by', $userID);
-        
+
         if ($period === 'daily') {
             $query->whereDate('created_at', Carbon::today());
         } elseif ($period === 'monthly') {
             $query->whereMonth('created_at', Carbon::now()->month)
-                  ->whereYear('created_at', Carbon::now()->year);
+                ->whereYear('created_at', Carbon::now()->year);
         }
-    
-        return $query->count(); 
+
+        return $query->count();
     }
-    
+
 
     public function getTransactionOperatriceAmountTotal($walletModel, $userID, $period = 'daily')
     {
-       
+
         $totalAmount = 0;
         $query = $walletModel::where('updated_by', $userID);
-        
+
         if ($period === 'daily') {
             $query->whereDate('created_at', Carbon::today());
         } elseif ($period === 'monthly') {
             $query->whereMonth('created_at', Carbon::now()->month)
-                  ->whereYear('created_at', Carbon::now()->year);
+                ->whereYear('created_at', Carbon::now()->year);
         }
-    
+
         $amount = $query->sum('amount');
 
         if ($amount !== null) {
             $totalAmount += $amount;
         }
-    
+
         return $totalAmount;
     }
 
@@ -2244,7 +2357,6 @@ class AdminController extends Controller
                 ' Votre email : '  . $user_info->email . ' Votre mot de passe : ' . $request->password));
 
             return back()->with('status', 'Mise a jour effectuée avec succès');
-            
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)

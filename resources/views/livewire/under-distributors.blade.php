@@ -174,7 +174,7 @@
                                 @foreach ($item->operator_services as $operator)
                                     @if ($operator->operator->is_commission)
                                         <span
-                                            class="alert alert-success font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            class="alert alert-success text-white font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
                                             {{ $operator->operator->name ?? null }}
                                         </span>
                                     @endif
@@ -215,7 +215,7 @@
                                     @foreach ($item->operator_services as $operator)
                                         @if ($operator->operator->is_under)
                                             <span
-                                                class="alert alert-success font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                class="alert alert-success text-white font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $operator->operator->name ?? null }}
                                             </span>
                                         @endif

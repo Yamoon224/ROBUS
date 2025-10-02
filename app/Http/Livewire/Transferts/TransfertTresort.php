@@ -14,7 +14,7 @@ use App\Http\Services\CommissionServiceBackend;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Services\CommissionServicePercentBackend;
-use App\Events\CreateWalletXbetEvent;
+use App\Events\CreateWalletTresortEvent;
 
 class TransfertTresort extends Component
 {
@@ -106,7 +106,7 @@ class TransfertTresort extends Component
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId(106)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers = app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
         $this->validate(
             [
@@ -182,7 +182,7 @@ class TransfertTresort extends Component
         $valeur_ceiling = $walletUser->silver_ceiling;
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
         $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
         try {
 
@@ -275,7 +275,7 @@ class TransfertTresort extends Component
                     $this->updateamountTresortReceveid($admin_civ, $percent_robus, $walletTresort,  $walletUser, $reel_amount);
                 }
 
-                event(new CreateWalletXbetEvent($walletTresort));
+                event(new CreateWalletTresortEvent($walletTresort));
 
                 app(NotificationServiceBackend::class)->notifyCreateUsers($walletUser, $admins, 'Réchargement Tresort', 'Demande de rechargement Tresort est en cours de validation', 'Demande de paiement de ' . ' ' . $walletTresort->wallet->sidUser->firstname);
 
@@ -420,18 +420,5 @@ class TransfertTresort extends Component
         return $reel_amount;
     }
 
-    public function getSumValTransactionProperty()
-    {
-        $service = app(TotalAmoutUserServiveBackend::class);
 
-        $somm_valeur = $service->getWalletBanksCeilingProperty()
-            + $service->getWalletDepositsCeilingProperty()
-            + $service->getWalletIntersCeilingProperty()
-            + $service->getWalletPaymentsCeilingProperty()
-            + $service->getWalletTransactionsCeilingProperty()
-            + $service->getWalletPhoneCreditsCeilingProperty()
-            + $service->getWalletReloadsCeilingProperty()
-            + $service->getWalletBankCardCeilingProperty();
-        return $somm_valeur;
-    }
 }

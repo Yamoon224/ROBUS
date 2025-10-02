@@ -71,7 +71,7 @@ class NotificationServiceBackend
         }
     }
 
-    protected function sendMailPhoneCreditNotification($check)
+    public function sendMailPhoneCreditNotification($check)
     {
         $notify = new MailController;
         $notify->newPhoneCredit($check);

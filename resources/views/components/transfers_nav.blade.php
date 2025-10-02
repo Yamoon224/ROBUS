@@ -161,7 +161,7 @@
                 </li>
             @endif
 
-            @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
+            {{-- @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
                 <li id="bank-send-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
@@ -178,7 +178,7 @@
 
                     </a>
                 </li>
-            @endif
+            @endif --}}
 
             @if ($showPushButton && sabdy()->hasPermissionTo('rechargement-push'))
                 <li id="push-tab" class="nav-item" role="presentation">
@@ -388,7 +388,7 @@
                 </li>
             @endif
 
-            @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
+            {{-- @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
                 <li id="bank-send-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
                         class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
@@ -405,7 +405,7 @@
 
                     </a>
                 </li>
-            @endif
+            @endif --}}
 
             @if (sabdy()->hasPermissionTo('rechargement-push'))
                 <li id="push-tab" class="nav-item" role="presentation">

@@ -83,7 +83,7 @@ class TransfertDeposit extends Component
     public function addVirement()
     {
         $walletUser = Auth::guard('web')->user();
-        $som_transfers = $this->getSumValTransactionProperty();
+        $som_transfers = app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
         $valeur_ceiling = $walletUser->silver_ceiling;
 
         $this->validate(
@@ -173,7 +173,7 @@ class TransfertDeposit extends Component
             ->first();
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
         $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
         $valeur_ceiling = $walletUser->silver_ceiling;
         DB::beginTransaction();
 
@@ -393,21 +393,7 @@ class TransfertDeposit extends Component
         return $reel_amount;
     }
 
-    public function getSumValTransactionProperty()
-    {
-        $service = app(TotalAmoutUserServiveBackend::class);
 
-        $somm_valeur = $service->getWalletBanksCeilingProperty()
-            + $service->getWalletDepositsCeilingProperty()
-            + $service->getWalletIntersCeilingProperty()
-            + $service->getWalletPaymentsCeilingProperty()
-            + $service->getWalletTransactionsCeilingProperty()
-            + $service->getWalletPhoneCreditsCeilingProperty()
-            + $service->getWalletReloadsCeilingProperty()
-            + $service->getWalletBankCardCeilingProperty();
-
-        return $somm_valeur;
-    }
 
     public function render()
     {

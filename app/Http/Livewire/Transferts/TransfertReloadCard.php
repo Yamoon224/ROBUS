@@ -113,7 +113,7 @@ class TransfertReloadCard extends Component
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId($this->provider_reloadcard)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
         DB::beginTransaction();
 
         $this->validateReloadCard();
@@ -199,7 +199,7 @@ class TransfertReloadCard extends Component
         $valeur_ceiling = $walletUser->silver_ceiling;
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
         $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
         DB::beginTransaction();
 
         try {
@@ -491,22 +491,6 @@ class TransfertReloadCard extends Component
         $reel_amount = (float) $reel_amount;
 
         return $reel_amount;
-    }
-
-    public function getSumValTransactionProperty()
-    {
-        $service = app(TotalAmoutUserServiveBackend::class);
-
-        $somm_valeur = $service->getWalletBanksCeilingProperty()
-            + $service->getWalletDepositsCeilingProperty()
-            + $service->getWalletIntersCeilingProperty()
-            + $service->getWalletPaymentsCeilingProperty()
-            + $service->getWalletTransactionsCeilingProperty()
-            + $service->getWalletPhoneCreditsCeilingProperty()
-            + $service->getWalletReloadsCeilingProperty()
-            + $service->getWalletBankCardCeilingProperty();
-
-        return $somm_valeur;
     }
 
     // Fonction utilitaire pour calculer les commissions

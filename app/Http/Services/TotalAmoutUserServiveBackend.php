@@ -24,7 +24,23 @@ class TotalAmoutUserServiveBackend
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
-      public function getNationTransactionProperty()
+
+    public function getSumValTransactionProperty()
+    {
+
+        $somm_valeur = $this->getWalletBanksCeilingProperty()
+            + $this->getWalletDepositsCeilingProperty()
+            + $this->getWalletIntersCeilingProperty()
+            + $this->getWalletPaymentsCeilingProperty()
+            + $this->getWalletTransactionsCeilingProperty()
+            + $this->getWalletPhoneCreditsCeilingProperty()
+            + $this->getWalletReloadsCeilingProperty()
+            + $this->getWalletBankCardCeilingProperty();
+            
+        return $somm_valeur;
+    }
+
+    public function getNationTransactionProperty()
     {
         $walletUser = Auth::guard('web')->user();
 
@@ -43,7 +59,7 @@ class TotalAmoutUserServiveBackend
         return $transaction_nationnal;
     }
 
-        public function getPaiementTransactionProperty()
+    public function getPaiementTransactionProperty()
     {
         $walletUser = Auth::guard('web')->user();
 
@@ -62,7 +78,7 @@ class TotalAmoutUserServiveBackend
         return $payments;
     }
 
-      public function getVirementTransactionProperty()
+    public function getVirementTransactionProperty()
     {
         $walletUser = Auth::guard('web')->user();
 
@@ -81,7 +97,7 @@ class TotalAmoutUserServiveBackend
         return $virement_transaction;
     }
 
-       public function getwalletXbetsCeilingProperty()
+    public function getwalletXbetsCeilingProperty()
     {
         $walletUser = Auth::guard('web')->user();
 
@@ -100,7 +116,7 @@ class TotalAmoutUserServiveBackend
         return $virement_transaction;
     }
 
-       public function getReloadTransactionProperty()
+    public function getReloadTransactionProperty()
     {
         $walletUser = Auth::guard('web')->user();
 
@@ -139,7 +155,7 @@ class TotalAmoutUserServiveBackend
         return $phone_transaction;
     }
 
-      public function getAdminCIVProperty()
+    public function getAdminCIVProperty()
     {
         return SidUser::whereStatus(true)
             ->whereIsAdmin(true)

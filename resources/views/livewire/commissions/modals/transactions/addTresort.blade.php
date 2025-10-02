@@ -7,9 +7,9 @@
     <script>
         window.addEventListener('DOMContentLoaded', function() {
             Echo.channel('wallet-tresort-created').listen(
-                '.Created_wallet_push',
+                '.Created_wallet_tresort',
                 (e) => {
-                    window.livewire.emit('notifyNewPhone:' - e.id);
+                    window.livewire.emit('notifyNewTresort:' - e.id);
                 },
             )
 

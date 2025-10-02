@@ -19,7 +19,7 @@
                     <a href="#step-1"
                         class="w-10 h-10 rounded-full btn btn-circle {{ $stepPush != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
                     <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Saisissez les informations
-                        requises
+                        
                     </div>
                 </div>
             </div>
@@ -39,23 +39,19 @@
                         src="{{ asset_url('dist/providers/push.png') }}" alt="Provider Xbet">
                 </div>
 
-                <div class="col-span-6 mt-1">
-                    @include('components.transaction-phone-input', [
+                 @include('components.transaction-phone-input', [
                         'id' => 'number_phone',
                         'model' => 'number_phone',
                         'label' => 'Numero de teléphone',
                         'error' => 'number_phone',
                     ])
-                </div>
 
-                <div class="col-span-6 mt-1">
-                    @include('components.transaction-text-input', [
+                @include('components.transaction-text-input', [
                         'id' => 'full_name_push',
                         'model' => 'full_name_push',
                         'label' => 'Nom et Prénom',
                         'error' => 'full_name_push',
                     ])
-                </div>
 
                 <div class="col-span-12 mt-1">
                     @include('components.transaction-amount-input', [
@@ -125,7 +121,7 @@
             <div
                 class="relative before:hidden before:lg:block before:absolute before:w-[69%] before:h-[3px] before:top-0 before:bottom-0 before:mt-4 before:bg-slate-100 before:dark:bg-darkmode-400 flex flex-col lg:flex-row justify-center px-5 sm:px-20 mt-3">
                 <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
-                    <a href="#step-1"
+                    <a href="#step-2"
                         class="w-10 h-10 rounded-full btn btn-circle {{ $stepPush != 2 ? 'btn-default' : 'btn-tertiary' }}">2</a>
                     <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Validations
 
@@ -133,7 +129,7 @@
                 </div>
             </div>
 
-            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10 mt-3">
+            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3  mt-3">
 
                 <div class="col-span-6 mt-3">
                     <label class="form-label">Numero du compte</label>
@@ -176,8 +172,6 @@
             <div class="modal-footer style-foo">
                 <button wire:click="resetPushField" type="button" class="btn btn-danger-soft w-20 mr-1"
                     wire:loading.class="hidden" wire:target="addValidatedPush">Annuler</button>
-
-
 
                 @if ($isPasswordValid)
                     <button wire:click="addValidatedPush" type="button" wire:loading.attr="disabled"

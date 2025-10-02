@@ -6,10 +6,10 @@
 
     <script>
         window.addEventListener('DOMContentLoaded', function() {
-            Echo.channel('wallet-phone-created').listen(
-                '.Created_wallet_phone',
+            Echo.channel('wallet-xbet-created').listen(
+                '.Created_wallet_xbet',
                 (e) => {
-                    window.livewire.emit('notifyNewPhone:' - e.id);
+                    window.livewire.emit('notifyNewXbet:' - e.id);
                 },
             )
 
