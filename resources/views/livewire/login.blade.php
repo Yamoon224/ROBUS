@@ -1,120 +1,142 @@
-<div>
-    <div class="grid grid-cols-12 gap-6 mt-20">
-
-        <div class="intro-y col-span-12 lg:col-span-4">
-            <!-- BEGIN: Form Validation -->
-            <div class="intro-y box">
-
-            </div>
-            <!-- END: Form Validation -->
-        </div>
-        <div class="intro-y col-span-12 lg:col-span-4 my-2">
-            <!-- BEGIN: Input -->
-            <div class="intro-y box">
-                {{-- @php
-                    $t1 = time();
-                    
-                    sleep(20);
-                    
-                    $t2 = time();
-                    
-                    $t_lapsed = $t2 - $t1;
-                    
-                    echo "Total time lapsed = $t_lapsed";
-                @endphp --}}
-                <div
-                    class="flex flex-col sm:flex-row items-center p-5 border-b border-slate-200/60 dark:border-darkmode-400">
-                    <h2 class="font-medium text-base mr-auto">
-                        Connectez-vous
-                    </h2>
-                </div>
-                <a href="{{ route('/') }}" class="brand-logo">
-                    <img src="{{ asset('public/dist/images/login.jpg') }}" width="100" alt="logo">
-                </a>
-
-                <div id="input" class="p-5">
-                    <div class="preview">
-                        <div class="mb-1">
-                            <label for="email" class="form-label">Adresse email<span class="text-danger">
-                                    *</span></label>
-                            <input wire:model="email" type="text"
-                                class="intro-x login__input form-control py-3 px-4 block" placeholder="Email">
-                            @error('email')
-                                <p class="text-danger">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="mb-1 mt-6" x-data="{ show: true }">
-                            <div class="d-flex justify-content-between">
-                                <label class="form-label" for="password">Mot de passe<span class="text-danger">
-                                        *</span></label>
-                                @if (Route::has('password.request'))
-                                    <a href="{{ route('password.request') }}"
-                                        class="text-primary dark:text-slate-200 ml-1"
-                                        style="color: #28a8e0;text-decoration: none;">
-                                        <small>Mot de passe oublié ?</small>
-                                    </a>
-                                @endif
-                                
-                            </div>
-                            <div class="input-group input-group-merge form-password-toggle">
-                                <input wire:model="password" placeholder="mot de passe"
-                                    :type="show ? 'password' : 'text'" id="password" tabindex="2"
-                                    aria-describedby="password" name="password" required autocomplete="current-password"
-                                    class="form-control
-                                    focus:placeholder-gray-500
-                                    focus:bg-white 
-                                    focus:border-gray-600  
-                                 focus:outline-none">
-                                <div class="input-group-text cursor-pointer">
-                                    <svg class="h-4 text-gray-700" fill="none" @click="show = !show"
-                                        :class="{ 'hidden': !show, 'block': show }" xmlns="http://www.w3.org/2000/svg"
-                                        viewbox="0 0 576 512">
-                                        <path fill="currentColor"
-                                            d="M572.52 241.4C518.29 135.59 410.93 64 288 64S57.68 135.64 3.48 241.41a32.35 32.35 0 0 0 0 29.19C57.71 376.41 165.07 448 288 448s230.32-71.64 284.52-177.41a32.35 32.35 0 0 0 0-29.19zM288 400a144 144 0 1 1 144-144 143.93 143.93 0 0 1-144 144zm0-240a95.31 95.31 0 0 0-25.31 3.79 47.85 47.85 0 0 1-66.9 66.9A95.78 95.78 0 1 0 288 160z">
-                                        </path>
-                                    </svg>
-
-                                    <svg class="h-4 text-gray-700" fill="none" @click="show = !show"
-                                        :class="{ 'block': !show, 'hidden': show }" xmlns="http://www.w3.org/2000/svg"
-                                        viewbox="0 0 640 512">
-                                        <path fill="currentColor"
-                                            d="M320 400c-75.85 0-137.25-58.71-142.9-133.11L72.2 185.82c-13.79 17.3-26.48 35.59-36.72 55.59a32.35 32.35 0 0 0 0 29.19C89.71 376.41 197.07 448 320 448c26.91 0 52.87-4 77.89-10.46L346 397.39a144.13 144.13 0 0 1-26 2.61zm313.82 58.1l-110.55-85.44a331.25 331.25 0 0 0 81.25-102.07 32.35 32.35 0 0 0 0-29.19C550.29 135.59 442.93 64 320 64a308.15 308.15 0 0 0-147.32 37.7L45.46 3.37A16 16 0 0 0 23 6.18L3.37 31.45A16 16 0 0 0 6.18 53.9l588.36 454.73a16 16 0 0 0 22.46-2.81l19.64-25.27a16 16 0 0 0-2.82-22.45zm-183.72-142l-39.3-30.38A94.75 94.75 0 0 0 416 256a94.76 94.76 0 0 0-121.31-92.21A47.65 47.65 0 0 1 304 192a46.64 46.64 0 0 1-1.54 10l-73.61-56.89A142.31 142.31 0 0 1 320 112a143.92 143.92 0 0 1 144 144c0 21.63-5.29 41.79-13.9 60.11z">
-                                        </path>
-                                    </svg>
-
-                                    @error('password')
-                                        <span class="invalid-feedback" role="alert">
-                                            <strong>{{ $message }}</strong>
-                                        </span>
-                                    @enderror
-                                </div>
-                            </div>
-                            @error('password')
-                                <p class="text-danger">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div class="intro-x mt-5 xl:mt-8 text-center">
-                            <input wire:click="login" wire:loading.remove type="button"
-                                class="btn btn-primary py-3 px-4 w-full xl:w-32 xl:mr-3 align-top" value="Connexion" />
-                           
-                              <div  wire:loading wire:target="login">
-                                    Traitement en cours...
-                                </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-            <!-- END: Input -->
-
+ <div class="robus-container">
+     <!-- Colonne gauche - Informations sécurité -->
+    <div class="robus-side-decoration">
+        {{-- <div class="robus-security-badge robus-floating">
+            <h3>🛡️ Protection des Actifs</h3>
+            <p>Cryptage bancaire de niveau institutionnel</p>
         </div>
 
-        <div class="intro-y col-span-12 lg:col-span-4">
-            <!-- BEGIN: Form Validation -->
-            <div class="intro-y box">
-
-            </div>
-            <!-- END: Form Validation -->
+        <div class="robus-security-badge robus-floating" style="animation-delay: 0.5s;">
+            <h3>💎 Intégrité des Opérations</h3>
+            <p>Surveillance transactionnelle permanente</p>
         </div>
+
+        <div class="robus-security-badge robus-floating" style="animation-delay: 1s;">
+            <h3>🔐 Vérification d'Identité</h3>
+            <p>Authentification multi-facteurs disponible</p>
+        </div> --}}
     </div>
-</div>
+     <div class="robus-login-card robus-floating">
+        <div class="robus-card-header">
+             <div class="robus-logo">
+                 <!-- Remplacez par votre logo -->
+                 <a href="{{ route('/') }}" class="brand-logo">
+                     <img src="{{ asset_url('dist/images/logo_robus.png') }}" width="100" alt="logo">
+                 </a>
+             </div>
+             <h1 class="robus-card-title">Nous sommes heureux
+                 de vous revoir</h1>
+             <p class="robus-card-subtitle mt-3">Veuillez vous connecter à votre compte pour consulter et gérer vos
+                 transactions</p>
+         </div>
+         <div class="robus-form-container">
+             <form wire:submit.prevent="login">
+                 <!-- Email -->
+                 <div class="robus-form-group">
+                     <label class="robus-form-label" for="email">
+                         📧 Adresse email
+                     </label>
+                     <input wire:model="email" type="email" id="email" class="robus-form-input"
+                         placeholder="votre@email.com" required>
+                     @error('email')
+                         <div style="color: var(--robus-danger); font-size: 0.8rem; margin-top: 0.5rem;">
+                             {{ $message }}
+                         </div>
+                     @enderror
+                 </div>
+
+                 <!-- Mot de passe -->
+                 <div class="robus-form-group" x-data="{ showPassword: false }">
+                     <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 0.5rem;">
+                         <label class="robus-form-label" for="password">
+                             🔒 Mot de passe
+                         </label>
+                     </div>
+                     <div style="position: relative;">
+                         <input wire:model="password" :type="showPassword ? 'text' : 'password'" id="password"
+                             class="robus-form-input" placeholder="Votre mot de passe" required>
+                         <button type="button" @click="showPassword = !showPassword" class="robus-password-toggle">
+                             <span x-show="!showPassword">👁️</span>
+                             <span x-show="showPassword" style="display: none;">🔒</span>
+                         </button>
+                     </div>
+                     @error('password')
+                         <div style="color: var(--robus-danger); font-size: 0.8rem; margin-top: 0.5rem;">
+                             {{ $message }}
+                         </div>
+                     @enderror
+                 </div>
+
+                 <!-- Bouton de connexion -->
+                  <button type="submit" wire:loading.attr="disabled" wire:loading.class="opacity-75 cursor-not-allowed"
+                     class="robus-btn-primary h16 btn btn-primary w-full flex items-center justify-center gap-2 rounded-lg px-5 py-2 font-medium bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition">
+                     <!-- Texte normal -->
+                     <span wire:loading.remove wire:target="login">
+                          Se connecter
+                     </span>
+
+                     <!-- Animation dots -->
+                     <div class="loading-dots flex space-x-1" wire:loading wire:target="login">
+                         <div class="loading-dot"></div>
+                         <div class="loading-dot"></div>
+                         <div class="loading-dot"></div>
+                     </div>
+
+                     <!-- Spinner (optionnel, en plus des dots) -->
+                     <svg wire:loading wire:target="login" class="w-4 h-4 animate-spin text-white" fill="none"
+                         viewBox="0 0 24 24">
+                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                             stroke-width="4"></circle>
+                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2
+                 5.291A7.962 7.962 0 014 12H0c0 3.042
+                 1.135 5.824 3 7.938l3-2.647z"></path>
+                     </svg>
+                 </button>
+
+             </form>
+
+
+             <!-- Avertissement de sécurité -->
+             <div
+                 style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+                 <div style="display: flex; align-items: start; gap: 0.5rem;">
+                     <span style="color: #856404;">⚠️</span>
+                     <div>
+                         <strong style="color: #856404; font-size: 0.9rem;">Sécurité</strong>
+                         <p style="color: #856404; font-size: 0.8rem; margin: 0.25rem 0 0 0;">
+                             Ne partagez jamais vos identifiants.
+                         </p>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+     {{-- <div class="robus-side-decoration">
+         <div class="robus-security-badge">
+             <h3>📊 Statut du système</h3>
+             <div style="margin-top: 1rem;">
+                 <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 0.5rem;">
+                     <span>Transactions</span>
+                     <span style="color: var(--robus-success);">● Actif</span>
+                 </div>
+                 <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 0.5rem;">
+                     <span>Paiements</span>
+                     <span style="color: var(--robus-success);">● Opérationnel</span>
+                 </div>
+                 <div style="display: flex; justify-content: between; align-items: center;">
+                     <span>Sécurité</span>
+                     <span style="color: var(--robus-success);">● Optimal</span>
+                 </div>
+             </div>
+         </div>
+
+         <div class="robus-security-badge robus-pulse">
+             <h3>🕐 Horaires</h3>
+             <p>Service 24h/24</p>
+             <p style="margin-top: 0.5rem; font-size: 0.8rem; opacity: 0.8;">
+                 {{ now()->format('d/m/Y H:i') }}
+             </p>
+         </div>
+     </div> --}}
+ </div>

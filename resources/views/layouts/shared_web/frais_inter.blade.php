@@ -1,8 +1,35 @@
-<div class="mr-10 card bg-secondary float-start style_info mr-10 ml-10  style_frais ">
-    <div class="card-header text-white" id="total-percent-inters">
-        Frais total : 
-    </div>
-    <div class="card-body text-white" id="total-percent-cumuls">
-        <h5 class="card-title text-white"></h5>
+
+<div class="row justify-content-center mt-3" >
+    <div class="col-12 col-md-8 col-lg-7" > 
+        <div class="card border-0 shadow-sm rounded-3 overflow-hidden mb-4 animate__animated animate__fadeInUp mx-auto"
+            style="max-width: 500px;" > 
+            <!-- En-tête de la carte -->
+            <div class="card-header bg-gradient-primary text-white py-3 text-center" > 
+                <div class="d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+                    <!-- Flex responsive -->
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-percent fa-lg me-2"></i>
+                        <h6 class="mb-0 fw-bold">Détail des Frais</h6>
+                    </div>
+                    <span class="badge bg-white text-primary fs-6 px-3 py-2 rounded-pill" id="total-percent-inters"
+                      >
+                        Total: 
+                    </span>
+                </div>
+            </div>
+
+            <div class="bg-light text-center"> 
+                <!-- Résultat calculé -->
+                <div class="calculation-result p-4 bg-gradient-info text-white rounded-3 border-0 mx-auto"
+                    style="max-width: 400px;"> <!-- Centrage interne -->
+                    <div class="text-center">
+                        <small class="opacity-75 d-block mb-2">Montant des frais pour votre transaction </small>
+                        <h3 class="mb-2 fw-bold" id="total-percent-cumuls">0 FCFA</h3> 
+                        <small class="opacity-75" id="result-detail">Basé sur le montant saisi</small>
+                    </div>
+                </div>
+              
+            </div>
+        </div>
     </div>
 </div>

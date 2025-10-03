@@ -1,3 +1,396 @@
+.btn-cyan { background: linear-gradient(135deg, #22D3EE, #0891B2); color: white; }
+.btn-pink { background: linear-gradient(135deg, #EC4899, #DB2777); color: white; }
+.btn-rose { background: linear-gradient(135deg, #F43F5E, #E11D48); color: white; }
+
+.form-floating>.form-control, .form-floating>.form-select {
+    height: calc(4rem + 2px) !important;
+    line-height: 1.25 !important;
+}
+
+.fw-bold-text{
+      font-weight: 700 !important;
+    color: black;
+}
+.ml-input{
+  margin-left: 5rem !important;
+}
+
+.form-label-custom {
+    position: absolute;
+    top: -10px;
+    left: 15px;
+    background: white;
+    padding: 0 5px;
+    font-size: 0.875rem;
+    z-index: 5;
+}
+.phone-input-container {
+    padding-top: 10px;
+}
+
+.mt-8{
+  margin-top: 2rem !important;
+}
+
+.text-muted-service {
+  color: white !important;
+}
+
+.bg-gradient-primary {
+        background: linear-gradient(135deg, #A30071 0%, #F8A21F 100%) !important;
+    }
+
+    .bg-gradient-progress {
+        background: linear-gradient(90deg, #A30071 0%, #F8A21F 100%) !important;
+        transition: width 0.5s ease-in-out;
+    }
+
+    .bg-gradient-info {
+        background: linear-gradient(135deg, #17a2b8 0%, #138496 100%) !important;
+    }
+
+    .style_frais {
+        transition: all 0.3s ease;
+    }
+
+    .style_frais:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    .card-header {
+        border-bottom: none;
+    }
+
+    .progress {
+        background-color: #e9ecef;
+        overflow: hidden;
+    }
+
+    .frais-details {
+        transition: all 0.3s ease;
+    }
+
+    .calculation-result {
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+
+    /* Animation pour le résultat */
+    @keyframes pulseResult {
+        0% {
+            transform: scale(1);
+        }
+
+        50% {
+            transform: scale(1.02);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    .calculation-result.updated {
+        animation: pulseResult 0.5s ease-in-out;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .frais-details .d-flex {
+            flex-direction: column;
+            align-items: flex-start !important;
+        }
+
+        .frais-details .badge {
+            margin-top: 0.5rem;
+            align-self: flex-end;
+        }
+    }
+  
+  
+  .bg-gradient-primary {
+        background: linear-gradient(135deg, #A30071 0%, #F8A21F 100%) !important;
+    }
+    
+    .wave-divider {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        line-height: 0;
+    }
+    
+    .wave-divider svg {
+        position: relative;
+        display: block;
+        width: calc(100% + 1.3px);
+        height: 80px;
+    }
+    
+    .wave-divider .shape-fill {
+        fill: #FFFFFF;
+    }
+    
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+    }
+    
+    .form-control {
+          transition: all 0.3s ease;
+    border: 2px solid #e2e8f0 !important;
+    background: #ffffff;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-control:hover {
+    border-color: #cbd5e0 !important;
+    box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.08);
+    transform: translateY(-1px);
+}
+
+ .form-control:focus {
+    border-color: #A30071 !important;
+    box-shadow: 0 0 0 3px rgba(163, 0, 113, 0.1), 0 2px 8px 0 rgba(0, 0, 0, 0.12) !important;
+    background: #ffffff;
+    transform: translateY(-1px);
+}
+    
+    .form-floating > .form-control:focus ~ label,
+    .form-floating > .form-control:not(:placeholder-shown) ~ label {
+        color: #A30071;
+    }
+    
+    .btn-primary {
+        background: linear-gradient(135deg, #A30071 0%, #F8A21F 100%);
+        border: none;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-primary:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 0.5rem 1rem rgba(163, 0, 113, 0.3);
+    }
+    
+    .btn-primary:disabled {
+        opacity: 0.6;
+        transform: none !important;
+    }
+    
+    .icon-wrapper {
+        transition: transform 0.3s ease;
+    }
+    
+    .icon-wrapper:hover {
+        transform: scale(1.1);
+    }
+    
+    .badge {
+        font-size: 1em;
+    }
+    
+    /* Animation de chargement */
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .loading-spinner {
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+
+.custom-navbar {
+    background: linear-gradient(294deg, #A30071 0%, #940066 100%);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+    padding: 0.5rem 10rem;
+    transition: all 0.3s ease;
+}
+
+.custom-navbar.scrolled {
+    background: rgba(30, 60, 114, 0.95);
+    backdrop-filter: blur(10px);
+}
+
+.navbar-logo {
+    transition: transform 0.3s ease;
+}
+
+.navbar-logo:hover {
+    transform: scale(1.05);
+}
+
+.custom-toggler {
+    border: none;
+    padding: 0.25rem 0.5rem;
+}
+
+.custom-toggler:focus {
+    box-shadow: none;
+}
+
+.nav-item-custom {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 500;
+    padding: 0.75rem 1rem !important;
+    margin: 0 0.25rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.nav-item-custom:hover,
+.nav-item-custom.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff !important;
+    transform: translateY(-1px);
+}
+
+.nav-icon {
+    font-size: 1.1rem;
+}
+
+.custom-dropdown {
+    background: white;
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.dropdown-item-custom {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: #333;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.navbar-dark .navbar-nav .nav-link.active, .navbar-dark .navbar-nav .show>.nav-link {
+    color: #fff;
+        background: linear-gradient(135deg, #F8A21F 0%, #FF8C00 100%) !important;
+
+    height: 160%;
+}
+
+.dropdown-item-custom:hover,
+.dropdown-item-custom.active {
+    background: #f8a11e !important;
+    color: white;
+    transform: translateX(5px);
+}
+
+.dropdown-icon {
+    font-size: 1rem;
+}
+
+.navbar-actions {
+    gap: 0.75rem;
+}
+
+.user-profile {
+    color: rgba(255, 255, 255, 0.9) !important;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.user-profile:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff !important;
+}
+
+.btn-outline-light {
+    border-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.btn-outline-light:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #fff;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-1px);
+}
+
+.btn-icon {
+    margin-right: 0.25rem;
+}
+
+/* Animation pour le dropdown */
+.dropdown-menu {
+    animation: dropdownFade 0.2s ease;
+}
+
+@keyframes dropdownFade {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 991.98px) {
+    .custom-navbar {
+        padding: 0.5rem 0;
+    }
+    
+    .nav-item-custom {
+        margin: 0.125rem 0;
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .navbar-actions {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        justify-content: center;
+    }
+
+    
+    .custom-dropdown {
+        background: rgba(255, 255, 255, 0.05);
+        box-shadow: none;
+        margin: 0;
+    }
+    
+    .dropdown-item-custom {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .dropdown-item-custom:hover,
+    .dropdown-item-custom.active {
+        background: rgba(255, 255, 255, 0.15);
+    }
+}
+
+
+
 .overflow-auto {
   overflow-x: auto; /* Enable horizontal scrolling */
   white-space: nowrap; /* Keep all items in a single horizontal line */

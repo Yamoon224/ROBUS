@@ -2110,7 +2110,7 @@
             $('#carte').removeClass('active');
             $('#phone-nav').removeClass('active');
             $('#xbet').addClass('active');
-            
+
             $('#xbet-nav').addClass('active');
             $('xbet-nav').attr('aria-selected', true);
             $('phone-nav').attr('aria-selected', false);
@@ -4004,8 +4004,9 @@
             $('#phone-nav').removeClass('active');
             $('phone-nav').attr('aria-selected', false);
             $('#phone').removeClass('active');
+            
             $('#xbet-nav').addClass('active');
-            $('xbet-nav').attr('aria-selected', false);
+            $('xbet-nav').attr('aria-selected', true);
 
             $('#wave-nav').removeClass('active');
             $('wave-nav').attr('aria-selected', false);

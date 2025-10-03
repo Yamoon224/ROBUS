@@ -17,7 +17,315 @@
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
 */
+/* Animation personnalisée pour le formulaire */
+.robus-finance-login {
+            min-height: 100vh;
+            background: 
+                linear-gradient(135deg, var(--robus-primary) 0%, var(--robus-secondary) 100%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.03)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
 
+        .robus-container {
+            display: grid;
+            grid-template-columns: 1fr 500px 1fr;
+            min-height: 100vh;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Éléments décoratifs latéraux */
+        .robus-side-decoration {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .robus-security-badge {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+            color: white;
+        }
+
+        .robus-security-badge h3 {
+            color: var(--robus-gold);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .robus-security-badge p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* Carte de connexion centrale */
+        .robus-login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .robus-card-header {
+            background: linear-gradient(135deg, var(--robus-primary), var(--robus-accent));
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .robus-card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--robus-gold), var(--robus-silver));
+        }
+
+        .robus-logo {
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .robus-logo img {
+            width: 50px;
+            height: 50px;
+        }
+
+        .robus-card-title {
+            color: black !important;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .robus-card-subtitle {
+            color: black;
+            font-size: 0.9rem;
+        }
+
+        /* Formulaire */
+        .robus-form-container {
+            padding: 2rem;
+        }
+
+        .robus-form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .robus-form-label {
+            display: block;
+            color: var(--robus-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .robus-form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .robus-form-input:focus {
+            outline: none;
+            border-color: var(--robus-accent);
+            box-shadow: 0 0 0 3px rgba(43, 108, 176, 0.1);
+        }
+
+        .robus-password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #718096;
+            cursor: pointer;
+        }
+
+        .robus-btn-primary {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--robus-accent), #2c5282);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .robus-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(43, 108, 176, 0.3);
+        }
+
+        .robus-btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Indicateurs de sécurité */
+        .robus-security-indicators {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+        }
+
+        .robus-security-item {
+            display: flex;
+            align-items: center;
+            color: var(--robus-success);
+            font-size: 0.8rem;
+        }
+
+        .robus-security-item::before {
+            content: '✓';
+            margin-right: 0.5rem;
+            font-weight: bold;
+        }
+
+        /* Animation de chargement */
+        .robus-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .robus-container {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .robus-side-decoration {
+                display: none;
+            }
+        }
+
+        /* Effets spéciaux */
+        .robus-floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .robus-pulse {
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.intro-y.box {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+/* Styles pour les inputs */
+.form-input {
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Loading animation améliorée */
+.btn-loading {
+    position: relative;
+    color: transparent;
+}
+
+.btn-loading::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    top: 50%;
+    left: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    border: 2px solid #ffffff;
+    border-radius: 50%;
+    border-right-color: transparent;
+    animation: spin 0.8s linear infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .min-h-screen {
+        padding: 1rem;
+    }
+    
+    .intro-y.box {
+        margin: 0;
+    }
+}
+
+/* Dark mode improvements */
+.dark .form-input {
+    background-color: #374151;
+    border-color: #4B5563;
+    color: #F9FAFB;
+}
+
+.dark .form-input:focus {
+    border-color: #3B82F6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
 /* ===== STYLE TRANSACTION MONEY ===== */
 .transaction-alert {
     display: flex;

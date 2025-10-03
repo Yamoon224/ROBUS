@@ -113,7 +113,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
         <div class="intro-y grid grid-cols-12 gap-5 mt-5">
             <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_3">
                 <div>
-                    <img src="{{ asset('public/dist/images/login.jpg') }}" height="30"
+                    <img src="{{ asset_url('dist/images/logo_robus.png') }}" height="30"
                         style="display:inline-block;margin-bottom:10px">
                 </div>
             </div>

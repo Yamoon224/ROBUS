@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <link href="{{ asset('public/dist/images/login.jpg') }}" rel="shortcut icon">
+    <link href="{{ asset_url('dist/images/logo_robus.png') }}" rel="shortcut icon">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description"
         content="Tinker admin is super flexible, powerful, clean &amp; modern responsive tailwind admin template with unlimited possibilities.">

@@ -3,47 +3,109 @@
     $route = Route::current()->getName();
 @endphp
 
-<nav class="navbar navbar-expand-md navbar-dark fixed-top  style_header">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top custom-navbar style_header">
     <div class="container-fluid margin-menu-all">
-        <a class="navbar-brand" href="#"><img
-                src="https://robus.africa/wp-content/uploads/2023/07/LOGO_ROBUS-web.png" alt="Brighton" title="Brighton"
-                height="70"></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
+        <!-- Logo -->
+        <a class="navbar-brand" href="#">
+            <img src="https://robus.africa/wp-content/uploads/2023/07/LOGO_ROBUS-web.png" 
+                 alt="Robus Africa" 
+                 title="Robus Africa"
+                 height="60"
+                 class="navbar-logo">
+        </a>
+
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
             aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse margin-menu" id="navbarCollapse">
-            <ul class="navbar-nav me-auto mb-2 mb-md-0">
+
+        <!-- Menu Items -->
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <!-- Accueil -->
                 <li class="nav-item">
-                    <a class="nav-link " aria-current="page" href="https://robus.africa/">Acceuil</a>
+                    <a class="nav-link nav-item-custom" href="https://robus.africa/">
+                        <i class="nav-icon">🏠</i>
+                        Accueil
+                    </a>
                 </li>
-                <li class="nav-item dropdown ">
-                    <a class="nav-link dropdown-toggle  {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'show' : '' }}" href="#" id="dropdown10"
-                        data-bs-toggle="dropdown" aria-expanded="{{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'true' : 'false' }}">Récharger ma carte</a>
-                    <ul class="dropdown-menu {{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'show' : '' }}" aria-labelledby="dropdown10" data-bs-popper="{{ $route == 'web.transactions_reloads' ||  $route == 'web.transactions_pushs' ? 'none' : '' }}">
+
+                <!-- Récharger ma carte - Dropdown -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle nav-item-custom {{ $route == 'web.transactions_reloads' || $route == 'web.transactions_pushs' ? 'active show' : '' }}" 
+                       href="#" 
+                       id="rechargeDropdown"
+                       data-bs-toggle="dropdown" 
+                       aria-expanded="{{ $route == 'web.transactions_reloads' || $route == 'web.transactions_pushs' ? 'true' : 'false' }}">
+                        <i class="nav-icon">💳</i>
+                        Récharger ma carte
+                    </a>
+                    <ul class="dropdown-menu custom-dropdown {{ $route == 'web.transactions_reloads' || $route == 'web.transactions_pushs' ? 'show' : '' }}" 
+                        aria-labelledby="rechargeDropdown">
                         <li>
-                            <a class="dropdown-item {{ $route == 'web.transactions_reloads' ? 'active' : '' }}" href="{{ route('web.transactions_reloads') }}">Carte Visa/Master
-                                Card</a></li>
-                        <li><a class="dropdown-item {{  $route == 'web.transactions_pushs' ? 'active' : '' }}" href="{{ route('web.transactions_pushs') }}">Carte PUSH</a></li>
+                            <a class="dropdown-item dropdown-item-custom {{ $route == 'web.transactions_reloads' ? 'active' : '' }}" 
+                               href="{{ route('web.transactions_reloads') }}">
+                                <i class="dropdown-icon">🔄</i>
+                                Carte Visa/MasterCard
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item dropdown-item-custom {{ $route == 'web.transactions_pushs' ? 'active' : '' }}" 
+                               href="{{ route('web.transactions_pushs') }}">
+                                <i class="dropdown-icon">⚡</i>
+                                Carte Push
+                            </a>
+                        </li>
                     </ul>
                 </li>
+
+                <!-- Transfert et paiement -->
                 <li class="nav-item">
-                    <a class="nav-link  {{ $route == 'web.transactions_transactions' ? 'active' : '' }}"
-                        href="{{ route('web.transactions_transactions') }}">Transfert et paiement de
-                        crédit</a>
+                    <a class="nav-link nav-item-custom {{ $route == 'web.transactions_transactions' ? 'active' : '' }}"
+                       href="{{ route('web.transactions_transactions') }}">
+                        <i class="nav-icon">💰</i>
+                        Transfert & Paiement
+                    </a>
                 </li>
 
-                <li class="nav-item"><a class="nav-link  {{ $route == 'web.transactions_robus' ? 'active' : '' }}"
-                        href="{{ route('web.transactions_robus') }}">Récharger mon compte ROBUS</a></li>
-                <li class="nav-item"><a class="nav-link   {{ $route == 'web.transactions_xbets' ? 'active' : '' }}"
-                        href="{{ route('web.transactions_xbets') }}">Récharger mon compte 1XBET</a></li>
-
-                        <li class="nav-item"><a class="nav-link   {{ $route == 'web.transactions_inters' ? 'active' : '' }}"
-                            href="{{ route('web.transactions_inters') }}">Transfert a l'international</a></li>
+                <!-- Récharger compte ROBUS -->
                 <li class="nav-item">
-                    <a class="nav-link  " href="https://robus.africa/#contacts">Contact</a>
+                    <a class="nav-link nav-item-custom {{ $route == 'web.transactions_robus' ? 'active' : '' }}"
+                       href="{{ route('web.transactions_robus') }}">
+                        <i class="nav-icon">🏦</i>
+                        Compte ROBUS
+                    </a>
+                </li>
+
+                <!-- Récharger compte 1XBET -->
+                <li class="nav-item">
+                    <a class="nav-link nav-item-custom {{ $route == 'web.transactions_xbets' ? 'active' : '' }}"
+                       href="{{ route('web.transactions_xbets') }}">
+                        <i class="nav-icon">🎰</i>
+                        Compte 1XBET
+                    </a>
+                </li>
+
+                <!-- Transfert international -->
+                <li class="nav-item">
+                    <a class="nav-link nav-item-custom {{ $route == 'web.transactions_inters' ? 'active' : '' }}"
+                       href="{{ route('web.transactions_inters') }}">
+                        <i class="nav-icon">🌍</i>
+                        Transfert International
+                    </a>
+                </li>
+
+                <!-- Contact -->
+                <li class="nav-item">
+                    <a class="nav-link nav-item-custom" href="https://robus.africa/#contacts">
+                        <i class="nav-icon">📞</i>
+                        Contact
+                    </a>
                 </li>
             </ul>
+
+           
         </div>
     </div>
 </nav>

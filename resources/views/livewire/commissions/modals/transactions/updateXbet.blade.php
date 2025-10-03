@@ -17,28 +17,28 @@
 
             <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Service 1Xbet
             </div>
-            @if ($choose_xbet_edit == 1)
+            @if ($choose_type_xbet == 1)
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-1">
                     <div class="col-span-6 ">
-                        <label for="provider_name_xbet_edit" class="form-label">Canal 1Xbet
+                        <label for="provider_name_xbet_edit" class="form-label">Canal 1XBET
                             <span class="text-danger">
                                 *</span></label>
                         <span
                             class="form-control style_edit_form alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                        text-indigo-100 bg-indigo-700 rounded"
                             style="color: white;">
-                            {{ $provider_name_xbet_edit ?? null }}
+                            {{ $xbetProvider ?? null }}
                         </span>
                     </div>
                     <div class="col-span-6">
-                        <label for="number_xbet_edit" class="form-label">Numero du compte<span class="text-danger">
+                        <label for="id_compte" class="form-label">Numero du compte<span class="text-danger">
                                 *</span></label>
 
                         <span
                             class="form-control style_edit_form alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                            text-indigo-100 bg-indigo-700 rounded"
                             style="color: white;">
-                            {{ $number_xbet_edit ?? null }}
+                            {{ $id_compte ?? null }}
                         </span>
 
                     </div>
@@ -46,7 +46,7 @@
                 </div>
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
                     <div class="col-span-6 mt-space">
-                        <label for="fullname_xbet_edit" class="form-label">Nom & prenom du client<span
+                        <label for="full_nameXbet" class="form-label">Nom & prenom du client<span
                                 class="text-danger">
                                 *</span></label>
 
@@ -54,7 +54,7 @@
                             class="form-control style_edit_form alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                            text-indigo-100 bg-indigo-700 rounded"
                             style="color: white;">
-                            {{ $fullname_xbet_edit ?? null }}
+                            {{ $full_nameXbet ?? null }}
                         </span>
 
                     </div>
@@ -66,33 +66,45 @@
                             class="form-control style_edit_form alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                            text-indigo-100 bg-indigo-700 rounded"
                             style="color: white;">
-                            {{ $amount_xbet_edit ?? null }} {{ $devise_user ?? null }}
+                            {{ $amount_xbet ?? null }} {{ $devise_user ?? null }}
                         </span>
 
                     </div>
                 </div>
             @else
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-1">
-                    <div class="col-span-6 ">
-                        <label for="provider_name_xbet_edit" class="form-label">Canal 1Xbet
+                    <div class="col-span-12 ">
+                        <label for="xbetProvider" class="form-label">Canal 1Xbet
                             <span class="text-danger">
                                 *</span></label>
                         <span
                             class="form-control style_edit_form alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                    text-indigo-100 bg-indigo-700 rounded"
                             style="color: white;">
-                            {{ $provider_name_xbet_edit ?? null }}
+                            {{ $xbetProvider ?? null }}
                         </span>
                     </div>
                     <div class="col-span-6">
-                        <label for="code_xbet_edit" class="form-label">Code retrait du compte<span class="text-danger">
+                        <label for="id_compte" class="form-label">Numero du compte<span class="text-danger">
                                 *</span></label>
 
                         <span
                             class="form-control style_edit_form alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                        text-indigo-100 bg-indigo-700 rounded"
                             style="color: white;">
-                            {{ $code_xbet_edit ?? null }}
+                            {{ $id_compte ?? null }}
+                        </span>
+
+                    </div>
+                    <div class="col-span-6">
+                        <label for="code_compte" class="form-label">Code retrait du compte<span class="text-danger">
+                                *</span></label>
+
+                        <span
+                            class="form-control style_edit_form alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
+                       text-indigo-100 bg-indigo-700 rounded"
+                            style="color: white;">
+                            {{ $code_compte ?? null }}
                         </span>
 
                     </div>
@@ -100,40 +112,40 @@
                 </div>
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
                     <div class="col-span-6 mt-space">
-                        <label for="countrie_xbet_edit" class="form-label">Pays<span class="text-danger">
+                        <label for="citie_xbet" class="form-label">Ville<span class="text-danger">
                                 *</span></label>
 
                         <span
                             class="form-control style_edit_form alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                        text-indigo-100 bg-indigo-700 rounded"
                             style="color: white;">
-                            {{ $countrie_xbet_edit ?? null }}
+                            {{ $citie_xbet ?? null }}
                         </span>
 
                     </div>
                     <div class="col-span-6 mt-space">
-                        <label for="citie_xbet_edit" class="form-label">Ville<span class="text-danger">
+                        <label for="area_xbet" class="form-label">Zone<span class="text-danger">
                                 *</span></label>
 
                         <span
                             class="form-control style_edit_form alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                            text-indigo-100 bg-indigo-700 rounded"
                             style="color: white;">
-                            {{ $citie_xbet_edit ?? null }}
+                            {{ $area_xbet ?? null }}
                         </span>
 
                     </div>
                 </div>
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3">
                         <div class="col-span-12 mt-space">
-                            <label for="amount_xbet_edit" class="form-label">Montant<span class="text-danger">
+                            <label for="amount_xbet" class="form-label">Montant<span class="text-danger">
                                     *</span></label>
     
                             <span
                                 class="form-control style_edit_form alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
                            text-indigo-100 bg-indigo-700 rounded"
                                 style="color: white;">
-                                {{ $amount_xbet_edit ?? null }} {{ $devise_user ?? null }}
+                                {{ $amount_xbet ?? null }} {{ $currency_custumers ?? null }}
                             </span>
     
                         </div>
@@ -154,22 +166,22 @@
                 <div
                     class=" col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
                     <input wire:click="$emit('modal-xbet-validted-show' , 'validated-xbet-modal')"
-                        wire:model="status_xbet_edit" id="bordered-radio-31" type="radio" value="SUCCESS"
+                        wire:model="xbetStatus" id="bordered-radio-31" type="radio" value="SUCCESS"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="bordered-radio-31"
                         class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Accepté</label>
-                    @error('status_xbet_edit')
+                    @error('xbetStatus')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
                 <div
                     class=" col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
                     <input wire:click="$emit('modal-xbet-validted-show' , 'validated-xbet-modal')"
-                        wire:model="status_xbet_edit" id="bordered-radio-32" type="radio" value="ERROR"
+                        wire:model="xbetStatus" id="bordered-radio-32" type="radio" value="ERROR"
                         class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                     <label for="bordered-radio-32"
                         class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Refusé</label>
-                    @error('status_xbet_edit')
+                    @error('xbetStatus')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

@@ -346,7 +346,7 @@
                                  <div class="report-box__indicator bg-success tooltip cursor-pointer">
                                     Succès 1Xbets {{ $xbet_success }}
                                 </div>
-                                
+
                                 <div class="report-box__indicator bg-pending tooltip cursor-pointer">
                                     Attente 1Xbets {{ $xbet_pendding }}
                                 </div>
@@ -945,6 +945,7 @@
     @include('livewire.commissions.modals.transactions.updateInterTransfer')
     @include('livewire.commissions.modals.transactions.updateRelaodCards')
     @include('livewire.commissions.modals.transactions.updateTransfersUV')
+    @include('livewire.commissions.modals.transactions.updateXbet')
     {{-- @include('livewire.commissions.modals.transactions.updateWave') --}}
     {{-- @include('livewire.commissions.modals.transactions.updateXbet') --}}
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')

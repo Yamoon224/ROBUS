@@ -82,7 +82,7 @@
                                 <tbody>
                                     <tr>
                                         <td>
-                                            <img src="{{ asset('public/dist/images/login.jpg') }}" height="30"
+                                            <img src="{{ asset_url('dist/images/logo_robus.png') }}" height="30"
                                                 style="display:inline-block;margin-bottom:10px">
 
                                         </td>

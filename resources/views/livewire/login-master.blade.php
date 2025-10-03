@@ -22,7 +22,7 @@
                         </h2>
                     </div>
                     <a href="{{ route('/') }}" class="brand-logo">
-                        <img src="{{ asset('public/dist/images/login.jpg') }}" width="100" alt="logo">
+                        <img src="{{ asset_url('dist/images/logo_robus.png') }}" width="100" alt="logo">
                     </a>
 
                     <div id="input" class="p-5">

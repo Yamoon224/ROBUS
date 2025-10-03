@@ -222,6 +222,7 @@ class Transfers extends Component
     public $xbetId;
     public $xbetStatus;
     public $xbetProvider;
+    public $xbetDescription;
     public $id_compte_retrait;
     public $amount_xbet;
     public $full_nameXbet;
@@ -1134,6 +1135,7 @@ class Transfers extends Component
         $this->xbetId = $id;
         $this->xbetStatus = null;
         $this->xbetProvider = $provider->name;
+        $this->xbetDescription = $check->description;
         $this->id_compte = $check->num_acompte ?? $check->num_acompte;
         $this->amount_xbet = $check->amount;
         $this->full_nameXbet = $check->full_name;
@@ -1141,7 +1143,7 @@ class Transfers extends Component
         $this->countrie = $check->countrie;
         $this->citie_xbet = $check->citie_name;
         $this->area_xbet = $check->area_name;
-
+        $this->choose_type_xbet = $check->choose_type_transaction;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         $this->emit($state);
     }
@@ -2994,6 +2996,14 @@ class Transfers extends Component
         $this->emit('modal-hide-phoneCredit');
         $this->emit('modal-hide-phoneCredit-validated');
         $this->emit('menu-phoneCredit-active');
+    }
+
+    public function cancelXbetField()
+    {
+        $this->password_validated = null;
+        $this->emit('modal-hide-xbet-validated');
+        $this->emit('modal-hide-xbet');
+        $this->emit('menu-xbet-active');
     }
 
 

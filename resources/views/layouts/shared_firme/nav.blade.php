@@ -13,7 +13,7 @@
 
 <nav class="side-nav">
     <a href="{{ route('companies.home') }}" class="intro-x flex items-center pl-5 pt-4">
-        <img alt="" class="w-6" src="{{ asset('public/dist/images/login.jpg') }}">
+        <img alt="" class="w-6" src="{{ asset_url('dist/images/logo_robus.png') }}">
         <span class="hidden xl:block text-white text-lg ml-3"> ROBUS </span>
     </a>
     <div class="side-nav__devider my-4"></div>
