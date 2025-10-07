@@ -23,9 +23,7 @@ use App\Http\Services\CommissionServiceBackend;
 use App\Http\Services\CommissionServicePercentBackend;
 use App\Http\Services\TotalAmoutUserServiveBackend;
 use App\Models\AdminsCom;
-use App\Models\Banks\BankCard;
 use App\Models\Costs\BankCost;
-use App\Models\Costs\DepositCost;
 use App\Models\Costs\PaymentCost;
 use App\Models\Costs\PhoneCreditCost;
 use App\Models\Costs\TransactionCost;
@@ -41,7 +39,6 @@ use App\Models\Wallets\WalletInter;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTresortMoney;
-use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletXbet;
 use App\Models\Wallets\WalletDjamo;
@@ -55,7 +52,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -230,6 +226,45 @@ class Transfers extends Component
     public $countrie;
     public $citie_xbet;
     public $area_xbet;
+
+    // Updated Versement
+    public $versementId;
+    public $versementStatus;
+    public $provider_versement;
+    public $versementDescription;
+    public $numAccompte;
+    public $versementAmount;
+    public $bank_code_edit;
+    public $guichet_edit;
+    public $num_auther_edit;
+    public $provider_versement_id;
+
+    // Updated Push
+    public $pushId;
+    public $pushStatus;
+    public $provider_push;
+    public $pushDescription;
+    public $numberPhone_edit;
+    public $amountPush;
+    public $fullName_edit;
+
+    // Updated Djamo
+    public $djamoId;
+    public $djamoStatus;
+    public $provider_djamo;
+    public $djamoDescription;
+    public $image_djamo;
+    public $amountDjamo;
+    public $fullNameDjamo_edit;
+
+    // Update tresort
+    public $tresortId;
+    public $tresortStatus;
+    public $provider_tresort;
+    public $tresortDescription;
+    public $numberPhoneTres_edit;
+    public $amountTresort;
+    public $fullNameTres_edit;
 
     // Transaction Bloque
     public $showRemonterTransButton = false;
@@ -1140,7 +1175,7 @@ class Transfers extends Component
         $this->amount_xbet = $check->amount;
         $this->full_nameXbet = $check->full_name;
         $this->code_compte = $check->code_acompte;
-        $this->countrie = $check->countrie;
+        $this->countrie = $check->countrieer;
         $this->citie_xbet = $check->citie_name;
         $this->area_xbet = $check->area_name;
         $this->choose_type_xbet = $check->choose_type_transaction;
@@ -1148,6 +1183,68 @@ class Transfers extends Component
         $this->emit($state);
     }
 
+    public function editVersement($id, $state)
+    {
+        $check = WalletVersement::whereId($id)->first();
+        $provider = Provider::whereId($check->provider_id)->first();
+        $this->versementId = $id;
+        $this->versementStatus = null;
+        $this->provider_versement = $provider->name;
+        $this->provider_versement_id = $provider->id;
+        $this->versementDescription = $check->description;
+        $this->numAccompte = $check->num_accompte;
+        $this->versementAmount = $check->amount;
+        $this->bank_code_edit = $check->bank_code;
+        $this->guichet_edit = $check->guichet_code;
+        $this->num_auther_edit = $check->num_authers;
+        $this->currency_custumers = $check->wallet->currencie->code ?? null;
+        $this->emit($state);
+    }
+
+    public function editPush($id, $state)
+    {
+        $check = WalletPush::whereId($id)->first();
+        $provider = Provider::whereId($check->provider_id)->first();
+        $this->pushId = $id;
+        $this->pushStatus = null;
+        $this->provider_push = $provider->name;
+        $this->pushDescription = $check->description;
+        $this->numberPhone_edit = $check->phone;
+        $this->amountPush = $check->amount;
+        $this->fullName_edit = $check->full_name;
+        $this->currency_custumers = $check->wallet->currencie->code ?? null;
+        $this->emit($state);
+    }
+
+    public function editDjamo($id, $state)
+    {
+        $check = WalletDjamo::whereId($id)->first();
+        $provider = Provider::whereId($check->provider_id)->first();
+        $this->djamoId = $id;
+        $this->djamoStatus = null;
+        $this->provider_djamo = $provider->name;
+        $this->djamoDescription = $check->description;
+        $this->image_djamo = $check->image;
+        $this->amountDjamo = $check->amount;
+        $this->fullNameDjamo_edit = $check->full_name;
+        $this->currency_custumers = $check->wallet->currencie->code ?? null;
+        $this->emit($state);
+    }
+
+    public function editTresort($id, $state)
+    {
+        $check = WalletTresortMoney::whereId($id)->first();
+        $provider = Provider::whereId($check->provider_id)->first();
+        $this->tresortId = $id;
+        $this->tresortStatus = null;
+        $this->provider_tresort = $provider->name;
+        $this->tresortDescription = $check->description;
+        $this->numberPhoneTres_edit = $check->phone;
+        $this->amountTresort = $check->amount;
+        $this->fullNameTres_edit = $check->full_name;
+        $this->currency_custumers = $check->wallet->currencie->code ?? null;
+        $this->emit($state);
+    }
 
     // Begin Edit informations
     public function editReloadCard($id, $state)
@@ -1526,6 +1623,1099 @@ class Transfers extends Component
             $this->emit('modal-hide-phoneCredit');
             $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+    }
+
+    public function updateXbet()
+    {
+        $check = WalletXbet::whereId($this->xbetId)->first();
+        $transactionData = $this->generateTransactionData();
+        $transactionCode = $transactionData['transactionCode'];
+        $transactionCompiCode = $transactionData['transactionCompiCode'];
+        $user_auth = $transactionData['user_auth'];
+        $admins = $transactionData['admins'];
+        $admin_civ = $transactionData['admin_civ'];
+        DB::beginTransaction();
+
+        try {
+
+            if ($check->status == 'PENDING') {
+
+                $this->validate([
+                    'xbetStatus' => 'required',
+                    'password_transaction' => 'required',
+                ]);
+
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                    $check->update([
+                        'description' => $this->description_phone_credit ?? null,
+                        'updated_by' => Auth::guard('web')->user()->id,
+                        'status' => $this->xbetStatus,
+                    ]);
+
+                    $this->password_transaction = "";
+                    $this->xbetStatus = "";
+                    $this->xbetId = "";
+
+                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+                        if ($check->status == 'SUCCESS') {
+
+                            if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                                $commission_transaction = $check->amount;
+
+                                $paymentXbet = app(TransfertServiceBackend::class)->createXbet($check, $transactionCode, $transactionCompiCode);
+
+                                app(TransfertServiceBackend::class)->createInvoiceXbet($check, $paymentXbet);
+
+                                $this->updateUserWallet($commission_transaction);
+
+                                if (Auth::guard('web')->user()->is_distributer == 1) {
+
+                                    $this->updateAdminCom($check, $commission_transaction);
+                                }
+
+                                $valeur_amount_com = $check->adminCom->amount;
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction 1Xbet");
+                                    } else {
+                                        $this->cancelXbetField();
+                                        $this->emit('modal-hide-xbet-validated');
+                                        $this->emit('modal-hide-xbet');
+                                        $this->emit('success', '1Xbet Acceptée sans commission sous-distibuteur !');
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+
+                                $this->notifyUsers($check, $admins, '1Xbet', 'Demande de paiement de 1xbet a été validé', 'Demande de paiement de 1xbet validé');
+
+                                $message = 'Votre demande de 1xbet de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été acceptée avec succès ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                $this->cancelXbetField();
+                                $this->emit('modal-hide-xbet-validated');
+                                $this->emit('modal-hide-xbet');
+                                $this->emit('success', 'Achat de transaction 1xbet validez avec succes !');
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                app(NotificationServiceBackend::class)->sendMailXbetNotification($check);
+                            } else {
+
+                                $this->cancelXbetField();
+                                $this->emit('modal-hide-xbet-validated');
+                                $this->emit('modal-hide-xbet');
+                                $this->emit('error', 'Pas vous le valideur !!');
+                                return;
+                            }
+                        } elseif ($check->status == 'ERROR') {
+
+                            if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                                $commission = $check->amount + $check->costs_amount;
+
+                                $this->updateReloadWallet($check, $commission);
+
+                                $this->updateWalletNull($check, $commission);
+
+
+                                $this->handleReloadClientCommission($check, $admin_civ);
+
+                                $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createErrorXbet($check, $transactionCode, $transactionCompiCode);
+
+                                app(TransfertServiceBackend::class)->createInvoiceXbet($check, $paymentPhoneCredit);
+
+                                $this->notifyUsers($check, $admins, '1Xbet', 'Demande de 1Xbet a été refusé', 'Demande de 1Xbet refusé');
+
+                                $message = 'Votre demande de 1xbet de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été refusée ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                $this->cancelXbetField();
+                                $this->emit('modal-hide-xbet-validated');
+                                $this->emit('modal-hide-xbet');
+                                $this->emit('error', 'Achat de credit refusé !');
+                                app(NotificationServiceBackend::class)->sendMailXbetNotification($check);
+                            } else {
+                                $this->cancelXbetField();
+                                $this->emit('modal-hide-xbet-validated');
+                                $this->emit('modal-hide-xbet');
+                                $this->emit('error', 'Pas de modification !');
+                                return;
+                            }
+                        } else {
+                            $this->cancelXbetField();
+                            $this->emit('modal-hide-xbet-validated');
+                            $this->emit('modal-hide-xbet');
+                            $this->emit('error', 'Pas de modification !');
+                            return;
+                        }
+                    } else {
+                        $this->cancelXbetField();
+                        $this->emit('modal-hide-xbet');
+                        $this->emit('modal-hide-xbet-validated');
+                        $this->emit('error', 'Pas le valideur !');
+                        return;
+                    }
+                } else {
+                    $this->cancelXbetField();
+                    $this->emit('modal-hide-xbet');
+                    $this->emit('modal-hide-xbet-validated');
+                    $this->emit('error', 'Mot de passe Incorrect !');
+                    return;
+                }
+            } elseif ($this->password_transaction = "" ||  $this->xbetStatus = "") {
+                $this->cancelXbetField();
+                $this->emit('modal-hide-xbet-validated');
+                $this->emit('modal-hide-xbet');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
+                return;
+            } else {
+                $this->cancelXbetField();
+                $this->emit('modal-hide-xbet');
+                $this->emit('modal-hide-xbet-validated');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+                return;
+            }
+            DB::commit();
+        } catch (\Exception $exception) {
+            $this->cancelXbetField();
+            $this->emit('modal-hide-xbet-validated');
+            $this->emit('modal-hide-xbet');
+            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+    public function tryOpenModal($modalName)
+    {
+        // Vérifie si le champ est vide
+        if (empty($this->versementStatus)) {
+            $this->addError('versementStatus', 'Veuillez sélectionner un statut avant de continuer.');
+            return;
+        }
+
+        $this->resetErrorBag('versementStatus');
+        $this->emit('modal-versement-validted-show', $modalName);
+        $this->emit('modal-hide-versement');
+    }
+
+    public function tryOpenModalPush($modalName)
+    {
+        // Vérifie si le champ est vide
+        if (empty($this->pushStatus)) {
+            $this->addError('pushStatus', 'Veuillez sélectionner un statut avant de continuer.');
+            return;
+        }
+
+        $this->resetErrorBag('pushStatus');
+        $this->emit('modal-push-validted-show', $modalName);
+        $this->emit('modal-hide-push');
+    }
+
+     public function tryOpenModalDjamo($modalName)
+    {
+        // Vérifie si le champ est vide
+        if (empty($this->djamoStatus)) {
+            $this->addError('djamoStatus', 'Veuillez sélectionner un statut avant de continuer.');
+            return;
+        }
+
+        $this->resetErrorBag('djamoStatus');
+        $this->emit('modal-djamo-validted-show', $modalName);
+        $this->emit('modal-hide-djamo');
+    }
+
+    public function tryOpenModalTresort($modalName)
+    {
+        // Vérifie si le champ est vide
+        if (empty($this->tresortStatus)) {
+            $this->addError('tresortStatus', 'Veuillez sélectionner un statut avant de continuer.');
+            return;
+        }
+
+        $this->resetErrorBag('tresortStatus');
+        $this->emit('modal-tresort-validted-show', $modalName);
+        $this->emit('modal-hide-tresort');
+    }
+
+    public function updateVersement()
+    {
+        $check = WalletVersement::whereId($this->versementId)->first();
+        $transactionData = $this->generateTransactionData();
+        $transactionCode = $transactionData['transactionCode'];
+        $transactionCompiCode = $transactionData['transactionCompiCode'];
+        $user_auth = $transactionData['user_auth'];
+        $admins = $transactionData['admins'];
+        $admin_civ = $transactionData['admin_civ'];
+        DB::beginTransaction();
+
+        try {
+
+            if ($check->status == 'PENDING') {
+
+                $this->validate(
+                    [
+                        'versementStatus' => 'required',
+                        'password_transaction' => 'required',
+                    ],
+                    [
+
+                        'versementStatus.required' =>
+                        'Le statut est obligatoire',
+                        'password_transaction.required' =>
+                        'Le mot de passe est obligatoire'
+                    ]
+                );
+
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                    $check->update([
+                        'description' => $this->versementDescription ?? null,
+                        'updated_by' => sabdy()->id,
+                        'status' => $this->versementStatus,
+                    ]);
+
+                    $this->password_transaction = "";
+                    $this->versementStatus = "";
+                    $this->versementId = "";
+
+                    if ($check->updated_by == sabdy()->id) {
+
+                        if ($check->status == 'SUCCESS') {
+
+                            if ($check->updated_by == sabdy()->id) {
+
+
+                                $commission_transaction = $check->amount;
+
+                                $paymentXbet = app(TransfertServiceBackend::class)->createVersement($check, $transactionCode, $transactionCompiCode);
+
+                                app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
+
+                                $this->updateUserWallet($commission_transaction);
+
+                                if (sabdy()->is_distributer == 1) {
+
+                                    $this->updateAdminCom($check, $commission_transaction);
+                                }
+
+                                $valeur_amount_com = $check->adminCom->amount;
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Versement Bancaires");
+                                    } else {
+                                        $this->cancelVersementField();
+                                        $this->emit('modal-hide-versement-validated');
+                                        $this->emit('modal-hide-versement');
+                                        $this->emit('success', 'Versement Acceptée sans commission sous-distibuteur !');
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+
+                                $this->notifyUsers($check, $admins, 'Versement', 'Demande de paiement de Versement a été validé', 'Demande de paiement de Versement validé');
+
+                                $message = 'Votre demande de Versement de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été acceptée avec succès ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                $this->cancelVersementField();
+                                $this->emit('modal-hide-versement-validated');
+                                $this->emit('modal-hide-versement');
+                                $this->emit('success', 'Achat de transaction 1xbet validez avec succes !');
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                app(NotificationServiceBackend::class)->sendMailVersementNotification($check);
+                            } else {
+
+                                $this->cancelVersementField();
+                                $this->emit('modal-hide-versement-validated');
+                                $this->emit('modal-hide-versement');
+                                $this->emit('error', 'Pas vous le valideur !!');
+                                return;
+                            }
+                        } elseif ($check->status == 'ERROR') {
+
+                            if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                                $commission = $check->amount + $check->costs_amount;
+
+                                $this->updateReloadWallet($check, $commission);
+
+                                $this->updateWalletNull($check, $commission);
+
+
+                                $this->handleReloadClientCommission($check, $admin_civ);
+
+                                $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createVersement($check, $transactionCode, $transactionCompiCode);
+
+                                app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPhoneCredit);
+
+                                $this->notifyUsers($check, $admins, 'Versement', 'Demande de Versement a été refusé', 'Demande de Versement refusé');
+
+                                $message = 'Votre demande de Versement de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été refusée ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                $this->cancelVersementField();
+                                $this->emit('modal-hide-versement-validated');
+                                $this->emit('modal-hide-versement');
+                                $this->emit('error', 'Achat de credit refusé !');
+                                app(NotificationServiceBackend::class)->sendMailVersementNotification($check);
+                            } else {
+                                $this->cancelVersementField();
+                                $this->emit('modal-hide-versement-validated');
+                                $this->emit('modal-hide-versement');
+                                $this->emit('error', 'Pas de modification !');
+                                return;
+                            }
+                        } else {
+                            $this->cancelVersementField();
+                            $this->emit('modal-hide-versement-validated');
+                            $this->emit('modal-hide-versement');
+                            $this->emit('error', 'Pas de modification !');
+                            return;
+                        }
+                    } else {
+                        $this->cancelVersementField();
+                        $this->emit('modal-hide-versement');
+                        $this->emit('modal-hide-versement-validated');
+                        $this->emit('error', 'Pas le valideur !');
+                        return;
+                    }
+                } else {
+                    $this->cancelVersementField();
+                    $this->emit('modal-hide-versement');
+                    $this->emit('modal-hide-versement-validated');
+                    $this->emit('error', 'Mot de passe Incorrect !');
+                    return;
+                }
+            } elseif ($this->password_transaction = "" ||  $this->versementStatus = "") {
+                $this->cancelVersementField();
+                $this->emit('modal-hide-versement-validated');
+                $this->emit('modal-hide-versement');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
+                return;
+            } else {
+                $this->cancelVersementField();
+                $this->emit('modal-hide-versement');
+                $this->emit('modal-hide-versement-validated');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+                return;
+            }
+            DB::commit();
+        } catch (\Exception $exception) {
+            $this->cancelVersementField();
+            $this->emit('modal-hide-versement-validated');
+            $this->emit('modal-hide-versement');
+            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+    public function updatePush()
+    {
+        $check = walletPush::whereId($this->pushId)->first();
+        $transactionData = $this->generateTransactionData();
+        $transactionCode = $transactionData['transactionCode'];
+        $transactionCompiCode = $transactionData['transactionCompiCode'];
+        $user_auth = $transactionData['user_auth'];
+        $admins = $transactionData['admins'];
+        $admin_civ = $transactionData['admin_civ'];
+        DB::beginTransaction();
+
+        try {
+
+            if ($check->status == 'PENDING') {
+
+                $this->validate(
+                    [
+                        'pushStatus' => 'required',
+                        'password_transaction' => 'required',
+                    ],
+                    [
+
+                        'pushStatus.required' =>
+                        'Le statut est obligatoire',
+                        'password_transaction.required' =>
+                        'Le mot de passe est obligatoire'
+                    ]
+                );
+
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                    $check->update([
+                        'description' => $this->pushDescription ?? null,
+                        'updated_by' => sabdy()->id,
+                        'status' => $this->pushStatus,
+                    ]);
+
+                    $this->password_transaction = "";
+                    $this->pushStatus = "";
+                    $this->pushId = "";
+
+                    if ($check->updated_by == sabdy()->id) {
+
+                        if ($check->status == 'SUCCESS') {
+
+                            if ($check->updated_by == sabdy()->id) {
+
+
+                                $commission_transaction = $check->amount;
+
+                                $paymentXbet = app(TransfertServiceBackend::class)->createPush($check, $transactionCode, $transactionCompiCode);
+
+                                app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
+
+                                $this->updateUserWallet($commission_transaction);
+
+                                if (sabdy()->is_distributer == 1) {
+
+                                    $this->updateAdminCom($check, $commission_transaction);
+                                }
+
+                                $valeur_amount_com = $check->adminCom->amount;
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Push");
+                                    } else {
+                                        $this->cancelPushField();
+                                        $this->emit('modal-hide-push-validated');
+                                        $this->emit('modal-hide-push');
+                                        $this->emit('success', 'Push Acceptée sans commission sous-distibuteur !');
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+
+                                $this->notifyUsers($check, $admins, 'Push', 'Demande de paiement de Push a été validé', 'Demande de paiement de Versement validé');
+
+                                $message = 'Votre demande de transacton Push de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été acceptée avec succès ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                $this->cancelPushField();
+                                $this->emit('modal-hide-push-validated');
+                                $this->emit('modal-hide-push');
+                                $this->emit('success', 'Achat de transaction Push validez avec succes !');
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                app(NotificationServiceBackend::class)->sendMailPushNotification($check);
+                            } else {
+
+                                $this->cancelPushField();
+                                $this->emit('modal-hide-push-validated');
+                                $this->emit('modal-hide-push');
+                                $this->emit('error', 'Pas vous le valideur !!');
+                                return;
+                            }
+                        } elseif ($check->status == 'ERROR') {
+
+                            if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                                $commission = $check->amount + $check->costs_amount;
+
+                                $this->updateReloadWallet($check, $commission);
+
+                                $this->updateWalletNull($check, $commission);
+
+
+                                $this->handleReloadClientCommission($check, $admin_civ);
+
+                                $paymentPush  = app(TransfertServiceBackend::class)->createPush($check, $transactionCode, $transactionCompiCode);
+
+                                app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPush);
+
+                                $this->notifyUsers($check, $admins, 'Push', 'Demande de transaction Push a été refusé', 'Demande de Transaction Push refusé');
+
+                                $message = 'Votre demande de transaction Push de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été refusée ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                $this->cancelPushField();
+                                $this->emit('modal-hide-push-validated');
+                                $this->emit('modal-hide-push');
+                                $this->emit('error', 'Achat de Push refusé !');
+                                app(NotificationServiceBackend::class)->sendMailPushNotification($check);
+                            } else {
+                                $this->cancelPushField();
+                                $this->emit('modal-hide-push-validated');
+                                $this->emit('modal-hide-push');
+                                $this->emit('error', 'Pas de modification !');
+                                return;
+                            }
+                        } else {
+                            $this->cancelPushField();
+                            $this->emit('modal-hide-push-validated');
+                            $this->emit('modal-hide-push');
+                            $this->emit('error', 'Pas de modification !');
+                            return;
+                        }
+                    } else {
+                        $this->cancelPushField();
+                        $this->emit('modal-hide-push');
+                        $this->emit('modal-hide-push-validated');
+                        $this->emit('error', 'Pas le valideur !');
+                        return;
+                    }
+                } else {
+                    $this->cancelPushField();
+                    $this->emit('modal-hide-push');
+                    $this->emit('modal-hide-push-validated');
+                    $this->emit('error', 'Mot de passe Incorrect !');
+                    return;
+                }
+            } elseif ($this->password_transaction = "" ||  $this->pushStatus = "") {
+                $this->cancelPushField();
+                $this->emit('modal-hide-push-validated');
+                $this->emit('modal-hide-push');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
+                return;
+            } else {
+                $this->cancelPushField();
+                $this->emit('modal-hide-push');
+                $this->emit('modal-hide-push-validated');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+                return;
+            }
+            DB::commit();
+        } catch (\Exception $exception) {
+            $this->cancelPushField();
+            $this->emit('modal-hide-push-validated');
+            $this->emit('modal-hide-push');
+            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+      public function updateDjamo()
+    {
+        $check = WalletDjamo::whereId($this->djamoId)->first();
+        $transactionData = $this->generateTransactionData();
+        $transactionCode = $transactionData['transactionCode'];
+        $transactionCompiCode = $transactionData['transactionCompiCode'];
+        $user_auth = $transactionData['user_auth'];
+        $admins = $transactionData['admins'];
+        $admin_civ = $transactionData['admin_civ'];
+        DB::beginTransaction();
+
+        try {
+
+            if ($check->status == 'PENDING') {
+
+                $this->validate(
+                    [
+                        'djamoStatus' => 'required',
+                        'password_transaction' => 'required',
+                    ],
+                    [
+
+                        'djamoStatus.required' =>
+                        'Le statut est obligatoire',
+                        'password_transaction.required' =>
+                        'Le mot de passe est obligatoire'
+                    ]
+                );
+
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                    $check->update([
+                        'description' => $this->djamoDescription ?? null,
+                        'updated_by' => sabdy()->id,
+                        'status' => $this->djamoStatus,
+                    ]);
+
+                    $this->password_transaction = "";
+                    $this->djamoStatus = "";
+                    $this->pushId = "";
+
+                    if ($check->updated_by == sabdy()->id) {
+
+                        if ($check->status == 'SUCCESS') {
+
+                            if ($check->updated_by == sabdy()->id) {
+
+
+                                $commission_transaction = $check->amount;
+
+                                $paymentXbet = app(TransfertServiceBackend::class)->createDjamo($check, $transactionCode, $transactionCompiCode);
+
+                                app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
+
+                                $this->updateUserWallet($commission_transaction);
+
+                                if (sabdy()->is_distributer == 1) {
+
+                                    $this->updateAdminCom($check, $commission_transaction);
+                                }
+
+                                $valeur_amount_com = $check->adminCom->amount;
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Djamo");
+                                    } else {
+                                        $this->cancelDjamoField();
+                                        $this->emit('modal-hide-djamo-validated');
+                                        $this->emit('modal-hide-djamo');
+                                        $this->emit('success', 'djamo Acceptée sans commission sous-distibuteur !');
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+
+                                $this->notifyUsers($check, $admins, 'Djamo', 'Demande de paiement de Djamo a été validé', 'Demande de paiement de Versement validé');
+
+                                $message = 'Votre demande de transacton Djamo de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été acceptée avec succès ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                $this->cancelDjamoField();
+                                $this->emit('modal-hide-djamo-validated');
+                                $this->emit('modal-hide-djamo');
+                                $this->emit('success', 'Achat de transaction Djamo validez avec succes !');
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                app(NotificationServiceBackend::class)->sendMailDjamoNotification($check);
+                            } else {
+
+                                $this->cancelDjamoField();
+                                $this->emit('modal-hide-push-validated');
+                                $this->emit('modal-hide-push');
+                                $this->emit('error', 'Pas vous le valideur !!');
+                                return;
+                            }
+                        } elseif ($check->status == 'ERROR') {
+
+                            if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                                $commission = $check->amount + $check->costs_amount;
+
+                                $this->updateReloadWallet($check, $commission);
+
+                                $this->updateWalletNull($check, $commission);
+
+
+                                $this->handleReloadClientCommission($check, $admin_civ);
+
+                                $paymentPush  = app(TransfertServiceBackend::class)->createDjamo($check, $transactionCode, $transactionCompiCode);
+
+                                app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPush);
+
+                                $this->notifyUsers($check, $admins, 'Djamo', 'Demande de transaction Djamo a été refusé', 'Demande de Transaction Djamo refusé');
+
+                                $message = 'Votre demande de transaction Djamo de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été refusée ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                $this->cancelDjamoField();
+                                $this->emit('modal-hide-djamo-validated');
+                                $this->emit('modal-hide-djamo');
+                                $this->emit('error', 'Achat de djamo refusé !');
+                                app(NotificationServiceBackend::class)->sendMailDjamoNotification($check);
+                            } else {
+                                $this->cancelDjamoField();
+                                $this->emit('modal-hide-push-validated');
+                                $this->emit('modal-hide-push');
+                                $this->emit('error', 'Pas de modification !');
+                                return;
+                            }
+                        } else {
+                            $this->cancelDjamoField();
+                            $this->emit('modal-hide-djamo-validated');
+                            $this->emit('modal-hide-djamo');
+                            $this->emit('error', 'Pas de modification !');
+                            return;
+                        }
+                    } else {
+                        $this->cancelDjamoField();
+                        $this->emit('modal-hide-djamo');
+                        $this->emit('modal-hide-djamo-validated');
+                        $this->emit('error', 'Pas le valideur !');
+                        return;
+                    }
+                } else {
+                    $this->cancelDjamoField();
+                    $this->emit('modal-hide-djamo');
+                    $this->emit('modal-hide-djamo-validated');
+                    $this->emit('error', 'Mot de passe Incorrect !');
+                    return;
+                }
+            } elseif ($this->password_transaction = "" ||  $this->djamoStatus = "") {
+                $this->cancelDjamoField();
+                $this->emit('modal-hide-djamo-validated');
+                $this->emit('modal-hide-djamo');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
+                return;
+            } else {
+                $this->cancelDjamoField();
+                $this->emit('modal-hide-djamo');
+                $this->emit('modal-hide-djamo-validated');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+                return;
+            }
+            DB::commit();
+        } catch (\Exception $exception) {
+            $this->cancelDjamoField();
+            $this->emit('modal-hide-djamo-validated');
+            $this->emit('modal-hide-djamo');
+            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
+    public function updateTresortMoney()
+    {
+        $check = WalletTresortMoney::whereId($this->tresortId)->first();
+        $transactionData = $this->generateTransactionData();
+        $transactionCode = $transactionData['transactionCode'];
+        $transactionCompiCode = $transactionData['transactionCompiCode'];
+        $user_auth = $transactionData['user_auth'];
+        $admins = $transactionData['admins'];
+        $admin_civ = $transactionData['admin_civ'];
+        DB::beginTransaction();
+
+        // try {
+
+        if ($check->status == 'PENDING') {
+
+            $this->validate(
+                [
+                    'tresortStatus' => 'required',
+                    'password_transaction' => 'required',
+                ],
+                [
+
+                    'tresortStatus.required' =>
+                    'Le statut est obligatoire',
+                    'password_transaction.required' =>
+                    'Le mot de passe est obligatoire'
+                ]
+            );
+
+            if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                $check->update([
+                    'description' => $this->pushDescription ?? null,
+                    'updated_by' => sabdy()->id,
+                    'status' => $this->tresortStatus,
+                ]);
+
+                $this->password_transaction = "";
+                $this->tresortStatus = "";
+                $this->tresortId = "";
+
+                if ($check->updated_by == sabdy()->id) {
+
+                    if ($check->status == 'SUCCESS') {
+
+                        if ($check->updated_by == sabdy()->id) {
+
+
+                            $commission_transaction = $check->amount;
+
+                            $paymentXbet = app(TransfertServiceBackend::class)->createTresort($check, $transactionCode, $transactionCompiCode);
+
+                            app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
+
+                            $this->updateUserWallet($commission_transaction);
+
+                            if (sabdy()->is_distributer == 1) {
+
+                                $this->updateAdminCom($check, $commission_transaction);
+                            }
+
+                            $valeur_amount_com = $check->adminCom->amount;
+
+                            if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Push");
+                                } else {
+                                    $this->cancelTresortField();
+                                    $this->emit('modal-hide-tresort-validated');
+                                    $this->emit('modal-hide-tresort');
+                                    $this->emit('success', 'Tresort Money Acceptée sans commission sous-distibuteur !');
+                                    return;
+                                }
+                            } else {
+
+                                app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                            }
+
+                            $this->notifyUsers($check, $admins, 'Tresort Money', 'Demande de paiement de Tresort Money a été validé', 'Demande de paiement de Tresort Money validé');
+
+                            $message = 'Votre demande de transacton Trésort Money de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' le ' .
+                                $check->updated_at .
+                                ' a été acceptée avec succès ' .
+                                'Robus vous remercie';
+
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
+
+                            $this->cancelTresortField();
+                            $this->emit('modal-hide-push-validated');
+                            $this->emit('modal-hide-push');
+                            $this->emit('success', 'Achat de transaction Tresort Money validez avec succes !');
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
+                            app(NotificationServiceBackend::class)->sendMailTresortNotification($check);
+                        } else {
+
+                            $this->cancelTresortField();
+                            $this->emit('modal-hide-push-validated');
+                            $this->emit('modal-hide-push');
+                            $this->emit('error', 'Pas vous le valideur !!');
+                            return;
+                        }
+                    } elseif ($check->status == 'ERROR') {
+
+                        if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                            $commission = $check->amount + $check->costs_amount;
+
+                            $this->updateReloadWallet($check, $commission);
+
+                            $this->updateWalletNull($check, $commission);
+
+
+                            $this->handleReloadClientCommission($check, $admin_civ);
+
+                            $paymentPush  = app(TransfertServiceBackend::class)->createTresort($check, $transactionCode, $transactionCompiCode);
+
+                            app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPush);
+
+                            $this->notifyUsers($check, $admins, 'Push', 'Demande de transaction Push a été refusé', 'Demande de Transaction Push refusé');
+
+                            $message = 'Votre demande de transaction Tresort Money de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' le ' .
+                                $check->updated_at .
+                                ' a été refusée ' .
+                                'Robus vous remercie';
+
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
+
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
+                            $this->cancelTresortField();
+                            $this->emit('modal-hide-tresort-validated');
+                            $this->emit('modal-hide-tresort');
+                            $this->emit('error', 'Achat de Push refusé !');
+                            app(NotificationServiceBackend::class)->sendMailTresortNotification($check);
+                        } else {
+                            $this->cancelTresortField();
+                            $this->emit('modal-hide-tresort-validated');
+                            $this->emit('modal-hide-tresort');
+                            $this->emit('error', 'Pas de modification !');
+                            return;
+                        }
+                    } else {
+                        $this->cancelTresortField();
+                        $this->emit('modal-hide-tresort-validated');
+                        $this->emit('modal-hide-tresort');
+                        $this->emit('error', 'Pas de modification !');
+                        return;
+                    }
+                } else {
+                    $this->cancelTresortField();
+                    $this->emit('modal-hide-tresort');
+                    $this->emit('modal-hide-tresort-validated');
+                    $this->emit('error', 'Pas le valideur !');
+                    return;
+                }
+            } else {
+                $this->cancelTresortField();
+                $this->emit('modal-hide-tresort');
+                $this->emit('modal-hide-tresort-validated');
+                $this->emit('error', 'Mot de passe Incorrect !');
+                return;
+            }
+        } elseif ($this->password_transaction = "" ||  $this->pushStatus = "") {
+            $this->cancelTresortField();
+            $this->emit('modal-hide-tresort-validated');
+            $this->emit('modal-hide-tresort');
+            $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
+            return;
+        } else {
+            $this->cancelTresortField();
+            $this->emit('modal-hide-tresort');
+            $this->emit('modal-hide-tresort-validated');
+            $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+            return;
+        }
+        DB::commit();
+        // } catch (\Exception $exception) {
+        //     $this->cancelTresortField();
+        //     $this->emit('modal-hide-tresort-validated');
+        //     $this->emit('modal-hide-tresort');
+        //     $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        // }
     }
 
     public function updateReloadCard()
@@ -2596,7 +3786,6 @@ class Transfers extends Component
     }
 
 
-
     public function ChooseUpdateVersement($id)
     {
 
@@ -2998,12 +4187,43 @@ class Transfers extends Component
         $this->emit('menu-phoneCredit-active');
     }
 
+    public function cancelPushField()
+    {
+        $this->emit('modal-hide-push');
+        $this->emit('modal-hide-push-validated');
+        $this->emit('menu-push-active');
+    }
+
+
+    public function cancelTresortField()
+    {
+        $this->emit('modal-hide-tresort');
+        $this->emit('modal-hide-tresort-validated');
+        $this->emit('menu-tresort-active');
+    }
+
     public function cancelXbetField()
     {
         $this->password_validated = null;
         $this->emit('modal-hide-xbet-validated');
         $this->emit('modal-hide-xbet');
         $this->emit('menu-xbet-active');
+    }
+
+    public function cancelDjamoField()
+    {
+        $this->password_validated = null;
+        $this->emit('modal-hide-djamo-validated');
+        $this->emit('modal-hide-djamo');
+        $this->emit('menu-djamo-active');
+    }
+
+    public function cancelVersementField()
+    {
+        $this->password_validated = null;
+        $this->emit('modal-hide-versement-validated');
+        $this->emit('modal-hide-versement');
+        $this->emit('menu-versement-active');
     }
 
 

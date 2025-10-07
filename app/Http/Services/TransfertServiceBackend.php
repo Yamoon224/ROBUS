@@ -10,6 +10,7 @@ use App\Models\Invoices\InvoiceInter;
 use App\Models\Invoices\InvoicePayment;
 use App\Models\Invoices\InvoicePhoneCredit;
 use App\Models\Invoices\InvoiceTransaction;
+use App\Models\Invoices\OneBetInvoice;
 use App\Models\Moneys\LevelMoney;
 use App\Models\Offer;
 use App\Models\OperatorService;
@@ -19,6 +20,7 @@ use App\Models\Payments\PaymentBank;
 use App\Models\Payments\PaymentPhoneCredit;
 use App\Models\Payments\Transaction;
 use App\Models\Payments\TransactionInter;
+use App\Models\Payments\OneBetTransaction;
 use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
@@ -44,6 +46,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeValidated;
 use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Invoices\AutherTransactionInvoice;
+use App\Models\Payments\AutherTransaction;
 
 class TransfertServiceBackend
 {
@@ -76,6 +80,7 @@ class TransfertServiceBackend
             'amount_solde_drawal' => $amount_drawal ?? null
         ]);
     }
+
 
     public function createXbetTransaction($val_amount, $provider, $percent_robus, $amount_solde, $choose_type_transaction, $fullName, $numberAcompte, $citieXbet, $areaXbet, $codeAcompte, $amountReceved)
     {
@@ -138,7 +143,7 @@ class TransfertServiceBackend
         ]);
     }
 
-     public function createVersementTransaction($val_amount, $provider, $percent_robus, $amount_solde, $numberAccount, $bankCode , $guichetCode , $numberRib, $amountReceved)
+    public function createVersementTransaction($val_amount, $provider, $percent_robus, $amount_solde, $numberAccount, $bankCode, $guichetCode, $numberRib, $amountReceved)
     {
 
         return WalletVersement::create([
@@ -160,7 +165,7 @@ class TransfertServiceBackend
     }
 
 
-     public function createDjamoTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $image, $amountReceved)
+    public function createDjamoTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $image, $amountReceved)
     {
 
         return WalletDjamo::create([
@@ -740,6 +745,126 @@ class TransfertServiceBackend
             'fee_amount' => $check->costs_amount ?? null,
             'received_amount' => $check->amount,
             'status' => $check->status,
+        ]);
+    }
+
+    public function createXbet($check, $transactionCode, $transactionCompiCode)
+    {
+        return OneBetTransaction::create([
+            'wallet_xbet_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createVersement($check, $transactionCode, $transactionCompiCode)
+    {
+        return AutherTransaction::create([
+            'wallet_versement_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+
+    public function createPush($check, $transactionCode, $transactionCompiCode)
+    {
+        return AutherTransaction::create([
+            'wallet_push_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createDjamo($check, $transactionCode, $transactionCompiCode)
+    {
+        return AutherTransaction::create([
+            'wallet_djamo_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+
+      public function createTresort($check, $transactionCode, $transactionCompiCode)
+    {
+        return AutherTransaction::create([
+            'wallet_tresort_money_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+
+    public function createErrorXbet($check, $transactionCode, $transactionCompiCode)
+    {
+        return OneBetTransaction::create([
+            'wallet_xbet_id' => $check->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createInvoiceXbet($check, $paymentPhoneCredit)
+    {
+        return  OneBetInvoice::create([
+            'title' => 'Achat de Transaction 1XBET',
+            'wallet_xbet_id' => $check->id,
+            'one_bet_transaction_id' => $paymentPhoneCredit->id,
+            // 'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description ?? null,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
+        ]);
+    }
+
+
+    public function createInvoiceVersement($check)
+    {
+        return  AutherTransactionInvoice::create([
+            'title' => 'Achat de Transaction',
+            'auther_transaction_id' => $check->id,
+            // 'one_bet_transaction_id' => $paymentPhoneCredit->id,
+            // 'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $check->description ?? null,
+            'status' => $check->status,
+            'created_by' => Auth::guard('web')->user()->id,
         ]);
     }
 

@@ -2,11 +2,17 @@
 <div wire:ignore.self id="validated-xbet-modal" class="modal hide" data-tw-backdrop="static"
     style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000; display: block;">
     <div class="modal-dialog modal-lg">
+
         <div class="modal-content">
             <div class="modal-body p-0">
+                <div class="modal-header">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h2 class="modal-title">Action requise !</h2>
+                </div>
                 <div class="p-5 text-center">
                     <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                    <div class="text-3xl mt-5">Action requise !!!</div>
                     <div class="text-slate-500 mt-2">Êtes-vous sûr de vouloir
                         cette action ?</div>
                 </div>
@@ -57,15 +63,15 @@
                     </div>
                 </div>
 
-                    <div class="px-5 pb-8 text-center mt-6">
-                        <button type="button" wire:click="cancelXbetField"
-                            class="btn btn-danger-soft w-25 mr-1 mb-1">Annuler</button>
-                        <button wire:click="updateXbet" type="button" wire:loading.remove=""
-                            class="btn btn-primary w-50">Validez</button>
-                            <div  wire:loading wire:target="updateXbet">
-                                Traitement en cours...
-                            </div>
+                <div class="px-5 pb-8 text-center mt-6">
+                    <button type="button" wire:click="cancelXbetField"
+                        class="btn btn-danger-soft w-25 mr-1 mb-1">Annuler</button>
+                    <button wire:click="updateXbet" type="button" wire:loading.remove=""
+                        class="btn btn-primary w-50">Validez</button>
+                    <div wire:loading wire:target="updateXbet">
+                        Traitement en cours...
                     </div>
+                </div>
 
 
             </div>

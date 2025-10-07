@@ -229,7 +229,7 @@
                                                       @if ($item->updated_by != null)
                                                           @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                  <a wire:click="editPaiement({{ $item->id }}, 'update-paiementInvoice-modal')"
+                                                                  <a wire:click="editTresort({{ $item->id }}, 'update-tresort-modal')"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                       href="javascript:;" title="Modifier">
                                                                       Modifier

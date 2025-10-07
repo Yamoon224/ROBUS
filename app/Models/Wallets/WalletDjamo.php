@@ -12,10 +12,12 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\AdminsCom;
 use App\Models\DjamoPercent;
 use App\Models\Invoices\OneBetInvoice;
+use App\Models\Invoices\AutherTransactionInvoice;
+use App\Models\Payments\AutherTransaction;
 
 class WalletDjamo extends Model
 {
-     use HasFactory;
+    use HasFactory;
     use SoftDeletes;
 
     protected $table = 'wallet_djamos';
@@ -35,7 +37,7 @@ class WalletDjamo extends Model
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
 
- 
+
 
     public function provider()
     {
@@ -44,18 +46,20 @@ class WalletDjamo extends Model
 
     public function transaction()
     {
-        return $this->hasOne(OneBetTransaction::class);
+        return $this->hasOne(AutherTransaction::class);
     }
 
     public function invoiceTransaction()
     {
-        return $this->hasOne(OneBetInvoice::class);
+        return $this->hasOne(AutherTransactionInvoice::class);
     }
 
     public function adminCom()
     {
         return $this->hasOne(AdminsCom::class);
     }
+
+
 
     public function wallet()
     {

@@ -4,9 +4,14 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-body p-0">
+                <div class="modal-header">
+                    <div class="warning-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h2 class="modal-title">Action requise !</h2>
+                </div>
                 <div class="p-5 text-center">
                     <i data-lucide="x-circle" class="w-16 h-16 text-danger mx-auto mt-3"></i>
-                    <div class="text-3xl mt-5">Action requise !!!</div>
                     <div class="text-slate-500 mt-2">Êtes-vous sûr de vouloir
                         cette action ?</div>
                 </div>

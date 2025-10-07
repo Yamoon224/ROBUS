@@ -2,20 +2,13 @@
     style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000; display: block;">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header alert alert-primary ">
-                <h2 class="font-medium text-base mr-auto">Valider demande internationnale</h2>
-            </div>
-            <a wire:click="$emit('modal-hide-inters')"
-                style="position: absolute; right: 0px; top: 0px; margin-top: 0.75rem; margin-right: 0.75rem;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="x"
-                    style="color: white;" data-lucide="x" class="lucide lucide-x w-8 h-8 text-slate-400">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                </svg>
-            </a>
-
-
+              @include("components.modal-header", [
+                'title' => 'Valider demande internationale',
+                'icon' => 'fas fa-check-circle',
+                'service' => 'Internationale',
+                'serviceIcon' => 'fas fa-dice',
+                'onClose' => 'cancelInterField'
+            ])
 
             @if ($choose_type_paiement == 1)
 

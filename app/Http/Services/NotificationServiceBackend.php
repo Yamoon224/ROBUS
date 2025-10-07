@@ -94,6 +94,12 @@ class NotificationServiceBackend
         $notify->newPush($check);
     }
 
+      public function sendMailTresortNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newTresort($check);
+    }
+
        public function sendMailVersementBanqueNotification($check)
     {
         $notify = new MailController;

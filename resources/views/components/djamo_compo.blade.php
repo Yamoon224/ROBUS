@@ -153,7 +153,7 @@
                                                       <div class="flex items-center justify-center text-success mt-3">
 
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                            <x-take-action-button action="ChooseUpdatePayment"
+                                                            <x-take-action-button action="ChooseUpdateDjamo"
                                                                   :itemId="$item->id" label="Je prends en charge"
                                                                   speed="ultra-fast" color="warning" />
                                                          
@@ -290,7 +290,7 @@
                                                       @if ($item->updated_by != null)
                                                           @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                  <a wire:click="editPaiement({{ $item->id }}, 'update-paiementInvoice-modal')"
+                                                                  <a wire:click="editDjamo({{ $item->id }}, 'update-djamo-modal')"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                       href="javascript:;" title="Modifier">
                                                                       Modifier

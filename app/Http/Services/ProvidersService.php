@@ -223,9 +223,9 @@ class ProvidersService
 
         if ($isUnderDistributer) {
             if ($countryNameGroup == "CIV") {
-                $providerMap = ['AFL', 'AFC', 'ASIE', 'AFE', 'URP'];
+                $providerMap = ['AFL', 'AFC','MAG', 'ASIE', 'AFE', 'URP'];
             } else {
-                $providerMap = ['AFL', 'CIV', 'AFC', 'ASIE', 'AFE'];
+                $providerMap = ['AFL', 'CIV', 'MAG', 'AFC', 'ASIE', 'AFE'];
             }
         } else {
             $providerMaps = [

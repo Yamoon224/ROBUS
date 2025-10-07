@@ -12,7 +12,8 @@ use Spatie\Activitylog\LogOptions;
 use App\Models\AdminsCom;
 use App\Models\ArgentTresort;
 use App\Models\Invoices\OneBetInvoice;
-
+use App\Models\Invoices\AutherTransactionInvoice;
+use App\Models\Payments\AutherTransaction;
 
 class WalletTresortMoney extends Model
 {
@@ -43,14 +44,15 @@ class WalletTresortMoney extends Model
         return $this->belongsTo(Provider::class, 'provider_id', 'id')->withTrashed();
     }
 
+   
     public function transaction()
     {
-        return $this->hasOne(OneBetTransaction::class);
+        return $this->hasOne(AutherTransaction::class);
     }
 
     public function invoiceTransaction()
     {
-        return $this->hasOne(OneBetInvoice::class);
+        return $this->hasOne(AutherTransactionInvoice::class);
     }
 
     public function adminCom()

@@ -12,6 +12,8 @@ use App\Models\Invoices\InvoiceDeposit;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Invoices\AutherTransactionInvoice;
+use App\Models\Payments\AutherTransaction;
 
 class WalletVersement extends Model
 {
@@ -49,11 +51,17 @@ class WalletVersement extends Model
         return $this->belongsTo(Wallet::class, 'wallet_id', 'id')->withTrashed();
     }
 
-
-    public function invoiceDeposit()
+ 
+    public function transaction()
     {
-        return $this->hasOne(InvoiceDeposit::class);
+        return $this->hasOne(AutherTransaction::class);
     }
+
+    public function invoiceTransaction()
+    {
+        return $this->hasOne(AutherTransactionInvoice::class);
+    }
+
 
     public function virementPercent()
     {

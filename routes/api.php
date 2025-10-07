@@ -156,6 +156,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('inter/show/{id}', [IntersPaymentController::class, 'inter_show']);
             Route::post('inter/delete/{id}', [IntersPaymentController::class, 'delete_inter']);
             Route::get('search_inter/{wallet_id}', [IntersPaymentController::class, 'search_transaction_inter']);
+            
             // Route::get('search_payment_inter/{commission_id}', [IntersPaymentController::class, 'search_payment_robus_inter']);
             Route::get('paiement_invoice_inter/{invoice_commission_id}', [IntersPaymentController::class, 'paiement_invoice_inter']);
             Route::get('paiement_invoice_inter_received/{amount_received}', [IntersPaymentController::class, 'paiement_invoice_received']);

@@ -11,7 +11,8 @@ use App\Models\Wallets\Wallet;
 use Spatie\Activitylog\LogOptions;
 use App\Models\AdminsCom;
 use App\Models\PushPercent;
-use App\Models\Invoices\OneBetInvoice;
+use App\Models\Invoices\AutherTransactionInvoice;
+use App\Models\Payments\AutherTransaction;
 
 
 class WalletPush extends Model
@@ -44,14 +45,15 @@ class WalletPush extends Model
         return $this->belongsTo(Provider::class, 'provider_id', 'id')->withTrashed();
     }
 
+   
     public function transaction()
     {
-        return $this->hasOne(OneBetTransaction::class);
+        return $this->hasOne(AutherTransaction::class);
     }
 
     public function invoiceTransaction()
     {
-        return $this->hasOne(OneBetInvoice::class);
+        return $this->hasOne(AutherTransactionInvoice::class);
     }
 
     public function adminCom()

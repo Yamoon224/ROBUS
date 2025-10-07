@@ -946,6 +946,10 @@
     @include('livewire.commissions.modals.transactions.updateRelaodCards')
     @include('livewire.commissions.modals.transactions.updateTransfersUV')
     @include('livewire.commissions.modals.transactions.updateXbet')
+    @include('livewire.commissions.modals.transactions.updateVersement')
+    @include('livewire.commissions.modals.transactions.updatePush')
+    @include('livewire.commissions.modals.transactions.updateTresort')
+    @include('livewire.commissions.modals.transactions.updateDjamo')
     {{-- @include('livewire.commissions.modals.transactions.updateWave') --}}
     {{-- @include('livewire.commissions.modals.transactions.updateXbet') --}}
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
