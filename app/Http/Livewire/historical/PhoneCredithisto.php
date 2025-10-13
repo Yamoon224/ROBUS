@@ -18,6 +18,7 @@ use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Payments\PaymentPhoneCredit;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Admin\MailController;
+use App\Http\Services\ServiceHistoricalBackend;
 
 class PhoneCredithisto extends Component
 {
@@ -385,14 +386,12 @@ class PhoneCredithisto extends Component
             ->where('wallet_phone_credits.is_web', false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->where('wallet_phone_credits.status', 'SUCCESS')->select('wallet_phone_credits.*');
 
         if ($walletUser->is_under_distributer) {
-            // Filtrer par utilisateur
             $wallettransactions->where('wallet_phone_credits.created_by', $walletUser->id);
         }
 
         $wallettransactions = $wallettransactions->get();
         
         foreach ($wallettransactions as $wallet) {
-            // Accédez à la propriété amount sur chaque objet
             $data[] = $wallet->costs_amount;
         }
 

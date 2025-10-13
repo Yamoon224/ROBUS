@@ -1852,6 +1852,45 @@ class Transfers extends Component
         $this->emit('modal-hide-push');
     }
 
+      public function tryOpenModalVirement($modalName)
+    {
+        // Vérifie si le champ est vide
+        if (empty($this->virementStatus)) {
+            $this->addError('virementStatus', 'Veuillez sélectionner un statut avant de continuer.');
+            return;
+        }
+
+        $this->resetErrorBag('virementStatus');
+        $this->emit('modal-virement-validted-show', $modalName);
+        $this->emit('modal-hide-virement');
+    }
+
+      public function tryOpenModalPaiementInvoice($modalName)
+    {
+        // Vérifie si le champ est vide
+        if (empty($this->paiementStatus)) {
+            $this->addError('paiementStatus', 'Veuillez sélectionner un statut avant de continuer.');
+            return;
+        }
+
+        $this->resetErrorBag('paiementStatus');
+        $this->emit('modal-paiement-validted-show', $modalName);
+        $this->emit('modal-hide-paiement');
+    }
+
+        public function tryOpenModalReloadCard($modalName)
+    {
+        // Vérifie si le champ est vide
+        if (empty($this->reloadcardStatus)) {
+            $this->addError('reloadcardStatus', 'Veuillez sélectionner un statut avant de continuer.');
+            return;
+        }
+
+        $this->resetErrorBag('reloadcardStatus');
+        $this->emit('modal-reloadCards-validted-show', $modalName);
+        $this->emit('modal-hide-reloadCard');
+    }
+
      public function tryOpenModalDjamo($modalName)
     {
         // Vérifie si le champ est vide
@@ -1863,6 +1902,19 @@ class Transfers extends Component
         $this->resetErrorBag('djamoStatus');
         $this->emit('modal-djamo-validted-show', $modalName);
         $this->emit('modal-hide-djamo');
+    }
+
+      public function tryOpenModalInter($modalName)
+    {
+        // Vérifie si le champ est vide
+        if (empty($this->interStatus)) {
+            $this->addError('interStatus', 'Veuillez sélectionner un statut avant de continuer.');
+            return;
+        }
+
+        $this->resetErrorBag('interStatus');
+        $this->emit('modal-inter-validted-show', $modalName);
+        // $this->emit('modal-hide-inter');
     }
 
     public function tryOpenModalTresort($modalName)
@@ -4238,9 +4290,9 @@ class Transfers extends Component
     public function cancelVirementField()
     {
         $this->virementDescription = '';
-        $this->virementId = '';
         $this->virementStatus = '';
-        $this->provider_virement = null;
+         $this->password_validated = null;
+         $this->emit('modal-hide-virement-validated');
         $this->emit('modal-hide-virement');
     }
 

@@ -88,6 +88,7 @@
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="bordered-radio-15"
                                 class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">
+                                <i class="fas fa-check-circle style_success"></i>
                                 Accepté</label>
                             @error('transactionStatus')
                                 <span class="text-danger">{{ $message }}</span>
@@ -101,7 +102,9 @@
                                 value="ERROR"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="bordered-radio-16"
-                                class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Refusé</label>
+                                class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">
+                                 <i class="fas fa-times-circle style_error"></i>
+                                Refusé</label>
                             @error('transactionStatus')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror

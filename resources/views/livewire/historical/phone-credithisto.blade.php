@@ -102,7 +102,7 @@
                     class="form-select py-3 px-4 box w-full
                     dark-border-dark-3 mt-lg-0 ms-auto mt-3"
                     aria-placeholder="Rechercher par pays">
-                    <option selected value="!=null" >Status</option>
+                    <option selected value="!=null">Status</option>
                     <option value="SUCCESS">Success</option>
                     <option value="ERROR">Erreur</option>
                     <option value="PENDING">En attente</option>
@@ -163,46 +163,36 @@
                                         @if ($phone_historicals->count() > 0)
                                             @foreach ($phone_historicals as $key => $item)
                                                 <tr class="intro-x">
-                                                    <td>
-                                                        <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->provider->name ?? null }}
-                                                        </p>
+                                                    <td class="text-center w-40">
 
-                                                    </td>
-                                                    <td class="w-50">
-                                                        <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                                            <div class="text-slate-300 text-xs  mt-0.5">
-                                                                {{ $item->wallet->sidUser->firstname ?? null }}
-                                                                {{ $item->wallet->sidUser->lastname ?? null }}
+                                                        <div
+                                                            class="px-3 py-2 text-dark btn-purple dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                            <div class="fc-event-title-container"
+                                                                style="color: white;">
+                                                                <div class="fc-event-title fc-sticky">
+                                                                    {{ $item->provider->name ?? null }}
+
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div class="text-slate-500  mt-0.5">
-                                                            <span
-                                                                class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                {{ $item->wallet->sidUser->country->name ?? null }}
-                                                                ville :
-                                                                {{ $item->wallet->sidUser->city->name ?? null }}
-                                                            </span>
-                                                        </div>
 
                                                     </td>
-                                                    <td class="w-40">
-                                                        <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->amount ?? null }} {{ $usersCountry }}</p>
-                                                            <p class="mt-3">
-                                                                Solde : 
-                                                            </p>
-                                                            <span
-                                                                class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
-                                                                {{ $item->wallet->currencie->code ?? null }}
-                                                            </span>
+                                                    <td class="user-info-card">
+                                                        @include('components.infoUser')
+
+                                                    </td>
+                                                    <td>
+                                                        @include('components.walletBalance')
+
                                                     </td>
                                                     <td class="w-40">
                                                         <p href="" class="font-medium whitespace-nowrap">
                                                             {{ $item->created_at ?? null }}</p>
                                                     </td>
                                                     <td class="w-40">
+                                                         <div class="mb-3">
+                                                      @include('components.info')
+                                                  </div>
                                                         <p href="" class="font-medium whitespace-nowrap mb-2">
                                                             {{ $item->paymentPhone->created_at ?? null }}</p>
                                                         <p href="" class="font-medium whitespace-nowrap">

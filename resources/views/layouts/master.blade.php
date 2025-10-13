@@ -1366,8 +1366,6 @@
             $('#update-paiementInvoice-modal').removeClass('show');
             $('#update-paiementInvoice-modal').addClass('hide');
 
-            $('#validated-paiementInvoice-modal').removeClass('show');
-            $('#validated-paiementInvoice-modal').addClass('hide');
 
             $('#reload-nav').removeClass('active');
             $('reload-nav').attr('aria-selected', false);

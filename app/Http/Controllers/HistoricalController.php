@@ -71,7 +71,6 @@ class HistoricalController extends Controller
 
             $pdf = Pdf::loadView('pages.historicals.pdf_bank', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
             return $pdf->download('reporting_virement.pdf');
-
         } elseif ($usersCountry->is_distributer == true) {
 
             foreach (
@@ -686,7 +685,6 @@ class HistoricalController extends Controller
 
         $pdf = Pdf::loadView('pages.historicals.pdf_reload', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
         return $pdf->download('reporting_rechargment.pdf');
-
     }
 
 
@@ -705,7 +703,7 @@ class HistoricalController extends Controller
 
         $data = [];
 
-        foreach ($wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('wallet_id' , firm()->wallet->wallet_id)->where('status', 'SUCCESS')->get() as $bank) {
+        foreach ($wallets::whereBetween('created_at', [$searchDateBegin, $searchDateEnd])->where('wallet_id', firm()->wallet->wallet_id)->where('status', 'SUCCESS')->get() as $bank) {
 
             $data[] = $bank->amount;
         }
@@ -769,14 +767,13 @@ class HistoricalController extends Controller
      */
     public function browse_transfer()
     {
-    
+
         return view('firms.pages.browse_transfer');
     }
 
     public function browse_reloads()
     {
         return view('firms.pages.browse_reloads');
-
     }
 
     public function browse_transferfirm()
@@ -914,6 +911,47 @@ class HistoricalController extends Controller
 
         return view('pages.historicals.browse_xbets');
     }
+
+    public function browse_versments()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+            abort(403);
+        }
+
+        return view('pages.historicals.browse_versments');
+    }
+
+    public function browse_push()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+            abort(403);
+        }
+
+        return view('pages.historicals.browse_push');
+    }
+
+    public function browse_djamo()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+            abort(403);
+        }
+
+        return view('pages.historicals.browse_djamo');
+    }
+
+    public function browse_tresort()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+            abort(403);
+        }
+
+        return view('pages.historicals.browse_tresort');
+    }
+
 
     public function browse_xbets_visitors()
     {

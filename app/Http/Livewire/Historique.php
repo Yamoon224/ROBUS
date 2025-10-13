@@ -13,6 +13,9 @@ use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletTresortMoney;
 use App\Models\WithMerchant;
 use Illuminate\Support\Carbon;
 use Livewire\Component;
@@ -41,6 +44,9 @@ class Historique extends Component
     public $showCommissionButton = false;
     public $showRecharButton = false;
     public $showVersementButton = false;
+    public $showDjamoButton = false;
+    public $showPushButton = false;
+    public $showTresortMoneyButton = false;
     public $showWaveButton = false;
     public $operators;
     public $operatorsCompagnie;
@@ -82,6 +88,9 @@ class Historique extends Component
             'Historiques Versement' => 'showVersementButton',
             'Historiques Transfert' => 'showTransButton',
             'Historiques Wave' => 'showWaveButton',
+            'Historiques Djamo' => 'showDjamoButton',
+            'Historiques Push' => 'showPushButton',
+            'Historiques Tresort Money' => 'showTresortMoneyButton',
         ];
 
         foreach ($this->operatorsTransaction as $operator) {
@@ -140,6 +149,24 @@ class Historique extends Component
         $wave_padding = $this->getTransactionCount(WalletWave::class, 'PENDING', 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web', false);
         $wave_success = $this->getTransactionCount(WalletWave::class, 'SUCCESS',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web', false);
 
+        // Push
+        $push_error = $this->getTransactionCount(WalletPush::class, 'ERROR',  'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
+        $push_padding = $this->getTransactionCount(WalletPush::class, 'PENDING', 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
+        $push_success = $this->getTransactionCount(WalletPush::class, 'SUCCESS',  'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
+         
+        $versment_error = $this->getTransactionCount(WalletVersement::class, 'ERROR',  'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
+        $versement_padding = $this->getTransactionCount(WalletVersement::class, 'PENDING', 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
+        $versement_success = $this->getTransactionCount(WalletVersement::class, 'SUCCESS',  'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
+
+        $tresort_error = $this->getTransactionCount(WalletTresortMoney::class, 'ERROR',  'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status',  'wallet_tresort_money.is_web', false);
+        $tresort_padding = $this->getTransactionCount(WalletTresortMoney::class, 'PENDING', 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status',  'wallet_tresort_money.is_web', false);
+        $tresort_success = $this->getTransactionCount(WalletTresortMoney::class, 'SUCCESS',  'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status',  'wallet_tresort_money.is_web', false);
+
+
+        $djamo_error = $this->getTransactionCount(WalletDjamo::class, 'ERROR',  'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
+        $djamo_padding = $this->getTransactionCount(WalletDjamo::class, 'PENDING', 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
+        $djamo_success = $this->getTransactionCount(WalletDjamo::class, 'SUCCESS',  'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
+
         // Amount transactions days
         $payement_amount = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount',  'wallet_payments.is_web', false);
         $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount',  'wallet_transactions.is_web', false);
@@ -151,13 +178,19 @@ class Historique extends Component
         $xbet_amount = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount',  'wallet_xbets.is_web', false);
         $wave_amount = $this->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount',  'wallet_waves.is_web', false);
 
+        $push_amount = $this->getTodayTransactionAmountTotal(WalletPush::class, 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by',  'wallet_pushes.status',  'wallet_pushes.amount',  'wallet_pushes.is_web', false);
+        $tresort_amount = $this->getTodayTransactionAmountTotal(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by',  'wallet_tresort_money.status',  'wallet_tresort_money.amount',  'wallet_tresort_money.is_web', false);
+        $versement_amount = $this->getTodayTransactionAmountTotal(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by',  'wallet_versements.status',  'wallet_versements.amount',  'wallet_versements.is_web', false);
+        $djamo_amount = $this->getTodayTransactionAmountTotal(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by',  'wallet_djamos.status',  'wallet_djamos.amount',  'wallet_djamos.is_web', false);
+
+
 
         return view('livewire.historique', [
 
             'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-            'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error,
-            'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success,
-            'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding,
+            'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error + $push_error + $versment_error + $tresort_error + $djamo_error ,
+            'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success + $push_success + $versement_success + $tresort_success + $djamo_success,
+            'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding + $push_padding + $tresort_padding + $djamo_padding + $versement_padding,
             'wallet_Banks_last' => WalletBank::where('is_web', false)
                 ->when(sabdy()->is_admin, function ($query) {
                     // Si c'est un administrateur, ne filtrez pas les résultats.
@@ -294,8 +327,57 @@ class Historique extends Component
                     // Si c'est un distributeur, filtrez par 'updated_by'.
                     return $query->where('updated_by', sabdy()->id);
                 })->select('wallet_versements.*')->limit(5)->orderBy('wallet_versements.created_at', 'desc')->get(),
+
+            // New
+             'Wallet_push_last' => WalletPush::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
+                ->when(sabdy()->is_under_distributer, function ($query) {
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
+                })->select('wallet_pushes.*')->limit(5)->orderBy('wallet_pushes.created_at', 'desc')->get(),
+            
+              'Wallet_tresort_last' => WalletTresortMoney::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
+                ->when(sabdy()->is_under_distributer, function ($query) {
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
+                })->select('wallet_tresort_money.*')->limit(5)->orderBy('wallet_tresort_money.created_at', 'desc')->get(),
+               
+                 'Wallet_djamo_last' => WalletDjamo::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
+                ->when(sabdy()->is_under_distributer, function ($query) {
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
+                })->select('wallet_djamos.*')->limit(5)->orderBy('wallet_djamos.created_at', 'desc')->get(),
+
+                
             'usersCountry' =>  $walletUser->country->currencie->name,
             'sum_bank' =>  $bank_amount,
+            'sum_versment' =>  $versement_amount,
+            'sum_push' =>  $push_amount,
+            'sum_tresort' =>  $tresort_amount,
+            'sum_djamo' =>  $djamo_amount,
             'sum_deposit' => $deposit_amount,
             'sum_payment' => $payement_amount,
             'sum_reload' => $reload_amount,
@@ -318,6 +400,9 @@ class Historique extends Component
             'showRecharButton' => $this->showRecharButton,
             'showWaveButton' => $this->showWaveButton,
             'showVersementButton' => $this->showVersementButton,
+            'showDjamoButton' => $this->showDjamoButton,
+            'showPushButton' => $this->showPushButton,
+            'showTresortMoneyButton' => $this->showTresortMoneyButton,
             'sum_under_distributers' => $this->historiqueService->getSDistributeurSumAdmin(),
             'sum_custumers' => $this->historiqueService->getCustumersSumAdmin(),
 

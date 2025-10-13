@@ -127,7 +127,6 @@ class XbetHisto extends Component
         return array_sum($data);
     }
 
-
     public function getVirementTransactionProperty()
     {
 

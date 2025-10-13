@@ -43,77 +43,32 @@
 
                             <div class="field-group">
                                 <div class="field">
-                                    {{-- <label for="{{ $phoneNumberLabel }}" class="form-label">{{ $phoneNumberLabel }}<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="{{ $phoneNumberInputId }}" disabled type="number"
-                                        class="form-control style_edit_form" placeholder="Numero du telephone"> --}}
-
-                                    <label class="form-label required">{{ $phoneNumberLabel }}</label>
+                                    <label class="form-label required">{{ $phoneNumberLabel }} </label>
                                     <div class="field-value">
-                                        <i class="fas fa-user"></i>
-                                        <span id="number_phone_credit_edit">
-                                           {{ $phoneNumberInputId }}</span>
+                                        <i class="fas fa-id-card"></i>
+                                        <span id="phone_user_edit">{{ $paiement_phone_canal_edit ?? $paiement_decoder_canal_edit }} </span>
                                     </div>
                                 </div>
+                             
                                 <div class="field">
-                                    <label class="form-label required">Montant</label>
-                                    <div class="field-value">
-                                        <i class="fas fa-money-bill-wave"></i>
-                                        <span id="offer_paiement_edit_amount">{{ $offer_paiement_edit_amount ?? null }}
-                                            {{ $currency_custumers ?? null }}</span>
-                                    </div>
-                                </div>
-                            </div>
-                             <div class="field-group">
-                                <div class="field">
-                                    
                                     <label class="form-label required">Offre</label>
                                     <div class="field-value">
                                         <i class="fas fa-id-card"></i>
                                         <span id="offer_paiement_edit">
-                                           {{ $offer_paiement_edit }}</span>
+                                            {{ $offer_paiement_edit }}</span>
                                     </div>
                                 </div>
                             </div>
+                            <div class="field-group">
+                                <div class="field field-full">
 
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                                <div class="col-span-12 mt-space-padding">
-                                    <label for="{{ $phoneNumberLabel }}" class="form-label">{{ $phoneNumberLabel }}<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="{{ $phoneNumberInputId }}" disabled type="number"
-                                        class="form-control style_edit_form" placeholder="Numero du telephone">
-
-                                </div>
-                            </div>
-
-
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-
-                                <div class="col-span-6 mt-space-padding">
-                                    <label for="offer_paiement_edit_amount" class="form-label">Montant<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <div class="flex">
-                                        <input wire:model.defer="offer_paiement_edit_amount" disabled
-                                            id="offer_paiement_edit_amount" type="number"
-                                            class="form-control text-base font-medium" placeholder="Montant">
-                                        <div
-                                            class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
-                                            <input wire:model.defer="devise_user" disabled id="devise_user"
-                                                type="text" class="form-control style_edit_form"
-                                                placeholder="Numero de telephone">
-                                        </div>
-
+                                    <label class="form-label required">Montant</label>
+                                    <div class="field-value">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span id="offer_paiement_edit_amount">{{ $offer_paiement_edit_amount ?? null }}
+                                            {{ $devise_user ?? null }}</span>
                                     </div>
 
-                                </div>
-                                <div class="col-span-6 mt-space-padding">
-                                    <label for="offer_paiement_edit" class="form-label">Offre<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="offer_paiement_edit" disabled id="offer_paiement_edit"
-                                        type="text" class="form-control style_edit_form">
                                 </div>
                             </div>
                         @endif
@@ -133,88 +88,71 @@
                                         : 'paiement_id_invoice_edit';
                             @endphp
 
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                                <div class="col-span-12 mt-space-padding">
-                                    <label for="paiement_name_cie_edit" class="form-label">Nom de la facture<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="paiement_name_cie_edit" disabled
-                                        id="paiement_name_cie_edit" type="text" class="form-control style_edit_form"
-                                        placeholder="Nom facture">
-
-                                </div>
-                            </div>
-                            <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                                <div class="col-span-6 mt-space-padding">
-                                    <label for="{{ $paiementInvoiceLabel }}"
-                                        class="form-label">{{ $paiementInvoiceLabel }}<span class="text-danger">
-                                            *</span></label>
-                                    <input wire:model.defer="{{ $paiementNumberInputId }}" disabled
-                                        id="{{ $paiementNumberInputId }}" type="text"
-                                        class="form-control style_edit_form" placeholder="Identifiant">
-
-                                </div>
-                                <div class="col-span-6 mt-space-padding">
-                                    <label for="paiement_amount_t_sodecie_edit" class="form-label">Montant<span
-                                            class="text-danger">
-                                            *</span></label>
-                                    <div class="flex">
-                                        <input wire:model.defer="paiement_amount_t_sodecie_edit" disabled
-                                            id="paiement_amount_t_sodecie_edit" type="number"
-                                            class="form-control text-base font-medium" placeholder="Montant">
-                                        <div
-                                            class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
-                                            <input wire:model.defer="devise_user" disabled id="devise_user"
-                                                type="text" class="form-control style_edit_form"
-                                                placeholder="Numero de telephone">
-                                        </div>
-
+                            <div class="field-group">
+                                <div class="field field-full">
+                                    <label class="form-label required">Nom de la facture</label>
+                                    <div class="field-value">
+                                        <i class="fas fa-id-card"></i>
+                                        <span id="paiement_name_cie_edit" class="inline-flex items-center gap-1">
+                                            <span class="mr-3">{{ $paiement_name_cie_edit ?? null }}</span>
+                                        </span>
                                     </div>
-
                                 </div>
+                                <div class="field">
+                                    <label class="form-label required"> {{ $paiementInvoiceLabel }} </label>
+                                    <div class="field-value">
+                                        <i class="fas fa-id-card"></i>
+                                        <span id="paiement_id_invoice_edit" class="inline-flex items-center gap-1">
+                                            <span class="mr-3">{{ $paiement_id_invoice_edit ?? null }}</span>
+                                        </span>
+                                    </div>
+                                </div>
+
+
+                                <div class="field">
+                                    <label class="form-label required">Montant</label>
+                                    <div class="field-value">
+                                        <i class="fas fa-money-bill-wave"></i>
+                                        <span
+                                            id="paiement_amount_t_sodecie_edit">{{ $paiement_amount_t_sodecie_edit ?? null }}
+                                            {{ $devise_user ?? null }}</span>
+                                    </div>
+                                </div>
+
                             </div>
                         @endif
 
                     @endif
 
                     @if ($provider_payment_edit == 10)
-                        <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                            <div class="col-span-12">
-                                <label for="paiement_name_sodecie_edit" class="form-label">Nom de la facture<span
-                                        class="text-danger">
-                                        *</span></label>
-                                <input wire:model="paiement_name_sodecie_edit" disabled id="paiement_name_sodecie_edit"
-                                    type="text" class="form-control style_edit_form" placeholder="Nom facture">
-
-                            </div>
-                        </div>
-
-                        <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3">
-                            <div class="col-span-6 mt-1">
-                                <label for="paiement_amount_t_sodecie_edit" class="form-label">Montant<span
-                                        class="text-danger">
-                                        *</span></label>
-                                <div class="flex">
-                                    <input wire:model.defer="paiement_amount_t_sodecie_edit" disabled
-                                        id="paiement_amount_t_sodecie_edit" type="number"
-                                        class="form-control text-base font-medium" placeholder="Montant">
-                                    <div
-                                        class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-devise">
-                                        <input wire:model.defer="devise_user" disabled id="devise_user"
-                                            type="text" class="form-control style_edit_form"
-                                            placeholder="Numero de telephone">
-                                    </div>
-
+                        <div class="field-group">
+                            <div class="field field-full">
+                                <label class="form-label required">Nom de la facture</label>
+                                <div class="field-value">
+                                    <i class="fas fa-id-card"></i>
+                                    <span id="paiement_name_sodecie_edit" class="inline-flex items-center gap-1">
+                                        <span class="mr-3">{{ $paiement_name_sodecie_edit ?? null }}</span>
+                                    </span>
                                 </div>
-
                             </div>
-                            <div class="col-span-6  mt-1">
-                                <label for="paiement_num_contrat_edit" class="form-label">Numero du contrat (09
-                                    chiffres)<span class="text-danger">
-                                        *</span></label>
-                                <input wire:model="paiement_num_contrat_edit" disabled id="paiement_num_contrat_edit"
-                                    type="number" class="form-control style_edit_form" placeholder="Numero contrat">
 
+                            <div class="field">
+                                <label class="form-label required">Montant</label>
+                                <div class="field-value">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                    <span
+                                        id="paiement_amount_t_sodecie_edit">{{ $paiement_amount_t_sodecie_edit ?? null }}
+                                        {{ $devise_user ?? null }}</span>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <label class="form-label required">Numero du contrat (09
+                                    chiffres)</label>
+                                <div class="field-value">
+                                    <i class="fas fa-user"></i>
+                                    <span id="paiement_num_contrat_edit">
+                                        {{ $paiement_num_contrat_edit ?? null }}</span>
+                                </div>
                             </div>
                         </div>
                     @endif
@@ -232,12 +170,14 @@
                         <div
                             class=" col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
                             <input
-                                wire:click="$emit('modal-paiement-validted-show' , 'validated-paiementInvoice-modal')"
-                                wire:model.debounce.10ms="paiementStatus" id="bordered-radio-19" type="radio"
+                                wire:click="tryOpenModalPaiementInvoice('validated-paiementInvoice-modal')"
+                                wire:model="paiementStatus" id="bordered-radio-19" type="radio"
                                 value="SUCCESS"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="bordered-radio-19"
-                                class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Accepté</label>
+                                class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">
+                                <i class="fas fa-check-circle style_success"></i>
+                                Accepté</label>
                             @error('paiementStatus')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
@@ -245,12 +185,14 @@
                         <div
                             class=" col-span-6 mt-space flex items-center pl-4 rounded border border-gray-200 dark:border-gray-700">
                             <input
-                                wire:click="$emit('modal-paiement-validted-show' , 'validated-paiementInvoice-modal')"
-                                wire:model.debounce.10ms="paiementStatus" id="bordered-radio-20" type="radio"
+                                wire:click="tryOpenModalPaiementInvoice('validated-paiementInvoice-modal')"
+                                wire:model="paiementStatus" id="bordered-radio-20" type="radio"
                                 value="ERROR"
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="bordered-radio-20"
-                                class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">Refusé</label>
+                                class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">
+                                <i class="fas fa-times-circle style_error"></i>
+                                Refusé</label>
                             @error('paiementStatus')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror

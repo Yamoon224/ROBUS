@@ -19,8 +19,9 @@
       </div>
       <div class="grid grid-cols-12 gap-6 mt-6">
           <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
-             
-               <div class="flex items-center  border-b border-slate-200/60 dark:border-darkmode-400 bg-white dark:bg-darkmode-700">
+
+              <div
+                  class="flex items-center  border-b border-slate-200/60 dark:border-darkmode-400 bg-white dark:bg-darkmode-700">
                   <div class="flex items-center gap-3">
                       <div class="w-3 h-8 bg-orange-500 rounded-r-full"></div>
                       <div>
@@ -86,7 +87,7 @@
                                               </td>
                                               <td class="user-info-card">
                                                   @include('components.infoUser')
-                                                  
+
                                               </td>
                                               <td>
                                                   @include('components.walletBalance')
@@ -151,11 +152,9 @@
                                                       <div class="flex items-center justify-center text-success mt-3">
 
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-
-                                                           <x-take-action-button action="ChooseUpdatePayment"
+                                                              <x-take-action-button action="ChooseUpdatePayment"
                                                                   :itemId="$item->id" label="Je prends en charge"
                                                                   speed="ultra-fast" color="warning" />
-
                                                           @endif
 
                                                       </div>
@@ -292,6 +291,12 @@
                                                                   <a wire:click="editPaiement({{ $item->id }}, 'update-paiementInvoice-modal')"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                       href="javascript:;" title="Modifier">
+                                                                      <svg class="w-4 h-4 mr-1" fill="none"
+                                                                          stroke="currentColor" viewBox="0 0 24 24">
+                                                                          <path stroke-linecap="round"
+                                                                              stroke-linejoin="round" stroke-width="2"
+                                                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                      </svg>
                                                                       Modifier
                                                                   </a>
                                                               @endif
@@ -301,6 +306,12 @@
                                                                       href="{{ route('paiements.invoice.print', $item->id) }}"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                       title="Facture">
+                                                                      <svg class="w-4 h-4 mr-1" fill="none"
+                                                                          stroke="currentColor" viewBox="0 0 24 24">
+                                                                          <path stroke-linecap="round"
+                                                                              stroke-linejoin="round" stroke-width="2"
+                                                                              d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                                                      </svg>
                                                                       Facture
                                                                   </a>
                                                               @endif
@@ -312,7 +323,16 @@
                                                                           class="alert  alert-warning inline-flex items-center justify-center px-2 py-1 mb-3 
                                                                                       text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
                                                                           style="color: white;">
-                                                                          Déjà choisir
+                                                                          <svg class="w-4 h-4 mr-1" fill="none"
+                                                                              stroke="currentColor"
+                                                                              viewBox="0 0 24 24">
+                                                                              <path stroke-linecap="round"
+                                                                                  stroke-linejoin="round"
+                                                                                  stroke-width="2"
+                                                                                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                                          </svg>
+                                                                          Déjà traité
+
                                                                       </span>
 
                                                                   </div>

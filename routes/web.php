@@ -364,6 +364,12 @@ Route::group(['prefix' => ''], function () {
             Route::get('/wave_historical', [HistoricalController::class, 'browse_waves'])->name('waves.historical');
             Route::get('/drawer_historical', [HistoricalController::class, 'browse_drawer'])->name('drawers.historical');
 
+            Route::get('/versment_historical', [HistoricalController::class, 'browse_versments'])->name('versments.historical');
+            Route::get('/push_historical', [HistoricalController::class, 'browse_push'])->name('pushs.historical');
+            Route::get('/djamo_historical', [HistoricalController::class, 'browse_djamo'])->name('djamos.historical');
+            Route::get('/tresort_historical', [HistoricalController::class, 'browse_tresort'])->name('tresorts.historical');
+
+
         });
 
         // Historique Sous distributer
