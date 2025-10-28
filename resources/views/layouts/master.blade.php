@@ -140,6 +140,8 @@
             $('#update-1xbet-transaction-modal').removeClass('show');
             $('#update-1xbet-transaction-modal').addClass('hide');
 
+            $('#update-virement-bank-modal').removeClass('show');
+            $('#update-virement-bank-modal').addClass('hide');
 
             $('#disabled-user_admin-modal').removeClass('show');
             $('#disabled-user_admin-modal').addClass('hide');
@@ -157,6 +159,9 @@
 
             $('#update-level-deposit-ivoire-modal').removeClass('show');
             $('#update-level-deposit-ivoire-modal').addClass('hide');
+
+            $('#update-level-bank-modal').removeClass('show');
+            $('#update-level-bank-modal').addClass('hide');
 
             // Levels ivoires
             $('#create-level-ivoire-modal').removeClass('show');
@@ -208,6 +213,9 @@
 
             $('#update-1xbet-transaction-modal').removeClass('show');
             $('#update-1xbet-transaction-modal').addClass('hide');
+
+            $('#update-virement-bank-modal').removeClass('show');
+            $('#update-virement-bank-modal').addClass('hide');
 
             //   Update CAfrique
             $('#update-trans-cafrique-modal').removeClass('show');
@@ -573,6 +581,12 @@
         Livewire.on('show-onexbetrans-modal', () => {
             $('#update-1xbet-transaction-modal').removeClass('hide');
             $('#update-1xbet-transaction-modal').addClass('show');
+
+        });
+
+         Livewire.on('show-virementBank-modal', () => {
+            $('#update-virement-bank-modal').removeClass('hide');
+            $('#update-virement-bank-modal').addClass('show');
 
         });
 
@@ -2593,6 +2607,11 @@
             $('#update-level-deposit-ivoire-modal').addClass('show');
         });
 
+
+        Livewire.on('update-level-bank-modal', () => {
+            $('#update-level-bank-modal').removeClass('hide');
+            $('#update-level-bank-modal').addClass('show');
+        });
 
 
         Livewire.on('update-level-deposit-inter-modal', () => {

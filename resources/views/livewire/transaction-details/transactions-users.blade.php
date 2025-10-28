@@ -35,17 +35,11 @@
                                     <th class="border-b-2 dark:border-darkmode-400 whitespace-nowrap">Expéditeur
                                     </th>
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                                        Montant demandé
-                                    </th>
-                                    <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                                        Envoyer le
-                                    </th>
-                                    <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                                        Traité le
+                                        Montant à recevoir
                                     </th>
 
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                                        Numero
+                                        Info Transactions
                                     </th>
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                         Statut </th>
@@ -58,29 +52,63 @@
                                 @if ($all_transactions->count() > 0)
                                     @foreach ($all_transactions as $key => $item)
                                         <tr class="intro-x">
-                                            <td>
-                                                <p class="font-medium whitespace-nowrap">
-                                                    {{ $item->provider->name ?? null }}
-                                                </p>
+                                            <td class="text-center w-40 ">
+
+                                                <div
+                                                    class="px-3 py-2 text-dark btn-primary dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                    <div class="fc-event-title-container" style="color: white;">
+                                                        <div class="fc-event-title fc-sticky">
+                                                            {{ $item->provider->name ?? null }}
+
+                                                        </div>
+                                                    </div>
+                                                </div>
 
                                             </td>
-                                            <td class="w-50">
-                                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                                    <div class="text-slate-300 text-xs  mt-0.5">
-                                                        {{ $item->wallet->sidUser->firstname ?? null }}
-                                                        {{ $item->wallet->sidUser->lastname ?? null }}</div>
-                                                </div>
-                                                <div class="text-slate-500  mt-0.5">
-                                                    <span
-                                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                        {{ $item->wallet->sidUser->country->name ?? null }} ville
-                                                        :
-                                                        {{ $item->wallet->sidUser->city->name ?? null }}
-                                                    </span>
-                                                </div>
+                                            <td class="user-info-card">
+                                                @include('components.infoUser')
+
+                                            </td>
+                                            @php
+
+                                                if (sabdy()->country->id == 107) {
+                                                    //  Convertion of amount valeur
+                                                    if (
+                                                        sabdy()->country->currencie->value >
+                                                        $item->wallet->sidUser->country->currencie->value
+                                                    ) {
+                                                        //   Convertion  in CFA
+                                                        $valeur_amount_receveid =
+                                                            (float) $item->amount_received *
+                                                            (float) sabdy()->country->currencie->value;
+                                                    } elseif (
+                                                        sabdy()->country->currencie->value ==
+                                                        $item->wallet->sidUser->country->currencie->value
+                                                    ) {
+                                                        $valeur_amount_receveid = $item->amount_received;
+                                                    } elseif (
+                                                        sabdy()->country->currencie->value <
+                                                        $item->wallet->sidUser->country->currencie->value
+                                                    ) {
+                                                        //   Convertion in Country send
+                                                        $valeur_amount_receveid =
+                                                            (float) $item->amount_received *
+                                                            (float) $item->wallet->sidUser->country->currencie->value;
+                                                    }
+                                                } else {
+                                                    //  Convertion of amount valeur
+                                                    $valeur_amount_receveid = (float) $item->amount_received;
+                                                }
+                                            @endphp
+                                            <td>
+                                                @include('components.walletBalanceConvertion')
+
 
                                             </td>
                                             <td class="w-40">
+                                                <div class="mb-3">
+                                                    @include('components.info_treatment')
+                                                </div>
                                                 @if ($item->type_transaction == 'Depot')
                                                     <span
                                                         class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
@@ -110,45 +138,21 @@
                                                         Retrait
                                                     </span>
                                                 @endif
-                                                <p class="font-medium whitespace-nowrap">
-                                                    {{ number_format($item->amount, 2, ',', ' ') ?? null }}
-                                                    {{ $item->wallet->currencie->code ?? null }}</p>
-                                                <p class="font-medium whitespace-nowrap mt-3">
-                                                    Solde déposant :
-                                                    {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
-                                                    {{ $item->wallet->currencie->code ?? null }}</p>
-                                                @if ($item->type_transaction == 'Réequilibrage')
-                                                    @php
-                                                        $wallet_info = App\Models\wallets\Wallet::where('wallet_id', $item->num_wallet)->first();
-
-                                                    @endphp
-
-                                                    <p class="font-medium whitespace-nowrap mt-3">
-                                                        Solde bénéficiaire :
-                                                        {{ number_format($item->amount_solde_drawal, 2, ',', ' ') ?? null }}
-                                                        {{ $wallet_info->currencie->code ?? null }}
-                                                    </p>
-                                                @else
-                                                    <p class="font-medium whitespace-nowrap mt-3">
-                                                        Solde bénéficiaire :
-                                                        {{ number_format($item->amount_solde_drawal, 2, ',', ' ') ?? null }}
-                                                        {{ $item->wallet->currencie->code ?? null }}</p>
-                                                @endif
-                                            </td>
-                                            <td class="w-40">
-                                                <p class="font-medium whitespace-nowrap">
-                                                    {{ $item->created_at ?? null }}</p>
-                                            </td>
-                                            <td class="w-40">
-                                                <p class="font-medium whitespace-nowrap">
-                                                    {{ $item->transaction->created_at ?? null }}</p>
+                                                
+                                                <div class="user-name">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-4 w-4 text-slate-400 group-hover:text-primary"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                                    </svg>
+                                                    <span
+                                                        class="font-mono text-sm text-slate-700 dark:text-slate-300  truncate">
+                                                        {{ $item->phone ?? null }} {{ $item->num_wallet ?? null }}
+                                                    </span>
+                                                </div>
                                             </td>
 
-                                            <td class="w-40">
-                                                <p class="font-medium whitespace-nowrap">
-                                                    {{ $item->phone ?? null }} {{ $item->num_wallet ?? null }}
-                                                </p>
-                                            </td>
                                             <td class="w-40">
                                                 @if ($item->status == 'PENDING')
                                                     <div class="flex items-center justify-center text-pending">
@@ -205,15 +209,13 @@
                                             <td class="w-56">
                                                 <div class="flex justify-center items-center">
                                                     @if ($item->status == 'PENDING')
-                                                        @if (!firm())
-                                                            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                <a wire:click="editTransaction({{ $item->id }}, 'update-transfersUV-modal')"
-                                                                    class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                    href="javascript:;" title="Modifier">
-                                                                    Modifier
-                                                                </a>
-                                                            @endif
-                                                        @endif
+                                                         <div class="flex items-center justify-center text-pending">
+                                                        <span
+                                                            class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                            En-attente
+                                                        </span>
+
+                                                    </div>
                                                     @elseif ($item->status == 'SUCCESS')
                                                         <a target="_bank"
                                                             href="{{ route('transfers.invoice.print', $item->id) }}"

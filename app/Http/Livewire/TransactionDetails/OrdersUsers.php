@@ -7,6 +7,7 @@ use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Http\Services\CeldingValeurService;
 
 class OrdersUsers extends Component
 {

@@ -7,11 +7,12 @@
 
         <div class="hidden md:block mx-auto text-slate-500"></div>
 
-        <div class="input-group input-group-md hidden" style="margin-top: 13px;width: 250px;">
+         <div class="input-group input-group-md hidden" style="margin-top: 13px;width: 250px;">
             <div class="w-56 relative text-slate-500">
 
-                <input type="text" name="table_search" class="form-control  w-56 box pr-10"
-                    style="height: 3rem; background-color: #eff3f7;" placeholder="Rechercher">
+                <input type="text" name="table_search" 
+                    class="form-control  w-56 box pr-10" style="height: 3rem; background-color: #eff3f7;"
+                    placeholder="Rechercher">
                 <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
                     data-feather="search"></i>
             </div>
@@ -19,26 +20,11 @@
     </div>
     <div class="grid grid-cols-12 gap-6 mt-6">
         <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
-            
-            <div class="flex items-center  border-b border-slate-200/60 dark:border-darkmode-400 bg-white dark:bg-darkmode-700">
-                  <div class="flex items-center gap-3">
-                      <div class="w-3 h-8 bg-orange-500 rounded-r-full"></div>
-                      <div>
-                          <h2 class="font-medium text-base mr-auto text-slate-900 dark:text-white text-xl">
-                             Liste des transferts internationnaux
-                          </h2>
-                          <div class="flex items-center gap-4 mt-2 mb-2 ">
-                              <span class="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                                  Dernière mise à jour: {{ now()->format('d/m/Y H:i') }}
-                              </span>
-                              <span class="w-1 h-1 bg-slate-400 rounded-full"></span>
-                              <span class="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                                  {{ $Internationals->count() }} éléments
-                              </span>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+            <div class="flex items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                <h2 class="font-medium text-base mr-auto">
+                    Liste des transfers internationnaux
+                </h2>
+            </div>
             <div class="py-5">
                 <div class="px-5">
                     <div class="overflow-x-auto">
@@ -52,10 +38,12 @@
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                         Montant demandé
                                     </th>
-
+                                    <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
+                                        Envoyer le
+                                    </th>
 
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                                        Info paiements Internationaux
+                                        Numero
                                     </th>
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                         Statut </th>
@@ -108,19 +96,54 @@
                                                         Rechargement carte
                                                     </span>
                                                 @endif
-                                                <div
-                                                    class="px-3 py-2 text-dark btn-indigo dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                    <div class="fc-event-title-container" style="color: white;">
-                                                        <div class="fc-event-title fc-sticky">
-                                                            {{ $item->provider->name ?? null }}
-
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                {{ $item->provider->name ?? null }}
 
                                             </td>
-                                            <td class="user-info-card">
-                                                @include('components.infoUser')
+                                            <td class="w-50">
+                                                <div class="mt-0.5 mb-2">
+                                                    <div class="mt-0.5">
+                                                        @if ($item->wallet->sidUser->is_under_distributer == 1)
+                                                            <div
+                                                                class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                <div class="fc-event-title-container">
+                                                                    <div class="fc-event-title fc-sticky">
+                                                                        Sous-distributeur</div>
+                                                                </div>
+                                                            </div>
+                                                        @elseif($item->wallet->sidUser->is_custumers == 1)
+                                                            <div
+                                                                class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                <div class="fc-event-title-container">
+                                                                    <div class="fc-event-title fc-sticky">Client</div>
+                                                                </div>
+                                                            </div>
+                                                        @else
+                                                            <div
+                                                                class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
+                                                                <div class="fc-event-title-container">
+                                                                    <div class="fc-event-title fc-sticky">Admin</div>
+                                                                </div>
+                                                            </div>
+                                                        @endif
+                                                        <div class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400  rounded font-medium"
+                                                            style="background-color: #b5048f; color:white;">
+                                                            {{-- <div class="fc-event-title-container">
+                                                            <div class="fc-event-title fc-sticky"> --}}
+                                                            Numero : {{ $item->wallet->sidUser->phone ?? null }}
+                                                            {{-- </div>
+                                                        </div> --}}
+                                                        </div>
+                                                        {{ $item->wallet->sidUser->firstname ?? null }}
+                                                        {{ $item->wallet->sidUser->lastname ?? null }}
+                                                    </div>
+                                                </div>
+                                                <div class="mt-0.5">
+                                                    <span
+                                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        {{ $item->wallet->sidUser->country->name ?? null }} ville :
+                                                        {{ $item->wallet->sidUser->city->name ?? null }}
+                                                    </span>
+                                                </div>
 
                                             </td>
 
@@ -134,13 +157,13 @@
                                                         //   Convertion  in CFA
                                                         $valeur_amount_receveid =
                                                             (float) $item->amount_received *
-                                                            (float) $item->country->currencie->value;
+                                                            (float) $item->country->currencie->value ?? null;
                                                         //   $valeur_amount_receveid =  * $item->wallet->currencie->value;
                                                     } elseif (
                                                         sabdy()->country->currencie->value ==
                                                         $item->country->currencie->value
                                                     ) {
-                                                        $valeur_amount_receveid = $item->amount_received;
+                                                        $valeur_amount_receveid = $item->amount_received ?? null;
                                                     } elseif (
                                                         sabdy()->country->currencie->value <
                                                         $item->country->currencie->value
@@ -148,7 +171,7 @@
                                                         //   Convertion in Country send
                                                         $valeur_amount_receveid =
                                                             (float) $item->amount_received *
-                                                            (float) $item->country->currencie->value;
+                                                            (float) $item->country->currencie->value ?? null;
                                                     }
                                                 } else {
                                                     if ($item->country->id == 107) {
@@ -160,14 +183,14 @@
                                                             //   Convertion  in CFA
                                                             $valeur_amount_receveid =
                                                                 (float) $item->amount_received *
-                                                                (float) sabdy()->country->currencie->value;
+                                                                (float) sabdy()->country->currencie->value ?? null;
 
                                                             //   $valeur_amount_receveid = (float) $commission_transaction_val_inter_convertion_cfa / (float) $item->country->currencie->value;
                                                         } elseif (
                                                             sabdy()->country->currencie->value ==
                                                             $item->country->currencie->value
                                                         ) {
-                                                            $valeur_amount_receveid = $item->amount_received;
+                                                            $valeur_amount_receveid = $item->amount_received ?? null;
                                                         } elseif (
                                                             sabdy()->country->currencie->value <
                                                             $item->country->currencie->value
@@ -175,12 +198,12 @@
                                                             //   Convertion  in CFA
                                                             $commission_transaction_val_inter_convertion_cfa =
                                                                 (float) $item->amount_received *
-                                                                (float) sabdy()->country->currencie->value;
+                                                                (float) sabdy()->country->currencie->value ?? null;
 
                                                             //   Convertion in Country send
                                                             $valeur_amount_receveid =
                                                                 (float) $item->amount_received *
-                                                                (float) $item->country->currencie->value;
+                                                                (float) $item->country->currencie->value ?? null;
                                                         }
                                                     } else {
                                                         //  Convertion of amount valeur
@@ -191,7 +214,7 @@
                                                             //   Convertion  in CFA
                                                             $valeur_amount_receveid =
                                                                 (float) $item->amount_received *
-                                                                (float) sabdy()->country->currencie->value;
+                                                                (float) sabdy()->country->currencie->value ?? null;
                                                         } elseif ($item->country->id == 107) {
                                                             //   dd('ici');
                                                             if (
@@ -201,11 +224,11 @@
                                                                 //   Convertion  in CFA
                                                                 $valeur_amount_receveid =
                                                                     (float) $item->amount_received *
-                                                                    (float) $item->wallet->country->currencie->value;
+                                                                    (float) $item->wallet->country->currencie->value ?? null;
                                                             } else {
                                                                 $valeur_amount_receveid =
                                                                     (float) $item->amount_received *
-                                                                    (float) $item->wallet->country->currencie->value;
+                                                                    (float) $item->wallet->country->currencie->value ?? null;
                                                             }
                                                         } elseif (
                                                             sabdy()->country->currencie->value <
@@ -214,29 +237,113 @@
                                                             //   Convertion  in CFA
                                                             $commission_transaction_val_inter_convertion_cfa =
                                                                 (float) $item->amount_received *
-                                                                (float) sabdy()->country->currencie->value;
+                                                                (float) sabdy()->country->currencie->value ?? null;
 
                                                             //   Convertion in Country send
                                                             $valeur_amount_receveid =
                                                                 (float) $item->amount_received *
-                                                                (float) $item->country->currencie->value;
+                                                                (float) $item->country->currencie->value ?? null;
                                                         }
                                                     }
                                                     //  Convertion of amount valeur
                                                 }
+
                                             @endphp
-                                            <td>
+                                            <td class="w-40">
 
-                                                @include('components.walletBalanceConvertionInter')
+                                                @if ($item->provider_type == 1)
+                                                    <p class="mb-3">
+                                                        Montant envoyé :
+                                                    </p>
+                                                    <div class="mt-0.5 mb-2">
+                                                        <div class="mt-0.5">
+                                                            {{ number_format($item->amount, 2, ',', ' ') ?? null }}
+                                                            {{ $item->wallet->country->currencie->code ?? null }}
+                                                        </div>
+                                                    </div>
+                                                    <p>
+                                                        Montant reçu
+                                                    </p>
+                                                    <div class="mt-0.5 mb-2">
+                                                        <div class="mt-0.5">
+                                                            {{ number_format($item->amount_received, 2, ',', ' ') ?? null }}
+                                                            {{ $item->country->currencie->code ?? null }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-0.5">
+                                                        <span class="font-bold ">
+                                                            Montant en {{ $usersCountry ?? null }} : <br>
 
+                                                            
+                                                             @isset($valeur_amount_receveid)
+                                                                @if($valeur_amount_receveid !== null)
+                                                                    {{ number_format($valeur_amount_receveid, 2, ',', ' ') }} {{ $usersCountry ?? '' }}
+                                                                @else
+                                                                    Non défini
+                                                                @endif
+                                                            @else
+                                                                Non défini
+                                                            @endisset
+                                                            {{ $usersCountry ?? null }}
+                                                        </span>
+                                                    </div>
+                                                    <p class="mt-3">
+                                                        Solde :
+                                                    </p>
+                                                    <span
+                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
+                                                        {{ $item->wallet->currencie->code ?? null }}
+                                                    </span>
+                                                @else
+                                                    <div class="mt-0.5 mb-2">
+                                                        <div class="mt-0.5">
+                                                            {{ number_format($item->amount, 2, ',', ' ') ?? null }}
+                                                            {{ $item->wallet->currencie->code ?? null }}
+                                                        </div>
+                                                    </div>
+                                                    <div class="mt-0.5">
+                                                        <span class="font-bold ">
+                                                            Montant en {{ $usersCountry ?? null }} : <br>
+
+                                                            
+                                                             @isset($valeur_amount_receveid)
+                                                                @if($valeur_amount_receveid !== null)
+                                                                    {{ number_format($valeur_amount_receveid, 2, ',', ' ') }} {{ $usersCountry ?? '' }}
+                                                                @else
+                                                                    Non défini
+                                                                @endif
+                                                            @else
+                                                                Non défini
+                                                            @endisset
+                                                            {{ $usersCountry ?? null }}
+                                                        </span>
+                                                    </div>
+                                                    <p class="mt-3">
+                                                        Solde :
+                                                    </p>
+                                                    <span
+                                                        class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                        {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
+                                                        {{ $item->wallet->currencie->code ?? null }}
+                                                    </span>
+                                                @endif
 
                                             </td>
+                                            <td class="w-40">
 
-
-                                            <td class="w-60">
-                                                <div class="mb-3">
-                                                    @include('components.infoInter')
+                                                {{ $item->created_at ?? null }}
+                                                <div
+                                                    class="px-3 py-2 text-dark bg-blue-900 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                    <div class="fc-event-title-container" style="color: white;">
+                                                        <div class="fc-event-title fc-sticky">
+                                                            {{ $item->country->name ?? null }}
+                                                        </div>
+                                                    </div>
                                                 </div>
+                                            </td>
+
+                                            <td class="w-40">
                                                 @if ($item->updated_by == null)
                                                     @if ($item->provider_type == 8)
                                                         <div
@@ -283,7 +390,8 @@
                                                     @elseif ($item->provider_type == 1)
                                                         <div
                                                             class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container" style="color: white;">
+                                                            <div class="fc-event-title-container"
+                                                                style="color: white;">
                                                                 <div class="fc-event-title fc-sticky">
                                                                     Paiement Mooney</div>
                                                             </div>
@@ -313,7 +421,8 @@
                                                     @elseif ($item->provider_type == 6)
                                                         <div
                                                             class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container" style="color: white;">
+                                                            <div class="fc-event-title-container"
+                                                                style="color: white;">
                                                                 <div class="fc-event-title fc-sticky">
                                                                     Credit telephonique</div>
                                                             </div>
@@ -322,7 +431,8 @@
                                                     @elseif ($item->provider_type == 7)
                                                         <div
                                                             class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                            <div class="fc-event-title-container" style="color: white;">
+                                                            <div class="fc-event-title-container"
+                                                                style="color: white;">
                                                                 <div class="fc-event-title fc-sticky">
                                                                     Versement bancaire</div>
                                                             </div>
@@ -331,10 +441,59 @@
                                                     @endif
                                                     <div class="flex items-center justify-center text-success mt-3">
                                                         @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                          <x-take-action-button action="ChooseUpdateInter"
-                                                                  :itemId="$item->id" label="Je prends en charge"
-                                                                  speed="ultra-fast" color="warning" />
+                                                            <a class="flex btn btn-warning items-center  mr-1 mb-2"
+                                                                wire:click="ChooseUpdateInter({{ $item->id }})">
+                                                                {{-- <button class="btn btn-warning mr-1 mb-2"> --}}
+                                                                Je prends <svg width="25" viewBox="0 0 120 30"
+                                                                    xmlns="http://www.w3.org/2000/svg" fill="1a202c"
+                                                                    class="w-4 h-4 ml-2">
+                                                                    <circle cx="15" cy="15" r="15">
+                                                                        <animate attributeName="r" from="15"
+                                                                            to="15" begin="0s"
+                                                                            dur="0.8s" values="15;9;15"
+                                                                            calcMode="linear"
+                                                                            repeatCount="indefinite">
+                                                                        </animate>
+                                                                        <animate attributeName="fill-opacity"
+                                                                            from="1" to="1"
+                                                                            begin="0s" dur="0.8s"
+                                                                            values="1;.5;1" calcMode="linear"
+                                                                            repeatCount="indefinite">
+                                                                        </animate>
+                                                                    </circle>
+                                                                    <circle cx="60" cy="15" r="9"
+                                                                        fill-opacity="0.3">
+                                                                        <animate attributeName="r" from="9"
+                                                                            to="9" begin="0s"
+                                                                            dur="0.8s" values="9;15;9"
+                                                                            calcMode="linear"
+                                                                            repeatCount="indefinite">
+                                                                        </animate>
+                                                                        <animate attributeName="fill-opacity"
+                                                                            from="0.5" to="0.5"
+                                                                            begin="0s" dur="0.8s"
+                                                                            values=".5;1;.5" calcMode="linear"
+                                                                            repeatCount="indefinite">
+                                                                        </animate>
+                                                                    </circle>
+                                                                    <circle cx="105" cy="15" r="15">
+                                                                        <animate attributeName="r" from="15"
+                                                                            to="15" begin="0s"
+                                                                            dur="0.8s" values="15;9;15"
+                                                                            calcMode="linear"
+                                                                            repeatCount="indefinite">
+                                                                        </animate>
+                                                                        <animate attributeName="fill-opacity"
+                                                                            from="1" to="1"
+                                                                            begin="0s" dur="0.8s"
+                                                                            values="1;.5;1" calcMode="linear"
+                                                                            repeatCount="indefinite">
+                                                                        </animate>
+                                                                    </circle>
+                                                                </svg>
+                                                                {{-- </button> --}}
 
+                                                            </a>
                                                         @endif
 
                                                     </div>
@@ -406,7 +565,7 @@
                                                         </p>
                                                         @if ($item->provider_id == 99)
                                                             <p class="font-medium whitespace-nowrap">
-                                                                Nom du expéditeur : {{ $item->name_benef ?? null }}
+                                                                Nom du bénéficiaire : {{ $item->name_benef ?? null }}
 
                                                             </p>
                                                             <p class="font-medium whitespace-nowrap">
@@ -513,7 +672,7 @@
                                                     </div>
                                                 @endif
                                             </td>
-                                            <td class="w-40">
+                                            <td class="w-56">
                                                 <div class="flex justify-center items-center">
                                                     @if ($item->updated_by != null)
                                                         @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
@@ -521,13 +680,6 @@
                                                                 <a wire:click="editInter({{ $item->id }}, 'update-interTransfers-modal')"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                     href="javascript:;" title="Modifier">
-                                                                     <svg class="w-4 h-4 mr-1" fill="none"
-                                                                          stroke="currentColor" viewBox="0 0 24 24">
-                                                                          <path stroke-linecap="round"
-                                                                              stroke-linejoin="round" stroke-width="2"
-                                                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                      </svg>
-                                                                    
                                                                     Modifier
                                                                 </a>
                                                             @endif

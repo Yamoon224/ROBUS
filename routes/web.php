@@ -255,7 +255,12 @@ Route::group(['prefix' => ''], function () {
             Route::post('/countrys_amount', [CommissionController::class, 'country_amounts'])->name('commissions.country_amounts.payments');
             Route::get('/companies', [CommissionController::class, 'browse_companies'])->name('commissions.browse_companies');
 
+            Route::get('/virements', [CommissionController::class, 'browse_virements'])->name('commissions.browse_virements');
+
             Route::get('/deposits', [CommissionController::class, 'browse_deposits'])->name('commissions.browse_deposits');
+
+            Route::get('/banksends', [CommissionController::class, 'browse_bankSends'])->name('commissions.browse_bankSends');
+
             Route::get('/inters', [CommissionController::class, 'browse_inters'])->name('commissions.browse_inters');
             Route::get('/phones', [CommissionController::class, 'browse_phones'])->name('commissions.browse_phones');
             Route::get('/reloads', [CommissionController::class, 'browse_reloads'])->name('commissions.browse_reloads');
@@ -538,6 +543,7 @@ Route::get('clear-route-mon_bara',  function () {
 Route::get('/reads_notifications', function () {
       Artisan::call('app:close-company-status');
       Artisan::call('app:close-status');
+      Artisan::call('wallet:generate-qrcodes');
      Artisan::call('status:readNotifications');
    return 'Artisan commands executed successfully.';
 });

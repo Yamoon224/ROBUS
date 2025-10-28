@@ -10,7 +10,7 @@ use Livewire\WithPagination;
 class VirementBanks extends Component
 {
 
-     use WithPagination;
+    use WithPagination;
     public $search = "";
     public $transaction_id;
     public $transaction_status;

@@ -20,6 +20,25 @@ class CeldingValeurService
 {
 
   
+    public function getTransactionsWallet($wallet, $id)
+    {
+        return  $wallet::where('wallet_id', $id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+    }
+
+    public function getTransactionOperatorsWallet($wallet, $id)
+    {
+        return  $wallet::where('updated_by', $id)
+            ->orderBy('created_at', 'desc')->paginate(20);
+    }
+
+
+       public function getTransactionUserWallet($wallet, $id, $num_wallet, $wallet_user)
+    {
+        return  $wallet::where('wallet_id', $id)
+            ->orWhere($num_wallet,  $wallet_user)
+            ->orderBy('created_at', 'desc')->paginate(20);
+    }
     public function validateDailyLimit($som_transfers, $valeur_ceiling)
     {
         if ($som_transfers >= $valeur_ceiling) {

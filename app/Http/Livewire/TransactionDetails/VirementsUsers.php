@@ -7,6 +7,7 @@ use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Http\Services\CeldingValeurService;
 
 class VirementsUsers extends Component
 {
@@ -32,7 +33,7 @@ class VirementsUsers extends Component
 
         if ($sid_user->is_distributer) {
 
-            $virements =  $this->getTransactionOperatorsWallet(WalletBank::class, $this->walletAllVirements);
+            $virements =  app(CeldingValeurService::class)->getTransactionOperatorsWallet(WalletBank::class, $this->walletAllVirements);
 
             if ($this->search != "") {
 
@@ -54,7 +55,7 @@ class VirementsUsers extends Component
 
             $wallet_solde = Wallet::where('sid_user_id',  $this->walletAllVirements)->first();
 
-            $virements =  $this->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
+            $virements =  app(CeldingValeurService::class)->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
 
 
             if ($this->search != "") {
@@ -84,16 +85,4 @@ class VirementsUsers extends Component
         );
     }
 
-
-    public function getTransactionsWallet($wallet, $id)
-    {
-        return  $wallet::where('wallet_id', $id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-    }
-
-    public function getTransactionOperatorsWallet($wallet, $id)
-    {
-        return  $wallet::where('updated_by', $id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-    }
 }

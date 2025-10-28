@@ -201,6 +201,7 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\RepositoryServiceProvider::class,
         Laravel\Tinker\TinkerServiceProvider::class,
+        
         // Maatwebsite\Excel\ExcelServiceProvider::class
 
     ],

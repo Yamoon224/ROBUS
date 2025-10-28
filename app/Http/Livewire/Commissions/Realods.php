@@ -2,11 +2,14 @@
 
 namespace App\Http\Livewire\Commissions;
 
+use App\Models\ArgentTresort;
 use Livewire\Component;
 use App\Models\Costs\ReloadCost;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ArgentTresorts;
+use App\Models\DjamoPercent;
 use App\Models\DjamoPercents;
+use App\Models\PushPercent;
 use App\Models\PushPercents;
 
 class Realods extends Component
@@ -46,7 +49,7 @@ class Realods extends Component
 
     public function editTresort($id, $state)
     {
-        $check = ArgentTresorts::whereId($id)->first();
+        $check = ArgentTresort::whereId($id)->first();
 
         $this->transaction_id = $check->id;
         $this->editTypeTresort = true;
@@ -62,7 +65,7 @@ class Realods extends Component
 
     public function editPush($id, $state)
     {
-        $check = PushPercents::whereId($id)->first();
+        $check = PushPercent::whereId($id)->first();
 
         $this->transaction_id = $check->id;
         $this->transaction_name = $check->name;
@@ -78,7 +81,7 @@ class Realods extends Component
 
     public function editDjamo($id, $state)
     {
-        $check = DjamoPercents::whereId($id)->first();
+        $check = DjamoPercent::whereId($id)->first();
 
         $this->transaction_id = $check->id;
         $this->transaction_name = $check->name;
@@ -112,7 +115,7 @@ class Realods extends Component
                 'comissionCompanie.required' => 'Ce champ est requis',
             ]
         );
-        $check = ArgentTresorts::whereId($this->transaction_id)->first();
+        $check = ArgentTresort::whereId($this->transaction_id)->first();
        
         $check->update([
             'name' => $this->transaction_name,
@@ -149,7 +152,7 @@ class Realods extends Component
                 'comissionCompanie.required' => 'Ce champ est requis',
             ]
         );
-        $check = DjamoPercents::whereId($this->transaction_id)->first();
+        $check = DjamoPercent::whereId($this->transaction_id)->first();
 
         $check->update([
             'name' => $this->transaction_name,
@@ -186,7 +189,7 @@ class Realods extends Component
                 'comissionCompanie.required' => 'Ce champ est requis',
             ]
         );
-        $check = PushPercents::whereId($this->transaction_id)->first();
+        $check = PushPercent::whereId($this->transaction_id)->first();
 
         $check->update([
             'name' => $this->transaction_name,
@@ -301,9 +304,9 @@ class Realods extends Component
     public function render()
     {
         $reload_cost = ReloadCost::query();
-        $reload_argentCost = ArgentTresorts::query();
-        $reload_djamoCost = DjamoPercents::query();
-        $reload_pushCost = PushPercents::query();
+        $reload_argentCost = ArgentTresort::query();
+        $reload_djamoCost = DjamoPercent::query();
+        $reload_pushCost = PushPercent::query();
 
         if ($this->search != "") {
 

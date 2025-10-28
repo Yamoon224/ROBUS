@@ -7,6 +7,7 @@ use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletInter;
 use Livewire\Component;
 use Livewire\WithPagination;
+use App\Http\Services\CeldingValeurService;
 
 class IntersUsers extends Component
 {
@@ -33,7 +34,7 @@ class IntersUsers extends Component
         if ($sid_user->is_distributer) {
 
 
-            $wallet_transaction =  $this->getTransactionOperatorsWallet(WalletInter::class, $this->walletAllInters);
+            $wallet_transaction =  app(CeldingValeurService::class)->getTransactionOperatorsWallet(WalletInter::class, $this->walletAllInters);
 
 
             if ($this->search != "") {
@@ -56,7 +57,7 @@ class IntersUsers extends Component
 
             $wallet_solde = Wallet::where('sid_user_id',  $this->walletAllInters)->first();
 
-            $wallet_transaction =  $this->getTransactionUserWallet(WalletInter::class, $wallet_solde->id, 'number_compte',  $wallet_solde->wallet_id);
+            $wallet_transaction =  app(CeldingValeurService::class)->getTransactionUserWallet(WalletInter::class, $wallet_solde->id, 'number_compte',  $wallet_solde->wallet_id);
 
             if ($this->search != "") {
 
@@ -85,16 +86,4 @@ class IntersUsers extends Component
         );
     }
 
-    public function getTransactionUserWallet($wallet, $id, $num_wallet, $wallet_user)
-    {
-        return  $wallet::where('wallet_id', $id)
-            ->orWhere($num_wallet,  $wallet_user)
-            ->orderBy('created_at', 'desc')->paginate(20);
-    }
-
-    public function getTransactionOperatorsWallet($wallet, $id)
-    {
-        return  $wallet::where('updated_by', $id)
-            ->orderBy('created_at', 'desc')->paginate(20);
-    }
 }

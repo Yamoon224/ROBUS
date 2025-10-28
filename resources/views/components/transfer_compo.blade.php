@@ -18,26 +18,27 @@
     </div>
     <div class="grid grid-cols-12 gap-6 mt-6">
         <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
-            
-             <div class="flex items-center  border-b border-slate-200/60 dark:border-darkmode-400 bg-white dark:bg-darkmode-700">
-                  <div class="flex items-center gap-3">
-                      <div class="w-3 h-8 bg-orange-500 rounded-r-full"></div>
-                      <div>
-                          <h2 class="font-medium text-base mr-auto text-slate-900 dark:text-white text-xl">
-                             Liste des transferts d'argent
-                          </h2>
-                          <div class="flex items-center gap-4 mt-2 mb-2 ">
-                              <span class="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                                  Dernière mise à jour: {{ now()->format('d/m/Y H:i') }}
-                              </span>
-                              <span class="w-1 h-1 bg-slate-400 rounded-full"></span>
-                              <span class="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                                  {{ $transactions->count() }} éléments
-                              </span>
-                          </div>
-                      </div>
-                  </div>
-              </div>
+
+            <div
+                class="flex items-center  border-b border-slate-200/60 dark:border-darkmode-400 bg-white dark:bg-darkmode-700">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-8 bg-orange-500 rounded-r-full"></div>
+                    <div>
+                        <h2 class="font-medium text-base mr-auto text-slate-900 dark:text-white text-xl">
+                            Liste des transferts d'argent
+                        </h2>
+                        <div class="flex items-center gap-4 mt-2 mb-2 ">
+                            <span class="text-sm text-slate-600 dark:text-slate-400 font-medium">
+                                Dernière mise à jour: {{ now()->format('d/m/Y H:i') }}
+                            </span>
+                            <span class="w-1 h-1 bg-slate-400 rounded-full"></span>
+                            <span class="text-sm text-slate-600 dark:text-slate-400 font-medium">
+                                {{ $transactions->count() }} éléments
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div id="new-products" class="tiny-slider py-5">
                 <div class="px-5">
                     <div class="overflow-x-auto">
@@ -51,7 +52,7 @@
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                         Montant à recevoir
                                     </th>
-                                   
+
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                         Info Transactions
                                     </th>
@@ -81,10 +82,10 @@
                                                 </div>
 
                                             </td>
-                                           <td class="user-info-card">
-                                                  @include('components.infoUser')
-                                                  
-                                              </td>
+                                            <td class="user-info-card">
+                                                @include('components.infoUser')
+
+                                            </td>
                                             @php
 
                                                 if (sabdy()->country->id == 107) {
@@ -116,9 +117,9 @@
                                                     $valeur_amount_receveid = (float) $item->amount_received;
                                                 }
                                             @endphp
-                                            <td >
+                                            <td>
                                                 @include('components.walletBalanceConvertion')
-                                               
+
 
                                             </td>
 
@@ -138,10 +139,9 @@
 
                                                     <div class="flex items-center justify-center text-success mt-3">
                                                         @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                           <x-take-action-button action="ChooseUpdateTransaction"
-                                                                  :itemId="$item->id" label="Je prends en charge"
-                                                                  speed="ultra-fast" color="warning" />
-
+                                                            <x-take-action-button action="ChooseUpdateTransaction"
+                                                                :itemId="$item->id" label="Je prends en charge"
+                                                                speed="ultra-fast" color="warning" />
                                                         @endif
 
                                                     </div>
@@ -233,12 +233,12 @@
                                                                 <a wire:click="editTransaction({{ $item->id }}, 'update-transfersUV-modal')"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                     href="javascript:;" title="Modifier">
-                                                                     <svg class="w-4 h-4 mr-1" fill="none"
-                                                                          stroke="currentColor" viewBox="0 0 24 24">
-                                                                          <path stroke-linecap="round"
-                                                                              stroke-linejoin="round" stroke-width="2"
-                                                                              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                                                      </svg>
+                                                                    <svg class="w-4 h-4 mr-1" fill="none"
+                                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                                        <path stroke-linecap="round"
+                                                                            stroke-linejoin="round" stroke-width="2"
+                                                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                                    </svg>
                                                                     Modifier
                                                                 </a>
                                                             @endif

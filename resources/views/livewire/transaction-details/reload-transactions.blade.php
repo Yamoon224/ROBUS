@@ -45,12 +45,6 @@
                                         Envoyer le
                                     </th>
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                                        Traité le
-                                    </th>
-                                    <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                                        Numero
-                                    </th>
-                                    <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                         Statut </th>
                                     <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                         Actions
@@ -61,144 +55,66 @@
 
                                 @foreach ($all_reloads as $item)
                                     <tr class="intro-x">
-                                        <td>
-                                            <p class="font-medium whitespace-nowrap">
-                                                {{ $item->provider->name ?? null }}
-                                            </p>
+                                        <td class="text-center w-40 ">
+
+                                            <div
+                                                class="px-3 py-2 text-dark btn-primary dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                <div class="fc-event-title-container" style="color: white;">
+                                                    <div class="fc-event-title fc-sticky">
+                                                        {{ $item->provider->name ?? null }}
+
+                                                    </div>
+                                                </div>
+                                            </div>
 
                                         </td>
+                                        <td class="user-info-card">
+                                            @include('components.infoUser')
+
+                                        </td>
+                                        <td class="w-60">
+                                            @include('components.walletBalanceConvertion')
+
+
+                                        </td>
+
+
                                         <td class="w-50">
-                                            <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                                <div class="text-slate-300 text-xs  mt-0.5">
-                                                    {{ $item->wallet->sidUser->firstname ?? null }}
-                                                    {{ $item->wallet->sidUser->lastname ?? null }}
+                                            <div class="flex flex-col space-y-2">
+                                                <div class="mb-2">
+                                                    @include('components.info_treatment')
                                                 </div>
+
+                                                <div class="user-name">
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        class="h-4 w-4 text-slate-400 group-hover:text-primary"
+                                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                                    </svg>
+                                                    <span
+                                                        class="font-mono text-sm text-slate-700 dark:text-slate-300  truncate">
+                                                        {{ $item->account_wallet ?? 'N/A' }}
+                                                    </span>
+                                                </div>
+
                                             </div>
-                                            <div class="text-slate-500  mt-0.5">
-                                                <span
-                                                    class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                    {{ $item->wallet->sidUser->country->name ?? null }}
-                                                    ville :
-                                                    {{ $item->wallet->sidUser->city->name ?? null }}
-                                                </span>
-                                            </div>
-
-                                        </td>
-                                        <td class="w-40">
-
-                                            @if ($item->wallet->sidUser->wallet_id != $item->account_wallet)
-                                                <span
-                                                    class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
-                                                         text-indigo-100 bg-indigo-700 rounded"
-                                                    style="color: white;">
-                                                    Achat d'UV
-                                                </span>
-                                            @else
-                                                <span
-                                                    class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
-                                                             text-indigo-100 bg-indigo-700 rounded"
-                                                    style="color: white;">
-                                                    Vente d'UV
-                                                </span>
-                                            @endif
-                                            <p class="font-medium whitespace-nowrap">
-                                                {{ number_format($item->amount, 2, ',', ' ') ?? null }}
-                                                {{ $item->wallet->currencie->code ?? null }}
-
-                                            </p>
-                                            <p class="font-medium whitespace-nowrap mt-3">
-                                                Solde déposant :
-                                                {{ number_format($item->amount_solde, 2, ',', ' ') ?? null }}
-                                                {{ $item->wallet->currencie->code ?? null }}</p>
-
-                                             @php
-                                                $wallet_info = App\Models\wallets\Wallet::where('wallet_id', $item->account_wallet)->first();
-                                            @endphp
-
-                                            <p class="font-medium whitespace-nowrap mt-3">
-                                                Solde bénéficiaire :
-                                                {{ number_format($item->amount_solde_drawal, 2, ',', ' ') ?? null }}
-                                                {{ $wallet_info->currencie->code ?? null }}</p>
-                                        </td>
-                                        <td class="w-40">
-                                            <p class="font-medium whitespace-nowrap">
-                                                {{ $item->created_at ?? null }}</p>
-                                        </td>
-                                        <td class="w-40">
-                                            <p class="font-medium whitespace-nowrap">
-                                                {{ $item->paymentReload->created_at ?? null }}</p>
-                                        </td>
-                                        <td class="w-40">
-                                            <p class="font-medium whitespace-nowrap">
-                                                {{ $item->account_wallet ?? null }}</p>
                                         </td>
 
                                         <td class="w-40">
-                                            @if ($item->status == 'PENDING')
-                                                <div class="flex items-center justify-center text-pending">
-                                                    <span
-                                                        class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                        En-attente
-                                                    </span>
-
-                                                </div>
-                                            @elseif ($item->status == 'ERROR')
-                                                <div class="flex items-center justify-center text-danger">
-                                                    <div class="flex items-center justify-center text-pending">
-                                                        <span
-                                                            class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                            Refusé
-                                                        </span>
-
-                                                    </div>
-
-                                                </div>
-                                                <div class="flex items-center justify-center text-pending">
-                                                    <span
-                                                        class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                              text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                        style="color: white;">
-                                                        Traiter
-                                                    </span>
-
-                                                </div>
-                                            @else
-                                                <div class="flex items-center justify-center text-success">
-                                                    <div class="flex items-center justify-center text-pending">
-                                                        <span
-                                                            class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                              text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                            style="color: white;">
-                                                            Accepté
-                                                        </span>
-
-
-                                                    </div>
-
-                                                </div>
-                                                <div class="flex items-center justify-center text-pending">
-                                                    <span
-                                                        class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                              text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                        style="color: white;">
-                                                        Traiter
-                                                    </span>
-
-                                                </div>
-                                            @endif
+                                                @include('components.info_status')
+                                          
                                         </td>
                                         <td class="w-56">
                                             <div class="flex justify-center items-center">
                                                 @if ($item->status == 'PENDING')
-                                                    @if (!firm())
-                                                        @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                            <a wire:click="editReload({{ $item->id }}, 'update-reloadWallet-modal')"
-                                                                class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                                href="javascript:;" title="Modifier">
-                                                                Modifier
-                                                            </a>
-                                                        @endif
-                                                    @endif
+                                                    <div class="flex items-center justify-center text-pending">
+                                                        <span
+                                                            class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                            En-attente
+                                                        </span>
+
+                                                    </div>
                                                 @elseif ($item->status == 'SUCCESS')
                                                     <a target="_bank"
                                                         href="{{ route('reaload.invoice.print', $item->id) }}"

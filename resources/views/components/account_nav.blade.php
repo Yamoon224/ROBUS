@@ -49,10 +49,26 @@
                  aria-controls="xbet" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
                      data-feather="shield"></i> Xbet </a>
          </li>
-         <li id="wave-tab" class="nav-item" role="presentation">
-             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#wave"
-                 aria-controls="wave" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
-                     data-feather="shield"></i> Wave </a>
+         <li id="push-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#push"
+                 aria-controls="push" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Push </a>
+         </li>
+         <li id="tresort-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#tresort"
+                 aria-controls="tresort" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Tresort Money </a>
+         </li>
+
+         <li id="djamo-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#djamo"
+                 aria-controls="djamo" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Djamo </a>
+         </li>
+          <li id="versments-tab" class="nav-item" role="presentation">
+             <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#versments"
+                 aria-controls="versments" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
+                     data-feather="shield"></i> Versements </a>
          </li>
 
      </ul>

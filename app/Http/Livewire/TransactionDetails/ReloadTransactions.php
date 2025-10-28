@@ -30,6 +30,7 @@ class ReloadTransactions extends Component
         
         $wallet_solde = Wallet::where('sid_user_id',  $this->walletAllReloads)->first();
 
+  
         $reaload_uv =  $this->getTransactionUserWallet(WalletReload::class, $wallet_solde->id, 'account_wallet',  $wallet_solde->wallet_id);
 
         $realod_search =  WalletReload::query();

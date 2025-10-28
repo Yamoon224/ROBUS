@@ -10,7 +10,7 @@
     <nav class="side-nav">
         <a href="{{ route('/') }}" class="intro-x flex items-center pl-5 pt-4">
             <img alt="Robus" class="w-20" src="{{ asset_url('dist/images/logo_robus.png') }}">
-            <span class="hidden xl:block text-white text-lg ml-3">  </span>
+            <span class="hidden xl:block text-white text-lg ml-3"> </span>
         </a>
         <div class="side-nav__devider my-4"></div>
         <ul>
@@ -90,7 +90,7 @@
             @if (Auth::guard('web')->user()->hasPermissionTo('historiques'))
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('historiques*') || request()->is('winnings*')  || request()->is('historicals*') ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('historiques*') || request()->is('winnings*') || request()->is('historicals*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24"
                                 height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                                 stroke-linecap="round" stroke-linejoin="round" icon-name="clipboard"
@@ -104,7 +104,8 @@
                             <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
                         </div>
                     </a>
-                    <ul class="{{ request()->is('historiques*') || request()->is('winnings*') || request()->is('historicals*') ? 'side-menu__sub-open' : '' }}">
+                    <ul
+                        class="{{ request()->is('historiques*') || request()->is('winnings*') || request()->is('historicals*') ? 'side-menu__sub-open' : '' }}">
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('voir-historique-transfers'))
                             <li>
@@ -117,14 +118,14 @@
                             </li>
                         @endif
                         {{-- @if (Auth::guard('web')->user()->hasPermissionTo('gain-commissions')) --}}
-                            <li>
-                                <a href="{{ route('unders.browse_winnings') }}"
-                                    class="side-menu {{ $route == 'unders.browse_winnings' ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                                    </div>
-                                    <div class="side-menu__title"> Gains commissions </div>
-                                </a>
-                            </li>
+                        <li>
+                            <a href="{{ route('unders.browse_winnings') }}"
+                                class="side-menu {{ $route == 'unders.browse_winnings' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title"> Gains commissions </div>
+                            </a>
+                        </li>
                         {{-- @endif --}}
 
                     </ul>
@@ -390,6 +391,14 @@
                             </a>
                         </li>
                         <li>
+                            <a href="{{ route('commissions.browse_bankSends') }}"
+                                class="side-menu {{ $route == 'commissions.browse_bankSends' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title">Rechargement Bank</div>
+                            </a>
+                        </li>
+                        <li>
                             <a href="{{ route('commissions.browse_deposits') }}"
                                 class="side-menu {{ $route == 'commissions.browse_deposits' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
@@ -448,6 +457,15 @@
                             </a>
                         </li>
                         <li>
+                            <a href="{{ route('commissions.browse_virements') }}"
+                                class="side-menu {{ $route == 'commissions.browse_virements' ? 'side-menu--active' : '' }}">
+                                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                                </div>
+                                <div class="side-menu__title">Service virements</div>
+                            </a>
+                        </li>
+
+                        <li>
                             <a href="{{ route('commissions.browse_onexbets') }}"
                                 class="side-menu {{ $route == 'commissions.browse_onexbets' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
@@ -456,7 +474,7 @@
                             </a>
                         </li>
 
-                         <li>
+                        <li>
                             <a href="{{ route('commissions.browse_versement_banks') }}"
                                 class="side-menu {{ $route == 'commissions.browse_versement_banks' ? 'side-menu--active' : '' }}">
                                 <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>

@@ -1941,6 +1941,28 @@ class CommissionController extends Controller
         return view('pages.commissions.deposits');
     }
 
+    public function browse_virements()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+        return view('pages.commissions.virements');
+    }
+
+
+       /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function browse_bankSends()
+    {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-commissions')) {
+            abort(403);
+        }
+        return view('pages.commissions.banksends');
+    }
+
 
     /**
      * Display a listing of the resource.
