@@ -93,9 +93,6 @@
                                                   @include('components.walletBalance')
 
                                               </td>
-
-
-
                                               <td class="w-60">
                                                   <div class="mb-3">
                                                       @include('components.info')
@@ -119,75 +116,7 @@
                                               </td>
 
                                               <td class="w-40">
-                                                  @if ($item->status == 'PENDING')
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                              En-attente
-                                                          </span>
-
-                                                      </div>
-                                                  @elseif ($item->status == 'ERROR')
-                                                      <div class="flex items-center justify-center text-danger">
-                                                          <div class="flex items-center justify-center text-pending">
-                                                              <span
-                                                                  class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                  Refusé
-                                                              </span>
-
-                                                          </div>
-                                                      </div>
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                              style="color: white;">
-                                                              Traiter
-                                                          </span>
-
-                                                      </div>
-                                                  @elseif($item->status == 'REFUND')
-                                                      <div class="flex items-center justify-center text-primary">
-                                                          <div class="flex items-center justify-center text-pending">
-                                                              <span
-                                                                  class="alert alert-primary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                  Remboursé
-                                                              </span>
-
-                                                          </div>
-                                                      </div>
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                              style="color: white;">
-                                                              Traiter
-                                                          </span>
-
-                                                      </div>
-                                                  @else
-                                                      <div class="flex items-center justify-center text-success">
-                                                          <div class="flex items-center justify-center text-pending">
-                                                              <span
-                                                                  class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                                  style="color: white;">
-                                                                  Accepté
-                                                              </span>
-
-                                                          </div>
-
-                                                      </div>
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                              style="color: white;">
-                                                              Traiter
-                                                          </span>
-
-                                                      </div>
-                                                  @endif
+                                                  @include('components.info_status')
                                               </td>
                                               <td class="w-40">
                                                   <div class="flex justify-center items-center">
@@ -197,7 +126,7 @@
                                                                   <a wire:click="editReloadCard({{ $item->id }}, 'update-reloadCards-modal')"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                       href="javascript:;" title="Modifier">
-                                                                       <svg class="w-4 h-4 mr-1" fill="none"
+                                                                      <svg class="w-4 h-4 mr-1" fill="none"
                                                                           stroke="currentColor" viewBox="0 0 24 24">
                                                                           <path stroke-linecap="round"
                                                                               stroke-linejoin="round" stroke-width="2"
@@ -241,8 +170,7 @@
                                                                           width="24" height="24"
                                                                           viewBox="0 0 24 24" fill="none"
                                                                           stroke="currentColor" stroke-width="2"
-                                                                          stroke-linecap="round"
-                                                                          stroke-linejoin="round"
+                                                                          stroke-linecap="round" stroke-linejoin="round"
                                                                           icon-name="alert-octagon"
                                                                           data-lucide="alert-octagon"
                                                                           class="lucide lucide-alert-octagon w-6 h-6 mr-2">

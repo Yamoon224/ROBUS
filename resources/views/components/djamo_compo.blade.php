@@ -19,8 +19,9 @@
       </div>
       <div class="grid grid-cols-12 gap-6 mt-6">
           <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
-             
-               <div class="flex items-center  border-b border-slate-200/60 dark:border-darkmode-400 bg-white dark:bg-darkmode-700">
+
+              <div
+                  class="flex items-center  border-b border-slate-200/60 dark:border-darkmode-400 bg-white dark:bg-darkmode-700">
                   <div class="flex items-center gap-3">
                       <div class="w-3 h-8 bg-orange-500 rounded-r-full"></div>
                       <div>
@@ -53,7 +54,7 @@
                                       <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                           Montant demandé
                                       </th>
-                                     
+
                                       <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                           Info Djamo
                                       </th>
@@ -83,16 +84,16 @@
                                                   </div>
 
                                               </td>
-                                                <td class="user-info-card">
+                                              <td class="user-info-card">
                                                   @include('components.infoUser')
-                                                  
+
                                               </td>
-                                              <td >
+                                              <td>
                                                   @include('components.walletBalance')
 
 
                                               </td>
-                                              
+
 
                                               <td class="w-60">
                                                   <div class="mb-3">
@@ -153,10 +154,9 @@
                                                       <div class="flex items-center justify-center text-success mt-3">
 
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                            <x-take-action-button action="ChooseUpdateDjamo"
+                                                              <x-take-action-button action="ChooseUpdateDjamo"
                                                                   :itemId="$item->id" label="Je prends en charge"
                                                                   speed="ultra-fast" color="warning" />
-                                                         
                                                           @endif
 
                                                       </div>
@@ -215,75 +215,8 @@
                                               </td>
 
                                               <td class="w-40">
-                                                  @if ($item->status == 'PENDING')
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                              En-attente
-                                                          </span>
+                                                  @include('components.info_status')
 
-                                                      </div>
-                                                  @elseif ($item->status == 'ERROR')
-                                                      <div class="flex items-center justify-center text-danger">
-                                                          <div class="flex items-center justify-center text-pending">
-                                                              <span
-                                                                  class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                  Refusé
-                                                              </span>
-
-                                                          </div>
-                                                      </div>
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                              style="color: white;">
-                                                              Traiter
-                                                          </span>
-
-                                                      </div>
-                                                  @elseif($item->status == 'REFUND')
-                                                      <div class="flex items-center justify-center text-primary">
-                                                          <div class="flex items-center justify-center text-pending">
-                                                              <span
-                                                                  class="alert alert-primary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                  Remboursé
-                                                              </span>
-
-                                                          </div>
-                                                      </div>
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                              style="color: white;">
-                                                              Traiter
-                                                          </span>
-
-                                                      </div>
-                                                  @else
-                                                      <div class="flex items-center justify-center text-success">
-                                                          <div class="flex items-center justify-center text-pending">
-                                                              <span
-                                                                  class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                                  style="color: white;">
-                                                                  Accepté
-                                                              </span>
-
-                                                          </div>
-
-                                                      </div>
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                              style="color: white;">
-                                                              Traiter
-                                                          </span>
-
-                                                      </div>
-                                                  @endif
                                               </td>
                                               <td class="w-40">
                                                   <div class="flex justify-center items-center">
@@ -293,13 +226,13 @@
                                                                   <a wire:click="editDjamo({{ $item->id }}, 'update-djamo-modal')"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                       href="javascript:;" title="Modifier">
-                                                                       <svg class="w-4 h-4 mr-1" fill="none"
+                                                                      <svg class="w-4 h-4 mr-1" fill="none"
                                                                           stroke="currentColor" viewBox="0 0 24 24">
                                                                           <path stroke-linecap="round"
                                                                               stroke-linejoin="round" stroke-width="2"
                                                                               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                       </svg>
-                                                                      
+
                                                                       Modifier
                                                                   </a>
                                                               @endif

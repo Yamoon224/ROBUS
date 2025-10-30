@@ -19,13 +19,14 @@
       </div>
       <div class="grid grid-cols-12 gap-6 mt-6">
           <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
-             
-              <div class="flex items-center  border-b border-slate-200/60 dark:border-darkmode-400 bg-white dark:bg-darkmode-700">
+
+              <div
+                  class="flex items-center  border-b border-slate-200/60 dark:border-darkmode-400 bg-white dark:bg-darkmode-700">
                   <div class="flex items-center gap-3">
                       <div class="w-3 h-8 bg-orange-500 rounded-r-full"></div>
                       <div>
                           <h2 class="font-medium text-base mr-auto text-slate-900 dark:text-white text-xl">
-                             Liste des transactions de Push
+                              Liste des transactions de Push
                           </h2>
                           <div class="flex items-center gap-4 mt-2 mb-2 ">
                               <span class="text-sm text-slate-600 dark:text-slate-400 font-medium">
@@ -119,10 +120,9 @@
 
                                                       <div class="flex items-center justify-center mt-4">
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                                  <x-take-action-button action="ChooseUpdatePush"
+                                                              <x-take-action-button action="ChooseUpdatePush"
                                                                   :itemId="$item->id" label="Je prends en charge"
-                                                                  speed="ultra-fast"
-                                                                  color="warning" />
+                                                                  speed="ultra-fast" color="warning" />
                                                           @endif
                                                       </div>
                                                   @else
@@ -147,75 +147,7 @@
                                               </td>
 
                                               <td class="w-40">
-                                                  @if ($item->status == 'PENDING')
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                              En-attente
-                                                          </span>
-
-                                                      </div>
-                                                  @elseif ($item->status == 'ERROR')
-                                                      <div class="flex items-center justify-center text-danger">
-                                                          <div class="flex items-center justify-center text-pending">
-                                                              <span
-                                                                  class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                  Refusé
-                                                              </span>
-
-                                                          </div>
-                                                      </div>
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                              style="color: white;">
-                                                              Traiter
-                                                          </span>
-
-                                                      </div>
-                                                  @elseif($item->status == 'REFUND')
-                                                      <div class="flex items-center justify-center text-primary">
-                                                          <div class="flex items-center justify-center text-pending">
-                                                              <span
-                                                                  class="alert alert-primary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                  Remboursé
-                                                              </span>
-
-                                                          </div>
-                                                      </div>
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                              style="color: white;">
-                                                              Traiter
-                                                          </span>
-
-                                                      </div>
-                                                  @else
-                                                      <div class="flex items-center justify-center text-success">
-                                                          <div class="flex items-center justify-center text-pending">
-                                                              <span
-                                                                  class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                                  style="color: white;">
-                                                                  Accepté
-                                                              </span>
-
-                                                          </div>
-
-                                                      </div>
-                                                      <div class="flex items-center justify-center text-pending">
-                                                          <span
-                                                              class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                              style="color: white;">
-                                                              Traiter
-                                                          </span>
-
-                                                      </div>
-                                                  @endif
+                                                  @include('components.info_status')
                                               </td>
                                               <td class="w-40">
                                                   <div class="flex justify-center items-center">

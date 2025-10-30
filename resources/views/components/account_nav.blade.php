@@ -37,7 +37,7 @@
          <li id="inter-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#inter"
                  aria-controls="inter" aria-selected="false" role="tab"> <i class="w-4 h-4 mr-2"
-                     data-feather="shield"></i> Inter </a>
+                     data-feather="shield"></i> International </a>
          </li>
          <li id="phone-tab" class="nav-item" role="presentation">
              <a href="javascript:;" class="nav-link py-4 flex items-center" data-tw-target="#phone"

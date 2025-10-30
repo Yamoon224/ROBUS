@@ -71,7 +71,4 @@ class WalletTransaction extends Model
         return LogOptions::defaults()->useLogName('Robus');
     }
 
-    // public function getValidatedDateAttribute($value) {
-    //     return  Carbon::createFromFormat('Y-m-d H:i:s',  $data->created_at)->format('d-m-Y');
-    // }
 }

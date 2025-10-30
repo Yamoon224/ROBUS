@@ -125,7 +125,6 @@
             </h2>
         </div>
 
-
         <div class="grid grid-cols-12 gap-6 mt-6">
             <div class="col-span-12 sm:col-span-6 xl:col-span-3 intro-y info-paiement-show" id="info-paie-show-2">
                 <div class="report-box zoom-in">

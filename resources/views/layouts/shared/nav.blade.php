@@ -135,7 +135,7 @@
             @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
                 <li>
                     <a href="javascript:;"
-                        class="side-menu {{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*') || request()->is('distribitors*') || request()->is('underdistributors*') ? 'side-menu--active' : '' }}">
+                        class="side-menu {{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*') || request()->is('distribitors*') || request()->is('underdistributors*')|| request()->is('rankings*')  ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" clea
                                 stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
@@ -149,7 +149,7 @@
                         </div>
                     </a>
                     <ul
-                        class="{{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*') || request()->is('distribitors*') || request()->is('underdistributors*') ? 'side-menu__sub-open' : '' }}">
+                        class="{{ request()->is('users*') || request()->is('masters*') || request()->is('comzones*') || request()->is('distribitors*') || request()->is('underdistributors*') || request()->is('rankings*') ? 'side-menu__sub-open' : '' }}">
 
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('clients'))
@@ -224,6 +224,19 @@
                                             class="block mx-auto"></i>
                                     </div>
                                     <div class="side-menu__title"> Operatrices</div>
+                                </a>
+                            </li>
+                        @endif
+
+                         @if (Auth::guard('web')->user()->hasPermissionTo('utilisateurs'))
+                            <li>
+
+                                <a href="{{ route('rankings.browse') }}"
+                                    class="side-menu {{ $route == 'rankings.browse'  ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="award"
+                                            class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Classements</div>
                                 </a>
                             </li>
                         @endif

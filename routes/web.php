@@ -14,6 +14,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Invoices\InvoiceController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PaimentController;
+use App\Http\Controllers\RankingController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TransactionController;
@@ -196,6 +197,11 @@ Route::group(['prefix' => ''], function () {
             Route::get('/uv', [TransactionController::class, 'browse_uv'])->name('transactions.uv.browse');
             Route::get('/show/{id}', [TransactionController::class, 'show'])->name('transactions.show');
             Route::get('/read/{id}/delete', [TransactionController::class, 'delete'])->name('transactions.delete');
+        });
+
+        //   Transactions
+        Route::prefix('rankings')->group(function () {
+            Route::get('/browse', [RankingController::class, 'browse'])->name('rankings.browse');
         });
 
         Route::prefix('historiques')->group(function () {
