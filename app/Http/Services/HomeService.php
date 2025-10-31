@@ -10,65 +10,235 @@ use App\Models\Sid\SidUser;
 class HomeService
 {
 
- public function getSubDistributorsWalletTransactionRanking($walletModel, $filters = [])
+    public function getSubDistributorsWalletTransactionFilterRanking($walletModel, array $filters = [])
     {
         $query = $walletModel::select(
-            'sid_users.firstname as sub_distributor',
             'sid_users.id as sub_userId',
+            'sid_users.firstname as sub_distributor',
             'sid_users.email as sub_email',
+            DB::raw('MAX(wallets.amount) as wallet_balance'),
             'countries.name as country_name',
+            'cities.name as citie_name',
             'currencies.code as currency_code',
             'providers.name as provider',
-            DB::raw('SUM(wallets.amount) as wallet_balance'),
             DB::raw('SUM(wallet_transactions.amount) as total_amount'),
-            DB::raw('COUNT(wallet_transactions.id) as total_transactions')
+            DB::raw('COUNT(wallet_transactions.id) as total_transactions'),
+            DB::raw('MAX(wallet_transactions.created_at) as last_transaction_date')
         )
-        ->join('wallets', 'wallet_transactions.wallet_id', '=', 'wallets.id')
-        ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
-        ->join('providers', 'wallet_transactions.provider_id', '=', 'providers.id')
-        ->join('countries', 'sid_users.country_id', '=', 'countries.id')
-        ->join('currencies', 'wallets.currencie_id', '=', 'currencies.id')
-        ->where('wallet_transactions.status', 'SUCCESS')
-        ->where('sid_users.is_under_distributer', true);
+            ->join('wallets', 'wallet_transactions.wallet_id', '=', 'wallets.id')
+            ->join('currencies', 'wallets.currencie_id', '=', 'currencies.id')
+            ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+            ->join('providers', 'wallet_transactions.provider_id', '=', 'providers.id')
+            ->join('countries', 'sid_users.country_id', '=', 'countries.id')
+            ->join('cities', 'sid_users.city_id', '=', 'cities.id')
+            ->where('wallet_transactions.status', 'SUCCESS')
+            ->where('sid_users.is_under_distributer', true);
 
-        // Appliquer les filtres
-        if (!empty($filters['date_start']) && !empty($filters['date_end'])) {
-            $query->whereBetween('wallet_transactions.created_at', [$filters['date_start'], $filters['date_end']]);
-        }
-
+        // ✅ Filtres dynamiques
         if (!empty($filters['provider_id'])) {
             $query->where('wallet_transactions.provider_id', $filters['provider_id']);
         }
 
-        // GroupBy
-        $transactions = $query->groupBy(
-            'sid_users.id',
-            'providers.id',
-            'countries.id',
-            'currencies.id',
-            'countries.name',
-            'providers.name',
-            'currencies.code'
-        )
-        ->orderByDesc('total_amount')
-        ->get();
+        // ✅ Filtre par pays
+        if (!empty($filters['country_id'])) {
+            $query->where('sid_users.country_id', $filters['country_id']);
+        }
 
-        return $transactions->groupBy('country_name')->map(function($subDistributors) {
-            return $subDistributors->map(function($t) {
-                return [
-                    'sub_distributor' => $t->sub_distributor ?? 'N/A',
-                    'sub_countrie' => $t->country_name ?? 'N/A',
-                    'currency' => $t->currency_code ?? 'XOF',
-                    'sub_userId' => $t->sub_userId ?? 'N/A',
-                    'sub_email' => $t->sub_email ?? 'N/A',
-                    'wallet_balance' => $t->wallet_balance ?? 0,
-                    'provider' => $t->provider ?? 'N/A',
-                    'total_amount' => $t->total_amount ?? 0,
-                    'total_transactions' => $t->total_transactions ?? 0
-                ];
-            });
+        // ✅ Filtre période
+        if (!empty($filters['periode'])) {
+            switch ($filters['periode']) {
+                case 'today':
+                    $query->whereDate('wallet_transactions.created_at', now());
+                    break;
+                case 'week':
+                    $query->whereBetween('wallet_transactions.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                    break;
+                case 'month':
+                    $query->whereBetween('wallet_transactions.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+                    break;
+                case 'year':
+                default:
+                    // ✅ Période par défaut = année en cours
+                    $query->whereYear('wallet_transactions.created_at', now()->year);
+                    break;
+            }
+        } else {
+            // ✅ par défaut, filtrer sur l’année en cours
+            $query->whereYear('wallet_transactions.created_at', now()->year);
+        }
+
+        // ✅ Groupements corrects
+        $transactions = $query
+            ->groupBy(
+                'sid_users.id',
+                'sid_users.firstname',
+                'sid_users.email',
+                'providers.id',
+                'providers.name',
+                'countries.id',
+                'cities.id',
+                'cities.name',
+                'countries.name',
+                'currencies.code'
+            )
+            ->orderByDesc('total_amount')
+            ->get();
+
+        // ✅ Transformation du résultat pour la vue
+        $ranking = $transactions->map(function ($t) {
+            return [
+                'sub_distributor'     => $t->sub_distributor ?? 'N/A',
+                'sub_countrie'        => $t->country_name ?? 'N/A',
+                'sub_citie' => $t->citie_name ?? 'N/A',
+                'sub_userId'          => $t->sub_userId ?? 'N/A',
+                'sub_email'           => $t->sub_email ?? 'N/A',
+                'wallet_balance'      => (float) $t->wallet_balance ?? 0,
+                'currency'            => $t->currency_code ?? 'N/A',
+                'provider'            => $t->provider ?? 'N/A',
+                'total_amount'        => (float) $t->total_amount ?? 0,
+                'total_transactions'  => (int) $t->total_transactions ?? 0,
+                'last_transaction_date' => $t->last_transaction_date
+                    ? \Carbon\Carbon::parse($t->last_transaction_date)->format('d/m/Y')
+                    : 'N/A',
+            ];
         });
+
+        // ✅ Regrouper par pays pour l’affichage
+        return $ranking->groupBy('sub_countrie')->map(fn($group) => $group->values());
     }
+
+
+
+    public function getSubDistributorsWalletTransactionRanking($walletModel)
+    {
+        $transactions = $walletModel::select(
+            'sid_users.firstname as sub_distributor',
+            'sid_users.id as sub_userId',
+            'sid_users.email as sub_email',
+            'countries.name as country_name',
+            'cities.name as citie_name',
+            'currencies.code as currency_code',
+            DB::raw('MAX(wallet_transactions.created_at) as last_transaction_date'),
+            DB::raw('MAX(wallets.amount) as wallet_balance'),
+            'providers.name as provider',
+            DB::raw('SUM(wallet_transactions.amount) as total_amount'),
+            DB::raw('COUNT(wallet_transactions.id) as total_transactions')
+        )
+            ->join('wallets', 'wallet_transactions.wallet_id', '=', 'wallets.id')
+            ->join('currencies', 'wallets.currencie_id', '=', 'currencies.id')
+            ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+            ->join('providers', 'wallet_transactions.provider_id', '=', 'providers.id')
+            ->join('countries', 'sid_users.country_id', '=', 'countries.id')
+            ->join('cities', 'sid_users.city_id', '=', 'cities.id')
+            ->where('wallet_transactions.status', 'SUCCESS')
+            ->where('sid_users.is_under_distributer', true)
+            ->groupBy(
+                'sid_users.id',
+                'sid_users.firstname',
+                'sid_users.email',
+                'providers.id',
+                'providers.name',
+                'countries.id',
+                'cities.id',
+                'countries.name',
+                'cities.name',
+                'currencies.code'
+            )
+            ->orderByDesc('total_amount')
+            ->get();
+
+        $ranking = $transactions->map(function ($t) {
+            return [
+                'sub_distributor' => $t->sub_distributor ?? 'N/A',
+                'sub_countrie' => $t->country_name ?? 'N/A',
+                'sub_citie' => $t->citie_name ?? 'N/A',
+                'sub_userId' => $t->sub_userId ?? 'N/A',
+                'sub_email' => $t->sub_email ?? 'N/A',
+                'wallet_balance' => (float) $t->wallet_balance ?? 0,
+                'walletTransaction_Created' => $t->wallet_transaction_created ?? 'N/A',
+                'currency' => $t->currency_code ?? 'N/A',
+                'provider' => $t->provider ?? 'N/A',
+                'total_amount' => (float) $t->total_amount ?? 0,
+                'total_transactions' => (int) $t->total_transactions ?? 0,
+                'last_transaction_date' => $t->last_transaction_date
+                    ? \Carbon\Carbon::parse($t->last_transaction_date)->format('d/m/Y')
+                    : 'N/A',
+            ];
+        });
+
+        // Regroupement par pays
+        return $ranking
+            ->groupBy('sub_countrie')
+            ->map(fn($group) => $group->values());
+    }
+
+    public function getSubDistributorsWalletTransactionFiveRanking($walletModel)
+    {
+        
+        $transactions = $walletModel::select(
+            'sid_users.firstname as sub_distributor',
+            'sid_users.id as sub_userId',
+            'sid_users.email as sub_email',
+            'countries.name as country_name',
+            'cities.name as citie_name',
+            'currencies.code as currency_code',
+            DB::raw('MAX(wallet_transactions.created_at) as last_transaction_date'),
+            DB::raw('MAX(wallets.amount) as wallet_balance'),
+            'providers.name as provider',
+            DB::raw('SUM(wallet_transactions.amount) as total_amount'),
+            DB::raw('COUNT(wallet_transactions.id) as total_transactions')
+        )
+            ->join('wallets', 'wallet_transactions.wallet_id', '=', 'wallets.id')
+            ->join('currencies', 'wallets.currencie_id', '=', 'currencies.id')
+            ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
+            ->join('providers', 'wallet_transactions.provider_id', '=', 'providers.id')
+            ->join('countries', 'sid_users.country_id', '=', 'countries.id')
+            ->join('cities', 'sid_users.city_id', '=', 'cities.id')
+            ->where('wallet_transactions.status', 'SUCCESS')
+            ->where('sid_users.is_under_distributer', true)
+            ->groupBy(
+                'sid_users.id',
+                'sid_users.firstname',
+                'sid_users.email',
+                'providers.id',
+                'providers.name',
+                'countries.id',
+                'cities.id',
+                'countries.name',
+                'cities.name',
+                'currencies.code'
+            )
+            ->orderByDesc('total_amount')
+            ->get();
+
+        $ranking = $transactions->map(function ($t) {
+          
+            return [
+                'sub_distributor' => $t->sub_distributor ?? 'N/A',
+                'sub_countrie' => $t->country_name ?? 'N/A',
+                'sub_citie' => $t->citie_name ?? 'N/A',
+                'sub_userId' => $t->sub_userId ?? 'N/A',
+                'sub_email' => $t->sub_email ?? 'N/A',
+                'wallet_balance' => (float) $t->wallet_balance ?? 0,
+                'currency' => $t->currency_code ?? 'N/A',
+                'provider' => $t->provider ?? 'N/A',
+                'total_amount' => (float) $t->total_amount ?? 0,
+                'total_transactions' => (int) $t->total_transactions ?? 0,
+                'last_transaction_date' => $t->last_transaction_date
+                    ? \Carbon\Carbon::parse($t->last_transaction_date)->format('d/m/Y')
+                    : 'N/A',
+            ];
+        });
+
+        // Regrouper par pays
+        $groupedRanking = $ranking->groupBy('sub_countrie')->map(function ($group) {
+            // Ne garder que les 5 premiers par pays
+            return $group->sortByDesc('total_amount')->take(5)->values();
+        });
+
+        return $groupedRanking;
+    }
+
 
 
     public function getUserTypeTotal($user, $status)

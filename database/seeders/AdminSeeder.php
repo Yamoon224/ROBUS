@@ -75,6 +75,9 @@ class AdminSeeder extends Seeder
 
             // 483313210.97302
             // 483311278.9730161
+
+                // 223 created_by
+        // Updated_by 15
             // 483313210.9730161
         DB::table('sid_users')->insert([
             'firstname' => 'Sabdy',

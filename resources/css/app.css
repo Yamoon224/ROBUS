@@ -898,6 +898,45 @@
     border: 1px solid #6366f1;
 }
 
+.performance-bar {
+    height: 0.5rem; /* Hauteur de la barre */
+    border-radius: 0.25rem;
+    background-color: #e5e7eb; /* Gris clair de fond */
+    overflow: hidden;
+}
+
+.performance-fill {
+    height: 100%;
+    border-radius: 0.25rem;
+    width: 0%; /* La largeur sera dynamique */
+    transition: width 0.3s ease-in-out;
+}
+
+/* Couleurs personnalisées */
+.performance-fill.neon-green {
+    background: linear-gradient(to right, #00ff88, #00cc6a);
+}
+
+.performance-fill.indigo {
+    background: linear-gradient(to right, #6366f1, #4f46e5);
+}
+
+.performance-fill.violet {
+    background: linear-gradient(to right, #8b5cf6, #7c3aed);
+}
+
+.performance-fill.amber {
+    background: linear-gradient(to right, #f59e0b, #d97706);
+}
+
+.performance-fill.orange {
+    background: linear-gradient(to right, #f97316, #ea580c);
+}
+
+.performance-fill.red {
+    background: linear-gradient(to right, #ef4444, #dc2626);
+}
+
 .user-location::before {
     content: '📍';
     font-size: 0.9rem;
