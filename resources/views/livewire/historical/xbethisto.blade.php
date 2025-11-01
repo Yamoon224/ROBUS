@@ -1,5 +1,16 @@
 <div>
 
+      <x-report-widget 
+        :formRoute="route('phones.historical.reporting_phone_historical')" 
+        :downloadRoute="route('phones.historical.reporting_phone_historical')" title="Les Activités des paiements des factures"
+        totalText="Total Transaction Xbets" 
+        :totalCount="$user ?? 0" 
+        :country="$usersCountry"
+        :pendingCount="$phone_historicals->where('status', 
+        'PENDING')->count()" :successCount="$phone_historicals->where('status', 
+        'SUCCESS')->count()" 
+        :errorCount="$phone_historicals->where('status', 'ERROR')->count()" />
+
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
         <div class="intro-y col-span-12 grid grid-cols-12 gap-5 items-center mt-2">
 

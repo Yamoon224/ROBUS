@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Historical;
 
 use Livewire\Component;
 
@@ -8,6 +8,6 @@ class VersmentHisto extends Component
 {
     public function render()
     {
-        return view('livewire.versment-histo');
+        return view('livewire.historical.versment-histo');
     }
 }

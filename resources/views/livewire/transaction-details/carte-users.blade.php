@@ -36,7 +36,7 @@
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-6">
             <nav class="w-full sm:w-auto sm:mr-auto">
                 <ul class="pagination">
-                    {{ $all_deposits->links('vendor.pagination.custum') }}
+                    {{ $card_historicals->links('vendor.pagination.custum') }}
                 </ul>
             </nav>
         </div>
