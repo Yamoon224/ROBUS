@@ -19,9 +19,72 @@ class RankingController extends Controller
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
             abort(403);
         }
-        return view('pages.custumers.browse_rankings');
+        return view('pages.rankings.browse_rankings');
     }
-    
+
+    public function browse_transactions()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_transactions');
+    }
+
+    public function browse_paiments()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_paiments');
+    }
+
+    public function browse_virments()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.custumers.browse_virments');
+    }
+
+    public function browse_phone_credits()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_phone_credits');
+    }
+
+    public function browse_reloads_cards()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_reloads_cards');
+    }
+
+    public function browse_inters()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_inters');
+    }
+
+    public function browse_bank_sends()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-soldes')) {
+            abort(403);
+        }
+        return view('pages.rankings.browse_bank_sends');
+    }
+
     public function browse_visitors()
     {
 
@@ -30,7 +93,5 @@ class RankingController extends Controller
         } else {
             abort(403);
         }
-
     }
-
 }

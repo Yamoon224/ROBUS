@@ -4,7 +4,7 @@
 
 @section('content')
     <div>
-        <livewire:rankings>
+        <livewire:rankings.ranking-authers>
     </div>
 @endsection
 

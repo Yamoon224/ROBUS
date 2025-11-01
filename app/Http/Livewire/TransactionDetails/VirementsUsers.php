@@ -80,7 +80,7 @@ class VirementsUsers extends Component
         return view(
             'livewire.transaction-details.virements-users',
             [
-                'all_virements'  => $virements,
+                'bank_historicals'  => $virements,
             ]
         );
     }

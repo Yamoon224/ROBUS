@@ -79,7 +79,7 @@ class PhoneCreditUsers extends Component
         return view(
             'livewire.transaction-details.phone-credit-users',
             [
-                'all_phonecredits'  => $phone_credits,
+                'phone_historicals'  => $phone_credits,
             ]
         );
     }

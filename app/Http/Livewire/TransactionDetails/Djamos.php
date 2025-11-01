@@ -77,7 +77,7 @@ class Djamos extends Component
         return view(
             'livewire.transaction-details.djamos',
             [
-                'all_djamos'  => $djamos,
+                'djamo_historicals'  => $djamos,
             ]
         );
     }

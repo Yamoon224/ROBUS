@@ -20,7 +20,7 @@
 
 </div>
 
-<div class="transaction-alert">
+<div class="transaction-alert-valiated">
     <div class="transaction-alert__content">
         <div class="transaction-alert__icon">
             <svg fill="currentColor" viewBox="0 0 20 20">

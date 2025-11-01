@@ -100,117 +100,48 @@
                                                       @include('components.info')
                                                   </div>
                                                   @if ($item->updated_by == null)
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          @if ($item->factureChoix_type == 1)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Facture
-                                                                          prépayée</div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ substr($item->id_invoice ?? null, 0, 5) }}
-                                                          @elseif($item->factureChoix_type == 2)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Facture
-                                                                          normale</div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ substr($item->id_invoice ?? null, 0, 5) }}
-                                                          @elseif($item->paiementChoix_phone == 1)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
+                                                      <div
+                                                          class="flex flex-col md:flex-row items-center justify-center gap-4 mt-4 p-4 ">
 
-                                                                          Numero de telephone</div>
-                                                                  </div>
-                                                              </div>
-
-                                                              {{ substr($item->number_phone ?? null, 0, 6) }}
-                                                          @elseif($item->paiementChoix_phone == 2)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Numero du decodeur
-                                                                      </div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ substr($item->number_decoder, 0, 5) }}
-                                                          @elseif ($item->paiementChoix_phone == null && $item->factureChoix_type == null)
-                                                              {{ substr($item->number_contract ?? null, 0, 5) }}
-                                                          @endif
-
-                                                      </p>
-                                                      <div class="flex items-center justify-center text-success mt-3">
-
+                                                          <!-- Bouton action -->
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               <x-take-action-button action="ChooseUpdateDjamo"
                                                                   :itemId="$item->id" label="Je prends en charge"
-                                                                  speed="ultra-fast" color="warning" />
+                                                                  speed="ultra-fast" color="warning"
+                                                                  class="mb-2 md:mb-0" />
                                                           @endif
+
+                                                          <!-- Section QR code / image -->
+
 
                                                       </div>
-                                                  @else
-                                                      <p class="font-medium whitespace-nowrap">
-                                                          @if ($item->factureChoix_type == 1)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Facture
-                                                                          prépayée</div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ $item->id_invoice ?? null }}
-                                                          @elseif($item->factureChoix_type == 2)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Facture
-                                                                          normale</div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ $item->id_invoice ?? null }}
-                                                          @elseif($item->paiementChoix_phone == 1)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
+                                                      <div
+                                                          class="flex flex-col items-center justify-center gap-2 p-2 bg-gray-50 mt-3">
+                                                          <i class="fas fa-qrcode text-gray-400 text-xl"></i>
 
-                                                                          Numero de telephone</div>
-                                                                  </div>
-                                                              </div>
-
-                                                              {{ $item->number_phone ?? null }}
-                                                          @elseif($item->paiementChoix_phone == 2)
-                                                              <div
-                                                                  class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                                  <div class="fc-event-title-container"
-                                                                      style="color: white;">
-                                                                      <div class="fc-event-title fc-sticky">
-                                                                          Numero du decodeur
-                                                                      </div>
-                                                                  </div>
-                                                              </div>
-                                                              {{ $item->number_decoder }}
+                                                          @if ($item->image)
+                                                              <img src="{{ asset('storage/' . $item->image) }}"
+                                                                  alt="QR Code Djamo"
+                                                                  class="qr-blur w-20 h-20 object-contain rounded-lg border border-gray-300 shadow-sm">
                                                           @else
-                                                              {{ $item->number_contract ?? null }}
+                                                              <span class="text-gray-400 italic">Aucune image
+                                                                  disponible</span>
                                                           @endif
-                                                      </p>
+                                                      </div>
+                                                  @else
+                                                      <div
+                                                          class="flex flex-col items-center justify-center gap-2 p-2 bg-gray-50 mt-3">
+                                                          <i class="fas fa-qrcode text-gray-400 text-xl"></i>
+
+                                                          @if ($item->image)
+                                                              <img src="{{ asset('storage/' . $item->image) }}"
+                                                                  alt="QR Code Djamo"
+                                                                  class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                                          @else
+                                                              <span class="text-gray-400 italic">Aucune image
+                                                                  disponible</span>
+                                                          @endif
+                                                      </div>
                                                   @endif
                                               </td>
 

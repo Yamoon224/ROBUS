@@ -202,6 +202,13 @@ Route::group(['prefix' => ''], function () {
         //   Transactions
         Route::prefix('rankings')->group(function () {
             Route::get('/browse', [RankingController::class, 'browse'])->name('rankings.browse');
+            Route::get('/transactions', [RankingController::class, 'browse_transactions'])->name('rankings.browse_transactions');
+            Route::get('/paiments', [RankingController::class, 'browse_paiments'])->name('rankings.browse_paiments');
+            Route::get('/virments', [RankingController::class, 'browse_virments'])->name('rankings.browse_virments');
+            Route::get('/phone_credits', [RankingController::class, 'browse_phone_credits'])->name('rankings.browse_phone_credits');
+            Route::get('/reloads_cards', [RankingController::class, 'browse_reloads_cards'])->name('rankings.browse_reloads_cards');
+            Route::get('/inters', [RankingController::class, 'browse_inters'])->name('rankings.browse_inters');
+            Route::get('/bank_sends', [RankingController::class, 'browse_bank_sends'])->name('rankings.browse_bank_sends');
         });
 
         Route::prefix('historiques')->group(function () {

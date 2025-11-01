@@ -18,7 +18,33 @@
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
 */
 /* Animation personnalisée pour le formulaire */
-   
+
+/* Classe pour flouter l'image */
+.qr-blur {
+    filter: blur(4px); /* équivalent Tailwind blur-md */
+    transition: filter 0.3s ease-in-out; /* pour un effet plus doux si on change le flou */
+}
+
+
+
+  select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 0.5rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+        padding-right: 2.5rem;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .shadow-strong {
+        box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.15);
+    }
+
+    .hover-lift:hover {
+        transform: translateY(-5px);
+        transition: all 0.3s ease-in-out;
+    }
 
 .btn-submit:active {
             transform: translateY(0);
@@ -688,6 +714,25 @@
     border-left: 4px solid #0ea5e9;
     border-radius: 12px;
     box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.transaction-alert-valiated {
+   display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.5rem 1rem; /* un peu plus confortable */
+    margin-bottom: 1rem;
+    /* Couleurs de fond et bordures */
+    background-color: #ecfdf5; /* vert très pâle pour le fond */
+    border: 1px solid #86efac; /* bordure principale claire */
+    border-left: 4px solid #22c55e; /* accent gauche plus foncé */
+    /* Optionnel : effet de gradient léger */
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+    border-radius: 12px; /* coins arrondis */
+    box-shadow: 0 2px 8px rgba(14, 165, 233, 0.1); /* ombre légère */
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;

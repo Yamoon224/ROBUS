@@ -78,7 +78,7 @@ class Pushs extends Component
         return view(
             'livewire.transaction-details.pushs',
             [
-                'all_pushs'  => $pushs,
+                'push_historicals'  => $pushs,
             ]
         );
     }

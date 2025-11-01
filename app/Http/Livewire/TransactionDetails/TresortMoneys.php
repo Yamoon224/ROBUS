@@ -76,7 +76,7 @@ class TresortMoneys extends Component
         return view(
             'livewire.transaction-details.tresort-moneys',
             [
-                'all_tresortMoney'  => $tresorts,
+                'tresortMoney_historicals'  => $tresorts,
             ]
         );
     }

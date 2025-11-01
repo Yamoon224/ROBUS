@@ -81,7 +81,7 @@ class XbetsUsers extends Component
         return view(
             'livewire.transaction-details.xbets-users',
             [
-                'all_xbets'  => $xbets,
+                'xbet_historicals'  => $xbets,
             ]
         );
     }

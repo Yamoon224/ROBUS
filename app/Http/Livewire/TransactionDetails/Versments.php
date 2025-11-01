@@ -81,7 +81,7 @@ class Versments extends Component
         return view(
             'livewire.transaction-details.versments',
             [
-                'all_versements'  => $tresorts,
+                'verment_historicals'  => $tresorts,
             ]
         );
     }

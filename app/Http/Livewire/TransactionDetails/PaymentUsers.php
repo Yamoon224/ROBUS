@@ -92,7 +92,7 @@ class PaymentUsers extends Component
         return view(
             'livewire.transaction-details.payment-users',
             [
-                'all_payments'  => $paiements,
+                'payment_historicals'  => $paiements,
             ]
         );
     }

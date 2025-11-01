@@ -10,7 +10,7 @@ use App\Models\Sid\SidUser;
 class HomeService
 {
 
-    public function getSubDistributorsWalletTransactionFilterRanking($walletModel, array $filters = [])
+    public function getSubDistributorsWalletTransactionFilterRanking($walletModel, string $walletTransactionTable = 'wallet_transactions', array $filters = [])
     {
         $query = $walletModel::select(
             'sid_users.id as sub_userId',
@@ -21,22 +21,22 @@ class HomeService
             'cities.name as citie_name',
             'currencies.code as currency_code',
             'providers.name as provider',
-            DB::raw('SUM(wallet_transactions.amount) as total_amount'),
-            DB::raw('COUNT(wallet_transactions.id) as total_transactions'),
-            DB::raw('MAX(wallet_transactions.created_at) as last_transaction_date')
+            DB::raw("SUM({$walletTransactionTable}.amount) as total_amount"),
+            DB::raw("COUNT({$walletTransactionTable}.id) as total_transactions"),
+            DB::raw("MAX({$walletTransactionTable}.created_at) as last_transaction_date"),
         )
-            ->join('wallets', 'wallet_transactions.wallet_id', '=', 'wallets.id')
+            ->join('wallets', "{$walletTransactionTable}.wallet_id", '=', 'wallets.id')
             ->join('currencies', 'wallets.currencie_id', '=', 'currencies.id')
             ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
-            ->join('providers', 'wallet_transactions.provider_id', '=', 'providers.id')
+            ->join('providers', "{$walletTransactionTable}.provider_id", '=', 'providers.id')
             ->join('countries', 'sid_users.country_id', '=', 'countries.id')
             ->join('cities', 'sid_users.city_id', '=', 'cities.id')
-            ->where('wallet_transactions.status', 'SUCCESS')
+            ->where("{$walletTransactionTable}.status", 'SUCCESS')
             ->where('sid_users.is_under_distributer', true);
 
         // ✅ Filtres dynamiques
         if (!empty($filters['provider_id'])) {
-            $query->where('wallet_transactions.provider_id', $filters['provider_id']);
+            $query->where("{$walletTransactionTable}.provider_id", $filters['provider_id']);
         }
 
         // ✅ Filtre par pays
@@ -48,23 +48,23 @@ class HomeService
         if (!empty($filters['periode'])) {
             switch ($filters['periode']) {
                 case 'today':
-                    $query->whereDate('wallet_transactions.created_at', now());
+                    $query->whereDate("{$walletTransactionTable}.created_at", now());
                     break;
                 case 'week':
-                    $query->whereBetween('wallet_transactions.created_at', [now()->startOfWeek(), now()->endOfWeek()]);
+                    $query->whereBetween("{$walletTransactionTable}.created_at", [now()->startOfWeek(), now()->endOfWeek()]);
                     break;
                 case 'month':
-                    $query->whereBetween('wallet_transactions.created_at', [now()->startOfMonth(), now()->endOfMonth()]);
+                    $query->whereBetween("{$walletTransactionTable}.created_at", [now()->startOfMonth(), now()->endOfMonth()]);
                     break;
                 case 'year':
                 default:
                     // ✅ Période par défaut = année en cours
-                    $query->whereYear('wallet_transactions.created_at', now()->year);
+                    $query->whereYear("{$walletTransactionTable}.created_at", now()->year);
                     break;
             }
         } else {
             // ✅ par défaut, filtrer sur l’année en cours
-            $query->whereYear('wallet_transactions.created_at', now()->year);
+            $query->whereYear("{$walletTransactionTable}.created_at", now()->year);
         }
 
         // ✅ Groupements corrects
@@ -172,9 +172,9 @@ class HomeService
             ->map(fn($group) => $group->values());
     }
 
-    public function getSubDistributorsWalletTransactionFiveRanking($walletModel)
+    public function getSubDistributorsWalletTransactionFiveRanking($walletModel, string $walletTransactionTable = 'wallet_transactions')
     {
-        
+
         $transactions = $walletModel::select(
             'sid_users.firstname as sub_distributor',
             'sid_users.id as sub_userId',
@@ -182,19 +182,20 @@ class HomeService
             'countries.name as country_name',
             'cities.name as citie_name',
             'currencies.code as currency_code',
-            DB::raw('MAX(wallet_transactions.created_at) as last_transaction_date'),
+            DB::raw("MAX({$walletTransactionTable}.created_at) as last_transaction_date"),
             DB::raw('MAX(wallets.amount) as wallet_balance'),
             'providers.name as provider',
-            DB::raw('SUM(wallet_transactions.amount) as total_amount'),
-            DB::raw('COUNT(wallet_transactions.id) as total_transactions')
+            DB::raw("SUM({$walletTransactionTable}.amount) as total_amount"),
+            DB::raw("COUNT({$walletTransactionTable}.id) as total_transactions")
         )
-            ->join('wallets', 'wallet_transactions.wallet_id', '=', 'wallets.id')
+            ->join('wallets', "{$walletTransactionTable}.wallet_id", '=', 'wallets.id')
             ->join('currencies', 'wallets.currencie_id', '=', 'currencies.id')
             ->join('sid_users', 'wallets.sid_user_id', '=', 'sid_users.id')
-            ->join('providers', 'wallet_transactions.provider_id', '=', 'providers.id')
+            ->join('providers', "{$walletTransactionTable}.provider_id", '=', 'providers.id')
             ->join('countries', 'sid_users.country_id', '=', 'countries.id')
             ->join('cities', 'sid_users.city_id', '=', 'cities.id')
-            ->where('wallet_transactions.status', 'SUCCESS')
+            ->where("{$walletTransactionTable}.status", 'SUCCESS')
+
             ->where('sid_users.is_under_distributer', true)
             ->groupBy(
                 'sid_users.id',
@@ -212,7 +213,7 @@ class HomeService
             ->get();
 
         $ranking = $transactions->map(function ($t) {
-          
+
             return [
                 'sub_distributor' => $t->sub_distributor ?? 'N/A',
                 'sub_countrie' => $t->country_name ?? 'N/A',

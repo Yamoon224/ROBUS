@@ -79,7 +79,7 @@ class TransactionsUsers extends Component
         return view(
             'livewire.transaction-details.transactions-users',
             [
-                'all_transactions'  => $wallet_transaction,
+                'transfer_historicals'  => $wallet_transaction,
             ]
         );
     }

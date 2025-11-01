@@ -81,7 +81,7 @@ class IntersUsers extends Component
         return view(
             'livewire.transaction-details.inters-users',
             [
-                'all_inters'  => $wallet_transaction,
+                'inter_historicals'  => $wallet_transaction,
             ]
         );
     }

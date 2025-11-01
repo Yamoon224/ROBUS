@@ -78,7 +78,7 @@ class CarteUsers extends Component
         return view(
             'livewire.transaction-details.carte-users',
             [
-                'all_deposits'  => $xbets,
+                'card_historicals'  => $xbets,
             ]
         );
     }
