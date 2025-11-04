@@ -10,9 +10,13 @@ use App\Models\Wallets\WalletInter;
 use App\Http\Controllers\Controller;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletDeposit;
+use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
+use App\Models\Wallets\WalletPush;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Wallets\WalletVersement;
 use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 
@@ -244,4 +248,106 @@ class InvoiceController extends Controller
             return view('pages.invoices.visitors.invoice_phone_credit_print', compact('walletPhoneCredit', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
         }
     }
+
+      public function push_transaction_invoice($id)
+    {
+
+        $direction = 'ltr';
+        $default_text_align = 'left';
+        $reverse_text_align = 'right';
+
+
+        $font_family = "'Roboto','sans-serif'";
+
+
+        $walletTransaction = WalletPush::find($id);
+
+        if (!$walletTransaction) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
+
+        if ($walletTransaction->is_web == 0) {
+            return view('pages.invoices.invoice_auther_print', compact('walletTransaction', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        } else {
+            return view('pages.invoices.visitors.invoice_auther_print', compact('walletTransaction', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        }
+    }
+
+       public function djamo_transaction_invoice($id)
+    {
+
+        $direction = 'ltr';
+        $default_text_align = 'left';
+        $reverse_text_align = 'right';
+
+
+        $font_family = "'Roboto','sans-serif'";
+
+
+        $walletTransaction = WalletDjamo::find($id);
+
+        if (!$walletTransaction) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
+
+        if ($walletTransaction->is_web == 0) {
+            return view('pages.invoices.invoice_auther_print', compact('walletTransaction', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        } else {
+            return view('pages.invoices.visitors.invoice_auther_print', compact('walletTransaction', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        }
+    }
+
+    public function tresort_transaction_invoice($id)
+    {
+
+        $direction = 'ltr';
+        $default_text_align = 'left';
+        $reverse_text_align = 'right';
+
+
+        $font_family = "'Roboto','sans-serif'";
+
+
+        $walletTransaction = WalletTresortMoney::find($id);
+
+        if (!$walletTransaction) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
+
+        if ($walletTransaction->is_web == 0) {
+            return view('pages.invoices.invoice_auther_print', compact('walletTransaction', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        } else {
+            return view('pages.invoices.visitors.invoice_auther_print', compact('walletTransaction', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        }
+    }
+
+       public function versment_transaction_invoice($id)
+    {
+
+        $direction = 'ltr';
+        $default_text_align = 'left';
+        $reverse_text_align = 'right';
+
+
+        $font_family = "'Roboto','sans-serif'";
+
+
+        $walletTransaction = WalletVersement::find($id);
+
+        if (!$walletTransaction) {
+            // Si la transaction de portefeuille n'existe pas, rediriger ou afficher un message d'erreur
+            return redirect()->back()->with('error', 'Transaction de portefeuille introuvable.');
+        }
+
+        if ($walletTransaction->is_web == 0) {
+            return view('pages.invoices.invoice_auther_print', compact('walletTransaction', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        } else {
+            return view('pages.invoices.visitors.invoice_auther_print', compact('walletTransaction', 'font_family', 'direction', 'default_text_align', 'reverse_text_align'));
+        }
+    }
+
+    
 }

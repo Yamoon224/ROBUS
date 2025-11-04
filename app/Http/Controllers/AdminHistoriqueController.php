@@ -15,12 +15,15 @@ use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletVersement;
+use App\Models\Wallets\WalletTresortMoney;
 use App\Models\WithMerchant;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 
 class AdminHistoriqueController extends Controller
 {
@@ -465,7 +468,7 @@ class AdminHistoriqueController extends Controller
                 $queryPaymentSend->whereDate('created_at', '<=', request('endDate'));
             }
 
-            
+
             $bank_transfer_sends = $queryTransactionSend->get();
             $bank_transfer_recieveds = $queryTransactionReceived->get();
             $bank_bank_recieveds = $queryBankReceived->get();
@@ -541,7 +544,7 @@ class AdminHistoriqueController extends Controller
     {
 
         $query = WalletInter::where('number_compte', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -556,9 +559,9 @@ class AdminHistoriqueController extends Controller
 
     public function walletPaymentSumErrorReceivedinterDaysProperty($id, $startDate = null, $endDate = null)
     {
- 
+
         $query = WalletInter::where('number_compte', $id)
-             ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
         if ($startDate && $endDate) {
             $query->whereBetween('updated_at', [$startDate, $endDate]);
         } elseif ($startDate) {
@@ -574,7 +577,7 @@ class AdminHistoriqueController extends Controller
     {
 
         $query = WalletInter::where('wallet_id', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -585,7 +588,6 @@ class AdminHistoriqueController extends Controller
         }
 
         return $query->sum('amount');
-        
     }
 
     public function walletPaymentSumErrorSendinterDaysProperty($id, $startDate = null, $endDate = null)
@@ -603,15 +605,14 @@ class AdminHistoriqueController extends Controller
         }
 
         return $query->sum('amount');
-
     }
 
 
-    public function walletPaymentSumErrorSendReloadProperty($id , $startDate = null, $endDate = null)
+    public function walletPaymentSumErrorSendReloadProperty($id, $startDate = null, $endDate = null)
     {
 
         $query = WalletReload::where('wallet_id', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -627,7 +628,7 @@ class AdminHistoriqueController extends Controller
 
     public function walletPaymentSumErrorSendReloadDaysProperty($id, $startDate = null, $endDate = null)
     {
-      
+
         $query = WalletReload::where('wallet_id', $id)
             ->where('status', 'ERROR');
 
@@ -644,9 +645,9 @@ class AdminHistoriqueController extends Controller
 
     public function walletPaymentSumErrorSendReceivedProperty($id, $startDate = null, $endDate = null)
     {
-      
+
         $query = WalletReload::where('account_wallet', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -661,9 +662,9 @@ class AdminHistoriqueController extends Controller
 
     public function walletPaymentSumErrorSendReceivedDaysProperty($id, $startDate = null, $endDate = null)
     {
- 
+
         $query = WalletReload::where('account_wallet', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('updated_at', [$startDate, $endDate]);
@@ -676,13 +677,13 @@ class AdminHistoriqueController extends Controller
         return $query->sum('amount');
     }
 
-    public function walletPaymentSumErrorSendTransactionProperty($id , $startDate = null, $endDate = null)
+    public function walletPaymentSumErrorSendTransactionProperty($id, $startDate = null, $endDate = null)
     {
 
         $query = WalletTransaction::where('wallet_id', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
-      if ($startDate && $endDate) {
+        if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         } elseif ($startDate) {
             $query->whereDate('created_at', '>=', $startDate);
@@ -697,7 +698,7 @@ class AdminHistoriqueController extends Controller
     {
 
         $query = WalletTransaction::where('updated_by', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('updated_at', [$startDate, $endDate]);
@@ -709,11 +710,11 @@ class AdminHistoriqueController extends Controller
 
         return $query->sum('amount');
     }
-    public function walletPaymentSumErrorReceivedTransactionProperty($id , $startDate = null, $endDate = null)
+    public function walletPaymentSumErrorReceivedTransactionProperty($id, $startDate = null, $endDate = null)
     {
 
         $query = WalletTransaction::where('num_wallet', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -729,8 +730,8 @@ class AdminHistoriqueController extends Controller
     public function walletPaymentSumErrorReceivedTransactionDaysProperty($id, $startDate = null, $endDate = null)
     {
 
-       $query = WalletTransaction::where('num_wallet', $id)
-        ->where('status', 'ERROR');
+        $query = WalletTransaction::where('num_wallet', $id)
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('updated_at', [$startDate, $endDate]);
@@ -747,7 +748,7 @@ class AdminHistoriqueController extends Controller
     {
 
         $query = WalletBank::where('wallet_id', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -763,8 +764,8 @@ class AdminHistoriqueController extends Controller
     public function walletPaymentSumErrorReceivedBankDaysProperty($id, $startDate = null, $endDate = null)
     {
         $query = WalletBank::where('updated_by', $id)
-        ->where('status', 'ERROR');
-        
+            ->where('status', 'ERROR');
+
         if ($startDate && $endDate) {
             $query->whereBetween('updated_at', [$startDate, $endDate]);
         } elseif ($startDate) {
@@ -780,7 +781,7 @@ class AdminHistoriqueController extends Controller
     {
 
         $query = WalletPhoneCredit::where('wallet_id', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -797,8 +798,8 @@ class AdminHistoriqueController extends Controller
     {
 
         $query = WalletPhoneCredit::where('updated_by', $id)
-        ->where('status', 'ERROR');
-      
+            ->where('status', 'ERROR');
+
         if ($startDate && $endDate) {
             $query->whereBetween('updated_at', [$startDate, $endDate]);
         } elseif ($startDate) {
@@ -810,13 +811,13 @@ class AdminHistoriqueController extends Controller
         return $query->sum('amount');
     }
 
-    public function walletPaymentSumErrorReceivedDepositProperty($id , $startDate = null, $endDate = null)
+    public function walletPaymentSumErrorReceivedDepositProperty($id, $startDate = null, $endDate = null)
     {
 
         $query = WalletDeposit::where('wallet_id', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
-           if ($startDate && $endDate) {
+        if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
         } elseif ($startDate) {
             $query->whereDate('created_at', '>=', $startDate);
@@ -825,7 +826,6 @@ class AdminHistoriqueController extends Controller
         }
 
         return $query->sum('amount');
-        
     }
 
 
@@ -833,7 +833,7 @@ class AdminHistoriqueController extends Controller
     {
 
         $query = WalletDeposit::where('updated_by', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('updated_at', [$startDate, $endDate]);
@@ -845,11 +845,11 @@ class AdminHistoriqueController extends Controller
 
         return $query->sum('amount');
     }
-    public function walletPaymentSumErrorSendPaymentProperty($id , $startDate = null, $endDate = null)
+    public function walletPaymentSumErrorSendPaymentProperty($id, $startDate = null, $endDate = null)
     {
 
         $query = WalletPayment::where('wallet_id', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);
@@ -858,14 +858,13 @@ class AdminHistoriqueController extends Controller
         } elseif ($endDate) {
             $query->whereDate('created_at', '<=', $endDate);
         }
-
     }
 
     public function walletPaymentSumErrorSendPaymentDaysProperty($id, $startDate = null, $endDate = null)
     {
 
         $query = WalletPayment::where('updated_by', $id)
-        ->where('status', 'ERROR');
+            ->where('status', 'ERROR');
 
         if ($startDate && $endDate) {
             $query->whereBetween('updated_at', [$startDate, $endDate]);
@@ -2217,6 +2216,109 @@ class AdminHistoriqueController extends Controller
         return $pdf->download('reporting_cartes_days.pdf');
     }
 
+    public function searchByPushsDate(Request $request)
+    {
+        $this->validate($request, [
+            'search_begin' => 'required|date',
+            'search_end' => 'required|date|after_or_equal:search_begin',
+        ]);
+
+
+        $searchDateBegin = $request->input('search_begin');
+
+        $searchDateEnd = $request->input('search_end');
+
+        $walletTransactions = $this->getTransactionDate(WalletPush::class, $searchDateBegin, $searchDateEnd);
+
+        $account_penddings =  $this->getTransactionCount(WalletPush::class, 'PENDING', $searchDateBegin, $searchDateEnd);;
+
+        $account_success = $this->getTransactionCount(WalletPush::class, 'SUCCESS', $searchDateBegin, $searchDateEnd);
+
+        $account_errors = $this->getTransactionCount(WalletPush::class, 'ERROR', $searchDateBegin, $searchDateEnd);
+
+        $amount_total = $this->walletTransactionsDays(WalletPush::class, $searchDateBegin, $searchDateEnd);
+
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_auther_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_transactions_days.pdf');
+    }
+
+    public function searchByDjamoDate(Request $request)
+    {
+        $this->validate($request, [
+            'search_begin' => 'required|date',
+            'search_end' => 'required|date|after_or_equal:search_begin',
+        ]);
+
+
+        $searchDateBegin = $request->input('search_begin');
+
+        $searchDateEnd = $request->input('search_end');
+
+        $walletTransactions = $this->getTransactionDate(WalletDjamo::class, $searchDateBegin, $searchDateEnd);
+
+        $account_penddings =  $this->getTransactionCount(WalletDjamo::class, 'PENDING', $searchDateBegin, $searchDateEnd);;
+
+        $account_success = $this->getTransactionCount(WalletDjamo::class, 'SUCCESS', $searchDateBegin, $searchDateEnd);
+
+        $account_errors = $this->getTransactionCount(WalletDjamo::class, 'ERROR', $searchDateBegin, $searchDateEnd);
+
+        $amount_total = $this->walletTransactionsDays(WalletDjamo::class, $searchDateBegin, $searchDateEnd);
+
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_auther_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_transactions_days.pdf');
+    }
+
+    public function searchByVersmentDate(Request $request)
+    {
+        $this->validate($request, [
+            'search_begin' => 'required|date',
+            'search_end' => 'required|date|after_or_equal:search_begin',
+        ]);
+
+
+        $searchDateBegin = $request->input('search_begin');
+
+        $searchDateEnd = $request->input('search_end');
+
+        $walletTransactions = $this->getTransactionDate(WalletVersement::class, $searchDateBegin, $searchDateEnd);
+
+        $account_penddings =  $this->getTransactionCount(WalletVersement::class, 'PENDING', $searchDateBegin, $searchDateEnd);;
+
+        $account_success = $this->getTransactionCount(WalletVersement::class, 'SUCCESS', $searchDateBegin, $searchDateEnd);
+
+        $account_errors = $this->getTransactionCount(WalletVersement::class, 'ERROR', $searchDateBegin, $searchDateEnd);
+
+        $amount_total = $this->walletTransactionsDays(WalletVersement::class, $searchDateBegin, $searchDateEnd);
+
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_auther_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_transactions_days.pdf');
+    }
+
+    public function searchByTresortDate(Request $request)
+    {
+        $this->validate($request, [
+            'search_begin' => 'required|date',
+            'search_end' => 'required|date|after_or_equal:search_begin',
+        ]);
+
+
+        $searchDateBegin = $request->input('search_begin');
+
+        $searchDateEnd = $request->input('search_end');
+
+        $walletTransactions = $this->getTransactionDate(WalletTresortMoney::class, $searchDateBegin, $searchDateEnd);
+
+        $account_penddings =  $this->getTransactionCount(WalletTresortMoney::class, 'PENDING', $searchDateBegin, $searchDateEnd);;
+
+        $account_success = $this->getTransactionCount(WalletTresortMoney::class, 'SUCCESS', $searchDateBegin, $searchDateEnd);
+
+        $account_errors = $this->getTransactionCount(WalletTresortMoney::class, 'ERROR', $searchDateBegin, $searchDateEnd);
+
+        $amount_total = $this->walletTransactionsDays(WalletTresortMoney::class, $searchDateBegin, $searchDateEnd);
+
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_auther_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_transactions_days.pdf');
+    }
 
     public function searchByPaymentsDate(Request $request)
     {
@@ -2532,7 +2634,7 @@ class AdminHistoriqueController extends Controller
             $account_success   = (clone $query)->where('status', 'SUCCESS')->count();
             $account_errors    = (clone $query)->where('status', 'ERROR')->count();
 
-         
+
             $amount_total = $this->walletPaymentSumSendTransactionDaysProperty($userId, request('startDate'), request('endDate'));
 
             $pdf = Pdf::loadView('pages.historicals.distributers.pdf_payment', compact('wallet_id', 'amount_total', 'bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
@@ -2568,7 +2670,7 @@ class AdminHistoriqueController extends Controller
     {
 
         $query = WalletPayment::where('wallet_id', $id)
-        ->where('status', 'SUCCESS');
+            ->where('status', 'SUCCESS');
 
         if ($startDate && $endDate) {
             $query->whereBetween('created_at', [$startDate, $endDate]);

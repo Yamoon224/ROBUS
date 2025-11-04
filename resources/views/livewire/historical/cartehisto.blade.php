@@ -1,14 +1,7 @@
 <div>
 
-     <x-report-widget 
-        :formRoute="route('inters.historical.reporting_cartes_days_historical.admins')" 
-        :downloadRoute="route('cards.historical.reporting_card_historical')" title="Les Activités des commande des cartes"
-        totalText="Total Commandes cartes" 
-        :totalCount="$user ?? 0" 
-        :country="$usersCountry"
-        :pendingCount="$card_historicals->where('status', 
-        'PENDING')->count()" :successCount="$card_historicals->where('status', 
-        'SUCCESS')->count()" 
+    <x-report-widget :formRoute="route('inters.historical.reporting_cartes_days_historical.admins')" :downloadRoute="route('cards.historical.reporting_card_historical')" title="Les Activités des commande des cartes"
+        totalText="Total Commandes cartes" :totalCount="$user ?? 0" :country="$usersCountry" :pendingCount="$card_historicals->where('status', 'PENDING')->count()" :successCount="$card_historicals->where('status', 'SUCCESS')->count()"
         :errorCount="$card_historicals->where('status', 'ERROR')->count()" />
 
 
@@ -66,7 +59,7 @@
                     <div class="tiny-slider py-5">
                         <div class="px-5">
                             <div class="overflow-x-auto">
-                                                       @include('components.tableCards')
+                                @include('components.tableCards')
 
                             </div>
                         </div>
@@ -88,6 +81,6 @@
         </div>
     </div>
 
-    @include('livewire.historical.modals.updateReloadCardDefund')
+    {{-- @include('livewire.historical.modals.updateReloadCardDefund') --}}
 
 </div>

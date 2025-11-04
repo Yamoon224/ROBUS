@@ -10,7 +10,6 @@ use App\Http\Controllers\ContactListController;
 use App\Http\Controllers\CountrieController;
 use App\Http\Controllers\FaqController;
 use App\Http\Controllers\HistoricalController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Invoices\InvoiceController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PaimentController;
@@ -18,7 +17,6 @@ use App\Http\Controllers\RankingController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Controllers\TransactionWebController;
 use App\Http\Controllers\UserController;
 use App\Http\Livewire\Historical\UnderHistorical\PaymentHisto;
 use App\Http\Livewire\Login;
@@ -355,6 +353,14 @@ Route::group(['prefix' => ''], function () {
             Route::get('/phone_credit/{phone_credit_id}', [InvoiceController::class, 'phone_credit_invoice'])->name('phone.invoice.print');
             Route::get('/waves/{wave_id}', [InvoiceController::class, 'waves_invoice'])->name('waves.invoice.print');
             Route::get('/xbets/{wave_id}', [InvoiceController::class, 'xbets_invoice'])->name('xbets.invoice.print');
+
+            // New invoice
+
+            Route::get('/push_transactions/{push_transactio_id}', [InvoiceController::class, 'push_transaction_invoice'])->name('push_transactions.invoice.print');
+            Route::get('/djamo_transactions/{djamo_transaction_id}', [InvoiceController::class, 'djamo_transaction_invoice'])->name('djamo_transactions.invoice.print');
+            Route::get('/tresort_transactions/{tresort_transaction_id}', [InvoiceController::class, 'tresort_transaction_invoice'])->name('tresort_transactions.invoice.print');
+            Route::get('/versment_transactions/{versment_transaction_id}', [InvoiceController::class, 'versment_transaction_invoice'])->name('versment_transactions.invoice.print');
+
         });
 
         //Historical
@@ -482,6 +488,12 @@ Route::group(['prefix' => ''], function () {
             Route::get('xbets_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByXbetsDate'])->name('inters.historical.reporting_xbet_days_historical.admins');
             Route::get('waves_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchBywavesDate'])->name('inters.historical.reporting_wave_days_historical.admins');
             Route::get('cartes_days/reporting_cartes_days_historical', [AdminHistoriqueController::class, 'searchByCartesDate'])->name('inters.historical.reporting_cartes_days_historical.admins');
+            
+            // New historicals
+            Route::get('push_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByPushsDate'])->name('pushs.historical.reporting_transaction_days_historical.admins');
+            Route::get('djamo_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByDjamoDate'])->name('djamos.historical.reporting_transaction_days_historical.admins');
+            Route::get('versment_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByVersmentDate'])->name('versments.historical.reporting_transaction_days_historical.admins');
+            Route::get('tresort_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByTresortDate'])->name('tresorts.historical.reporting_transaction_days_historical.admins');
 
             Route::get('payments/reporting_payment_historical/{id}', [AdminHistoriqueController::class, 'reporting_payment_historical'])->name('payments.historical.reporting_payment_historical.admins');
             Route::get('phones/reporting_phone_hisnOTItorical/{id}', [AdminHistoriqueController::class, 'reporting_phone_historical'])->name('phones.historical.reporting_phone_historical.admins');
@@ -489,6 +501,9 @@ Route::group(['prefix' => ''], function () {
             Route::get('transfers/reporting_transfer_historical_received/{id}', [AdminHistoriqueController::class, 'reporting_transfer_received_historical'])->name('transfers.historical.received.reporting_transfer_historical.admins');
             Route::get('echecs/reporting_echecs_historical_echecs/{id}', [AdminHistoriqueController::class, 'reporting_transfer_echecs_historical'])->name('echecs.historical.reporting_transfer_historical.admins');
             Route::get('drawer_under_distributer/reporting_drawer_historical/{id}', [AdminHistoriqueController::class, 'reporting_drawer_historical'])->name('transfers.historical.reporting_drawer_historical.admins');
+
+  
+
         });
 
        

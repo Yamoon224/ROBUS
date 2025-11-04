@@ -15,8 +15,7 @@
 
 <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
-    <!-- Formulaire dates -->
-    <div class="intro-y col-span-12 lg:col-span-12">
+    <div class="intro-y col-span-12 lg:col-span-12 mt-3">
         <div class="intro-y col-span-12 grid grid-cols-12 gap-5 items-center mt-2 mb-6">
 
             <div class="col-span-12 sm:col-span-4">
@@ -29,7 +28,7 @@
                         <span class="text-red-500 text-sm block mt-1">{{ $message }}</span>
                     @enderror
             </div>
-
+            
             <div class="col-span-12 sm:col-span-4">
                 <label for="search_end" class="block mb-1">Date de fin</label>
                 <input type="date" name="search_end" id="search_end"
@@ -41,29 +40,28 @@
             </div>
 
             <div class="col-span-12 sm:col-span-4 flex items-end mt-3 sm:mt-0">
-                <button type="submit" class="btn btn-primary w-full sm:w-auto">Télécharger en pdf</button>
+                <button type="submit" class="btn btn-primary w-full sm:w-auto">
+                   <i data-feather="airplay"  class="hidden sm:block w-4 h-4 mr-2"></i> Télécharger en pdf
+                </button>
                 </form>
             </div>
         </div>
 
-        <!-- Titre et bouton téléchargement -->
         <div class="intro-y block sm:flex items-center h-10 mb-5">
             <h2 class="text-lg font-medium truncate mr-5">{{ $title }}</h2>
             @if ($downloadRoute)
                 <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
-                    <a href="{{ $downloadRoute }}" class="btn btn-primary flex items-center ml-3" style="color:white;">
-                        <i data-lucide="file-text" class="hidden sm:block w-4 h-4 mr-2"></i> Télécharger le rapport
+                    <a href="{{ $downloadRoute }}" class="btn btn-success flex items-center ml-3" style="color:white;">
+                        <i data-feather="airplay"  class="hidden sm:block w-4 h-4 mr-2"></i>Rapport du jour
                     </a>
                 </div>
             @endif
         </div>
 
-        <!-- Statistiques -->
         <div class="intro-y grid grid-cols-12 gap-5 mt-5">
 
             <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
                  <div>
-
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                             fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                             stroke-linejoin="round" class="feather feather-trending-down font-medium-5">

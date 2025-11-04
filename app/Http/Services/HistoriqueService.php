@@ -7,9 +7,9 @@ namespace App\Http\Services;
 use App\Http\Services\ConvertionService;
 use App\Models\AdminsCom;
 use App\Models\Wallets\Wallet;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class HistoriqueService
 {
@@ -27,6 +27,95 @@ class HistoriqueService
 
         return $walletModel::whereStatus('SUCCESS')
             ->sum('amount');
+    }
+
+    public function getTransactionsStatusProperty($walletTransaction ,string $walletIsWebHistorical, string  $walletStatus ,$statusTransferFilter  , string $walletCreated , string  $walletUpdated)
+    {
+
+        $walletUser = Auth::guard('web')->user(); 
+
+        $data = [];
+
+        $wallets = $walletTransaction::where($walletIsWebHistorical, false)->where($walletStatus, $statusTransferFilter);
+
+
+        if ($walletUser->is_under_distributer) {
+            $wallets->where($walletCreated, $walletUser->id); 
+        }elseif($walletUser->is_distributer)
+        {
+            $wallets->where($walletUpdated, $walletUser->id); 
+
+        }else {
+            $wallets->where($walletCreated , '!=', $walletUser->id); 
+        }
+
+        $wallets = $wallets->get();
+
+        foreach ($wallets as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
+    }
+
+     public function getTransactionsAllDaysProperty($walletTransaction , $walletTransactionIsWeb , string $walletCreated , string  $walletUpdated)
+    {
+
+
+        $data = [];
+
+        $wallets = $walletTransaction::where($walletTransactionIsWeb , false);
+
+        $walletUser = Auth::guard('web')->user(); 
+
+        if ($walletUser->is_under_distributer) {
+            $wallets->where($walletCreated, $walletUser->id); 
+        }elseif($walletUser->is_distributer)
+        {
+            $wallets->where($walletUpdated , $walletUser->id); 
+
+        }else {
+      
+            $wallets->where($walletCreated , '!=', $walletUser->id)
+                     ->orWhere($walletCreated , $walletUser->id); 
+        }
+
+        $wallets = $wallets->get();
+     
+        foreach ($wallets as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
+    }
+
+     public function getTransactionsDaysProperty($walletTransaction , $beginDate , $endDate , string $walletCreated , string  $walletUpdated)
+    {
+
+
+        $data = [];
+
+        $wallets = $walletTransaction::whereIsWeb(false)->whereBetween('created_at', [$beginDate, $endDate]);
+
+        $walletUser = Auth::guard('web')->user(); 
+
+        if ($walletUser->is_under_distributer) {
+            $wallets->where($walletCreated, $walletUser->id); 
+        }elseif($walletUser->is_distributer)
+        {
+            $wallets->where($walletUpdated , $walletUser->id); 
+
+        }else {
+            $wallets->where($walletCreated , '!=', $walletUser->id); 
+        }
+
+        $wallets = $wallets->get();
+
+        foreach ($wallets as $bank) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
     }
 
     public function getTransactionAllCount($walletModel, $wallet_transactions, $transaction_days)
