@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Wallets\WalletReload;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Services\HistoriqueService;
 
 class Reloadhisto extends Component
 {

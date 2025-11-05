@@ -5,20 +5,8 @@ namespace App\Http\Livewire\Historical;
 use Livewire\Component;
 use App\Models\Sid\SidUser;
 use Livewire\WithPagination;
-use App\Events\AdminNotifEvent;
-use App\Models\Custumers\Country;
-use App\Models\Providers\Provider;
-use Illuminate\Support\Facades\DB;
-use App\Models\Payments\Transaction;
 use Illuminate\Support\Facades\Auth;
-use App\Notifications\UserNotification;
-use App\Notifications\AdminNotification;
 use App\Models\Wallets\WalletTransaction;
-use App\Events\CreateWalletTransfersEvent;
-use App\Models\Invoices\InvoiceTransaction;
-use Illuminate\Support\Facades\Notification;
-use App\Http\Controllers\Admin\MailController;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Http\Services\HistoriqueService;
 
 
@@ -119,7 +107,5 @@ class TransferHisto extends Component
         );
     }
 
-
-  
 
 }

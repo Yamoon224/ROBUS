@@ -10,11 +10,15 @@ use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletInter;
 use App\Models\Wallets\WalletReload;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTransaction;
+use App\Http\Services\HistoriqueService;
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Wallets\WalletVersement;
 
 class HistoricalController extends Controller
 {
@@ -23,6 +27,14 @@ class HistoricalController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    protected $historiqueService;
+
+    public function __construct(
+        HistoriqueService $historiqueService,
+    ) {
+        $this->historiqueService = $historiqueService;
+    }
+
     public function browse_reload()
     {
 
@@ -37,76 +49,16 @@ class HistoricalController extends Controller
     {
 
 
-        $usersCountry  =   Auth::guard('web')->user();
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-
-        $bank_historicals = [];
-
-        if ($usersCountry->is_under_distributer == true) {
-
-            foreach (
-                WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $usersCountry->country->id)
-                    ->where('wallet_banks.created_by', $usersCountry->id)
-                    ->whereDate('wallet_banks.created_at', $convertions)->select('wallet_banks.*')->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_banks.created_by', $usersCountry->id)
-                ->whereDate('wallet_banks.created_at', $convertions)->where('wallet_banks.status', 'PENDING')->select('wallet_banks.*')->count();
-
-            $account_success = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_banks.created_by', $usersCountry->id)
-                ->whereDate('wallet_banks.created_at', $convertions)->where('wallet_banks.status', 'SUCCESS')->select('wallet_banks.*')->count();
-
-            $account_errors = WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_banks.created_by', $usersCountry->id)
-                ->whereDate('wallet_banks.created_at', $convertions)->where('wallet_banks.status', 'ERROR')->select('wallet_banks.*')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_bank', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_virement.pdf');
-        } elseif ($usersCountry->is_distributer == true) {
-
-            foreach (
-                WalletBank::where('updated_by', $usersCountry->id)
-                    ->whereDate('created_at', $convertions)
-                    ->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletBank::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at', $convertions)->where('status', 'PENDING')->count();
-
-            $account_success = WalletBank::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at', $convertions)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletBank::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at', $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_bank', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_virement.pdf');
-        } elseif ($usersCountry->is_admin == true) {
-
-            foreach (WalletBank::whereDate('created_at',  $convertions)->get() as $bank) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletBank::whereDate('created_at', $convertions)->where('status', 'PENDING')->count();
-
-            $account_success = WalletBank::whereDate('created_at', $convertions)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletBank::whereDate('created_at', $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_bank', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_virement.pdf');
-        }
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletBank::class,
+            relationTableWallet: 'wallet_banks.wallet_id',
+            walletCreatedBy: 'wallet_banks.created_by',
+            walletAll: 'wallet_banks.*',
+            walletCreated: 'wallet_banks.created_at',
+            walletStatus: 'wallet_banks.status',
+            viewPath: 'pages.historicals.pdf_bank',
+            fileName: 'reporting_virement.pdf',
+        );
     }
 
     public function reporting_reload_historical()
@@ -185,442 +137,153 @@ class HistoricalController extends Controller
     public function reporting_card_historical()
     {
 
-        $usersCountry  =   Auth::guard('web')->user();
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $bank_historicals = [];
-        if ($usersCountry->is_under_distributer == true) {
-
-            foreach (
-                WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $usersCountry->country->id)
-                    ->where('wallet_deposits.created_by', $usersCountry->id)
-                    ->whereDate('wallet_deposits.created_at',  $convertions)->select('wallet_deposits.*')->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_deposits.created_by', $usersCountry->id)
-                ->whereDate('wallet_deposits.created_at',  $convertions)->where('wallet_deposits.status', 'PENDING')->select('wallet_deposits.*')->count();
-
-            $account_success = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_deposits.created_by', $usersCountry->id)
-                ->whereDate('wallet_deposits.created_at',  $convertions)->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->count();
-
-            $account_errors = WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_deposits.created_by', $usersCountry->id)
-                ->whereDate('wallet_deposits.created_at',  $convertions)->where('wallet_deposits.status', 'ERROR')->select('wallet_deposits.*')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_card_bank', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_commande.pdf');
-        } elseif ($usersCountry->is_distributer == true) {
-            foreach (
-                WalletDeposit::where('updated_by', $usersCountry->id)
-                    ->whereDate('created_at',  $convertions)->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletDeposit::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'PENDING')->count();
-
-            $account_success = WalletDeposit::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletDeposit::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_card_bank', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_commande.pdf');
-        } elseif ($usersCountry->is_admin == true) {
-            foreach (WalletDeposit::whereDate('created_at',  $convertions)->get() as $bank) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletDeposit::whereDate('created_at',  $convertions)->where('status', 'PENDING')->count();
-
-            $account_success = WalletDeposit::whereDate('created_at',  $convertions)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletDeposit::whereDate('created_at',  $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_card_bank', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_commande.pdf');
-        }
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletDeposit::class,
+            relationTableWallet: 'wallet_deposits.wallet_id',
+            walletCreatedBy: 'wallet_deposits.created_by',
+            walletAll: 'wallet_deposits.*',
+            walletCreated: 'wallet_deposits.created_at',
+            walletStatus: 'wallet_deposits.status',
+            viewPath: 'pages.historicals.pdf_card_bank',
+            fileName: 'reporting_commande.pdf',
+        );
     }
 
 
     public function reporting_inter_historical()
     {
 
-        $usersCountry  =   Auth::guard('web')->user();
-
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-
-        $bank_historicals = [];
-
-        if ($usersCountry->is_under_distributer == true) {
-
-            foreach (
-                WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $usersCountry->country->id)
-                    ->where('wallet_inters.created_by', $usersCountry->id)
-                    ->whereDate('wallet_inters.created_at',  $convertions)->select('wallet_inters.*')->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-            $users_countrie = Auth::guard('web')->user()->wallet->currencie->code;
-
-            $account_penddings = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_inters.created_by', $usersCountry->id)
-                ->whereDate('wallet_inters.created_at',  $convertions)->where('wallet_inters.status', 'PENDING')->select('wallet_inters.*')->count();
-
-            $account_success = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_inters.created_by', $usersCountry->id)
-                ->whereDate('wallet_inters.created_at',  $convertions)->where('wallet_inters.status', 'SUCCESS')->select('wallet_inters.*')->count();
-
-            $account_errors = WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_inters.created_by', $usersCountry->id)
-                ->whereDate('wallet_inters.created_at',  $convertions)->where('wallet_inters.status', 'ERROR')->select('wallet_inters.*')->count();
-
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_inter', compact('bank_historicals', 'users_countrie', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_inter.pdf');
-        } elseif ($usersCountry->is_distributer == true) {
-
-            foreach (
-                WalletInter::where('updated_by', $usersCountry->id)
-                    ->whereDate('created_at',  $convertions)->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-            $users_countrie = Auth::guard('web')->user()->wallet->currencie->code;
-
-            $account_penddings = WalletInter::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'PENDING')->count();
-
-            $account_success = WalletInter::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletInter::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_inter', compact('bank_historicals', 'users_countrie', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_inter.pdf');
-        } elseif ($usersCountry->is_admin == true) {
-            foreach (WalletInter::whereDate('created_at',  $convertions)->get() as $bank) {
-                $bank_historicals[] = $bank;
-            }
-
-            $users_countrie = Auth::guard('web')->user()->wallet->currencie->code;
-
-            $account_penddings = WalletInter::whereDate('created_at',  $convertions)->where('status', 'PENDING')->count();
-
-            $account_success = WalletInter::whereDate('created_at',  $convertions)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletInter::whereDate('created_at',  $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_inter', compact('bank_historicals', 'users_countrie', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_inter.pdf');
-        }
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletInter::class,
+            relationTableWallet: 'wallet_inters.wallet_id',
+            walletCreatedBy: 'wallet_inters.created_by',
+            walletAll: 'wallet_inters.*',
+            walletCreated: 'wallet_inters.created_at',
+            walletStatus: 'wallet_inters.status',
+            viewPath: 'pages.historicals.pdf_inter',
+            fileName: 'reporting_inter.pdf',
+        );
     }
 
     public function reporting_payment_historical()
     {
 
-        $usersCountry  =   Auth::guard('web')->user();
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $bank_historicals = [];
-
-        if ($usersCountry->is_under_distributer == true) {
-            foreach (
-                WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $usersCountry->country->id)
-                    ->where('wallet_payments.created_by', $usersCountry->id)
-                    ->whereDate('wallet_payments.created_at',  $convertions)->select('wallet_payments.*')->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_payments.created_by', $usersCountry->id)
-                ->whereDate('wallet_payments.created_at',  $convertions)->where('wallet_payments.status', 'PENDING')->select('wallet_payments.*')->count();
-
-            $account_success = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_payments.created_by', $usersCountry->id)
-                ->whereDate('wallet_payments.created_at',  $convertions)->where('wallet_payments.status', 'SUCCESS')->select('wallet_payments.*')->count();
-
-
-            $account_errors = WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_payments.created_by', $usersCountry->id)
-                ->whereDate('wallet_payments.created_at',  $convertions)->where('wallet_payments.status', 'ERROR')->select('wallet_payments.*')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_payment', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_payment.pdf');
-        } elseif ($usersCountry->is_distributer == true) {
-
-            foreach (
-                WalletPayment::where('updated_by', $usersCountry->id)
-                    ->whereDate('created_at',  $convertions)->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletPayment::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'PENDING')->count();
-
-
-            $account_success = WalletPayment::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'SUCCESS')->count();
-
-
-            $account_errors = WalletPayment::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_payment', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_payment.pdf');
-        } elseif ($usersCountry->is_admin == true) {
-
-            foreach (WalletPayment::whereDate('created_at',  $convertions)->get() as $bank) {
-                $bank_historicals[] = $bank;
-            }
-
-
-            $account_penddings = WalletPayment::whereDate('created_at',  $convertions)->where('status', 'PENDING')->count();
-
-
-            $account_success = WalletPayment::whereDate('created_at',  $convertions)->where('status', 'SUCCESS')->count();
-
-
-            $account_errors = WalletPayment::whereDate('created_at',  $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_payment', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_payment.pdf');
-        }
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletInter::class,
+            relationTableWallet: 'wallet_payments.wallet_id',
+            walletCreatedBy: 'wallet_payments.created_by',
+            walletAll: 'wallet_payments.*',
+            walletCreated: 'wallet_payments.created_at',
+            walletStatus: 'wallet_payments.status',
+            viewPath: 'pages.historicals.pdf_payment',
+            fileName: 'reporting_payment.pdf',
+        );
     }
 
     public function reporting_phone_historical()
     {
 
-        $usersCountry  =   Auth::guard('web')->user();
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $bank_historicals = [];
-
-        if ($usersCountry->is_under_distributer == true) {
-
-            foreach (
-                WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $usersCountry->country->id)
-                    ->where('wallet_phone_credits.created_by', $usersCountry->id)
-                    ->whereDate('wallet_phone_credits.created_at',  $convertions)->select('wallet_phone_credits.*')->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_phone_credits.created_by', $usersCountry->id)
-                ->whereDate('wallet_phone_credits.created_at',  $convertions)->where('wallet_phone_credits.status', 'PENDING')->select('wallet_phone_credits.*')->count();
-
-            $account_success = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_phone_credits.created_by', $usersCountry->id)
-                ->whereDate('wallet_phone_credits.created_at',  $convertions)->where('wallet_phone_credits.status', 'SUCCESS')->select('wallet_phone_credits.*')->count();
-
-            $account_errors = WalletPhoneCredit::join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_phone_credits.created_by', $usersCountry->id)
-                ->whereDate('wallet_phone_credits.created_at',  $convertions)->where('wallet_phone_credits.status', 'ERROR')->select('wallet_phone_credits.*')->count();
-
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_phone', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_phone.pdf');
-        } elseif ($usersCountry->is_distributer == true) {
-            foreach (
-                WalletPhoneCredit::where('updated_by', $usersCountry->id)
-                    ->whereDate('created_at',  $convertions)->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletPhoneCredit::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'PENDING')->count();
-
-            $account_success = WalletPhoneCredit::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletPhoneCredit::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_phone', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_phone.pdf');
-        } elseif ($usersCountry->is_admin == true) {
-            foreach (WalletPhoneCredit::whereDate('created_at',  $convertions)->get() as $bank) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletPhoneCredit::whereDate('created_at',  $convertions)->where('status', 'PENDING')->count();
-
-            $account_success = WalletPhoneCredit::whereDate('created_at',  $convertions)->where('status', 'SUCCESS')->count();
-
-            $account_errors = WalletPhoneCredit::whereDate('created_at',  $convertions)->where('status', 'ERROR')->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_phone', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_phone.pdf');
-        }
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletPhoneCredit::class,
+            relationTableWallet: 'wallet_phone_credits.wallet_id',
+            walletCreatedBy: 'wallet_phone_credits.created_by',
+            walletAll: 'wallet_phone_credits.*',
+            walletCreated: 'wallet_phone_credits.created_at',
+            walletStatus: 'wallet_phone_credits.status',
+            viewPath: 'pages.historicals.pdf_phone',
+            fileName: 'reporting_phone.pdf',
+        );
     }
 
     public function reporting_transfer_historical()
     {
 
-        $usersCountry  =   Auth::guard('web')->user();
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $bank_historicals = [];
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletTransaction::class,
+            relationTableWallet: 'wallet_transactions.wallet_id',
+            walletCreatedBy: 'wallet_transactions.created_by',
+            walletAll: 'wallet_transactions.*',
+            walletCreated: 'wallet_transactions.created_at',
+            walletStatus: 'wallet_transactions.status',
+            viewPath: 'pages.historicals.pdf_transfer',
+            fileName: 'reporting_transfers.pdf',
+        );
+    }
 
-        if ($usersCountry->is_under_distributer == true) {
+    public function reporting_push_historical()
+    {
 
-            foreach (
-                WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                    ->where('wallets.country_id', $usersCountry->country->id)
-                    ->where('wallet_transactions.created_by', $usersCountry->id)
-                    ->whereDate('wallet_transactions.created_at',  $convertions)
-                    ->select('wallet_transactions.*')->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletPush::class,
+            relationTableWallet: 'wallet_pushes.wallet_id',
+            walletCreatedBy: 'wallet_pushes.created_by',
+            walletAll: 'wallet_pushes.*',
+            walletCreated: 'wallet_pushes.created_at',
+            walletStatus: 'wallet_pushes.status',
+            viewPath: 'pages.historicals.pdf_auher',
+            fileName: 'reporting_authers.pdf',
+        );
+    }
 
-            $account_penddings = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_transactions.created_by', $usersCountry->id)
-                ->whereDate('wallet_transactions.created_at',  $convertions)
-                ->where('wallet_transactions.status', 'PENDING')
-                ->select('wallet_transactions.*')->count();
-            $account_success = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_transactions.created_by', $usersCountry->id)
-                ->whereDate('wallet_transactions.created_at',  $convertions)
-                ->where('wallet_transactions.status', 'SUCCESS')
-                ->select('wallet_transactions.*')->count();
+    public function reporting_versment_historical()
+    {
 
-            $account_errors = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_transactions.created_by', $usersCountry->id)
-                ->whereDate('wallet_transactions.created_at',  $convertions)
-                ->where('wallet_transactions.status', 'ERROR')
-                ->select('wallet_transactions.*')->count();
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletVersement::class,
+            relationTableWallet: 'wallet_versements.wallet_id',
+            walletCreatedBy: 'wallet_versements.created_by',
+            walletAll: 'wallet_versements.*',
+            walletCreated: 'wallet_versements.created_at',
+            walletStatus: 'wallet_versements.status',
+            viewPath: 'pages.historicals.pdf_auher',
+            fileName: 'reporting_authers.pdf',
+        );
+    }
 
-            $pdf = Pdf::loadView('pages.historicals.pdf_transfer', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_transfers.pdf');
-        } elseif ($usersCountry->is_distributer == true) {
+    public function reporting_djamo_historical()
+    {
 
-            foreach (
-                WalletTransaction::where('updated_by', $usersCountry->id)
-                    ->whereDate('created_at',  $convertions)->get() as $bank
-            ) {
-                $bank_historicals[] = $bank;
-            }
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletDjamo::class,
+            relationTableWallet: 'wallet_djamos.wallet_id',
+            walletCreatedBy: 'wallet_djamos.created_by',
+            walletAll: 'wallet_djamos.*',
+            walletCreated: 'wallet_djamos.created_at',
+            walletStatus: 'wallet_djamos.status',
+            viewPath: 'pages.historicals.pdf_auher',
+            fileName: 'reporting_authers.pdf',
+        );
+    }
 
-            $account_penddings = WalletTransaction::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)
-                ->where('status', 'PENDING')
-                ->count();
-            $account_success = WalletTransaction::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)
-                ->where('status', 'SUCCESS')
-                ->count();
+    public function reporting_tresort_historical()
+    {
 
-            $account_errors = WalletTransaction::where('updated_by', $usersCountry->id)
-                ->whereDate('created_at',  $convertions)
-                ->where('status', 'ERROR')
-                ->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_transfer', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_transfers.pdf');
-        } elseif ($usersCountry->is_admin == true) {
-            foreach (WalletTransaction::whereDate('created_at',  $convertions)->get() as $bank) {
-                $bank_historicals[] = $bank;
-            }
-
-            $account_penddings = WalletTransaction::whereDate('created_at',  $convertions)
-                ->where('status', 'PENDING')
-                ->count();
-            $account_success = WalletTransaction::whereDate('created_at',  $convertions)
-                ->where('status', 'SUCCESS')
-                ->count();
-
-            $account_errors = WalletTransaction::whereDate('created_at',  $convertions)
-                ->where('status', 'ERROR')
-                ->count();
-
-            $pdf = Pdf::loadView('pages.historicals.pdf_transfer', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-            return $pdf->download('reporting_transfers.pdf');
-        }
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletTresortMoney::class,
+            relationTableWallet: 'wallet_tresort_money.wallet_id',
+            walletCreatedBy: 'wallet_tresort_money.created_by',
+            walletAll: 'wallet_tresort_money.*',
+            walletCreated: 'wallet_tresort_money.created_at',
+            walletStatus: 'wallet_tresort_money.status',
+            viewPath: 'pages.historicals.pdf_auher',
+            fileName: 'reporting_authers.pdf',
+        );
     }
 
     public function reporting_transfer_historical_company()
     {
 
-        $usersCountry  =   firm();
-        $todays = Carbon::now();
-        $convertions = $todays->toDateString();
-        $bank_historicals = [];
 
-
-        foreach (
-            WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-                ->where('wallets.country_id', $usersCountry->country->id)
-                ->where('wallet_transactions.wallet_id', $usersCountry->wallet->id)
-                // ->whereDate('wallet_transactions.created_at',  $convertions)
-                ->select('wallet_transactions.*')->get() as $bank
-        ) {
-            $bank_historicals[] = $bank;
-        }
-
-        $account_penddings = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $usersCountry->country->id)
-            ->where('wallet_transactions.wallet_id', $usersCountry->wallet->id)
-            // ->whereDate('wallet_transactions.created_at',  $convertions)
-            ->where('wallet_transactions.status', 'PENDING')
-            ->select('wallet_transactions.*')->count();
-        $account_success = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $usersCountry->country->id)
-            ->where('wallet_transactions.wallet_id', $usersCountry->wallet->id)
-            // ->whereDate('wallet_transactions.created_at',  $convertions)
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->select('wallet_transactions.*')->count();
-
-        $account_errors = WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', $usersCountry->country->id)
-            ->where('wallet_transactions.wallet_id', $usersCountry->wallet->id)
-            // ->whereDate('wallet_transactions.created_at',  $convertions)
-            ->where('wallet_transactions.status', 'ERROR')
-            ->select('wallet_transactions.*')->count();
-
-
-        $account_penddings = WalletTransaction::where('status', 'PENDING')->where('wallet_id', $usersCountry->wallet->id)
-            ->count();
-        $account_success = WalletTransaction::where('status', 'SUCCESS')->where('wallet_id', $usersCountry->wallet->id)
-            ->count();
-
-        $account_errors = WalletTransaction::where('status', 'ERROR')->where('wallet_id', $usersCountry->wallet->id)
-            ->count();
-
-        $pdf = Pdf::loadView('pages.historicals.pdf_transfer_company', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
-
-        return $pdf->download('reporting_transfers.pdf');
+        return $this->historiqueService->generateDailyFirmReport(
+            modelClass: WalletTransaction::class,
+            relationTableWallet: 'wallet_transactions.wallet_id',
+            walletCreatedBy: 'wallet_transactions.created_by',
+            walletAll: 'wallet_transactions.*',
+            walletCreated: 'wallet_transactions.created_at',
+            walletStatus: 'wallet_transactions.status',
+            viewPath: 'pages.historicals.pdf_transfer_company',
+            fileName: 'reporting_transfers.pdf',
+        );
     }
 
     public function reporting_reload_historical_company()
@@ -686,7 +349,6 @@ class HistoricalController extends Controller
         $pdf = Pdf::loadView('pages.historicals.pdf_reload', compact('bank_historicals', 'account_penddings', 'account_success', 'account_errors'))->setOptions(['defaultFont' => 'sans-serif']);
         return $pdf->download('reporting_rechargment.pdf');
     }
-
 
     public function getTransactionDate($wallets, $searchDateBegin, $searchDateEnd)
     {

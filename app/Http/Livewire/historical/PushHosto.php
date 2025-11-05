@@ -3,6 +3,7 @@
 namespace App\Http\Livewire\Historical;
 
 use Livewire\Component;
+use App\Http\Services\HistoriqueService;
 
 class PushHosto extends Component
 {

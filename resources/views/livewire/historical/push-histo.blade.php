@@ -1,8 +1,8 @@
 <div>
 
   <x-report-widget 
-        :formRoute="route('inters.historical.reporting_payment_days_historical.admins')" 
-        :downloadRoute="route('transfers.historical.reporting_transfer_historical')" 
+        :formRoute="route('pushs.historical.reporting_transaction_days_historical.admins')" 
+        :downloadRoute="route('push.historical.reporting_push_historical')" 
         title="Les activités des transactions Push"
         totalText="Transaction total" 
         :totalCount="$user ?? 0" 
@@ -50,7 +50,7 @@
             </div>
             <div class="col-span-12 sm:col-span-3 2xl:col-span-3 " style="margin-top: 13px;width: 250px;">
                 <div class="w-56 relative text-slate-500 mt-3">
-                    <input type="text" name="table_search" wire:model.debounce.250ms="searchBankHistorical"
+                    <input type="text" name="table_search" wire:model.debounce.250ms="searchHistorical"
                         class="form-control w-56 box pr-10" style="height: 3rem;" placeholder="Rechercher">
                     {{-- <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6  ml-10" data-feather="search"></i> --}}
                 </div>

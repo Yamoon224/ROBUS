@@ -8,6 +8,7 @@ use Livewire\WithPagination;
 use App\Models\Providers\Provider;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Wallets\WalletPayment;
+use App\Http\Services\HistoriqueService;
 
 class PaymentHisto extends Component
 {
@@ -18,7 +19,7 @@ class PaymentHisto extends Component
     public  $startDate = "";
     public  $endDate =  "";
     public $wallet_payment;
- 
+
 
     // Edit Paiment
 
@@ -32,8 +33,6 @@ class PaymentHisto extends Component
     {
 
         $paiements =  WalletPayment::query();
-        $offers =  Offer::where('status', true)->latest()->orderBy('name', 'asc')->get();
-
 
         if (Auth::guard('web')->user()->wallet->sidUser->is_under_distributer == true) {
 
@@ -73,14 +72,10 @@ class PaymentHisto extends Component
                     'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
                     'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
-                    'sum_commissions' => $this->WalletPaymentUser,
-                    'provider_paiements' => $this->PaiementTransaction,
-                    'offers_canal' => $offers,
-
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletCommissionUserProperty(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_by', 'wallet_payments.status', 'wallet_payments.*'),
                 ]
             );
-        } else 
-        {
+        } else {
 
             if ($this->startDate && $this->endDate) {
 
@@ -118,49 +113,11 @@ class PaymentHisto extends Component
                     'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
                     'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
-                    'sum_commissions' => $this->WalletPayment,
-                    'provider_paiements' => $this->PaiementTransaction,
-                    'offers_canal' => $offers,
-
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletAdminCommissionProperty(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.status', 'wallet_payments.*'),
 
                 ]
             );
         }
     }
 
-    public function getPaiementTransactionProperty()
-    {
-        $walletUser = Auth::guard('web')->user();
-
-        $payments = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-            ->where('country_services.country_id', $walletUser->country->id)->where('providers.status', true)
-            ->where('providers.provider_type_id',  2)->select('providers.*')->orderBy('providers.name', 'asc')->get();
-
-        return $payments;
-    }
-    // Admin 
-    public function getWalletPaymentProperty()
-    {
-
-        $data = [];
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_payments.status', 'SUCCESS')->select('wallet_payments.*')->get() as $bank) {
-            $data[] = $bank->commissions_admin;
-        }
-
-        return array_sum($data);
-    }
-
-    // User 
-    public function getWalletPaymentUserProperty()
-    {
-
-        $data = [];
-        foreach (WalletPayment::join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_payments.created_by', Auth::guard('web')->user()->id)->where('wallet_payments.status', 'SUCCESS')->select('wallet_payments.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
 }

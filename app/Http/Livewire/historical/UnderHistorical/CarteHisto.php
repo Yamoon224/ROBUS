@@ -7,6 +7,7 @@ use Livewire\WithPagination;
 use App\Models\Providers\Provider;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Wallets\WalletDeposit;
+use App\Http\Services\HistoriqueService;
 
 class CarteHisto extends Component
 {
@@ -16,20 +17,6 @@ class CarteHisto extends Component
     public $statusFilter = "";
     public  $startDate = "";
     public  $endDate =  "";
-
-    // edit
-    public $reloadcard_description_edit;
-    public $provider_reloadcard_edit;
-    public $country_reloadcard_edit;
-    public $amount_reloadcard_edit;
-    public $account_number_reloadcard_edit;
-    public $phone_reloadcard_edit;
-    public $amount_reloadcard_robus_edit;
-    public $country_reloadcard_robus_edit;
-    public $reloadcardStatus;
-    public $name_reloadcard_edit;
-    public $reloadcardId;
-
 
 
 
@@ -75,8 +62,7 @@ class CarteHisto extends Component
                     'card_historicals' => $cartes->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_deposits.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_deposits.created_at', 'desc')->select('wallet_deposits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletDepsositsUser,
-                    'provider_reloads' =>  $this->ReloadTransaction,
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletCommissionUserProperty(WalletDeposit::class , 'wallet_deposits.wallet_id' ,'wallet_deposits.created_by' ,'wallet_deposits.status' ,'wallet_deposits.*'),
 
                 ]
             );
@@ -116,52 +102,11 @@ class CarteHisto extends Component
                     'card_historicals' => $cartes->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_deposits.created_at', 'desc')->select('wallet_deposits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletDepsosits,
-                    'provider_reloads' =>  $this->ReloadTransaction,
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletAdminCommissionProperty(WalletDeposit::class , 'wallet_deposits.wallet_id','wallet_deposits.status' ,'wallet_deposits.*'),
 
                 ]
             );
         }
     }
-
-
-    public function getReloadTransactionProperty()
-    {
-
-        $walletUser = Auth::guard('web')->user();
-
-        $reload_transaction = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-            ->where('country_services.country_id', $walletUser->country->id)->where('providers.status', true)
-            ->where('providers.provider_type_id',  5)
-            ->select('providers.*')
-            ->orderBy('providers.name', 'asc')->get();
-
-        return $reload_transaction;
-    }
-    // Admin 
-    public function getWalletDepsositsProperty()
-    {
-        $data = [];
-        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() as $bank) {
-            $data[] = $bank->commissions_admin;
-        }
-
-        return array_sum($data);
-    }
-
-    // User 
-    public function getWalletDepsositsUserProperty()
-    {
-
-        $data = [];
-        foreach (WalletDeposit::join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_deposits.created_by', Auth::guard('web')->user()->id)->where('wallet_deposits.status', 'SUCCESS')->select('wallet_deposits.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-
 
 }

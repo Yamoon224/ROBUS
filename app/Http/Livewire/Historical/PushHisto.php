@@ -88,32 +88,4 @@ class PushHisto extends Component
 
     }
 
-    public function getTransactionsDaysProperty()
-    {
-
-
-        $data = [];
-
-        $wallets = WalletPush::whereIsWeb(false)->whereBetween('created_at', [$this->beginDate, $this->endDateT]);
-
-        $walletUser = Auth::guard('web')->user(); 
-
-        if ($walletUser->is_under_distributer) {
-            $wallets->where('wallet_pushes.created_by', $walletUser->id); 
-        }elseif($walletUser->is_distributer)
-        {
-            $wallets->where('wallet_pushes.updated_by', $walletUser->id); 
-
-        }else {
-            $wallets->where('wallet_pushes.created_by' , '!=', $walletUser->id); 
-        }
-
-        $wallets = $wallets->get();
-
-        foreach ($wallets as $bank) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
-    }
 }

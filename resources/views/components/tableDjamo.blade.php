@@ -15,11 +15,9 @@
                   </th>
                   <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                       Statut </th>
-                  @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                      <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                          Actions
-                      </th>
-                  @endif
+                  <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
+                      Actions
+                  </th>
               </tr>
           </thead>
           <tbody>
@@ -73,62 +71,35 @@
                           </td>
                           <td class="w-40">
                               <div class="flex justify-center items-center">
-                                  @if ($item->updated_by != null)
-                                      @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
-                                          <div class="flex items-center justify-center text-pending">
-                                              <span
-                                                  class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                  En-attente
-                                              </span>
+                                  @if ($item->status == 'PENDING')
+                                      <div class="flex items-center justify-center text-pending">
+                                          <span
+                                              class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                              En-attente
+                                          </span>
 
-                                          </div>
-                                      @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)
-                                          @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                              <a target="_bank" href="{{ route('djamos.invoice.print', $item->id) }}"
-                                                  class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
-                                                  Facture
-                                              </a>
-                                          @endif
-                                      @else
-                                          <div class="flex items-center justify-center text-dark">
-                                              <div class="flex items-center justify-center text-pending">
-                                                  <span
-                                                      class="alert  alert-warning inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                                      text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                      style="color: white;">
-                                                      Déjà choisir
-                                                  </span>
-
-                                              </div>
-                                          </div>
+                                      </div>
+                                  @elseif ($item->status == 'SUCCESS')
+                                      @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                          <a target="_bank"
+                                              href="{{ route('djamo_transactions.invoice.print', $item->id) }}"
+                                              class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
+                                              Facture
+                                          </a>
                                       @endif
                                   @else
                                       <div class="flex items-center justify-center text-dark">
-                                          <div class="flex items-center justify-center text-warring">
+                                          <div class="flex items-center justify-center text-pending">
                                               <span
-                                                  class="alert alert-dark show mb-2 inline-flex items-center justify-center px-2 py-1 mb-3 
-                                                                    text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                  class="alert  alert-warning inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                                                      text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
                                                   style="color: white;">
-                                                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                      viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                      icon-name="alert-octagon" data-lucide="alert-octagon"
-                                                      class="lucide lucide-alert-octagon w-6 h-6 mr-2">
-                                                      <polygon
-                                                          points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2">
-                                                      </polygon>
-                                                      <line x1="12" y1="8" x2="12" y2="12">
-                                                      </line>
-                                                      <line x1="12" y1="16" x2="12.01" y2="16">
-                                                      </line>
-                                                  </svg>
-                                                  Pas encore choisir
+                                                  Déjà choisir
                                               </span>
 
                                           </div>
                                       </div>
                                   @endif
-
                               </div>
                           </td>
                       </tr>

@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Wallets\WalletInter;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Services\HistoriqueService;
 
 class InterHisto extends Component
 {
@@ -59,12 +60,11 @@ class InterHisto extends Component
                     'inter_historicals' =>   $inters->join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_inters.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_inters.created_at', 'desc')->select('wallet_inters.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletIntersUser,
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletCommissionUserProperty(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_by', 'wallet_inters.status', 'wallet_inters.*'),
 
                 ]
             );
-        } else
-        {
+        } else {
 
             if ($this->startDate && $this->endDate) {
 
@@ -98,37 +98,11 @@ class InterHisto extends Component
                     'user' => $walletUser,
                     'inter_historicals' =>  $inters->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletInters,
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletAdminCommissionProperty(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.status', 'wallet_inters.*'),
 
                 ]
             );
         }
     }
-
-    // Admin 
-    public function getWalletIntersProperty()
-    {
-        $data = [];
-        foreach (WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_inters.status', 'SUCCESS')->select('wallet_inters.*')->get() as $bank) {
-            $data[] = $bank->commissions_admin;
-        }
-
-        return array_sum($data);
-    }
-
-    // User 
-    public function getWalletIntersUserProperty()
-    {
-
-        $data = [];
-        foreach (WalletInter::join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_inters.created_by', Auth::guard('web')->user()->id)->where('wallet_inters.status', 'SUCCESS')->select('wallet_inters.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-    
 
 }

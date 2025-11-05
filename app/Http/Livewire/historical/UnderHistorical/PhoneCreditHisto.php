@@ -73,8 +73,6 @@ class PhoneCreditHisto extends Component
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
                     'sum_commissions' => app(ServiceHistoricalBackend::class)->getWalletSumCommissionProperty(WalletPhoneCredit::class,  'wallet_phone_credits.wallet_id',  'wallet_phone_credits.created_by', 'wallet_phone_credits.status', 'wallet_phone_credits.*'),
-                    'provider_credits' => $this->PhoneCreditTransaction,
-
                 ]
             );
         } else
@@ -113,8 +111,6 @@ class PhoneCreditHisto extends Component
                         ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
                     'sum_commissions' => app(ServiceHistoricalBackend::class)->getWalletSumAdminProperty(WalletPhoneCredit::class , 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.status', 'wallet_phone_credits.*'),
-                    'provider_credits' => app(ServiceHistoricalBackend::class)->getProvidersByAllType(Provider::class , 6),
-
                 ]
             );
         }

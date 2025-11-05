@@ -355,7 +355,6 @@ Route::group(['prefix' => ''], function () {
             Route::get('/xbets/{wave_id}', [InvoiceController::class, 'xbets_invoice'])->name('xbets.invoice.print');
 
             // New invoice
-
             Route::get('/push_transactions/{push_transactio_id}', [InvoiceController::class, 'push_transaction_invoice'])->name('push_transactions.invoice.print');
             Route::get('/djamo_transactions/{djamo_transaction_id}', [InvoiceController::class, 'djamo_transaction_invoice'])->name('djamo_transactions.invoice.print');
             Route::get('/tresort_transactions/{tresort_transaction_id}', [InvoiceController::class, 'tresort_transaction_invoice'])->name('tresort_transactions.invoice.print');
@@ -380,6 +379,12 @@ Route::group(['prefix' => ''], function () {
             Route::get('phones/reporting_phone_historical', [HistoricalController::class, 'reporting_phone_historical'])->name('phones.historical.reporting_phone_historical');
             Route::get('transfers/reporting_transfer_historical', [HistoricalController::class, 'reporting_transfer_historical'])->name('transfers.historical.reporting_transfer_historical');
             Route::get('drawer_under_distributer/reporting_drawer_historical', [HistoricalController::class, 'reporting_drawer_historical'])->name('transfers.historical.reporting_drawer_historical');
+
+            // New Providers wallets transactions
+            Route::get('pushs/reporting_push_historical', [HistoricalController::class, 'reporting_push_historical'])->name('push.historical.reporting_push_historical');
+            Route::get('versments/reporting_versment_historical', [HistoricalController::class, 'reporting_versment_historical'])->name('versments.historical.reporting_versment_historical');
+            Route::get('djamos/reporting_djamo_historical', [HistoricalController::class, 'reporting_djamo_historical'])->name('djamos.historical.reporting_djamo_historical');
+            Route::get('tresort_money/reporting_tresort_historical', [HistoricalController::class, 'reporting_tresort_historical'])->name('tresort_money.historical.reporting_tresort_historical');
 
             Route::get('/inters_historical', [HistoricalController::class, 'browse_inter'])->name('inters.historical');
             Route::get('/cartes_historical', [HistoricalController::class, 'browse_carte'])->name('cartes.historical');

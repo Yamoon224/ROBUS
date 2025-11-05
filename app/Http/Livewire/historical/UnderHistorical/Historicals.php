@@ -14,6 +14,7 @@ use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletTransaction;
+use App\Http\Services\HistoriqueService;
 
 class Historicals extends Component
 {

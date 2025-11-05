@@ -6,6 +6,7 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Wallets\WalletPhoneCredit;
+use App\Http\Services\HistoriqueService;
 
 class PhoneCredithisto extends Component
 {
@@ -42,6 +43,7 @@ class PhoneCredithisto extends Component
             return view(
                 'livewire.historical.phone-credithisto',
                 [
+                    'user' =>  app(HistoriqueService::class)->getTransactionsDaysProperty(WalletPhoneCredit::class , $this->startDate,$this->endDate , 'wallet_phone_credits.created_by' , 'wallet_phone_credits.updated_by'),
                     'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web', false)->whereBetween('wallet_phone_credits.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
@@ -73,6 +75,7 @@ class PhoneCredithisto extends Component
             return view(
                 'livewire.historical.phone-credithisto',
                 [
+                     'user' =>  app(HistoriqueService::class)->getTransactionsStatusProperty(WalletPhoneCredit::class , 'wallet_phone_credits.is_web', 'wallet_phone_credits.status' , $this->statusTransferFilter , 'wallet_phone_credits.created_by' , 'wallet_phone_credits.updated_by'),
                     'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web', false)->orderBy('wallet_phone_credits.created_at', 'desc')->where("wallet_phone_credits.status", $this->statusPhoneFilter)->select('wallet_phone_credits.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
@@ -84,6 +87,7 @@ class PhoneCredithisto extends Component
         return view(
             'livewire.historical.phone-credithisto',
             [
+                 'user' =>  app(HistoriqueService::class)->getTransactionsAllDaysProperty(WalletPhoneCredit::class , 'wallet_phone_credits.is_web' , 'wallet_phone_credits.created_by' , 'wallet_phone_credits.updated_by'),
                 'phone_historicals' =>   $phones->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
                     ->where('wallets.country_id', $walletUser->country->id)->where('wallet_phone_credits.is_web', false)->orderBy('wallet_phone_credits.created_at', 'desc')->select('wallet_phone_credits.*')->paginate(15),
                 'usersCountry' =>   $walletUser->country->currencie->name,

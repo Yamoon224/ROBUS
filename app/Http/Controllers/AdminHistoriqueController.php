@@ -2228,7 +2228,7 @@ class AdminHistoriqueController extends Controller
 
         $searchDateEnd = $request->input('search_end');
 
-        $walletTransactions = $this->getTransactionDate(WalletPush::class, $searchDateBegin, $searchDateEnd);
+        $push_historicals = $this->getTransactionDate(WalletPush::class, $searchDateBegin, $searchDateEnd);
 
         $account_penddings =  $this->getTransactionCount(WalletPush::class, 'PENDING', $searchDateBegin, $searchDateEnd);;
 
@@ -2238,8 +2238,8 @@ class AdminHistoriqueController extends Controller
 
         $amount_total = $this->walletTransactionsDays(WalletPush::class, $searchDateBegin, $searchDateEnd);
 
-        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_auther_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
-        return $pdf->download('reporting_transactions_days.pdf');
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_auther_transactions', compact('amount_total', 'push_historicals', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_auther_days.pdf');
     }
 
     public function searchByDjamoDate(Request $request)
@@ -2264,8 +2264,8 @@ class AdminHistoriqueController extends Controller
 
         $amount_total = $this->walletTransactionsDays(WalletDjamo::class, $searchDateBegin, $searchDateEnd);
 
-        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_auther_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
-        return $pdf->download('reporting_transactions_days.pdf');
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_djamo_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_djamo_days.pdf');
     }
 
     public function searchByVersmentDate(Request $request)
@@ -2290,8 +2290,8 @@ class AdminHistoriqueController extends Controller
 
         $amount_total = $this->walletTransactionsDays(WalletVersement::class, $searchDateBegin, $searchDateEnd);
 
-        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_auther_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
-        return $pdf->download('reporting_transactions_days.pdf');
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_versment_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_versement_days.pdf');
     }
 
     public function searchByTresortDate(Request $request)
@@ -2316,8 +2316,8 @@ class AdminHistoriqueController extends Controller
 
         $amount_total = $this->walletTransactionsDays(WalletTresortMoney::class, $searchDateBegin, $searchDateEnd);
 
-        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_auther_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
-        return $pdf->download('reporting_transactions_days.pdf');
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_tresort_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_tresort_days.pdf');
     }
 
     public function searchByPaymentsDate(Request $request)

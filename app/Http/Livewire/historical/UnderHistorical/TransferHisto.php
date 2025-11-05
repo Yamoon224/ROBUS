@@ -4,10 +4,10 @@ namespace App\Http\Livewire\Historical\UnderHistorical;
 
 use Livewire\Component;
 use Livewire\WithPagination;
-use App\Events\AdminNotifEvent;
 use App\Models\Providers\Provider;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Wallets\WalletTransaction;
+use App\Http\Services\HistoriqueService;
 
 class TransferHisto extends Component
 {
@@ -76,8 +76,7 @@ class TransferHisto extends Component
                     'transfer_historicals' => $transfers->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)->select('wallet_transactions.*')->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                     'usersCountry' =>  $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletRelaodUser,
-                    'providers' =>  $this->NationTransaction,
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletCommissionUserProperty(WalletTransaction::class , 'wallet_transactions.wallet_id' ,'wallet_transactions.created_by' ,'wallet_transactions.status' ,'wallet_transactions.*'),
 
                 ]
             );
@@ -114,49 +113,11 @@ class TransferHisto extends Component
                     'user' => $walletUser,
                     'transfer_historicals' => $transfers->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                     'usersCountry' =>  $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletRelaod,
-                    'providers' =>  $this->NationTransaction,
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletAdminCommissionProperty(WalletTransaction::class , 'wallet_transactions.wallet_id','wallet_transactions.status' ,'wallet_transactions.*'),
 
                 ]
             );
         }
     }
 
-    public function getNationTransactionProperty()
-    {
-        $walletUser = Auth::guard('web')->user();
-
-        $transaction_nationnal = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-            ->where('country_services.country_id', $walletUser->country->id)->where('providers.status', true)
-            ->where('providers.provider_type_id',  1)->select('providers.*')->orderBy('providers.name', 'asc')->get();
-
-        return $transaction_nationnal;
-    }
-
-    // Admin 
-    public function getWalletRelaodProperty()
-    {
-        $data = [];
-        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
-            $data[] = $bank->commissions_admin;
-        }
-
-        return array_sum($data);
-    }
-
-    // User 
-    public function getWalletRelaodUserProperty()
-    {
-
-        $data = [];
-        foreach (WalletTransaction::join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_transactions.created_by', Auth::guard('web')->user()->id)->where('wallet_transactions.status', 'SUCCESS')->select('wallet_transactions.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
-    
-  
 }

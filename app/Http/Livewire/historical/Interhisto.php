@@ -8,6 +8,7 @@ use App\Models\Wallets\Wallet;
 use Illuminate\Support\Facades\DB;
 use App\Models\Wallets\WalletInter;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Services\HistoriqueService;
 
 class Interhisto extends Component
 {
@@ -47,6 +48,7 @@ class Interhisto extends Component
             return view(
                 'livewire.historical.interhisto',
                 [
+                    'user' =>  app(HistoriqueService::class)->getTransactionsDaysProperty(WalletInter::class , $this->startDate,$this->endDate , 'wallet_inters.created_by' , 'wallet_inters.updated_by'),
                     'inter_historicals' =>  $inters->whereBetween('wallet_inters.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
 
@@ -79,6 +81,7 @@ class Interhisto extends Component
             return view(
                 'livewire.historical.interhisto',
                 [
+                     'user' =>  app(HistoriqueService::class)->getTransactionsStatusProperty(WalletInter::class , 'wallet_inters.is_web', 'wallet_inters.status' , $this->statusTransferFilter , 'wallet_inters.created_by' , 'wallet_inters.updated_by'),
                     'inter_historicals' =>  $inters->where("wallet_inters.status", $this->statusInterFilter)->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
 
@@ -89,6 +92,8 @@ class Interhisto extends Component
         return view(
             'livewire.historical.interhisto',
             [
+                 'user' =>  app(HistoriqueService::class)->getTransactionsAllDaysProperty(WalletInter::class , 'wallet_inters.is_web' , 'wallet_inters.created_by' , 'wallet_inters.updated_by'),
+
                 'inter_historicals' =>  $inters->orderBy('wallet_inters.created_at', 'desc')->paginate(15),
                 'usersCountry' =>   $walletUser->country->currencie->name,
 

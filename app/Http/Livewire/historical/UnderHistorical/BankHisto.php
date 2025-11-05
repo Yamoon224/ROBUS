@@ -8,6 +8,7 @@ use Livewire\WithPagination;
 use App\Models\Custumers\Country;
 use App\Models\Providers\Provider;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Services\HistoriqueService;
 
 class BankHisto extends Component
 {
@@ -18,20 +19,7 @@ class BankHisto extends Component
     public  $startDate = "";
     public  $endDate =  "";
 
-    // edit
-    public $virementDescription_edit;
-    public $provider_virement_edit;
-    public $firstname_user_edit;
-    public $lastname_user_edit;
-    public $phone_user_edit;
-    public $amount_virement_edit;
-    public $account_number_user_edit;
-    public $country_virement_edit;
-    public $virementStatus;
-    public $virementId;
-    public $currency_custumers;
 
-  
 
     public function render()
     {
@@ -80,9 +68,7 @@ class BankHisto extends Component
                     'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_banks.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletBanksUser,
-                    'provider_virements' =>  $this->VirementTransaction,
-                    'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletCommissionUserProperty(WalletBank::class , 'wallet_banks.wallet_id' ,'wallet_banks.created_by' ,'wallet_banks.status' ,'wallet_banks.*'),
 
                 ]
             );
@@ -126,54 +112,12 @@ class BankHisto extends Component
                     'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
-                    'sum_commissions' => $this->WalletBanks,
-                    'provider_virements' =>  $this->VirementTransaction,
-                    'countries' => Country::where('status', true)->orderBy('name', 'asc')->get(),
+                    'sum_commissions' => app(HistoriqueService::class)->getWalletAdminCommissionProperty(WalletBank::class , 'wallet_banks.wallet_id'  ,'wallet_banks.status' ,'wallet_banks.*'),
 
                 ]
             );
         }
     }
 
-
-    public function getVirementTransactionProperty()
-    {
-
-        $walletUser = Auth::guard('web')->user();
-
-        $virement_transaction = Provider::join('country_services', 'country_services.provider_id', 'providers.id')
-            ->where('country_services.country_id', $walletUser->country->id)->where('providers.status', true)
-            ->where('providers.provider_type_id',  4)
-            ->select('providers.*')
-            ->orderBy('providers.name', 'asc')->get();
-
-        return $virement_transaction;
-    }
-
-    // Admin 
-    public function getWalletBanksProperty()
-    {
-
-        $data = [];
-        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_banks.status', 'SUCCESS')->select('wallet_banks.*')->get() as $bank) {
-            $data[] = $bank->commissions_admin;
-        }
-
-        return array_sum($data);
-    }
-
-    // User 
-    public function getWalletBanksUserProperty()
-    {
-
-        $data = [];
-        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where('wallet_banks.created_by', Auth::guard('web')->user()->id)->where('wallet_banks.status', 'SUCCESS')->select('wallet_banks.*')->get() as $bank) {
-            $data[] = $bank->commissions;
-        }
-
-        return array_sum($data);
-    }
 
 }

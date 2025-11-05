@@ -14,11 +14,9 @@
             </th>
             <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                 Statut </th>
-            @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                    Actions
-                </th>
-            @endif
+            <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody>
@@ -28,7 +26,7 @@
                     <td class="text-center w-40">
                         <div
                             class="px-3 py-2 text-dark btn-pink dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                            <div class="fc-event-title-container" style="color: white;">
+                            <div class="fc-event-title-container text-white" >
                                 <div class="fc-event-title fc-sticky">
                                     {{ $item->provider->name ?? null }}
 

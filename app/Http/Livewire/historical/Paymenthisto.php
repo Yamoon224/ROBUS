@@ -19,6 +19,7 @@ use App\Notifications\UserNotification;
 use App\Notifications\AdminNotification;
 use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Admin\MailController;
+use App\Http\Services\HistoriqueService;
 
 class Paymenthisto extends Component
 {
@@ -54,6 +55,7 @@ class Paymenthisto extends Component
             return view(
                 'livewire.historical.paymenthisto',
                 [
+                    'user' =>  app(HistoriqueService::class)->getTransactionsDaysProperty(WalletPayment::class , $this->startDate,$this->endDate , 'wallet_payments.created_by' , 'wallet_payments.updated_by'),
                     'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->whereBetween('wallet_payments.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
                     'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
@@ -91,7 +93,7 @@ class Paymenthisto extends Component
             return view(
                 'livewire.historical.paymenthisto',
                 [
-
+                     'user' =>  app(HistoriqueService::class)->getTransactionsStatusProperty(WalletPayment::class , 'wallet_payments.is_web', 'wallet_payments.status' , $this->statusTransferFilter , 'wallet_payments.created_by' , 'wallet_payments.updated_by'),
                     'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->where("wallet_payments.status", $this->statusFilter)->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
                     'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
@@ -102,6 +104,7 @@ class Paymenthisto extends Component
         return view(
             'livewire.historical.paymenthisto',
             [
+                 'user' =>  app(HistoriqueService::class)->getTransactionsAllDaysProperty(WalletPayment::class , 'wallet_payments.is_web' , 'wallet_payments.created_by' , 'wallet_payments.updated_by'),
                 'payment_historicals' =>   $paiements->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
                     ->where('wallets.country_id', Auth::guard('web')->user()->country->id)->orderBy('wallet_payments.created_at', 'desc')->select('wallet_payments.*')->paginate(15),
                 'usersCountry' =>  Auth::guard('web')->user()->country->currencie->name,
