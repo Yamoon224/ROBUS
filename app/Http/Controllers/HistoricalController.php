@@ -169,7 +169,7 @@ class HistoricalController extends Controller
     {
 
         return $this->historiqueService->generateDailyReport(
-            modelClass: WalletInter::class,
+            modelClass: WalletPayment::class,
             relationTableWallet: 'wallet_payments.wallet_id',
             walletCreatedBy: 'wallet_payments.created_by',
             walletAll: 'wallet_payments.*',
@@ -220,8 +220,8 @@ class HistoricalController extends Controller
             walletAll: 'wallet_pushes.*',
             walletCreated: 'wallet_pushes.created_at',
             walletStatus: 'wallet_pushes.status',
-            viewPath: 'pages.historicals.pdf_auher',
-            fileName: 'reporting_authers.pdf',
+            viewPath: 'pages.historicals.transactionsDays.pdf_auther_transactions',
+            fileName: 'reporting_pushs.pdf',
         );
     }
 
@@ -235,8 +235,8 @@ class HistoricalController extends Controller
             walletAll: 'wallet_versements.*',
             walletCreated: 'wallet_versements.created_at',
             walletStatus: 'wallet_versements.status',
-            viewPath: 'pages.historicals.pdf_auher',
-            fileName: 'reporting_authers.pdf',
+            viewPath: 'pages.historicals.transactionsDays.pdf_versment_transactions',
+            fileName: 'reporting_versment.pdf',
         );
     }
 
@@ -250,8 +250,8 @@ class HistoricalController extends Controller
             walletAll: 'wallet_djamos.*',
             walletCreated: 'wallet_djamos.created_at',
             walletStatus: 'wallet_djamos.status',
-            viewPath: 'pages.historicals.pdf_auher',
-            fileName: 'reporting_authers.pdf',
+            viewPath: 'pages.historicals.transactionsDays.pdf_versment_transactions',
+            fileName: 'reporting_djamo.pdf',
         );
     }
 
@@ -265,8 +265,8 @@ class HistoricalController extends Controller
             walletAll: 'wallet_tresort_money.*',
             walletCreated: 'wallet_tresort_money.created_at',
             walletStatus: 'wallet_tresort_money.status',
-            viewPath: 'pages.historicals.pdf_auher',
-            fileName: 'reporting_authers.pdf',
+            viewPath: 'pages.historicals.transactionsDays.pdf_tresort_transactions',
+            fileName: 'reporting_tresort_money.pdf',
         );
     }
 

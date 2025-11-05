@@ -1,15 +1,15 @@
 <div>
 
   <x-report-widget 
-        :formRoute="route('pushs.historical.reporting_transaction_days_historical.admins')" 
-        :downloadRoute="route('push.historical.reporting_push_historical')" 
-        title="Les activités des transactions Push"
+        :formRoute="route('djamos.historical.reporting_transaction_days_historical.admins')" 
+        :downloadRoute="route('djamos.historical.reporting_djamo_historical')" 
+        title="Les activités des transactions Djamo"
         totalText="Transaction total" 
         :totalCount="$user ?? 0" 
         :country="$usersCountry"
-        :pendingCount="$push_historicals->where('status', 'PENDING')->count()" 
-        :successCount="$push_historicals->where('status', 'SUCCESS')->count()" 
-        :errorCount="$push_historicals->where('status', 'ERROR')->count()" />
+        :pendingCount="$djamo_historicals->where('status', 'PENDING')->count()" 
+        :successCount="$djamo_historicals->where('status', 'SUCCESS')->count()" 
+        :errorCount="$djamo_historicals->where('status', 'ERROR')->count()" />
 
 
 
@@ -62,7 +62,7 @@
                 <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
                     <div class=" items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                         <h2 class="font-medium text-base mr-auto">
-                            Liste des transaction Pushs
+                            Liste des transaction Djamo
                         </h2>
                     </div>
                     <div class="tiny-slider py-5">
@@ -77,7 +77,7 @@
                 <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-6 mb-6">
                     <nav class="w-full sm:w-auto sm:mr-auto">
                         <ul class="pagination">
-                            {{ $push_historicals->links() }}
+                            {{ $djamo_historicals->links() }}
                         </ul>
                     </nav>
                 </div>

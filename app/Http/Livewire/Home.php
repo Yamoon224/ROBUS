@@ -14,7 +14,10 @@ use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletXbet;
 use Livewire\Component;
 use App\Http\Services\HomeService;
-
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Wallets\WalletVersement;
 
 class Home extends Component
 {
@@ -61,9 +64,25 @@ class Home extends Component
         $xbet_padding = app(HomeService::class)->getTransactionCount(WalletXbet::class, 'PENDING', 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
         $xbet_success = app(HomeService::class)->getTransactionCount(WalletXbet::class, 'SUCCESS',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status');
 
-        // $wave_error = $this->getTransactionCount(WalletWave::class, 'ERROR',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
-        // $wave_padding = $this->getTransactionCount(WalletWave::class, 'PENDING', 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
-        // $wave_success = $this->getTransactionCount(WalletWave::class, 'SUCCESS',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status');
+        // New transactions
+
+        $djamo_error = app(HomeService::class)->getTransactionCount(WalletDjamo::class, 'ERROR', 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status');
+        $djamo_padding = app(HomeService::class)->getTransactionCount(WalletDjamo::class, 'PENDING', 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status');
+        $djamo_success = app(HomeService::class)->getTransactionCount(WalletDjamo::class, 'SUCCESS', 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status');
+
+        $versment_error = app(HomeService::class)->getTransactionCount(WalletVersement::class, 'ERROR', 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status');
+        $versment_padding = app(HomeService::class)->getTransactionCount(WalletVersement::class, 'PENDING', 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status');
+        $versment_success = app(HomeService::class)->getTransactionCount(WalletVersement::class, 'SUCCESS', 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status');
+
+        $tresortMoney_error = app(HomeService::class)->getTransactionCount(WalletTresortMoney::class, 'ERROR', 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status');
+        $tresortMoney_pendding = app(HomeService::class)->getTransactionCount(WalletTresortMoney::class, 'PENDING', 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status');
+        $tresortMoney_success = app(HomeService::class)->getTransactionCount(WalletTresortMoney::class, 'SUCCESS', 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status');
+
+
+        $push_error = app(HomeService::class)->getTransactionCount(WalletPush::class, 'ERROR', 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status');
+        $push_pendding = app(HomeService::class)->getTransactionCount(WalletPush::class, 'PENDING', 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status');
+        $push_success = app(HomeService::class)->getTransactionCount(WalletPush::class, 'SUCCESS', 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status');
+
 
         // Amount transactions days
         $payement_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount');
@@ -89,6 +108,13 @@ class Home extends Component
         $bank_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $deposit_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
+
+        // new amount
+        $djamo_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by',  'wallet_djamos.status',  'wallet_djamos.amount');
+        $push_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletPush::class, 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by',  'wallet_pushes.status',  'wallet_pushes.amount');
+        $tresortMoney_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by',  'wallet_tresort_money.status',  'wallet_tresort_money.amount');
+        $versment_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by',  'wallet_versements.status',  'wallet_versements.amount');
+        $bank_send = app(HomeService::class)->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         // $wave_amount = app(HomeService::class)->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount');
 
         // Amount transactions month
@@ -100,6 +126,14 @@ class Home extends Component
         $bank_amount_month = app(HomeService::class)->getDaysTransaction(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount');
         $deposit_amount_month = app(HomeService::class)->getDaysTransaction(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount');
         $xbet_amount_month = app(HomeService::class)->getDaysTransaction(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount');
+
+        $djamo_amount_month = app(HomeService::class)->getDaysTransaction(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by',  'wallet_djamos.status',  'wallet_djamos.amount');
+        
+   
+        $push_amount_month = app(HomeService::class)->getDaysTransaction(WalletPush::class, 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by',  'wallet_pushes.status',  'wallet_pushes.amount');
+        $tresortMoney_amount_month = app(HomeService::class)->getDaysTransaction(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by',  'wallet_tresort_money.status',  'wallet_tresort_money.amount');
+        $versment_amount_month = app(HomeService::class)->getDaysTransaction(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by',  'wallet_versements.status',  'wallet_versements.amount');
+
         // $wave_amount_month = app(HomeService::class)->getDaysTransaction(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount');
 
         // count One transactions
@@ -122,6 +156,12 @@ class Home extends Component
         $companies = app(HomeService::class)->getUserTypeTotal('is_company', true);
         // $comzones = $this->getUserTypeTotal('is_com_zone', true);
 
+        // New transactions
+        $push_amount_days = app(HomeService::class)->getTransactionAllCount(WalletPush::class, 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by');
+        $djamo_amount_days = app(HomeService::class)->getTransactionAllCount(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by');
+        $versment_amount_days = app(HomeService::class)->getTransactionAllCount(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by');
+        $tresortMoney_amount_days = app(HomeService::class)->getTransactionAllCount(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by');
+
         return view('livewire.home', [
 
             // Users
@@ -142,6 +182,23 @@ class Home extends Component
             'error_transaction' => $transaction_error,
             'success_transaction' => $transaction_success,
             'pendding_transaction' => $transaction_padding,
+
+            'djamo_error' => $djamo_error,
+            'djamo_success' => $djamo_success,
+            'djamo_padding' => $djamo_padding,
+
+            'versment_error' => $versment_error,
+            'versment_success' => $versment_success,
+            'versment_padding' => $versment_padding,
+
+            'tresortMoney_error' => $tresortMoney_error,
+            'tresortMoney_success' => $tresortMoney_success,
+            'tresortMoney_pendding' => $tresortMoney_pendding,
+
+            'push_error' => $push_error,
+            'push_success' => $push_success,
+            'push_pendding' => $push_pendding,
+
             // 
             'error_xbet' => $xbet_error,
             'success_xbet' => $xbet_success,
@@ -174,7 +231,13 @@ class Home extends Component
             'pendding_inter' => $inter_padding,
 
 
-            // 
+            // New Transactions
+            'amount_djamo_days' => $djamo_amount_month,
+            'amount_push_days' => $push_amount_month,
+            'amount_tresortMoney_days' => $tresortMoney_amount_month,
+            'amount_versment_days' => $versment_amount_month,
+
+            // New 
             'amount_payment_days' => $payement_amount,
             'amount_payment_cie_days' => $payement_amount_cie,
             'amount_payment_canal_days' => $payement_amount_canal,
@@ -208,6 +271,13 @@ class Home extends Component
             'sum_reload' => $reload_amount,
             'sum_transaction' => $transaction_amount,
             'sum_inter' => $inter_amount,
+
+            // New transaction amount
+            'sum_push' => $push_amount,
+            'sum_djamo' => $djamo_amount,
+            'sum_versment' => $versment_amount,
+            'sum_tresortMoney' => $tresortMoney_amount,
+
             'sum_phoneCredit' => $phonecredit_amount,
             'sum_xbet' => $xbet_amount,
             // 'sum_wave' => $wave_amount,
@@ -219,6 +289,13 @@ class Home extends Component
             'sum_inter_month' => $inter_amount_month,
             'sum_phoneCredit_month' => $phonecredit_amount_month,
             'sum_xbet_month' => $xbet_amount_month,
+
+            // New sum
+            'sum_push_month' => $push_amount_month,
+            'sum_djamo_month' => $djamo_amount_month,
+            'sum_tresort_month' => $tresortMoney_amount_month,
+            'sum_versment_month' => $versment_amount_month,
+
             // 'sum_wave_month' => $wave_amount_month,
             // Transaction days
             'account_bank_days' => $bank_amount_days,
@@ -229,6 +306,13 @@ class Home extends Component
             'account_inter_days' => $inter_amount_days,
             'account_phoneCredit_days' => $phone_amount_days,
             'account_xbet_days' => $xbet_amount_days,
+
+            // New transactions
+            'account_push_days' => $push_amount_days,
+            'account_djamo_days' => $djamo_amount_days,
+            'account_versment_days' => $versment_amount_days,
+            'account_tresort_days' => $tresortMoney_amount_days,
+
             // 'open_apps' => $closeRobus,
         ]);
     }
@@ -241,7 +325,4 @@ class Home extends Component
 
         return $totalUsers;
     }
-
-
-  
 }

@@ -215,16 +215,16 @@ class Reloaduv extends Component
                                 'created_by'  =>   Auth::guard('web')->user()->id,
                             ]);
 
-                            // if ($walletUser->country->code == "CI") {
+                            if ($walletUser->country->code == "CI") {
 
-                            //     $message = 'Vous avez effectué un transafers de ' . $reload_unders->amount .  $walletUser->wallet->currencie->code .  'par '
-                            //         . $reload_unders->provider->name  .  ' a '
-                            //         . $reload_unders->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
+                                $message = 'Vous avez effectué un transafers de ' . $reload_unders->amount .  $walletUser->wallet->currencie->code .  'par '
+                                    . $reload_unders->provider->name  .  ' a '
+                                    . $reload_unders->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
 
-                            //     $encode = substr(Auth::guard('web')->user()->phone,  -10);
+                                $encode = substr(Auth::guard('web')->user()->phone,  -10);
 
-                            //     Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-                            // }
+                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                            }
 
                             $msg_title = 'Achat d\'UV';
                             $msg = 'Votre demande de rechargement d\'UV ';

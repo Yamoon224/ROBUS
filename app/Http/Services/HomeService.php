@@ -534,12 +534,57 @@ class HomeService
     }
 
 
+    public function getDaysAmountTransaction(
+        $walletModel,
+        string $wallet_transaction,
+        string $transaction_days,
+        string $walletMy,
+        string $transaction_status,
+        string $wallet_amount
+    ) {
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
+        $walletTransactionTable = (new $walletModel)->getTable();
+
+        $query = $walletModel::join('wallets', function ($join) use ($wallet_transaction) {
+            $join->on($wallet_transaction, '=', 'wallets.id');
+        })
+            // ✅ On filtre correctement le mois et l'année
+            ->whereBetween("{$walletTransactionTable}.{$transaction_days}", [$startOfMonth, $endOfMonth])
+            ->where("{$walletTransactionTable}.{$transaction_status}", 'SUCCESS');
+
+        if (sabdy()->is_distributer) {
+            $query->where("{$walletTransactionTable}.{$walletMy}", sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($sub) use ($wallet_transaction) {
+                $sub->where($wallet_transaction, sabdy()->wallet->id);
+            });
+        } else {
+            $query->where(function ($sub) use ($walletTransactionTable, $walletMy) {
+                $sub->where("{$walletTransactionTable}.{$walletMy}", sabdy()->id)
+                    ->orWhere("{$walletTransactionTable}.{$walletMy}", '!=', sabdy()->id);
+            })->where(function ($sub) {
+                $countryId = sabdy()->country->id;
+                $sub->where('wallets.country_id', '!=', $countryId)
+                    ->orWhere('wallets.country_id', '=', $countryId);
+            });
+        }
+
+        return $query->sum("{$walletTransactionTable}.{$wallet_amount}");
+    }
+
     // Sum amount month valeurs
-    public function getDaysTransaction($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
+    public function getDaysTransaction($walletModel, string $wallet_transaction, string $transaction_days, string $walletMy, string $transaction_status, string $wallet_amount)
     {
 
+
+
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
+
         $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereMonth($transaction_days, now()->month)
+            ->whereBetween($transaction_days, [$startOfMonth, $endOfMonth])
             ->where($transaction_status, 'SUCCESS');
 
         if (sabdy()->is_distributer) {
