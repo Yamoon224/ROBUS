@@ -21,6 +21,7 @@ use App\Mail\WalletReloadCard;
 use App\Mail\WalletPhoneCredit;
 use App\Mail\WalletTransaction;
 use App\Mail\WalletVersement;
+use App\Mail\WalletReloadAcompte;
 use App\Mail\WalletTresort;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
@@ -178,6 +179,15 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletReload($data));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+     public function newReloadAcompteCommission($data)
+    {
+        try {
+            Mail::to($data->sidUser->email)->send(new WalletReloadAcompte($data));
         } catch (\Throwable $th) {
             throw $th;
         }

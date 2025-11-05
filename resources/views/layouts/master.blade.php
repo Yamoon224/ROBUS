@@ -434,6 +434,9 @@
             $('#create-reloadWallet-modal').removeClass('show');
             $('#create-reloadWallet-modal').addClass('hide');
 
+            $('#create-reloadWalletCommission-modal').removeClass('show');
+            $('#create-reloadWalletCommission-modal').addClass('hide');
+
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
 
@@ -1414,12 +1417,9 @@
         });
 
         Livewire.on('modal-hide-paiementHisto', () => {
-
             // Paiement Invoice
-
             $('#update-paiementHisto-modal').removeClass('show');
             $('#update-paiementHisto-modal').addClass('hide');
-
 
         });
 
@@ -1428,6 +1428,9 @@
             // realod Wallet
             $('#create-reloadWallet-modal').removeClass('show');
             $('#create-reloadWallet-modal').addClass('hide');
+
+            $('#create-reloadWalletCommission-modal').removeClass('show');
+            $('#create-reloadWalletCommission-modal').addClass('hide');
 
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
@@ -1471,6 +1474,9 @@
             // realod Wallet
             $('#create-reloadWallet-modal').removeClass('show');
             $('#create-reloadWallet-modal').addClass('hide');
+
+            $('#create-reloadWalletCommission-modal').removeClass('show');
+            $('#create-reloadWalletCommission-modal').addClass('hide');
 
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
@@ -2917,52 +2923,19 @@
             $('#reload-nav').addClass('active');
             $('reload-nav').attr('aria-selected', true);
             $('#reload').addClass('active');
-            $('#transfers-nav').removeClass('active');
-            $('transfers-nav').attr('aria-selected', false);
-            $('#transfers').removeClass('active');
-            $('#paiement-nav').removeClass('active');
-            $('paiement-nav').attr('aria-selected', false);
-            $('#paiement').removeClass('active');
-            $('#virement-nav').removeClass('active');
-            $('virement-nav').attr('aria-selected', false);
-            $('#virement').removeClass('active');
-            $('#inter-nav').removeClass('active');
-            $('inter-nav').attr('aria-selected', false);
 
-            $('#wave-nav').removeClass('active');
-            $('wave-nav').attr('aria-selected', false);
-            $('#wave').removeClass('active');
+        });
 
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-            $('#xbet').removeClass('active');
 
-            $('#inter').removeClass('active');
-            $('#carte-nav').removeClass('active');
-            $('carte-nav').attr('aria-selected', false);
-            $('#carte').removeClass('active');
-            $('#phone-nav').removeClass('active');
-            $('phone-nav').attr('aria-selected', false);
-            $('#phone').removeClass('active');
-            $('#info-paie-hide-1').removeClass('info-paiement-hide');
-            $('#info-paie-hide-2').removeClass('info-paiement-hide');
-            $('#info-paie-hide-3').removeClass('info-paiement-hide');
-            $('#info-paie-hide-4').removeClass('info-paiement-hide');
-            $('#info-paie-hide-1').addClass('info-paiement-hide');
-            $('#info-paie-hide-2').addClass('info-paiement-hide');
-            $('#info-paie-hide-3').addClass('info-paiement-hide');
-            $('#info-paie-hide-4').addClass('info-paiement-hide');
-            $('#info-paie-show-1').removeClass('info-paiement-show');
-            $('#info-paie-show-2').removeClass('info-paiement-show');
-            $('#info-paie-show-3').removeClass('info-paiement-show');
-            $('#info-paie-show-4').removeClass('info-paiement-show');
-            $('#info-paie-show-1').addClass('info-paiement-show');
-            $('#info-paie-show-2').addClass('info-paiement-show');
-            $('#info-paie-show-3').addClass('info-paiement-show');
-            $('#info-paie-show-4').addClass('info-paiement-show');
-            $('#xbet-nav').removeClass('active');
-            $('xbet-nav').attr('aria-selected', false);
-
+        Livewire.on('modal-reloadWalletCommission-show', () => {
+            $('#create-reloadWalletCommission-modal').removeClass('hide');
+            $('#create-reloadWalletCommission-modal').addClass('show');
+            $('#commission-nav').addClass('active');
+            $('commission-nav').attr('aria-selected', true);
+            $('#commission').addClass('active');
+              $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
         });
 
 

@@ -11,6 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
+use App\Models\Payments\TransactionCommission;
 
 class WalletAdmin extends Model
 {
@@ -54,6 +55,12 @@ class WalletAdmin extends Model
     {
         return $this->belongsTo(SidUser::class, 'sid_user_id', 'id')->withTrashed();
     }
+
+      public function transaction()
+    {
+        return $this->hasOne(TransactionCommission::class);
+    }
+
 
     public function getActivitylogOptions(): LogOptions
     {

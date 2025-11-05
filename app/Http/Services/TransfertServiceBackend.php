@@ -48,12 +48,118 @@ use App\Mail\CodeValidated;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Invoices\AutherTransactionInvoice;
 use App\Models\Payments\AutherTransaction;
+use App\Models\Invoices\InvoiceReload;
+use App\Models\Payments\PaymentReload;
 
 class TransfertServiceBackend
 {
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
+
+    public function createWalletTransactionReloadReload($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal)
+    {
+
+        return  WalletTransaction::create(
+            [
+                'wallet_id' =>   $walletUser->wallet->id,
+                'amount' => $relaod_uv_amout_robus,
+                'description'  => "remboursement",
+                'created_by' => Auth::guard('web')->user()->id,
+                'provider_id'  =>  $provider->id,
+                'num_wallet'  => $account_reload_uv,
+                'costs_amount' => 0,
+                'choose_type_transaction' => 1,
+                'amount_received'  => $valeur_receive,
+                'type_transaction' => 'Réequilibrage',
+                'type_received' => 'Transfert',
+                'status'  => "SUCCESS",
+                'amount_solde'  => $amount_solde ?? null,
+                'amount_solde_drawal' => $amount_drawal ?? null
+            ]
+        );
+    }
+
+    public function createWalletTReloadInvoiceReload($walletTransaction, $transactionCode, $transactionCompiCode)
+    {
+
+        return  Transaction::create([
+            'wallet_transaction_id' => $walletTransaction->id,
+            'sid_user_id' => sabdy()->id,
+            'transaction_id' => 'RB_' . $walletTransaction->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $walletTransaction->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' => $walletTransaction->amount,
+            'fee_amount' =>  $walletTransaction->costs_amount,
+            'received_amount' => $walletTransaction->amount,
+            'status' => $walletTransaction->status,
+        ]);
+    }
+
+    public function createWalletTranloadInvoiceReload($walletTransaction, $transaction)
+    {
+
+        return InvoiceTransaction::create([
+            'title' => "Transfers d'argent",
+            'wallet_transaction_id' => $walletTransaction->id,
+            'transactions_id' => $transaction->id,
+            'company_id' => sabdy()->company->id,
+            'description' => $walletTransaction->description,
+            'status' => $walletTransaction->status,
+            'created_by' => sabdy()->id,
+        ]);
+    }
+
+    public function createWalletReload($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive, $number_reload_uv, $amount_solde, $amount_drawal)
+    {
+
+        return  WalletReload::create([
+            'wallet_id' =>   $walletUser->wallet->id,
+            'amount' => $relaod_uv_amout_robus,
+            'description'  => 'Rechargement de compte UV',
+            'reload_cost_id' => 1,
+            'created_by' => Auth::guard('web')->user()->id,
+            'provider_id'  =>  $provider->id,
+            'account_wallet'  => $account_reload_uv,
+            'amount_received'  => $valeur_receive,
+            'type_transaction' => 'Réequilibrage',
+            'type_received' => 'Transfert',
+            'phone'  => $number_reload_uv ?? null,
+            'status'  => "SUCCESS",
+            'amount_solde'  => $amount_solde ?? null,
+            'amount_solde_drawal' => $amount_drawal ?? null
+        ]);
+    }
+
+    public function createWalletPaymentReload($reload_unders, $transactionCode, $transactionCompiCode)
+    {
+
+        return  PaymentReload::create([
+            'wallet_reload_id' => $reload_unders->id,
+            'sid_user_id' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'RB_' . $reload_unders->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' =>  $reload_unders->provider->name,
+            'trans_comp_id' => 'RB_' . $transactionCompiCode,
+            'pay_amount' =>  $reload_unders->amount,
+            'fee_amount' =>  $reload_unders->amount,
+            'received_amount' => ($reload_unders->amount),
+            'status'  =>    $reload_unders->status,
+        ]);
+    }
+
+    public function createWalletPaymentInvoiceReload($reload_unders, $paymentRealod)
+    {
+
+        return   InvoiceReload::create([
+            'title' => "Rechargement de compte",
+            'wallet_reload_id' => $reload_unders->id,
+            'payment_reload_id' =>  $paymentRealod->id,
+            'company_id' => Auth::guard('web')->user()->company->id,
+            'description' => $reload_unders->description,
+            'status'  =>    $reload_unders->status,
+            'created_by'  =>   Auth::guard('web')->user()->id,
+        ]);
+    }
 
     public function createRobusWalletInter($val_amount, $percent_robus, $country_robus, $provider_payment, $number_compte, $provider_type, $amount_drawal)
     {
@@ -810,7 +916,7 @@ class TransfertServiceBackend
     }
 
 
-      public function createTresort($check, $transactionCode, $transactionCompiCode)
+    public function createTresort($check, $transactionCode, $transactionCompiCode)
     {
         return AutherTransaction::create([
             'wallet_tresort_money_id' => $check->id,

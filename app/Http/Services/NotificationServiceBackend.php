@@ -119,6 +119,17 @@ class NotificationServiceBackend
         $notify->newPaiement($check);
     }
 
+     public function sendMailReloadUVNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newReloadUV($check);
+    }
+
+      public function sendMailReloadAcompteCommissionNotification($check)
+    {
+        $notify = new MailController;
+        $notify->newReloadAcompteCommission($check);
+    }
     public function sendSuccessMessageCreateNotification($walletUser, $message)
     {
         if ($walletUser->country->code == 'CI' && $walletUser->is_custumers == 1) {

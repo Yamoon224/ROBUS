@@ -1,10 +1,13 @@
    <!-- Badges de statut -->
+   @php
+       $user = $item->wallet->sidUser ?? null;
+   @endphp
    <div class="user-badges-container">
-       @if ($item->wallet->sidUser->is_under_distributer == 1)
+       @if ($user && $user->is_under_distributer == 1)
            <div class="user-badge user-badge--distributor">
                Sous-distributeur
            </div>
-       @elseif($item->wallet->sidUser->is_custumers == 1)
+       @elseif ($user && $user->is_custumers == 1)
            <div class="user-badge user-badge--customer">
                Client
            </div>

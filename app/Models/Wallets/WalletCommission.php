@@ -11,6 +11,7 @@ use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\Activitylog\LogOptions;
+use App\Models\Payments\TransactionCommission;
 
 
 class WalletCommission extends Model
@@ -49,6 +50,11 @@ class WalletCommission extends Model
     public function country()
     {
         return $this->belongsTo(Country::class, 'country_id', 'id')->withTrashed();
+    }
+
+     public function transaction()
+    {
+        return $this->hasOne(TransactionCommission::class);
     }
 
     public function sidUser()
