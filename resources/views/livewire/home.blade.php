@@ -124,23 +124,50 @@
                 Les Activites du compte Aujourdh'ui
             </h2>
         </div>
-        <h2 class="text-lg font-medium truncate mr-6 mt-6">
-
-
-            <div class="amount-section mr-wallet">
-                <div class="amount-label">Solde actuel</div>
+        <div class="grid grid-cols-12 gap-4 mt-6">
+            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                <div class="amount-label text-sm text-gray-500">Solde actuel</div>
                 <div class="amount-balance">
                     <div class="flex items-baseline justify-between">
-                        <span class="amount-balance-value">
-                            {{ $walletSolde ?? null }}
+                        <span class="amount-balance-value text-xl font-semibold">
+                            {{ $walletSolde ?? 0 }}
                         </span>
-                        <span class="amount-balance-currency">
-                            {{ $user_currencie ?? 'CFA' }}
+                        <span class="amount-balance-currency text-white">
+                            {{ $usersCountry ?? 'CFA' }}
                         </span>
                     </div>
                 </div>
             </div>
-        </h2>
+
+            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                <div class="amount-label text-sm text-gray-500">Compte des commissions total</div>
+                <div class="amount-commission-balance">
+                    <div class="flex items-baseline justify-between">
+                        <span class="amount-balance-value text-xl font-semibold">
+                            {{ $walletCommissions ?? 0 }}
+                        </span>
+                        <span class="amount-balance-currency text-white">
+                            {{ $usersCountry ?? 'CFA' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                <div class="amount-label text-sm text-gray-500">Compte des transactions </div>
+                <div class="amount-admin-balance">
+                    <div class="flex items-baseline justify-between">
+                        <span class="amount-balance-value text-xl font-semibold">
+                            {{ $walletAdmin ?? 0 }}
+                        </span>
+                        <span class="amount-balance-currency text-white">
+                            {{ $usersCountry ?? 'CFA' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="grid grid-cols-12 gap-6 mt-6">
 
             <div class="col-span-12 sm:col-span-6 lg:col-span-6 intro-y info-paiement-show">

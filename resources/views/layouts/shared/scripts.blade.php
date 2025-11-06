@@ -32,51 +32,76 @@
     });
 </script>
 @if (session('status'))
-    @if (session('color') === 'danger')
-        <script>
-            const playNotificationErrorSound = () => {
-                const audio = new Audio('sounds/soundError.mp3');
-                audio.play().catch(() => {
-                    console.warn('Son non joué (peut-être bloqué par le navigateur)');
-                });
-            };
-            Swal.fire({
-                // position: 'top-end',
-                width: 600,
-                toast: true,
-                position: 'top-end',
+    <script>
+        // Configuration des types de notifications
+        const notificationConfig = {
+            danger: {
                 icon: 'error',
-                timer: 2000,
-                color: '#1f2a3c',
-                title: '{!! session('status') !!}',
-                showConfirmButton: true,
-            })
-
-            playNotificationErrorSound();
-        </script>
-    @else
-        <script>
-            const playNotificationSound = () => {
-                const audio = new Audio('sounds/notification.wav');
-                audio.play().catch(() => {
-                    console.warn('Son non joué (peut-être bloqué par le navigateur)');
-                });
-            };
-
-            Swal.fire({
-                // position: 'top-end',
+                iconColor: '#ef4444',
+                background: '#fef2f2',
+                sound: 'sounds/soundError.mp3',
+                timer: 4000
+            },
+            warning: {
+                icon: 'warning',
+                iconColor: '#f59e0b',
+                background: '#fffbeb',
+                sound: 'sounds/soundWarning.mp3',
+                timer: 5000
+            },
+            info: {
+                icon: 'info',
+                iconColor: '#3b82f6',
+                background: '#eff6ff',
+                sound: 'sounds/soundInfo.mp3',
+                timer: 4000
+            },
+            success: {
                 icon: 'success',
-                width: 600,
-                hight: 600,
-                timer: 2000,
-                toast: true,
-                position: 'top-end',
-                color: '#1f2a3c',
-                padding: '3em',
-                title: '{!! session('status') !!}',
-                showConfirmButton: true,
-            })
-            playNotificationSound();
-        </script>
-    @endif
+                iconColor: '#10b981',
+                background: '#f0fdf4',
+                sound: 'sounds/notification.wav',
+                timer: 3000
+            }
+        };
+
+        const config = notificationConfig['{{ session('color') }}'] || notificationConfig.success;
+
+        // Jouer le son
+        const playNotificationSound = () => {
+            const audio = new Audio(config.sound);
+            audio.play().catch(() => {
+                console.warn('Son non joué (peut-être bloqué par le navigateur)');
+            });
+        };
+
+        // Afficher la notification
+        Swal.fire({
+            title: '{!! session('status') !!}',
+            icon: config.icon,
+            iconColor: config.iconColor,
+            background: config.background,
+            color: '#1f2937',
+            position: 'top-end',
+            toast: true,
+            showConfirmButton: false,
+            showCloseButton: true,
+            timer: config.timer,
+            timerProgressBar: true,
+            width: 500,
+            padding: '1.5em',
+            customClass: {
+                popup: 'animated-slide-in-right',
+                title: 'text-lg font-semibold',
+                closeButton: `text-${config.iconColor.split('-')[1]}-500 hover:text-${config.iconColor.split('-')[1]}-700`
+            },
+            didOpen: (toast) => {
+                toast.addEventListener('mouseenter', Swal.stopTimer);
+                toast.addEventListener('mouseleave', Swal.resumeTimer);
+            }
+        });
+
+        playNotificationSound();
+    </script>
 @endif
+

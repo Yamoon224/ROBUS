@@ -56,7 +56,6 @@ class TransferHisto extends Component
                     'user' =>  app(HistoriqueService::class)->getTransactionsDaysProperty(WalletTransaction::class , $this->startDate,$this->endDate , 'wallet_transactions.created_by' , 'wallet_transactions.updated_by'),
                     'transfer_historicals' =>  $transfers->whereBetween('wallet_transactions.created_at', [$this->startDate, $this->endDate])->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                     'usersCountry' =>  $walletUser->country->currencie->name,
-                    'providers' =>  $this->NationTransaction,
 
                 ]
             );
@@ -90,8 +89,6 @@ class TransferHisto extends Component
                     'transfer_historicals' => $transfers->where("wallet_transactions.status", $this->statusTransferFilter)
                              ->orderBy('wallet_transactions.created_at', 'desc')->paginate(15),
                     'usersCountry' =>  $walletUser->country->currencie->name,
-                    'providers' =>  $this->NationTransaction,
-
                 ]
             );
         }

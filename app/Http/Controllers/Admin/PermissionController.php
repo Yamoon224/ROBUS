@@ -6,6 +6,9 @@ use App\Models\Sid\Feature;
 use Illuminate\Http\Request;
 use App\Models\Sid\Permissions;
 use App\Http\Controllers\Controller;
+use App\Models\MessageTransaction;
+use App\Models\Notification;
+use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
@@ -22,20 +25,37 @@ class PermissionController extends Controller
         return view('pages.admin.permissions.browse', compact('features', 'permissions'));
     }
 
-    public function search(Request $request){
+    public function browse_messages()
+    {
+
+        return view('pages.admin.browse_messages');
+    }
+
+
+    public function add_messages()
+    {
+
+        if (!Auth::user()->hasPermissionTo('envoie-messages')) {
+            abort(403);
+        }
+        return view('pages.admin.add_messages');
+    }
+
+    public function search(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'query' => 'required'
         ]);
 
         if ($validator->fails()) {
             return redirect('application/permissions')
-                    ->withErrors($validator)
-                    ->with('color', 'danger')
-                    ->with('status', 'Données saisie incorrecte')
-                    ->withInput();
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Données saisie incorrecte')
+                ->withInput();
         }
         $features = Feature::all();
-        $permissions = Permissions::where('name', 'like', '%'. $request->get('query') .'%')->orWhere('description',  'like', '%'. $request->get('query') .'%')->paginate(10);
+        $permissions = Permissions::where('name', 'like', '%' . $request->get('query') . '%')->orWhere('description',  'like', '%' . $request->get('query') . '%')->paginate(10);
         return view('pages.admin.permissions.browse', compact('permissions', 'features'));
     }
 
@@ -48,6 +68,107 @@ class PermissionController extends Controller
         return view('pages.admin.permissions.add', compact('features'));
     }
 
+    public function store_one_messages($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'message' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('application/messages/add')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Données saisie incorrecte')
+                ->withInput();
+        }
+
+        try {
+
+            $user = SidUser::whereId($id)->first();
+            $typ_user = $user->where('is_under_distributer', true) ? "under" : "custumers";
+            $notificationId = uniqid('notif_', true);
+            $messageTransaction = new MessageTransaction();
+            $messageTransaction->sid_user_id = $user->id;
+            $messageTransaction->title = $request->title;
+            $messageTransaction->type_send = $typ_user;
+            $messageTransaction->messages = $request->message;
+            $messageTransaction->save();
+            $notification = new Notification();
+            $notification->id = $notificationId;
+            $notification->notifiable_id = $user->id;
+            $notification->data = json_encode([
+                'title' => $request->title,
+                'message' => $request->message
+            ]);
+            $notification->read_at = null;
+            $notification->save();
+            DB::commit();
+            return back()->with('status', 'Les messages ont été envoyés avec succès');
+        } catch (\Throwable $th) {
+            return redirect('application/permissions/read/' . $id . '/update')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Une erreure est survenue')
+                ->withInput();
+        }
+    }
+
+    public function store_messages(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'message' => 'required',
+            'typ_user' => 'required|string|in:under,custumers',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect('application/messages/add')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Données saisie incorrecte')
+                ->withInput();
+        }
+
+        if ($request->typ_user === "under") {
+            $users = SidUser::where('is_under_distributer', true)->get();
+        } elseif ($request->typ_user === "custumers") {
+            $users = SidUser::where('is_custumers', true)->get();
+        } else {
+            return redirect('application/messages/add')
+                ->with('color', 'danger')
+                ->with('status', 'Type d’utilisateur invalide')
+                ->withInput();
+        }
+
+
+
+        foreach ($users as $user) {
+
+            $notificationId = uniqid('notif_', true);
+            $messageTransaction = new MessageTransaction();
+            $messageTransaction->sid_user_id = $user->id;
+            $messageTransaction->title = $request->title;
+            $messageTransaction->type_send = $request->typ_user;
+            $messageTransaction->messages = $request->message;
+            $messageTransaction->save();
+            $notification = new Notification();
+            $notification->id = $notificationId;
+            $notification->notifiable_id = $user->id;
+            $notification->data = json_encode([
+                'title' => $request->title,
+                'message' => $request->message
+            ]);
+            $notification->read_at = null;
+            $notification->save();
+        }
+
+        DB::commit();
+        return redirect(route('messages.browse'))->with('status', 'Les messages ont été envoyés avec succès');
+    }
+
+
 
     public function store(Request $request)
     {
@@ -59,20 +180,19 @@ class PermissionController extends Controller
 
         if ($validator->fails()) {
             return redirect('application/permissions/add')
-                    ->withErrors($validator)
-                    ->with('color', 'danger')
-                    ->with('status', 'Données saisie incorrecte')
-                    ->withInput();
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Données saisie incorrecte')
+                ->withInput();
         }
 
         Permissions::create([
-            'name'=> $request->name,
-            'description'=>$request->description,
-            'guard_name'=>'web',
-            'feature_id'=>$request->feature_id,
+            'name' => $request->name,
+            'description' => $request->description,
+            'guard_name' => 'web',
+            'feature_id' => $request->feature_id,
         ]);
         return redirect(route('permissions.browse'))->with('status', 'Permission \n créee avec succès');
-
     }
 
 
@@ -94,11 +214,11 @@ class PermissionController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect('application/permissions/read/'. $id . '/update')
-                    ->withErrors($validator)
-                    ->with('color', 'danger')
-                    ->with('status', 'Données saisie incorrecte')
-                    ->withInput();
+            return redirect('application/permissions/read/' . $id . '/update')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Données saisie incorrecte')
+                ->withInput();
         }
 
         try {
@@ -109,11 +229,11 @@ class PermissionController extends Controller
             $permission->save();
             return redirect(route('permissions.browse'))->with('status', 'Permission mise à jour avec succès');
         } catch (\Throwable $th) {
-            return redirect('application/permissions/read/'. $id . '/update')
-                    ->withErrors($validator)
-                    ->with('color', 'danger')
-                    ->with('status', 'Une erreure est survenue')
-                    ->withInput();
+            return redirect('application/permissions/read/' . $id . '/update')
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Une erreure est survenue')
+                ->withInput();
         }
     }
 
@@ -122,17 +242,17 @@ class PermissionController extends Controller
         if (!Auth::user()->hasPermissionTo('supprimer-permission')) {
             abort(403);
         }
-        try{
+        try {
             DB::beginTransaction();
             $permission = Permissions::find($id);
             $permission->delete();
             DB::commit();
             return redirect(route('permissions.browse'))
-                ->with('status','Permission supprimée avec succèss');
-        }catch (\Exception $exception){
+                ->with('status', 'Permission supprimée avec succèss');
+        } catch (\Exception $exception) {
             return redirect(route('permissions.browse'))
-            ->with('color', 'danger')
-            ->with('status','Une erreure est survenue');
+                ->with('color', 'danger')
+                ->with('status', 'Une erreure est survenue');
         }
     }
 }

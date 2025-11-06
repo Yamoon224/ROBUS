@@ -60,6 +60,7 @@
                 </div>
             </div>
         @endif
+        
         <div class="ml-5">
             @if ($user->is_active == true)
                 <div class="sm:w-40 truncate sm:whitespace-normal font-medium text-lg mt-3 text-success">
@@ -85,6 +86,55 @@
 
     </div>
     <!-- END: Profile Info -->
+   <div class="grid grid-cols-12 gap-6 mt-3">
+
+        <div class="intro-y col-span-4 lg:col-span-12">
+            <div class="intro-y box">
+
+                <div class="p-5">
+                    <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Modification du Numero</h2>
+
+                    <div class="" id="step-2">
+                        @include('components.update_phone_form')
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="intro-y col-span-4 lg:col-span-12">
+            <!-- BEGIN: Form Validation -->
+            <div class="intro-y box">
+
+                <div class="p-5">
+                    <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Modification du email</h2>
+
+                    <div class="" id="step-2">
+
+                        @include('components.update_email_form')
+                    </div>
+                </div>
+
+
+            </div>
+            <!-- END: Form Validation -->
+        </div>
+         <div class="intro-y col-span-4 lg:col-span-12">
+            <div class="intro-y box">
+
+                <div class="p-5">
+                    <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Envoie des notification</h2>
+
+                    <div class="" id="step-2">
+                        @include('components.send_notfication_form')
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
 
     <div class="tab-content mt-6">
         <div id="doc" class="tab-pane active" role="tabpanel" aria-labelledby="doc-tab">

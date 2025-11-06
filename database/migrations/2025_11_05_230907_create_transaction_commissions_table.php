@@ -16,18 +16,6 @@ return new class extends Migration
         Schema::create('transaction_commissions', function (Blueprint $table) {
            $table->bigIncrements('id');
           
-        //    $table->unsignedBigInteger('wallet_commission_id')->nullable();
-        //     $table->foreign('wallet_commission_id')
-        //         ->references('id')
-        //         ->on('wallet_commissions')
-        //         ->nullOnDelete();
-
-        //     $table->unsignedBigInteger('wallet_admin_id')->nullable();
-        //     $table->foreign('wallet_admin_id')
-        //         ->references('id')
-        //         ->on('wallet_admins')
-        //         ->nullOnDelete();
-
             $table->unsignedBigInteger('sid_user_id');
             $table->foreign('sid_user_id')->references('id')->on('sid_users')->onDelete('cascade');
             $table->string('transaction_id')->unique();

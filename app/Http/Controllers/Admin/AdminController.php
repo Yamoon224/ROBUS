@@ -31,6 +31,10 @@ use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
+use App\Models\Wallets\WalletVersement;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
@@ -1583,6 +1587,12 @@ class AdminController extends Controller
             "Depots" => $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             "Retraits" => $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             "Moneys" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+            // New transactions
+            "Xbets" => $this->getTodayTransactionCommissionAmountTotal(WalletXbet::class, $user->wallet->id),
+            "Push" => $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id),
+            "Versement" => $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id),
+            "Tresort" => $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id),
+            "Djamo" => $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id),
         ];
 
 
@@ -1596,6 +1606,12 @@ class AdminController extends Controller
             "Depots" => WalletTransaction::class,
             "Retraits" => WalletTransaction::class,
             "Moneys" => WalletTransaction::class,
+
+            "Xbets" => WalletXbet::class,
+            "Push" => WalletPush::class,
+            "Versement" => WalletVersement::class,
+            "Tresort" => WalletTresortMoney::class,
+            "Djamo" => WalletDjamo::class,
         ];
 
 
@@ -1700,6 +1716,15 @@ class AdminController extends Controller
             "Retrait Depots" => $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             "Retrait Retraits" => $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             "Retrait Moneys" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
+
+            // New amount
+            "Retrait Xbet" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletXbet::class, $user->wallet->id),
+            "Retrait Push" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletPush::class, $user->wallet->id),
+            "Retrait Versement" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletVersement::class, $user->wallet->id),
+            "Retrait Tresort" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id),
+            "Retrait Djamo" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletDjamo::class, $user->wallet->id),
+
+
         ];
 
         $resetMappings = [
@@ -1712,6 +1737,14 @@ class AdminController extends Controller
             "Retrait Depots" => WalletTransaction::class,
             "Retrait Retraits" => WalletTransaction::class,
             "Retrait Moneys" => WalletTransaction::class,
+
+            "Retrait Xbet" => WalletXbet::class,
+            "Retrait Push" => WalletPush::class,
+            "Retrait Versement" => WalletVersement::class,
+            "Retrait Tresort" => WalletTresortMoney::class,
+            "Retrait Djamo" => WalletDjamo::class,
+
+
         ];
 
 
@@ -1840,8 +1873,14 @@ class AdminController extends Controller
         $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
         $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
         $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
+        $gain_xbets = $this->getTodayTransactionCommissionAmountTotal(WalletXbet::class, $user->wallet->id);
+        $gain_versments = $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id);
+        $gain_pushs = $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id);
+        $gain_djamos = $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id);
+        $gain_tresorts = $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id);
 
-        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
+        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits 
+        + $gain_xbets + $gain_versments + $gain_pushs + $gain_djamos + $gain_tresorts;
 
 
         if ($amount <= 0) {
@@ -1877,6 +1916,14 @@ class AdminController extends Controller
             $this->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class, $user->wallet->id);
             $this->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class, $user->wallet->id);
             $this->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class, $user->wallet->id);
+
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletXbet::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletVersement::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletPush::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletDjamo::class, $user->wallet->id);
+            $this->getUpdateTransactionCommissionAmountNullTotal(WalletTresortMoney::class, $user->wallet->id);
+
+
 
             $msg = 'Vous avez transféré vos commissions sur votre compte';
             $msg_title = 'Transfert de la commission';

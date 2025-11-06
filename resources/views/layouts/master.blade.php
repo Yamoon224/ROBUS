@@ -475,7 +475,7 @@
             $('#validated-push-modal').removeClass('show');
             $('#validated-push-modal').addClass('hide');
 
-              $('#validated-djamo-modal').removeClass('show');
+            $('#validated-djamo-modal').removeClass('show');
             $('#validated-djamo-modal').addClass('hide');
 
             $('#validated-tresort-modal').removeClass('show');
@@ -587,7 +587,7 @@
 
         });
 
-         Livewire.on('show-virementBank-modal', () => {
+        Livewire.on('show-virementBank-modal', () => {
             $('#update-virement-bank-modal').removeClass('hide');
             $('#update-virement-bank-modal').addClass('show');
 
@@ -2410,6 +2410,21 @@
 
         });
 
+
+        Livewire.on('menu-reloadAcompte-active', () => {
+
+            // realod Wallet
+
+            // ✅ Activer le menu "commission"
+            $('#commission-tab a.nav-link').addClass('active').attr('aria-selected', true);
+            $('#commission').addClass('active show');
+
+            // ❌ Désactiver le menu "reload" (à adapter selon tes vrais IDs)
+            $('#reload-tab a.nav-link').removeClass('active').attr('aria-selected', false);
+            $('#reload').removeClass('active show');
+
+        });
+
         Livewire.on('menu-reloadCarte-active', () => {
 
             // realod cards
@@ -2933,7 +2948,7 @@
             $('#commission-nav').addClass('active');
             $('commission-nav').attr('aria-selected', true);
             $('#commission').addClass('active');
-              $('#reload-nav').removeClass('active');
+            $('#reload-nav').removeClass('active');
             $('reload-nav').attr('aria-selected', false);
             $('#reload').removeClass('active');
         });

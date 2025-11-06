@@ -34,7 +34,7 @@
                             </span>
                             <span class="w-1 h-1 bg-slate-400 rounded-full"></span>
                             <span class="text-sm text-slate-600 dark:text-slate-400 font-medium">
-                                {{ $all_tresortMoney->count() }} éléments
+                                {{ $tresortMoney_historicals->count() }} éléments
                             </span>
                         </div>
                     </div>

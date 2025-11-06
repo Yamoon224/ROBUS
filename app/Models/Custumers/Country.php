@@ -4,8 +4,11 @@ namespace App\Models\Custumers;
 
 use App\Models\Currency;
 use App\Models\Sid\SidUser;
+use App\Models\PaymentService;
 use App\Models\CountryService;
 use App\Models\Custumers\City;
+use App\Models\OperatorPayment;
+use App\Models\OperatorService;
 use App\Models\Wallets\Wallet;
 use App\Models\Providers\Provider;
 use App\Models\Wallets\WalletBank;
@@ -40,6 +43,12 @@ class Country extends Model
     {
         return $this->hasMany(CountryService::class, 'country_id', 'id', 'provider_id');
     }
+
+    public function country_operators()
+    {
+        return $this->hasMany(PaymentService::class, 'country_id' , 'id' , 'operator_payment_id');
+    }
+
 
     public function providers()
     {

@@ -4,96 +4,8 @@
 
 @section('content')
     <h2 class="text-lg font-medium truncate mr-5 mt-6">Liste des gains a remonté</h2>
-    <div class="intro-y grid grid-cols-12 gap-5 mt-5">
-
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in">
-
-
-            <div class="font-medium text-historique mt-6">Total Gain</div>
-
-            <div class="text-slate-500 mt-3">
-                {{ number_format($company_gains, 2, ',', ' ') ?? null }}
-                {{ $usersCountry ?? null }}</div>
-
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box bg-primary p-5 cursor-pointer zoom-in style-success">
-
-            <div class="font-medium text-historique text-white mt-6">Paiements</div>
-
-
-            <div class="text-slate-500 mt-3">
-                {{ number_format($gain_payments, 2, ',', ' ') ?? null }}
-                {{ $usersCountry ?? null }}</div>
-
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style-error">
-
-            <div class="font-medium text-historique mt-6">Dépot Robus</div>
-            <div class="text-slate-500 mt-3">
-                {{ number_format($gain_depots, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
-            </div>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
-
-            <div class="font-medium text-historique mt-6">Rétrait Robus</div>
-            <div class="text-slate-500 mt-3">
-                {{ number_format($gain_retraits, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
-            </div>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style-error">
-
-
-
-
-            <div class="font-medium text-historique mt-6">Mobile Money</div>
-            <div class="text-slate-500 mt-3">
-                {{ number_format($gain_moneys, 2, ',', ' ') ?? null }} {{ $usersCountry ?? null }}
-            </div>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_user1">
-
-
-
-            <div class="font-medium text-historique mt-6">Credits</div>
-            <div class="text-slate-500 mt-3"> {{ number_format($gain_phone_credits, 2, ',', ' ') ?? null }}
-                {{ $usersCountry ?? null }}</div>
-
-        </div>
-        {{-- luiscrepin@gmail.com --}}
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
-
-
-
-            <div class="font-medium text-historique mt-6">Inters</div>
-            <div class="text-slate-500 mt-3">
-                {{ number_format($gain_inters, 2, ',', ' ') ?? null }}
-                {{ $usersCountry ?? null }}</div>
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table2">
-
-            <div class="font-medium text-historique mt-6">Virements</div>
-            <div class="text-slate-500 mt-3">
-                {{ number_format($gain_banks, 2, ',', ' ') ?? null }}
-                {{ $usersCountry ?? null }}</div>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_table_factures">
-
-
-            <div class="font-medium text-historique mt-6">Réchargements cartes</div>
-            <div class="text-slate-500 mt-3">
-                {{ number_format($gain_deposits, 2, ',', ' ') ?? null }}
-                {{ $usersCountry ?? null }}
-
-
-            </div>
-        </div>
-
-    </div>
+    @include('components.rapport_remont_company_form')
+  
     <div class="grid grid-cols-12 gap-6 mt-3">
 
         <div class="intro-y col-span-12 lg:col-span-12">
@@ -110,12 +22,11 @@
             </div>
             <!-- END: Form Validation -->
         </div>
-        
+
     </div>
     <div class="grid grid-cols-12 gap-6 mt-3">
 
-        <div class="intro-y col-span-6 lg:col-span-12">
-            <!-- BEGIN: Form Validation -->
+        <div class="intro-y col-span-4 lg:col-span-12">
             <div class="intro-y box">
 
                 <div class="p-5">
@@ -127,12 +38,10 @@
                     </div>
                 </div>
 
-
             </div>
-            <!-- END: Form Validation -->
         </div>
 
-        <div class="intro-y col-span-6 lg:col-span-12">
+        <div class="intro-y col-span-4 lg:col-span-12">
             <!-- BEGIN: Form Validation -->
             <div class="intro-y box">
 
@@ -148,6 +57,20 @@
 
             </div>
             <!-- END: Form Validation -->
+        </div>
+        <div class="intro-y col-span-4 lg:col-span-12">
+            <div class="intro-y box">
+
+                <div class="p-5">
+                    <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Envoie des notification</h2>
+
+                    <div class="" id="step-2">
+                        @include('components.send_notfication_form')
+
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
     <!-- BEGIN: Profile Info -->
@@ -211,7 +134,7 @@
                 </svg>
             </a>
         </h2>
-            @include('components.info_detail_wallet')
+        @include('components.info_detail_wallet')
 
         <div class="ml-5">
             @if ($user->is_active == true)

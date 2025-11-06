@@ -43,6 +43,11 @@
                                 </td>
                                 <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">{{ $item->name ?? null }}</div>
+                                    @foreach ($item->country_operators as $service)
+                                        <span
+                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            {{ $service->operator->name ?? null }}</span>
+                                    @endforeach
 
                                 </td>
                                 <td class="w-40 ">
@@ -88,11 +93,6 @@
                                         {{ $item->amount_max_send ?? '00' }}
                                     </div>
                                 </td>
-                                {{-- <td class="w-35 text-center">
-                                    <div class="text-slate-500 text-xs  mt-0.5">
-                                        {{ $item->silver_ceiling_no_identity ?? '00' }}
-                                    </div>
-                                </td> --}}
                                 <td class="w-56">
                                     <div class="flex justify-center items-center">
                                         @if (Auth::guard('web')->user()->hasPermissionTo('modifier-cautions'))
@@ -103,7 +103,6 @@
                                             </a>
                                         @endif
                                     </div>
-                                  
                                 </td>
                             </tr>
                         @endforeach

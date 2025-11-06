@@ -15,9 +15,9 @@ use App\Models\Custumers\Country;
 use App\Models\Providers\Provider;
 use Illuminate\Support\Facades\DB;
 use App\Models\Wallets\WalletReload;
-use App\Models\Wallets\WalletCommission;
 use App\Models\Payments\TransactionCommission;
 use App\Models\Wallets\WalletAdmin;
+use App\Models\Wallets\WalletCommission;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
@@ -33,7 +33,9 @@ class Reloaduv extends Component
     use WithPagination;
     protected $paginationTheme = "bootstrap";
     public $searchRealod = "";
+    public $searchRealodAcompte = "";
     public $statusFilter = "";
+    public $statusFilterAcompte = "";
 
 
     // Reload UV
@@ -341,6 +343,8 @@ class Reloaduv extends Component
 
                     $amountBefore = $wallet ? (float) $wallet->amount : 0;
 
+                    $walletAfter = $wallet ? (float) $wallet->amount  +  (float) $val_amount : 0;
+
                     $wallet->update([
                         'amount' => DB::raw('amount+'  . $val_amount),
                     ]);
@@ -348,12 +352,14 @@ class Reloaduv extends Component
 
                     $wallet = WalletAdmin::first();
                     $amountBefore = $wallet ? (float) $wallet->amount : 0;
+                    $walletAfter = $wallet ? (float) $wallet->amount  +  (float) $val_amount : 0;
                     $wallet->update([
                         'amount' => DB::raw('amount+'  . $val_amount),
                     ]);
                 }
 
                 $amount_solde = (float)sabdy()->wallet->amount - (float)$this->relaod_uv_amout_robus;
+
 
                 $walletTransaction = TransactionCommission::create(
                     [
@@ -363,7 +369,7 @@ class Reloaduv extends Component
                             ? 'Rechargement compte commission par ' . sabdy()->firstname
                             : 'Rechargement compte admin ' . sabdy()->firstname,
                         'amount_received'  => $val_amount,
-                        'type_transaction' =>  $this->providerAllCommission == 1 ? 'Rechargement compte commission' : 'Rechargement compte admin',
+                        'type_transaction' =>  $this->providerAllCommission == 1 ? 'Commission' : 'Admin',
                         'status'  => "SUCCESS",
                         "transaction_id" => "Robus_" . $transactionCode,
                         "operator_transaction_name" => "Robus_" . $transactionCode,
@@ -391,17 +397,15 @@ class Reloaduv extends Component
                     app(NotificationServiceBackend::class)->sendMailReloadAcompteCommissionNotification($walletTransaction);
                 }
 
-                $this->resetField();
                 $this->emit('modal-hide', 'hide');
-                
+                $this->cancelReloadAcompteField();
             }
         } else {
-            $this->resetField();
             $this->emit('modal-hide', 'hide');
+            $this->cancelReloadAcompteField();
             $this->emit('error', 'Selectionnez une valeur  !');
         }
     }
-
 
     private function convertAdminCommission($amount, $wallet)
     {
@@ -452,6 +456,22 @@ class Reloaduv extends Component
         $this->number_reload_uv = '';
         $this->relaod_uv_amout_robus = '';
         $this->emit('modal-hide', 'hide');
+    }
+
+    public function cancelReloadAcompteField()
+    {
+
+        $this->relaod_uv_amout = '';
+        $this->reload_uv_description = '';
+        $this->relaod_amount_commission = '';
+        $this->providerCommission = null;
+        $this->providerAdmin = null;
+        $this->reload_uv_status = '';
+        $this->provider_reload_uv = null;
+        $this->account_reload_uv = '';
+        $this->number_reload_uv = '';
+        $this->relaod_uv_amout_robus = '';
+        $this->emit('menu-reloadAcompte-active');
     }
 
     public function cancelReloadCardField()
@@ -531,6 +551,7 @@ class Reloaduv extends Component
     {
 
         $realod_search =  WalletReload::query();
+        $realod_acoumpte_search =  TransactionCommission::query();
 
         $walletUser = Auth::guard('web')->user();
 
@@ -571,10 +592,26 @@ class Reloaduv extends Component
                     ->orWhere("wallet_reloads.account_wallet", "like",  "%" . $this->searchRealod . "%");
             }
 
+            if ($this->searchRealodAcompte != "") {
+
+                $this->resetPage();
+
+                $realod_acoumpte_search->where("transaction_commissions.type_transaction", "like",  "%" . $this->searchRealodAcompte . "%")
+                    ->orWhere("transaction_commissions.pay_amount", "like",  "%" . $this->searchRealodAcompte . "%")
+                    ->orWhere("transaction_commissions.operator_transaction_name", "like",  "%" . $this->searchRealodAcompte . "%")
+                    ->orWhere("transaction_commissions.description", "like",  "%" . $this->searchRealodAcompte . "%");
+            }
+
 
             if ($this->statusFilter != "") {
                 $realod_search->where('wallet_reloads.status', $this->statusFilter);
             }
+
+            if ($this->statusFilterAcompte != "") {
+                $realod_acoumpte_search->where('transaction_commissions.type_transaction', $this->statusFilterAcompte);
+                $this->emit('menu-reloadAcompte-active');
+            }
+
 
             if ($this->account_reload_uv != '') {
 
@@ -597,6 +634,7 @@ class Reloaduv extends Component
                 [
                     'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
                     'WalletReloads' => $this->WalletReloads,
+                    'WalletTransactionCommissions' => $this->WalletReloads,
                     'reload_error' => WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'ERROR')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
                     'reload_success' =>   WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
@@ -621,6 +659,7 @@ class Reloaduv extends Component
                         ->whereId(9)
                         ->get(),
                     'wallet_info_searchs' => $wallet_info_user,
+                    'reaload_acomptes' => $realod_acoumpte_search->orderBy('transaction_commissions.created_at', 'desc')->paginate(20),
                     'usersCountry' => Auth::guard('web')->user()->country->currencie->name,
 
                 ]
@@ -647,10 +686,27 @@ class Reloaduv extends Component
             }
 
 
+            if ($this->searchRealodAcompte != "") {
+
+                $this->resetPage();
+
+                $realod_acoumpte_search->where("transaction_commissions.type_transaction", "like",  "%" . $this->searchRealodAcompte . "%")
+                    ->orWhere("transaction_commissions.pay_amount", "like",  "%" . $this->searchRealodAcompte . "%")
+                    ->orWhere("transaction_commissions.operator_transaction_name", "like",  "%" . $this->searchRealodAcompte . "%")
+                    ->orWhere("transaction_commissions.description", "like",  "%" . $this->searchRealodAcompte . "%");
+            }
+
+
             if ($this->statusFilter != "") {
                 $realod_search->where('wallet_reloads.status', $this->statusFilter);
                 // $this->emit('menu-reload-active');
             }
+
+            if ($this->statusFilterAcompte != "") {
+                $realod_acoumpte_search->where('transaction_commissions.type_transaction', $this->statusFilterAcompte);
+                $this->emit('menu-reloadAcompte-active');
+            }
+
 
             if ($this->account_reload_uv != '') {
 
@@ -691,6 +747,7 @@ class Reloaduv extends Component
                     'withdrawal_robus' => Provider::whereStatus(true)
                         ->whereId(9)
                         ->get(),
+                    'reaload_acomptes' => $realod_acoumpte_search->orderBy('transaction_commissions.created_at', 'desc')->paginate(20),
                     'walletCommissions' => WalletCommission::where('status', 1)->sum('amount'),
                     'walletAdmin' => WalletAdmin::where('status', 1)->sum('amount'),
                     'wallet_info_searchs' => $wallet_info_user,

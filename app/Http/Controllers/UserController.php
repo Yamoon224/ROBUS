@@ -67,28 +67,27 @@ class UserController extends Controller
         if ($user->tokens()->exists()) {
             $user->tokens()->delete();
         }
-    
+
         //  Cache::tags("user_{$userId}_data")->flush();
-         Cache::forget('app_status_mobile');
+        Cache::forget('app_status_mobile');
 
-         if ($user->session_id) {
+        if ($user->session_id) {
             Session::getHandler()->destroy($user->session_id);
-         }
+        }
 
-         $user->update([
+        $user->update([
             'device_meta_data' => null,
             'activation_code' => null,
             'last_logout' => now(),
             'session_id' => null,
             'session_expires_at' => null
         ]);
-          
+
         activity()
             ->causedBy(auth()->user())
             ->log("Déconnexion forcée de l'utilisateur #$userId");
 
-       return back()->with('status', 'Utilisateur déconnecté avec succès.');
-
+        return back()->with('status', 'Utilisateur déconnecté avec succès.');
     }
 
 
@@ -262,7 +261,7 @@ class UserController extends Controller
         }
     }
 
-      /**
+    /**
      * Display the specified resource.
      *
      * @param  int  $id
@@ -278,12 +277,12 @@ class UserController extends Controller
             $kycs = $user->kyc()->get() ?? null;
 
             $countrieId = $user->country_id;
-            
+
             $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
 
             $countrie = Country::whereId($countrieId)->first();
 
-            $cities = City::where('country_id' ,$countrieId)->get();
+            $cities = City::where('country_id', $countrieId)->get();
 
             return view('pages.custumers.show_edit', compact(
                 'countrie',
@@ -323,15 +322,15 @@ class UserController extends Controller
             $usersCountry = Auth::guard('web')->user()->country->currencie->name;
 
             // Gains
-            $gain_deposits = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletDeposit::class , $user->company_id , $user->id);
-            $gain_payments = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletPayment::class, $user->company_id , $user->id);
+            $gain_deposits = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletDeposit::class, $user->company_id, $user->id);
+            $gain_payments = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletPayment::class, $user->company_id, $user->id);
             $gain_transactions = $this->getEmployerTransactionCommission(WalletTransaction::class, $user->wallet->id);
-            $gain_moneys = $this->getTodayTransactionCompagnieMCommissionAmountTotal(WalletTransaction::class, $user->company_id , $user->id);
-            $gain_depots = $this->getTodayTransactionCompagnieRobusCommissionAmountTotal(WalletTransaction::class, $user->company_id , $user->id);
-            $gain_retraits = $this->getTodayTransactionCompagnieRetraitCommissionAmountTotal(WalletTransaction::class, $user->company_id , $user->id);
-            $gain_phone_credits = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletPhoneCredit::class , $user->company_id , $user->id);
-            $gain_inters = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletInter::class, $user->company_id , $user->id);
-            $gain_banks = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletBank::class, $user->company_id , $user->id);
+            $gain_moneys = $this->getTodayTransactionCompagnieMCommissionAmountTotal(WalletTransaction::class, $user->company_id, $user->id);
+            $gain_depots = $this->getTodayTransactionCompagnieRobusCommissionAmountTotal(WalletTransaction::class, $user->company_id, $user->id);
+            $gain_retraits = $this->getTodayTransactionCompagnieRetraitCommissionAmountTotal(WalletTransaction::class, $user->company_id, $user->id);
+            $gain_phone_credits = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletPhoneCredit::class, $user->company_id, $user->id);
+            $gain_inters = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletInter::class, $user->company_id, $user->id);
+            $gain_banks = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletBank::class, $user->company_id, $user->id);
 
             $company_gains = $gain_payments + $gain_moneys  + $gain_depots + $gain_retraits  + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
 
@@ -374,7 +373,34 @@ class UserController extends Controller
         return array_sum($data);
     }
 
-    public function getTodayTransactionCompagnieCommissionAmountTotal($walletModel , $idCompagnie ,$id)
+    public function getTodayTransactionCompagnieCommissionAmountTotal($walletModel, $idCompagnie, $id)
+    {
+        $sidUsers = SidUser::where('company_id', $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+            // Vérifie que le wallet existe avant d’y accéder
+            if (!$sidUser->wallet) {
+                continue; // passe à l'utilisateur suivant
+            }
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->where('status', 'SUCCESS')
+                ->sum('commission_companie');
+
+            $totalAmount += $amount ?? 0;
+        }
+
+        return $totalAmount;
+    }
+
+
+    public function getTodayTransactionCompagnieMCommissionAmountTotal($walletModel, $idCompagnie, $id)
     {
 
         $sidUsers = SidUser::where('company_id',  $idCompagnie)
@@ -385,10 +411,45 @@ class UserController extends Controller
 
         foreach ($sidUsers as $sidUser) {
 
+            if (!$sidUser->wallet) {
+                continue; // passe à l'utilisateur suivant
+            }
             $sidUserId = $sidUser->wallet->id;
 
             $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
+                ->where('status', 'SUCCESS')
+                ->where('provider_id', '!=', 9)
+                ->sum('commission_companie');
+
+            if ($amount !== null) {
+                $totalAmount += $amount;
+            }
+        }
+
+
+        return $totalAmount;
+    }
+    public function getTodayTransactionCompagnieRobusCommissionAmountTotal($walletModel, $idCompagnie, $id)
+    {
+
+        $sidUsers = SidUser::where('company_id',  $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+
+            if (!$sidUser->wallet) {
+                continue; // passe à l'utilisateur suivant
+            }
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->where('status', 'SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Depot')
                 ->sum('commission_companie');
 
             if ($amount !== null) {
@@ -400,7 +461,7 @@ class UserController extends Controller
         return $totalAmount;
     }
 
-    public function getTodayTransactionCompagnieMCommissionAmountTotal($walletModel , $idCompagnie ,$id)
+    public function getTodayTransactionCompagnieRetraitCommissionAmountTotal($walletModel, $idCompagnie, $id)
     {
 
         $sidUsers = SidUser::where('company_id',  $idCompagnie)
@@ -411,39 +472,17 @@ class UserController extends Controller
 
         foreach ($sidUsers as $sidUser) {
 
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-            ->whereStatus('SUCCESS')
-            ->where('provider_id', '!=', 9)
-            ->sum('commission_companie');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
+              if (!$sidUser->wallet) {
+                continue; // passe à l'utilisateur suivant
             }
-        }
-
-
-        return $totalAmount;
-    }
-    public function getTodayTransactionCompagnieRobusCommissionAmountTotal($walletModel , $idCompagnie ,$id)
-    {
-
-        $sidUsers = SidUser::where('company_id',  $idCompagnie)
-            ->where('id', '!=', $id)
-            ->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
 
             $sidUserId = $sidUser->wallet->id;
 
             $amount = $walletModel::where('wallet_id', $sidUserId)
-            ->whereStatus('SUCCESS')
-            ->where('provider_id', 9)
-            ->where('type_transaction', 'Depot')
-            ->sum('commission_companie');
+                ->where('status', 'SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Retrait')
+                ->sum('commission_companie');
 
             if ($amount !== null) {
                 $totalAmount += $amount;
@@ -454,35 +493,7 @@ class UserController extends Controller
         return $totalAmount;
     }
 
-    public function getTodayTransactionCompagnieRetraitCommissionAmountTotal($walletModel , $idCompagnie ,$id)
-    {
-
-        $sidUsers = SidUser::where('company_id',  $idCompagnie)
-            ->where('id', '!=', $id)
-            ->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-            ->whereStatus('SUCCESS')
-            ->where('provider_id', 9)
-            ->where('type_transaction', 'Retrait')
-            ->sum('commission_companie');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
-
-
-        return $totalAmount;
-    }
-
-    public function getEmployerTransactionCommission($walletModel , $id)
+    public function getEmployerTransactionCommission($walletModel, $id)
     {
 
 
@@ -617,7 +628,7 @@ class UserController extends Controller
     public function activate(int $id)
     {
         try {
-            
+
             DB::beginTransaction();
             $user = SidUser::find($id);
 
@@ -625,12 +636,10 @@ class UserController extends Controller
 
                 $user->is_active = '0';
                 $user->status = '0';
-                
             } else {
 
                 $user->is_active = '1';
                 $user->status = '1';
-
             }
 
             $msg = 'Désactivation effectuée avec succès';
@@ -644,8 +653,7 @@ class UserController extends Controller
 
                 // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
                 Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-
-            } 
+            }
             $notify = new MailController;
             $notify->activeAccount($user);
             $user->save();
@@ -661,19 +669,19 @@ class UserController extends Controller
             ->with('status', $msg);
     }
 
-    public function edit_custumers($id ,Request $request)
+    public function edit_custumers($id, Request $request)
     {
 
 
-            $validator = $this->userValidatorService->validateUserUpdateDataAdmin($request->all());
+        $validator = $this->userValidatorService->validateUserUpdateDataAdmin($request->all());
 
-            if ($validator->fails()) {
-                return back()
-                    ->withErrors($validator)
-                    ->with('color', 'danger')
-                    ->with('status', 'Champ requise')
-                    ->withInput();
-            }
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Champ requise')
+                ->withInput();
+        }
 
 
         try {
@@ -687,7 +695,7 @@ class UserController extends Controller
                 $request->file('image_verso')
             );
 
-            $msg =" Modification effectuée avec succès ";
+            $msg = " Modification effectuée avec succès ";
 
             if ($response['success']) {
 
@@ -702,17 +710,15 @@ class UserController extends Controller
                 $color = 'success';
 
                 return redirect(route('custumers.browse'))->with('color', $color)->with('status', $msg);
-
             } else {
 
                 $message = $response['message'];
-                
+
                 return back()
                     ->with('color', 'danger')
                     ->with('status', $message)
                     ->withInput();
             }
-
         } catch (\Throwable $th) {
             return back()
                 ->withErrors($validator)

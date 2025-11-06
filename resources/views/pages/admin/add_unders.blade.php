@@ -225,8 +225,6 @@
         <!-- END: Form Validation -->
     </div>
 
-    </div>
-
 
 @endsection
 

@@ -78,6 +78,13 @@ Route::group(['middleware' => ['auth:web']], function () {
         Route::get('/read/{id}/delete', [PermissionController::class, 'delete'])->name('permissions.delete');
     });
 
+      Route::group(['prefix' => 'messages'], function () {
+        Route::get('/browse',  [PermissionController::class, 'browse_messages'])->name('messages.browse');
+        Route::get('/add', [PermissionController::class, 'add_messages'])->name('messages.add');
+        Route::post('/store', [PermissionController::class, 'store_messages'])->name('messages.admin.store');
+        Route::post('/store/{id}', [PermissionController::class, 'store_one_messages'])->name('messages.one.store');
+    });
+
 
     Route::group(['prefix' => 'activites'], function () {
         Route::get('/browse',  [AdminController::class, 'browse_activites'])->name('activites.browse_activites');

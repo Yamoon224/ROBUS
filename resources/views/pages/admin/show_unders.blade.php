@@ -3,7 +3,6 @@
 @section('title', 'Details du sous distributeurs')
 
 @php
-
     $currencie = $user->wallet->currencie->code;
 @endphp
 
@@ -335,7 +334,7 @@
                 [
                     'label' => 'Rapport réchargements',
                     'route' => route('reloads.historical.received.reporting_reload_historical.admins', [
-                        'id' => $user->wallet->id,
+                    'id' => $user->wallet->id,
                     ]),
                 ],
                 [
@@ -402,83 +401,6 @@
                 Rapport des échecs
             </a>
         </div>
-        {{-- <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('reloads.historical.received.reporting_reload_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport réchargements
-            </a>
-        </div> --}}
-        {{-- <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('reloads.historical.reporting_reload_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport des comptes réchargés
-            </a>
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('cards.historical.reporting_card_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport rechargement carte
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('virements.historical.reporting_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport virements
-            </a>
-        </div> --}}
-        {{-- <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('transfers.historical.reporting_transfer_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport transferts
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('transfers.historical.received.reporting_transfer_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport transferts récus
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('payments.historical.reporting_payment_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport paiements
-            </a>
-        </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2  ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary"
-                href="{{ route('inters.historical.reporting_inter_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport inter
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 ">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary "
-                href="{{ route('phones.historical.reporting_phone_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport credits
-            </a>
-        </div>
-
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 " style="background-color: red">
-            <a class="  flex items-center text-slate-600 dark:text-slate-300 btn btn-primary text-white"
-                style="background-color: red"
-                href="{{ route('echecs.historical.reporting_transfer_historical.admins', ['id' => $user->wallet->id]) }}"
-                style="color: white;">
-                Rapport des échecs
-            </a>
-        </div> --}}
-
 
     </div>
 
@@ -522,8 +444,7 @@
     @endif
     <div class="grid grid-cols-12 gap-6 mt-3">
 
-        <div class="intro-y col-span-6 lg:col-span-12">
-            <!-- BEGIN: Form Validation -->
+        <div class="intro-y col-span-4 lg:col-span-12">
             <div class="intro-y box">
 
                 <div class="p-5">
@@ -535,12 +456,10 @@
                     </div>
                 </div>
 
-
             </div>
-            <!-- END: Form Validation -->
         </div>
 
-        <div class="intro-y col-span-6 lg:col-span-12">
+        <div class="intro-y col-span-4 lg:col-span-12">
             <!-- BEGIN: Form Validation -->
             <div class="intro-y box">
 
@@ -556,6 +475,20 @@
 
             </div>
             <!-- END: Form Validation -->
+        </div>
+         <div class="intro-y col-span-4 lg:col-span-12">
+            <div class="intro-y box">
+
+                <div class="p-5">
+                    <h2 class="text-lg mt-3 font-medium truncate mr-5 mt-6">Envoie des notification</h2>
+
+                    <div class="" id="step-2">
+                        @include('components.send_notfication_form')
+
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 

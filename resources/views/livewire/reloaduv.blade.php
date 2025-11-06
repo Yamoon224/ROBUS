@@ -20,7 +20,7 @@
 
             <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                 <div class="amount-label text-sm text-gray-500">Compte des commissions total</div>
-                <div class="amount-balance">
+                <div class="amount-commission-balance">
                     <div class="flex items-baseline justify-between">
                         <span class="amount-balance-value text-xl font-semibold">
                             {{ $walletCommissions ?? 0 }}
@@ -34,7 +34,7 @@
 
             <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                 <div class="amount-label text-sm text-gray-500">Compte des transactions </div>
-                <div class="amount-balance">
+                <div class="amount-admin-balance">
                     <div class="flex items-baseline justify-between">
                         <span class="amount-balance-value text-xl font-semibold">
                             {{ $walletAdmin ?? 0 }}
@@ -421,6 +421,264 @@
                                                                 @endif
 
                                                             </div>
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            @else
+                                                <tr>
+                                                    <td colspan="7" class="text-center">Aucune donnée pour le
+                                                        moment</td>
+                                                </tr>
+                                            @endif
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- BEGIN: Pagination -->
+                    <div class="intro-y col-span-12 flex flex-wrap sm:flex-row sm:flex-nowrap items-center mt-6">
+                        <nav class="w-full sm:w-auto sm:mr-auto">
+                            <ul class="pagination">
+                                {{ $reaload_uv->links('vendor.livewire.tailwind-reload_compte') }}
+
+                            </ul>
+                        </nav>
+                    </div>
+                    <!-- END: Pagination -->
+
+                </div>
+            </div>
+
+            <div id="commission" class="tab-pane" role="tabpanel" aria-labelledby="commission-tab">
+
+
+
+                <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
+                    <div class="hidden md:block mx-auto text-slate-500"></div>
+                    <div class="hidden md:block mx-auto text-slate-500"></div>
+                    <div class="hidden md:block mx-auto text-slate-500"></div>
+
+                    <div class="hidden md:block mx-auto text-slate-500"></div>
+
+                    <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
+                        <label for="statusFilterAcompte">Filtrer par type</label>
+                        <select id="statusFilterAcompte" wire:model="statusFilterAcompte"
+                            class="form-select py-3 px-4 box w-full
+                    dark-border-dark-3 mt-lg-0 ms-auto mt-3"
+                            aria-placeholder="Rechercher par type de transaction">
+                            <option selected>Type de rechargement</option>
+                            <option value="Commission">Commissions</option>
+                            <option value="Admin">Compte Admin</option>
+                        </select>
+                    </div>
+                    <div class="hidden md:block mx-auto text-slate-500"></div>
+
+                    <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;   ">
+                        <div class="w-56 relative text-slate-500">
+
+                            <input type="text" name="table_search" wire:model.debounce.250ms="searchRealodAcompte"
+                                class="form-control  w-56 box pr-10" style="height: 3rem; background-color: #eff3f7;"
+                                placeholder="Rechercher">
+                            {{-- <i class="w-4 h-4 absolute my-auto inset-y-0 mr-6 " style="margin-left: 12rem;"
+                                data-feather="searchTransaction"></i> --}}
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-12 gap-6  mt-6">
+                    <div class="intro-y box col-span-12" style="background-color: #eff3f7;">
+                        <div class="flex items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
+                            <h2 class="font-medium text-base mr-auto">
+                                Liste des rechargements des comptes administrateurs
+                            </h2>
+                        </div>
+                        <div id="new-products" class="tiny-slider py-5">
+                            <div class="px-5">
+                                <div class="overflow-x-auto">
+                                    <table id="table_orders" class="table table-bordered">
+                                        <thead class="table-dark">
+                                            <tr>
+
+                                                <th class="border-b-2 dark:border-darkmode-400 whitespace-nowrap">
+                                                    Opérateur
+                                                </th>
+                                                <th class="border-b-2 dark:border-darkmode-400 whitespace-nowrap">
+                                                    Expéditeur
+                                                </th>
+                                                <th
+                                                    class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
+                                                    Montant demandé
+                                                </th>
+                                                <th
+                                                    class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
+                                                    Info transaction
+                                                </th>
+
+                                                <th
+                                                    class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
+                                                    Statut </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if ($reaload_acomptes->count() > 0)
+                                                @foreach ($reaload_acomptes as $item)
+                                                    <tr class="intro-x">
+                                                        <td class="text-center w-40">
+                                                            @if ($item->type_transaction == 'Commission')
+                                                                <div
+                                                                    class="px-3 py-2 text-dark amount-befor dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Commission
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @else
+                                                                <div
+                                                                    class="px-3 py-2 text-dark amount-after dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Administration
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @endif
+                                                            <div
+                                                                class="px-3 py-2 text-dark btn-primary dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                <div class="fc-event-title-container"
+                                                                    style="color: white;">
+                                                                    <div class="fc-event-title fc-sticky">
+
+                                                                        Robus
+
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+
+
+                                                        </td>
+                                                        <td class="user-info-card">
+                                                            @include('components.infoAdminUser')
+
+                                                        </td>
+                                                        @php
+
+                                                            $valeur_amount_receveid =
+                                                                (float) ($item->amount_received ?? 0);
+
+                                                            $senderCurrencyValue =
+                                                                optional(optional(sabdy()->country)->currencie)
+                                                                    ->value ?? 1;
+                                                            $receiverCurrencyValue =
+                                                                optional(
+                                                                    optional(optional($item->wallet)->sidUser)->country,
+                                                                )->currencie->value ?? 1;
+                                                            $countryId = optional(sabdy()->country)->id;
+
+                                                            if ($countryId == 107) {
+                                                                // Conversion de montant
+                                                                if ($senderCurrencyValue > $receiverCurrencyValue) {
+                                                                    // Conversion en CFA
+                                                                    $valeur_amount_receveid =
+                                                                        (float) $item->amount_received *
+                                                                        (float) $senderCurrencyValue;
+                                                                } elseif (
+                                                                    $senderCurrencyValue == $receiverCurrencyValue
+                                                                ) {
+                                                                    // Montant inchangé
+                                                                    $valeur_amount_receveid =
+                                                                        (float) $item->amount_received;
+                                                                } elseif (
+                                                                    $senderCurrencyValue < $receiverCurrencyValue
+                                                                ) {
+                                                                    // Conversion vers la devise du pays d’envoi
+                                                                    $valeur_amount_receveid =
+                                                                        (float) $item->amount_received *
+                                                                        (float) $receiverCurrencyValue;
+                                                                }
+                                                            } else {
+                                                                // Pas de conversion spécifique
+                                                                $valeur_amount_receveid =
+                                                                    (float) $item->amount_received;
+                                                            }
+                                                        @endphp
+                                                        <td>
+                                                            @include('components.walletBalanceAdminConvertion')
+
+                                                        </td>
+                                                        <td class="w-40">
+                                                            <div class="mb-3">
+                                                                @include('components.info_admin_treatment')
+                                                            </div>
+                                                            @include('components.walletBalanceBeforConvertion')
+
+                                                        </td>
+
+                                                        <td class="w-40">
+                                                            @if ($item->status == 'PENDING')
+                                                                <div
+                                                                    class="flex items-center justify-center text-pending">
+                                                                    <span
+                                                                        class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                                        En-attente
+                                                                    </span>
+
+                                                                </div>
+                                                            @elseif ($item->status == 'ERROR')
+                                                                <div
+                                                                    class="flex items-center justify-center text-danger">
+                                                                    <div
+                                                                        class="flex items-center justify-center text-pending">
+                                                                        <span
+                                                                            class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                                            Refusé
+                                                                        </span>
+
+                                                                    </div>
+
+                                                                </div>
+                                                                <div
+                                                                    class="flex items-center justify-center text-pending">
+                                                                    <span
+                                                                        class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                        style="color: white;">
+                                                                        Traiter
+                                                                    </span>
+
+                                                                </div>
+                                                            @else
+                                                                <div
+                                                                    class="flex items-center justify-center text-success">
+                                                                    <div
+                                                                        class="flex items-center justify-center text-pending">
+                                                                        <span
+                                                                            class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                            style="color: white;">
+                                                                            Accepté
+                                                                        </span>
+
+
+                                                                    </div>
+
+                                                                </div>
+                                                                <div
+                                                                    class="flex items-center justify-center text-pending">
+                                                                    <span
+                                                                        class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
+                                                                  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                                        style="color: white;">
+                                                                        Traiter
+                                                                    </span>
+
+                                                                </div>
+                                                            @endif
                                                         </td>
                                                     </tr>
                                                 @endforeach

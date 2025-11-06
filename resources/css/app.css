@@ -20,6 +20,51 @@
 /* Animation personnalisée pour le formulaire */
 
 /* Classe pour flouter l'image */
+
+.animated-slide-in-right {
+    animation: slideInRight 0.5s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.swal2-timer-progress-bar {
+    height: 4px;
+    border-radius: 0 0 4px 4px;
+}
+
+/* Couleurs de la barre de progression selon le type */
+.swal2-icon-error ~ .swal2-timer-progress-bar {
+    background: #ef4444;
+}
+
+.swal2-icon-warning ~ .swal2-timer-progress-bar {
+    background: #f59e0b;
+}
+
+.swal2-icon-info ~ .swal2-timer-progress-bar {
+    background: #3b82f6;
+}
+
+.swal2-icon-success ~ .swal2-timer-progress-bar {
+    background: #10b981;
+}
+
+@media (max-width: 640px) {
+    .swal2-popup {
+        width: 90% !important;
+        margin: 0.5em !important;
+    }
+}
+
 .qr-blur {
     filter: blur(4px); /* équivalent Tailwind blur-md */
     transition: filter 0.3s ease-in-out; /* pour un effet plus doux si on change le flou */
@@ -1159,6 +1204,29 @@
     overflow: hidden;
 }
 
+.amount-befor {
+    /* background: linear-gradient(135deg, #10b981 0%, #059669 100%); */
+    background-color: #1e293b !important;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    border: 1px solid #10b981;
+    position: relative;
+    overflow: hidden;
+}
+
+.amount-after {
+   background-color: #b5048f !important;
+    color: white;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    border: 1px solid #10b981;
+    position: relative;
+    overflow: hidden;
+}
+
 .amount-value-received {
     background: linear-gradient(135deg, #1e3a8a 0%, #059669 100%);
     color: white;
@@ -1224,6 +1292,51 @@
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
     border: 1px solid #3b82f6;
     position: relative;
+}
+
+/* Version avec icônes */
+.amount-commission-balance {
+    background-color: #f87316 !important;
+    color: white;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    border: 1px solid #f87316;
+    position: relative;
+}
+
+.amount-commission-balance::before {
+    content: "💰";
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+}
+
+.amount-admin-balance {
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+    color: white;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    border: 1px solid #10b981;
+    position: relative;
+}
+
+.amount-admin-balance::before {
+    content: "👑";
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+}
+
+.amount-commission-value, .amount-admin-value {
+    font-weight: 800;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    font-size: 1.25rem;
 }
 
 .amount-balance::after {
@@ -4760,6 +4873,17 @@ select {
   color: rgb(var(--color-slate-400) / 0.9);
 }
 
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .form-control:focus {
   border-color: rgb(var(--color-primary) / var(--tw-border-opacity));
   --tw-border-opacity: 0.4;
@@ -5121,6 +5245,7 @@ select {
 }
 
 .modal-content {
+   animation: modalSlideIn 0.3s ease-out;
   position: relative;
   width: 100%;
   border-radius: 0.25rem;

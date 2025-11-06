@@ -6,6 +6,9 @@ use App\Models\Currency;
 use Livewire\Component;
 use Livewire\WithPagination;
 use App\Models\Custumers\Country;
+use App\Models\OperatorPayment;
+use App\Models\OperatorService;
+use App\Models\PaymentService;
 
 class Countries extends Component
 {
@@ -16,6 +19,7 @@ class Countries extends Component
 
     public $search = "";
     public $countireName;
+    public $operator_id;
     public $countireCode;
     public $countrieStatus;
     public $countrieId;
@@ -40,11 +44,17 @@ class Countries extends Component
         'amount_max_send.required' => 'Ajouter le montant maxi ',
     ];
 
+    public function mount($countrieId = null)
+    {
+        $this->countrieId = $countrieId;
+    }
+
     public function edit($id, $state)
     {
         $check = Country::whereId($id)->first();
         $this->countrieId = $id;
         $this->countrie_indic = $check->indecative;
+        $this->operator_id = $check->operator_id;
         $this->currencie = $check->currencie->id ?? 1;
         $this->countrieStatus = $check->robus;
         $this->silver_no_identity = $check->silver_ceiling_no_identity;
@@ -70,6 +80,26 @@ class Countries extends Component
             'name_groupe' => $this->name_groupe,
             'amount_max_send' => $this->amount_max_send,
         ]);
+
+        PaymentService::where('country_id', $check->id)->delete();
+
+        if (!empty($this->operator_id)) {
+
+            foreach ($this->operator_id as $key => $operator_s_id) {
+
+                $country_service = new PaymentService();
+                $country_service->operator_payment_id = $operator_s_id;
+                $country_service->country_id = $check->id;
+                $root_operator = OperatorPayment::findOrFail($operator_s_id);
+
+                $country_service->save();
+
+                $root_operator->save();
+            }
+
+            $root_operator->save();
+        }
+
 
         $this->resetField();
         $this->emit('modal-hide', 'hide');
@@ -120,12 +150,18 @@ class Countries extends Component
 
         return view('livewire.countries', [
             "countries" => $countrie->orderBy('name', 'desc')->paginate(30),
-            'currencies' => $this->currencies
+            'currencies' => $this->currencies,
+            'operators' => $this->operators,
         ]);
     }
 
     public function getCurrenciesProperty()
     {
         return Currency::all();
+    }
+
+    public function getOperatorsProperty()
+    {
+        return OperatorPayment::get();
     }
 }

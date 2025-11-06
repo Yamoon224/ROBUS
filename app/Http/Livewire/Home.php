@@ -18,6 +18,8 @@ use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletPush;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletVersement;
+use App\Models\Wallets\WalletAdmin;
+use App\Models\Wallets\WalletCommission;
 
 class Home extends Component
 {
@@ -312,6 +314,9 @@ class Home extends Component
             'account_djamo_days' => $djamo_amount_days,
             'account_versment_days' => $versment_amount_days,
             'account_tresort_days' => $tresortMoney_amount_days,
+
+            'walletCommissions' => WalletCommission::where('status', 1)->sum('amount'),
+            'walletAdmin' => WalletAdmin::where('status', 1)->sum('amount'),
 
             // 'open_apps' => $closeRobus,
         ]);

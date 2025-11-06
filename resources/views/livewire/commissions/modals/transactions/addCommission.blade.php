@@ -16,7 +16,9 @@
                 </svg>
             </a>
 
-            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+
+            <div class="modal-body grid grid-cols-12 gap-4 gap-y-3" wire:loading.class="hidden"
+                wire:target="addReloadCommission">
                 <div class="col-span-12">
                     <label for="modal-form-1" class="form-label">Canal<span class="text-danger">
                             *</span></label>
@@ -40,7 +42,8 @@
                     </div>
                 </div>
 
-                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3" wire:loading.class="hidden"
+                    wire:target="addReloadCommission">
 
                     <div class="col-span-12">
                         <label for="relaod_amount_commission" class="form-label">Montant<span class="text-danger">
@@ -54,25 +57,47 @@
 
                 </div>
             @endif
-            <div class="modal-footer style-foo">
-                <button wire:click="cancelReloadCardField" type="button"
-                    class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
-                <button wire:click="addReloadCommission" type="button" wire:loading.remove=""
-                    class="btn btn-primary w-50">Envoyer la demande</button>
-                <div wire:loading wire:target="addReloadCommission">
-                    Traitement en cours...
+
+            <div class="modal-footer bg-gray-50 px-6 py-5 border-t border-gray-200">
+                <div class="flex justify-end space-x-4 w-full items-center">
+                    <!-- Bouton Annuler -->
+                    <button wire:click="cancelReloadCardField" wire:loading.attr="disabled"
+                        wire:target="addReloadCommission" wire:loading.class="hidden" type="button"
+                        class="btn btn-outline-secondary w-20 mr-1">
+                        Annuler
+                    </button>
+
+                    <!-- Bouton principal avec état de chargement -->
+                    <button wire:click="addReloadCommission" type="button" wire:loading.attr="disabled"
+                        wire:target="addReloadCommission" class="btn btn-primary w-50">
+
+                        <!-- Texte normal -->
+                        <span wire:loading.remove wire:target="addReloadCommission" class="flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path fill-rule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            Envoyer la demande
+                        </span>
+
+                        <!-- Loader dans le bouton -->
+                        <span wire:loading wire:target="addReloadCommission" class="flex items-center">
+                            <svg class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg"
+                                fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                    stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                </path>
+                            </svg>
+                            Traitement...
+                        </span>
+                    </button>
                 </div>
             </div>
+
         </div>
     </div>
-    <script>
-        window.addEventListener('DOMContentLoaded', function() {
-            Echo.channel('wallet-reload-created').listen(
-                '.Created_wallet_reload',
-                (e) => {
-                    window.livewire.emit('notifyNewReload:' + e.id);
-                },
-            )
-        });
-    </script>
 </div>
