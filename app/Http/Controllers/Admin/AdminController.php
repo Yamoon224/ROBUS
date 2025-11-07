@@ -1108,7 +1108,7 @@ class AdminController extends Controller
             'zone' => 'required',
             'email' => ['required', 'string', 'email', 'max:255'],
             'phone' => ['required'],
-             'percent' => 'required',
+            'percent' => 'required',
             'password' => ['required', 'confirmed'],
             'image' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
             'image_recto' => 'nullable|mimes:jpeg,png,jpg,svg|max:2048',
@@ -1519,6 +1519,13 @@ class AdminController extends Controller
         $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
         $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
 
+        $gain_xbets = $this->getTodayTransactionCommissionAmountTotal(WalletXbet::class, $user->wallet->id);
+        $gain_versment = $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id);
+        $gain_push = $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id);
+        $gain_djamo = $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id);
+        $gain_tresorts = $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id);
+
+
         $count_days_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'daily');
         $amount_days_inters = $this->getTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'daily');
         $count_mounth_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'monthly');
@@ -1526,13 +1533,19 @@ class AdminController extends Controller
 
         $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
 
-        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
+        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits             
+        + $gain_xbets + $gain_versment + $gain_push + $gain_djamo + $gain_tresorts;
 
         // Execeptions
         $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
 
         return view('pages.admin.show_unders', compact(
             'user',
+            'gain_xbets',
+            'gain_versment',
+            'gain_push',
+            'gain_djamo',
+            'gain_tresorts',
             'count_days_inters',
             'amount_days_inters',
             'count_mounth_inters',
@@ -1716,7 +1729,6 @@ class AdminController extends Controller
             "Retrait Depots" => $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             "Retrait Retraits" => $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
             "Retrait Moneys" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id),
-
             // New amount
             "Retrait Xbet" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletXbet::class, $user->wallet->id),
             "Retrait Push" => $this->getTodayTransactionMobileCommissionAmountTotal(WalletPush::class, $user->wallet->id),
@@ -1737,7 +1749,149 @@ class AdminController extends Controller
             "Retrait Depots" => WalletTransaction::class,
             "Retrait Retraits" => WalletTransaction::class,
             "Retrait Moneys" => WalletTransaction::class,
+            "Retrait Xbet" => WalletXbet::class,
+            "Retrait Push" => WalletPush::class,
+            "Retrait Versement" => WalletVersement::class,
+            "Retrait Tresort" => WalletTresortMoney::class,
+            "Retrait Djamo" => WalletDjamo::class,
 
+
+        ];
+
+
+        $validator = Validator::make(
+
+            $request->all(),
+            [
+                'amountDrawal' => 'required',
+            ],
+            [
+
+                'amountDrawal.required' => 'Votre montant est obligatoire',
+
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->json(
+                [
+                    'success' => false,
+                    'message' => 'Le montant est  obligatoire',
+                    'data' => $validator->errors()
+                ],
+                333
+            );
+        }
+
+        if ($amount <= 0) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Le montant de la commission est invalide ou null !!')
+                ->withInput();
+        }
+
+
+        if (!isset($gainMappings[$typeRemonte])) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Type de remontée invalide !!')
+                ->withInput();
+        }
+
+        $calculatedGainAmount = $gainMappings[$typeRemonte];
+
+
+        if ((string)$amount !== (string)$calculatedGainAmount) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Montant de la commission invalide !!')
+                ->withInput();
+        }
+
+        $amount_solde = (float)$user->wallet->amount;
+
+        $resetClass = $resetMappings[$typeRemonte];
+
+        $amountDrawa = $this->withdrawCommission($resetClass, $user, $request->amountDrawal);
+
+        if ($amountDrawa === true) {
+
+            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte);
+
+            if (isset($resetMappings[$typeRemonte])) {
+                if ($admin_civ->count() > 0) {
+                    $nmbre_admin = $admin_civ->count();
+                    $valeur_single = $withRemonte->amount_with_draw / $nmbre_admin;
+
+                    foreach ($admin_civ as $userAdmin) {
+                        $this->processAdminCommissionSDistributer($userAdmin->id, $withRemonte->id, $valeur_single);
+                    }
+                }
+            }
+
+            $msg = 'Admins a fait un retrait sur votre commission';
+            $msg_title = 'Transfert de la commission';
+            $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+
+            return back()
+                ->with('color', 'success')
+                ->with('status', 'Votre commission a été retirée avec succès !!')
+                ->withInput();
+        } else {
+            // Il y a eu une erreur
+            return back()
+                ->with('color', 'danger')
+                ->with('status', $amountDrawa) // L'erreur renvoyée par withdrawCommission
+                ->withInput();
+        }
+    }
+
+    public  function remonteCommissionCompanyAdmins($amount, $typeRemonte, int $id, Request $request)
+    {
+
+
+        $user = SidUser::find($id);
+        $admin_civ =  SidUser::whereStatus(true)
+            ->whereIsAdmin(true)
+            ->where('country_id', 107)
+            ->get();
+
+        if (!$user) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Utilisateur introuvable !!')
+                ->withInput();
+        }
+
+
+        $gainMappings = [
+            "Retrait Paiements" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPayment::class, $user->company_id, $user->id),
+            "Retrait Transactions" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletTransaction::class, $user->company_id, $user->id),
+            "Retrait Crédits" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPhoneCredit::class, $user->company_id, $user->id),
+            "Retrait International" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletInter::class, $user->company_id, $user->id),
+            "Retrait Virements" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletBank::class, $user->company_id, $user->id),
+            "Retrait Rechargements" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletDeposit::class, $user->company_id, $user->id),
+            "Retrait Depots" => $this->getTodayTransactionRobusDepotCompagnieCommissionAmountTotal(WalletTransaction::class, $user->company_id, $user->id),
+            "Retrait Retraits" => $this->getTodayTransactionRobusRetraitCompagnieCommissionAmountTotal(WalletTransaction::class, $user->company_id, $user->id),
+            "Retrait Moneys" => $this->getTodayTransactionMobileCompagnieCommissionAmountTotal(WalletTransaction::class, $user->company_id, $user->id),
+            // New amount
+            "Retrait Xbet" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletXbet::class, $user->company_id, $user->id),
+            "Retrait Push" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPush::class, $user->company_id, $user->id),
+            "Retrait Versement" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletVersement::class, $user->company_id, $user->id),
+            "Retrait Tresort" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletTresortMoney::class, $user->company_id, $user->id),
+            "Retrait Djamo" => $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletDjamo::class, $user->company_id, $user->id)
+        ];
+
+        $resetMappings = [
+            "Retrait Paiements" => WalletPayment::class,
+            "Retrait Transactions" => WalletTransaction::class,
+            "Retrait Crédits" => WalletPhoneCredit::class,
+            "Retrait International" => WalletInter::class,
+            "Retrait Virements" => WalletBank::class,
+            "Retrait Rechargements" => WalletDeposit::class,
+            "Retrait Depots" => WalletTransaction::class,
+            "Retrait Retraits" => WalletTransaction::class,
+            "Retrait Moneys" => WalletTransaction::class,
             "Retrait Xbet" => WalletXbet::class,
             "Retrait Push" => WalletPush::class,
             "Retrait Versement" => WalletVersement::class,
@@ -1867,20 +2021,42 @@ class AdminController extends Controller
                 ->withInput();
         }
 
-        $gain_deposits = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id);
-        $gain_payments = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id);
-        $gain_transactions = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
-        $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
-        $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
-        $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
-        $gain_xbets = $this->getTodayTransactionCommissionAmountTotal(WalletXbet::class, $user->wallet->id);
-        $gain_versments = $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id);
-        $gain_pushs = $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id);
-        $gain_djamos = $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id);
-        $gain_tresorts = $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id);
+        if ($user->is_under_distributer == true) {
+            $gain_deposits = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id);
+            $gain_payments = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id);
+            $gain_transactions = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+            $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
+            $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
+            $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
+           
+            $gain_xbets = $this->getTodayTransactionCommissionAmountTotal(WalletXbet::class, $user->wallet->id);
+            $gain_versments = $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id);
+            $gain_pushs = $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id);
+            $gain_djamos = $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id);
+            $gain_tresorts = $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id);
+        } elseif ($user->is_company == true) {
 
-        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits 
-        + $gain_xbets + $gain_versments + $gain_pushs + $gain_djamos + $gain_tresorts;
+        
+            $gain_deposits = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletDeposit::class, $user->company_id, $user->id);
+            $gain_payments = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPayment::class, $user->company_id, $user->id);
+            $gain_transactions = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletTransaction::class, $user->company_id, $user->id);
+            $gain_phone_credits = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPhoneCredit::class,  $user->company_id, $user->id);
+            $gain_inters = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletInter::class, $user->company_id, $user->id);
+            $gain_banks = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletBank::class, $user->company_id, $user->id);
+            $gain_xbets = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletXbet::class, $user->company_id, $user->id);
+            $gain_versments = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletVersement::class, $user->company_id, $user->id);
+            $gain_pushs = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPush::class, $user->company_id, $user->id);
+            $gain_djamos = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletDjamo::class, $user->company_id, $user->id);
+            $gain_tresorts = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletTresortMoney::class, $user->company_id, $user->id);
+        } else {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Le montant de la commission est invalide ou utilisateur introuvable !!')
+                ->withInput();
+        }
+
+        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits
+            + $gain_xbets + $gain_versments + $gain_pushs + $gain_djamos + $gain_tresorts;
 
 
         if ($amount <= 0) {
@@ -1966,7 +2142,6 @@ class AdminController extends Controller
 
     public function getUpdateTransactionDepotRobusCommissionAmountNullTotal($walletModel, $sidUserId)
     {
-
 
 
 
@@ -2090,6 +2265,35 @@ class AdminController extends Controller
         return $totalAmount;
     }
 
+    public function getTodayTransactionCommissionCompagnieAmountTotal($walletModel, $idCompagnie, $id)
+    {
+
+
+        $sidUsers = SidUser::where('company_id', $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+
+        foreach ($sidUsers as $sidUser) {
+            // Vérifie que le wallet existe avant d’y accéder
+            if (!$sidUser->wallet) {
+                continue; // passe à l'utilisateur suivant
+            }
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->where('status', 'SUCCESS')
+                ->sum('commission_companie');
+
+            $totalAmount += $amount ?? 0;
+        }
+
+        return $totalAmount;
+    }
+
     public function getTransactionsAmountTotal($walletModel, $userID, $period = 'daily')
     {
 
@@ -2168,6 +2372,37 @@ class AdminController extends Controller
         return $totalAmount;
     }
 
+
+    public function getTodayTransactionRobusRetraitCompagnieCommissionAmountTotal($walletModel, $idCompagnie, $id)
+    {
+
+        $sidUsers = SidUser::where('company_id', $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+        foreach ($sidUsers as $sidUser) {
+            // Vérifie que le wallet existe avant d’y accéder
+            if (!$sidUser->wallet) {
+                continue; // passe à l'utilisateur suivant
+            }
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->where('status', 'SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Retrait')
+                ->sum('commission_companie');
+
+            $totalAmount += $amount ?? 0;
+        }
+
+
+        return $totalAmount;
+    }
+
     public function getTodayTransactionRobusDepotCommissionAmountTotal($walletModel, $userID)
     {
 
@@ -2187,6 +2422,38 @@ class AdminController extends Controller
         return $totalAmount;
     }
 
+
+    public function getTodayTransactionRobusDepotCompagnieCommissionAmountTotal($walletModel, $idCompagnie, $id)
+    {
+
+
+        $sidUsers = SidUser::where('company_id', $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+
+        foreach ($sidUsers as $sidUser) {
+            // Vérifie que le wallet existe avant d’y accéder
+            if (!$sidUser->wallet) {
+                continue; // passe à l'utilisateur suivant
+            }
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->whereStatus('SUCCESS')
+                ->where('provider_id', 9)
+                ->where('type_transaction', 'Depot')
+                ->sum('commission_companie');
+
+            $totalAmount += $amount ?? 0;
+        }
+
+        return $totalAmount;
+    }
+
     public function getTodayTransactionMobileCommissionAmountTotal($walletModel, $userID)
     {
 
@@ -2201,6 +2468,38 @@ class AdminController extends Controller
         if ($amount !== null) {
             $totalAmount += $amount;
         }
+
+        return $totalAmount;
+    }
+
+    public function getTodayTransactionMobileCompagnieCommissionAmountTotal($walletModel, $idCompagnie, $id)
+    {
+
+
+        $sidUsers = SidUser::where('company_id', $idCompagnie)
+            ->where('id', '!=', $id)
+            ->get();
+
+        $totalAmount = 0;
+
+
+        foreach ($sidUsers as $sidUser) {
+            // Vérifie que le wallet existe avant d’y accéder
+            if (!$sidUser->wallet) {
+                continue; // passe à l'utilisateur suivant
+            }
+
+            $sidUserId = $sidUser->wallet->id;
+
+            $amount = $walletModel::where('wallet_id', $sidUserId)
+                ->where('status', 'SUCCESS')
+                ->where('provider_id', '!=', 9)
+                ->sum('commission_companie');
+
+            $totalAmount += $amount ?? 0;
+        }
+
+
 
         return $totalAmount;
     }

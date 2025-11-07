@@ -8,10 +8,13 @@ use App\Models\Sid\Permissions;
 use App\Http\Controllers\Controller;
 use App\Models\MessageTransaction;
 use App\Models\Notification;
+use App\Models\Pub;
 use App\Models\Sid\SidUser;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 
 class PermissionController extends Controller
 {
@@ -31,6 +34,12 @@ class PermissionController extends Controller
         return view('pages.admin.browse_messages');
     }
 
+    public function browse_pubs()
+    {
+
+        return view('pages.admin.browse_pubs');
+    }
+
 
     public function add_messages()
     {
@@ -40,6 +49,16 @@ class PermissionController extends Controller
         }
         return view('pages.admin.add_messages');
     }
+
+    public function add_pubs()
+    {
+
+        if (!Auth::user()->hasPermissionTo('publicite')) {
+            abort(403);
+        }
+        return view('pages.admin.add_pubs');
+    }
+
 
     public function search(Request $request)
     {
@@ -113,6 +132,60 @@ class PermissionController extends Controller
                 ->withInput();
         }
     }
+
+    public function store_pubs(Request $request)
+    {
+        // ✅ Validation
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'message' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('color', 'danger')
+                ->with('status', 'Veuillez corriger les erreurs avant de continuer.');
+        }
+
+        // ✅ Traitement de l'image
+        $file_front = $request->file('image');
+
+        if ($file_front) {
+            $userName = Str::slug(Auth::user()->firstname); // Slug pour éviter caractères spéciaux
+            $destination_path = public_path("pubs/{$userName}/");
+
+            // Crée le dossier s'il n'existe pas
+            if (!File::exists($destination_path)) {
+                File::makeDirectory($destination_path, 0755, true);
+            }
+
+            $front_file = date('YmdHis') . '.' . $file_front->getClientOriginalExtension();
+            $file_front->move($destination_path, $front_file);
+
+            // ✅ URL publique (sans "public/")
+            $imageUrl = url("pubs/{$userName}/{$front_file}");
+
+            // ✅ Enregistrement
+             Pub::create([
+                'title' => $request->title,
+                'images' => $imageUrl,
+                'messages' => $request->message,
+            ]);
+
+            return redirect()
+                ->route('pubs.browse')
+                ->with('color', 'success')
+                ->with('status', 'La publicité a été enregistrée avec succès.');
+        }
+
+        return back()
+            ->with('color', 'danger')
+            ->with('status', 'Aucune image n’a été téléchargée.');
+    }
+
 
     public function store_messages(Request $request)
     {

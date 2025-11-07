@@ -18,7 +18,6 @@ use App\Models\Payments\AutherTransaction;
 class WalletPush extends Model
 {
     use HasFactory;
-     use HasFactory;
     use SoftDeletes;
 
     protected $table = 'wallet_pushes';

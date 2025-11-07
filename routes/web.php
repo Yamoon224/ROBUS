@@ -296,6 +296,7 @@ Route::group(['prefix' => ''], function () {
 
         Route::post('remote/commissions/{amount}/{type}/{id}', [AdminController::class, 'remonteCommission'])->name('remonte.commissions.unders');
         Route::post('remote/admins/commissions/{amount}/{type}/{id}', [AdminController::class, 'remonteCommissionAdmins'])->name('remonte.commissions.admins');
+        Route::post('remote/admins/commission_compagnies/{amount}/{type}/{id}', [AdminController::class, 'remonteCommissionCompanyAdmins'])->name('remonte.commissions.companies.admins');
         Route::post('remote/commissionalls/{amount}/{type}/{id}', [AdminController::class, 'remonteAllCommission'])->name('remonte.remonteAllCommission.unders');
 
 

@@ -24,6 +24,10 @@ use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletWave;
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletVersement;
+use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Wallets\WalletPush;
 use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use App\Rules\MatchOldPassword;
@@ -332,7 +336,15 @@ class UserController extends Controller
             $gain_inters = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletInter::class, $user->company_id, $user->id);
             $gain_banks = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletBank::class, $user->company_id, $user->id);
 
-            $company_gains = $gain_payments + $gain_moneys  + $gain_depots + $gain_retraits  + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits;
+            $gain_pushs = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletPush::class, $user->company_id, $user->id);
+            $gain_xbets = $this->getTodayTransactionCompagnieCommissionAmountTotal(walletXbet::class, $user->company_id, $user->id);
+            $gain_tresorts = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletTresortMoney::class, $user->company_id, $user->id);
+            $gain_versments = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletVersement::class, $user->company_id, $user->id);
+            $gain_djamo = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletDjamo::class, $user->company_id, $user->id);
+
+            $company_gains = $gain_payments + $gain_moneys  + $gain_depots + $gain_retraits  
+            + $gain_transactions + $gain_phone_credits + $gain_inters 
+            + $gain_banks + $gain_deposits + $gain_pushs + $gain_xbets + $gain_tresorts + $gain_versments + $gain_djamo;
 
             // Execeptions
             $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
@@ -354,6 +366,12 @@ class UserController extends Controller
                 'gain_phone_credits',
                 'gain_inters',
                 'gain_banks',
+
+                'gain_pushs',
+                'gain_xbets',
+                'gain_tresorts',
+                'gain_versments',
+                'gain_djamo',
                 'kycs'
             ));
         } else {

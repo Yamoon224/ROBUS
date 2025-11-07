@@ -748,11 +748,23 @@
                             @if (Auth::user()->hasPermissionTo('envoie-messages'))
                                 <li>
                                     <a href="{{ route('messages.browse') }}"
-                                        class="side-menu {{ $route == 'messages.browse' ? 'side-menu--active' : '' }}">
+                                        class="side-menu {{ $route == 'messages.browse' || $route == 'messages.add' ? 'side-menu--active' : '' }}">
                                         <div class="side-menu__icon">
                                             <i data-feather="send" class="block mx-auto"></i>
                                         </div>
                                         <div class="side-menu__title">Messages</div>
+                                    </a>
+                                </li>
+                            @endif
+
+                             @if (Auth::user()->hasPermissionTo('pub'))
+                                <li>
+                                    <a href="{{ route('pubs.browse') }}"
+                                        class="side-menu {{ $route == 'pubs.browse' || $route == 'pubs.add' ? 'side-menu--active' : '' }}">
+                                        <div class="side-menu__icon">
+                                            <i data-feather="megaphone" class="block mx-auto"></i>
+                                        </div>
+                                        <div class="side-menu__title">Publicité</div>
                                     </a>
                                 </li>
                             @endif

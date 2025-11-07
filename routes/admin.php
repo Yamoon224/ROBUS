@@ -86,6 +86,12 @@ Route::group(['middleware' => ['auth:web']], function () {
     });
 
 
+      Route::group(['prefix' => 'pubs'], function () {
+        Route::get('/browse',  [PermissionController::class, 'browse_pubs'])->name('pubs.browse');
+        Route::get('/add', [PermissionController::class, 'add_pubs'])->name('pubs.add');
+        Route::post('/store', [PermissionController::class, 'store_pubs'])->name('pubs.admin.store');
+    });
+
     Route::group(['prefix' => 'activites'], function () {
         Route::get('/browse',  [AdminController::class, 'browse_activites'])->name('activites.browse_activites');
     });
