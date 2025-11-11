@@ -8,6 +8,7 @@ use App\Models\Providers\Provider;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Invoices\InvoiceReload;
 use App\Models\Payments\PaymentReload;
+use App\Models\Sid\SidUser;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -37,6 +38,23 @@ class WalletReload extends Model
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
 
+
+    public function walletByUser()
+    {
+        return $this->belongsTo(Wallet::class, 'account_wallet', 'id');
+    }
+
+    public function sidUser()
+    {
+        return $this->hasOneThrough(
+            SidUser::class,
+            Wallet::class,
+            'id',              // Clé primaire de Wallet
+            'id',              // Clé primaire de SidUser
+            'account_wallet',  // Clé étrangère dans WalletReload
+            'sid_user_id'      // Clé étrangère dans Wallet
+        );
+    }
 
     public function provider()
     {

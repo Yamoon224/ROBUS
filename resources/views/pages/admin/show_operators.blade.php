@@ -25,7 +25,7 @@
 
             </div>
         </div>
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in ">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in btn-amber">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-trending-down font-medium-5">
@@ -83,7 +83,7 @@
             </div>
         </div>
 
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in ">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in btn-rose ">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-trending-down font-medium-5">
@@ -111,7 +111,7 @@
             </div>
         </div>
 
-        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in ">
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in btn-pink">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
                     fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                     stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
@@ -182,6 +182,83 @@
                 {{ $currencie ?? null }}
             </div>
         </div>
+
+
+        <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in btn-info">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Montant total Push</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($totalSumAmounts['sum_wallet_push'], 2, ',', ' ') ?? null }}
+                {{ $currencie ?? null }}
+            </div>
+        </div>
+
+         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in btn-purple">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Montant total Djamo</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($totalSumAmounts['sum_wallet_djamo'], 2, ',', ' ') ?? null }}
+                {{ $currencie ?? null }}
+            </div>
+        </div>
+
+         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in btn-teal">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Montant total Tresort Money</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($totalSumAmounts['sum_wallet_tresortMoney'], 2, ',', ' ') ?? null }}
+                {{ $currencie ?? null }}
+            </div>
+        </div>
+
+         <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in btn-cyan">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Montant total Versements</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($totalSumAmounts['sum_wallet_versement'], 2, ',', ' ') ?? null }}
+                {{ $currencie ?? null }}
+            </div>
+        </div>
+
+          <div class="col-span-12 sm:col-span-4 2xl:col-span-3 box p-5 cursor-pointer zoom-in">
+            <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                    fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                    stroke-linejoin="round" class="feather feather-trending-down font-medium-5">
+                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                    <polyline points="17 18 23 18 23 12"></polyline>
+                </svg>
+            </div>
+            <div class="font-medium text-historique mt-6">Montant total Bank send</div>
+            <div class="text-slate-500 mt-3">
+                {{ number_format($totalSumAmounts['sum_wallet_bankSend'], 2, ',', ' ') ?? null }}
+                {{ $currencie ?? null }}
+            </div>
+        </div>
+        
 
 
 
@@ -688,11 +765,11 @@
             @livewire('transaction-details.carte-users', ['walletAllDeposits' => $user->id])
         </div>
 
-<div id="xbet" class="tab-pane" role="tabpanel" aria-labelledby="xbet-tab">
+        <div id="xbet" class="tab-pane" role="tabpanel" aria-labelledby="xbet-tab">
             @livewire('transaction-details.xbets-users', ['walletAllXbets' => $user->id])
         </div>
 
-  
+
         <div id="push" class="tab-pane" role="tabpanel" aria-labelledby="push-tab">
             @livewire('transaction-details.pushs', ['walletPushs' => $user->id])
 

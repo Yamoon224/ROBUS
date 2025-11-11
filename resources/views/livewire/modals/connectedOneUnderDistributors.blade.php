@@ -37,10 +37,10 @@
 
                 <div class="px-5 pb-8 text-center mt-6">
                       <button wire:click="cancelConnectedField" type="button"
-                    class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
+                    class="btn btn-secondary w-20 mr-1">Annuler</button>
 
                     <input wire:click="connectedOneMaster" wire:loading.remove type="button"
-                        class="btn btn-danger  w-25 mr-1 mb-1"
+                        class="btn btn-danger  w-30 mr-1 mb-1"
                         value="{{ $underdistributeurDesabled == 0 ? 'Lié au MASTER' : 'Désactiver du MASTER' }}" />
 
                     <div wire:loading wire:target="connectedOneMaster">

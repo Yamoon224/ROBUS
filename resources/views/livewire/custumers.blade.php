@@ -11,42 +11,44 @@
         </div>
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
-           
+
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
 
             <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-                    <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par pays</label>
-                    <select id="countriesFilter" wire:model="countriesFilter"
-                    class="form-select py-3 px-4 box w-100"
-                    aria-placeholder="Rechercher par pays">
-                    <option value="" selected>Rechercher par pays</option> @foreach ($countries as $country)
-                        <option value="{{ $country->id }}">{{ $country->name }}</option>
-                    @endforeach
-                </select>
+                    <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par
+                        pays</label>
+                    <select id="countriesFilter" wire:model="countriesFilter" class="form-select py-3 px-4 box w-100"
+                        aria-placeholder="Rechercher par pays">
+                        <option value="" selected>Rechercher par pays</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                     <label for="citiesFilter" class="text-gray-700 text-sm font-bold mb-2">Filtrer par ville</label>
-                    <select id="citiesFilter" wire:model="citiesFilter"
-                    class="form-select py-3 px-4 box w-100"
-                    aria-placeholder="Rechercher par ville"
-                    @if(empty($cities)) disabled @endif> <option value="" selected>Rechercher par ville</option> @foreach ($cities as $city)
-                        <option value="{{ $city->id }}">{{ $city->name }}</option>
-                    @endforeach
-                </select>
+                    <select id="citiesFilter" wire:model="citiesFilter" class="form-select py-3 px-4 box w-100"
+                        aria-placeholder="Rechercher par ville" @if (empty($cities)) disabled @endif>
+                        <option value="" selected>Rechercher par ville</option>
+                        @foreach ($cities as $city)
+                            <option value="{{ $city->id }}">{{ $city->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
-                    <label for="cityNameSearch" class="block text-gray-700 text-sm font-bold mb-2">Rechercher par nom des zones</label>
+                    <label for="cityNameSearch" class="block text-gray-700 text-sm font-bold mb-2">Rechercher par nom
+                        des zones</label>
                     <input type="text" id="cityNameSearch" wire:model.live.debounce.300ms="cityNameSearch"
-                           placeholder="Saisir le nom d'une ville..."
-                           class="form-input py-3 px-4 box w-full rounded-md border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500">
+                        placeholder="Saisir le nom d'une ville..."
+                        class="form-input py-3 px-4 box w-full rounded-md border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500">
                 </div>
             </div>
             <div class="hidden md:block ml-8 text-slate-500"></div>
@@ -64,9 +66,8 @@
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
-                        <th class="whitespace-nowrap">Date de création</th>
                         <th class="text-center whitespace-nowrap">Prénom(s) & nom</th>
-                        <th class="text-center whitespace-nowrap">Email & téléphone</th>
+                        <th class="text-center whitespace-nowrap">Email & Solde</th>
                         <th class="text-center whitespace-nowrap">Status compte</th>
                         <th class="text-center whitespace-nowrap">Statut</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
@@ -77,17 +78,20 @@
                     <tbody>
 
                         <tr class="intro-x">
-                            <td class="w-35">
-                                <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
+                            <td class="w-60">
+                                <div class="mb-3">
+                                    @include('components.infoUserDetails')
+                                </div>
+                                @include('components.infoDetailsUser')
 
                             </td>
                             <td class="w-60">
                                 @if (Auth::guard('web')->user()->hasPermissionTo('voir-couleurs'))
-                                @php
-                                    $solde = $item->wallet->amount ?? 0.0;
-                                @endphp
-                                <div class="barre mb-3"
-                                    style="height: 20px; 
+                                    @php
+                                        $solde = $item->wallet->amount ?? 0.0;
+                                    @endphp
+                                    <div class="barre mb-3"
+                                        style="height: 20px; 
                                         background-color: 
                                             @if ($solde >= 100000) yellow;
                                             @elseif ($solde >= 50000 && $solde < 100000)
@@ -96,17 +100,10 @@
                                                 red;
                                             @else
                                                 gray; @endif;">
-                                </div>
-                            @endif
-                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                    <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname }}
-                                        {{ $item->lastname }}</div>
-                                </div>
-                                <div class="text-slate-500  mt-0.5">
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->country->name ?? null }} ville : {{ $item->city->name ?? null }}
-                                    </span>
+                                    </div>
+                                @endif
+                                    <div class="user-phone mt-6 mb-3">
+                                    {{ $item->email ?? 'Non renseigné' }}
                                 </div>
 
                                 @if ($item->company_id != null && $item->company_id != 1)
@@ -166,20 +163,6 @@
 
                             </td>
 
-                            <td class="w-40">
-
-                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                    <div class="text-slate-300 text-xs  mt-0.5">{{ $item->email ?? null }}
-                                    </div>
-                                </div>
-
-                                <div class="text-slate-300 text-xs mt-3 mb-2">
-                                    <div class="text-slate-300 text-xs  mt-0.5">
-                                        {{ $item->phone ?? null }}</div>
-                                </div>
-
-
-                            </td>
 
                             <td class="w-40">
 
@@ -240,16 +223,17 @@
                             <td class="table-report__action w-56">
                                 <div class="flex justify-center items-center">
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-utilisateur'))
-                                    <a class="flex items-center mr-3" href="{{ route('custumers.show_edit', ['id' => $item->id]) }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                            stroke-linejoin="round" class="lucide lucide-edit block mx-auto h-15 mr-1">
-                                            <path d="M12 20h9"></path>
-                                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-                                        </svg>
-                                    </a>
-                                    
-                                @endif
+                                        <a class="flex items-center mr-3"
+                                            href="{{ route('custumers.show_edit', ['id' => $item->id]) }}">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="lucide lucide-edit block mx-auto h-15 mr-1">
+                                                <path d="M12 20h9"></path>
+                                                <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                                            </svg>
+                                        </a>
+                                    @endif
                                     @if (Auth::guard('web')->user()->hasPermissionTo('voir-clients'))
                                         <a class="flex items-center mr-3"
                                             href="{{ route('custumers.show', ['id' => $item->id]) }}">

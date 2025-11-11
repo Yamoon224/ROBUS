@@ -13,6 +13,7 @@ use App\Models\AdminsCom;
 use App\Models\PushPercent;
 use App\Models\Invoices\AutherTransactionInvoice;
 use App\Models\Payments\AutherTransaction;
+use App\Models\Sid\SidUser;
 
 
 class WalletPush extends Model
@@ -37,7 +38,11 @@ class WalletPush extends Model
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
 
- 
+    public function updatedByUser()
+    {
+        return $this->belongsTo(SidUser::class, 'updated_by', 'id');
+    }
+
 
     public function provider()
     {

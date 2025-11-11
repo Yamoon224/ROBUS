@@ -21,6 +21,23 @@
 
 /* Classe pour flouter l'image */
 
+
+ .message-content {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+ .status-active {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: rgb(6, 95, 70);
+        }
+        .status-inactive {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: rgb(153, 27, 27);
+        }
+
 .animated-slide-in-right {
     animation: slideInRight 0.5s ease-out;
 }
@@ -929,6 +946,12 @@
     border-color: #8b5cf6;
 }
 
+.user-badge--compagnie {
+    background: linear-gradient(135deg, #14B8A6 0%, #0D9488 100%);
+    color: white;
+    border-color: #14B8A6;
+}
+
 .user-badge--customer {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
@@ -1322,6 +1345,25 @@
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
     border: 1px solid #10b981;
     position: relative;
+}
+
+.amount-remonte-balance {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+    color: white;
+    padding: 1rem 1rem 1rem 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    border: 1px solid #D97706;
+    position: relative;
+}
+
+.amount-remonte-balance::before {
+     content: "👑";
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
 }
 
 .amount-admin-balance::before {
@@ -6298,6 +6340,18 @@ select {
 
 .w-50 {
   width: 12rem;
+}
+
+.w-60 {
+  width: 15rem;
+}
+
+.w-80 {
+  width: 40rem;
+}
+
+.w-90 {
+  width: 60rem;
 }
 
 .w-8 {

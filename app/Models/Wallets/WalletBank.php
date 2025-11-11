@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Sid\SidUser;
 
 class WalletBank extends Model
 {
@@ -39,7 +40,11 @@ class WalletBank extends Model
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
 
-    
+       public function updatedByUser()
+    {
+        return $this->belongsTo(SidUser::class, 'updated_by', 'id');
+    }
+
     public function adminCom(){
     	return $this->hasOne(AdminsCom::class);
     }

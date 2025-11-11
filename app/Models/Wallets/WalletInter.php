@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
+use App\Models\Sid\SidUser;
 
 class WalletInter extends Model
 {
@@ -45,6 +46,12 @@ class WalletInter extends Model
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
 
+       public function updatedByUser()
+    {
+        return $this->belongsTo(SidUser::class, 'updated_by', 'id');
+    }
+
+    
     public function adminCom(){
     	return $this->hasOne(AdminsCom::class);
     }

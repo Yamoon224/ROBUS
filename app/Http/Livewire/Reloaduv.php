@@ -641,7 +641,7 @@ class Reloaduv extends Component
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
                     'reload_pendding' =>   WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'PENDING')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
-                    'reaload_uv' => $realod_search->join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                    'reload_historicals' => $realod_search->join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)
                         ->where('wallet_reloads.created_by', Auth::guard('web')->user()->id)
                         ->select('wallet_reloads.*')
@@ -735,7 +735,7 @@ class Reloaduv extends Component
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'SUCCESS')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
                     'reload_pendding' =>   WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->where('wallet_reloads.status', 'PENDING')->whereDate('wallet_reloads.created_at', Carbon::today())->select('wallet_reloads.*')->count(),
-                    'reaload_uv' => $realod_search->join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                    'reload_historicals' => $realod_search->join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->select('wallet_reloads.*')->orderBy('wallet_reloads.created_at', 'desc')->paginate(20),
                     'countrie_number_local' => Auth::guard('web')->user()->country->indecative,
                     'wallet_search' => $wallet->where("wallet_id", "like",  "%" . $this->account_reload_uv . "%")

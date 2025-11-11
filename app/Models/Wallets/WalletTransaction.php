@@ -10,6 +10,7 @@ use App\Models\Payments\Transaction;
 use App\Models\Costs\TransactionCost;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Invoices\InvoiceTransaction;
+use App\Models\Sid\SidUser;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -37,6 +38,11 @@ class WalletTransaction extends Model
     ];
 
  
+     public function updatedByUser()
+    {
+        return $this->belongsTo(SidUser::class, 'updated_by', 'id');
+    }
+
 
     public function provider()
     {

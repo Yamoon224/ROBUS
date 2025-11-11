@@ -760,9 +760,9 @@
                              @if (Auth::user()->hasPermissionTo('pub'))
                                 <li>
                                     <a href="{{ route('pubs.browse') }}"
-                                        class="side-menu {{ $route == 'pubs.browse' || $route == 'pubs.add' ? 'side-menu--active' : '' }}">
+                                        class="side-menu {{ $route == 'pubs.browse' ? 'side-menu--active' : '' }}">
                                         <div class="side-menu__icon">
-                                            <i data-feather="megaphone" class="block mx-auto"></i>
+                                            <i data-feather="speaker" class="block mx-auto"></i>
                                         </div>
                                         <div class="side-menu__title">Publicité</div>
                                     </a>

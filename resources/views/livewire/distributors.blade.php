@@ -5,12 +5,12 @@
     </h2>
     <div class="grid grid-cols-12 gap-6 mt-5">
         <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
-         
+
             @if (Auth::guard('web')->user()->hasPermissionTo('ajouter-administrateur'))
                 <a class="btn btn-primary shadow-md mr-2" href="{{ route('operators.admins.add') }}">Ajouter une
                     operatrice</a>
             @endif
-           
+
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
@@ -41,10 +41,9 @@
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
-                        <th class="whitespace-nowrap">Date de création</th>
-                        <th class="text-center whitespace-nowrap">Nom</th>
+                        <th class="text-center whitespace-nowrap">Nom & Prénom</th>
                         <th class="text-center whitespace-nowrap">Email & télépone</th>
-                        <th class="text-center whitespace-nowrap">Rôle</th>
+                        <th class="text-center whitespace-nowrap">Operations</th>
                         <th class="text-center whitespace-nowrap">Statut</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -55,71 +54,39 @@
                             $old_operators = getOperators($item->id);
                         @endphp
                         <tr class="intro-x">
-                            <td class="w-35">
-                                <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
+                            <td class="w-60">
+                                <div class="mb-3">
+                                    @include('components.infoUserDetails')
+                                </div>
+                                @include('components.infoDetailsUser')
 
                             </td>
                             <td class="w-50">
-                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                    <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname ?? null }}</div>
+                                <div class="user-phone mt-6">
+                                    {{ $item->email ?? 'Non renseigné' }}
                                 </div>
-                                <div class="text-slate-500  mt-0.5">
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->country->name ?? null }} ville : {{ $item->city->name ?? null }}
+
+                            </td>
+                            <td>
+                                <div class="user-name">
+                                    {{ $item->wallet->wallet_id ?? null }}
+                                </div>
+                                <p class="mb-6">
+                                    <span class="bg-success w-25 mt-3 text-white fs-5 px-2 py-1 rounded ">
+                                        Operations :
                                     </span>
-                                </div>
+                                </p>
 
+                                @foreach ($item->operator_services as $operator)
+                                    @if ($operator->operator->is_operator)
+                                        <span
+                                            class="alert alert-success text-white font-assign-list inline-flex items-center  justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            {{ $operator->operator->name ?? null }}
+                                        </span>
+                                    @endif
+                                @endforeach
                             </td>
-                            <td>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $item->phone }}
-                                </div>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-3">{{ $item->email }}
-                                </div>
-                            </td>
-                            <td>
-                                @if ($item->is_custumers == '1')
-                                    <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5 mb-2">
-                                        <p class="font-medium whitespace-nowrap">Client</p>
-                                    </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_distributer == true)
-                                    <div class="font-medium whitespace-nowrap">
-                                        <p class="font-medium whitespace-nowrap">Distributeur </p>
-                                    </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_under_distributer == true)
-                                    <div class="font-medium whitespace-nowrap">
-                                        <p class="font-medium whitespace-nowrap"> Sous-distributeur</p>
-                                    </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_com_zone == true)
-                                    <div class="font-medium whitespace-nowrap">Com zone</div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @endif
-
-                            </td>
-                            <td class="table-report__action w-35">
+                            <td class="w-35">
                                 @if ($item->status == '1')
                                     @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
                                         <div class="flex items-center justify-center text-success">
@@ -148,9 +115,9 @@
                                 @endif
                             </td>
 
-                            <td class="table-report__action w-30">
+                            <td class="w-60">
                                 <div class="flex mt-4 lg:mt-0">
-                                      @if ($item->is_distributer)
+                                    @if ($item->is_distributer)
                                         <div class="flex items-start mb-3">
 
                                             <div class="absolute right-0 top-0 mr-5 mt-3 dropdown">
@@ -160,11 +127,10 @@
                                                 </div>
                                                 <a class="dropdown-toggle w-5 h-5 block" href="javascript:;"
                                                     aria-expanded="false" data-tw-toggle="dropdown"> <svg
-                                                        xmlns="http://www.w3.org/2000/svg" width="24"
-                                                        height="24" viewBox="0 0 24 24" fill="none"
-                                                        stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                                        stroke-linejoin="round" icon-name="more-horizontal"
-                                                        data-lucide="more-horizontal"
+                                                        xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                        viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                        icon-name="more-horizontal" data-lucide="more-horizontal"
                                                         class="lucide lucide-more-horizontal w-5 h-5 text-slate-500">
                                                         <circle cx="12" cy="12" r="1"></circle>
                                                         <circle cx="19" cy="12" r="1"></circle>
@@ -173,22 +139,24 @@
 
                                                 </a>
 
-                                                <div class="dropdown-menu w-50" id="_8vqni2v1b"
+                                                 <div class="dropdown-menu w-90"
                                                     data-popper-placement="bottom-end"
-                                                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
-                                                    <div class="dropdown-content">
+                                                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px); z-index: 50;">
+
+                                                    <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
                                                         @foreach ($operators as $operator)
-                                                            <input
-                                                                wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
-                                                                value="{{ $operator->id }}" type="checkbox"
-                                                                class="sid-switch"
-                                                                @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
-
-
-                                                            <p class="text-slate-500 text-xs  mt-0.5">
-                                                                {{ $operator->name ?? null }}
-
-                                                            </p>
+                                                            <label
+                                                                class="flex items-center px-3 py-2 hover:bg-slate-50 rounded-md cursor-pointer transition-colors">
+                                                                <input
+                                                                    wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                                    value="{{ $operator->id }}" type="checkbox"
+                                                                    class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors"
+                                                                    @if (in_array($operator->id, $old_operators)) checked @endif>
+                                                                <span
+                                                                    class="ml-2 text-sm text-slate-700 truncate flex-1">
+                                                                    {{ $operator->name ?? 'Non renseigné' }}
+                                                                </span>
+                                                            </label>
                                                         @endforeach
                                                     </div>
                                                 </div>
@@ -196,19 +164,19 @@
                                         </div>
                                     @endif
 
-                                      <div class="flex justify-center items-center">
+                                    <div class="flex justify-center items-center">
 
-                                    @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
-                                        <a class="btn btn-primary mr-1 mb-2 btn-sm"
-                                            href="{{ route('operators.admins.show', ['id' => $item->id]) }}">
-                                            Voir
-                                        </a>
-                                    @endif  
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
+                                            <a class="btn btn-primary mr-1 mb-2 btn-sm"
+                                                href="{{ route('operators.admins.show', ['id' => $item->id]) }}">
+                                                Voir Détails
+                                            </a>
+                                        @endif
 
 
+                                    </div>
                                 </div>
-                                </div>
-                              
+
                             </td>
                         </tr>
                     </tbody>

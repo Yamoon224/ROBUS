@@ -3,7 +3,7 @@
         <div class="hidden md:block mx-auto text-slate-500"></div>
 
 
-        <div class="col-span-12 sm:col-span-3 2xl:col-span-3">
+        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 mt-6">
             <label for="countriesFilter">Filtrer par utilisateurs</label>
             <select id="typeUsers" wire:model="typeUsers"
                 class="form-select py-3 px-4 box w-full
@@ -32,8 +32,6 @@
                     <tr>
                         <th class="whitespace-nowrap">Date</th>
                         <th class="text-center whitespace-nowrap">Prénom(s) & nom</th>
-                        <th class="text-center whitespace-nowrap">Téléphone</th>
-                        <th class="text-center whitespace-nowrap">Type</th>
                         <th class="text-center whitespace-nowrap">Email</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -43,53 +41,18 @@
 
                         @foreach ($users_all as $item)
                             <tr class="intro-x">
-                                <td class="w-35">
-                                    <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
-
-                                </td>
-                                <td class="w-50">
-                                    <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                        <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname }}
-                                            {{ $item->lastname }}</div>
-                                    </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->country->name ?? null }} ville :
-                                            {{ $item->city->name ?? null }}
-                                        </span>
+                                <td class="w-40">
+                                    <div class="mb-3">
+                                        @include('components.infoUserDetails')
                                     </div>
 
                                 </td>
-                                <td>
-                                    <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">
-                                        {{ $item->phone }}
-                                    </div>
+                                <td class="w-60">
+                                    @include('components.infoDetailsUser')
 
                                 </td>
                                 <td>
-
-                                    @if ($item->is_distributer)
-                                        <div class="font-medium whitespace-nowrap">Distributeur</div>
-                                    @elseif($item->is_under_distributer)
-                                        <div class="font-medium whitespace-nowrap">Sous-distributeur</div>
-                                    @elseif($item->is_custumers)
-                                        <div class="font-medium whitespace-nowrap">Client</div>
-                                    @elseif ($item->is_master)
-                                        <div class="font-medium whitespace-nowrap">Masters</div>
-                                    @elseif ($item->is_supervisor)
-                                        <div class="font-medium whitespace-nowrap">Superviseurs</div>
-                                    @elseif ($item->is_com_zone)
-                                        <div class="font-medium whitespace-nowrap">Com Zone</div>
-                                    @elseif ($item->is_company)
-                                        <div class="font-medium whitespace-nowrap">Compagnie</div>
-                                    @else
-                                        <div class="font-medium whitespace-nowrap">Admin</div>
-                                    @endif
-
-                                </td>
-                                <td>
-                                    <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">
+                                    <div class="text-slate-500 text-xs text-center whitespace-nowrap mt-0.5">
                                         {{ $item->email }}
                                     </div>
 

@@ -37,6 +37,7 @@ use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
+use App\Models\Wallets\WalletBankSend;
 use App\Models\WithMerchant;
 use App\Notifications\UserNotification;
 use App\Rules\MatchOldPassword;
@@ -2616,6 +2617,12 @@ class AdminController extends Controller
         $sum_wallet_xbet_retrait = $this->transactionAccountService->getTransactionOperatorsAmount(WalletXbet::class, $user->id);
         $sum_wallet_Inter = $this->transactionAccountService->getTransactionOperatorsAmount(WalletInter::class,  $user);
 
+        $sum_wallet_push = $this->transactionAccountService->getTransactionOperatorsAmount(WalletPush::class,  $user);
+        $sum_wallet_djamo = $this->transactionAccountService->getTransactionOperatorsAmount(WalletDjamo::class,  $user);
+        $sum_wallet_tresortMoney = $this->transactionAccountService->getTransactionOperatorsAmount(WalletTresortMoney::class,  $user);
+        $sum_wallet_versement = $this->transactionAccountService->getTransactionOperatorsAmount(WalletVersement::class,  $user);
+        $sum_wallet_bankSend = $this->transactionAccountService->getTransactionOperatorsAmount(WalletBankSend::class,  $user);
+
 
         return [
             'sum_wallet_transaction' => $sum_wallet_transaction,
@@ -2627,7 +2634,12 @@ class AdminController extends Controller
             'sum_wallet_wave' => $sum_wallet_wave,
             'sum_wallet_xbet_depot' => $sum_wallet_xbet_depot,
             'sum_wallet_xbet_retrait' => $sum_wallet_xbet_retrait,
-            'sum_wallet_Inter' => $sum_wallet_Inter
+            'sum_wallet_Inter' => $sum_wallet_Inter,
+            'sum_wallet_push' => $sum_wallet_push,
+            'sum_wallet_djamo' => $sum_wallet_djamo,
+            'sum_wallet_tresortMoney' => $sum_wallet_tresortMoney,
+            'sum_wallet_versement' => $sum_wallet_versement,
+            'sum_wallet_bankSend' => $sum_wallet_bankSend
         ];
     }
 

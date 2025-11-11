@@ -531,7 +531,7 @@ class Transfers extends Component
     {
         $this->showNBankNotification = true;
         // $this->emit('modal-hide-virement');
-        $this->emit('menu-virement-active');
+        // $this->emit('menu-virement-active');
     }
 
     public function notifyAllWallet()
@@ -543,42 +543,42 @@ class Transfers extends Component
     public function notifyNewPaiement()
     {
         $this->showNPaiementNotification = true;
-        $this->emit('menu-paiement-active');
+        // $this->emit('menu-paiement-active');
     }
 
     public function notifyNewTransfers()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-transfers');
-        $this->emit('menu-transaction-active');
+        // $this->emit('menu-transaction-active');
     }
 
     public function notifyNewInter()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-inters');
-        $this->emit('menu-inters-active');
+        // $this->emit('menu-inters-active');
     }
 
     public function notifyNewCard()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-reloadCard');
-        $this->emit('menu-reloadCarte-active');
+        // $this->emit('menu-reloadCarte-active');
     }
 
     public function notifyNewPhone()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
-        $this->emit('menu-phoneCredit-active');
+        // $this->emit('menu-phoneCredit-active');
     }
 
     public function notifyNewXbet()
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
-        $this->emit('menu-xbet-active');
+        // $this->emit('menu-xbet-active');
     }
 
 
@@ -587,7 +587,7 @@ class Transfers extends Component
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
-        $this->emit('menu-versement-active');
+        // $this->emit('menu-versement-active');
     }
 
 
@@ -595,7 +595,7 @@ class Transfers extends Component
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
-        $this->emit('menu-tresort-active');
+        // $this->emit('menu-tresort-active');
     }
 
 
@@ -603,7 +603,7 @@ class Transfers extends Component
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
-        $this->emit('menu-push-active');
+        // $this->emit('menu-push-active');
     }
 
 
@@ -611,7 +611,7 @@ class Transfers extends Component
     {
         $this->showNTransfersNotification = true;
         // $this->emit('modal-hide-phoneCredit');
-        $this->emit('menu-djamo-active');
+        // $this->emit('menu-djamo-active');
     }
 
 
@@ -627,7 +627,7 @@ class Transfers extends Component
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId($this->provider_transaction)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
         $walletUser = Auth::guard('web')->user();
         $rt = rand(40, 500000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
@@ -5517,21 +5517,7 @@ class Transfers extends Component
         }
     }
 
-    public function getSumValTransactionProperty()
-    {
-        $service = app(TotalAmoutUserServiveBackend::class);
-
-        $somm_valeur = $service->getWalletBanksCeilingProperty()
-            + $service->getWalletDepositsCeilingProperty()
-            + $service->getWalletIntersCeilingProperty()
-            + $service->getWalletPaymentsCeilingProperty()
-            + $service->getWalletTransactionsCeilingProperty()
-            + $service->getWalletPhoneCreditsCeilingProperty()
-            + $service->getWalletReloadsCeilingProperty()
-            + $service->getWalletBankCardCeilingProperty();
-
-        return $somm_valeur;
-    }
+ 
 
 
     public function getReloadTransactionProperty()

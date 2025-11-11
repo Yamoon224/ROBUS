@@ -1,5 +1,60 @@
 <div>
 
+    <div class="grid grid-cols-12 gap-4 mt-6">
+        <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+            <div class="amount-label text-sm text-gray-500">Solde actuel</div>
+            <div class="amount-balance">
+                <div class="flex items-baseline justify-between">
+                    <span class="amount-balance-value text-xl font-semibold">
+                        {{ $walletSolde ?? 0 }}
+                    </span>
+                    <span class="amount-balance-currency text-white">
+                        {{ $usersCountry ?? 'CFA' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+            <div class="amount-label text-sm text-gray-500">Compte des commissions total</div>
+            <div class="amount-commission-balance">
+                <div class="flex items-baseline justify-between">
+                    <span class="amount-balance-value text-xl font-semibold">
+                        {{ $walletCommissions ?? 0 }}
+                    </span>
+                    <span class="amount-balance-currency text-white">
+                        {{ $usersCountry ?? 'CFA' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+            <div class="amount-label text-sm text-gray-500">Compte des transactions </div>
+            <div class="amount-admin-balance">
+                <div class="flex items-baseline justify-between">
+                    <span class="amount-balance-value text-xl font-semibold">
+                        {{ $walletAdmin ?? 0 }}
+                    </span>
+                    <span class="amount-balance-currency text-white">
+                        {{ $usersCountry ?? 'CFA' }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-span-12 sm:col-span-6 lg:col-span-3 intro-y info-paiement-show">
+            <div class="amount-label text-sm text-gray-500">Total remonté Sous distributeur aujourd'hui </div>
+            <div class="amount-remonte-balance">
+                <div class="flex items-baseline justify-between">
+                    <span class="amount-balance-value text-xl font-semibold">
+                        {{ $sum_commissions ?? 0 }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
         <div class="intro-y col-span-12 lg:col-span-12">
             <div class="intro-y block sm:flex items-center h-10">
@@ -10,21 +65,6 @@
                         href="{{ route('payments.historical.reporting_payment_historical') }}" style="color: white;">
                         <i data-lucide="file-text" class="hidden sm:block w-4 h-4 mr-2"></i> Telecharger le rapport
                     </a>
-                </div>
-            </div>
-
-        </div>
-    </div>
-    <div class="intro-y col-span-12 lg:col-span-12 ">
-    
-        <div class=" intro-y grid grid-cols-12 gap-5 mt-5">
-            <div class="col-span-12 sm:col-span-6 2xl:col-span-6 box p-5 cursor-pointer zoom-in style_table_factures">
-                <div>
-
-                    <i data-feather="trending-down" class="font-medium-5"></i>
-                </div>
-                <div class="font-medium text-historique mt-6">Total remonté Sous distributeur aujourd'hui</div>
-                <div class="text-slate-500 mt-3"> {{ $sum_commissions ?? null }} 
                 </div>
             </div>
 
@@ -82,13 +122,11 @@
                                                 Date
                                             </th>
                                             <th class="border-b-2 dark:border-darkmode-400 whitespace-nowrap">
-                                                Nom
+                                                Nom & Prénom(s)
                                             </th>
+
                                             <th class="border-b-2 dark:border-darkmode-400 whitespace-nowrap">
-                                                Prénom(s)
-                                            </th>
-                                            <th class="border-b-2 dark:border-darkmode-400 whitespace-nowrap">
-                                                Pays
+                                                Pays & ville
                                             </th>
                                             <th
                                                 class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
@@ -102,38 +140,37 @@
                                         @if ($payment_drawers->count() > 0)
                                             @foreach ($payment_drawers as $key => $item)
                                                 <tr class="intro-x">
-                                                    <td class="w-40">
-                                                        <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->created_at ?? null }}</p>
-                                                    </td>
+                                                    <td class="w-30">
+                                                        <div
+                                                            class="px-3 py-2 text-dark btn-rose dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                            <div class="fc-event-title-container" style="color: white;">
+                                                                <div class="fc-event-title fc-sticky">
+                                                                    {{ $item->type_transaction ?? null }}
 
-                                                    <td class="w-40">
-                                                        <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->sidUser->firstname ?? null }}
-                                                        </p>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
-                                                    </td>
-                                                    <td class="w-40">
-                                                        <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->sidUser->lastname ?? null }}
-                                                        </p>
-
-                                                    </td>
-
-                                                    <td class="w-40">
-                                                        <div class="text-slate-500  mt-0.5">
-                                                            <span
-                                                                class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                                {{ $item->sidUser->country->name ?? null }}
-                                                                ville :
-                                                                {{ $item->sidUser->city->name ?? null }}
-                                                            </span>
+                                                        <div class="mb-3">
+                                                            @include('components.info_admin_treatment')
                                                         </div>
                                                     </td>
+
                                                     <td class="w-40">
-                                                        <p href="" class="font-medium whitespace-nowrap">
-                                                            {{ $item->amount_with_draw ?? null }}
-                                                            {{ $item->sidUser->wallet->currencie->name ?? null }}</p>
+                                                        @include('components.infoRemonteUser')
+
+
+                                                    </td>
+
+
+                                                    <td class="w-40">
+                                                        @include('components.infoRemonteDetailsUser')
+
+                                                    </td>
+                                                    <td class="w-50">
+
+                                                        @include('components.walletBalanceRemonte')
+
                                                     </td>
                                                 </tr>
                                             @endforeach

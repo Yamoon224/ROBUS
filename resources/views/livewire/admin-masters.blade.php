@@ -41,35 +41,36 @@
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
-                        <th class="whitespace-nowrap">Date de création</th>
                         <th class="text-center whitespace-nowrap">Prénom(s) & nom</th>
-                        <th class="text-center whitespace-nowrap">Email & télépone</th>
+                        <th class="text-center whitespace-nowrap">Email & Solde</th>
                         <th class="text-center whitespace-nowrap">Type</th>
-                        <th class="text-center whitespace-nowrap">Rôle</th>
                         <th class="text-center whitespace-nowrap">Statut</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
                 </thead>
                 @foreach ($users as $item)
-                @php
+                    @php
 
-                $old_operators = getOperators($item->id);
+                        $old_operators = getOperators($item->id);
 
-            @endphp
+                    @endphp
                     <tbody>
                         <tr class="intro-x">
-                            <td class="w-35">
-                                <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
+                            <td class="w-60">
+                                <div class="mb-3">
+                                    @include('components.infoUserDetails')
+                                </div>
+                                @include('components.infoDetailsUser')
 
                             </td>
                             <td class="w-60">
 
                                 @if (Auth::guard('web')->user()->hasPermissionTo('voir-couleurs'))
-                                @php
-                                    $solde = $item->wallet->amount ?? 0.0;
-                                @endphp
-                                <div class="barre"
-                                    style="height: 20px; 
+                                    @php
+                                        $solde = $item->wallet->amount ?? 0.0;
+                                    @endphp
+                                    <div class="barre"
+                                        style="height: 20px; 
                                         background-color: 
                                             @if ($solde >= 100000) yellow;
                                             @elseif ($solde >= 50000 && $solde < 100000)
@@ -78,54 +79,33 @@
                                                 red;
                                             @else
                                                 gray; @endif;">
-                                </div>
-                            @endif
-                            
-                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                    <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname }}
-                                        {{ $item->lastname }}</div>
-                                </div>
-                                <div class="text-slate-500  mt-0.5">
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->country->name ?? null }} ville : {{ $item->city->name ?? null }}
-                                    </span>
-                                </div>
-
-                            </td>
-                            <td>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $item->phone }}
-                                </div>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-3">{{ $item->email }}
-                                </div>
-                            </td>
-                            <td>
-
-                                @if ($item->is_master)
-                                    <div class="font-medium whitespace-nowrap">MASTER</div>
-                                @else
-                                    <div class="font-medium whitespace-nowrap">Admin</div>
+                                    </div>
                                 @endif
-                                <div class="text-slate-500  mt-0.5">
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->wallet->wallet_id ?? null }}
-                                    </span>
+
+                                <div class="user-phone mt-6">
+                                    {{ $item->email ?? 'Non renseigné' }}
                                 </div>
-                                <p>Operations : </p>
+
+                            </td>
+                            <td>
+
+                                <div class="user-name">
+                                    {{ $item->wallet->wallet_id ?? null }}
+                                </div>
+                                <p>
+                                    <span class="bg-success w-25 mt-3 text-white fs-5 px-2 py-1 rounded ">
+                                        Operations :
+                                    </span>
+                                </p>
                                 @foreach ($item->operator_services as $opera)
                                     <span
-                                        class="alert alert-success font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        class="alert alert-success mt-6 font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
                                         {{ $opera->operator->name ?? null }}
                                     </span>
                                 @endforeach
                             </td>
 
-                            <td class="text-center w-50">
-                                @foreach ($item->get_role() as $role)
-                                    <span class="m-1 badge badge-info"> {{ $role->name }} </span>
-                                @endforeach
-                            </td>
+
                             <td class="table-report__action w-35">
                                 @if ($item->status == '1')
                                     @if (Auth::guard('web')->user()->hasPermissionTo('active-master'))
@@ -154,14 +134,14 @@
                                 @endif
                             </td>
 
-                            <td class="table-report__action w-30">
-                                <div class="flex mt-4 lg:mt-0">
+                            <td class="w-60">
+                                <div class="flex mt-4 lg:mt-0 mr-6 ml-6">
                                     @if ($item->is_master)
                                         <div class="flex items-start ">
 
                                             <div class="absolute right-0 top-0 mr-5 mt-3 dropdown">
                                                 <h2 class="intro-y text-lg font-medium ">
-                                                    Assigner
+                                                  <i class="fas fa-lock w-3 h-4 mr-2"></i>  Assigner
                                                 </h2>
                                                 <a class="dropdown-toggle w-5 h-5 block" href="javascript:;"
                                                     aria-expanded="false" data-tw-toggle="dropdown"> <svg
@@ -178,22 +158,25 @@
                                                 </a>
 
 
-                                                <div class="dropdown-menu w-50" id="_8vqni2v1b"
+                                                <div class="dropdown-menu w-80" id="_8vqni2v1b"
                                                     data-popper-placement="bottom-end"
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
                                                     <div class="dropdown-content">
                                                         @foreach ($operators as $operator)
+
+                                                         <label
+                                                            class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
                                                             <input
-                                                                wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                                 wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
                                                                 value="{{ $operator->id }}" type="checkbox"
-                                                                class="sid-switch"
-                                                                @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
+                                                                class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors"
+                                                                @if (in_array($operator->id, $old_operators)) checked @endif>
+                                                            <span class="ml-3 text-sm text-slate-700 truncate flex-1">
+                                                                {{ $operator->name ?? 'Non renseigné' }}
+                                                            </span>
+                                                        </label>
 
-
-                                                            <p class="font-assign ">
-                                                                {{ $operator->name ?? null }}
-
-                                                            </p>
+                                                     
                                                         @endforeach
                                                     </div>
                                                 </div>
@@ -203,7 +186,7 @@
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-master'))
                                         <a class="btn btn-primary mr-1 mb-2 btn-sm"
                                             href="{{ route('masters.admins.show', ['id' => $item->id]) }}">
-                                            Voir
+                                            Voir Détails
                                         </a>
                                     @endif
 

@@ -41,7 +41,7 @@
           
             <div class="modal-footer">
                 <button wire:click="resetField" type="button"
-                    class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
+                    class="btn btn-secondary w-20 mr-1">Annuler</button>
                 <button wire:click="submit" type="submit" wire:loading.remove
                     class="btn btn-primary w-20">Modifier</button>
                 <button wire:loading.delay wire:target="submit" wire:click="submit" type="button"

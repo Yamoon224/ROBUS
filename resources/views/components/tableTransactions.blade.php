@@ -13,7 +13,8 @@
                    Info Transactions
                </th>
                <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
-                   Statut </th>
+                   Statut
+               </th>
                <th class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                    Actions
                </th>
@@ -73,12 +74,12 @@
                        <td>
                            @include('components.walletBalanceConvertion')
 
-
                        </td>
                        <td class="w-40">
                            <div class="mb-3">
                                @include('components.info_treatment')
                            </div>
+
                            @if ($item->type_transaction == 'Depot')
                                <span
                                    class="alert alert-success inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none
@@ -123,7 +124,13 @@
                        </td>
 
                        <td class="w-40">
+
+                           <div class="mb-3">
+                               @include('components.infoValidtedUser')
+                           </div>
+
                            @include('components.info_status')
+
                        </td>
                        <td class="w-56">
                            <div class="flex justify-center items-center">

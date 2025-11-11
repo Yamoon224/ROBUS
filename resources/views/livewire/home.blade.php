@@ -1,5 +1,10 @@
 <div>
 
+        <!-- inject:js -->
+    <script src="{{ asset_url('/js/app.js') }}"></script>
+   <script src="{{ asset_url('/css/app.css') }}"></script>
+    <script src="{{ asset_url('/css/appModal.css') }}"></script>
+
     <div class="intro-y col-span-12 lg:col-span-12">
         @if (sabdyHomeVerify())
             <div class="grid grid-cols-12 gap-6">
@@ -792,7 +797,6 @@
                         reload="{{ json_encode($sum_reload) }}" transaction="{{ json_encode($sum_transaction) }}"
                         inter="{{ json_encode($sum_inter) }}" phone="{{ json_encode($sum_phoneCredit) }}"
                         xbet="{{ json_encode($sum_phoneCredit) }}"
-                       
                         push="{{ json_encode($sum_push) }}"
                         djamo="{{ json_encode($sum_djamo) }}"
                         versment="{{ json_encode($sum_versment) }}"

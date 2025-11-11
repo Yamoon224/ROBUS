@@ -70,6 +70,10 @@
             $('#disabled-user_admin-modal').addClass('show');
         });
 
+        Livewire.on('show-disabled-users-modal', () => {
+            $('#disabled-user_unders-modal').removeClass('hide');
+            $('#disabled-user_unders-modal').addClass('show');
+        });
 
         Livewire.on('show-drawals-modal', () => {
             $('#drawal-unders-modal').removeClass('hide');
@@ -146,6 +150,9 @@
             $('#disabled-user_admin-modal').removeClass('show');
             $('#disabled-user_admin-modal').addClass('hide');
 
+              $('#disabled-user_unders-modal').removeClass('show');
+            $('#disabled-user_unders-modal').addClass('hide');
+
             // Levels inter
             $('#create-level-inter-modal').removeClass('show');
             $('#create-level-inter-modal').addClass('hide');
@@ -200,6 +207,13 @@
 
             $('#update-faqs-modal').removeClass('show');
             $('#update-faqs-modal').addClass('hide');
+
+            $('#disabled-pubs-modal').removeClass('show');
+            $('#disabled-pubs-modal').addClass('hide');
+
+
+            $('#delete-pubs-modal').removeClass('show');
+            $('#delete-pubs-modal').addClass('hide');
 
             // Deposit Cost
             $('#create-deposit-modal').removeClass('show');
@@ -2662,6 +2676,16 @@
         Livewire.on('show-disabled-modal', () => {
             $('#disabled-faqs-modal').removeClass('hide');
             $('#disabled-faqs-modal').addClass('show');
+        });
+
+        Livewire.on('show-disabled-pub-modal', () => {
+            $('#disabled-pubs-modal').removeClass('hide');
+            $('#disabled-pubs-modal').addClass('show');
+        });
+
+         Livewire.on('show-deleted-pub-modal', () => {
+            $('#delete-pubs-modal').removeClass('hide');
+            $('#delete-pubs-modal').addClass('show');
         });
 
         Livewire.on('show-disabled-card-modal', () => {

@@ -39,7 +39,7 @@
 
                 <div class="px-5 pb-8 text-center mt-6">
                       <button wire:click="cancelConnectedField" type="button"
-                    class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
+                    class="btn btn-secondary w-20 mr-1">Annuler</button>
 
                     <input wire:click="connectedOneCompanie" wire:loading.remove type="button"
                         class="btn btn-danger  w-25 mr-1 mb-1"

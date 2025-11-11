@@ -21,7 +21,12 @@
                         <canvas id="sum" virement="{{ json_encode($sum_bank) }}"
                             deposit="{{ json_encode($sum_deposit) }}" payment="{{ json_encode($sum_payment) }}"
                             reload="{{ json_encode($sum_reload) }}" transaction="{{ json_encode($sum_transaction) }}"
-                            inter="{{ json_encode($sum_inter) }}" phone="{{ json_encode($sum_phoneCredit) }}"></canvas>
+                            inter="{{ json_encode($sum_inter) }}" phone="{{ json_encode($sum_phoneCredit) }}"
+                            xbet="{{ json_encode($sum_phoneCredit) }}" 
+                            push="{{ json_encode($sum_push) }}"
+                            djamo="{{ json_encode($sum_djamo) }}" 
+                            versment="{{ json_encode($sum_versment) }}"
+                            tresort="{{ json_encode($sum_tresortMoney) }}"></canvas>
 
                     </div>
                 </div>
@@ -569,8 +574,8 @@
                                     <div class="ml-auto">{{ $djamo->created_at ?? null }}</div>
                                 </div>
                             @endforeach
-                            <a style="color: white;" href="{{ route('djamos.historical') }}"
-                                class="btn btn-outline-secondary w-full border-slate-300  border-dashed relative justify-start mb-2">
+                            <a href="{{ route('djamos.historical') }}"
+                                class="btn btn-outline-secondary text-black w-full border-slate-300  border-dashed relative justify-start mb-2">
                                 <span class="truncate mr-5">Voir plus</span>
                                 <span
                                     class="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
@@ -1027,9 +1032,9 @@
                                 <div class="ml-auto">{{ $djamo->created_at ?? null }}</div>
                             </div>
                         @endforeach
-                        <a style="color: white;" href="{{ route('djamos.historical') }}"
-                            class="btn btn-outline-secondary w-full border-slate-300  border-dashed relative justify-start mb-2">
-                            <span class="truncate mr-5">Voir plus</span>
+                        <a href="{{ route('djamos.historical') }}"
+                            class="btn btn-outline-secondary text-black w-full border-slate-300  border-dashed relative justify-start mb-2">
+                            <span class="truncate mr-5 text-black">Voir plus</span>
                             <span
                                 class="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -1057,6 +1062,11 @@
             var sumTransaction = JSON.parse($('#sum').attr('transaction'));
             var sumInter = JSON.parse($('#sum').attr('inter'));
             var sumPhone = JSON.parse($('#sum').attr('phone'));
+            var sumXbet = JSON.parse($('#sum').attr('xbet'));
+            var sumPush = JSON.parse($('#sum').attr('push'));
+            var sumDjamo = JSON.parse($('#sum').attr('djamo'));
+            var sumVersment = JSON.parse($('#sum').attr('versment'));
+            var sumTresort = JSON.parse($('#sum').attr('tresort'));
             var _ctx = $('#sum');
 
             new Chart(_ctx, {
@@ -1069,32 +1079,47 @@
                         'Rechargement',
                         'Transactions',
                         'Inters',
-                        'Credits'
+                        'Credits',
+                        '1Xbet',
+                        'Push',
+                        'Djamo',
+                        'Versement',
+                        'Tresort',
                     ],
                     datasets: [{
 
                         label: 'Activites',
-                        data: [sumVirement, sumDeposit, sumPayment, sumReload, sumTransaction, sumInter,
-                            sumPhone
+                        data: [sumVirement, sumDeposit, sumPayment, sumReload,
+                            sumTransaction, sumInter, sumPhone, sumXbet, sumPush, sumDjamo, sumVersment,
+                            sumTresort
                         ],
                         backgroundColor: [
-                            '#84cc17',
-                            '#f97417',
-                            '#ff0101',
-                            '#ff0000',
-                            '#ff6384',
-                            '#b5048f',
-                            '#FFFF00'
-
+                            '#84cc17', // ✅ sumVirement → vert clair
+                            '#f97417', // ✅ sumDeposit → orange vif
+                            '#ff0101', // ✅ sumPayment → rouge
+                            '#e11d48', // ✅ sumReload → rouge rosé
+                            '#ff6384', // ✅ sumTransaction → rose clair
+                            '#b5048f', // ✅ sumInter → violet
+                            '#facc15', // ✅ sumPhone → jaune
+                            '#3b82f6', // ✅ sumXbet → bleu moyen
+                            '#14b8a6', // ✅ sumPush → turquoise
+                            '#9333ea', // ✅ sumDjamo → violet profond
+                            '#a855f7', // ✅ sumVersment → mauve clair
+                            '#0ea5e9' // ✅ sumTresort → bleu ciel
                         ],
                         borderColor: [
-                            '#84cc17',
-                            '#f97417',
-                            '#ff0101',
-                            '#ff0000',
-                            '#ff6384',
-                            '#b5048f',
-                            '#FFFF00'
+                            '#84cc17', // ✅ sumVirement → vert clair
+                            '#f97417', // ✅ sumDeposit → orange vif
+                            '#ff0101', // ✅ sumPayment → rouge
+                            '#e11d48', // ✅ sumReload → rouge rosé
+                            '#ff6384', // ✅ sumTransaction → rose clair
+                            '#b5048f', // ✅ sumInter → violet
+                            '#facc15', // ✅ sumPhone → jaune
+                            '#3b82f6', // ✅ sumXbet → bleu moyen
+                            '#14b8a6', // ✅ sumPush → turquoise
+                            '#9333ea', // ✅ sumDjamo → violet profond
+                            '#a855f7', // ✅ sumVersment → mauve clair
+                            '#0ea5e9' // ✅ sumTresort → bleu ciel
                         ],
                         borderWidth: 1,
                     }]

@@ -14,42 +14,44 @@
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
 
-     
+
             <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
-                    <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par pays</label>
-                    <select id="countriesFilter" wire:model="countriesFilter"
-                    class="form-select py-3 px-4 box w-100"
-                    aria-placeholder="Rechercher par pays">
-                    <option value="" selected>Rechercher par pays</option> @foreach ($countries as $country)
-                        <option value="{{ $country->id }}">{{ $country->name }}</option>
-                    @endforeach
-                </select>
+                    <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par
+                        pays</label>
+                    <select id="countriesFilter" wire:model="countriesFilter" class="form-select py-3 px-4 box w-100"
+                        aria-placeholder="Rechercher par pays">
+                        <option value="" selected>Rechercher par pays</option>
+                        @foreach ($countries as $country)
+                            <option value="{{ $country->id }}">{{ $country->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                     <label for="citiesFilter" class="text-gray-700 text-sm font-bold mb-2">Filtrer par ville</label>
-                    <select id="citiesFilter" wire:model="citiesFilter"
-                    class="form-select py-3 px-4 box w-100"
-                    aria-placeholder="Rechercher par ville"
-                    @if(empty($cities)) disabled @endif> <option value="" selected>Rechercher par ville</option> @foreach ($cities as $city)
-                        <option value="{{ $city->id }}">{{ $city->name }}</option>
-                    @endforeach
-                </select>
+                    <select id="citiesFilter" wire:model="citiesFilter" class="form-select py-3 px-4 box w-100"
+                        aria-placeholder="Rechercher par ville" @if (empty($cities)) disabled @endif>
+                        <option value="" selected>Rechercher par ville</option>
+                        @foreach ($cities as $city)
+                            <option value="{{ $city->id }}">{{ $city->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="hidden md:block mx-auto text-slate-500"></div>
             <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
                 <div class="w-full sm:w-auto mt-3 sm:mt-0 md:ml-0">
-                    <label for="cityNameSearch" class="block text-gray-700 text-sm font-bold mb-2">Rechercher par nom des zones</label>
+                    <label for="cityNameSearch" class="block text-gray-700 text-sm font-bold mb-2">Rechercher par nom
+                        des zones</label>
                     <input type="text" id="cityNameSearch" wire:model.live.debounce.300ms="cityNameSearch"
-                           placeholder="Saisir le nom d'une ville..."
-                           class="form-input py-3 px-4 box w-full rounded-md border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500">
+                        placeholder="Saisir le nom d'une ville..."
+                        class="form-input py-3 px-4 box w-full rounded-md border border-gray-300 focus:ring focus:ring-blue-200 focus:border-blue-500">
                 </div>
             </div>
-            
+
             <div class="hidden md:block ml-8 text-slate-500"></div>
             <div class="mt-3 input-group input-group-md" style="margin-top: 13px;width: 250px;">
                 <div class="w-56 relative text-slate-500">
@@ -65,11 +67,10 @@
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
-                        <th class="whitespace-nowrap">Date de création</th>
                         <th class="text-center whitespace-nowrap">Prénom(s) & nom</th>
                         <th class="text-center whitespace-nowrap">Email & télépone</th>
                         <th class="text-center whitespace-nowrap">Type</th>
-                        <th class="text-center whitespace-nowrap">Rôle</th>
+                        <th class="text-center whitespace-nowrap">Liaison</th>
                         <th class="text-center whitespace-nowrap">Statut</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -81,91 +82,33 @@
                             $old_operators = getOperators($item->id);
                         @endphp
                         <tr class="intro-x">
-                            <td class="w-35">
-                                <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
-
-                            </td>
                             <td class="w-60">
-
-                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                    <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname }}
-                                        {{ $item->lastname }}</div>
+                                <div class="mb-3">
+                                    @include('components.infoUserDetails')
                                 </div>
-                                <div class="text-slate-500  mt-0.5">
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->country->name ?? null }} ville : {{ $item->city->name ?? null }}
-                                    </span>
-                                </div>
-
-
-                                @if ($item->company_id != null && $item->company_id != 1)
-                                    <div class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
-
-                                        @if ($item->is_accepted_companie)
-                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                <div class="flex items-center justify-center text-success">
-                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
-                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
-                                                        href="javascript:;" wire:loading.attr="disabled"
-                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
-                                                        Déja attribuer a
-                                                        {{ $item->company_id != null ? $item->company->name : null }}
-                                                    </a>
-                                                </div>
-                                                <div class="flex items-center justify-center text-pending mt-3">
-                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-desactive-company-modal'); $emit('show-desactive-company-modal')"
-                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
-                                                        href="javascript:;" wire:loading.attr="disabled"
-                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
-                                                        Rétirer a
-                                                        {{ $item->company_id != null ? $item->company->name : null }}
-                                                    </a>
-                                                </div>
-                                            @endif
-                                        @else
-                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                <div class="flex items-center justify-center text-danger">
-                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
-                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
-                                                        href="javascript:;"
-                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
-                                                        Attribution en attente
-                                                    </a>
-
-                                                </div>
-                                            @endif
-                                        @endif
-
-
-                                    </div>
-                                @else
-                                    @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                        <div class="flex items-center justify-center text-primary ">
-
-                                            <a wire:click="addConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
-                                                class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
-                                                href="javascript:;" wire:loading.attr="disabled"
-                                                title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
-                                                Lié a une compagnie
-                                            </a>
-
-                                        </div>
-                                    @endif
-                                @endif
+                                @include('components.infoDetailsUser')
 
                             </td>
-                            <td>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $item->phone }}
+                            <td class="w-40">
+
+                                <div class="user-name">
+                                    {{ $item->phone ?? '' }}
                                 </div>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-3">{{ $item->email }}
+                                <div class="user-name mt-3">
+                                    {{ $item->email ?? '' }}
                                 </div>
-                                <p class="mt-3">Commissions : </p>
+
+                                <p>
+                                    <span class="bg-success w-25 text-white fs-5 px-2 py-1 rounded">
+                                        Commissions :
+                                    </span>
+                                </p>
+
 
                                 @foreach ($item->operator_services as $operator)
                                     @if ($operator->operator->is_commission)
                                         <span
-                                            class="alert alert-success text-white font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            class="alert mt-3 alert-success text-white font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
                                             {{ $operator->operator->name ?? null }}
                                         </span>
                                     @endif
@@ -190,18 +133,13 @@
                                 @endif
 
                                 @if ($item->is_under_distributer)
-                                    <div class="font-medium whitespace-nowrap">
-                                        <p class="font-medium whitespace-nowrap"> Sous-distributeur</p>
+                                    <div class="user-name">
+                                        {{ $item->wallet->wallet_id ?? null }}
                                     </div>
 
-                                    <div class="text-slate-500  mt-0.5">
-
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                    <p>Operations : </p>
+                                    <span class="bg-success w-25 text-white fs-5 px-2 py-1 rounded">
+                                        Operations :
+                                    </span>
 
                                     @foreach ($item->operator_services as $operator)
                                         @if ($operator->operator->is_under)
@@ -223,25 +161,78 @@
 
                             </td>
 
-                            <td class="text-center w-50">
+                            <td class="w-60">
 
+                                @if ($item->company_id != null && $item->company_id != 1)
+                                    <div
+                                        class="text-center  border-t border-slate-200/60 dark:border-darkmode-400 mt-3">
+
+                                        @if ($item->is_accepted_companie)
+                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                <div class="flex items-center justify-center text-success">
+                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
+                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
+                                                        href="javascript:;" wire:loading.attr="disabled"
+                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
+                                                        Déja attribuer a
+                                                    </a>
+                                                </div>
+                                                <div class="user-badge user-badge--compagnie">
+                                                    {{ $item->company_id != null ? $item->company->name : null }}
+                                                </div>
+                                                <div class="flex items-center justify-center text-pending mt-3 mb-3">
+                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-desactive-company-modal'); $emit('show-desactive-company-modal')"
+                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
+                                                        href="javascript:;" wire:loading.attr="disabled"
+                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
+                                                        Rétirer a
+                                                        {{ $item->company_id != null ? $item->company->name : null }}
+                                                    </a>
+                                                </div>
+                                            @endif
+                                        @else
+                                            @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                                <div class="flex items-center justify-center text-danger">
+                                                    <a wire:click="editConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
+                                                        class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
+                                                        href="javascript:;"
+                                                        title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
+                                                        Attribution en attente
+                                                    </a>
+
+                                                </div>
+                                            @endif
+                                        @endif
+
+                                    </div>
+                                @else
+                                    @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
+                                        <div class="flex items-center justify-center text-primary mt-3">
+
+                                            <a wire:click="addConnectedCompanie({{ $item->id }}, 'show-connected-company-modal'); $emit('show-connected-company-modal')"
+                                                class="flex items-center mr-3 @if ($item->is_accepted_companie == 1) @else @endif"
+                                                href="javascript:;" wire:loading.attr="disabled"
+                                                title="@if ($item->is_accepted_companie == 1) Désactiver @else Activer @endif">
+                                                Lié a une compagnie
+                                            </a>
+
+                                        </div>
+                                    @endif
+                                @endif
                                 @if ($item->get_role() != '[]')
                                     @foreach ($item->get_role() as $role)
                                         @if ($role->id == 4)
                                             @if ($item->master_id != null)
-                                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                                    <p>MASTER :</p>
-                                                    <div class="text-slate-300 text-xs  mt-2">
+                                                <div class="text-slate-300 text-xs  mt-0.5 mb-2 mt-3">
+                                                    <div class="user-badge user-badge--distributor">
+                                                        Master
+                                                    </div>
+
+                                                    <div class="user-name">
                                                         {{ $item->master_id != null ? $item->master->firstname . ' ' . $item->master->lastname : null }}
                                                     </div>
                                                 </div>
-                                                <div class="text-slate-500  mt-0.5">
-                                                    <span
-                                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                        {{ $item->country->name ?? null }} ville :
-                                                        {{ $item->city->name ?? null }}
-                                                    </span>
-                                                </div>
+
                                                 <div
                                                     class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
 
@@ -279,7 +270,7 @@
                                                 </div>
                                             @else
                                                 @if (Auth::guard('web')->user()->hasPermissionTo('liaison-master'))
-                                                    <div class="flex items-center justify-center text-primary ">
+                                                    <div class="flex items-center justify-center text-primary mt-3">
 
                                                         <a wire:click="addConnected({{ $item->id }}, 'show-connected-master-modal'); $emit('show-connected-master-modal')"
                                                             class="flex items-center mr-3 @if ($item->is_accepted == 1) @else @endif"
@@ -292,22 +283,16 @@
                                                 @endif
                                             @endif
                                         @endif
-                                        <span class="m-1 badge badge-info mt-2"> {{ $role->name }} </span>
                                     @endforeach
                                 @else
                                     @if ($item->master_id != null)
                                         <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                            <p>MASTER :</p>
-                                            <div class="text-slate-300 text-xs  mt-2">
+                                            <div class="user-badge user-badge--distributor">
+                                                Master
+                                            </div>
+                                            <div class="text-slate-300 text-xs mt-2">
                                                 {{ $item->master_id != null ? $item->master->firstname . ' ' . $item->master->lastname : null }}
                                             </div>
-                                        </div>
-                                        <div class="text-slate-500  mt-0.5">
-                                            <span
-                                                class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->country->name ?? null }} ville :
-                                                {{ $item->city->name ?? null }}
-                                            </span>
                                         </div>
                                         <div
                                             class="text-center  border-t border-slate-200/60 dark:border-darkmode-400">
@@ -362,7 +347,7 @@
                                 @endif
 
                             </td>
-                            <td class="table-report__action w-35">
+                            <td class="w-40">
                                 @if ($item->is_under_distributer)
                                     <div class="flex items-start ">
                                         <div class="absolute  top-0 mr-5 mt-3 dropdown">
@@ -383,22 +368,23 @@
 
                                             </a>
 
-                                            <div class="dropdown-menu w-50" id="_8vqni2v1b"
+                                            <div class="dropdown-menu w-90" id="_8vqni2v1b"
                                                 data-popper-placement="bottom-end"
-                                                style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
-                                                <div class="dropdown-content">
+                                                style="position: absolute; inset: 0px 0px auto auto; margin: 0px; width: 30% !import; transform: translate(0px, 20px);">
+                                                <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
+
                                                     @foreach ($operatorsCommissions as $operator)
-                                                        <input
-                                                            wire:click="editUpdateCommission({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
-                                                            value="{{ $operator->id }}" type="checkbox"
-                                                            class="sid-switch"
-                                                            @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
-
-
-                                                        <p class="text-slate-500 text-xs  mt-0.5">
-                                                            {{ $operator->name ?? null }}
-
-                                                        </p>
+                                                        <label
+                                                            class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                                                            <input
+                                                                wire:click="editUpdateCommission({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                                value="{{ $operator->id }}" type="checkbox"
+                                                                class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors"
+                                                                @if (in_array($operator->id, $old_operators)) checked @endif>
+                                                            <span class="ml-3 text-sm text-slate-700 truncate flex-1">
+                                                                {{ $operator->name ?? 'Non renseigné' }}
+                                                            </span>
+                                                        </label>
                                                     @endforeach
                                                 </div>
                                             </div>
@@ -409,10 +395,10 @@
                                     @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
                                         <div class="flex items-center justify-center text-success">
 
-                                            <a class="flex items-center mr-3"
-                                                href="{{ route('custumers.activate', ['id' => $item->id]) }}"
-                                                data-message="Etes vous sûr de vouloir effectuer cette action ?"
-                                                onclick="promptAlert(this)">
+                                            <a wire:click="edit({{ $item->id }}, 'show-disabled-users-modal'); $emit('show-disabled-users-modal')"
+                                                class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
+                                                href="javascript:;"
+                                                title="@if ($item->status == 1) Désactiver @else Activer @endif">
                                                 <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> Activé
                                             </a>
 
@@ -422,10 +408,10 @@
                                     @if (Auth::guard('web')->user()->hasPermissionTo('activer-administrateur'))
                                         <div class="flex items-center justify-center text-danger">
 
-                                            <a class="flex items-center mr-3"
-                                                href="{{ route('custumers.activate', ['id' => $item->id]) }}"
-                                                data-message="Etes vous sûr de vouloir effectuer cette action ?"
-                                                onclick="promptAlert(this)">
+                                            <a wire:click="edit({{ $item->id }}, 'show-disabled-users-modal'); $emit('show-disabled-users-modal')"
+                                                class="flex items-center mr-3 @if ($item->status == 1) @else @endif"
+                                                href="javascript:;"
+                                                title="@if ($item->status == 1) Désactiver @else Activer @endif">
                                                 <i class="fas fa-lock w-4 h-4 mr-2"></i>Désactivé
                                             </a>
 
@@ -433,7 +419,7 @@
                                     @endif
                                 @endif
                             </td>
-                            <td class="table-report__action w-30">
+                            <td class="w-60">
                                 <div class="flex mt-4 lg:mt-0">
                                     @if ($item->is_under_distributer)
                                         <div class="flex items-start mb-3">
@@ -458,22 +444,22 @@
 
                                                 </a>
 
-                                                <div class="dropdown-menu w-50" id="_8vqni2v1b"
-                                                    data-popper-placement="bottom-end"
-                                                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
-                                                    <div class="dropdown-content">
+                                                <div class="dropdown-menu w-90" data-popper-placement="bottom-end"
+                                                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px); width: 400px; z-index:50;">
+                                                    <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
                                                         @foreach ($operators as $operator)
-                                                            <input
-                                                                wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
-                                                                value="{{ $operator->id }}" type="checkbox"
-                                                                class="sid-switch"
-                                                                @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
-
-
-                                                            <p class="text-slate-500 text-xs  mt-0.5">
-                                                                {{ $operator->name ?? null }}
-
-                                                            </p>
+                                                            <label
+                                                                class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                                                                <input
+                                                                    wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                                    value="{{ $operator->id }}" type="checkbox"
+                                                                    class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors"
+                                                                    @if (in_array($operator->id, $old_operators)) checked @endif>
+                                                                <span
+                                                                    class="ml-3 text-sm text-slate-700 truncate flex-1">
+                                                                    {{ $operator->name ?? 'Non renseigné' }}
+                                                                </span>
+                                                            </label>
                                                         @endforeach
                                                     </div>
                                                 </div>
@@ -498,7 +484,7 @@
                                         @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
                                             <a class="btn btn-primary mr-1 mb-2 btn-sm"
                                                 href="{{ route('unders.admins.show', ['id' => $item->id]) }}">
-                                                Voir
+                                                Voir Détails
                                             </a>
                                         @endif
 
@@ -524,6 +510,7 @@
         </nav>
     </div>
     @include('livewire.modals.disabledUsers')
+    @include('livewire.modals.disabledUnderUsers')
     @include('livewire.modals.connectedUnders')
     @include('livewire.modals.connectedOneUnderDistributors')
     @include('livewire.modals.connectedCompanyUnders')

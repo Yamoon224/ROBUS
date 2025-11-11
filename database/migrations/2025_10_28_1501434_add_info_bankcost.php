@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('versement_percents', function (Blueprint $table) {
-            $table->string('description')->nullable();
+        Schema::table('pubs', function (Blueprint $table) {
+            $table->boolean('status')->default(true);
         });
     }
 
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('versement_percents', function (Blueprint $table) {
+        Schema::table('pubs', function (Blueprint $table) {
             //
         });
     }

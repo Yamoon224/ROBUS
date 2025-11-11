@@ -376,7 +376,7 @@ class Historique extends Component
             'sum_bank' =>  $bank_amount,
             'sum_versment' =>  $versement_amount,
             'sum_push' =>  $push_amount,
-            'sum_tresort' =>  $tresort_amount,
+            'sum_tresortMoney' =>  $tresort_amount,
             'sum_djamo' =>  $djamo_amount,
             'sum_deposit' => $deposit_amount,
             'sum_payment' => $payement_amount,

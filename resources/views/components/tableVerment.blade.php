@@ -82,6 +82,10 @@
                       </td>
 
                       <td class="w-40">
+                         <div class="mb-3">
+                               @include('components.infoValidtedUser')
+                           </div>
+
                           @include('components.info_status')
 
                       </td>

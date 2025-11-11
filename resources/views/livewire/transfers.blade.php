@@ -950,8 +950,6 @@
     @include('livewire.commissions.modals.transactions.updatePush')
     @include('livewire.commissions.modals.transactions.updateTresort')
     @include('livewire.commissions.modals.transactions.updateDjamo')
-    {{-- @include('livewire.commissions.modals.transactions.updateWave') --}}
-    {{-- @include('livewire.commissions.modals.transactions.updateXbet') --}}
     @include('livewire.commissions.modals.transactions.updatePaiementInvoice')
     @include('livewire.commissions.modals.transactions.addPhoneCredit')
     @include('livewire.commissions.modals.transactions.addOneXbet')

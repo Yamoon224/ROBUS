@@ -9,6 +9,10 @@ use App\Models\Wallets\WalletDeposit;
 use App\Models\Wallets\WalletInter;
 use App\Models\Wallets\WalletPayment;
 use App\Models\Wallets\WalletPhoneCredit;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Wallets\WalletVersement;
+use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Notifications\AdminNotification;
@@ -28,18 +32,46 @@ class TotalAmoutUserServiveBackend
     public function getSumValTransactionProperty()
     {
 
-        $somm_valeur = $this->getWalletBanksCeilingProperty()
-            + $this->getWalletDepositsCeilingProperty()
-            + $this->getWalletIntersCeilingProperty()
-            + $this->getWalletPaymentsCeilingProperty()
-            + $this->getWalletTransactionsCeilingProperty()
-            + $this->getWalletPhoneCreditsCeilingProperty()
-            + $this->getWalletReloadsCeilingProperty()
+        $somm_valeur = $this->getWalletCeilingProperty(WalletBank::class, 'wallet_banks.wallet_id' ,'wallet_banks.created_by' ,'wallet_banks.created_at' ,'wallet_banks.*' ,  'wallet_banks.status')
+            + $this->getWalletCeilingProperty(WalletDeposit::class, 'wallet_deposits.wallet_id' ,'wallet_deposits.created_by' ,'wallet_deposits.created_at' ,'wallet_deposits.*' ,  'wallet_deposits.status')
+            +  $this->getWalletCeilingProperty(WalletInter::class, 'wallet_inters.wallet_id' ,'wallet_inters.created_by' ,'wallet_inters.created_at' ,'wallet_inters.*' ,  'wallet_inters.status')
+            + $this->getWalletCeilingProperty(WalletPayment::class, 'wallet_payments.wallet_id' ,'wallet_payments.created_by' ,'wallet_payments.created_at' ,'wallet_payments.*' ,  'wallet_payments.status')
+            + $this->getWalletCeilingProperty(WalletTransaction::class, 'wallet_transactions.wallet_id' ,'wallet_transactions.created_by' ,'wallet_transactions.created_at' ,'wallet_transactions.*' ,  'wallet_transactions.status')
+            +  $this->getWalletCeilingProperty(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id' ,'wallet_phone_credits.created_by' ,'wallet_phone_credits.created_at' ,'wallet_phone_credits.*' ,  'wallet_phone_credits.status')
+            +$this->getWalletCeilingProperty(WalletPush::class, 'wallet_pushes.wallet_id' ,'wallet_pushes.created_by' ,'wallet_pushes.created_at' ,'wallet_pushes.*' ,  'wallet_pushes.status')
+            +$this->getWalletCeilingProperty(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id' ,'wallet_tresort_money.created_by' ,'wallet_tresort_money.created_at' ,'wallet_tresort_money.*' ,  'wallet_tresort_money.status')
+            + $this->getWalletCeilingProperty(WalletVersement::class, 'wallet_versements.wallet_id' ,'wallet_versements.created_by' ,'wallet_versements.created_at' ,'wallet_versements.*' ,  'wallet_versements.status')
+            + $this->getWalletCeilingProperty(WalletDjamo::class, 'wallet_djamos.wallet_id' ,'wallet_djamos.created_by' ,'wallet_djamos.created_at' ,'wallet_djamos.*' ,  'wallet_djamos.status')
             + $this->getWalletBankCardCeilingProperty();
-            
+
         return $somm_valeur;
     }
 
+
+    public function getWalletCeilingProperty($walletClass, string $walletWalletId, string $walletCreatedBy, string $walletCreatedAt, string $allWallet, string $walletStatus)
+    {
+        $data = [];
+        foreach (
+            $walletClass::join('wallets', $walletWalletId, 'wallets.id')
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    $walletCreatedBy,
+                    sabdy()->id
+                )
+                ->whereDate($walletCreatedAt, Carbon::today())
+                ->select($allWallet)
+                ->where($walletStatus, 'SUCCESS')
+                ->get()
+            as $bank
+        ) {
+            $data[] = $bank->amount;
+        }
+
+        return array_sum($data);
+    }
     public function getNationTransactionProperty()
     {
         $walletUser = Auth::guard('web')->user();
@@ -200,155 +232,6 @@ class TotalAmoutUserServiveBackend
         return array_sum($data);
     }
 
-    public function getWalletDepositsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletDeposit::join(
-                'wallets',
-                'wallet_deposits.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_deposits.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_deposits.created_at', Carbon::today())
-                ->select('wallet_deposits.*')
-                ->where('wallet_deposits.status', 'SUCCESS')
-                ->get()
-            as $deposit
-        ) {
-            $data[] = $deposit->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletIntersCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletInter::join(
-                'wallets',
-                'wallet_inters.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_inters.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_inters.created_at', Carbon::today())
-                ->select('wallet_inters.*')
-                ->where('wallet_inters.status', 'SUCCESS')
-                ->get()
-            as $inter
-        ) {
-            $data[] = $inter->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPaymentsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletPayment::join(
-                'wallets',
-                'wallet_payments.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_payments.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_payments.created_at', Carbon::today())
-                ->select('wallet_payments.*')
-                ->where('wallet_payments.status', 'SUCCESS')
-                ->get()
-            as $payment
-        ) {
-            $data[] = $payment->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletTransaction::join(
-                'wallets',
-                'wallet_transactions.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_transactions.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_transactions.created_at', Carbon::today())
-                ->select('wallet_transactions.*')
-                ->where('wallet_transactions.status', 'SUCCESS')
-                ->get()
-            as $transaction
-        ) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPhoneCreditsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletPhoneCredit::join(
-                'wallets',
-                'wallet_phone_credits.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_phone_credits.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-                ->select('wallet_phone_credits.*')
-                ->where('wallet_phone_credits.status', 'SUCCESS')
-                ->get()
-            as $phone
-        ) {
-            $data[] = $phone->amount;
-        }
-
-        return array_sum($data);
-    }
 
     public function getWalletBankCardCeilingProperty()
     {
@@ -363,28 +246,5 @@ class TotalAmoutUserServiveBackend
         return array_sum($data);
     }
 
-    public function getWalletReloadsCeilingProperty()
-    {
-        $data = [];
 
-        foreach (
-            WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )->where(
-                    'wallet_reloads.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_reloads.created_at', Carbon::today())
-                ->select('wallet_reloads.*')
-                ->where('wallet_reloads.status', 'SUCCESS')
-                ->get()
-            as $reload
-        ) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
-    }
 }

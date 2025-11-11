@@ -14,6 +14,7 @@ use App\Models\ArgentTresort;
 use App\Models\Invoices\OneBetInvoice;
 use App\Models\Invoices\AutherTransactionInvoice;
 use App\Models\Payments\AutherTransaction;
+use App\Models\Sid\SidUser;
 
 class WalletTresortMoney extends Model
 {
@@ -38,6 +39,10 @@ class WalletTresortMoney extends Model
     ];
 
  
+   public function updatedByUser()
+    {
+        return $this->belongsTo(SidUser::class, 'updated_by', 'id');
+    }
 
     public function provider()
     {

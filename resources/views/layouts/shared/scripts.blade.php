@@ -17,7 +17,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <!-- End plugin js for this page -->
 <!-- inject:js -->
-<script src="{{ asset('js/script.js') }}"></script>
+{{-- <script src="{{ asset('js/script.js') }}"></script> --}}
 <script src="{{ asset('js/app.js') }}"></script>
 
 <script src="https://kit.fontawesome.com/612bf07328.js" crossorigin="anonymous"></script>

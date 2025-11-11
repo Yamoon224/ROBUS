@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
+use App\Models\Sid\SidUser;
 
 class WalletWave extends Model
 {
@@ -37,6 +38,10 @@ class WalletWave extends Model
     ];
 
 
+   public function updatedByUser()
+    {
+        return $this->belongsTo(SidUser::class, 'updated_by', 'id');
+    }
 
     public function provider()
     {

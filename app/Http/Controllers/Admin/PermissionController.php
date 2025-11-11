@@ -60,6 +60,16 @@ class PermissionController extends Controller
     }
 
 
+    public function edit_pubs(int $id)
+    {
+        if (!Auth::user()->hasPermissionTo('publicite')) {
+            abort(403);
+        }
+
+        $pubs = Pub::find($id);;
+
+        return view('pages.admin.edit_pubs', compact('pubs'));
+    }
     public function search(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -87,6 +97,61 @@ class PermissionController extends Controller
         return view('pages.admin.permissions.add', compact('features'));
     }
 
+    public function store_one_pubs($id, Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:4096',
+            'message' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('color', 'danger')
+                ->with('status', 'Veuillez corriger les erreurs avant de continuer.');
+        }
+
+        $pub = Pub::whereId($id)->first();
+
+        if (!$pub) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Les informations sur la publicité sont introuvables.');
+        }
+
+
+        $file_front = $request->file('image');
+
+        if ($file_front) {
+            $userName = Str::slug(Auth::user()->firstname);
+            $destination_path = public_path("pubs/{$userName}/");
+
+            // Crée le dossier s'il n'existe pas
+            if (!File::exists($destination_path)) {
+                File::makeDirectory($destination_path, 0755, true);
+            }
+
+            $front_file = date('YmdHis') . '.' . $file_front->getClientOriginalExtension();
+            $file_front->move($destination_path, $front_file);
+
+            // ✅ URL publique (sans "public/")
+            $imageUrl = url("pubs/{$userName}/{$front_file}");
+
+            // ✅ Enregistrement
+            $pub->Update([
+                'title' => $request->title,
+                'images' => $imageUrl,
+                'messages' => $request->message,
+            ]);
+
+            return redirect()
+                ->route('pubs.browse')
+                ->with('color', 'success')
+                ->with('status', 'La publicité a été modifiée avec succès.');
+        }
+    }
     public function store_one_messages($id, Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -169,7 +234,7 @@ class PermissionController extends Controller
             $imageUrl = url("pubs/{$userName}/{$front_file}");
 
             // ✅ Enregistrement
-             Pub::create([
+            Pub::create([
                 'title' => $request->title,
                 'images' => $imageUrl,
                 'messages' => $request->message,

@@ -75,10 +75,9 @@
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
-                        <th class="whitespace-nowrap">Date de création</th>
                         <th class="text-center whitespace-nowrap">Nom</th>
-                        <th class="text-center whitespace-nowrap">Email & télépone</th>
-                        <th class="text-center whitespace-nowrap">Rôle</th>
+                        <th class="text-center whitespace-nowrap">Solde & Forfait</th>
+                        <th class="text-center whitespace-nowrap">Commissions</th>
                         <th class="text-center whitespace-nowrap">Statut</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -92,7 +91,10 @@
 
                         <tr class="intro-x">
                             <td class="w-35">
-                                <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
+                                <div class="mb-3">
+                                    @include('components.infoUserDetails')
+                                </div>
+                                @include('components.infoDetailsCompany')
 
                             </td>
                             <td class="w-50">
@@ -112,16 +114,8 @@
                                                 gray; @endif;">
                                     </div>
                                 @endif
-                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                    <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname ?? null }}</div>
-                                </div>
-                                <div class="text-slate-500  mt-0.5">
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->country->name ?? null }} ville : {{ $item->city->name ?? null }}
-                                    </span>
-                                </div>
-                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
+
+                                <div class="text-slate-300 text-xs w-60  mt-0.5 mb-2 mt-3">
                                     <span
                                         class="alert alert-success  inline-flex items-center text-white justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
 
@@ -130,56 +124,17 @@
 
                                 </div>
                             </td>
-                            <td>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $item->phone }}
-                                </div>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-3">{{ $item->email }}
-                                </div>
-                            </td>
-                            <td>
-                                @if ($item->is_custumers == '1')
-                                    <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5 mb-2">
-                                        <p class="font-medium whitespace-nowrap">Client</p>
-                                    </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_distributer == true)
-                                    <div class="font-medium whitespace-nowrap">
-                                        <p class="font-medium whitespace-nowrap">Distributeur </p>
-                                    </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_under_distributer == true)
-                                    <div class="font-medium whitespace-nowrap">
-                                        <p class="font-medium whitespace-nowrap"> Sous-distributeur</p>
-                                    </div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @elseif($item->is_company == true)
-                                    <div class="font-medium whitespace-nowrap">Sociéte</div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
-                                    </div>
-                                @endif
-                                <p>Commissions Ouverte : </p>
+                            <td class="w-80">
+
+                                <p>
+                                    <span class="bg-success w-25 text-white fs-5 px-2 py-1 rounded mb-3">
+                                        Commissions Ouverte :
+                                    </span>
+                                </p>
+
                                 @foreach ($item->operator_services as $opera)
                                     <span
-                                        class="alert alert-success text-white  font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        class="alert alert-success text-white  font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 mt-3 rounded">
                                         {{ $opera->operator->name ?? null }}
                                     </span>
                                 @endforeach
@@ -213,7 +168,7 @@
                                 @endif
                             </td>
 
-                            <td class="table-report__action w-30">
+                            <td class="w-60">
                                 <div class="flex justify-center items-center">
                                     @if ($item->is_company)
                                         <div class="flex items-start ">
@@ -237,22 +192,22 @@
                                                 </a>
 
 
-                                                <div class="dropdown-menu w-50" id="_8vqni2v1b"
-                                                    data-popper-placement="bottom-end"
+                                                <div class="dropdown-menu w-90" data-popper-placement="bottom-end"
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
-                                                    <div class="dropdown-content">
+                                                    <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
                                                         @foreach ($operators as $operator)
-                                                            <input
-                                                                wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
-                                                                value="{{ $operator->id }}" type="checkbox"
-                                                                class="sid-switch"
-                                                                @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
-
-
-                                                            <p class="text-slate-500 text-xs  mt-0.5">
-                                                                {{ $operator->name ?? null }}
-
-                                                            </p>
+                                                            <label
+                                                                class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                                                                <input
+                                                                    wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                                    value="{{ $operator->id }}" type="checkbox"
+                                                                    class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors"
+                                                                    @if (in_array($operator->id, $old_operators)) checked @endif>
+                                                                <span
+                                                                    class="ml-3 text-sm text-slate-700 truncate flex-1">
+                                                                    {{ $operator->name ?? 'Non renseigné' }}
+                                                                </span>
+                                                            </label>
                                                         @endforeach
                                                     </div>
                                                 </div>
@@ -274,7 +229,7 @@
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
                                         <a class="btn btn-primary mr-1 mb-2 btn-sm"
                                             href="{{ route('company.show_company', ['id' => $item->id]) }}">
-                                            Voir
+                                            Voir Détails
                                         </a>
                                     @endif
 

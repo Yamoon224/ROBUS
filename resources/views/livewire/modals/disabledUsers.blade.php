@@ -13,7 +13,7 @@ style="margin-top: 0px; margin-left: 0px; padding-left: 0px; z-index: 10000; dis
 
                 <div class="px-5 pb-8 text-center mt-6">
                     <button type="button" wire:click="resetField()"
-                        class="btn btn-outline-secondary w-25 mr-1 mb-1">Annuler</button>
+                        class="btn btn-secondary w-25 mr-1 mb-1">Annuler</button>
                     <input wire:click="disable" wire:loading.remove type="button"
                         class="btn btn-danger  w-25 mr-1 mb-1"
                         value="{{ $sidUserStatus == 1 ? 'Désactiver' : 'Activer' }}" />

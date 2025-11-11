@@ -11,6 +11,10 @@
            <div class="user-badge user-badge--customer">
                Client
            </div>
+       @elseif ($user && $user->is_company == 1)
+           <div class="user-badge user-badge--compagnie">
+               Société
+           </div>
        @else
            <div class="user-badge user-badge--admin">
                Administrateur

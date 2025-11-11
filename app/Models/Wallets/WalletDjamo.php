@@ -14,6 +14,7 @@ use App\Models\DjamoPercent;
 use App\Models\Invoices\OneBetInvoice;
 use App\Models\Invoices\AutherTransactionInvoice;
 use App\Models\Payments\AutherTransaction;
+use App\Models\Sid\SidUser;
 
 class WalletDjamo extends Model
 {
@@ -37,6 +38,10 @@ class WalletDjamo extends Model
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
 
+   public function updatedByUser()
+    {
+        return $this->belongsTo(SidUser::class, 'updated_by', 'id');
+    }
 
 
     public function provider()
