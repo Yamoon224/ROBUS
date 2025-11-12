@@ -18,6 +18,7 @@
 <link rel="stylesheet" href="{{ asset_url('css/app.css') }}" />
 {{-- <link rel="stylesheet" href="{{ asset_url('css/appModal.css') }}" /> --}}
 <!-- END: Page CSS-->
+<link rel="stylesheet" href="{{ asset_url('web/css/animation.css') }}">
 
 @vite(['resources/css/app.css', 'resources/js/app.js'])
 

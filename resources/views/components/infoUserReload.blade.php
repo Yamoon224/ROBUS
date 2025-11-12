@@ -5,7 +5,7 @@
     $user = $wallet ? $wallet->sidUser : null;
 @endphp
 
-  <span class="bg-success w-25 text-white fs-5 px-2 py-1 rounded">
+  <span class="bg-success w-60 text-white fs-5 px-1 py-1 rounded">
       Bénéficiaire du rechargement
    </span>
    <div class="user-badges-container mt-3">

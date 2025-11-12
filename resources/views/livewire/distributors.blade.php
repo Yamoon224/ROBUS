@@ -71,8 +71,8 @@
                                 <div class="user-name">
                                     {{ $item->wallet->wallet_id ?? null }}
                                 </div>
-                                <p class="mb-6">
-                                    <span class="bg-success w-25 mt-3 text-white fs-5 px-2 py-1 rounded ">
+                                <p class="mb-3">
+                                    <span class="style_table2 w-25 mt-3 text-white fs-5 px-2 py-1 rounded ">
                                         Operations :
                                     </span>
                                 </p>

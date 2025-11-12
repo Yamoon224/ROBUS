@@ -98,8 +98,8 @@
                                     {{ $item->email ?? '' }}
                                 </div>
 
-                                <p>
-                                    <span class="bg-success w-25 text-white fs-5 px-2 py-1 rounded">
+                                <p class="mb-3">
+                                    <span class="style_table2 w-25 text-white fs-5 px-2 py-1 rounded">
                                         Commissions :
                                     </span>
                                 </p>
@@ -108,7 +108,7 @@
                                 @foreach ($item->operator_services as $operator)
                                     @if ($operator->operator->is_commission)
                                         <span
-                                            class="alert mt-3 alert-success text-white font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                            class="alert mt-3 alert-success text-white font-assign-list inline-flex items-center justify-center px-2 py-1  text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
                                             {{ $operator->operator->name ?? null }}
                                         </span>
                                     @endif
@@ -137,14 +137,17 @@
                                         {{ $item->wallet->wallet_id ?? null }}
                                     </div>
 
-                                    <span class="bg-success w-25 text-white fs-5 px-2 py-1 rounded">
-                                        Operations :
-                                    </span>
+                                    <p class="mb-3">
+                                        <span class="style_table2 w-25 text-white fs-5 px-2 py-1 rounded">
+                                            Operations :
+                                        </span>
+                                    </p>
+
 
                                     @foreach ($item->operator_services as $operator)
                                         @if ($operator->operator->is_under)
                                             <span
-                                                class="alert alert-success text-white font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                class="alert alert-success text-white font-assign-list inline-flex items-center justify-center px-2 py-1  text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $operator->operator->name ?? null }}
                                             </span>
                                         @endif

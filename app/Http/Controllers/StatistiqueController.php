@@ -119,6 +119,51 @@ class StatistiqueController extends Controller
         return view('pages.states.browse_inter');
     }
 
+     public function browse_versment()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
+        return view('pages.states.browse_versment');
+    }
+
+        public function browse_xbet()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
+        return view('pages.states.browse_xbet');
+    }
+
+        public function browse_push()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
+        return view('pages.states.browse_push');
+    }
+
+        public function browse_tresort()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
+        return view('pages.states.browse_tresort');
+    }
+
+        public function browse_djamos()
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
+            abort(403);
+        }
+        return view('pages.states.browse_djamos');
+    }
+
     /**
      * Display a listing of the resource.
      *

@@ -1,23 +1,10 @@
  <div class="robus-container">
      <!-- Colonne gauche - Informations sécurité -->
-    <div class="robus-side-decoration">
-        {{-- <div class="robus-security-badge robus-floating">
-            <h3>🛡️ Protection des Actifs</h3>
-            <p>Cryptage bancaire de niveau institutionnel</p>
-        </div>
+     <div class="robus-side-decoration">
 
-        <div class="robus-security-badge robus-floating" style="animation-delay: 0.5s;">
-            <h3>💎 Intégrité des Opérations</h3>
-            <p>Surveillance transactionnelle permanente</p>
-        </div>
-
-        <div class="robus-security-badge robus-floating" style="animation-delay: 1s;">
-            <h3>🔐 Vérification d'Identité</h3>
-            <p>Authentification multi-facteurs disponible</p>
-        </div> --}}
-    </div>
+     </div>
      <div class="robus-login-card robus-floating">
-        <div class="robus-card-header">
+         <div class="robus-card-header">
              <div class="robus-logo">
                  <!-- Remplacez par votre logo -->
                  <a href="{{ route('/') }}" class="brand-logo">
@@ -68,11 +55,11 @@
                  </div>
 
                  <!-- Bouton de connexion -->
-                  <button type="submit" wire:loading.attr="disabled" wire:loading.class="opacity-75 cursor-not-allowed"
+                 <button type="submit" wire:loading.attr="disabled" wire:loading.class="opacity-75 cursor-not-allowed"
                      class="robus-btn-primary h16 btn btn-primary w-full flex items-center justify-center gap-2 rounded-lg px-5 py-2 font-medium bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition">
                      <!-- Texte normal -->
                      <span wire:loading.remove wire:target="login">
-                          Se connecter
+                         Se connecter
                      </span>
 
                      <!-- Animation dots -->
@@ -112,31 +99,64 @@
          </div>
      </div>
 
-     {{-- <div class="robus-side-decoration">
-         <div class="robus-security-badge">
-             <h3>📊 Statut du système</h3>
-             <div style="margin-top: 1rem;">
-                 <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 0.5rem;">
-                     <span>Transactions</span>
-                     <span style="color: var(--robus-success);">● Actif</span>
+     <div class="robus-side-decoration">
+         <div class="space-y-4">
+             <!-- Statut du Service -->
+             <div class="bg-white rounded-xl border border-gray-200 p-10 shadow-sm">
+                 <div class="flex items-center justify-between mb-3">
+                     <h3 class="font-semibold text-gray-900 flex items-center gap-2">
+                         <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                 d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                             </path>
+                         </svg>
+                         Statut du Service
+                     </h3>
+                     <span
+                         class="inline-flex items-center gap-1 px-2 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">
+                         <span class="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></span>
+                         Indisponible
+                     </span>
                  </div>
-                 <div style="display: flex; justify-content: between; align-items: center; margin-bottom: 0.5rem;">
-                     <span>Paiements</span>
-                     <span style="color: var(--robus-success);">● Opérationnel</span>
+                 <p class="text-sm text-gray-600">Service en maintenance - Réouverture prochaine</p>
+             </div>
+
+             <!-- Horaires -->
+             <div class="bg-white rounded-xl border border-blue-200 p-5 shadow-sm">
+                 <h3 class="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                     <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                             d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                     </svg>
+                     Prochaine Ouverture
+                 </h3>
+
+                 <div class="grid grid-cols-2 gap-3">
+                     <div class="text-center">
+                         <div class="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                             <div class="text-xs text-orange-600 font-medium mb-1">JOUR</div>
+                             <div class="text-orange-700 font-semibold">{{ getAppCloseWeb()->day_of_week ?? 'N/A' }}
+                             </div>
+                         </div>
+                     </div>
+                     <div class="text-center">
+                         <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                             <div class="text-xs text-blue-600 font-medium mb-1">HORAIRE</div>
+                             <div class="text-blue-700 font-semibold text-sm">
+                                 {{ \Carbon\Carbon::createFromFormat('H:i:s', getAppCloseWeb()->time_start ?? '00:00:00')->format('H:i') }}
+                                 -
+                                 {{ \Carbon\Carbon::createFromFormat('H:i:s', getAppCloseWeb()->time_end ?? '00:00:00')->format('H:i') }}
+                             </div>
+                         </div>
+                     </div>
                  </div>
-                 <div style="display: flex; justify-content: between; align-items: center;">
-                     <span>Sécurité</span>
-                     <span style="color: var(--robus-success);">● Optimal</span>
+
+                 <div class="mt-3 text-center">
+                     <p class="text-xs text-gray-500">
+                         Mise à jour : {{ now()->format('d/m/Y H:i') }}
+                     </p>
                  </div>
              </div>
          </div>
-
-         <div class="robus-security-badge robus-pulse">
-             <h3>🕐 Horaires</h3>
-             <p>Service 24h/24</p>
-             <p style="margin-top: 0.5rem; font-size: 0.8rem; opacity: 0.8;">
-                 {{ now()->format('d/m/Y H:i') }}
-             </p>
-         </div>
-     </div> --}}
+     </div>
  </div>

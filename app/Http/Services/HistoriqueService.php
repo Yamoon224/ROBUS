@@ -693,6 +693,15 @@ class HistoriqueService
             ->sum($wallet_amount);
     }
 
+    public function getCommissionTransactionCountrie($walletModel,string $wallet_transaction, $countrie, string $walletStatus,string $wallet_amount)
+    {
+
+        return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+            ->where('wallets.country_id', $countrie)
+            ->where($walletStatus, "SUCCESS")
+            ->sum($wallet_amount);
+    }
+
     public function getTodayTransactionAmountCountrieTotal($walletModel, $wallet_transaction, $countrie, $transaction_days, $walletMy, $wallet_amount)
     {
 

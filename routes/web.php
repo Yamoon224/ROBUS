@@ -471,6 +471,12 @@ Route::group(['prefix' => ''], function () {
             Route::get('/inters_state', [StatistiqueController::class, 'browse_inter'])->name('inters.states');
             Route::get('/cartes_state', [StatistiqueController::class, 'browse_carte'])->name('cartes.states');
             Route::get('/phone_state', [StatistiqueController::class, 'browse_phone'])->name('phones.states');
+
+            Route::get('/versment_state', [StatistiqueController::class, 'browse_versment'])->name('versments.states');
+            Route::get('/xbet_state', [StatistiqueController::class, 'browse_xbet'])->name('xbets.states');
+            Route::get('/push_state', [StatistiqueController::class, 'browse_push'])->name('pushs.states');
+            Route::get('/tresort_state', [StatistiqueController::class, 'browse_tresort'])->name('tresorts.states');
+            Route::get('/djamos_state', [StatistiqueController::class, 'browse_djamos'])->name('djamos.states');
         });
 
 

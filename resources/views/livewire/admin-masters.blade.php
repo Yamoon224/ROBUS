@@ -92,14 +92,14 @@
                                 <div class="user-name">
                                     {{ $item->wallet->wallet_id ?? null }}
                                 </div>
-                                <p>
-                                    <span class="bg-success w-25 mt-3 text-white fs-5 px-2 py-1 rounded ">
+                                <p class="mb-3">
+                                    <span class="style_table2 w-25 mt-3 text-white fs-5 px-2 py-1 rounded ">
                                         Operations :
                                     </span>
                                 </p>
                                 @foreach ($item->operator_services as $opera)
                                     <span
-                                        class="alert alert-success mt-6 font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                        class="alert alert-success mt-6 font-assign-list inline-flex items-center justify-center px-2 py-1 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
                                         {{ $opera->operator->name ?? null }}
                                     </span>
                                 @endforeach

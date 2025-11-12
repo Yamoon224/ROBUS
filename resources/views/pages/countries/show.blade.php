@@ -20,7 +20,7 @@
             <div class="col-span-12 sm:col-span-8 xl:col-span-8 intro-y">
                 <div class="alert alert-secondary show mb-2 font-medium text-lg text-center" role="alert">Les
                     paiements
-                    entrants en/au {{ $countrie->name ?? null }} en   {{ $usersCountry ?? null }}</div>
+                    entrants en/au {{ $countrie->name ?? null }} en {{ $usersCountry ?? null }}</div>
             </div>
             <div class="col-span-12 sm:col-span-2 xl:col-span-2 intro-y">
 
@@ -37,7 +37,7 @@
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
 
-                            {{ $sum_wallet_custumers  ?? null }} 
+                            {{ $sum_wallet_custumers ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde cliens
                         </div>
@@ -51,7 +51,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_supervisors  ?? null }} 
+                            {{ $sum_wallet_supervisors ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde superviseurs
                         </div>
@@ -65,7 +65,7 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_companies ?? null }} 
+                            {{ $sum_wallet_companies ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde Compagnie
                         </div>
@@ -79,71 +79,99 @@
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_under_distributors ?? null }} 
+                            {{ $sum_wallet_under_distributors ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde Sous distributeurs
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-4 xl:col-span-4 intro-y">
-                <div class="report-box zoom-in">
+            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
+                <div class="report-box zoom-in ">
                     <div class="box p-5 style_table4">
                         <div class="flex">
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_distributors ?? null }} 
+                            {{ $sum_wallet_distributors ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Solde  distributeurs
+                        <div class="text-base text-slate-500 mt-1">Solde distributeurs
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-4 xl:col-span-4 intro-y">
+            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
                     <div class="box p-5 style_table4">
                         <div class="flex">
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_masters ?? null }} 
+                            {{ $sum_wallet_masters ?? null }}
                         </div>
-                        <div class="text-base text-slate-500 mt-1">Solde  masters
+                        <div class="text-base text-slate-500 mt-1">Solde masters
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="col-span-12 sm:col-span-4 xl:col-span-4 intro-y">
+            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
-                    <div class="box p-5 style_table4">
+                    <div class="box p-5 style_table_cartes">
                         <div class="flex">
                             <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sum_wallet_comZones ?? null }} 
+                            {{ $sum_wallet_comZones ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Solde COM ZONES
                         </div>
                     </div>
                 </div>
             </div>
-            
-        </div>
-        <div class="grid grid-cols-12 gap-6 mt-5">
+
+            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
+                <div class="report-box zoom-in ">
+                    <div class="box p-5 style_table3">
+                        <div class="flex">
+                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                        </div>
+                        <div class="text-3xl font-medium leading-8 mt-6">
+                            {{ $sumTotalCommission ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Solde commission SD
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
+                <div class="report-box zoom-in ">
+                    <div class="box p-5 style_table3">
+                        <div class="flex">
+                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                        </div>
+                        <div class="text-3xl font-medium leading-8 mt-6">
+                            {{ $sumCTotalCommission ?? null }}
+                        </div>
+                        <div class="text-base text-slate-500 mt-1">Solde commission Compagnies
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
                     <div class="box p-5 style_user1">
                         <div class="flex">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                        </svg>                        </div>
+                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                            </svg>
+                        </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                           {{ $custumers_countrie_count ?? null }}
+                            {{ $custumers_countrie_count ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Clients
                         </div>
@@ -154,11 +182,11 @@
                 <div class="report-box zoom-in">
                     <div class="box p-5 style_2">
                         <div class="flex">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                            </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $user_supervisor_count ?? null }}
@@ -173,11 +201,11 @@
                 <div class="report-box zoom-in">
                     <div class="box p-5 style_user2">
                         <div class="flex">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                            </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $user_company_count ?? null }}
@@ -192,11 +220,11 @@
                 <div class="report-box zoom-in">
                     <div class="box p-5 style_user3">
                         <div class="flex">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                            </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $users_distri_Countrie_count ?? null }}
@@ -206,15 +234,15 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-4 xl:col-span-4 intro-y">
+            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
                     <div class="box p-5 style_table4">
                         <div class="flex">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                            </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
                             {{ $user_under_distributor_count ?? null }}
@@ -224,18 +252,18 @@
                     </div>
                 </div>
             </div>
-            <div class="col-span-12 sm:col-span-4 xl:col-span-4 intro-y">
+            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
                     <div class="box p-5 style_table_factures">
                         <div class="flex">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                            </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $user_master_count    ?? null }}
+                            {{ $user_master_count ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">Masters
                         </div>
@@ -243,31 +271,31 @@
                 </div>
             </div>
 
-            <div class="col-span-12 sm:col-span-4 xl:col-span-4 intro-y">
+            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
                 <div class="report-box zoom-in">
                     <div class="box p-5 ">
                         <div class="flex">
-                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                        stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
-                                    </svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                            </svg>
                         </div>
                         <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $user_comzone_count    ?? null }}
+                            {{ $user_comzone_count ?? null }}
                         </div>
                         <div class="text-base text-slate-500 mt-1">COM ZONES
                         </div>
                     </div>
                 </div>
             </div>
-            
+
         </div>
 
 
         @livewire('user-countrie', ['countrie' => $countrie->id])
 
-   
+
         <div class="grid grid-cols-12 gap-6 mt-6">
 
             <!-- BEGIN: Sales Report -->
@@ -293,7 +321,7 @@
             <div class="col-span-12 sm:col-span-6 lg:col-span-6 mt-8">
                 <div class="intro-y flex items-center h-10">
                     <h2 class="text-lg font-medium truncate mr-5">
-                        Les activités du mois  en {{ $usersCountry }}
+                        Les activités du mois en {{ $usersCountry }}
                     </h2>
                 </div>
                 <div class="intro-y box p-5 mt-12 sm:mt-5">

@@ -2011,9 +2011,7 @@ class AdminController extends Controller
     {
 
 
-
         $user = SidUser::find($id);
-
 
         if (!$user) {
             return back()

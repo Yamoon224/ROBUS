@@ -41,10 +41,9 @@
             <table class="table table-bordered table-hover -mt-2 -intro-x ">
                 <thead class="table-dark">
                     <tr>
-                        <th class="whitespace-nowrap">Date de création</th>
-                        <th class="text-center whitespace-nowrap">Nom</th>
+                        <th class="text-center whitespace-nowrap">Nom & Prénom</th>
                         <th class="text-center whitespace-nowrap">Email & télépone</th>
-                        <th class="text-center whitespace-nowrap">Rôle</th>
+                        <th class="text-center whitespace-nowrap">Operations</th>
                         <th class="text-center whitespace-nowrap">Statut</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -57,38 +56,29 @@
                     @endphp
                     <tbody>
                         <tr class="intro-x">
-                            <td class="w-35">
-                                <div class="text-slate-500 text-xs  mt-0.5">{{ $item->created_at }}</div>
-
-                            </td>
                             <td class="w-60">
-                                <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                    <div class="text-slate-300 text-xs  mt-0.5">{{ $item->firstname ?? null }}</div>
+                                <div class="mb-3">
+                                    @include('components.infoUserDetails')
                                 </div>
-                                <div class="text-slate-500  mt-0.5">
-                                    <span
-                                        class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                        {{ $item->country->name ?? null }} ville : {{ $item->city->name ?? null }}
-                                    </span>
+                                @include('components.infoDetailsUser')
+
+                            </td>
+                            <td class="w-50">
+                                <div class="user-phone mt-6">
+                                    {{ $item->email ?? 'Non renseigné' }}
                                 </div>
 
                             </td>
                             <td>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-0.5">{{ $item->phone }}
-                                </div>
-                                <div class="text-slate-500 text-xs whitespace-nowrap mt-3">{{ $item->email }}
-                                </div>
-                            </td>
-                            <td>
-                                @if($item->is_com_zone == true)
-                                    <div class="font-medium whitespace-nowrap">Com zone</div>
-                                    <div class="text-slate-500  mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->wallet->wallet_id ?? null }}
-                                        </span>
+                                @if ($item->is_com_zone == true)
+                                    <div class="user-name">
+                                        {{ $item->wallet->wallet_id ?? null }}
                                     </div>
-                                    <p>Operations : </p>
+                                    <p class="mb-3">
+                                        <span class="style_table2 w-25 mt-3 text-white fs-5 px-2 py-1 rounded ">
+                                            Operations :
+                                        </span>
+                                    </p>
                                     @foreach ($item->operator_services as $opera)
                                         <span
                                             class="alert alert-success font-assign-list inline-flex items-center justify-center px-2 py-1 mb-3 text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
@@ -127,7 +117,7 @@
                                 @endif
                             </td>
 
-                            <td class="table-report__action w-30">
+                            <td class="w-50">
 
                                 <div class="flex mt-4 lg:mt-0">
                                     @if ($item->is_com_zone)
@@ -152,22 +142,24 @@
                                                 </a>
 
 
-                                                <div class="dropdown-menu w-50" id="_8vqni2v1b"
+                                                <div class="dropdown-menu w-80" 
                                                     data-popper-placement="bottom-end"
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
                                                     <div class="dropdown-content">
                                                         @foreach ($operators as $operator)
-                                                            <input
-                                                                wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
-                                                                value="{{ $operator->id }}" type="checkbox"
-                                                                class="sid-switch"
-                                                                @if (in_array($operator->id, $old_operators)) checked="checked" @endif>
 
-
-                                                            <p class="font-assign ">
-                                                                {{ $operator->name ?? null }}
-
-                                                            </p>
+                                                        <label
+                                                                class="flex items-center px-3 py-2 hover:bg-slate-50 rounded-md cursor-pointer transition-colors">
+                                                                <input
+                                                                    wire:click="edit_update({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                                    value="{{ $operator->id }}" type="checkbox"
+                                                                    class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors"
+                                                                    @if (in_array($operator->id, $old_operators)) checked @endif>
+                                                                <span
+                                                                    class="ml-2 text-sm text-slate-700 truncate flex-1">
+                                                                    {{ $operator->name ?? 'Non renseigné' }}
+                                                                </span>
+                                                            </label>
                                                         @endforeach
                                                     </div>
                                                 </div>
@@ -177,7 +169,7 @@
                                     @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
                                         <a class="btn btn-primary mr-1 mb-2 btn-sm"
                                             href="{{ route('comzone.show_comzone', ['id' => $item->id]) }}">
-                                            Voir
+                                            Voir Details
                                         </a>
                                     @endif
 
