@@ -115,11 +115,11 @@ class RobusTransactionService
             $compagnie = null;
             $sidUserId = null;
         }
-        
+
         if ($sidUserId) {
             $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
         } else {
-            $activeCButtons = []; 
+            $activeCButtons = [];
         }
 
         $updatedValues = [
@@ -155,15 +155,16 @@ class RobusTransactionService
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
 
-                if ($account_accepted && !empty($activeCButtons['showRemonterDepotCButton']) ) {
+                if ($account_accepted && !empty($activeCButtons['showRemonterDepotCButton'])) {
                     $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
                     $walletTransaction->increment('commission_companie', $valuer_companie);
+
                     if ($admin_civ->count() > 0) {
                         $nmbre_admin = $admin_civ->count();
                         $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
 
                         foreach ($admin_civ as $user) {
-                            $this->commissionServices->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                            $this->commissionServices->processAdminCommissionSDistributerAndComp($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit, $valuer_companie);
                         }
                     }
                 } else {
@@ -186,6 +187,16 @@ class RobusTransactionService
                 if ($account_accepted && !empty($activeCButtons['showRemonterRetraitCButton'])) {
                     $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
                     $walletTransaction->increment('commission_companie', $valuer_companie);
+
+                    if ($admin_civ->count() > 0) {
+                        $nmbre_admin = $admin_civ->count();
+                        $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
+
+                        foreach ($admin_civ as $user) {
+                            $this->commissionServices->processAdminCommissionSDistributerAndComp($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit  , $valuer_companie);
+                        }
+                    }
+                } else {
                 }
 
 
@@ -233,7 +244,7 @@ class RobusTransactionService
         return true;
     }
 
- 
+
 
     private function convertAdminCommission($amount)
     {
@@ -450,7 +461,7 @@ class RobusTransactionService
             ->first();
 
         $wallet = robus()->wallet;
-     
+
         // Préparez les valeurs mises à jour
         $updatedValues = [
             'reload_by' => robus()->firstname . ' ' . robus()->lastname,

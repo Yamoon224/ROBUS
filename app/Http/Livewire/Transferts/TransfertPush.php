@@ -392,7 +392,6 @@ class TransfertPush extends Component
 
                 if ($account_accepted && $this->showRemonterPushCButton) {
                     $walletPush->increment('commission_companie', $valuer_companie);
-
                     $totalCommission =  $valuer_companie + $valuer_deposit;
 
                     app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_push_id', $walletPush->id, $totalCommission, $adminAmount);

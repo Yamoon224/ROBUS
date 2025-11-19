@@ -140,9 +140,6 @@ class TransfertDjamo extends Component
             if ($provider) {
 
 
-
-                $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageDjamo();
-
                 if ($walletUser->country->code != 'CI') {
                     $this->resetDjamoField();
                     $this->emit(
@@ -363,8 +360,6 @@ class TransfertDjamo extends Component
             }
         }
     }
-
-
 
     public function updatedAmountDjamo()
     {

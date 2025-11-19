@@ -147,7 +147,7 @@
                                     @foreach ($item->operator_services as $operator)
                                         @if ($operator->operator->is_under)
                                             <span
-                                                class="alert alert-success text-white font-assign-list inline-flex items-center justify-center px-2 py-1  text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
+                                                class="alert alert-success mt-1 text-white font-assign-list inline-flex items-center justify-center px-2 py-1  text-xs leading-none text-indigo-100 bg-indigo-700 rounded">
                                                 {{ $operator->operator->name ?? null }}
                                             </span>
                                         @endif
@@ -484,12 +484,14 @@
                                             </a>
                                         @endif
 
-                                        @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('voir-sous-distributeurs'))
                                             <a class="btn btn-primary mr-1 mb-2 btn-sm"
                                                 href="{{ route('unders.admins.show', ['id' => $item->id]) }}">
                                                 Voir Détails
                                             </a>
                                         @endif
+
+                                        @include('components.tableDeleted')
 
                                     </div>
                                 </div>
@@ -513,6 +515,7 @@
         </nav>
     </div>
     @include('livewire.modals.disabledUsers')
+    @include('livewire.modals.deletedUsers')
     @include('livewire.modals.disabledUnderUsers')
     @include('livewire.modals.connectedUnders')
     @include('livewire.modals.connectedOneUnderDistributors')

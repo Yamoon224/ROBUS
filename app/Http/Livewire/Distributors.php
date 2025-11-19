@@ -21,6 +21,7 @@ class Distributors extends Component
     public $countriesFilter = "";
     public $perPage = 30;
     public $sortField = 'id';
+    public $sidUserInfos;
     public $sortAsc = true;
     public $sidUserId;
     public $sidUserStatus;
@@ -29,6 +30,7 @@ class Distributors extends Component
     {
         $check = SidUser::whereId($id)->first();
         $this->sidUserId = $id;
+        $this->sidUserInfos = $check->firstname . ' ' . $check->lastname;
         $this->sidUserStatus = $check->status;
         $this->emit($state);
     }
@@ -40,11 +42,11 @@ class Distributors extends Component
         $this->emit('modal-hide', 'hide');
     }
 
-      public function activeAll()
+    public function activeAll()
     {
-  
+
         OperatorService::truncate();
-        $utilisateurs = SidUser::where('is_distributer' , true)->get();
+        $utilisateurs = SidUser::where('is_distributer', true)->get();
         $operations = Operator::whereIsCommission(true)->get();
 
         foreach ($utilisateurs as $utilisateur) {
@@ -57,6 +59,23 @@ class Distributors extends Component
         }
     }
 
+    public function deletedUser()
+    {
+        $user = SidUser::find($this->sidUserId);
+
+        if (!empty($user)) {
+
+            if ($user->wallet) {
+                $user->wallet->forceDelete();
+            }
+
+            $user->forceDelete();
+            $this->emit('modal-hide', 'hide');
+            $this->cancelConnectedField();
+            $this->emit('refreshPage');
+            $this->emit('success', 'Utilisateur supprimer avec success !');
+        }
+    }
 
     public function edit_update($data)
     {
@@ -96,9 +115,9 @@ class Distributors extends Component
 
     public function activeAllOPerators()
     {
-  
-    
-        $utilisateurs = SidUser::where('is_distributer' , true)->get();
+
+
+        $utilisateurs = SidUser::where('is_distributer', true)->get();
         $operations = Operator::whereIsOperator(true)->get();
 
         foreach ($utilisateurs as $utilisateur) {
@@ -165,7 +184,7 @@ class Distributors extends Component
                 ->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
                 ->paginate($this->perPage);
         }
-        
+
         if ($this->countriesFilter != "") {
             $users->where("country_id", $this->countriesFilter);
         }

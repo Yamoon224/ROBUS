@@ -34,7 +34,7 @@ class TresortRepository extends BaseRepository
      * @return array
      */
 
-    public function getTresorById($xbet_id)
+    public function getTresortById($xbet_id)
     {
         return WalletTresortMoney::findOrFail($xbet_id);
     }

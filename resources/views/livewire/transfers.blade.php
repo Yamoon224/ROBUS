@@ -367,6 +367,17 @@
                                     Echec Inters {{ $inter_error }}
                                 </div>
                             </div>
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    Succès Bank sends {{ $bank_send_success }}
+                                </div>
+                                <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                    Attente Bank sends {{ $bank_send_pendding }}
+                                </div>
+                                <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                    Echec Bank sends {{ $bank_send_error }}
+                                </div>
+                            </div>
 
 
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -394,13 +405,23 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="flex flex-wrap items-center gap-4">
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletInters ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Paiements Internationaux  {{ $usersCountry }}</div>
+                                </div>
 
-                            <div class="text-3xl font-medium leading-8 mt-transactions mt-3">
-                                {{ $WalletInters ?? null }}
+                                <div class="flex flex-col items-start">
+                                    <div class="text-3xl font-medium leading-8">
+                                        {{ $WalletBankSends ?? null }}
+                                    </div>
+                                    <div class="text-base text-slate-500">Bank send {{ $usersCountry }}
+                                    </div>
+                                </div>
+                            </div>
 
-                            </div>
-                            <div class="text-base text-slate-500 mt-1">Paiements Internationaux {{ $usersCountry }}
-                            </div>
                         </div>
                     </div>
                 </div>

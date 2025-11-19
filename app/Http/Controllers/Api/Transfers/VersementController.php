@@ -157,7 +157,6 @@ class VersementController extends Controller
     public function create_versement(Request $request)
     {
 
-        $offers =  Offer::whereId($request->offer)->whereStatus(true)->first();
         $amount_days = $this->validatedamountDays->getCeilingProperty();
         $valeur_ceiling  =  robus()->silver_ceiling;
         $admin_civ = $this->validatedamountDays->adminCiv();

@@ -126,6 +126,9 @@
             $('#deconnected-company-modal').removeClass('show');
             $('#deconnected-company-modal').addClass('hide');
 
+            $('#deleted-users-modal').removeClass('show');
+            $('#deleted-users-modal').addClass('hide');
+
             // desabled master
             $('#disabled-master-admin-modal').removeClass('show');
             $('#disabled-master-admin-modal').addClass('hide');
@@ -150,7 +153,7 @@
             $('#disabled-user_admin-modal').removeClass('show');
             $('#disabled-user_admin-modal').addClass('hide');
 
-              $('#disabled-user_unders-modal').removeClass('show');
+            $('#disabled-user_unders-modal').removeClass('show');
             $('#disabled-user_unders-modal').addClass('hide');
 
             // Levels inter
@@ -583,6 +586,11 @@
         Livewire.on('show-connected-company-modal', () => {
             $('#connected-company-modal').removeClass('hide');
             $('#connected-company-modal').addClass('show');
+        });
+
+        Livewire.on('show-deleted-users-modal', () => {
+            $('#deleted-users-modal').removeClass('hide');
+            $('#deleted-users-modal').addClass('show');
         });
 
         Livewire.on('show-desactive-company-modal', () => {
@@ -2683,7 +2691,7 @@
             $('#disabled-pubs-modal').addClass('show');
         });
 
-         Livewire.on('show-deleted-pub-modal', () => {
+        Livewire.on('show-deleted-pub-modal', () => {
             $('#delete-pubs-modal').removeClass('hide');
             $('#delete-pubs-modal').addClass('show');
         });

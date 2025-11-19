@@ -177,17 +177,7 @@ class PercentRobusAuthService
         }
     }
 
-    public function getRobusPercentageDjamo()
-    {
-        $countryNameGroup = robus()->country->name_groupe;
 
-        switch ($countryNameGroup) {
-            case 'CIV':
-                return DjamoPercent::whereId(1)->first();
-            default:
-                return null;
-        }
-    }
 
     public function getRobusPercentageTresort()
     {
@@ -226,6 +216,17 @@ class PercentRobusAuthService
         })->first();
     }
 
+        public function getRobusPercentageDjamo()
+    {
+        $countryNameGroup = robus()->country->name_groupe;
+
+        switch ($countryNameGroup) {
+            case 'CIV':
+                return DjamoPercent::whereId(2)->first();
+            default:
+                return null;
+        }
+    }
 
     public function getRobusPercentagePhoneCreditWeb()
     {
@@ -337,7 +338,7 @@ class PercentRobusAuthService
 
     public function getRobusPercentageDjamoInter()
     {
-        return DjamoPercent::whereId(2)->first();
+        return DjamoPercent::whereId(1)->first();
     }
 
     public function getRobusPercentageTresortInter()

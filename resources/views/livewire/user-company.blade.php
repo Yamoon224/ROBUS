@@ -232,6 +232,7 @@
                                             Voir Détails
                                         </a>
                                     @endif
+                                        @include('components.tableDeleted')
 
 
                                 </div>
@@ -255,5 +256,6 @@
         </nav>
     </div>
     @include('livewire.modals.disabledUsers')
+    @include('livewire.modals.deletedUsers')
 
 </div>

@@ -34,7 +34,7 @@ class PushRepository extends BaseRepository
      * @return array
      */
 
-    public function getXbetById($xbet_id)
+    public function getPushById($xbet_id)
     {
         return WalletPush::findOrFail($xbet_id);
     }

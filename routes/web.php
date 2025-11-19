@@ -298,6 +298,8 @@ Route::group(['prefix' => ''], function () {
         Route::post('remote/admins/commissions/{amount}/{type}/{id}', [AdminController::class, 'remonteCommissionAdmins'])->name('remonte.commissions.admins');
         Route::post('remote/admins/commission_compagnies/{amount}/{type}/{id}', [AdminController::class, 'remonteCommissionCompanyAdmins'])->name('remonte.commissions.companies.admins');
         Route::post('remote/commissionalls/{amount}/{type}/{id}', [AdminController::class, 'remonteAllCommission'])->name('remonte.remonteAllCommission.unders');
+        Route::post('remote/commissions/{id}', [AdminController::class, 'remonteAllCountryCommission'])->name('remonte.remonteAllCountryCommission.unders');
+        Route::post('remote/compagnies/commissions/{id}', [AdminController::class, 'remonteAllCountryCompanies'])->name('remonte.remonteAllCountryCompanies.companies');
 
 
         Route::prefix('pays_commissions')->group(function () {

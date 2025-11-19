@@ -87,7 +87,7 @@
                                 </div>
 
                             </td>
-                            <td>
+                            <td class="w-35">
 
                                 <div class="user-name">
                                     {{ $item->wallet->wallet_id ?? null }}
@@ -106,7 +106,7 @@
                             </td>
 
 
-                            <td class="table-report__action w-35">
+                            <td class="w-30">
                                 @if ($item->status == '1')
                                     @if (Auth::guard('web')->user()->hasPermissionTo('active-master'))
                                         <div class="flex items-center justify-center text-success">
@@ -189,6 +189,7 @@
                                             Voir Détails
                                         </a>
                                     @endif
+                                    @include('components.tableDeleted')
 
 
                                 </div>
@@ -211,6 +212,7 @@
         </nav>
     </div>
     @include('livewire.modals.disabledUsers')
+    @include('livewire.modals.deletedUsers')
 
 
 </div>

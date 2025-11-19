@@ -117,7 +117,7 @@
                                 @endif
                             </td>
 
-                            <td class="w-50">
+                            <td class="w-60">
 
                                 <div class="flex mt-4 lg:mt-0">
                                     @if ($item->is_com_zone)
@@ -173,6 +173,7 @@
                                         </a>
                                     @endif
 
+                                    @include('components.tableDeleted')
 
                                 </div>
                             </td>
@@ -195,5 +196,6 @@
         </nav>
     </div>
     @include('livewire.modals.disabledUsers')
+    @include('livewire.modals.deletedUsers')
 
 </div>

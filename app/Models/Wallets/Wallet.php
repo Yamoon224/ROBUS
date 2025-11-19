@@ -102,6 +102,27 @@ class Wallet extends Model
         return $this->hasMany(WalletTransaction::class);
     }
 
+    public function walletPushs()
+    {
+        return $this->hasMany(WalletPush::class);
+    }
+
+    public function walletBankSends()
+    {
+        return $this->hasMany(WalletBankSend::class);
+    }
+
+    public function walletDjamos()
+    {
+        return $this->hasMany(WalletDjamo::class);
+    }
+
+    public function walletTresortsMoneys()
+    {
+        return $this->hasMany(WalletTresortMoney::class);
+    }
+
+
     public function walletXbets()
     {
         return $this->hasMany(WalletXbet::class);
@@ -129,6 +150,29 @@ class Wallet extends Model
         }
 
         return $query;
+    }
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::forceDeleting(function ($wallet) {
+
+            $wallet->walletBanks()->forceDelete();
+            $wallet->walletDeposits()->forceDelete();
+            $wallet->orderCards()->forceDelete();
+            $wallet->walletInters()->forceDelete();
+            $wallet->walletReloads()->forceDelete();
+            $wallet->walletPayments()->forceDelete();
+            $wallet->walletTransactions()->forceDelete();
+            $wallet->walletPushs()->forceDelete();
+            $wallet->walletBankSends()->forceDelete();
+            $wallet->walletDjamos()->forceDelete();
+            $wallet->walletTresortsMoneys()->forceDelete();
+            $wallet->walletXbets()->forceDelete();
+            $wallet->walletWaves()->forceDelete();
+            $wallet->walletPhoneCredits()->forceDelete();
+        });
     }
 
     public function getActivitylogOptions(): LogOptions

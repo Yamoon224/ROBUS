@@ -184,6 +184,7 @@
                                         </a>
                                     @endif
 
+                                        @include('components.tableDeleted')
 
                                 </div>
                             </td>
@@ -206,5 +207,7 @@
         </nav>
     </div>
     @include('livewire.modals.disabledUsers')
+    @include('livewire.modals.deletedUsers')
+
 
 </div>

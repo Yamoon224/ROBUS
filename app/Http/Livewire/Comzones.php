@@ -20,6 +20,7 @@ class Comzones extends Component
     public $countriesFilter = "";
     public $perPage = 30;
     public $sortField = 'id';
+    public $sidUserInfos;
     public $sortAsc = true;
     public $sidUserId;
     public $sidUserStatus;
@@ -28,10 +29,30 @@ class Comzones extends Component
     {
         $check = SidUser::whereId($id)->first();
         $this->sidUserId = $id;
+        $this->sidUserInfos = $check->firstname . ' ' . $check->lastname;
         $this->sidUserStatus = $check->status;
         $this->emit($state);
     }
 
+        public function deletedUser()
+    {
+        $user = SidUser::find($this->sidUserId);
+
+        if (!empty($user)) {
+
+            if ($user->wallet) {
+                $user->wallet->forceDelete();
+            }
+
+            $user->forceDelete();
+            $this->emit('modal-hide', 'hide');
+            $this->resetField();
+            $this->emit('refreshPage');
+            $this->emit('success', 'Utilisateur supprimer avec success !');
+        }
+    }
+
+    
     public function resetField()
     {
         $this->sidUserId = '';

@@ -102,6 +102,36 @@ class CommissionService
         }
     }
 
+      public function processAdminCommissionSDistributerAndComp($userId, $walletTransactionId, $amount, $valuer_deposit , $amountCompagie)
+    {
+
+
+
+        $admin_single = SidUser::find($userId);
+
+        AdminsCom::create([
+            'amount' => $amount,
+            'sid_user_id' => $admin_single->id,
+            'wallet_transaction_id' => $walletTransactionId,
+            'description' => 'Commission administrateur',
+            'status'  => "SUCCESS",
+            "amount_compagnie" => $amountCompagie ?? 0,
+            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
+            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+        ]);
+
+        $amount_all = (float)$valuer_deposit +  (float)$amountCompagie;
+        $walletCommission = WalletCommission::find(1);
+        $walletAdmin = WalletAdmin::find(1);
+        if ($walletCommission && $walletCommission->amount >= $amount) {
+            $walletCommission->decrement('amount', $amount_all);
+            $walletAdmin->increment('amount', $amount);
+        } else {
+            $admin_single->wallet->decrement('amount', $amount_all);
+            $admin_single->wallet->increment('amount', $amount);
+        }
+    }
+
     public function processAdminCommissionSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
     {
 
@@ -115,6 +145,7 @@ class CommissionService
             'wallet_transaction_id' => $walletTransactionId,
             'description' => 'Commission administrateur',
             'status'  => "SUCCESS",
+            "amount_compagnie" => 0,
             'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
             'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
         ]);
@@ -122,10 +153,11 @@ class CommissionService
         $walletCommission = WalletCommission::find(1);
         $walletAdmin = WalletAdmin::find(1);
         if ($walletCommission && $walletCommission->amount >= $amount) {
-            $walletCommission->decrement('amount', $amount);
+            $walletCommission->decrement('amount', $valuer_deposit);
             $walletAdmin->increment('amount', $amount);
         } else {
-            $admin_single->wallet->decrement('amount', $amount);
+            $admin_single->wallet->decrement('amount', $valuer_deposit);
+            $admin_single->wallet->increment('amount', $amount);
         }
     }
 

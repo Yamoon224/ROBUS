@@ -18,6 +18,7 @@ class custumers extends Component
     public $countriesFilter = "";
     public $statusFilter_piece = "";
     public $statusFilter_active = "";
+    public $sidUserInfos;
     public $perPage = 30;
     public $sortField = 'id';
     public $sortAsc = true;
@@ -33,13 +34,13 @@ class custumers extends Component
     public $masters;
     public $company_id;
     public $countries;
-    public $cities = []; 
+    public $cities = [];
     public $citiesFilter;
-    public $cityNameSearch = ''; 
-    
+    public $cityNameSearch = '';
+
     public function mount()
     {
-        $this->countries = Country::orderBy('name')->get(); 
+        $this->countries = Country::orderBy('name')->get();
     }
 
 
@@ -47,9 +48,9 @@ class custumers extends Component
     {
 
         if ($countryId) {
-            $this->cities = City::where('country_id', $countryId) 
-                                 ->orderBy('name')
-                                 ->get();
+            $this->cities = City::where('country_id', $countryId)
+                ->orderBy('name')
+                ->get();
         } else {
             $this->cities = [];
         }
@@ -63,10 +64,29 @@ class custumers extends Component
         $check = SidUser::whereId($id)->first();
         $this->sidUserId = $id;
         $this->sidUserStatus = $check->status;
+        $this->sidUserInfos = $check->firstname . ' ' . $check->lastname;
         $this->emit($state);
     }
 
 
+      public function deletedUser()
+    {
+        $user = SidUser::find($this->sidUserId);
+
+        if (!empty($user)) {
+            
+            if ($user->wallet) {
+                $user->wallet->forceDelete();
+            }
+
+            $user->forceDelete();
+            $this->emit('modal-hide', 'hide');
+            $this->cancelConnectedField();
+            $this->emit('refreshPage');
+            $this->emit('success', 'Utilisateur supprimer avec success !');
+        }
+    }
+    
     public function editConnected($id, $state)
     {
         $check = SidUser::whereId($id)->first();
@@ -79,7 +99,7 @@ class custumers extends Component
     public function editConnectedCompanie($id, $state)
     {
 
-     
+
         $check = SidUser::whereId($id)->first();
         $this->user_id = $check->id;
         $this->company_id = $check->company_id;
@@ -254,7 +274,7 @@ class custumers extends Component
             $users->where("is_active", $this->statusFilter_active);
         }
 
-     
+
         if ($this->countriesFilter != "") {
             $users->where("country_id", $this->countriesFilter);
         }
@@ -269,16 +289,16 @@ class custumers extends Component
 
         if ($this->cityNameSearch != "") {
 
-            $this->resetPage(); 
+            $this->resetPage();
             $users->where('is_custumers', true)
-            ->when($this->cityNameSearch, function ($query) {
-                $query->where(function ($query) {
-                    $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
-                });
-            })
-            ->paginate($this->perPage);
+                ->when($this->cityNameSearch, function ($query) {
+                    $query->where(function ($query) {
+                        $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
+                    });
+                })
+                ->paginate($this->perPage);
         }
-        
+
         return view('livewire.custumers', [
             "users" => $users->where('is_custumers', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
             "countries" => Country::where('status', true)->orderBy("name", 'desc')->get()

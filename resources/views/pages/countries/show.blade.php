@@ -131,33 +131,70 @@
             </div>
 
             <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
-                <div class="report-box zoom-in ">
-                    <div class="box p-5 style_table3">
-                        <div class="flex">
-                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
-                        </div>
-                        <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sumTotalCommission ?? null }}
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Solde commission SD
-                        </div>
-                    </div>
-                </div>
-            </div>
+                <form method="POST"
+                    action="{{ route('remonte.remonteAllCountryCommission.unders', ['id' => $countrie->id]) }}">
+                    @csrf
+                    <div class="report-box zoom-in">
+                        <div class="box p-5 style_table3 flex flex-col justify-between h-full">
 
-            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
-                <div class="report-box zoom-in ">
-                    <div class="box p-5 style_table3">
-                        <div class="flex">
-                            <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
-                        </div>
-                        <div class="text-3xl font-medium leading-8 mt-6">
-                            {{ $sumCTotalCommission ?? null }}
-                        </div>
-                        <div class="text-base text-slate-500 mt-1">Solde commission Compagnies
+                            <div>
+                                <div class="flex">
+                                    <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                                </div>
+                                <div class="text-3xl font-medium leading-8 mt-6">
+                                    {{ $sumTotalCommission ?? '0.00' }}
+                                </div>
+                                <div class="text-base text-slate-500 mt-1 mb-4">
+                                    Solde commission SD
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-darkmode-400 h-16 flex justify-end">
+                                <button type="submit" class="btn btn-warning mr-1 mb-2 btn-sm" title="Tout Remonter">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                                    </svg>
+                                    Remonter toute les commissions
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </form>
+            </div>
+            <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
+                   <form method="POST"
+                    action="{{ route('remonte.remonteAllCountryCompanies.companies', ['id' => $countrie->id]) }}">
+                    @csrf
+                    <div class="report-box zoom-in">
+                        <div class="box p-5 style_table3 flex flex-col justify-between h-full">
+
+                            <div>
+                                <div class="flex">
+                                    <i data-feather="credit-card" class="report-box__icon text-secondary"></i>
+                                </div>
+                                <div class="text-3xl font-medium leading-8 mt-6">
+                                    {{ $sumCTotalCommission ?? '0.00' }}
+                                </div>
+                                <div class="text-base text-slate-500 mt-1 mb-4">
+                                   Solde commission Compagnies
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-4 border-t border-slate-200 dark:border-darkmode-400 h-16 flex justify-end">
+                                <button type="submit" class="btn btn-warning  mr-1 mb-2 btn-sm" title="Tout Remonter">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                                        stroke-width="1.5" stroke="currentColor" class="w-4 h-4 mr-1">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M4.5 10.5 12 3m0 0 7.5 7.5M12 3v18" />
+                                    </svg>
+                                    Remonter toute les commissions
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
             </div>
 
             <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">

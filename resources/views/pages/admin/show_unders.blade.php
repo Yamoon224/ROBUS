@@ -659,11 +659,9 @@
                 </div>
                 <!-- BEGIN: Pagination -->
 
-
             </div>
         </div>
         <div id="reload" class="tab-pane" role="tabpanel" aria-labelledby="reload-tab">
-
             @livewire('transaction-details.reload-transactions', ['walletAllReloads' => $user->id])
         </div>
         <div id="transfers" class="tab-pane " role="tabpanel" aria-labelledby="transfers-tab">
@@ -671,7 +669,6 @@
             @livewire('transaction-details.transactions-users', ['walletAllTransactions' => $user->id])
 
         </div>
-
         <div id="paiement" class="tab-pane" role="tabpanel" aria-labelledby="paiement-tab">
             @livewire('transaction-details.payment-users', ['walletAllPayments' => $user->id])
 
@@ -690,38 +687,28 @@
             @livewire('transaction-details.inters-users', ['walletAllInters' => $user->id])
 
         </div>
-
         <div id="carte" class="tab-pane" role="tabpanel" aria-labelledby="carte-tab">
             @livewire('transaction-details.carte-users', ['walletAllDeposits' => $user->id])
 
         </div>
-
         <div id="xbet" class="tab-pane" role="tabpanel" aria-labelledby="xbet-tab">
             @livewire('transaction-details.xbets-users', ['walletAllXbets' => $user->id])
         </div>
-
-  
         <div id="push" class="tab-pane" role="tabpanel" aria-labelledby="push-tab">
             @livewire('transaction-details.pushs', ['walletPushs' => $user->id])
 
         </div>
-
         <div id="tresort" class="tab-pane" role="tabpanel" aria-labelledby="tresort-tab">
             @livewire('transaction-details.tresort-moneys', ['walletTresorts' => $user->id])
 
         </div>
-
         <div id="djamo" class="tab-pane" role="tabpanel" aria-labelledby="djamo-tab">
             @livewire('transaction-details.djamos', ['walletDjamos' => $user->id])
-
         </div>
-
         <div id="versments" class="tab-pane" role="tabpanel" aria-labelledby="versments-tab">
             @livewire('transaction-details.versments', ['walletVersements' => $user->id])
-
         </div>
-
-
+        
     </div>
 
 @endsection

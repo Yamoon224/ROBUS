@@ -49,7 +49,7 @@ class VersementService
             'amount' => $reel_amount,
             'amount_solde' => $amount_solde ?? null,
             'amount_received' => $valeur_received ?? null,
-            'description'  => "Paiement de facture CIE",
+            'description'  => "Paiement versements",
             'virement_percent_id' => $percent_robus->id,
             'num_accompte'   => $number_decoder ?? null,
             'bank_code' => $id_invoice ?? null,

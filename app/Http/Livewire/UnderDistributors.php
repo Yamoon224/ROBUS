@@ -26,6 +26,7 @@ class UnderDistributors extends Component
     public $sortAsc = true;
     public $sidUserId;
     public $sidUserStatus;
+    public $sidUserInfos;
     public $user_id;
     public $master_id;
     public $company_id;
@@ -36,14 +37,14 @@ class UnderDistributors extends Component
     public $master_country;
     public $masters;
     public $countries;
-    public $cities = []; 
+    public $cities = [];
     public $citiesFilter;
-    public $cityNameSearch = ''; 
+    public $cityNameSearch = '';
 
 
     public function mount()
     {
-        $this->countries = Country::orderBy('name')->get(); 
+        $this->countries = Country::orderBy('name')->get();
     }
 
 
@@ -51,9 +52,9 @@ class UnderDistributors extends Component
     {
 
         if ($countryId) {
-            $this->cities = City::where('country_id', $countryId) 
-                                 ->orderBy('name')
-                                 ->get();
+            $this->cities = City::where('country_id', $countryId)
+                ->orderBy('name')
+                ->get();
         } else {
             $this->cities = [];
         }
@@ -66,6 +67,8 @@ class UnderDistributors extends Component
         $check = SidUser::whereId($id)->first();
         $this->sidUserId = $id;
         $this->sidUserStatus = $check->status;
+        $this->sidUserInfos = $check->firstname . ' ' . $check->lastname;
+
         $this->user_country = $check->country->id;
         $this->emit($state);
     }
@@ -83,9 +86,9 @@ class UnderDistributors extends Component
 
     public function activeAll()
     {
-  
+
         OperatorService::truncate();
-        $utilisateurs = SidUser::where('is_under_distributer' , true)->get();
+        $utilisateurs = SidUser::where('is_under_distributer', true)->get();
         $operations = Operator::whereIsCommission(true)->get();
 
         foreach ($utilisateurs as $utilisateur) {
@@ -100,9 +103,9 @@ class UnderDistributors extends Component
 
     public function activeAllOPerators()
     {
-  
-    
-        $utilisateurs = SidUser::where('is_under_distributer' , true)->get();
+
+
+        $utilisateurs = SidUser::where('is_under_distributer', true)->get();
         $operations = Operator::whereIsUnder(true)->get();
 
         foreach ($utilisateurs as $utilisateur) {
@@ -121,6 +124,7 @@ class UnderDistributors extends Component
         $this->user_id = $check->id;
         $this->company_id = $check->company_id;
         $this->user_country = $check->country->id;
+        $this->sidUserInfos = $check->firstname . ' ' . $check->lastname;
         $this->underdistributeurDesabled = $check->is_accepted_companie;
         $this->emit($state);
     }
@@ -287,6 +291,23 @@ class UnderDistributors extends Component
         $this->emit('modal-hide', 'hide');
     }
 
+    public function deletedUser()
+    {
+        $user = SidUser::find($this->sidUserId);
+
+        if (!empty($user)) {
+            
+            if ($user->wallet) {
+                $user->wallet->forceDelete();
+            }
+
+            $user->forceDelete();
+            $this->emit('modal-hide', 'hide');
+            $this->cancelConnectedField();
+            $this->emit('refreshPage');
+            $this->emit('success', 'Utilisateur supprimer avec success !');
+        }
+    }
 
     public function connectedOneMaster()
     {
@@ -441,14 +462,14 @@ class UnderDistributors extends Component
 
         if ($this->cityNameSearch != "") {
 
-            $this->resetPage(); 
+            $this->resetPage();
             $users->where('is_under_distributer', true)
-            ->when($this->cityNameSearch, function ($query) {
-                $query->where(function ($query) {
-                    $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
-                });
-            })
-            ->paginate($this->perPage);
+                ->when($this->cityNameSearch, function ($query) {
+                    $query->where(function ($query) {
+                        $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
+                    });
+                })
+                ->paginate($this->perPage);
         }
 
         return view('livewire.under-distributors', [

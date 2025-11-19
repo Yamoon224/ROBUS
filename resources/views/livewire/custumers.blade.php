@@ -102,7 +102,7 @@
                                                 gray; @endif;">
                                     </div>
                                 @endif
-                                    <div class="user-phone mt-6 mb-3">
+                                <div class="user-phone mt-6 mb-3">
                                     {{ $item->email ?? 'Non renseigné' }}
                                 </div>
 
@@ -247,6 +247,7 @@
                                             </svg>
                                         </a>
                                     @endif
+                                    @include('components.tableDeleted')
 
                                 </div>
                             </td>
@@ -274,5 +275,6 @@
     @include('livewire.modals.connectedCompanyUnders')
     @include('livewire.modals.connectedCompanyOneUnderDistributors')
     @include('livewire.modals.unsignUnderDistributors')
+    @include('livewire.modals.deletedUsers')
 
 </div>

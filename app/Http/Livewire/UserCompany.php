@@ -26,13 +26,14 @@ class UserCompany extends Component
     public $sidUserId;
     public $sidUserStatus;
     public $countries;
-    public $cities = []; 
+    public $cities = [];
     public $citiesFilter;
-    public $cityNameSearch = ''; 
-    
+    public $cityNameSearch = '';
+    public $sidUserInfos;
+
     public function mount()
     {
-        $this->countries = Country::orderBy('name')->get(); 
+        $this->countries = Country::orderBy('name')->get();
     }
 
 
@@ -40,9 +41,9 @@ class UserCompany extends Component
     {
 
         if ($countryId) {
-            $this->cities = City::where('country_id', $countryId) 
-                                 ->orderBy('name')
-                                 ->get();
+            $this->cities = City::where('country_id', $countryId)
+                ->orderBy('name')
+                ->get();
         } else {
             $this->cities = [];
         }
@@ -54,8 +55,26 @@ class UserCompany extends Component
     {
         $check = SidUser::whereId($id)->first();
         $this->sidUserId = $id;
+        $this->sidUserInfos = $check->firstname . ' ' . $check->lastname;
         $this->sidUserStatus = $check->status;
         $this->emit($state);
+    }
+
+    public function deletedUser()
+    {
+        $user = SidUser::find($this->sidUserId);
+
+        if (!empty($user)) {
+
+            if ($user->wallet) {
+                $user->wallet->forceDelete();
+            }
+
+            $user->forceDelete();
+            $this->emit('modal-hide', 'hide');
+            $this->emit('refreshPage');
+            $this->emit('success', 'Utilisateur supprimer avec success !');
+        }
     }
 
     public function edit_update($data)
@@ -93,7 +112,7 @@ class UserCompany extends Component
             $this->emit('success', 'Liste des operateurs mise à jour !');
         }
     }
-    
+
     public function resetField()
     {
         $this->sidUserId = '';
@@ -106,44 +125,41 @@ class UserCompany extends Component
         $check = SidUser::whereId($this->sidUserId)->first();
 
         if (!empty($check)) {
-            
-            if ($check->status == 0) 
-            {
+
+            if ($check->status == 0) {
                 $check->update(['status' => 1]);
 
                 if ($check->email != null) {
-                                    
-                    Mail::to($check->email)->send(new UvSend('Votre compte Robus a été activé pour une raison \n Merci Bien' ));
+
+                    Mail::to($check->email)->send(new UvSend('Votre compte Robus a été activé pour une raison \n Merci Bien'));
                 }
-                
+
                 $this->resetField();
                 $this->emit('modal-hide', 'hide');
                 $this->emit('success', $check->status == 1 ? 'Utilisateur activée !' : 'Utilisateur désactivée !');
-
             } else {
 
                 $check->update(['status' => 0]);
 
                 if ($check->email != null) {
-                                    
-                    Mail::to($check->email)->send(new UvSend('Votre compte Robus a été desactivé pour une raison \n Merci Bien' ));
+
+                    Mail::to($check->email)->send(new UvSend('Votre compte Robus a été desactivé pour une raison \n Merci Bien'));
                 }
                 $this->resetField();
                 $this->emit('modal-hide', 'hide');
                 $this->emit('success', $check->status == 1 ? 'Utilisateur activée !' : 'Utilisateur désactivée !');
-            } 
-           
+            }
         }
     }
 
     public function render()
     {
         $users = SidUser::query()->where('is_company', true);
-    
+
         if ($this->search != "") {
             $this->resetPage();
-    
-            $users->where(function($query) {
+
+            $users->where(function ($query) {
                 $query->where('is_admin', true)
                     ->orWhere("is_distributer", true)
                     ->orWhere("is_under_distributer", true)
@@ -153,7 +169,7 @@ class UserCompany extends Component
                     ->orWhere("email", "LIKE", "%" . $this->search . "%");
             });
         }
-    
+
 
 
         if ($this->countriesFilter != "") {
@@ -170,26 +186,24 @@ class UserCompany extends Component
 
         if ($this->cityNameSearch != "") {
 
-            $this->resetPage(); 
+            $this->resetPage();
             $users->where('is_company', true)
-            ->when($this->cityNameSearch, function ($query) {
-                $query->where(function ($query) {
-                    $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
-                });
-            })
-            ->paginate($this->perPage);
+                ->when($this->cityNameSearch, function ($query) {
+                    $query->where(function ($query) {
+                        $query->where("zone", "LIKE", "%" . $this->cityNameSearch . "%");
+                    });
+                })
+                ->paginate($this->perPage);
         }
-    
+
         $users = $users->orderBy($this->sortField, $this->sortAsc ? 'asc' : 'desc')
-                       ->orderBy('created_at', 'desc')
-                       ->paginate($this->perPage);
-    
+            ->orderBy('created_at', 'desc')
+            ->paginate($this->perPage);
+
         return view('livewire.user-company', [
             "users" => $users,
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->whereIsCommission(true)->orderBy("name", 'desc')->get(),
         ]);
     }
-    
-
 }

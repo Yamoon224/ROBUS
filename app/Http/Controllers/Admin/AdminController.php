@@ -1488,7 +1488,7 @@ class AdminController extends Controller
     public function showunders(int $id, Request $request)
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur')) {
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-sous-distributeurs')) {
             abort(403);
         }
 
@@ -1534,8 +1534,8 @@ class AdminController extends Controller
 
         $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
 
-        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits             
-        + $gain_xbets + $gain_versment + $gain_push + $gain_djamo + $gain_tresorts;
+        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits
+            + $gain_xbets + $gain_versment + $gain_push + $gain_djamo + $gain_tresorts;
 
         // Execeptions
         $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
@@ -1661,7 +1661,9 @@ class AdminController extends Controller
 
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
-        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte);
+        $amount_old_solde = (float)$user->wallet->amount;
+
+        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte, $amount_old_solde);
 
         if ($withRemonte !== null) {
 
@@ -1809,15 +1811,17 @@ class AdminController extends Controller
                 ->withInput();
         }
 
-        $amount_solde = (float)$user->wallet->amount;
+        $amount_old_solde = (float)$user->wallet->amount;
 
         $resetClass = $resetMappings[$typeRemonte];
+
+        $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
         $amountDrawa = $this->withdrawCommission($resetClass, $user, $request->amountDrawal);
 
         if ($amountDrawa === true) {
 
-            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte);
+            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $amount_old_solde);
 
             if (isset($resetMappings[$typeRemonte])) {
                 if ($admin_civ->count() > 0) {
@@ -1898,8 +1902,6 @@ class AdminController extends Controller
             "Retrait Versement" => WalletVersement::class,
             "Retrait Tresort" => WalletTresortMoney::class,
             "Retrait Djamo" => WalletDjamo::class,
-
-
         ];
 
 
@@ -1952,7 +1954,7 @@ class AdminController extends Controller
                 ->withInput();
         }
 
-        $amount_solde = (float)$user->wallet->amount;
+        $amount_solde = (float)$user->wallet->amount + (float)$request->amountDrawal;
 
         $resetClass = $resetMappings[$typeRemonte];
 
@@ -1960,7 +1962,9 @@ class AdminController extends Controller
 
         if ($amountDrawa === true) {
 
-            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte);
+            $walletFreshAmount = (float) $user->wallet()->value('amount');
+
+            $withRemonte = $this->createWithCommission($amount_solde, $request->amountDrawal, $user->id, $typeRemonte, $walletFreshAmount);
 
             if (isset($resetMappings[$typeRemonte])) {
                 if ($admin_civ->count() > 0) {
@@ -2027,15 +2031,12 @@ class AdminController extends Controller
             $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
             $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
             $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
-           
             $gain_xbets = $this->getTodayTransactionCommissionAmountTotal(WalletXbet::class, $user->wallet->id);
             $gain_versments = $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id);
             $gain_pushs = $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id);
             $gain_djamos = $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id);
             $gain_tresorts = $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id);
         } elseif ($user->is_company == true) {
-
-        
             $gain_deposits = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletDeposit::class, $user->company_id, $user->id);
             $gain_payments = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletPayment::class, $user->company_id, $user->id);
             $gain_transactions = $this->getTodayTransactionCommissionCompagnieAmountTotal(WalletTransaction::class, $user->company_id, $user->id);
@@ -2073,9 +2074,11 @@ class AdminController extends Controller
                 ->withInput();
         }
 
+        $walletFreshAmount = (float) $user->wallet()->value('amount');
+
         $amount_solde = (float)$user->wallet->amount + (float)$amount;
 
-        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte);
+        $withRemonte = $this->createWithCommission($amount_solde, $amount, $user->id,  $typeRemonte, $walletFreshAmount);
 
         if ($withRemonte !== null) {
 
@@ -2116,6 +2119,242 @@ class AdminController extends Controller
         }
     }
 
+    public function remonteAllCountryCommission(int $id)
+    {
+        $countryDetails = Country::find($id);
+
+        if (!$countryDetails) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Pays non trouvé !')
+                ->withInput();
+        }
+
+        $usersToRemonte = SidUser::where('country_id', $countryDetails->id)
+            ->where('is_under_distributer', true)
+            ->get();
+
+        $successCount = 0;
+
+        foreach ($usersToRemonte as $user) {
+
+            if (!$user->wallet) {
+                continue;
+            }
+
+            $commissionModels = [
+                "Rechargements"         => WalletDeposit::class,
+                "Paiements"             => WalletPayment::class,
+                "Transactions"          => WalletTransaction::class,
+                "Crédit téléphonique"   => WalletPhoneCredit::class,
+                "Transfert international" => WalletInter::class,
+                "Virements"              => WalletBank::class,
+                "Xbet"                  => WalletXbet::class,
+                "Versement"             => WalletVersement::class,
+                "Push"                  => WalletPush::class,
+                "Djamo"                 => WalletDjamo::class,
+                "Tresort Money"         => WalletTresortMoney::class,
+            ];
+
+            foreach ($commissionModels as $type => $model) {
+
+                $commission = $model::where('wallet_id', $user->wallet->id)
+                    ->where('status', 'SUCCESS')
+                    ->sum('commissions');
+
+                if ($commission <= 0) {
+                    continue;
+                }
+
+                $model::where('wallet_id', $user->wallet->id)
+                    ->where('status', 'SUCCESS')
+                    ->update(['commissions' => 0]);
+
+                // Nouveau solde
+                $walletFreshAmount = (float) $user->wallet()->value('amount');
+
+                $amount_solde = $walletFreshAmount + (float) $commission;
+
+                $withRemonte = $this->createWithCommission(
+                    $amount_solde,
+                    $commission,
+                    $user->id,
+                    $type,
+                    $walletFreshAmount
+                );
+
+                if ($withRemonte) {
+
+                    // Mise à jour du wallet
+                    $user->wallet->update([
+                        'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                        'sid_user_relod' => sabdy()->id,
+                        'amount' => DB::raw('amount + ' . $withRemonte->amount_with_draw),
+                    ]);
+
+                    // Notif
+                    $msg = "Votre commission ($type) a été transférée sur votre compte.";
+                    $msg_title = 'Transfert de commission par ' . sabdy()->firstname . ' ' . sabdy()->lastname;
+
+                    $user->notify(new UserNotification([
+                        'title' => $msg_title,
+                        'message' => $msg
+                    ]));
+
+                    $successCount++;
+                }
+            }
+        }
+
+        if ($successCount > 0) {
+            return back()
+                ->with('color', 'success')
+                ->with('status', "$successCount commission(s) ont été remontée(s) avec succès !")
+                ->withInput();
+        }
+
+        return back()
+            ->with('color', 'info')
+            ->with('status', 'Aucune commission à remonter pour ce pays ou aucun sous-distributeur trouvé.')
+            ->withInput();
+    }
+
+    public function remonteAllCountryCompanies(int $id)
+    {
+        $countryDetails = Country::find($id);
+
+        if (!$countryDetails) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Pays non trouvé !')
+                ->withInput();
+        }
+
+        $companieCountries = SidUser::where('country_id', $countryDetails->id)
+            ->where('is_company', true)
+            ->where('company_id', '!=', 1)
+            ->get();
+
+        $successCount = 0;
+
+        foreach ($companieCountries as $company) {
+
+
+            if (!$company->wallet) {
+                continue;
+            }
+
+            $usersCompanieToRemonte = SidUser::where('company_id', $company->id)
+                ->where('is_under_distributer', true)
+                ->get();
+
+
+
+            $commissionModels = [
+                "Rechargements"         => WalletDeposit::class,
+                "Paiements"             => WalletPayment::class,
+                "Transactions"          => WalletTransaction::class,
+                "Crédit téléphonique"   => WalletPhoneCredit::class,
+                "Transfert international" => WalletInter::class,
+                "Virements"              => WalletBank::class,
+                "Xbet"                  => WalletXbet::class,
+                "Versement"             => WalletVersement::class,
+                "Push"                  => WalletPush::class,
+                "Djamo"                 => WalletDjamo::class,
+                "Tresort Money"         => WalletTresortMoney::class,
+            ];
+
+            foreach ($usersCompanieToRemonte as $user) {
+
+
+                // 1. Parcours de tous les modèles pour cet utilisateur
+                foreach ($commissionModels as $type => $model) {
+
+                    $commission = $model::where('wallet_id', $user->wallet->id)
+                        ->where('status', 'SUCCESS')
+                        ->sum('commission_companie');
+
+                    if ($commission <= 0) {
+                        continue;
+                    }
+
+                    $model::where('wallet_id', $user->wallet->id)
+                        ->where('status', 'SUCCESS')
+                        ->update(['commission_companie' => 0]);
+
+                    // Nouveau solde
+                    $walletFreshAmount = (float) $company->wallet()->value('amount');
+
+                    $amount_solde = $walletFreshAmount + (float) $commission;
+
+                    $withRemonte = $this->createWithCommission(
+                        $amount_solde,
+                        $commission,
+                        $company->id,
+                        $type,
+                        $walletFreshAmount
+                    );
+
+                    if ($withRemonte) {
+
+                        // Mise à jour du wallet
+                        $company->wallet->update([
+                            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                            'sid_user_relod' => sabdy()->id,
+                            'amount'         => DB::raw('amount + ' . ((float)$withRemonte->amount_with_draw)),
+                        ]);
+
+                        $msg = "Votre commission ($type) a été transférée sur votre compte.";
+                        $msg_title = 'Transfert de commission par ' . sabdy()->firstname . ' ' . sabdy()->lastname;
+                        $company->notify(new UserNotification([
+                            'title' => $msg_title,
+                            'message' => $msg
+                        ]));
+
+                        $successCount++;
+                    }
+                }
+            }
+        }
+
+        if ($successCount > 0) {
+            return back()
+                ->with('color', 'success')
+                ->with('status', "$successCount commission(s) ont été remontée(s) avec succès !")
+                ->withInput();
+        }
+
+        return back()
+            ->with('color', 'info')
+            ->with('status', 'Aucune commission à remonter pour ce pays ou aucun sous-distributeur trouvé.')
+            ->withInput();
+    }
+
+
+    public function calculateAndClearTotalCommission(array $walletModels, int $walletId): float
+    {
+        $grandTotalCommission = 0.0;
+
+        foreach ($walletModels as $walletModel) {
+
+            // 1. Calcule la somme des commissions pour ce modèle
+            $totalForModel = $walletModel::where('wallet_id', $walletId)
+                ->whereStatus('SUCCESS')
+                ->sum('commissions');
+
+            if ($totalForModel > 0) {
+                // 2. Met à jour la colonne 'commissions' à 0 (Nettoyage/Remise à null)
+                $walletModel::where('wallet_id', $walletId)
+                    ->whereStatus('SUCCESS')
+                    ->update(['commissions' => 0]);
+
+                // 3. Ajoute au total général
+                $grandTotalCommission += $totalForModel;
+            }
+        }
+
+        return $grandTotalCommission;
+    }
 
     public function getUpdateTransactionCommissionAmountNullTotal($walletModel, $sidUserId)
     {
@@ -2236,7 +2475,7 @@ class AdminController extends Controller
 
 
 
-    private function createWithCommission($amount_solde, $gain_amount, $userId, $typeRemonte)
+    private function createWithCommission($amount_solde, $gain_amount, $userId, $typeRemonte, $oldSolde)
     {
         return WithMerchant::create([
             'amount_with_draw' =>  $gain_amount,
@@ -2244,6 +2483,7 @@ class AdminController extends Controller
             'amount_solde' =>   $amount_solde,
             'type_transaction' => $typeRemonte,
             'status' =>  "SUCCESS",
+            'old_balance' => $oldSolde,
             'date_removed' => Carbon::now(),
         ]);
     }

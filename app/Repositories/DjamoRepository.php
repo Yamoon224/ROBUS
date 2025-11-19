@@ -34,7 +34,7 @@ class DjamoRepository extends BaseRepository
      * @return array
      */
 
-    public function getXbetById($xbet_id)
+    public function getDjamoById($xbet_id)
     {
         return WalletDjamo::findOrFail($xbet_id);
     }

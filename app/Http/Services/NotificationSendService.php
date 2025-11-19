@@ -10,7 +10,10 @@ use App\Events\CreateWalletOneXbet;
 use App\Events\CreateWalletPaiementEvent;
 use App\Events\CreateWalletPhoneCreditEvent;
 use App\Events\CreateWalletReloadCardEvent;
+use App\Events\CreateWalletPushEvent;
 use App\Events\CreateWalletTransfersEvent;
+use App\Events\CreateWalletTresortEvent;
+use App\Events\CreateWalletDjamoEvent;
 use App\Events\CreateWaveEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Models\Sid\SidUser;
@@ -70,7 +73,7 @@ class NotificationSendService
         ], 200);
     }
 
-      public function sendNotificationVersement($walletPayment)
+    public function sendNotificationVersement($walletPayment)
     {
         $msg = 'Demande en cours de validation';
         $msg_title = 'Versement Bancaire';
@@ -324,6 +327,167 @@ class NotificationSendService
                 'status' => $walletPhone->status,
             ],
             'message' => ('Le crédit téléphonique a été créé avec succès.')
+        ], 200);
+    }
+
+    public function sendNotificationPush($walletPush)
+    {
+
+
+        if (robus()->is_custumers) {
+            if (robus()->country->code == "CI") {
+
+                $message = 'Votre transaction de ' . $walletPush->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                    . $walletPush->provider->name  .  ' le '
+                    . $walletPush->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+                $encode = substr(robus()->phone,  -10);
+
+                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            }
+        }
+        $admins = $this->getAdminCIVProperty();
+        $msg = 'Demande en cours de validation';
+        $msg_title = 'Transction Push';
+        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletPushEvent($walletPush));
+        Notification::send($admins, new AdminNotification('Demande de transaction Push de ' . ' ' . $walletPush->wallet->sidUser->firstname));
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+
+        if (robus()->email != null) {
+
+            $notify = new MailController;
+            $notify->newPush($walletPush);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id'      => $walletPush->id,
+                'provider' => $walletPush->provider->name,
+                'amount' => $walletPush->amount,
+                'description' => $walletPush->description,
+                'status' => $walletPush->status,
+            ],
+            'message' => ('La demande de Push a été créé avec succès.')
+        ], 200);
+    }
+
+    public function sendNotificationTresort($walletTransaction)
+    {
+
+
+        if (robus()->is_custumers) {
+            if (robus()->country->code == "CI") {
+
+                $message = 'Votre transaction de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                    . $walletTransaction->provider->name  .  ' le '
+                    . $walletTransaction->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+                $encode = substr(robus()->phone,  -10);
+
+                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            }
+        }
+        $admins = $this->getAdminCIVProperty();
+        $msg = 'Demande en cours de validation';
+        $msg_title = 'Transction Tresort Money';
+        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletTresortEvent($walletTransaction));
+        Notification::send($admins, new AdminNotification('Demande de transaction Tresort Money de ' . ' ' . $walletTransaction->wallet->sidUser->firstname));
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+
+        if (robus()->email != null) {
+
+            $notify = new MailController;
+            $notify->newTresort($walletTransaction);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id'      => $walletTransaction->id,
+                'provider' => $walletTransaction->provider->name,
+                'amount' => $walletTransaction->amount,
+                'description' => $walletTransaction->description,
+                'status' => $walletTransaction->status,
+            ],
+            'message' => ('La demande de transaction tresort Money a été créé avec succès.')
+        ], 200);
+    }
+
+
+
+    public function sendNotificationDjamo($walletTransaction)
+    {
+
+
+        if (robus()->is_custumers) {
+            if (robus()->country->code == "CI") {
+
+                $message = 'Votre transaction de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                    . $walletTransaction->provider->name  .  ' le '
+                    . $walletTransaction->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+                $encode = substr(robus()->phone,  -10);
+
+                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            }
+        }
+        $admins = $this->getAdminCIVProperty();
+        $msg = 'Demande en cours de validation';
+        $msg_title = 'Transction Djamo';
+        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletDjamoEvent($walletTransaction));
+        Notification::send($admins, new AdminNotification('Demande de transaction Djamo de ' . ' ' . $walletTransaction->wallet->sidUser->firstname));
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+        }
+
+        if (robus()->email != null) {
+
+            $notify = new MailController;
+            $notify->newDjamo($walletTransaction);
+        }
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id'      => $walletTransaction->id,
+                'provider' => $walletTransaction->provider->name,
+                'amount' => $walletTransaction->amount,
+                'description' => $walletTransaction->description,
+                'status' => $walletTransaction->status,
+            ],
+            'message' => ('La demande de transaction tresort Money a été créé avec succès.')
         ], 200);
     }
 

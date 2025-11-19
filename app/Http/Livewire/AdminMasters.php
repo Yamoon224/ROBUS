@@ -20,6 +20,7 @@ class AdminMasters extends Component
     public $search = "";
     public $countriesFilter = "";
     public $perPage = 30;
+    public $sidUserInfos;
     public $sortField = 'id';
     public $sortAsc = true;
     public $sidUserId;
@@ -29,8 +30,28 @@ class AdminMasters extends Component
     {
         $check = SidUser::whereId($id)->first();
         $this->sidUserId = $id;
+        $this->sidUserInfos = $check->firstname . ' ' . $check->lastname;
         $this->sidUserStatus = $check->status;
         $this->emit($state);
+    }
+
+
+    public function deletedUser()
+    {
+        $user = SidUser::find($this->sidUserId);
+
+        if (!empty($user)) {
+
+            if ($user->wallet) {
+                $user->wallet->forceDelete();
+            }
+
+            $user->forceDelete();
+            $this->emit('modal-hide', 'hide');
+            $this->resetField();
+            $this->emit('refreshPage');
+            $this->emit('success', 'Utilisateur supprimer avec success !');
+        }
     }
 
     public function resetField()
@@ -42,19 +63,19 @@ class AdminMasters extends Component
 
     public function edit_update($data)
     {
-      
+
         $sid_user = $data['user_id'];
-        
+
         $operator_id = $data['operator_id'];
 
         $check_user = SidUser::whereId($sid_user)->first();
 
         $check_operator = Operator::whereId($operator_id)->first();
-        
+
         $old_operators = OperatorService::where('sid_user_id', $check_user->id)
-                                                ->where('operator_id', $check_operator->id)
-                                                ->first();
-      
+            ->where('operator_id', $check_operator->id)
+            ->first();
+
         if (!empty($old_operators)) {
 
             $old_operators->forcedelete();
@@ -62,11 +83,10 @@ class AdminMasters extends Component
             $this->resetdesableField();
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Liste des operateurs mise à jour !');
-
-        }else {
+        } else {
 
             $operator_service = new OperatorService;
-            $operator_service->sid_user_id =$check_user->id;
+            $operator_service->sid_user_id = $check_user->id;
             $operator_service->operator_id  = $check_operator->id;
             $operator_service->save();
             event(new assignementEvent($operator_service));
@@ -74,49 +94,45 @@ class AdminMasters extends Component
             $this->resetdesableField();
             $this->emit('modal-hide', 'hide');
             $this->emit('success', 'Liste des operateurs mise à jour !');
-
         }
     }
 
-        
+
     public function resetdesableField()
     {
         $this->emit('modal-hide', 'hide');
         // return redirect(request()->header('Referer'));
     }
-    
+
     public function disable()
     {
         $check = SidUser::whereId($this->sidUserId)->first();
 
         if (!empty($check)) {
-            
-            if ($check->status == 0) 
-            {
+
+            if ($check->status == 0) {
                 $check->update(['status' => 1]);
 
                 if ($check->email != null) {
-                                    
-                    Mail::to($check->email)->send(new UvSend('Votre compte Robus a été activé pour une raison \n Merci Bien' ));
+
+                    Mail::to($check->email)->send(new UvSend('Votre compte Robus a été activé pour une raison \n Merci Bien'));
                 }
-                
+
                 $this->resetField();
                 $this->emit('modal-hide', 'hide');
                 $this->emit('success', $check->status == 1 ? 'Utilisateur activée !' : 'Utilisateur désactivée !');
-
             } else {
 
                 $check->update(['status' => 0]);
 
                 if ($check->email != null) {
-                                    
-                    Mail::to($check->email)->send(new UvSend('Votre compte Robus a été desactivé pour une raison \n Merci Bien' ));
+
+                    Mail::to($check->email)->send(new UvSend('Votre compte Robus a été desactivé pour une raison \n Merci Bien'));
                 }
                 $this->resetField();
                 $this->emit('modal-hide', 'hide');
                 $this->emit('success', $check->status == 1 ? 'Utilisateur activée !' : 'Utilisateur désactivée !');
-            } 
-           
+            }
         }
     }
 
@@ -141,10 +157,9 @@ class AdminMasters extends Component
         }
 
         return view('livewire.admin-masters', [
-            "users" => $users->where('is_master' , true)->orderBy('created_at', 'desc')->latest()->paginate(30),
+            "users" => $users->where('is_master', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->whereIsMaster(true)->orderBy("name", 'desc')->get(),
         ]);
     }
-
 }

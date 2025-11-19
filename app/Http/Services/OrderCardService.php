@@ -140,7 +140,6 @@ class OrderCardService
 
 
             $valuer_deposit = (float) $percent_robus->percent_merchands;
-            // Convertion in devise Use send
             $convertion_commission = $this->commissionServices->convertAdminCommission($valuer_deposit);
             $admin_valeur =  $amount_commission -  $percent_robus->percent_merchands;
 
