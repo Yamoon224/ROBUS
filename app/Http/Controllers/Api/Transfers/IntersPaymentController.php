@@ -276,73 +276,6 @@ class IntersPaymentController extends Controller
                             );
                         }
                     }
-                } elseif (in_array($request->provider, [104])) {
-
-                    if (robus()->is_under_distributer) {
-
-
-                        $validator = Validator::make(
-
-                            $request->all(),
-                            [
-                                "phone" => 'required',
-                                "amount" => 'required',
-                                "name_custumer" => 'required',
-                                "image_piece" => 'required',
-                                'country' => 'required',
-                            ],
-                            [
-
-                                'phone.required' => 'Votre numero est obligatoire',
-                                'amount.required' => 'Votre montant est obligatoire',
-                                'name_custumer.required' => 'Nom est obligatoire',
-                                'image_piece.required' => 'Numero piece est obligatoire',
-                                'country.required' => 'Votre pays est obligatoire',
-
-                            ]
-                        );
-
-                        if ($validator->fails()) {
-                            return response()->json(
-                                [
-                                    'success' => false,
-                                    'message' => 'Verifiez les champs',
-                                    'data' => $validator->errors()
-                                ],
-                                333
-                            );
-                        }
-                    } else {
-
-                        $validator = Validator::make(
-
-                            $request->all(),
-                            [
-                                "phone" => 'required',
-                                "amount" => 'required',
-                                'country' => 'required',
-                            ],
-                            [
-
-                                'phone.required' => 'Votre numero est obligatoire',
-                                'amount.required' => 'Votre montant est obligatoire',
-                                'country.required' => 'Votre pays est obligatoire',
-
-
-                            ]
-                        );
-
-                        if ($validator->fails()) {
-                            return response()->json(
-                                [
-                                    'success' => false,
-                                    'message' => 'Verifiez les champs',
-                                    'data' => $validator->errors()
-                                ],
-                                333
-                            );
-                        }
-                    }
                 } elseif (in_array($request->provider, [99])) {
 
                     if (robus()->is_under_distributer) {
@@ -427,7 +360,7 @@ class IntersPaymentController extends Controller
                             );
                         }
                     }
-                } elseif (in_array($request->provider, [105 , 106])) {
+                } elseif (in_array($request->provider, [104, 105, 106])) {
 
                     if (robus()->is_under_distributer) {
 
@@ -440,6 +373,7 @@ class IntersPaymentController extends Controller
                                 "amount" => 'required',
                                 'country' => 'required',
                                 "name_custumer" => 'required',
+                                'image_piece' => 'image|mimes:png,jpg,jpeg|max:102400',
                             ],
                             [
 
@@ -469,6 +403,8 @@ class IntersPaymentController extends Controller
                                 "phone" => 'required',
                                 "amount" => 'required',
                                 'country' => 'required',
+                                'image_piece' => 'image|mimes:png,jpg,jpeg|max:102400',
+
                             ],
                             [
 
@@ -684,10 +620,15 @@ class IntersPaymentController extends Controller
 
                         if ($request->provider == 104) {
                             $percent_djamo =  $this->percentRobus->getRobusPercentageDjamoInter();
+                            $percent_djamo_action = $this->percentRobus->getRobusPercentageDjamoInter()->id;
+
                         } elseif ($request->provider == 105) {
                             $percent_djamo =  $this->percentRobus->getRobusPercentagePushInter();
+                            $percent_push_action = $this->percentRobus->getRobusPercentagePushInter()->id;
+                       
                         } elseif ($request->provider == 106) {
                             $percent_djamo =  $this->percentRobus->getRobusPercentageTresortInter();
+                            $percent_tresort_action = $this->percentRobus->getRobusPercentageTresortInter()->id;
                         }
 
                         if ($percent_djamo != null) {
@@ -752,6 +693,9 @@ class IntersPaymentController extends Controller
                                             $request->name,
                                             $request->name_sender,
                                             $request->account_number,
+                                            $percent_push_action,
+                                            $percent_djamo_action,
+                                            $percent_tresort_action,
                                             $imagePath
                                         );
 
@@ -1462,50 +1406,48 @@ class IntersPaymentController extends Controller
                 }
 
 
-                  $percent_robus =  $this->percentRobus->getRobusPercentagePush();
+                $percent_robus =  $this->percentRobus->getRobusPercentagePush();
 
-                    if ($percent_robus != null) {
+                if ($percent_robus != null) {
 
-                        $reel_amount = $this->validatedamountDays->search_amount($request->amount_push);
+                    $reel_amount = $this->validatedamountDays->search_amount($request->amount_push);
 
-                        if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+                    if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            if (robus()->is_under_distributer) {
-                                $val_amount_send = $reel_amount;
-                                $amountReceved = $reel_amount;
-                            } else {
+                        if (robus()->is_under_distributer) {
+                            $val_amount_send = $reel_amount;
+                            $amountReceved = $reel_amount;
+                        } else {
 
-                                $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
-                                $amountReceved = $reel_amount - (float) ($percent_robus->percent * $reel_amount);
-                            }
+                            $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
+                            $amountReceved = $reel_amount - (float) ($percent_robus->percent * $reel_amount);
+                        }
 
 
-                            if ($this->validatedamountDays->validateAmount($val_amount_send)) {
+                        if ($this->validatedamountDays->validateAmount($val_amount_send)) {
 
-                                $walletPush =  $this->pushService->createRobusWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone , $request->full_name_push, $amountReceved);
+                            $walletPush =  $this->pushService->createRobusWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone, $request->full_name_push, $amountReceved);
 
-                                if ($walletPush != null) {
+                            if ($walletPush != null) {
 
-                                    if ($this->pushService->updateamountPushReceveid($admin_civ, $percent_robus, $walletPush, $reel_amount)) {
-                                        $this->notificationPhone->sendNotificationPush($walletPush);
-                                        return $this->messageAfterValidated($walletPush);
-                                    }
-                                } else {
-
-                                    return  json_message_response(false, "Error de creation de transfert du montant!", 333);
+                                if ($this->pushService->updateamountPushReceveid($admin_civ, $percent_robus, $walletPush, $reel_amount)) {
+                                    $this->notificationPhone->sendNotificationPush($walletPush);
+                                    return $this->messageAfterValidated($walletPush);
                                 }
                             } else {
-                                return json_message_response(false, "Verifié votre solde !!", 333);
+
+                                return  json_message_response(false, "Error de creation de transfert du montant!", 333);
                             }
                         } else {
-                            return json_message_response(false, "Votre montant journalier est atteint !!", 333);
+                            return json_message_response(false, "Verifié votre solde !!", 333);
                         }
                     } else {
-
-                        return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
+                        return json_message_response(false, "Votre montant journalier est atteint !!", 333);
                     }
+                } else {
 
-
+                    return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
+                }
             }
         } catch (\Exception $exception) {
             return response()->json([

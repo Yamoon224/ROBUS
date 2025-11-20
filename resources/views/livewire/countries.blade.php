@@ -1,5 +1,5 @@
 <div>
-    
+
     <h2 class="intro-y text-lg font-medium mt-10">
         Liste des pays
     </h2>
@@ -26,10 +26,12 @@
                         <th class="whitespace-nowrap text-center">Code</th>
                         <th class="text-center whitespace-nowrap text-center">Name</th>
                         <th class="text-center whitespace-nowrap text-center">Compagnie</th>
+                        <th class="text-center whitespace-nowrap text-center">API</th>
+
                         <th class="text-center whitespace-nowrap text-center">Devise</th>
                         <th class="text-center whitespace-nowrap text-center">Plafond</th>
                         <th class="text-center whitespace-nowrap text-center">Montant Maxi a envoyé</th>
-                         {{-- <th class="text-center whitespace-nowrap text-center">Plafond sans piece</th> --}}
+                        {{-- <th class="text-center whitespace-nowrap text-center">Plafond sans piece</th> --}}
                         <th class="text-center whitespace-nowrap text-center">Actions</th>
                     </tr>
                 </thead>
@@ -78,12 +80,40 @@
                                         @endif
                                     @endif
                                 </td>
+                                <td class="w-40 ">
+                                    @if ($item->is_integrate == '1')
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('active-caution'))
+                                            <div class="flex items-center justify-center text-success">
+
+                                                <a wire:click="edit({{ $item->id }}, 'show-disabled-countrieIntegrate-modal'); $emit('show-disabled-countrieIntegrate-modal')"
+                                                    class="flex items-center mr-3 @if ($item->is_integrate == 1) @else @endif"
+                                                    href="javascript:;"
+                                                    title="@if ($item->is_integrate == 1) Ne permet pas une integration @else Permet pas une integration @endif">
+                                                    <i class="fas fa-unlock-alt w-4 h-4 mr-2"></i> API
+                                                </a>
+
+                                            </div>
+                                        @endif
+                                    @else
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('desactive-caution'))
+                                            <div class="flex items-center justify-center text-danger">
+                                                <a wire:click="edit({{ $item->id }}, 'show-disabled-countrieIntegrate-modal'); $emit('show-disabled-countrieIntegrate-modal')"
+                                                    class="flex items-center mr-3 @if ($item->is_integrate == 1) @else @endif"
+                                                    href="javascript:;"
+                                                    title="@if ($item->is_integrate == 1) Ne permet pas une integration @else Permet pas une integration @endif">
+                                                    <i class="fas fa-lock w-4 h-4 mr-2"></i>NON API
+                                                </a>
+
+                                            </div>
+                                        @endif
+                                    @endif
+                                </td>
                                 <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">
                                         {{ $item->currencie->name ?? 'Pas encore' }}
                                     </div>
                                 </td>
-                                 <td class="w-35 text-center">
+                                <td class="w-35 text-center">
                                     <div class="text-slate-500 text-xs  mt-0.5">
                                         {{ $item->silver_ceiling ?? '00' }}
                                     </div>
@@ -127,6 +157,7 @@
         <!-- END: Pagination -->
     </div>
     @include('livewire.commissions.modals.disabledCountries')
+    @include('livewire.commissions.modals.integrateCountries')
     @include('livewire.commissions.modals.updateCountries')
 
 </div>

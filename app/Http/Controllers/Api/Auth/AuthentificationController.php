@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
 
 class AuthentificationController extends Controller
 {
@@ -41,7 +43,6 @@ class AuthentificationController extends Controller
         $this->registerRepository = $registerReposi;
         $this->authService = $authService;
         $this->initializeAppStatus();
-
     }
 
     private function initializeAppStatus()
@@ -195,7 +196,6 @@ class AuthentificationController extends Controller
                     $message = 'Code activation ' . $user->activation_code;
 
                     http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$user->phone&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-
                 }
 
                 $notify = new MailController;
@@ -442,7 +442,7 @@ class AuthentificationController extends Controller
                             'activation_code' => null,
                         ]);
 
-
+                        $originalLogoPath = public_path('dist/images/logo_violet.jpeg');
 
                         $tokenResult = $user->createToken('auth_token');
 
@@ -451,6 +451,47 @@ class AuthentificationController extends Controller
                         $user->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
                         $notifs = $user->unreadNotifications;
                         event(new CustumersEvent($notifs));
+
+                        try {
+
+                            $qrData = json_encode([
+                                'wallet_id' => $wallet_user->wallet_id,
+                                'user' => $wallet_user->sidUser->firstname . ' ' .  $wallet_user->sidUser->lastname,
+                                'countrie' => $wallet_user->sidUser->country->name . ' ' .  $wallet_user->sidUser->citie->name,
+                                'currencie' => $wallet_user->country->currencie->name,
+                            ]);
+
+                            $result = Builder::create()
+                                ->data($qrData)
+                                ->encoding(new Encoding('UTF-8'))
+                                ->size(300)
+                                ->margin(10)
+
+                                // 🎨 Couleur du QR code
+                                // ->foregroundColor(new Color(0, 51, 102))
+                                // ->backgroundColor(new Color(255, 255, 255)) 
+                                // 🖼️ Logo au centre
+                                ->logoPath($originalLogoPath)
+                                ->logoResizeToWidth(70)
+                                ->logoResizeToHeight(70)
+
+                                ->build();
+
+
+                            $qrPath = 'qrcodes/wallet_' . $wallet_user->id . '.png';
+                            $result->saveToFile(public_path($qrPath));
+
+                            $wallet_user->update(['qr_code' => $qrPath]);
+                        } catch (\Throwable $th) {
+
+                            return response()->json(
+                                [
+                                    'success' => false,
+                                    'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+                                ],
+                                301
+                            );
+                        }
 
                         return $this->loginSuccess($tokenResult, $user);
                     } else {
@@ -561,8 +602,8 @@ class AuthentificationController extends Controller
 
                     $user = $sidUser;
                     $user->fcm_token = $request->input('fcm_token');
-                    $user->last_login = Carbon::now(); 
-                    $user->last_logout = null; 
+                    $user->last_login = Carbon::now();
+                    $user->last_logout = null;
                     // $user->session_id = session()->getId();
                     $user->save();
 
@@ -576,17 +617,17 @@ class AuthentificationController extends Controller
 
                     $tokenResult = $user_data->createToken('auth_token');
                     $tokenResult->token->update([
-                        'expires_at' => now()->addDays(7) 
-                        ]);
-        
-                        Cache::put(
-                            'user_session_'.$user->id,
-                            $user->session_id,
-                            now()->addDays(7) 
+                        'expires_at' => now()->addDays(7)
+                    ]);
+
+                    Cache::put(
+                        'user_session_' . $user->id,
+                        $user->session_id,
+                        now()->addDays(7)
                     );
                     $user_data->update([
                         'session_id' => session()->getId(),
-                        'session_expires_at' => now()->addDays(7) 
+                        'session_expires_at' => now()->addDays(7)
                     ]);
                     $message = 'Une fois connecté, veuillez modifier votre mot de passe temporaire dans votre profil';
                     $recipient = $user->country->code == 'CI' ? '225' . substr($user->phone, -10) : $user->email;
@@ -715,7 +756,7 @@ class AuthentificationController extends Controller
     {
 
         $user = SidUser::where('email', $request->email)->first();
-        
+
         if (!$user) {
             return response()->json([
                 'success' => false,
@@ -816,10 +857,9 @@ class AuthentificationController extends Controller
                 $phone_user = substr($resend_user->phone, -10);
 
                 Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone_user&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-              
+
                 $notify = new MailController;
                 $notify->newOtp($resend_user);
-
             } else {
 
                 $notify = new MailController;
@@ -830,7 +870,6 @@ class AuthentificationController extends Controller
                 'success' => true,
                 'message' => 'Votre code d\actualisation a ete envoyer.'
             ], 200);
-
         } catch (\Throwable $th) {
 
             return response()->json(
@@ -911,15 +950,14 @@ class AuthentificationController extends Controller
                         $phone = $request->phone;
                         Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$phone&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                         // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$phone&from=ROBUS&sms=$message");
-                        
+
                         $user = SidUser::whereEmail($request->phone)->first();
                         if (!empty($user)) {
                             $user->update(['forget_password' => $activation_code]);
                             Mail::to($request->phone)->send(new UpdatePassword('Utilisez ce mot de passe temporaire pour vous connectez ' .  $activation_code));
                         }
-                        
-                        DB::commit();
 
+                        DB::commit();
                     }
                 } else {
                     $user = SidUser::whereEmail($request->phone)->first();

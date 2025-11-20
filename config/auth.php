@@ -62,6 +62,11 @@ return [
             'driver' => 'session',
             'provider' => 'comzones',
         ],
+
+        'integration' => [
+            'driver' => 'session',
+            'provider' => 'integrations',
+        ],
     ],
 
     /*
@@ -99,6 +104,11 @@ return [
         ],
 
         'comzones' => [
+            'driver' => 'eloquent',
+            'model' =>  App\Models\Sid\SidUser::class,
+        ],
+
+        'integrations' => [
             'driver' => 'eloquent',
             'model' =>  App\Models\Sid\SidUser::class,
         ],
@@ -145,6 +155,13 @@ return [
 
         'comzones' => [
             'provider' => 'comzones',
+            'table' => 'password_resets',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'integrations' => [
+            'provider' => 'integrations',
             'table' => 'password_resets',
             'expire' => 60,
             'throttle' => 60,

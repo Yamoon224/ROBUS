@@ -22,6 +22,7 @@ class Countries extends Component
     public $operator_id;
     public $countireCode;
     public $countrieStatus;
+    public $countrieIntegrate;
     public $countrieId;
     public $countrie_indic;
     public $currencie;
@@ -57,6 +58,7 @@ class Countries extends Component
         $this->operator_id = $check->operator_id;
         $this->currencie = $check->currencie->id ?? 1;
         $this->countrieStatus = $check->robus;
+        $this->countrieIntegrate = $check->is_integrate;
         $this->silver_no_identity = $check->silver_ceiling_no_identity;
         $this->ceiling = $check->silver_ceiling;
         $this->name_groupe = $check->name_groupe;
@@ -134,6 +136,23 @@ class Countries extends Component
         }
     }
 
+   public function disableIntegrate()
+    {
+        $check = Country::find($this->countrieId);
+        if (!empty($check)) {
+            if ($check->is_integrate == 0) $check->update(
+                [
+                    'is_integrate' => 1
+
+                ]
+            );
+            else $check->update([
+                'is_integrate' => 0
+            ]);
+            $this->emit('modal-hide', 'hide');
+            $this->emit('success', $check->is_integrate == 1 ? 'Pays acceptée pour integration !' : 'Pays non acceptée pour integration !!');
+        }
+    }
 
     public function render()
     {

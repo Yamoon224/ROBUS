@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Notification;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\ValidateDailyLimitService;
 use App\Http\Services\OperatorRestrictionService;
+use App\Http\Services\CommissionService;
 
 class InterPaymentService
 {
@@ -31,17 +32,21 @@ class InterPaymentService
     public $convertionService;
     public $validatedamountDays;
     public $operatorRestrictionService;
+    protected $commissionServices;
 
     public function __construct(
         IntersRepository $inter_Reposi,
         ConvertionService $convertionService,
         ValidateDailyLimitService $validatedamountDays,
         OperatorRestrictionService $operatorRestrictionService,
+        CommissionService $commissionServices
+
     ) {
         $this->intersRepository = $inter_Reposi;
         $this->convertionService = $convertionService;
         $this->validatedamountDays = $validatedamountDays;
         $this->operatorRestrictionService = $operatorRestrictionService;
+        $this->commissionServices = $commissionServices;
     }
 
     public function updateAmountReceived($walletInter, $country_robus, $valeur_received)
@@ -118,6 +123,8 @@ class InterPaymentService
 
             $valeur_amount_admin  = $percent_robus->percent_under_distributer * $amount;
             $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
+            $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
+            $deposit_valeur_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
 
             if (!empty($activeButtons['showRemonterInterButton'])) {
 
@@ -129,55 +136,19 @@ class InterPaymentService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
                     $walletInter->increment('commission_companie', $percent_valeur_compagnie);
+                    $company_valeur_convertion =  $this->convertionService->convertAdminCommission($percent_valeur_compagnie);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_inter_id',  $walletInter->id, $company_valeur_convertion, $deposit_valeur_convertion);
                 }
             } else {
                 $valeur_percent_admin  = $percent_robus->percent * $amount;
+                $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
+                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion, $valuer_deposit);
             }
         } else {
 
-            if (robus()->country->code == 'CI') {
-
-                $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  robus()->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletInter->provider->name .
-                    ' a ' . $walletInter->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
-
-                $encode = substr(robus()->phone, -10);
-
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-            }
-
             $valeur_percent_admin  = $percent_robus->percent * $amount;
-        }
-
-        if (robus()->country->currencie->value > $country_robus->currencie->value) {
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        } elseif (robus()->country->currencie->value == $country_robus->currencie->value) {
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin;
-        } elseif (robus()->country->currencie->value < $country_robus->currencie->value) {
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        }
-
-        if ($admin_civ->count() > 0) {
-
-            $nmbre_admin = $admin_civ->count();
-
-            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_inter_id' =>  $walletInter->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' => $valuer_deposit,
-                    'description_underdistributer' => 'Paiement commission sous-distributer'
-                ]);
-            }
+            $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion);
         }
 
         return true;
@@ -220,11 +191,13 @@ class InterPaymentService
         $valuer_deposit = $percent_robus->percent_merchands *  $amount;
         $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
 
+
         // Commissions Inters 
         if (robus()->is_under_distributer == 1) {
 
             $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
             $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
+            $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
 
             if (!empty($activeButtons['showRemonterInterButton'])) {
 
@@ -233,58 +206,23 @@ class InterPaymentService
                 ]);
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
+                $deposit_valeur_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
                     $walletInter->increment('commission_companie', $percent_valeur_compagnie);
+                    $company_valeur_convertion =  $this->convertionService->convertAdminCommission($percent_valeur_compagnie);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_inter_id',  $walletInter->id, $company_valeur_convertion, $deposit_valeur_convertion);
                 }
             } else {
                 $valeur_percent_admin  = $percent_robus->percent * $amount;
+                $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
+                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion, $valuer_deposit);
             }
         } else {
 
-            if (robus()->country->code == 'CI') {
-
-                $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  robus()->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletInter->provider->name .
-                    ' a ' . $walletInter->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
-
-                $encode = substr(robus()->phone, -10);
-
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-            }
-
             $valeur_percent_admin  = $percent_robus->percent * $amount;
-        }
-
-        if (robus()->country->currencie->value > $country_robus->currencie->value) {
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        } elseif (robus()->country->currencie->value == $country_robus->currencie->value) {
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin;
-        } elseif (robus()->country->currencie->value < $country_robus->currencie->value) {
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        }
-
-        if ($admin_civ->count() > 0) {
-
-            $nmbre_admin = $admin_civ->count();
-
-            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_inter_id' =>  $walletInter->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' => $valuer_deposit,
-                    'description_underdistributer' => 'Paiement commission sous-distributer'
-                ]);
-            }
+            $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion);
         }
 
         return true;
@@ -294,7 +232,7 @@ class InterPaymentService
     public function processCommissionMobileDistributers($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
     {
 
-    
+
 
         $wallet = robus()->wallet;
 
@@ -712,7 +650,10 @@ class InterPaymentService
         $name,
         $name_sender,
         $account_number,
-        $imagePath
+        $percent_push_action = null,
+        $percent_djamo_action = null,
+        $percent_tresort_action = null,
+        $imagePath,
 
     ) {
 
@@ -724,6 +665,11 @@ class InterPaymentService
             'description' => null,
             'inter_cost_id' => null,
             'transaction_cost_id' => $percent_robus->id,
+            'djamo_percent_id' => $percent_djamo_action ?? null,
+            'push_percent_id' => $percent_push_action ?? null,
+            'virement_percent_id' => $percent_push_action ?? null,
+            'argent_tresort_id' => $percent_tresort_action ?? null,
+            'bank_commission_id' => $percent_push_action ?? null,
             'phone' => $country_robus->indecative . $phone ?? null,
             'number_compte' => $account_number,
             'created_by' => robus()->id,

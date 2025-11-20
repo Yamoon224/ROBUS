@@ -75,21 +75,6 @@ class ConvertionService
         }
     }
 
-    // public function convertAdminCommissionReload($amount)
-    // {
-    //     $country_civ = Country::find(107);
-
-    //     $robus_currency = robus()->country->currencie->value;
-
-    //     if ($country_civ->currencie->value > robus()->country->currencie->value) {
-    //         return $amount * $robus_currency;
-    //     } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
-    //         return $amount;
-    //     } else {
-    //         return   $amount * $robus_currency;
-    //     }
-    // }
-
 
     public function convertAdminCommissionReload($amount, $wallet)
     {
@@ -105,6 +90,8 @@ class ConvertionService
             return $amount / $wallet->country->currencie->value;
         }
     }
+
+    
 
     public function convertAdminCommissionPayment($amount)
     {

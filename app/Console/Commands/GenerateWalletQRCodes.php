@@ -17,7 +17,7 @@ class GenerateWalletQRCodes extends Command
         $wallets = Wallet::all();
         $this->info('Nombre de wallets : ' . $wallets->count());
 
-        $originalLogoPath = public_path('dist/images/logo_robus.png');
+        $originalLogoPath = public_path('dist/images/logo_violet.jpeg');
 
 
         foreach ($wallets as $wallet) {
@@ -28,8 +28,8 @@ class GenerateWalletQRCodes extends Command
 
             $qrData = json_encode([
                 'wallet_id' => $wallet->wallet_id,
-                // 'user' => $wallet->sidUser->firstname . ' '.  $wallet->sidUser->lastname,
-                // 'countrie' => $wallet->sidUser->country->name . ' '.  $wallet->sidUser->citie->name,
+                'user' => $wallet->sidUser->firstname . ' '.  $wallet->sidUser->lastname,
+                'countrie' => $wallet->sidUser->country->name . ' '.  $wallet->sidUser->citie->name,
                 'currencie' => $wallet->country->currencie->name,
             ]);
 

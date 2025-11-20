@@ -60,6 +60,10 @@ Route::group(['prefix' => 'masters'], function () {
     Route::view('/robus', 'auth.login_master')->name('admin.login_master');
 });
 
+Route::group(['prefix' => 'auth'], function () {
+    Route::view('/users', 'auth.login_integration')->name('admin.login_integration');
+});
+
 Route::group(['prefix' => 'comzones'], function () {
     Route::view('/robus', 'auth.login_com_zone')->name('admin.login_com_zone');
 });
@@ -299,7 +303,7 @@ Route::group(['prefix' => ''], function () {
         Route::post('remote/admins/commission_compagnies/{amount}/{type}/{id}', [AdminController::class, 'remonteCommissionCompanyAdmins'])->name('remonte.commissions.companies.admins');
         Route::post('remote/commissionalls/{amount}/{type}/{id}', [AdminController::class, 'remonteAllCommission'])->name('remonte.remonteAllCommission.unders');
         Route::post('remote/commissions/{id}', [AdminController::class, 'remonteAllCountryCommission'])->name('remonte.remonteAllCountryCommission.unders');
-        Route::post('remote/compagnies/commissions/{id}', [AdminController::class, 'remonteAllCountryCompanies'])->name('remonte.remonteAllCountryCompanies.companies');
+        Route::post('remote/compagnies/commissions/{id}', [AdminController::class, 'remonteAllCountryCompanies'])->name('remonte.remonteAllCountryCompanies.unders');
 
 
         Route::prefix('pays_commissions')->group(function () {

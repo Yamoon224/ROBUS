@@ -5,10 +5,10 @@
      </div>
      <div class="robus-login-card robus-floating">
          <div class="robus-card-header">
-             <div class="robus-logo">
+             <div>
                  <!-- Remplacez par votre logo -->
                  <a href="{{ route('/') }}" class="brand-logo">
-                     <img src="{{ asset_url('dist/images/logo_robus.png') }}" width="100" alt="logo">
+                     <img src="{{ asset_url('dist/images/logo_orange.jpeg') }}" width="100" alt="logo">
                  </a>
              </div>
              <h1 class="robus-card-title">Nous sommes heureux
@@ -80,21 +80,23 @@
                      </svg>
                  </button>
 
+
              </form>
 
 
              <!-- Avertissement de sécurité -->
-             <div
-                 style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px; padding: 1rem; margin-top: 1rem;">
-                 <div style="display: flex; align-items: start; gap: 0.5rem;">
-                     <span style="color: #856404;">⚠️</span>
-                     <div>
-                         <strong style="color: #856404; font-size: 0.9rem;">Sécurité</strong>
-                         <p style="color: #856404; font-size: 0.8rem; margin: 0.25rem 0 0 0;">
-                             Ne partagez jamais vos identifiants.
-                         </p>
-                     </div>
-                 </div>
+
+             <div class="text-center mt-6 pt-4 border-t border-gray-200">
+                 <p class="text-gray-600 mb-3">
+                     Vous n'avez pas encore de compte ?
+                 </p>
+                 <a href="{{ route('web.prospect_registers') }}"
+                     class="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                     <i class="fas fa-user-plus"></i>
+                     Créer un compte gratuit
+                 </a>
+
+
              </div>
          </div>
      </div>
@@ -119,7 +121,33 @@
                      </span>
                  </div>
                  <p class="text-sm text-gray-600">Service en maintenance - Réouverture prochaine</p>
+                 <!-- Lien vers l'inscription -->
+                 <div
+                     style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px; padding: 1rem; margin-top: 1rem;">
+                     <div style="display: flex; align-items: start; gap: 0.5rem;">
+                         <span style="color: #856404;">⚠️</span>
+                         <div>
+                             <strong style="color: #856404; font-size: 0.9rem;">Sécurité</strong>
+                             <p style="color: #856404; font-size: 0.8rem; margin: 0.25rem 0 0 0;">
+                                 Ne partagez jamais vos identifiants de connexion.
+                                 PayFlow ne vous demandera jamais votre mot de passe par email ou téléphone.
+                             </p>
+                         </div>
+                     </div>
+                 </div>
+                 <div class="mt-4 grid grid-cols-2 gap-4 text-center mt-6">
+                      
+                        <div class="text-xs text-gray-500">
+                            <i class="fas fa-shield-alt text-blue-500"></i>
+                            <div>Sécurisé</div>
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            <i class="fas fa-headset text-purple-500"></i>
+                            <div>Support 24/7</div>
+                        </div>
+                    </div>
              </div>
+
 
              <!-- Horaires -->
              <div class="bg-white rounded-xl border border-blue-200 p-5 shadow-sm">

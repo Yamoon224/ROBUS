@@ -327,6 +327,16 @@ class ProvidersService
             ->pluck('providers.name');
     }
 
+      public static function getCountrieType($query, $countryId)
+    {
+
+
+        return $query->where('country_id', $countryId)
+            ->select('countries.*')
+            ->orderBy('countries.name', 'asc')
+            ->pluck('countries.name');
+    }
+
     public static function getProvidersByTypeOrderCard($query, $countryId, $providerType)
     {
         return $query

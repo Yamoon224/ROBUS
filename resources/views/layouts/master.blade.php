@@ -133,6 +133,9 @@
             $('#disabled-master-admin-modal').removeClass('show');
             $('#disabled-master-admin-modal').addClass('hide');
 
+            $('#disabled-countrieIntegrate-modal').removeClass('show');
+            $('#disabled-countrieIntegrate-modal').addClass('hide');
+
             $('#disabled-company-admin-modal').removeClass('show');
             $('#disabled-company-admin-modal').addClass('hide');
 
@@ -342,6 +345,7 @@
 
             $('#update-countrie-modal').removeClass('show');
             $('#update-countrie-modal').addClass('hide');
+
 
             // Cities 
             $('#create-citie-modal').removeClass('show');
@@ -624,6 +628,11 @@
         Livewire.on('show-disabled-modal', () => {
             $('#disabled-master-admin-modal').removeClass('hide');
             $('#disabled-master-admin-modal').addClass('show');
+        });
+
+        Livewire.on('show-disabled-countrieIntegrate-modal', () => {
+            $('#disabled-countrieIntegrate-modal').removeClass('hide');
+            $('#disabled-countrieIntegrate-modal').addClass('show');
         });
 
         Livewire.on('show-disabled-App-modal', () => {

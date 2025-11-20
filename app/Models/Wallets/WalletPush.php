@@ -43,7 +43,6 @@ class WalletPush extends Model
         return $this->belongsTo(SidUser::class, 'updated_by', 'id');
     }
 
-
     public function provider()
     {
         return $this->belongsTo(Provider::class, 'provider_id', 'id')->withTrashed();

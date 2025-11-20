@@ -14,6 +14,23 @@ class CommissionService
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
+
+    public function SendSms()
+    {
+        // if (robus()->country->code == 'CI') {
+
+        //     $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  robus()->wallet->currencie->code .
+        //         ' ' .
+        //         'par ' . $walletInter->provider->name .
+        //         ' a ' . $walletInter->created_at .
+        //         ' votre demande est en-cours de validation ' .
+        //         'Robus vous remercie';
+
+        //     $encode = substr(robus()->phone, -10);
+
+        //     Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+        // }
+    }
     public function distributeAdminCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
     {
 
@@ -102,7 +119,7 @@ class CommissionService
         }
     }
 
-      public function processAdminCommissionSDistributerAndComp($userId, $walletTransactionId, $amount, $valuer_deposit , $amountCompagie)
+    public function processAdminCommissionSDistributerAndComp($userId, $walletTransactionId, $amount, $valuer_deposit, $amountCompagie)
     {
 
 

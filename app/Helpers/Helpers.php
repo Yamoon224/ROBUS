@@ -382,6 +382,18 @@ function sabdyMasterVerify()
     }
 }
 
+function sabdyIntegrationVerify()
+{
+
+    $user = Auth::guard('integration')->user();
+
+    if ($user && $user->hasRole('integration')) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 if (!function_exists('asset_url')) {
     function asset_url($path)
     {

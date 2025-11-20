@@ -120,7 +120,6 @@
                                                 Téléphone bénéficiaire <span class="text-danger">*</span>
                                             </label>
 
-                                            <!-- Indice pays en position absolute -->
                                             <div class="position-absolute top-50 start-0 translate-middle-y">
                                                 <span class="badge bg-primary text-white bg-opacity-10 text-primary fw-bold px-2 py-2"
                                                     id="indice-countrie">
@@ -135,16 +134,6 @@
                                         @enderror
                                     </div>
 
-                                    <style>
-                                        .form-floating {
-                                            position: relative;
-                                        }
-
-                                        .form-floating>.form-control {
-                                            padding-left: 60px;
-                                            /* Espace pour l'indice pays */
-                                        }
-                                    </style>
 
                                     <!-- N° Téléphone expéditeur -->
                                     <div class="col-md-6 col-sm-6 col-xs-12 mt-3">
