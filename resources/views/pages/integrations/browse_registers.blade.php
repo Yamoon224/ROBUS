@@ -4,7 +4,6 @@
 
 @section('content')
 
-
     <section class="contact-info-section py-5 mt-8">
         <div class="container container-large my-4">
             <!-- Header Section -->
@@ -150,7 +149,8 @@
 
 
                                     <form method="POST" action="{{ route('web.prospect_store.stores') }}" method="post"
-                                        enctype="multipart/form-data" style="margin-bottom:5%" class="bg-light">
+                                        enctype="multipart/form-data" style="margin-bottom:5%" class="bg-light"
+                                        id="registrationForm">
                                         @csrf
                                         <!-- Company Information -->
                                         <div class="form-section mb-3">
@@ -521,6 +521,37 @@
                                             </div>
                                         </div>
 
+                                        <!-- reCAPTCHA Section -->
+                                        <div class="form-section mb-4">
+                                            <div class="section-header mb-4">
+                                                <div class="d-flex align-items-center">
+                                                    <div
+                                                        class="section-icon bg-primary bg-opacity-10 text-primary rounded-circle p-2 me-3">
+                                                        <i class="fas fa-robot"></i>
+                                                    </div>
+                                                    <h5 class="fw-bold mb-0 text-dark">Vérification de sécurité</h5>
+                                                </div>
+                                                <div class="section-divider mt-2"></div>
+                                            </div>
+
+                                            <div class="row g-4">
+                                                <div class="col-12">
+                                                    <div class="g-recaptcha"
+                                                        data-sitekey="{{ config('services.recaptcha.site_key') }}"
+                                                        data-callback="onRecaptchaSuccess"
+                                                        data-expired-callback="onRecaptchaExpired">
+                                                    </div>
+                                                    @error('g-recaptcha-response')
+                                                        <div class="invalid-feedback d-block">
+                                                            <strong>{{ $message }}</strong>
+                                                        </div>
+                                                    @enderror
+                                                    <div id="recaptcha-error" class="text-danger small mt-2 d-none">
+                                                        Veuillez compléter la vérification reCAPTCHA.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <!-- Terms and Conditions -->
                                         <div class="form-check mb-4 p-3 bg-light rounded">
@@ -537,13 +568,11 @@
                                         </div>
 
                                         <!-- Submit Button -->
-                                        <button type="submit"
-                                            class="btn btn-primary-custom btn-lg w-100 text-white py-3 mb-2 fs-6">
+                                        <button type="submit" id="submit-btn"
+                                            class="btn btn-primary-custom btn-lg w-100 text-white py-3 mb-2 fs-6" disabled>
                                             <i class="fas fa-rocket me-2"></i>Créer mon compte
                                         </button>
                                     </form>
-
-
 
                                     <!-- Login Link -->
                                     <div class="text-center">
@@ -565,10 +594,11 @@
     </section>
 
     @push('scripts')
+        <!-- reCAPTCHA Script -->
+        {{-- Le script reCAPTCHA doit être inclus une seule fois --}}
+        <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <script type="text/javascript">
             $(document).ready(function() {
-
-
                 $('#country_id').on('change', function() {
                     var country_id = $('#country_id').val();
                     CountrieIndice(country_id);
@@ -576,20 +606,28 @@
 
                 function CountrieIndice(countryId) {
                     $.get('{{ url('transactions/robus/search-indice') }}/' + countryId, function(data) {
-
                         if (data) {
-
                             var indicative = data.indecative;
                             $('#indice-countrie').text(indicative);
-
                         } else {
                             $('#indice-countrie').text('Aucune information disponible');
                         }
                     });
                 }
-
             });
 
+            // reCAPTCHA Callbacks
+            function onRecaptchaSuccess(token) {
+                document.getElementById('recaptcha-error').classList.add('d-none');
+                document.getElementById('submit-btn').disabled = false;
+            }
+
+            function onRecaptchaExpired() {
+                document.getElementById('recaptcha-error').classList.remove('d-none');
+                document.getElementById('submit-btn').disabled = true;
+            }
+
+            // Password visibility toggle
             document.getElementById('togglePassword').addEventListener('click', function() {
                 const passwordInput = document.getElementById('password');
                 const icon = this.querySelector('i');
@@ -657,44 +695,53 @@
                 const password = document.getElementById('password').value;
                 const confirmPassword = e.target.value;
                 const matchMessage = document.getElementById('passwordMatch');
+                const matchSuccess = document.getElementById('passwordMatchSuccess');
 
-                if (confirmPassword && password !== confirmPassword) {
-                    matchMessage.classList.remove('d-none');
+                if (confirmPassword) {
+                    if (password !== confirmPassword) {
+                        matchMessage.classList.remove('d-none');
+                        matchSuccess.classList.add('d-none');
+                    } else {
+                        matchMessage.classList.add('d-none');
+                        matchSuccess.classList.remove('d-none');
+                    }
                 } else {
                     matchMessage.classList.add('d-none');
+                    matchSuccess.classList.add('d-none');
                 }
             });
 
-            // Form submission
+            // Form submission with reCAPTCHA validation
             document.getElementById('registrationForm').addEventListener('submit', function(e) {
-                e.preventDefault();
+                const recaptchaResponse = grecaptcha.getResponse();
+
+                if (!recaptchaResponse) {
+                    e.preventDefault();
+                    document.getElementById('recaptcha-error').classList.remove('d-none');
+                    return false;
+                }
 
                 // Basic validation
                 const password = document.getElementById('password').value;
                 const confirmPassword = document.getElementById('confirmPassword').value;
 
                 if (password !== confirmPassword) {
+                    e.preventDefault();
                     alert('Les mots de passe ne correspondent pas!');
                     return;
                 }
 
                 if (!document.getElementById('terms').checked) {
+                    e.preventDefault();
                     alert('Veuillez accepter les conditions générales!');
                     return;
                 }
 
-                // Simulate form submission
-                const submitBtn = this.querySelector('button[type="submit"]');
+                // Show loading state
+                const submitBtn = document.getElementById('submit-btn');
                 const originalText = submitBtn.innerHTML;
-
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Création en cours...';
                 submitBtn.disabled = true;
-
-                setTimeout(() => {
-                    alert('Compte créé avec succès! Un commercial vous contactera sous peu.');
-                    submitBtn.innerHTML = originalText;
-                    submitBtn.disabled = false;
-                }, 2000);
             });
         </script>
     @endpush

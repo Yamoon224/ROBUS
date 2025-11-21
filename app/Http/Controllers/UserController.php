@@ -63,6 +63,7 @@ class UserController extends Controller
         $this->createUserService = $createUserService;
     }
 
+
     public function forceLogoutUser($userId)
     {
 
@@ -95,6 +96,11 @@ class UserController extends Controller
     }
 
 
+    public function browse_propects(Request $request)
+    {
+                  return view('pages.integrations.prospects.browse');
+
+    }
 
     public function browse(Request $request)
     {
@@ -147,6 +153,8 @@ class UserController extends Controller
             abort(403);
         }
     }
+
+
 
     public function browsedistributors()
     {

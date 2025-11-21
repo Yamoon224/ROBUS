@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
 use App\Models\Custumers\City;
+use PhpParser\Node\Stmt\TryCatch;
 
 class IntegrationController extends Controller
 {
@@ -51,6 +52,168 @@ class IntegrationController extends Controller
             'countries' => $countries,
         ]);
     }
+
+    public function home_propects()
+    {
+        return view('home_propects');
+    }
+
+
+    public function browse_integrations()
+    {
+
+        if (!propect()) {
+            abort(403);
+        }
+
+        return view('pages.integrations.browse_integrations');
+    }
+
+    public function add_identifications()
+    {
+
+        if (!propect()) {
+            abort(403);
+        }
+
+        return view('pages.integrations.add_documents');
+    }
+
+    public function update_identifications(Request $request)
+    {
+
+
+        if (!propect()) {
+            abort(403);
+        }
+
+        try {
+
+            $validator = Validator::make(
+
+                $request->all(),
+                [
+                    'image_recto'   => 'required|mimes:jpeg,png,jpg,pdf|max:2048',
+                    'image_verso'   => 'required|mimes:jpeg,png,jpg,pdf|max:2048',
+                    'juridict_form' => 'required|mimes:jpeg,png,jpg,pdf|max:2048',
+                ],
+                [
+
+                    'image_recto.required'   => 'Le document est obligatoire',
+                    'image_verso.required'   => 'Le document est obligatoire',
+                    'juridict_form.required' => 'Le document est obligatoire',
+                    'image_recto.mimes'      => 'Le document doit être un fichier de type: jpeg, png, jpg, pdf',
+                    'image_verso.mimes'      => 'Le document doit être un fichier de type: jpeg, png, jpg, pdf',
+                    'juridict_form.mimes'    => 'Le document doit être un fichier de type: jpeg, png, jpg, pdf',
+                    'image_recto.max'         => 'Le document ne doit pas dépasser 2 Mo',
+                    'image_verso.max'         => 'Le document ne doit pas dépasser 2 Mo',
+                    'juridict_form.max'       => 'Le document ne doit pas dépasser 2 Mo',
+                ]
+            );
+
+            if ($validator->fails()) {
+                return back()
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Veuillez verifier les champs du formulaire')
+                    ->withInput();
+            }
+
+
+            $userId = propect()->id;
+            $destination_path = public_path("documents/$userId/");
+
+            // Crée le dossier s'il n'existe pas
+            if (!file_exists($destination_path)) {
+                mkdir($destination_path, 0755, true);
+            }
+
+            // Récupère les fichiers
+            $file_recto   = $request->file('image_recto');
+            $file_verso   = $request->file('image_verso');
+            $file_juridict = $request->file('juridict_form');
+
+            // Génère les noms uniques
+            $front_file    = 'face_' . date('YmdHis') . '.' . $file_recto->getClientOriginalExtension();
+            $back_file     = 'arriere_' . date('YmdHis') . '.' . $file_verso->getClientOriginalExtension();
+            $juridict_file = 'juridict_' . date('YmdHis') . '.' . $file_juridict->getClientOriginalExtension();
+
+            // Déplace les fichiers
+            $file_recto->move($destination_path, $front_file);
+            $file_verso->move($destination_path, $back_file);
+            $file_juridict->move($destination_path, $juridict_file);
+
+            $integratedClient = IntegrationClient::where('sid_user_id', $userId)->first();
+
+            if(!$integratedClient){
+                return back()
+                ->with('color', 'danger')
+                ->with('status', 'Client introuvable')
+                ->withInput();
+            }
+
+            if($integratedClient->is_active) {
+                return back()
+                    ->with('color', 'warning')
+                    ->with('status', 'Vos documents ont déjà été validés et ne peuvent plus être modifiés.')
+                    ->withInput();
+            }
+
+            if($integratedClient->deleted_at) {
+                return back()
+                    ->with('color', 'danger')
+                    ->with('status', 'Client introuvable')
+                    ->withInput();
+            }
+
+            if($integratedClient->terms_accepted == false) {
+                return back()
+                    ->with('color', 'danger')
+                    ->with('status', 'Vous devez accepter les conditions générales avant de soumettre des documents.')
+                    ->withInput();
+            }
+
+            if($integratedClient->front_document && $integratedClient->piece_document && $integratedClient->juridict_form) {
+                return back()
+                    ->with('color', 'warning')
+                    ->with('status', 'Vous avez déjà soumis des documents. Veuillez contacter le support pour toute modification.')
+                    ->withInput();
+            }
+
+            // Met à jour ou crée l'enregistrement
+            IntegrationClient::updateOrCreate(
+                ['sid_user_id' => $userId],
+                [
+                    'front_document'  => env('APP_URL') . "/documents/$userId/$front_file",
+                    'piece_document'  => env('APP_URL') . "/documents/$userId/$back_file",
+                    'juridict_form'   => env('APP_URL') . "/documents/$userId/$juridict_file",
+                ]
+            );
+
+            return redirect()->route('propects.identifications')
+                ->with('color', 'success')
+                ->with('status', 'Documents téléchargés avec succès.');
+
+        } catch (\Exception $exception) {
+
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de la demande')
+                ->withInput();
+        }
+    }
+
+    public function browse_identifications()
+    {
+
+        if (!propect()) {
+            abort(403);
+        }
+
+        return view('pages.integrations.browse_documents');
+    }
+
 
     /**
      * Display a listing of the resource.

@@ -47,7 +47,7 @@ class LoginProspect extends Component
                 Auth::guard('integration')->user()->last_logout  = null;
                 Auth::guard('integration')->user()->save();
                 $this->emit('success', 'Authentificaion reussie redirection en cours !');
-                return redirect()->route('/');
+                return redirect()->route('propects.home');
             } else {
 
                 $this->emit('error', 'Vous n\'etes pas identifiable veuillez contactez l\'admin ! Merci bien');

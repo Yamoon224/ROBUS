@@ -166,6 +166,12 @@ function firm()
     return Auth::guard('company')->user();
 }
 
+function propect()
+{
+    return Auth::guard('integration')->user();
+}
+
+
 
 function sabdy()
 {

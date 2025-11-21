@@ -5,8 +5,7 @@
 <!-- BEGIN: Side Menu -->
 <nav class="side-nav">
     <a href="{{ route('masters.home') }}" class="intro-x flex items-center pl-5 pt-4">
-        <img alt="" class="w-6" src="{{ asset_url('dist/images/logo_robus.png') }}">
-        <span class="hidden xl:block text-white text-lg ml-3"> ROBUS </span>
+        <img alt="Robus" class="w-20" src="{{ asset_url('dist/images/logo_robus.png') }}">
     </a>
     <div class="side-nav__devider my-4"></div>
     <ul>
@@ -60,11 +59,11 @@
         <li>
 
             <a href="{{ route('underdistributors.browse_reloads') }}"
-            class="side-menu {{ $route == 'underdistributors.browse_reloads' ? 'side-menu--active' : '' }}">
-            <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-            </div>
-            <div class="side-menu__title"> Réchargements </div>
-        </a>
+                class="side-menu {{ $route == 'underdistributors.browse_reloads' ? 'side-menu--active' : '' }}">
+                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
+                </div>
+                <div class="side-menu__title"> Réchargements </div>
+            </a>
         </li>
         <li class="side-nav__devider my-4"></li>
         <li>
@@ -87,7 +86,7 @@
         </li>
         <li class="side-nav__devider my-4"></li>
         <li>
-            
+
             <a href="{{ route('masters.account.profile') }}"
                 class="side-menu {{ $route == 'masters.account.profile' || $route == 'masters.account.security' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="user" class="block mx-auto"></i></div>

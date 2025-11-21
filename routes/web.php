@@ -84,6 +84,9 @@ Route::group(['prefix' => ''], function () {
 
         Route::get('/logout', [Login::class, 'logout'])->name('admin.logout');
 
+        //Api Clients
+
+
         //Account managment
         Route::prefix('account')->group(function () {
 
@@ -128,7 +131,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/browse_level_deposit_under', [LevelController::class, 'browse_levels_deposit_ivoire_under'])->name('levels.browse_levels_deposit_ivoire_under');
         });
 
-        
+
         //   Cards
         Route::prefix('cards')->group(function () {
             Route::get('/browse', [CardController::class, 'browse'])->name('cards.browse');
@@ -161,6 +164,8 @@ Route::group(['prefix' => ''], function () {
             Route::post('/update/{id}', [MasterController::class, 'updateunders'])->name('unders.admins.update');
         });
 
+
+
         Route::prefix('winnings')->group(function () {
             Route::get('/browse', [UserController::class, 'browse_winnings'])->name('unders.browse_winnings');
         });
@@ -176,6 +181,9 @@ Route::group(['prefix' => ''], function () {
         //   Users
         Route::prefix('users')->group(function () {
             Route::get('/browse', [UserController::class, 'browse'])->name('custumers.browse');
+            Route::get('prospects/browse', [UserController::class, 'browse_propects'])->name('users.prospects.browse');
+            Route::get('prospects/details/{id}', [AdminController::class, 'show_propects'])->name('users.prospects.details');
+
             Route::post('/logout-user/{id}', [UserController::class, 'forceLogoutUser'])->name('logoutUsers.browse');
             Route::get('/browse_company', [UserController::class, 'browse_company'])->name('company.browse');
             // Route::get('/browse_comzone', [UserController::class, 'browse_comzone'])->name('comzone.browse');
@@ -251,7 +259,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/currencies',  [CountrieController::class, 'currencies'])->name('currencies.browse');
         });
 
-    
+
 
         //   Costs Commissions
         Route::prefix('commissions')->group(function () {
@@ -340,13 +348,13 @@ Route::group(['prefix' => ''], function () {
             // Route::post('/update/{id}',  [ServiceController::class, 'update_operators'])->name('operators.update');
         });
 
+
         Route::group(['prefix' => 'close_app'], function () {
             Route::get('/browse',  [ServiceController::class, 'browse_close_app'])->name('close_app.browse');
             Route::get('/browse_masters',  [ServiceController::class, 'browse_close_app_masters'])->name('browse_close_app_masters.browse');
             Route::get('/browse_comzones',  [ServiceController::class, 'browse_close_app_comzones'])->name('browse_close_app_comzones.browse');
             Route::get('/browse_visitors',  [ServiceController::class, 'browse_close_app_visitors'])->name('browse_close_app_visitors.browse');
             Route::get('/browse_companies',  [ServiceController::class, 'browse_close_app_companies'])->name('browse_companies.browse');
-
         });
 
         //Invoices
@@ -366,7 +374,6 @@ Route::group(['prefix' => ''], function () {
             Route::get('/djamo_transactions/{djamo_transaction_id}', [InvoiceController::class, 'djamo_transaction_invoice'])->name('djamo_transactions.invoice.print');
             Route::get('/tresort_transactions/{tresort_transaction_id}', [InvoiceController::class, 'tresort_transaction_invoice'])->name('tresort_transactions.invoice.print');
             Route::get('/versment_transactions/{versment_transaction_id}', [InvoiceController::class, 'versment_transaction_invoice'])->name('versment_transactions.invoice.print');
-
         });
 
         //Historical
@@ -404,8 +411,6 @@ Route::group(['prefix' => ''], function () {
             Route::get('/push_historical', [HistoricalController::class, 'browse_push'])->name('pushs.historical');
             Route::get('/djamo_historical', [HistoricalController::class, 'browse_djamo'])->name('djamos.historical');
             Route::get('/tresort_historical', [HistoricalController::class, 'browse_tresort'])->name('tresorts.historical');
-
-
         });
 
         // Historique Sous distributer
@@ -498,7 +503,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('waves/reporting_wave_historical/{id}', [AdminHistoriqueController::class, 'reporting_wa ve_historical'])->name('waves.historical.reporting_wave_historical.admins');
             Route::get('inters/reporting_inter_historical/{id}', [AdminHistoriqueController::class, 'reporting_inter_historical'])->name('inters.historical.reporting_inter_historical.admins');
             // Reporting in date transactions
-          
+
             Route::get('inter_days/reporting_inter_days_historical', [AdminHistoriqueController::class, 'searchByIntersDate'])->name('inters.historical.reporting_inter_days_historical.admins');
             Route::get('transactions_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByTransactionsDate'])->name('inters.historical.reporting_transaction_days_historical.admins');
             Route::get('payment_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByPaymentsDate'])->name('inters.historical.reporting_payment_days_historical.admins');
@@ -506,7 +511,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('xbets_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchByXbetsDate'])->name('inters.historical.reporting_xbet_days_historical.admins');
             Route::get('waves_days/reporting_payment_days_historical', [AdminHistoriqueController::class, 'searchBywavesDate'])->name('inters.historical.reporting_wave_days_historical.admins');
             Route::get('cartes_days/reporting_cartes_days_historical', [AdminHistoriqueController::class, 'searchByCartesDate'])->name('inters.historical.reporting_cartes_days_historical.admins');
-            
+
             // New historicals
             Route::get('push_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByPushsDate'])->name('pushs.historical.reporting_transaction_days_historical.admins');
             Route::get('djamo_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByDjamoDate'])->name('djamos.historical.reporting_transaction_days_historical.admins');
@@ -519,12 +524,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('transfers/reporting_transfer_historical_received/{id}', [AdminHistoriqueController::class, 'reporting_transfer_received_historical'])->name('transfers.historical.received.reporting_transfer_historical.admins');
             Route::get('echecs/reporting_echecs_historical_echecs/{id}', [AdminHistoriqueController::class, 'reporting_transfer_echecs_historical'])->name('echecs.historical.reporting_transfer_historical.admins');
             Route::get('drawer_under_distributer/reporting_drawer_historical/{id}', [AdminHistoriqueController::class, 'reporting_drawer_historical'])->name('transfers.historical.reporting_drawer_historical.admins');
-
-  
-
         });
-
-       
     });
 });
 
@@ -587,11 +587,11 @@ Route::get('clear-route-mon_bara',  function () {
 });
 
 Route::get('/reads_notifications', function () {
-      Artisan::call('app:close-company-status');
-      Artisan::call('app:close-status');
-      Artisan::call('wallet:generate-qrcodes');
-     Artisan::call('status:readNotifications');
-   return 'Artisan commands executed successfully.';
+    Artisan::call('app:close-company-status');
+    Artisan::call('app:close-status');
+    Artisan::call('wallet:generate-qrcodes');
+    Artisan::call('status:readNotifications');
+    return 'Artisan commands executed successfully.';
 });
 
 Route::get('/reads_applications', function () {
@@ -606,8 +606,7 @@ Route::get('/reads_applications', function () {
 
 Route::get('/reads_application_web', function () {
 
-  return  Artisan::call('app:close-web-status');
-
+    return  Artisan::call('app:close-web-status');
 });
 
 

@@ -4,7 +4,7 @@
         <a class="navbar-brand" href="{{ url('/') }}" style="transition: all 0.3s ease;">
             <img src="https://robus.africa/wp-content/uploads/2023/07/LOGO_ROBUS-web.png" alt="Robus Africa"
                 title="Robus Africa" height="50" class="navbar-logo" style="transition: transform 0.3s ease;">
-            <span class="ms-2 fw-bold text-dark d-none d-md-inline" style="font-size: 1.2rem;">ROBUS</span>
+            {{-- <span class="ms-2 fw-bold text-dark d-none d-md-inline" style="font-size: 1.2rem;">ROBUS</span> --}}
         </a>
 
         <!-- Bouton toggle mobile -->

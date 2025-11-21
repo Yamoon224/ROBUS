@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Livewire\Component;
+use App\Http\Services\HomeService;
 
 class HomeCompany extends Component
 {
@@ -107,78 +108,80 @@ class HomeCompany extends Component
     {
 
         // Statistiques underDIstributors
-        $payment_error = $this->getTransactionUsersCount(WalletPayment::class, 'ERROR');
-        $payment_padding = $this->getTransactionUsersCount(WalletPayment::class, 'PENDING');
-        $payment_success = $this->getTransactionUsersCount(WalletPayment::class, 'SUCCESS');
+        $payment_error = app(HomeService::class)->getTransactionUsersCount(WalletPayment::class, 'ERROR');
+        $payment_padding = app(HomeService::class)->getTransactionUsersCount(WalletPayment::class, 'PENDING');
+        $payment_success = app(HomeService::class)->getTransactionUsersCount(WalletPayment::class, 'SUCCESS');
 
-        $transaction_error = $this->getTransactionUsersCount(WalletTransaction::class, 'ERROR');
-        $transaction_padding = $this->getTransactionUsersCount(WalletTransaction::class, 'PENDING');
-        $transaction_success = $this->getTransactionUsersCount(WalletTransaction::class, 'SUCCESS');
+        $transaction_error = app(HomeService::class)->getTransactionUsersCount(WalletTransaction::class, 'ERROR');
+        $transaction_padding = app(HomeService::class)->getTransactionUsersCount(WalletTransaction::class, 'PENDING');
+        $transaction_success = app(HomeService::class)->getTransactionUsersCount(WalletTransaction::class, 'SUCCESS');
 
-        $bank_error = $this->getTransactionUsersCount(WalletBank::class, 'ERROR');
-        $bank_padding = $this->getTransactionUsersCount(WalletBank::class, 'PENDING');
-        $bank_success = $this->getTransactionUsersCount(WalletBank::class, 'SUCCESS');
+        $bank_error = app(HomeService::class)->getTransactionUsersCount(WalletBank::class, 'ERROR');
+        $bank_padding = app(HomeService::class)->getTransactionUsersCount(WalletBank::class, 'PENDING');
+        $bank_success = app(HomeService::class)->getTransactionUsersCount(WalletBank::class, 'SUCCESS');
 
-        $deposit_error = $this->getTransactionUsersCount(WalletDeposit::class, 'ERROR');
-        $deposit_padding = $this->getTransactionUsersCount(WalletDeposit::class, 'PENDING');
-        $deposit_success = $this->getTransactionUsersCount(WalletDeposit::class, 'SUCCESS');
+        $deposit_error = app(HomeService::class)->getTransactionUsersCount(WalletDeposit::class, 'ERROR');
+        $deposit_padding = app(HomeService::class)->getTransactionUsersCount(WalletDeposit::class, 'PENDING');
+        $deposit_success = app(HomeService::class)->getTransactionUsersCount(WalletDeposit::class, 'SUCCESS');
 
-        $reload_error = $this->getTransactionCountReload(WalletReload::class);
-        $reload_padding = $this->getTransactionCountReload(WalletReload::class);
-        $reload_success = $this->getTransactionCountReload(WalletReload::class);
+        $reload_error = app(HomeService::class)->getTransactionCountCompagnieReload(WalletReload::class);
+        $reload_padding = app(HomeService::class)->getTransactionCountCompagnieReload(WalletReload::class);
+        $reload_success = app(HomeService::class)->getTransactionCountCompagnieReload(WalletReload::class);
 
-        $phone_credit_error = $this->getTransactionUsersCount(WalletPhoneCredit::class, 'ERROR');
-        $phone_credit_padding = $this->getTransactionUsersCount(WalletPhoneCredit::class, 'PENDING');
-        $phone_credit_success = $this->getTransactionUsersCount(WalletPhoneCredit::class, 'SUCCESS');
+        $phone_credit_error = app(HomeService::class)->getTransactionUsersCount(WalletPhoneCredit::class, 'ERROR');
+        $phone_credit_padding = app(HomeService::class)->getTransactionUsersCount(WalletPhoneCredit::class, 'PENDING');
+        $phone_credit_success = app(HomeService::class)->getTransactionUsersCount(WalletPhoneCredit::class, 'SUCCESS');
 
-        $inter_error = $this->getTransactionUsersCount(WalletInter::class, 'ERROR');
-        $inter_padding = $this->getTransactionUsersCount(WalletInter::class, 'PENDING');
-        $inter_success = $this->getTransactionUsersCount(WalletInter::class, 'SUCCESS');
+        $inter_error = app(HomeService::class)->getTransactionUsersCount(WalletInter::class, 'ERROR');
+        $inter_padding = app(HomeService::class)->getTransactionUsersCount(WalletInter::class, 'PENDING');
+        $inter_success = app(HomeService::class)->getTransactionUsersCount(WalletInter::class, 'SUCCESS');
 
         // Amount transactions days
-        $payement_amount = $this->getTodayTransactionUndersAmountTotal(WalletPayment::class);
-        $transaction_amount = $this->getTodayTransactionUndersAmountTotal(WalletTransaction::class);
-        $reload_amount = $this->getTodayReloadAmountTotal(WalletReload::class);
-        $phonecredit_amount = $this->getTodayTransactionUndersAmountTotal(WalletPhoneCredit::class);
-        $inter_amount = $this->getTodayTransactionUndersAmountTotal(WalletInter::class);
+        $payement_amount = app(HomeService::class)->getTodayTransactionUndersAmountTotal(WalletPayment::class);
+        $transaction_amount = app(HomeService::class)->getTodayTransactionUndersAmountTotal(WalletTransaction::class);
+        $reload_amount = app(HomeService::class)->getTodayReloadAmountCompagnieTotal(WalletReload::class);
+        $phonecredit_amount = app(HomeService::class)->getTodayTransactionUndersAmountTotal(WalletPhoneCredit::class);
+        $inter_amount = app(HomeService::class)->getTodayTransactionUndersAmountTotal(WalletInter::class);
         
-        $bank_amount = $this->getTodayTransactionUndersAmountTotal(WalletBank::class);
-        $deposit_amount = $this->getTodayTransactionUndersAmountTotal(WalletDeposit::class);
+        $bank_amount = app(HomeService::class)->getTodayTransactionUndersAmountTotal(WalletBank::class);
+        $deposit_amount = app(HomeService::class)->getTodayTransactionUndersAmountTotal(WalletDeposit::class);
 
         // Amount transactions month
-        $payement_amount_month = $this->getDaysTransactionUnderMonth(WalletPayment::class);
-        $transaction_amount_month_company = $this->getDaysTransactionUnderMonth(WalletTransaction::class);
-        $reload_amount_month = $this->getDaysReloadAmountTotal(WalletReload::class);
-        $phonecredit_amount_month = $this->getDaysTransactionUnderMonth(WalletPhoneCredit::class);
-        $inter_amount_month = $this->getDaysTransactionUnderMonth(WalletInter::class);
-        $bank_amount_month = $this->getDaysTransactionUnderMonth(WalletBank::class);
-        $deposit_amount_month = $this->getDaysTransactionUnderMonth(WalletDeposit::class);
+        $payement_amount_month = app(HomeService::class)->getDaysTransactionUnderMonth(WalletPayment::class);
+        $transaction_amount_month_company = app(HomeService::class)->getDaysTransactionUnderMonth(WalletTransaction::class);
+        $reload_amount_month = app(HomeService::class)->getDaysReloadAmountCompagnieTotal(WalletReload::class);
+        $phonecredit_amount_month = app(HomeService::class)->getDaysTransactionUnderMonth(WalletPhoneCredit::class);
+        $inter_amount_month = app(HomeService::class)->getDaysTransactionUnderMonth(WalletInter::class);
+        $bank_amount_month = app(HomeService::class)->getDaysTransactionUnderMonth(WalletBank::class);
+        $deposit_amount_month = app(HomeService::class)->getDaysTransactionUnderMonth(WalletDeposit::class);
 
         // Gain Month
-        $payement_gain_month = $this->getDaysTransactionGain(WalletPayment::class);
-        $transaction_gain_month = $this->getDaysTransactionGain(WalletTransaction::class);
-        $phonecredit_gain_month = $this->getDaysTransactionGain(WalletPhoneCredit::class);
-        $inter_gain_month = $this->getDaysTransactionGain(WalletInter::class);
-        $bank_gain_month = $this->getDaysTransactionGain(WalletBank::class);
-        $deposit_gain_month = $this->getDaysTransactionGain(WalletDeposit::class);
+        $payement_gain_month = app(HomeService::class)->getDaysTransactionCompanieGain(WalletPayment::class);
+        $transaction_gain_month = app(HomeService::class)->getDaysTransactionCompanieGain(WalletTransaction::class);
+        $phonecredit_gain_month = app(HomeService::class)->getDaysTransactionCompanieGain(WalletPhoneCredit::class);
+        $inter_gain_month = app(HomeService::class)->getDaysTransactionCompanieGain(WalletInter::class);
+        $bank_gain_month = app(HomeService::class)->getDaysTransactionCompanieGain(WalletBank::class);
+        $deposit_gain_month = app(HomeService::class)->getDaysTransactionCompanieGain(WalletDeposit::class);
 
         // Gain Days
-        $payement_gain_days = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class);
-        $transaction_gain_days = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class);
-        $phonecredit_gain_days = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class);
-        $inter_gain_days = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class);
-        $bank_gain_days = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class);
-        $deposit_gain_days = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
+        $payement_gain_days = app(HomeService::class)->getTodayTransactionCommissionCompanieAmountTotal(WalletPayment::class);
+        $transaction_gain_days = app(HomeService::class)->getTodayTransactionCommissionCompanieAmountTotal(WalletTransaction::class);
+        $phonecredit_gain_days = app(HomeService::class)->getTodayTransactionCommissionCompanieAmountTotal(WalletPhoneCredit::class);
+        $inter_gain_days = app(HomeService::class)->getTodayTransactionCommissionCompanieAmountTotal(WalletInter::class);
+        $bank_gain_days = app(HomeService::class)->getTodayTransactionCommissionCompanieAmountTotal(WalletBank::class);
+        $deposit_gain_days = app(HomeService::class)->getTodayTransactionCommissionCompanieAmountTotal(WalletDeposit::class);
 
         //  SUm gain 
         $sum_gain = $payement_gain_days + $transaction_gain_days + $phonecredit_gain_days + $inter_gain_days + $bank_gain_days + $deposit_gain_days;
 
         $walletUser = Auth::guard('company')->user();
-        $state_transaction_year =  $this->getMastersGainProperty(WalletTransaction::class);
-        $transaction_amount_month = $this->getDaysTransaction(WalletTransaction::class);
-        $transaction_error = $this->getTransactionCount(WalletTransaction::class, 'ERROR', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
-        $transaction_padding = $this->getTransactionCount(WalletTransaction::class, 'PENDING', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
-        $transaction_success = $this->getTransactionCount(WalletTransaction::class, 'SUCCESS', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
+        $state_transaction_year =  app(HomeService::class)->getMastersGainProperty(WalletTransaction::class);
+        $transaction_amount_month = app(HomeService::class)->getDaysTransactionCompanieGain(WalletTransaction::class);
+        
+        $transaction_error = app(HomeService::class)->getTransactionFirmCount(WalletTransaction::class, 'ERROR', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
+        $transaction_padding = app(HomeService::class)->getTransactionFirmCount(WalletTransaction::class, 'PENDING', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
+        $transaction_success = app(HomeService::class)->getTransactionFirmCount(WalletTransaction::class, 'SUCCESS', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status');
+        
         $closeRobus = CloseApp::orderBy('id', 'asc')->get();
         $employers =  SidUser::where('is_custumers', true)->where('company_id', firm()->company_id)->count();
         $underDistributors =  SidUser::where('is_under_distributer', true)->where('company_id', firm()->company_id)->count();
@@ -266,142 +269,6 @@ class HomeCompany extends Component
         ]);
     }
 
-    
-    public function getTransactionCountReload($walletModel)
-    {
-
-
-        $totalCount = $walletModel::where('wallet_id', firm()->wallet->id)
-            ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
-            ->count();
-
-        return $totalCount;
-    }
-
-    public function getDaysTransactionGain($walletModel)
-    {
-
-        $sidUsers = SidUser::where('company_id', firm()->company->id)
-        ->where('id', '!=', firm()->id)
-        ->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereMonth('created_at', now()->month)
-                ->sum('commission_companie');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
-
-
-        return $totalAmount;
-    }
-
-    public function getTodayTransactionCommissionAmountTotal($walletModel)
-    {
-
-        $sidUsers = SidUser::where('company_id',  firm()->company->id)
-        ->where('id', '!=', firm()->id)
-        ->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereDate('created_at', Carbon::today())
-                ->sum('commission_companie');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
-
-
-        return $totalAmount;
-    }
-
-    
-
-    public function getTodayTransactionUndersAmountTotal($walletModel)
-    {
-
-        $sidUsers = SidUser::where('company_id',  firm()->company->id)
-        ->where('id', '!=', firm()->id)->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereDate('created_at', Carbon::today())
-                ->sum('amount');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
-
-
-        return $totalAmount;
-    }
-
-
-    public function getTodayReloadAmountTotal($walletModel)
-    {
-
-
-        $totalAmount = $walletModel::where('wallet_id',  firm()->wallet->id)
-            ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
-            ->sum('amount');
-
-        return $totalAmount;
-    }
-
-    public function getDaysReloadAmountTotal($walletModel)
-    {
-
-
-        $totalAmount = $walletModel::where('wallet_id',  firm()->wallet->id)
-            ->whereStatus('SUCCESS')
-            ->whereMonth(DB::raw('created_at'), now()->month)
-            ->sum('amount');
-
-        return $totalAmount;
-    }
-
-    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount)
-    {
-
-        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
-            ->where($transaction_status, 'SUCCESS');
-
-        if (sabdy()->is_under_distributer) {
-            $query->where(function ($query) use ($wallet_transaction) {
-                $query->where($wallet_transaction, firm()->wallet->id);
-            });
-        }
-
-        return $query->sum($wallet_amount);
-    }
-
 
     public function getTransactionCount($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status)
     {
@@ -419,28 +286,7 @@ class HomeCompany extends Component
         return $query->count();
     }
 
-    public function getTransactionUsersCount($walletModel,  $status)
-    {
 
-
-        $sidUsers = SidUser::where('company_id',  firm()->company->id)
-        ->where('id', '!=', firm()->id)->get();
-        $totalcount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $count = $walletModel::where('wallet_id', $sidUserId)
-                ->where('status', $status)->count();
-
-            if ($count !== null) {
-                $totalcount += $count;
-            }
-        }
-
-        return $totalcount;
-    }
 
     public function getDaysTransaction($walletModel)
     {
@@ -461,59 +307,6 @@ class HomeCompany extends Component
         return $totalAmount;
     }
 
-
-    public function getDaysTransactionUnderMonth($walletModel)
-    {
-
-        $sidUsers = SidUser::where('company_id', firm()->company->id)
-        ->where('id', '!=', firm()->id)
-        ->get();
-
-        $totalAmount = 0;
-
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-
-            $amount = $walletModel::where('wallet_id', $sidUserId)
-                ->whereStatus('SUCCESS')
-                ->whereMonth('created_at', now()->month)
-                ->sum('amount');
-
-            if ($amount !== null) {
-                $totalAmount += $amount;
-            }
-        }
-
-
-        return $totalAmount;
-    }
-
-    public function getMastersGainProperty($walletModel)
-    {
-        $reloads = [];
-
-        $currentYear = Carbon::now()->year;
-
-        for ($month = 1; $month <= 12; $month++) {
-            $formattedMonth = str_pad($month, 2, '0', STR_PAD_LEFT);
-
-            $reloadSum = 0;
-
-            $reloadSum += $walletModel::where('wallet_id', firm()->wallet->id)
-                ->where('status', 'SUCCESS')
-                ->whereYear('created_at', $currentYear)
-                ->where('created_at', 'like', "%-$formattedMonth-%")
-                ->sum('amount');
-
-
-            $reloads[] = $reloadSum;
-        }
-
-        return $reloads;
-    }
-
-    
 
     public function getRealodsAdminDays($walletModel)
     {
@@ -570,88 +363,6 @@ class HomeCompany extends Component
                 $reload7[] = ($reload->amount);
             }
         }
-        $reloads = [array_sum($reload1), array_sum($reload2), array_sum($reload3), array_sum($reload4), array_sum($reload5), array_sum($reload6), array_sum($reload7)];
-        // dd($reloads);
-        return $reloads;
-    }
-
-
-    public function getRealodsAdminAmountDaysUsers($walletModel)
-    {
-        $sidUsers = SidUser::where('company_id', firm()->company->id)
-            ->where('id', '!=', firm()->id)
-            ->get();
-    
-            $reload1 = [];
-            $reload2 = [];
-            $reload3 = [];
-            $reload4 = [];
-            $reload5 = [];
-            $reload6 = [];
-            $reload7 = [];
-
-    
-        foreach ($sidUsers as $sidUser) {
-
-            $sidUserId = $sidUser->wallet->id;
-    
-            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
-
-                if ($reload->created_at->dayOfWeek === Carbon::MONDAY) {
-    
-                    $reload1[] = ($reload->amount);
-                }
-            }
-            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
-    
-                if ($reload->created_at->dayOfWeek === Carbon::TUESDAY) {
-    
-                    $reload2[] = ($reload->amount);
-                }
-            }
-            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
-                if ($reload->created_at->dayOfWeek === Carbon::WEDNESDAY) {
-    
-                    $reload3[] = ($reload->amount);
-                }
-            }
-            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
-                if ($reload->created_at->dayOfWeek === Carbon::THURSDAY) {
-    
-                    $reload4[] = ($reload->amount);
-                }
-            }
-            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
-                if ($reload->created_at->dayOfWeek === Carbon::FRIDAY) {
-    
-                    $reload5[] = ($reload->amount);
-                }
-            }
-            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
-                if ($reload->created_at->dayOfWeek === Carbon::SATURDAY) {
-    
-                    $reload6[] = ($reload->amount);
-                }
-            }
-            foreach ($walletModel::where('wallet_id', $sidUserId)->where('status', 'SUCCESS')->get() as $reload) {
-                if ($reload->created_at->dayOfWeek === Carbon::SUNDAY) {
-    
-                    $reload7[] = ($reload->amount);
-                }
-            }
- 
-
-            // $transactions = $walletModel::where('wallet_id', $sidUserId)
-            //     ->where('status', 'SUCCESS')
-            //     ->get();
-    
-            // foreach ($transactions as $transaction) {
-            //     $dayOfWeek = $transaction->created_at->dayOfWeek;
-            //     $reloadsByDay[$dayOfWeek] += $transaction->amount;
-            // }
-        }
-    
-                  
         $reloads = [array_sum($reload1), array_sum($reload2), array_sum($reload3), array_sum($reload4), array_sum($reload5), array_sum($reload6), array_sum($reload7)];
         // dd($reloads);
         return $reloads;

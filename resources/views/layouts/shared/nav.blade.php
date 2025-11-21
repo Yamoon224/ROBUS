@@ -215,6 +215,20 @@
                             </li>
                         @endif
 
+                        @if (Auth::guard('web')->user()->hasPermissionTo('integrateurs'))
+                            <li>
+
+                                <a href="{{ route('users.prospects.browse') }}"
+                                    class="side-menu {{ $route == 'users.prospects.browse' ||  $route == 'users.prospects.details' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> 
+                                         <i data-feather="codesandbox" class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title"> Integrateurs</div>
+                                </a>
+                            </li>
+                        @endif
+                        
+
                         @if (Auth::guard('web')->user()->hasPermissionTo('com-zone'))
                             <li>
 

@@ -75,8 +75,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div
-                            class="intro-y flex text-xs sm:text-sm flex-col sm:flex-row items-center mt-5 pt-5 border-t border-slate-200/60 dark:border-darkmode-400">
+                        <div class="intro-y flex text-xs sm:text-sm flex-col sm:flex-row items-center mt-5 pt-5 border-t border-slate-200/60 dark:border-darkmode-400">
 
 
                             <div class="flex items-center text-slate-600 dark:text-slate-500 sm:ml-auto mt-5 sm:mt-0">
@@ -100,8 +99,8 @@
                                         <button type="button"
                                             wire:click="edit({{ $item->id }}, 'show-deleted-pub-modal'); $emit('show-deleted-pub-modal')"
                                             class="flex items-center px-3 py-2 rounded-lg text-sm font-medium bg-red-100 text-red-800 
-               hover:bg-red-200 transition-colors duration-200 shadow-sm hover:shadow-md
-               focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500">
+                                hover:bg-red-200 transition-colors duration-200 shadow-sm hover:shadow-md
+                                focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-red-500">
                                             <i class="fas fa-trash w-4 h-4 mr-2"></i> Supprimer
                                         </button>
                                     </div>
@@ -109,7 +108,6 @@
                             </div>
                         </div>
                     </div>
-
 
 
                 </div>

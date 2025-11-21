@@ -91,7 +91,6 @@ class AdminController extends Controller
     }
 
 
-
     public function home_com_zones()
     {
         return view('home_comzone');
@@ -298,6 +297,33 @@ class AdminController extends Controller
         return view('pages.admin.gain_under_distributer');
     }
 
+    public function UpdatePassword_prospect(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'current_password' => ['required', new MatchOldPassword],
+            'new_password' => ['required'],
+            'new_confirm_password' => ['same:new_password'],
+        ]);
+
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+
+
+        SidUser::find(propect()->id)->update(['password' => Hash::make($request->new_password)]);
+
+        $notify = new MailController;
+        $notify->modifyPassword($request);
+
+
+        return back()->with('status', 'Mise a jour effectuée avec succès');
+    }
     public function UpdatePassword_companie(Request $request)
     {
 
@@ -1575,6 +1601,95 @@ class AdminController extends Controller
     }
 
 
+     public function show_propects(int $id, Request $request)
+    {
+
+        if (!Auth::guard('web')->user()->hasPermissionTo('voir-integrateurs')) {
+            abort(403);
+        }
+
+
+        $user = SidUser::whereId($id)->first();
+
+        $wallet_solde = Wallet::where('sid_user_id', $user->id)->first();
+
+        $usersCountry = Auth::guard('web')->user()->country->currencie->name;
+
+        $kycs = $user->kyc()->get() ?? null;
+
+        $roles = Role::all();
+
+        $countries = Country::where('status', true)->get();
+        // Wallet Error and other
+        $sum_error    = $this->getCountWalletTransaction($wallet_solde->id, 'ERROR');
+        $sum_success    = $this->getCountWalletTransaction($wallet_solde->id, 'SUCCESS');
+        $pending_success    = $this->getCountWalletTransaction($wallet_solde->id, 'PENDING');
+        $totalSumAmounts = $this->getTotalSumTransactionsAmount($wallet_solde);
+
+        // Gains
+        $gain_deposits = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id);
+        $gain_payments = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id);
+        $gain_transactions = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+        $gain_moneys = $this->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+        $gain_depots = $this->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+        $gain_retraits = $this->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
+        $gain_phone_credits = $this->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class,  $user->wallet->id);
+        $gain_inters = $this->getTodayTransactionCommissionAmountTotal(WalletInter::class, $user->wallet->id);
+
+        $gain_xbets = $this->getTodayTransactionCommissionAmountTotal(WalletXbet::class, $user->wallet->id);
+        $gain_versment = $this->getTodayTransactionCommissionAmountTotal(WalletVersement::class, $user->wallet->id);
+        $gain_push = $this->getTodayTransactionCommissionAmountTotal(WalletPush::class, $user->wallet->id);
+        $gain_djamo = $this->getTodayTransactionCommissionAmountTotal(WalletDjamo::class, $user->wallet->id);
+        $gain_tresorts = $this->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class, $user->wallet->id);
+
+
+        $count_days_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'daily');
+        $amount_days_inters = $this->getTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'daily');
+        $count_mounth_inters = $this->getCountsTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'monthly');
+        $amount_mounth_inters = $this->getTransactionsAmountTotal(WalletInter::class, $user->wallet->id, 'monthly');
+
+        $gain_banks = $this->getTodayTransactionCommissionAmountTotal(WalletBank::class, $user->wallet->id);
+
+        $company_gains = $gain_payments + $gain_transactions + $gain_phone_credits + $gain_inters + $gain_banks + $gain_deposits
+            + $gain_xbets + $gain_versment + $gain_push + $gain_djamo + $gain_tresorts;
+
+        // Execeptions
+        $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
+
+        return view('pages.admin.show_unders', compact(
+            'user',
+            'gain_xbets',
+            'gain_versment',
+            'gain_push',
+            'gain_djamo',
+            'gain_tresorts',
+            'count_days_inters',
+            'amount_days_inters',
+            'count_mounth_inters',
+            'amount_mounth_inters',
+            'roles',
+            'sum_wallet_drawer',
+            'sum_error',
+            'sum_success',
+            'pending_success',
+            'countries',
+            'usersCountry',
+            'totalSumAmounts',
+            'kycs',
+            'gain_payments',
+            'gain_transactions',
+            'gain_phone_credits',
+            'gain_inters',
+            'gain_banks',
+            'gain_deposits',
+            'gain_depots',
+            'gain_retraits',
+            'gain_moneys',
+            'company_gains'
+
+        ));
+    }
+
 
     public function remonteCommission($amount, $typeRemonte, int $id)
     {
@@ -2306,6 +2421,7 @@ class AdminController extends Controller
 
                         $msg = "Votre commission ($type) a été transférée sur votre compte.";
                         $msg_title = 'Transfert de commission par ' . sabdy()->firstname . ' ' . sabdy()->lastname;
+
                         $company->notify(new UserNotification([
                             'title' => $msg_title,
                             'message' => $msg
@@ -3154,6 +3270,101 @@ class AdminController extends Controller
         }
     }
 
+      public function updateProfil_admin(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+
+
+        try {
+            DB::beginTransaction();
+            $user = SidUser::find(sabdy()->id);
+            $user->firstname = $request->firstname;
+            $user->lastname = $request->lastname;
+            $user->phone = $request->phone;
+            $user->created_by = sabdy()->id;
+            $file_image = $request->file('image');
+
+            if ($file_image) {
+                $destination_path = public_path('profil/' . $user->firstname . '/');
+                $front_file = date('YmdHis') . "." . $file_image->getClientOriginalExtension();
+                $file_image->move($destination_path, $front_file);
+                $user->image =  env('APP_URL') . "/public/profil/" . $user->firstname . "/$front_file";
+            }
+
+            $user->save();
+
+            $color = 'success';
+
+            return redirect()->back()->with('color', $color)->with('status', 'Mise a jour effectuée avec succès');
+            // return redirect(route('admin.browse'))->with('status', 'Mise a jour effectuée avec succès');
+        } catch (\Exception $exception) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+    }
+
+    public function updateProspect_company(Request $request)
+    {
+
+        $validator = Validator::make($request->all(), [
+            'firstname' => ['required', 'string', 'max:255'],
+            'lastname' => ['required', 'string', 'max:255'],
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+
+
+        try {
+            DB::beginTransaction();
+            $user = SidUser::find(propect()->id);
+            $user->firstname = $request->firstname;
+            $user->lastname = $request->lastname;
+            $user->phone = $request->phone;
+            $user->created_by = propect()->id;
+            $file_image = $request->file('image');
+
+            if ($file_image) {
+                $destination_path = public_path('profil/' . $user->firstname . '/');
+                $front_file = date('YmdHis') . "." . $file_image->getClientOriginalExtension();
+                $file_image->move($destination_path, $front_file);
+                $user->image =  env('APP_URL') . "/public/profil/" . $user->firstname . "/$front_file";
+            }
+
+            $user->save();
+
+            $color = 'success';
+
+            return redirect()->back()->with('color', $color)->with('status', 'Mise a jour effectuée avec succès');
+            // return redirect(route('admin.browse'))->with('status', 'Mise a jour effectuée avec succès');
+        } catch (\Exception $exception) {
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+    }
 
     public function updateProfilManager(Request $request)
     {
@@ -3262,6 +3473,14 @@ class AdminController extends Controller
         $user = SidUser::where('id', Auth::user()->id)->first();
         return view('firms.pages.security_employers', compact('user', 'roles'));
     }
+
+    public function security_prospects()
+    {
+
+        $roles = Role::orderBy('created_at', 'DESC')->get();
+        $user = SidUser::where('id', Auth::user()->id)->first();
+        return view('firms.pages.security_prospects', compact('user', 'roles'));
+    }
     public function showProfile()
     {
         if (!Auth::guard('web')->user()->hasPermissionTo('modifier-profil')) {
@@ -3280,6 +3499,16 @@ class AdminController extends Controller
 
         $user = SidUser::where('id', firm()->id)->first();
         return view('firms.pages.showProfile', compact('user'));
+    }
+
+    public function show_prospect_profile()
+    {
+        if (!propect()) {
+            abort(403);
+        }
+
+        $user = SidUser::where('id', propect()->id)->first();
+        return view('firms.pages.showProspectProfile', compact('user'));
     }
 
     public function ShowProfil_employes()

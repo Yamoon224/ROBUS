@@ -64,6 +64,16 @@ class LoginCompany extends Component
         return redirect()->route('admin.login_companie');
     }
 
+    public function logout_prospect()
+    {
+        Auth::user()->last_logout  = Carbon::now()->toDateTimeString();
+        Auth::guard('integration')->user()->save();
+        Auth::logout(Auth::guard('integration')->user());
+        Session::flush();
+        $this->emit('success', 'Déconnexion réussi !');
+        return redirect()->route('admin.login_integration');
+    }
+
 
 
     public function logout_masters()

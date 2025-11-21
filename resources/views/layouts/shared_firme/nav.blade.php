@@ -2,19 +2,14 @@
     $prefix = Request::route()->getPrefix();
     $route = Route::current()->getName();
     $status = appDispoRobus(App\Models\AppCompanyStatus::class);
-   // Vérifier l'état de l'application
-//    $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
-// if (!$appStatusResult['success']) {
-//     return response()->json($appStatusResult, 301);
-// }
 @endphp
 <!-- BEGIN: Side Menu -->
 
 <nav class="side-nav">
     <a href="{{ route('companies.home') }}" class="intro-x flex items-center pl-5 pt-4">
-        <img alt="" class="w-6" src="{{ asset_url('dist/images/logo_robus.png') }}">
-        <span class="hidden xl:block text-white text-lg ml-3"> ROBUS </span>
+        <img alt="Robus" class="w-20" src="{{ asset_url('dist/images/logo_robus.png') }}">
+
     </a>
     <div class="side-nav__devider my-4"></div>
     <ul>

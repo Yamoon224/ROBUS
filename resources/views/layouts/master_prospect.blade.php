@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="ROBUS">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>@yield('title') - ROBUS</title>
+
+    @include('layouts.shared.styles')
+    {{-- <script type="module"  src="{{ asset('build/assets/app.13c293c6.js') }}"></script>
+    <script type="module" crossorigin src="/boostrap/assets/app2.mjs"></script> --}}
+    <script src="https://js.pusher.com/4.1/pusher.min.js"></script>
+    <script type="module" src="{{ asset('build/assets/app.c57777cd.js') }}"></script>
+    {{-- <script type="module" crossorigin src="{{ asset('boostrap/ssr/app2.mjs') }}"></script> --}}
+    {{-- <link rel="stylesheet" href="/build/assets/app2.mjs">
+    <link href="{{ asset('public/build/assets/app.b4f7846d.css') }}" rel="stylesheet">
+    {{-- <style>
+        [x-cloak] {
+            display: none !important;
+        }
+    </style> --}}
+    {{-- @vite('ressource/js/app.js') --}}
+
+
+    @stack('styles')
+
+    @livewireStyles
+    {{-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> --}}
+    {{-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+    <link rel="stylesheet" type="text/css"
+        href="https://cdn.datatables.net/buttons/2.2.2/css/buttons.dataTables.min.css"> --}}
+
+</head>
+
+
+<body class="dark:bg-transparent">
+
+    <!-- BEGIN: Content-->
+    <div class="mobile-menu md:hidden">
+        @include('layouts.shared_prospect.navMobile')
+    </div>
+    <div class="flex">
+        @include('layouts.shared_prospect.nav')
+        <div class="content">
+            <div class="top-bar">
+                @include('layouts.shared_prospect.side')
+            </div>
+            @yield('content')
+        </div>
+    </div>
+    @include('layouts.shared.scripts')
+
+    @stack('scripts')
+    @livewireScripts
+    @include('layouts.scripts_toastr')
+    <script>
+      
+
+
+        Livewire.on('modal-hide', () => {
+
+
+            //Categories
+            $('#create-categorie-modal').removeClass('show');
+            $('#create-categorie-modal').addClass('hide');
+
+            $('#remonte-ccommission-modal').removeClass('show');
+            $('#remonte-ccommission-modal').addClass('hide');
+
+            $('#disabled-categorie-modal').removeClass('show');
+            $('#disabled-categorie-modal').addClass('hide');
+
+            $('#update-categorie-modal').removeClass('show');
+            $('#update-categorie-modal').addClass('hide');
+
+            $('#delete-categorie-modal').removeClass('show');
+            $('#delete-categorie-modal').addClass('hide');
+
+            $('#create-reload-company-modal').removeClass('show');
+            $('#create-reload-company-modal').addClass('hide');
+
+            //employers
+            $('#create-employers-modal').removeClass('show');
+            $('#create-employers-modal').addClass('hide');
+
+            $('#payment-employers-modal').removeClass('show');
+            $('#payment-employers-modal').addClass('hide');
+
+            $('#disabled-employers-modal').removeClass('show');
+            $('#disabled-employers-modal').addClass('hide');
+
+            $('#update-employers-modal').removeClass('show');
+            $('#update-employers-modal').addClass('hide');
+
+            $('#delete-employers-modal').removeClass('show');
+            $('#delete-employers-modal').addClass('hide');
+
+
+        });
+
+
+        Livewire.on('show-reload-under-companie-modal', () => {
+            $('#create-reload-company-modal').removeClass('hide');
+            $('#create-reload-company-modal').addClass('show');
+
+        });
+        // Categories
+
+        Livewire.on('modal-show', () => {
+            $('#create-categorie-modal').removeClass('hide');
+            $('#create-categorie-modal').addClass('show');
+        });
+
+        Livewire.on('modal-show-remonte-ccommission', () => {
+            $('#remonte-ccommission-modal').removeClass('hide');
+            $('#remonte-ccommission-modal').addClass('show');
+        });
+
+        Livewire.on('show-disabled-modal', () => {
+            $('#disabled-categorie-modal').removeClass('hide');
+            $('#disabled-categorie-modal').addClass('show');
+        });
+
+        Livewire.on('update-categorie-modal', () => {
+            $('#update-categorie-modal').removeClass('hide');
+            $('#update-categorie-modal').addClass('show');
+        });
+
+        Livewire.on('delete-categorie-modal', () => {
+            $('#delete-categorie-modal').removeClass('hide');
+            $('#delete-categorie-modal').addClass('show');
+        });
+
+        // Employers
+
+        Livewire.on('modal-show', () => {
+            $('#create-employers-modal').removeClass('hide');
+            $('#create-employers-modal').addClass('show');
+        });
+
+        Livewire.on('modal-show-employers', () => {
+            $('#payment-employers-modal').removeClass('hide');
+            $('#payment-employers-modal').addClass('show');
+        });
+
+
+        Livewire.on('show-disabled-modal', () => {
+            $('#disabled-employers-modal').removeClass('hide');
+            $('#disabled-employers-modal').addClass('show');
+        });
+
+        Livewire.on('update-employers-modal', () => {
+            $('#update-employers-modal').removeClass('hide');
+            $('#update-employers-modal').addClass('show');
+        });
+
+        Livewire.on('delete-employers-modal', () => {
+            $('#delete-employers-modal').removeClass('hide');
+            $('#delete-employers-modal').addClass('show');
+        });
+    </script>
+
+</body>
+
+</html>

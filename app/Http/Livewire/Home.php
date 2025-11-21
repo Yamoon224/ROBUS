@@ -166,7 +166,6 @@ class Home extends Component
 
         return view('livewire.home', [
 
-            // Users
 
             // 'is_masters' => $masters,
             'is_custumers' => $custumers,
