@@ -23,7 +23,11 @@ class CommissionUnderDistributer extends Component
     {
         $drawers =  WithMerchant::query();
 
-        $walletUser = Auth::guard('web')->user();
+       $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
 
 
         if ($this->startDate && $this->endDate) {

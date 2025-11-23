@@ -21,46 +21,17 @@
 
 
     <li class="nav__devider my-4"></li>
+  <li>
 
+            <a href="{{ route('propects.transferHistos.historical') }}"
+                class="menu {{ $route == 'propects.transferHistos.historical' ? 'menu--active' : '' }}">
+                <div class="menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i> </div>
+                <div class="menu__title"> Historiques </div>
+            </a>
+        </li>
    
-    <li>
-        <a href="javascript:;" class="menu {{ request()->is('historicals*') ? 'menu--active' : '' }}">
-            <div class="menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i> </div>
-            <div class="menu__title">
-                Historiques
-                <div class="menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
-            </div>
-        </a>
-        <ul class="{{ request()->is('company/historicals*') ? 'menu__sub-open' : '' }}">
-
-
-            <li>
-                <a href="{{ route('propects.transfers.historical') }}"
-                    class="menu {{ $route == 'propects.transfers.historical' ? 'menu--active' : '' }}">
-                    <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                    </div>
-                    <div class="menu__title"> Historique transfert </div>
-                </a>
-            </li>
-            <li>
-                <a href="{{ route('propects.reloads.historical') }}"
-                    class="menu {{ $route == 'propects.reloads.historical' ? 'menu--active' : '' }}">
-                    <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                    </div>
-                    <div class="menu__title"> Historique réchargement</div>
-                </a>
-            </li>
-        </ul>
-    </li>
-    <li class="nav__devider my-4"></li>
-    <li>
-
-        <a href="{{ route('propects.transactions.historiques.states') }}"
-            class="menu {{ $route == 'propects.transactions.historiques.states' ? 'menu--active' : '' }}">
-            <div class="menu__icon"> <i data-feather="activity" class="block mx-auto"></i></div>
-            <div class="menu__title"> Statistiques </div>
-        </a>
-    </li>
+ 
+    
     <li class="nav__devider my-4"></li>
 
     <li>

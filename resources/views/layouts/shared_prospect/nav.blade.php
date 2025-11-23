@@ -26,42 +26,12 @@
 
         <li class="side-nav__devider my-4"></li>
 
-        <li>
-            <a href="javascript:;" class="side-menu {{ request()->is('historicals*') ? 'side-menu--active' : '' }}">
+         <li>
+
+            <a href="{{ route('propects.transferHistos.historical') }}"
+                class="side-menu {{ $route == 'propects.transferHistos.historical' ? 'side-menu--active' : '' }}">
                 <div class="side-menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i> </div>
-                <div class="side-menu__title">
-                    Historiques
-                    <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
-                </div>
-            </a>
-            <ul class="{{ request()->is('company/historicals*') ? 'side-menu__sub-open' : '' }}">
-
-
-                <li>
-                    <a href="{{ route('propects.transfers.historical') }}"
-                        class="side-menu {{ $route == 'propects.transfers.historical' ? 'side-menu--active' : '' }}">
-                        <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                        </div>
-                        <div class="side-menu__title"> Historique transfert </div>
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('propects.reloads.historical') }}"
-                        class="side-menu {{ $route == 'propects.reloads.historical' ? 'side-menu--active' : '' }}">
-                        <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
-                        </div>
-                        <div class="side-menu__title"> Historique réchargement</div>
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li class="side-nav__devider my-4"></li>
-        <li>
-
-            <a href="{{ route('propects.transactions.historiques.states') }}"
-                class="side-menu {{ $route == 'propects.transactions.historiques.states' ? 'side-menu--active' : '' }}">
-                <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i></div>
-                <div class="side-menu__title"> Statistiques </div>
+                <div class="side-menu__title"> Historiques </div>
             </a>
         </li>
         <li class="side-nav__devider my-4"></li>

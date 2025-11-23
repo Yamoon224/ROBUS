@@ -22,6 +22,126 @@ class HistoriqueService
         $this->convertionService = $convertionService;
     }
 
+    public function getTransactionCountReload($walletModel)
+    {
+
+
+        $totalCount = $walletModel::where('wallet_id', sabdy()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        return $totalCount;
+    }
+
+    public function getTransactionCountProspectReload($walletModel)
+    {
+
+
+        $totalCount = $walletModel::where('wallet_id', propect()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->whereDate('created_at', Carbon::today())
+            ->count();
+
+        return $totalCount;
+    }
+
+    public function getTodayTransactionAmountProspectTotalHisto($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $IswebStatus, $isWeb)
+    {
+        // Construction de la requête de base
+        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+            ->whereDate($transaction_days, Carbon::today())
+            ->where($transaction_status, 'SUCCESS')
+            ->where($IswebStatus, $isWeb);
+
+        $query->where(function ($query) use ($wallet_transaction) {
+            $query->where($wallet_transaction, propect()->wallet->id);
+        });
+
+        // Calculer la somme des montants des transactions
+        return $query->sum($wallet_amount);
+    }
+
+    public function getTodayTransactionAmountTotalHisto($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $IswebStatus, $isWeb)
+    {
+        // Construction de la requête de base
+        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
+            ->whereDate($transaction_days, Carbon::today())
+            ->where($transaction_status, 'SUCCESS')
+            ->where($IswebStatus, $isWeb);
+
+        if (sabdy()->is_distributer) {
+            $query->where($walletMy, sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transaction) {
+                $query->where($wallet_transaction, sabdy()->wallet->id);
+            });
+        } else {
+
+            $query->where(function ($query) use ($walletMy) {
+                $query->where($walletMy, sabdy()->id)
+                    ->orWhere($walletMy, '!=', sabdy()->id);
+            })
+                ->where(function ($query) {
+                    $countryId = sabdy()->country->id;
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                });
+        }
+
+        // Calculer la somme des montants des transactions
+        return $query->sum($wallet_amount);
+    }
+
+    // count valeurs
+    public function getTransactionCountHisto($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status, $IswebStatus, $isWeb)
+    {
+        // Commencer par construire la requête de base
+        $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
+            ->whereDate($transaction_days, Carbon::today())
+            ->where($wallet_status, $status)
+            ->where($IswebStatus, $isWeb);
+
+        // Vérification de l'utilisateur distributeur
+        if (sabdy()->is_distributer) {
+            $query->where($walletMy, sabdy()->id);
+        } elseif (sabdy()->is_under_distributer) {
+            $query->where(function ($query) use ($wallet_transactions) {
+                $query->where($wallet_transactions, sabdy()->wallet->id);
+            });
+        } else {
+
+            $query->where(function ($query) use ($walletMy) {
+                $query->where($walletMy, sabdy()->id)
+                    ->orWhere($walletMy, '!=', sabdy()->id);
+            })
+                ->where(function ($query) {
+                    $countryId = sabdy()->country->id;
+                    $query->where('wallets.country_id', '!=', $countryId)
+                        ->orWhere('wallets.country_id', '=', $countryId);
+                });
+        }
+
+        // Compter les transactions
+        return $query->count();
+    }
+
+    public function getTransactionCountProspectHisto($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status, $IswebStatus, $isWeb)
+    {
+        // Commencer par construire la requête de base
+        $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
+            ->whereDate($transaction_days, Carbon::today())
+            ->where($wallet_status, $status)
+            ->where($IswebStatus, $isWeb);
+
+        // Vérification de l'utilisateur distributeur
+        $query->where(function ($query) use ($wallet_transactions) {
+            $query->where($wallet_transactions, propect()->wallet->id);
+        });
+
+        // Compter les transactions
+        return $query->count();
+    }
     public function generateDailyReport(
         string $modelClass,
         string $relationTableWallet,
@@ -102,7 +222,7 @@ class HistoriqueService
         $bank_historicals = collect();
 
 
-        if ($user->is_under_distributer) {
+        if ($user->is_under_distributer || $user->is_api) {
 
 
             $query = $modelClass::join('wallets', $relationTableWallet, 'wallets.id')
@@ -199,7 +319,7 @@ class HistoriqueService
         return $pdf->download($fileName);
     }
 
-      public function generateDailyAllDistributorReport(
+    public function generateDailyAllDistributorReport(
         string $modelClass,
         string $relationTableWallet,
         ?string $relationWalletId = null,
@@ -227,7 +347,7 @@ class HistoriqueService
                 ->where($adminDescription, $description)
                 ->whereDate($walletCreated, $convertions)
                 ->select($walletAll);
-                
+
             $account_penddings =  $this->getCountWalletAllTransaction($modelClass, $relationTableWallet, $relationWalletId, $relationAdminTableWalletId,  $relationTableWalletId, $walletStatus, 'PENDING', $convertions, $adminDescription, $description, $walletAll);
             $account_success =  $this->getCountWalletAllTransaction($modelClass, $relationTableWallet, $relationWalletId, $relationAdminTableWalletId,  $relationTableWalletId, $walletStatus, 'SUCCESS', $convertions, $adminDescription, $description, $walletAll);
             $account_errors =  $this->getCountWalletAllTransaction($modelClass, $relationTableWallet, $relationWalletId, $relationAdminTableWalletId,  $relationTableWalletId, $walletStatus, 'ERROR', $convertions, $adminDescription, $description, $walletAll);
@@ -358,7 +478,11 @@ class HistoriqueService
     public function getTransactionsStatusProperty($walletTransaction, string $walletIsWebHistorical, string  $walletStatus, $statusTransferFilter, string $walletCreated, string  $walletUpdated)
     {
 
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
 
         $data = [];
 
@@ -367,7 +491,7 @@ class HistoriqueService
 
         if ($walletUser->is_under_distributer) {
             $wallets->where($walletCreated, $walletUser->id);
-        } elseif ($walletUser->is_distributer) {
+        } elseif ($walletUser->is_distributer || $walletUser->is_api) {
             $wallets->where($walletUpdated, $walletUser->id);
         } else {
             $wallets->where($walletCreated, '!=', $walletUser->id);
@@ -390,9 +514,13 @@ class HistoriqueService
 
         $wallets = $walletTransaction::where($walletTransactionIsWeb, false);
 
-        $walletUser = Auth::guard('web')->user();
+       $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
 
-        if ($walletUser->is_under_distributer) {
+        if ($walletUser->is_under_distributer || $walletUser->is_api) {
             $wallets->where($walletCreated, $walletUser->id);
         } elseif ($walletUser->is_distributer) {
             $wallets->where($walletUpdated, $walletUser->id);
@@ -419,9 +547,13 @@ class HistoriqueService
 
         $wallets = $walletTransaction::whereIsWeb(false)->whereBetween('created_at', [$beginDate, $endDate]);
 
-        $walletUser = Auth::guard('web')->user();
+      $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
 
-        if ($walletUser->is_under_distributer) {
+        if ($walletUser->is_under_distributer || $walletUser->is_api) {
             $wallets->where($walletCreated, $walletUser->id);
         } elseif ($walletUser->is_distributer) {
             $wallets->where($walletUpdated, $walletUser->id);
@@ -693,7 +825,7 @@ class HistoriqueService
             ->sum($wallet_amount);
     }
 
-    public function getCommissionTransactionCountrie($walletModel,string $wallet_transaction, $countrie, string $walletStatus,string $wallet_amount)
+    public function getCommissionTransactionCountrie($walletModel, string $wallet_transaction, $countrie, string $walletStatus, string $wallet_amount)
     {
 
         return $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
@@ -737,6 +869,18 @@ class HistoriqueService
         $totalAmount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
             ->whereStatus('SUCCESS')
             ->whereMonth(DB::raw('created_at'), now()->month)
+            ->sum('amount');
+
+        return $totalAmount;
+    }
+
+    public function getTodayReloadAmountProspectTotal($walletModel)
+    {
+
+
+        $totalAmount = $walletModel::where('wallet_id',  propect()->wallet->id)
+            ->whereStatus('SUCCESS')
+            ->whereDate('created_at', Carbon::today())
             ->sum('amount');
 
         return $totalAmount;

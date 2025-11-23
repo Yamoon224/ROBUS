@@ -5,7 +5,12 @@
             [
                 'name' => 'Front CNI',
                 'url' => $documents->front_document ?? null,
-                'status' => $documents->status === 'Validé' ? 'Validé' : 'En attente',
+                'status' =>
+                    $documents?->status === 'Validé'
+                        ? 'Validé'
+                        : ($documents?->status === 'Refusé'
+                            ? 'Refusé'
+                            : 'En attente'),
 
                 'type' => 'Image/PDF',
                 'file_size' => 'N/A',
@@ -17,7 +22,12 @@
             [
                 'name' => 'Verso CNI',
                 'url' => $documents->piece_document ?? null,
-                'status' => $documents->status === 'Validé' ? 'Validé' : 'En attente',
+                'status' =>
+                    $documents?->status === 'Validé'
+                        ? 'Validé'
+                        : ($documents?->status === 'Refusé'
+                            ? 'Refusé'
+                            : 'En attente'),
 
                 'type' => 'Image/PDF',
                 'file_size' => 'N/A',
@@ -29,7 +39,12 @@
             [
                 'name' => 'Juridict Form',
                 'url' => $documents->juridict_form ?? null,
-                'status' => $documents->status === 'Validé' ? 'Validé' : 'En attente',
+                'status' =>
+                    $documents?->status === 'Validé'
+                        ? 'Validé'
+                        : ($documents?->status === 'Refusé'
+                            ? 'Refusé'
+                            : 'En attente'),
 
                 'type' => 'Image/PDF',
                 'file_size' => 'N/A',
@@ -53,12 +68,18 @@
                                 <div class="flex items-center">
                                     <i class="fas fa-cloud-upload-alt text-blue-600 mr-3 text-xl text-blue-800"></i>
 
-                                    @if ($documentsCollection->count() > 0 && $documentsCollection->contains(fn($doc) => $doc['status'] !== 'Validé'))
+                                    @if ($documentsCollection->count() > 0 && $documents->status !== 'Validé')
                                         <!-- Si documents existants mais non validés -->
                                         <a class="btn btn-warning shadow-md mr-2"
                                             href="{{ route('propects.identifications.add') }}">
                                             Mise à jour des documents
                                         </a>
+                                    @elseif($documents->status === 'Validé')
+                                        <span
+                                            class="inline-flex status-badge bg-success items-center px-4 py-2 text-base font-semibold text-white bg-green-600 rounded-lg shadow-sm">
+                                            <i class="fas fa-check-circle mr-2"></i>
+                                            Vos documents sont valides
+                                        </span>
                                     @else
                                         <!-- Sinon bouton par défaut pour ajouter -->
                                         <a class="btn btn-primary shadow-md mr-2"
@@ -114,14 +135,33 @@
                                             <i class="fas fa-sync-alt animate-spin mr-1"></i>En cours de vérification
                                         </p>
                                     </div>
+                                @elseIf($document['status'] === 'Refusé')
+                                    <span
+                                        class="inline-flex status-badge bg-danger status-validated items-center px-4 py-2 text-base font-semibold text-white bg-red-600 rounded-lg shadow-sm">
+                                        <i class="fas fa-times-circle mr-2"></i>
+                                        Refusé
+                                    </span>
+                                @else
+                                    <span
+                                        class="inline-flex status-badge bg-success items-center px-4 py-2 text-base font-semibold text-white bg-green-600 rounded-lg shadow-sm">
+                                        <i class="fas fa-check-circle mr-2"></i>
+                                        Validé
+                                    </span>
                                 @endif
                                 <div
                                     class="flex items-center text-slate-600 dark:text-slate-500 sm:ml-auto mt-5 sm:mt-0">
 
                                     @if ($document['status'] === 'Validé')
-                                        <span class="status-badge status-validated">
-                                            <i class="fas fa-check-circle mr-1"></i>
+                                        <span
+                                            class="inline-flex status-badge bg-success items-center px-4 py-2 text-base font-semibold text-white bg-green-600 rounded-lg shadow-sm">
+                                            <i class="fas fa-check-circle mr-2"></i>
                                             Validé
+                                        </span>
+                                    @elseIf($document['status'] === 'Refusé')
+                                        <span
+                                            class="inline-flex status-badge bg-danger status-validated items-center px-4 py-2 text-base font-semibold text-white bg-red-600 rounded-lg shadow-sm">
+                                            <i class="fas fa-times-circle mr-2"></i>
+                                            Refusé
                                         </span>
                                     @else
                                         <span class="status-badge dossier-pedding">
@@ -136,7 +176,8 @@
                                 <div class="flex items-start justify-between mb-4 ml-6 mt-6">
                                     <div class="flex items-center space-x-3">
                                         <div class="bg-blue-50 rounded-xl p-3">
-                                            <i  class="fas fa-{{ $document['icon'] ?? 'file' }} border-blue-200  text-blue-800 text-lg"></i>
+                                            <i
+                                                class="fas fa-{{ $document['icon'] ?? 'file' }} border-blue-200  text-blue-800 text-lg"></i>
                                         </div>
                                         <div class="min-w-0 flex-1 mr-3 ml-3 ">
                                             <h6 class="font-bold text-gray-900 truncate" style="max-width: 200px;">
@@ -152,18 +193,7 @@
 
 
                                 <!-- Progress Bar for Pending Documents -->
-                                @if ($document['status'] === 'En attente')
-                                    <div class="mb-3">
-                                        <div class="w-full bg-gray-200 rounded-full h-1.5">
-                                            <div class="bg-yellow-500 h-1.5 rounded-full animate-pulse"
-                                                style="width: 75%">
-                                            </div>
-                                        </div>
-                                        <p class="text-yellow-600 text-xs text-center mt-1">
-                                            <i class="fas fa-clock mr-1"></i>En cours de vérification
-                                        </p>
-                                    </div>
-                                @endif
+
 
                                 <!-- Action Buttons -->
                                 <div
@@ -258,9 +288,9 @@
                                         <i class="fas fa-times-circle text-red-600 text-xl"></i>
                                     </div>
                                     <h4 class="font-bold text-gray-900 text-2xl">
-                                        {{ $rejectedCount ?? $documentsCollection->where('status', 'Rejeté')->count() }}
+                                        {{ $rejectedCount ?? $documentsCollection->where('status', 'Refusé')->count() }}
                                     </h4>
-                                    <small class="text-gray-500">Rejetés</small>
+                                    <small class="text-gray-500">Refusés</small>
                                 </div>
 
                                 <!-- Total -->

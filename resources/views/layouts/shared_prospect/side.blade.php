@@ -14,16 +14,48 @@
         aria-expanded="false" data-tw-toggle="dropdown">
         <img alt="ROBUS" src="{{ asset(propect()->country->image ?? 'public/dist/images/profil.png') }}">
     </div>
-    <div class="mr-6 dropdown-toggle w-8 h-8 rounded-full shadow-lg image-fit zoom-in" role="button"
+    <div class="mr-14 dropdown-toggle w-8 h-8 rounded-full shadow-lg image-fit zoom-in" role="button"
         aria-expanded="false" data-tw-toggle="dropdown">
-      @if(propect())
-            <div class="font-medium whitespace-nowrap">Compagnie  {{ propect()->integration->name ?? null }}</div> 
+        @if (propect())
+            <div class="font-medium whitespace-nowrap">Compagnie {{ propect()->integration->name ?? null }}</div>
             <div class="text-slate-500  mt-0.5">
                 <span
                     class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                     {{ propect()->wallet->wallet_id ?? null }}
                 </span>
             </div>
+        @endif
+
+    </div>
+    <div class="flex flex-col items-center sm:items-start w-full sm:w-auto ml-6">
+
+        @if (fielValidated()->status === 'Validé')
+            <span
+                class="inline-flex items-center px-4 py-2 text-base font-semibold text-white bg-success rounded-lg shadow-sm">
+                <i class="fas fa-check-circle mr-2"></i>
+                Dossier approuvé
+            </span>
+        @elseif (fielValidated()->status === 'Refusé')
+            <div class="w-full sm:w-48 mb-1">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-danger h-2 rounded-full animate-pulse" style="width: 75%"></div>
+                </div>
+            </div>
+            <span
+                class="inline-flex items-center px-4 py-2 text-base font-semibold text-white bg-danger rounded-lg shadow-sm">
+                <i class="fas fa-times-circle mr-2"></i>
+              Dossier non validé
+            </span>
+        @else
+            <div class="w-full sm:w-48 mb-1">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-yellow-400 h-2 rounded-full animate-pulse" style="width: 75%"></div>
+                </div>
+            </div>
+            <p class="text-yellow-600 text-xs mt-1">
+                <i class="fas fa-sync-alt animate-spin mr-1"></i>
+              Dossier En cours de vérification
+            </p>
         @endif
 
     </div>
@@ -46,7 +78,7 @@
 
     <span
         class="alert alert-primary inline-flex items-center justify-center px-2 py-1  text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-          {{ auth()->guard('web')->user()->country->name ?? null }}
+        {{ propect()->country->name ?? null }}
     </span>
 
 </div>
@@ -68,13 +100,14 @@
 <div class="intro-x dropdown w-8 h-8">
     <div class="dropdown-toggle w-8 h-8 rounded-full overflow-hidden shadow-lg image-fit zoom-in" role="button"
         aria-expanded="false" data-tw-toggle="dropdown">
-        <img alt="ROBUS" src="{{ asset(Auth::guard('integration')->user()->image ?? 'public/dist/images/profil.png') }}">
+        <img alt="ROBUS"
+            src="{{ asset(Auth::guard('integration')->user()->image ?? 'public/dist/images/profil.png') }}">
     </div>
     <div class="dropdown-menu w-56">
         <ul class="dropdown-content bg-primary text-white">
             <li class="p-2">
                 </span>
-             
+
                 <div class="font-medium"> {{ Auth::guard('integration')->user()->firstname }}
                     {{ Auth::guard('integration')->user()->lastname }}</div>
             </li>
@@ -82,8 +115,8 @@
                 <hr class="dropdown-divider border-white/[0.08]">
             </li>
             <li>
-                <a href="{{ route('propects.account.profile') }}" class="dropdown-item hover:bg-white/5"> <i data-feather="user"
-                        class="w-4 h-4 mr-2"></i> Profile </a>
+                <a href="{{ route('propects.account.profile') }}" class="dropdown-item hover:bg-white/5"> <i
+                        data-feather="user" class="w-4 h-4 mr-2"></i> Profile </a>
             </li>
             <li>
                 <a href="" class="dropdown-item hover:bg-white/5"> <i data-feather="help-circle"
@@ -91,7 +124,8 @@
             </li>
             <li class="p-2">
                 </span>
-                <div class="font-medium"> Solde : {{ number_format(Auth::guard('integration')->user()->wallet->amount, 2, ',', ' ' ) ?? null }}
+                <div class="font-medium"> Solde :
+                    {{ number_format(Auth::guard('integration')->user()->wallet->amount, 2, ',', ' ') ?? null }}
                     {{ Auth::guard('integration')->user()->country->currencie->code ?? null }}</div>
             </li>
             <li>
@@ -99,7 +133,13 @@
             </li>
             <li>
                 <a href="{{ route('propects.logout') }}" class="dropdown-item hover:bg-white/5">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" icon-name="toggle-right" data-lucide="toggle-right" class="lucide lucide-toggle-right w-4 h-4 mr-2"><rect x="1" y="5" width="22" height="14" rx="7" ry="7"></rect><circle cx="16" cy="12" r="3"></circle></svg>Déconnexion
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" icon-name="toggle-right" data-lucide="toggle-right"
+                        class="lucide lucide-toggle-right w-4 h-4 mr-2">
+                        <rect x="1" y="5" width="22" height="14" rx="7" ry="7"></rect>
+                        <circle cx="16" cy="12" r="3"></circle>
+                    </svg>Déconnexion
                 </a>
                 <form id="logout-form" action="{{ route('propects.logout') }}" method="POST" style="display: none;">
                     @csrf

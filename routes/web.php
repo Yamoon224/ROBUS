@@ -194,6 +194,8 @@ Route::group(['prefix' => ''], function () {
             Route::get('/show_company/{id}', [UserController::class, 'show_company'])->name('company.show_company');
             Route::get('/show_comzone/{id}', [UserController::class, 'show_comzone'])->name('comzone.show_comzone');
             Route::post('/update_custumers/{id}', [UserController::class, 'update_custumers'])->name('custumers.update_custumers');
+            Route::post('/update_validated/{id}', [UserController::class, 'update_validated'])->name('prospects.update_documents');
+            Route::post('/update_rejet/{id}', [UserController::class, 'update_reject'])->name('prospects.reject_documents');
             Route::post('/update_silver_ceiling/{id}', [UserController::class, 'update_silver_ceiling'])->name('custumers.update_silver_ceiling');
             Route::post('/admin_silver_ceiling/{id}', [UserController::class, 'update_silver_admin_ceiling'])->name('custumers.update_silver_admin_ceiling');
             Route::get('/read/{id}/delete', [UserController::class, 'delete'])->name('custumers.delete');

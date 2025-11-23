@@ -42,8 +42,12 @@ class Paymenthisto extends Component
 
         $paiements =  WalletPayment::query();
 
-
-        if (sabdy()->is_under_distributer) {
+ $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
+        if ($walletUser->is_under_distributer || $walletUser->is_api) {
             $paiements->where('wallet_payments.created_by', sabdy()->id);
         }
 

@@ -42,11 +42,41 @@ Route::group(['middleware' => ['auth:integration']], function () {
     });
 
     //Historical
-    Route::prefix('historicals')->group(function () {
-        Route::get('/transfers_historicals', [HistoricalController::class, 'browse_transfer'])->name('propects.transfers.historical');
-        Route::get('/reloads_historicals', [HistoricalController::class, 'browse_reloads'])->name('propects.reloads.historical');
-        Route::get('transfers/reporting_transfer_historical', [HistoricalController::class, 'reporting_transfer_historical_company'])->name('propects.transfers.historical.reporting_transfer_historical');
-        Route::get('reloads_days/reporting_reloads_days_historical', [HistoricalController::class, 'searchByReloadsDate'])->name('propects.historical.reporting_transaction_days_historical.companies');
+    Route::prefix('historicals/prospects')->group(function () {
+        
+        Route::get('/transfers_historicals', [HistoricalController::class, 'browse_propect_transfer'])->name('propects.transferHistos.historical');
+        Route::get('/reloads_historical', [HistoricalController::class, 'browse_reload'])->name('propects.relaods.historical');
+        Route::get('/transfers_historical', [HistoricalController::class, 'browse_transferfirm'])->name('propects.transfers.historical');
+        Route::get('/paiements_historical', [HistoricalController::class, 'browse_paiement'])->name('propects.paiements.historical');
+        Route::get('/virements_historical', [HistoricalController::class, 'browse_virement'])->name('propects.virements.historical');
+
+        // Reporting
+        Route::get('virements/reporting_historical', [HistoricalController::class, 'reporting_historical'])->name('propects.virements.historical.reporting_historical');
+        Route::get('reloads/reporting_reload_historical', [HistoricalController::class, 'reporting_reload_historical'])->name('propects.reloads.historical.reporting_reload_historical');
+        Route::get('cards/reporting_card_historical', [HistoricalController::class, 'reporting_card_historical'])->name('propects.cards.historical.reporting_card_historical');
+        Route::get('inters/reporting_inter_historical', [HistoricalController::class, 'reporting_inter_historical'])->name('propects.inters.historical.reporting_inter_historical');
+        Route::get('payments/reporting_payment_historical', [HistoricalController::class, 'reporting_payment_historical'])->name('propects.payments.historical.reporting_payment_historical');
+        Route::get('phones/reporting_phone_historical', [HistoricalController::class, 'reporting_phone_historical'])->name('propects.phones.historical.reporting_phone_historical');
+        Route::get('transfers/reporting_transfer_historical', [HistoricalController::class, 'reporting_transfer_historical'])->name('propects.transfers.historical.reporting_transfer_historical');
+        Route::get('drawer_under_distributer/reporting_drawer_historical', [HistoricalController::class, 'reporting_drawer_historical'])->name('propects.transfers.historical.reporting_drawer_historical');
+
+        // New Providers wallets transactions
+        Route::get('pushs/reporting_push_historical', [HistoricalController::class, 'reporting_push_historical'])->name('propects.push.historical.reporting_push_historical');
+        Route::get('versments/reporting_versment_historical', [HistoricalController::class, 'reporting_versment_historical'])->name('propects.versments.historical.reporting_versment_historical');
+        Route::get('djamos/reporting_djamo_historical', [HistoricalController::class, 'reporting_djamo_historical'])->name('propects.djamos.historical.reporting_djamo_historical');
+        Route::get('tresort_money/reporting_tresort_historical', [HistoricalController::class, 'reporting_tresort_historical'])->name('propects.tresort_money.historical.reporting_tresort_historical');
+
+        Route::get('/inters_historical', [HistoricalController::class, 'browse_inter'])->name('propects.inters.historical');
+        Route::get('/cartes_historical', [HistoricalController::class, 'browse_carte'])->name('propects.cartes.historical');
+        Route::get('/phone_historical', [HistoricalController::class, 'browse_phone'])->name('propects.phones.historical');
+        Route::get('/xbet_historical', [HistoricalController::class, 'browse_xbets'])->name('propects.xbets.historical');
+        Route::get('/wave_historical', [HistoricalController::class, 'browse_waves'])->name('propects.waves.historical');
+        Route::get('/drawer_historical', [HistoricalController::class, 'browse_drawer'])->name('propects.drawers.historical');
+
+        Route::get('/versment_historical', [HistoricalController::class, 'browse_versments'])->name('propects.versments.historical');
+        Route::get('/push_historical', [HistoricalController::class, 'browse_push'])->name('propects.pushs.historical');
+        Route::get('/djamo_historical', [HistoricalController::class, 'browse_djamo'])->name('propects.djamos.historical');
+        Route::get('/tresort_historical', [HistoricalController::class, 'browse_tresort'])->name('propects.tresorts.historical');
     });
 
     //Invoices

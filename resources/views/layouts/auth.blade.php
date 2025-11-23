@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+h<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="loading semi-dark-layout" data-layout="semi-dark-layout" data-textdirection="ltr">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">

@@ -33,10 +33,14 @@ class Interhisto extends Component
 
         $inters =  WalletInter::whereIsWeb(false);
 
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
 
 
-        if (sabdy()->is_under_distributer) {
+        if ($walletUser->is_under_distributer || $walletUser->is_api) {
             $inters->where('wallet_inters.created_by', sabdy()->id);
         }
 

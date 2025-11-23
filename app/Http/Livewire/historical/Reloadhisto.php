@@ -21,11 +21,17 @@ class Reloadhisto extends Component
 
     public function render()
     {
-        $walletUser = Auth::guard('web')->user();
+
+        $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
+                
         $realodQuery = WalletReload::query();
 
         // Filtrer par utilisateur
-        if ($walletUser->is_under_distributer) {
+        if ($walletUser->is_under_distributer || $walletUser->is_api) {
             $realodQuery->where('created_by', $walletUser->id);
         }
 
@@ -36,15 +42,15 @@ class Reloadhisto extends Component
 
         // Recherche textuelle
         if (!empty($this->searchRealodHistorical)) {
-            $this->resetPage(); // Réinitialiser la pagination lors d'une recherche
+            $this->resetPage(); 
             $realodQuery->orWhereHas('paymentReload', function ($query) {
                 $query->where('operator_transaction_name', 'like', '%' . $this->searchRealodHistorical . '%')
-                      ->orWhere('transaction_id', 'like', '%' . $this->searchRealodHistorical . '%')
-                      ->orWhere('trans_comp_id', 'like', '%' . $this->searchRealodHistorical . '%');
+                    ->orWhere('transaction_id', 'like', '%' . $this->searchRealodHistorical . '%')
+                    ->orWhere('trans_comp_id', 'like', '%' . $this->searchRealodHistorical . '%');
             })
-            ->orWhere('amount', 'like', '%' . $this->searchRealodHistorical . '%')
-            ->orWhere('phone', 'like', '%' . $this->searchRealodHistorical . '%')
-            ->orWhere('account_wallet', 'like', '%' . $this->searchRealodHistorical . '%');
+                ->orWhere('amount', 'like', '%' . $this->searchRealodHistorical . '%')
+                ->orWhere('phone', 'like', '%' . $this->searchRealodHistorical . '%')
+                ->orWhere('account_wallet', 'like', '%' . $this->searchRealodHistorical . '%');
         }
 
         // Filtre par statut
@@ -64,7 +70,12 @@ class Reloadhisto extends Component
 
     public function getReloadsAllDaysProperty()
     {
-        $walletUser = Auth::guard('web')->user();
+
+        $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
 
         if (!$walletUser) {
             return 0;
@@ -72,7 +83,7 @@ class Reloadhisto extends Component
 
         $walletsQuery = WalletReload::query();
 
-        if ($walletUser->is_under_distributer) {
+        if ($walletUser->is_under_distributer || $walletUser->is_api) {
             $walletsQuery->where('created_by', $walletUser->id);
         }
 

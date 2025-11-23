@@ -14,7 +14,6 @@
             <div class="hidden md:block mx-auto text-slate-500"></div>
 
 
-
             <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                 <div class="w-80  mt-3 sm:mt-0 sm:ml-auto md:ml-0">
                     <label for="countriesFilter" class="block text-gray-700 text-sm font-bold mb-2">Filtrer par

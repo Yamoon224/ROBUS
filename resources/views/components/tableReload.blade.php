@@ -1,3 +1,12 @@
+  @php
+      $currentUser = Auth::guard('web')->check()
+          ? Auth::guard('web')->user()
+          : (Auth::guard('integration')->check()
+              ? Auth::guard('integration')->user()
+              : null);
+  @endphp
+
+
   <table id="table_orders" class="table table-bordered">
       <thead class="table-dark">
           <tr>
@@ -86,7 +95,7 @@
                       </td>
 
                       <td class="w-60">
-                              @include('components.infoUserReload')
+                          @include('components.infoUserReload')
 
                           @if ($item->status == 'PENDING')
                               <div class="flex items-center justify-center text-pending mt-3">
@@ -145,7 +154,7 @@
                           <div class="flex justify-center items-center">
 
                               @if ($item->status == 'PENDING')
-                                  @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                  @if ($currentUser && $currentUser->hasPermissionTo('traitement-demande'))
                                       <a wire:click="editReload({{ $item->id }}, 'update-reloadWallet-modal')"
                                           class="btn btn-primary mr-1 mb-2 btn-sm" href="javascript:;" title="Modifier">
                                           Modifier

@@ -29,6 +29,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Cache;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
+use App\Models\IntegrationClient;
+
 
 class AuthentificationController extends Controller
 {
@@ -738,7 +740,75 @@ class AuthentificationController extends Controller
         return $this->loginAll($request, 'underDistributorLogin');
     }
 
+    public function loginProspect(Request $request)
+    {
 
+
+        try {
+
+            $apiKey = $request->header('X-API-Key');
+            $apiSecret = $request->header('X-API-Secret');
+
+            if (!$apiKey || !$apiSecret) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Headers API manquants'
+                ], 400);
+            }
+
+
+
+            $client = IntegrationClient::with(['sidUser', 'sidUser.wallet'])
+                ->where('api_key', $apiKey)
+                ->where('is_active', true)
+                ->first();
+
+            if (!$client || $client->api_secret !== $apiSecret) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Identifiants API invalides'
+                ], 401);
+            }
+
+            $user = $client->sidUser;
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Utilisateur associé introuvable'
+                ], 404);
+            }
+            Auth::login($user);
+            $tokenResult = $user->createToken('auth_token');
+
+            // Mettre à jour le last_login
+            $user->update([
+                'last_login' => Carbon::now()->toDateTimeString(),
+                'last_logout' => null
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'token' => $tokenResult,
+                'user' => [
+                    'id' => $user->id,
+                    'firstname' => $user->firstname,
+                    'lastname' => $user->lastname,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'wallet' => $user->wallet ? [
+                        'wallet_id' => $user->wallet->wallet_id,
+                        'amount' => $user->wallet->amount,
+                        'currency' => $user->wallet->currencie->name ?? null
+                    ] : null
+                ]
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(
+                ['success' => false, 'message' => 'Une erreur s\'est produite lors de l\'authentification.'],
+                301
+            );
+        }
+    }
 
     /**
      * Verify

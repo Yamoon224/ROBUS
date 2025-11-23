@@ -74,16 +74,18 @@ class StatistiqueController extends Controller
         // if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
         //     abort(403);
         // }
-        return view('firms.pages.browse_transfer_state');
+        if (propect()) {
+                    return view('firms.pages.browse_transfer_pros_state');
+        } else {
+
+            return view('firms.pages.browse_transfer_state');
+        }
     }
 
     public function browse_state_prospects()
     {
 
-        // if (!Auth::guard('web')->user()->hasPermissionTo('statistiques')) {
-        //     abort(403);
-        // }
-        // return view('firms.pages.browse_transfer_state');
+         return view('firms.pages.browse_transfer_pros_state');
     }
 
     /**

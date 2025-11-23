@@ -43,8 +43,13 @@ class Cartehisto extends Component
 
         $cartes =  WalletDeposit::whereIsWeb(false);
 
-        $walletUser = Auth::guard('web')->user();
-        if (sabdy()->is_under_distributer) {
+      $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
+
+        if (sabdy()->is_under_distributer || $walletUser->is_api) {
             $cartes->where('wallet_deposits.created_by', sabdy()->id);
         }
 
@@ -82,8 +87,6 @@ class Cartehisto extends Component
         }
 
         if ($this->statusFilter != "") {
-
-            // $cartes->where("wallet_deposits.status", $this->statusFilter);
 
             return view(
                 'livewire.historical.cartehisto',

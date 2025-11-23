@@ -15,6 +15,7 @@ use App\Models\Custumers\Country;
 use App\Models\Custumers\Zone;
 use App\Models\Sid\SidUser;
 use App\Models\User;
+use App\Models\IntegrationClient;
 use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletBank;
 use App\Models\Wallets\WalletDeposit;
@@ -98,8 +99,12 @@ class UserController extends Controller
 
     public function browse_propects(Request $request)
     {
-                  return view('pages.integrations.prospects.browse');
+        if (Auth::guard('web')->user()->hasPermissionTo('integrateurs')) {
 
+            return view('pages.integrations.browse');
+        } else {
+            abort(403);
+        }
     }
 
     public function browse(Request $request)
@@ -350,9 +355,9 @@ class UserController extends Controller
             $gain_versments = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletVersement::class, $user->company_id, $user->id);
             $gain_djamo = $this->getTodayTransactionCompagnieCommissionAmountTotal(WalletDjamo::class, $user->company_id, $user->id);
 
-            $company_gains = $gain_payments + $gain_moneys  + $gain_depots + $gain_retraits  
-            + $gain_transactions + $gain_phone_credits + $gain_inters 
-            + $gain_banks + $gain_deposits + $gain_pushs + $gain_xbets + $gain_tresorts + $gain_versments + $gain_djamo;
+            $company_gains = $gain_payments + $gain_moneys  + $gain_depots + $gain_retraits
+                + $gain_transactions + $gain_phone_credits + $gain_inters
+                + $gain_banks + $gain_deposits + $gain_pushs + $gain_xbets + $gain_tresorts + $gain_versments + $gain_djamo;
 
             // Execeptions
             $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
@@ -498,7 +503,7 @@ class UserController extends Controller
 
         foreach ($sidUsers as $sidUser) {
 
-              if (!$sidUser->wallet) {
+            if (!$sidUser->wallet) {
                 continue; // passe à l'utilisateur suivant
             }
 
@@ -677,7 +682,8 @@ class UserController extends Controller
 
                 $encode = substr($user->phone,  -10);
 
-                // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                //                 http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
                 Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
             $notify = new MailController;
@@ -778,7 +784,7 @@ class UserController extends Controller
 
                     $encode = substr($user->phone,  -10);
 
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                 } else {
 
                     $notify = new MailController;
@@ -800,7 +806,7 @@ class UserController extends Controller
 
                     $encode = substr($user->phone,  -10);
 
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                 } else {
 
                     $notify = new MailController;
@@ -847,7 +853,7 @@ class UserController extends Controller
 
                     $encode = substr($user->phone,  -10);
 
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                 } else {
 
                     $notify = new MailController;
@@ -869,7 +875,7 @@ class UserController extends Controller
 
                     $encode = substr($user->phone,  -10);
 
-                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                 } else {
 
                     $notify = new MailController;
@@ -1029,7 +1035,7 @@ class UserController extends Controller
 
                         $encode = substr($user->phone,  -10);
 
-                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                     } else {
 
                         $notify = new MailController;
@@ -1062,7 +1068,7 @@ class UserController extends Controller
 
                         $encode = substr($user->phone,  -10);
 
-                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                     } else {
 
                         $notify = new MailController;
@@ -1095,7 +1101,7 @@ class UserController extends Controller
 
                         $encode = substr($user->phone,  -10);
 
-                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                     } else {
 
                         $notify = new MailController;
@@ -1125,6 +1131,133 @@ class UserController extends Controller
     }
 
 
+    public function update_validated(Request $request, $id)
+    {
+
+
+
+        try {
+
+
+            DB::beginTransaction();
+            $user = SidUser::findOrFail($id);
+            $documents = IntegrationClient::where('sid_user_id', $id)->first();
+
+            if ($documents) {
+
+                $credentials = IntegrationClient::generateCredentials();
+
+
+                $documents->update([
+                    'validated_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                    'validated_at' => Carbon::today(),
+                    'status' => "Validé",
+                    'is_active' => true,
+                    'api_key' => $credentials['api_key'],
+                    'api_secret' => $credentials['api_secret'],
+                    'webhook_secret' => $credentials['webhook_secret'],
+                    'rate_limit' => 100, 
+                    'allowed_ips' => $request->input('allowed_ips', [])
+                ]);
+
+
+                $user->wallet->update([
+                    'status' => true
+                ]);
+
+                DB::commit();
+
+                if ($user->country->code == "CI") {
+
+                    $message = 'Votre dossier a été activé avec succès';
+
+                    $encode = substr($user->phone,  -10);
+
+                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                } else {
+
+                    $notify = new MailController;
+                    $notify->activeAccount($user);
+                }
+                event(new UpdateActiveAccountEvent($user));
+                return redirect(route('users.prospects.browse'))->with('color', 'success')->with('status', 'Dossier accepté avec succès');
+            } else {
+
+                return back()
+                    ->with('color', 'danger')
+                    ->with('status', 'Ce client a pas ses dossiers')
+                    ->withInput();
+            }
+        } catch (\Exception $exception) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+    }
+
+    public function update_reject($id)
+    {
+
+
+
+        try {
+
+
+            DB::beginTransaction();
+            $user = SidUser::findOrFail($id);
+            $documents = IntegrationClient::where('sid_user_id', $id)->first();
+
+
+            if ($documents) {
+
+                $updateData = [
+                    'validated_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                    'validated_at' => Carbon::today(),
+                    'status' => "Refusé",
+                    'is_active' => false,
+                ];
+
+                $documents->update($updateData);
+
+
+                $user->wallet->update([
+                    'status' => false
+                ]);
+
+                DB::commit();
+
+                if ($user->country->code == "CI") {
+
+                    $message = 'Votre dossier a été rejeté avec succès veuillez le modifier et le renvoyer';
+
+                    $encode = substr($user->phone,  -10);
+
+                    http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                } else {
+
+                    $notify = new MailController;
+                    $notify->activeAccount($user);
+                }
+                event(new UpdateActiveAccountEvent($user));
+                return redirect(route('users.prospects.browse'))->with('color', 'danger')->with('status', 'Dossier rejeté avec succès');
+            } else {
+
+                return back()
+                    ->with('color', 'danger')
+                    ->with('status', 'Ce client a pas ses dossiers')
+                    ->withInput();
+            }
+
+
+            // DB::commit();
+        } catch (\Exception $exception) {
+            return back()
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de modification')
+                ->withInput();
+        }
+    }
     public function update_silver_ceiling(Request $request, $id)
     {
 

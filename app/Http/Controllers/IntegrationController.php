@@ -53,6 +53,15 @@ class IntegrationController extends Controller
         ]);
     }
 
+      public function browse_commissions()
+    {
+        if (propect()) {
+            return view('pages.integrations.browse_commissions');
+        } else {
+            abort(403);
+        }
+    }
+
     public function home_propects()
     {
         return view('home_propects');

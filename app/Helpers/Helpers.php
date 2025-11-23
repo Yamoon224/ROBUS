@@ -16,7 +16,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
-
+use App\Models\IntegrationClient;
 
 
 
@@ -51,6 +51,8 @@ if (! function_exists('applyRestrictionMap')) {
         }
     }
 }
+
+
 
 if (!function_exists('appDispoRobus')) {
     function appDispoRobus($model)
@@ -156,6 +158,10 @@ function walletId($id)
     return Wallet::find($id);
 }
 
+function fielValidated()
+{
+    return IntegrationClient::where('sid_user_id', propect()->id)->first();
+}
 function paymentId($id)
 {
     return WalletReload::find($id);

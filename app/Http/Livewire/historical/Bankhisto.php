@@ -19,7 +19,7 @@ class Bankhisto extends Component
     public  $startDate = "";
     public  $endDate =  "";
 
-  
+
     public function resetVirementField()
     {
 
@@ -29,11 +29,15 @@ class Bankhisto extends Component
     public function render()
     {
 
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
 
         $banks =  WalletBank::query();
 
-        if (sabdy()->is_under_distributer) {
+        if (sabdy()->is_under_distributer || $walletUser->is_api) {
             $banks->where('wallet_banks.created_by', sabdy()->id);
         }
 
@@ -45,7 +49,7 @@ class Bankhisto extends Component
             return view(
                 'livewire.historical.bankhisto',
                 [
-                    'user' =>  app(HistoriqueService::class)->getTransactionsDaysProperty(WalletBank::class , $this->startDate,$this->endDate , 'wallet_banks.created_by' , 'wallet_banks.updated_by'),
+                    'user' =>  app(HistoriqueService::class)->getTransactionsDaysProperty(WalletBank::class, $this->startDate, $this->endDate, 'wallet_banks.created_by', 'wallet_banks.updated_by'),
                     'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
                         ->where('wallets.country_id', $walletUser->country->id)->whereBetween('wallet_banks.created_at', [$this->startDate, $this->endDate])->where('wallet_banks.created_by', Auth::guard('web')->user()->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
@@ -82,7 +86,7 @@ class Bankhisto extends Component
             return view(
                 'livewire.historical.bankhisto',
                 [
-                     'user' =>  app(HistoriqueService::class)->getTransactionsStatusProperty(WalletBank::class , 'wallet_banks.is_web', 'wallet_banks.status' , $this->statusTransferFilter , 'wallet_banks.created_by' , 'wallet_banks.updated_by'),
+                    'user' =>  app(HistoriqueService::class)->getTransactionsStatusProperty(WalletBank::class, 'wallet_banks.is_web', 'wallet_banks.status', $this->statusTransferFilter, 'wallet_banks.created_by', 'wallet_banks.updated_by'),
                     'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')->where("wallet_banks.status", $this->statusFilter)
                         ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
                     'usersCountry' =>   $walletUser->country->currencie->name,
@@ -93,7 +97,7 @@ class Bankhisto extends Component
         return view(
             'livewire.historical.bankhisto',
             [
-                'user' =>  app(HistoriqueService::class)->getTransactionsAllDaysProperty(WalletBank::class , 'wallet_banks.is_web' , 'wallet_banks.created_by' , 'wallet_banks.updated_by'),
+                'user' =>  app(HistoriqueService::class)->getTransactionsAllDaysProperty(WalletBank::class, 'wallet_banks.is_web', 'wallet_banks.created_by', 'wallet_banks.updated_by'),
                 'bank_historicals' => $banks->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
                     ->where('wallets.country_id', $walletUser->country->id)->orderBy('wallet_banks.created_at', 'desc')->select('wallet_banks.*')->paginate(15),
                 'usersCountry' =>   $walletUser->country->currencie->name,
@@ -101,5 +105,4 @@ class Bankhisto extends Component
             ]
         );
     }
-
 }

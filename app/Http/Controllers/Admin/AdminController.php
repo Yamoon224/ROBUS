@@ -13,6 +13,7 @@ use App\Mail\NewAdmin;
 use App\Mail\OtpValidated;
 use App\Models\AdminsCom;
 use App\Models\AppCompanyStatus;
+use App\Models\IntegrationClient;
 use App\Models\Banks\BankCard;
 use App\Models\Notification;
 use App\Models\Company;
@@ -1601,7 +1602,7 @@ class AdminController extends Controller
     }
 
 
-     public function show_propects(int $id, Request $request)
+    public function show_propects(int $id, Request $request)
     {
 
         if (!Auth::guard('web')->user()->hasPermissionTo('voir-integrateurs')) {
@@ -1656,8 +1657,28 @@ class AdminController extends Controller
         // Execeptions
         $sum_wallet_drawer = $this->getWalletWithMerchantSumUserProperty($id);
 
+        $documents = IntegrationClient::where('sid_user_id', $id)->first();
+
+        $documentsCollection = collect([
+            ['name' => 'Front CNI', 'url' => $documents->front_document ?? null, 'status' => 'Validé'],
+            ['name' => 'Verso CNI', 'url' => $documents->piece_document ?? null, 'status' => 'Validé'],
+            ['name' => 'Juridict Form', 'url' => $documents->juridict_form ?? null, 'status' => 'Validé'],
+        ])->filter(fn($doc) => $doc['url']); 
+
+        // Calcul des statistiques
+        $validatedCount = $documentsCollection->where('status', 'Validé')->count();
+        $pendingCount   = $documentsCollection->where('status', 'En attente')->count();
+        $rejectedCount  = $documentsCollection->where('status', 'Rejeté')->count();
+        $totalCount     = $documentsCollection->count();
+
+   
         return view('pages.admin.show_unders', compact(
             'user',
+            'documents',
+            'validatedCount',
+            'pendingCount',
+            'rejectedCount',
+            'totalCount',
             'gain_xbets',
             'gain_versment',
             'gain_push',
@@ -1685,7 +1706,7 @@ class AdminController extends Controller
             'gain_depots',
             'gain_retraits',
             'gain_moneys',
-            'company_gains'
+            'company_gains',
 
         ));
     }
@@ -2139,7 +2160,7 @@ class AdminController extends Controller
                 ->withInput();
         }
 
-        if ($user->is_under_distributer == true) {
+        if ($user->is_under_distributer == true || $user->is_api == true) {
             $gain_deposits = $this->getTodayTransactionCommissionAmountTotal(WalletDeposit::class, $user->wallet->id);
             $gain_payments = $this->getTodayTransactionCommissionAmountTotal(WalletPayment::class, $user->wallet->id);
             $gain_transactions = $this->getTodayTransactionCommissionAmountTotal(WalletTransaction::class, $user->wallet->id);
@@ -3270,7 +3291,7 @@ class AdminController extends Controller
         }
     }
 
-      public function updateProfil_admin(Request $request)
+    public function updateProfil_admin(Request $request)
     {
 
         $validator = Validator::make($request->all(), [

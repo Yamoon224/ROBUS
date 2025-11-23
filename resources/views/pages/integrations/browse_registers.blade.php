@@ -578,7 +578,7 @@
                                     <div class="text-center">
                                         <p class="text-muted mb-0">
                                             Vous avez déjà un compte ?
-                                            <a href="#" class="text-primary text-decoration-none fw-semibold">Se
+                                            <a href="{{ route('admin.login_integration') }}"  class="text-primary text-decoration-none fw-semibold">Se
                                                 connecter</a>
                                         </p>
                                     </div>

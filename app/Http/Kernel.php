@@ -70,7 +70,7 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
-         'integrations' => [
+        'integrations' => [
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -78,7 +78,6 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
             \App\Http\Middleware\AuthenticateApiClient::class,
-
         ],
 
 
@@ -86,6 +85,13 @@ class Kernel extends HttpKernel
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ],
+
+        'api_integration' => [
+            'throttle:100,1', // Rate limiting spécifique
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            'api.secure', // Votre SecureApiMiddleware
+            'api.client', // Votre AuthenticateApiClient
         ],
     ];
 

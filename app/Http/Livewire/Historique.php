@@ -111,71 +111,71 @@ class Historique extends Component
         $walletUser = sabdy();
 
         // Account valeurs transactions
-        $payment_error = $this->getTransactionCount(WalletPayment::class, 'ERROR', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status',  'wallet_payments.is_web', false);
-        $payment_padding = $this->getTransactionCount(WalletPayment::class, 'PENDING', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status',  'wallet_payments.is_web', false);
-        $payment_success = $this->getTransactionCount(WalletPayment::class, 'SUCCESS', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status',  'wallet_payments.is_web', false);
-        $transaction_error = $this->getTransactionCount(WalletTransaction::class, 'ERROR', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status',  'wallet_transactions.is_web', false);
-        $transaction_padding = $this->getTransactionCount(WalletTransaction::class, 'PENDING', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status',  'wallet_transactions.is_web', false);
-        $transaction_success = $this->getTransactionCount(WalletTransaction::class, 'SUCCESS', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status',  'wallet_transactions.is_web', false);
-        $bank_error = $this->getTransactionCount(WalletBank::class, 'ERROR', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status',  'wallet_banks.is_web', false);
-        $bank_padding = $this->getTransactionCount(WalletBank::class, 'PENDING', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status',  'wallet_banks.is_web', false);
-        $bank_success = $this->getTransactionCount(WalletBank::class, 'SUCCESS', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status',  'wallet_banks.is_web', false);
-        $deposit_error = $this->getTransactionCount(WalletDeposit::class, 'ERROR', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status',  'wallet_deposits.is_web', false);
-        $deposit_padding = $this->getTransactionCount(WalletDeposit::class, 'PENDING', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status',  'wallet_deposits.is_web', false);
-        $deposit_success = $this->getTransactionCount(WalletDeposit::class, 'SUCCESS', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status',  'wallet_deposits.is_web', false);
-        $reload_error = $this->getTransactionCountReload(WalletReload::class);
-        $reload_padding = $this->getTransactionCountReload(WalletReload::class);
-        $reload_success = $this->getTransactionCountReload(WalletReload::class);
+        $payment_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletPayment::class, 'ERROR', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status',  'wallet_payments.is_web', false);
+        $payment_padding =app(HistoriqueService::class)->getTransactionCountHisto(WalletPayment::class, 'PENDING', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status',  'wallet_payments.is_web', false);
+        $payment_success =app(HistoriqueService::class)->getTransactionCountHisto(WalletPayment::class, 'SUCCESS', 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by', 'wallet_payments.status',  'wallet_payments.is_web', false);
+        $transaction_error =app(HistoriqueService::class)->getTransactionCountHisto(WalletTransaction::class, 'ERROR', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status',  'wallet_transactions.is_web', false);
+        $transaction_padding =app(HistoriqueService::class)->getTransactionCountHisto(WalletTransaction::class, 'PENDING', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status',  'wallet_transactions.is_web', false);
+        $transaction_success =app(HistoriqueService::class)->getTransactionCountHisto(WalletTransaction::class, 'SUCCESS', 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by', 'wallet_transactions.status',  'wallet_transactions.is_web', false);
+        $bank_error =app(HistoriqueService::class)->getTransactionCountHisto(WalletBank::class, 'ERROR', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status',  'wallet_banks.is_web', false);
+        $bank_padding =app(HistoriqueService::class)->getTransactionCountHisto(WalletBank::class, 'PENDING', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status',  'wallet_banks.is_web', false);
+        $bank_success =app(HistoriqueService::class)->getTransactionCountHisto(WalletBank::class, 'SUCCESS', 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by', 'wallet_banks.status',  'wallet_banks.is_web', false);
+        $deposit_error =app(HistoriqueService::class)->getTransactionCountHisto(WalletDeposit::class, 'ERROR', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status',  'wallet_deposits.is_web', false);
+        $deposit_padding =app(HistoriqueService::class)->getTransactionCountHisto(WalletDeposit::class, 'PENDING', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status',  'wallet_deposits.is_web', false);
+        $deposit_success =app(HistoriqueService::class)->getTransactionCountHisto(WalletDeposit::class, 'SUCCESS', 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by', 'wallet_deposits.status',  'wallet_deposits.is_web', false);
+        $reload_error = app(HistoriqueService::class)->getTransactionCountReload(WalletReload::class);
+        $reload_padding = app(HistoriqueService::class)->getTransactionCountReload(WalletReload::class);
+        $reload_success = app(HistoriqueService::class)->getTransactionCountReload(WalletReload::class);
 
-        $phone_credit_error = $this->getTransactionCount(WalletPhoneCredit::class, 'ERROR',  'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status',  'wallet_phone_credits.is_web', false);
-        $phone_credit_padding = $this->getTransactionCount(WalletPhoneCredit::class, 'PENDING', 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status',  'wallet_phone_credits.is_web', false);
-        $phone_credit_success = $this->getTransactionCount(WalletPhoneCredit::class, 'SUCCESS',  'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status',  'wallet_phone_credits.is_web', false);
+        $phone_credit_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletPhoneCredit::class, 'ERROR',  'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status',  'wallet_phone_credits.is_web', false);
+        $phone_credit_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletPhoneCredit::class, 'PENDING', 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status',  'wallet_phone_credits.is_web', false);
+        $phone_credit_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletPhoneCredit::class, 'SUCCESS',  'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by', 'wallet_phone_credits.status',  'wallet_phone_credits.is_web', false);
 
-        $inter_error = $this->getTransactionCount(WalletInter::class, 'ERROR',  'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status',  'wallet_inters.is_web', false);
-        $inter_padding = $this->getTransactionCount(WalletInter::class, 'PENDING', 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status',  'wallet_inters.is_web', false);
-        $inter_success = $this->getTransactionCount(WalletInter::class, 'SUCCESS',  'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status',  'wallet_inters.is_web', false);
+        $inter_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletInter::class, 'ERROR',  'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status',  'wallet_inters.is_web', false);
+        $inter_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletInter::class, 'PENDING', 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status',  'wallet_inters.is_web', false);
+        $inter_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletInter::class, 'SUCCESS',  'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by', 'wallet_inters.status',  'wallet_inters.is_web', false);
 
-        $xbet_error = $this->getTransactionCount(WalletXbet::class, 'ERROR',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status',  'wallet_xbets.is_web', false);
-        $xbet_padding = $this->getTransactionCount(WalletXbet::class, 'PENDING', 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status',  'wallet_xbets.is_web', false);
-        $xbet_success = $this->getTransactionCount(WalletXbet::class, 'SUCCESS',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status',  'wallet_xbets.is_web', false);
+        $xbet_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletXbet::class, 'ERROR',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status',  'wallet_xbets.is_web', false);
+        $xbet_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletXbet::class, 'PENDING', 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status',  'wallet_xbets.is_web', false);
+        $xbet_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletXbet::class, 'SUCCESS',  'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by', 'wallet_xbets.status',  'wallet_xbets.is_web', false);
 
-        $wave_error = $this->getTransactionCount(WalletWave::class, 'ERROR',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web', false);
-        $wave_padding = $this->getTransactionCount(WalletWave::class, 'PENDING', 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web', false);
-        $wave_success = $this->getTransactionCount(WalletWave::class, 'SUCCESS',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web', false);
+        $wave_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletWave::class, 'ERROR',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web', false);
+        $wave_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletWave::class, 'PENDING', 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web', false);
+        $wave_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletWave::class, 'SUCCESS',  'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by', 'wallet_waves.status',  'wallet_waves.is_web', false);
 
         // Push
-        $push_error = $this->getTransactionCount(WalletPush::class, 'ERROR',  'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
-        $push_padding = $this->getTransactionCount(WalletPush::class, 'PENDING', 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
-        $push_success = $this->getTransactionCount(WalletPush::class, 'SUCCESS',  'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
+        $push_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletPush::class, 'ERROR',  'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
+        $push_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletPush::class, 'PENDING', 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
+        $push_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletPush::class, 'SUCCESS',  'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
          
-        $versment_error = $this->getTransactionCount(WalletVersement::class, 'ERROR',  'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
-        $versement_padding = $this->getTransactionCount(WalletVersement::class, 'PENDING', 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
-        $versement_success = $this->getTransactionCount(WalletVersement::class, 'SUCCESS',  'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
+        $versment_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletVersement::class, 'ERROR',  'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
+        $versement_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletVersement::class, 'PENDING', 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
+        $versement_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletVersement::class, 'SUCCESS',  'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
 
-        $tresort_error = $this->getTransactionCount(WalletTresortMoney::class, 'ERROR',  'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status',  'wallet_tresort_money.is_web', false);
-        $tresort_padding = $this->getTransactionCount(WalletTresortMoney::class, 'PENDING', 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status',  'wallet_tresort_money.is_web', false);
-        $tresort_success = $this->getTransactionCount(WalletTresortMoney::class, 'SUCCESS',  'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status',  'wallet_tresort_money.is_web', false);
+        $tresort_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletTresortMoney::class, 'ERROR',  'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status',  'wallet_tresort_money.is_web', false);
+        $tresort_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletTresortMoney::class, 'PENDING', 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status',  'wallet_tresort_money.is_web', false);
+        $tresort_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletTresortMoney::class, 'SUCCESS',  'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by', 'wallet_tresort_money.status',  'wallet_tresort_money.is_web', false);
 
 
-        $djamo_error = $this->getTransactionCount(WalletDjamo::class, 'ERROR',  'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
-        $djamo_padding = $this->getTransactionCount(WalletDjamo::class, 'PENDING', 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
-        $djamo_success = $this->getTransactionCount(WalletDjamo::class, 'SUCCESS',  'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
+        $djamo_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletDjamo::class, 'ERROR',  'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
+        $djamo_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletDjamo::class, 'PENDING', 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
+        $djamo_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletDjamo::class, 'SUCCESS',  'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by', 'wallet_djamos.status',  'wallet_djamos.is_web', false);
 
         // Amount transactions days
-        $payement_amount = $this->getTodayTransactionAmountTotal(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount',  'wallet_payments.is_web', false);
-        $transaction_amount = $this->getTodayTransactionAmountTotal(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount',  'wallet_transactions.is_web', false);
-        $reload_amount = $this->getTodayReloadAmountTotal(WalletReload::class);
-        $phonecredit_amount = $this->getTodayTransactionAmountTotal(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount',  'wallet_phone_credits.is_web', false);
-        $inter_amount = $this->getTodayTransactionAmountTotal(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount',  'wallet_inters.is_web', false);
-        $bank_amount = $this->getTodayTransactionAmountTotal(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount',   'wallet_banks.is_web', false);
-        $deposit_amount = $this->getTodayTransactionAmountTotal(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount',  'wallet_deposits.is_web', false);
-        $xbet_amount = $this->getTodayTransactionAmountTotal(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount',  'wallet_xbets.is_web', false);
-        $wave_amount = $this->getTodayTransactionAmountTotal(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount',  'wallet_waves.is_web', false);
+        $payement_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletPayment::class, 'wallet_payments.wallet_id', 'wallet_payments.created_at', 'wallet_payments.updated_by',  'wallet_payments.status',  'wallet_payments.amount',  'wallet_payments.is_web', false);
+        $transaction_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletTransaction::class, 'wallet_transactions.wallet_id', 'wallet_transactions.created_at', 'wallet_transactions.updated_by',  'wallet_transactions.status',  'wallet_transactions.amount',  'wallet_transactions.is_web', false);
+        $reload_amount = app(HistoriqueService::class)->getTodayReloadAmountTotal(WalletReload::class);
+        $phonecredit_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', 'wallet_phone_credits.created_at', 'wallet_phone_credits.updated_by',  'wallet_phone_credits.status',  'wallet_phone_credits.amount',  'wallet_phone_credits.is_web', false);
+        $inter_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletInter::class, 'wallet_inters.wallet_id', 'wallet_inters.created_at', 'wallet_inters.updated_by',  'wallet_inters.status',  'wallet_inters.amount',  'wallet_inters.is_web', false);
+        $bank_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletBank::class, 'wallet_banks.wallet_id', 'wallet_banks.created_at', 'wallet_banks.updated_by',  'wallet_banks.status',  'wallet_banks.amount',   'wallet_banks.is_web', false);
+        $deposit_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletDeposit::class, 'wallet_deposits.wallet_id', 'wallet_deposits.created_at', 'wallet_deposits.updated_by',  'wallet_deposits.status',  'wallet_deposits.amount',  'wallet_deposits.is_web', false);
+        $xbet_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletXbet::class, 'wallet_xbets.wallet_id', 'wallet_xbets.created_at', 'wallet_xbets.updated_by',  'wallet_xbets.status',  'wallet_xbets.amount',  'wallet_xbets.is_web', false);
+        $wave_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletWave::class, 'wallet_waves.wallet_id', 'wallet_waves.created_at', 'wallet_waves.updated_by',  'wallet_waves.status',  'wallet_waves.amount',  'wallet_waves.is_web', false);
 
-        $push_amount = $this->getTodayTransactionAmountTotal(WalletPush::class, 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by',  'wallet_pushes.status',  'wallet_pushes.amount',  'wallet_pushes.is_web', false);
-        $tresort_amount = $this->getTodayTransactionAmountTotal(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by',  'wallet_tresort_money.status',  'wallet_tresort_money.amount',  'wallet_tresort_money.is_web', false);
-        $versement_amount = $this->getTodayTransactionAmountTotal(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by',  'wallet_versements.status',  'wallet_versements.amount',  'wallet_versements.is_web', false);
-        $djamo_amount = $this->getTodayTransactionAmountTotal(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by',  'wallet_djamos.status',  'wallet_djamos.amount',  'wallet_djamos.is_web', false);
+        $push_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletPush::class, 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by',  'wallet_pushes.status',  'wallet_pushes.amount',  'wallet_pushes.is_web', false);
+        $tresort_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by',  'wallet_tresort_money.status',  'wallet_tresort_money.amount',  'wallet_tresort_money.is_web', false);
+        $versement_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by',  'wallet_versements.status',  'wallet_versements.amount',  'wallet_versements.is_web', false);
+        $djamo_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by',  'wallet_djamos.status',  'wallet_djamos.amount',  'wallet_djamos.is_web', false);
 
 
 
@@ -403,92 +403,4 @@ class Historique extends Component
         ]);
     }
 
-    public function getTransactionCountReload($walletModel)
-    {
-
-
-        $totalCount = $walletModel::where('wallet_id', sabdy()->wallet->id)
-            ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
-            ->count();
-
-        return $totalCount;
-    }
-
-
-    public function getTodayReloadAmountTotal($walletModel)
-    {
-
-        $totalAmount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
-            ->whereStatus('SUCCESS')
-            ->whereDate('created_at', Carbon::today())
-            ->sum('amount');
-
-        return $totalAmount;
-    }
-
-    public function getTodayTransactionAmountTotal($walletModel, $wallet_transaction, $transaction_days, $walletMy, $transaction_status, $wallet_amount, $IswebStatus, $isWeb)
-    {
-        // Construction de la requête de base
-        $query = $walletModel::join('wallets', $wallet_transaction, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
-            ->where($transaction_status, 'SUCCESS')
-            ->where($IswebStatus, $isWeb);
-
-        if (sabdy()->is_distributer) {
-            $query->where($walletMy, sabdy()->id);
-        } elseif (sabdy()->is_under_distributer) {
-            $query->where(function ($query) use ($wallet_transaction) {
-                $query->where($wallet_transaction, sabdy()->wallet->id);
-            });
-        } else {
-
-            $query->where(function ($query) use ($walletMy) {
-                $query->where($walletMy, sabdy()->id)
-                    ->orWhere($walletMy, '!=', sabdy()->id);
-            })
-                ->where(function ($query) {
-                    $countryId = sabdy()->country->id;
-                    $query->where('wallets.country_id', '!=', $countryId)
-                        ->orWhere('wallets.country_id', '=', $countryId);
-                });
-        }
-
-        // Calculer la somme des montants des transactions
-        return $query->sum($wallet_amount);
-    }
-
-
-    // count valeurs
-    public function getTransactionCount($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status, $IswebStatus, $isWeb)
-    {
-        // Commencer par construire la requête de base
-        $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
-            ->whereDate($transaction_days, Carbon::today())
-            ->where($wallet_status, $status)
-            ->where($IswebStatus, $isWeb);
-
-        // Vérification de l'utilisateur distributeur
-        if (sabdy()->is_distributer) {
-            $query->where($walletMy, sabdy()->id);
-        } elseif (sabdy()->is_under_distributer) {
-            $query->where(function ($query) use ($wallet_transactions) {
-                $query->where($wallet_transactions, sabdy()->wallet->id);
-            });
-        } else {
-
-            $query->where(function ($query) use ($walletMy) {
-                $query->where($walletMy, sabdy()->id)
-                    ->orWhere($walletMy, '!=', sabdy()->id);
-            })
-                ->where(function ($query) {
-                    $countryId = sabdy()->country->id;
-                    $query->where('wallets.country_id', '!=', $countryId)
-                        ->orWhere('wallets.country_id', '=', $countryId);
-                });
-        }
-
-        // Compter les transactions
-        return $query->count();
-    }
 }

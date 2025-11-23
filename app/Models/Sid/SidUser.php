@@ -14,6 +14,7 @@ use App\Models\Master;
 use App\Models\Operator;
 use App\Models\OperatorService;
 use App\Models\WalletDrawal;
+use App\Models\IntegrationClient;
 use App\Models\Wallets\Wallet;
 use App\Models\WithMerchant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -63,6 +64,13 @@ class SidUser extends Authenticatable
     {
         return $this->belongsTo(Company::class, 'company_id', 'id');
     }
+
+
+  public function integrator()
+{
+    return $this->hasOne(IntegrationClient::class, 'sid_user_id', 'id');
+}
+
 
     public function categorie()
     {

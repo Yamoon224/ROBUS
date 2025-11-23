@@ -34,9 +34,13 @@ class TransferHisto extends Component
 
         $transfers =  WalletTransaction::whereIsWeb(false);
 
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
 
-        if ($walletUser->is_under_distributer) {
+        if ($walletUser->is_under_distributer || $walletUser->is_api ) {
             $transfers->where('wallet_transactions.created_by', $walletUser->id); 
         }elseif($walletUser->is_distributer)
         {
@@ -80,7 +84,6 @@ class TransferHisto extends Component
 
         if ($this->statusTransferFilter != "") {
 
-            // $transfers->where("wallet_transactions.status", $this->statusTransferFilter);
 
             return view(
                 'livewire.historical.transfer-histo',

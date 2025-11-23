@@ -27,37 +27,46 @@
                     </div>
                 </div>
             </div>
-             <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
-               
-            </div>
             <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+
+            </div>
+            <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y ">
                 <div class="amount-label text-sm text-gray-500">Status de votre dossiers</div>
-                @php
-                    $status = $integrationClient->status ?? 'N/A';
-                    $statusColor = match ($status) {
-                        'Validé' => 'dossier-validated',
-                        'En attente' => 'dossier-pedding',
-                        'Rejeté' => 'dossier-ejected',
-                        default => 'dossier-pedding',
-                    };
-                @endphp
-                <div class="{{ $statusColor }}">
-                    <div class="flex items-baseline justify-between">
-
-
-                        <div class="flex items-center justify-between">
-                            {{-- <span  class="text-xl font-semibold text-gray-900 dark:text-gray-100">{{ $status }}</span> --}}
-                            <span class="inline-block px-3 py-1 rounded-full text-sm font-medium ">
-                                {{ $integrationClient->status ?? 0 }}
-                            </span>
+                @if ($integrationClient->status === 'Validé')
+                    <span
+                        class="inline-flex status-badge bg-success items-center px-4 py-2 text-base font-semibold text-white bg-green-600 rounded-lg shadow-sm">
+                        <i class="fas fa-check-circle mr-2"></i>
+                        Compte validé
+                    </span>
+                @elseif ($integrationClient->status === 'Refusé')
+                    <div class="mb-4">
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full animate-pulse"
+                                style="width: 75%"></div>
                         </div>
-
+                        <p class="text-amber-600 text-xs text-center mt-2">
+                            <span
+                                class="inline-flex status-badge bg-danger  items-center px-4 py-2 text-base font-semibold text-white bg-red-600 rounded-lg shadow-sm">
+                                <i class="fas fa-times-circle mr-2"></i>
+                                Refusé
+                            </span>
+                        </p>
                     </div>
-                </div>
+                @else
+                    <div class="text-center">
+                        <div class="w-48 bg-gray-200 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-amber-400 to-orange-500 h-2 rounded-full animate-pulse"
+                                style="width: 75%"></div>
+                        </div>
+                        <p class="text-amber-600 text-xs mt-2">
+                            <i class="fas fa-sync-alt animate-spin mr-1"></i>En cours de vérification
+                        </p>
+                    </div>
+                @endif
             </div>
 
         </div>
-        
+
 
         <div class="grid grid-cols-12 gap-6 mt-6">
 
@@ -503,7 +512,7 @@
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_transaction_days ?? null }}</div>
                 <div class="font-medium text-historique mt-6">
 
-                    <a href="{{ route('transactions.browse') }}">
+                    <a href="#">
                         Transferts d'argents</a>
 
                 </div>
@@ -523,7 +532,7 @@
                 </div>
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_payment_days ?? null }}</div>
                 <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
+                    <a href="#">
                         Paiement factures</a>
                 </div>
             </div>
@@ -540,7 +549,7 @@
 
                 <div class="font-medium text-historique  mt-6">
 
-                    <a href="{{ route('transactions.browse') }}"> Virements bancaires</a>
+                    <a href="#"> Virements bancaires</a>
 
                 </div>
             </div>
@@ -557,7 +566,7 @@
 
                 <div class="font-medium text-historique mt-6">
 
-                    <a href="{{ route('transactions.browse') }}"> Paiements internationaux</a>
+                    <a href="#"> Paiements internationaux</a>
 
                 </div>
             </div>
@@ -573,7 +582,7 @@
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_deposit_days ?? null }}</div>
 
                 <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}"> Réchargements de carte</a>
+                    <a href="#"> Réchargements de carte</a>
                 </div>
             </div>
             <div class="col-span-12 sm:col-span-4 2xl:col-span-2 box p-5 cursor-pointer zoom-in style_facture_home3">
@@ -607,7 +616,7 @@
                 </div>
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_djamo_days ?? null }}</div>
                 <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
+                    <a href="#">
                         Transaction Djamo</a>
                 </div>
             </div>
@@ -625,7 +634,7 @@
                 </div>
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_push_days ?? null }}</div>
                 <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
+                    <a href="#">
                         Transaction Push</a>
                 </div>
             </div>
@@ -643,7 +652,7 @@
                 </div>
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_versment_days ?? null }}</div>
                 <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
+                    <a href="#">
                         Transaction Versement</a>
                 </div>
             </div>
@@ -661,7 +670,7 @@
                 </div>
                 <div class="text-3xl font-medium leading-8 mt-6">{{ $account_tresort_days ?? null }}</div>
                 <div class="font-medium text-historique mt-6">
-                    <a href="{{ route('transactions.browse') }}">
+                    <a href="#">
                         Transaction Tresort Money</a>
                 </div>
             </div>

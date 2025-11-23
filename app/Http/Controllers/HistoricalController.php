@@ -38,11 +38,16 @@ class HistoricalController extends Controller
     public function browse_reload()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_reload');
+        } else {
 
-        return view('pages.historicals.browse_reload');
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_reload');
+        }
     }
 
     public function reporting_historical()
@@ -433,17 +438,33 @@ class HistoricalController extends Controller
         return view('firms.pages.browse_transfer');
     }
 
+    public function browse_propect_transfer()
+    {
+
+        return view('firms.pages.browse_prospect_transfer');
+    }
+
     public function browse_reloads()
     {
         return view('firms.pages.browse_reloads');
     }
 
+    public function browse_prospect_reloads()
+    {
+        return view('firms.pages.browse_prospect_reloads');
+    }
+
     public function browse_transferfirm()
     {
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_transfer');
+        } else {
+
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+            return view('pages.historicals.browse_transfer');
         }
-        return view('pages.historicals.browse_transfer');
     }
 
     public function browse_transfert_visitors()
@@ -462,11 +483,16 @@ class HistoricalController extends Controller
     public function browse_paiement()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_paiement');
+        } else {
 
-        return view('pages.historicals.browse_paiement');
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_paiement');
+        }
     }
 
     /**
@@ -477,11 +503,16 @@ class HistoricalController extends Controller
     public function browse_virement()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_virement');
+        } else {
 
-        return view('pages.historicals.browse_virement');
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_virement');
+        }
     }
     /**
      * Display a listing of the resource.
@@ -490,11 +521,17 @@ class HistoricalController extends Controller
      */
     public function browse_inter()
     {
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
 
-        return view('pages.historicals.browse_inter');
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_inter');
+        } else {
+
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_inter');
+        }
     }
 
     public function browse_inter_visitors()
@@ -513,11 +550,17 @@ class HistoricalController extends Controller
      */
     public function browse_carte()
     {
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
 
-        return view('pages.historicals.browse_carte');
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_carte');
+        } else {
+
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_carte');
+        }
     }
 
 
@@ -538,11 +581,16 @@ class HistoricalController extends Controller
     public function browse_phone()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_phone');
+        } else {
 
-        return view('pages.historicals.browse_phone');
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_phone');
+        }
     }
 
     public function browse_phone_visitors()
@@ -567,51 +615,79 @@ class HistoricalController extends Controller
     public function browse_xbets()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_xbets');
+        } else {
 
-        return view('pages.historicals.browse_xbets');
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_xbets');
+        }
     }
 
     public function browse_versments()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_versments');
+        } else {
 
-        return view('pages.historicals.browse_versments');
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_versments');
+        }
     }
 
     public function browse_push()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
-        }
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_push');
+        } else {
 
-        return view('pages.historicals.browse_push');
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_push');
+        }
     }
 
     public function browse_djamo()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_djamo');
+        } else {
+
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_djamo');
         }
 
-        return view('pages.historicals.browse_djamo');
+   
     }
 
     public function browse_tresort()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
+         if (propect()) {
+            return view('pages.historicals.integrators.browse_tresort');
+        } else {
+
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_tresort');
         }
 
-        return view('pages.historicals.browse_tresort');
     }
 
 
@@ -628,9 +704,16 @@ class HistoricalController extends Controller
     public function browse_drawer()
     {
 
-        if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
-            abort(403);
+         if (propect()) {
+            return view('pages.historicals.integrators.browse_drawer');
+        } else {
+
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_drawer');
         }
-        return view('pages.historicals.browse_drawer');
+
     }
 }
