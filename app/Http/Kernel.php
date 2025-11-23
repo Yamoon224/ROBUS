@@ -87,12 +87,13 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
-        'api_integration' => [
-            'throttle:100,1', // Rate limiting spécifique
-            \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            'api.secure', // Votre SecureApiMiddleware
-            'api.client', // Votre AuthenticateApiClient
-        ],
+        // 'auth.api_client' => [
+        //     'throttle:api',
+        //     \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        //     \App\Http\Middleware\AuthenticateApiIntegrateClient::class,   // Auth API Key / Secret
+        // ],
+
+
     ];
 
     /**
@@ -113,5 +114,9 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+         /**
+         * Middleware pour guard API client (Passport)
+         */
+        'auth.api_client' => \App\Http\Middleware\AuthenticateApiIntegrateClient::class,
     ];
 }

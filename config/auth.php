@@ -48,6 +48,12 @@ return [
             'hash'  => false,
         ],
 
+        'api_client' => [
+            'driver' => 'passport',
+            'provider' => 'api_clients',
+            'hash'  => false,
+        ],
+
         'company' => [
             'driver' => 'session',
             'provider' => 'users',
@@ -112,6 +118,11 @@ return [
             'driver' => 'eloquent',
             'model' =>  App\Models\Sid\SidUser::class,
         ],
+
+        'api_clients' => [
+            'driver' => 'eloquent',
+            'model' =>  App\Models\Sid\SidUser::class,
+        ]
 
     ],
 
