@@ -23,6 +23,8 @@ use App\Http\Controllers\Invoices\InvoiceController;
 Route::group(['prefix' => 'robus'], function () {
 
     Route::get('prospect/register',  [IntegrationController::class, 'prospect_registers'])->name('web.prospect_registers');
+    Route::get('prospect/documents',  [IntegrationController::class, 'prospect_documents'])->name('web.prospect_documents');
+    Route::get('prospect/contact',  [IntegrationController::class, 'prospect_contact'])->name('web.prospect_contact');
     Route::post('prospect/store',  [IntegrationController::class, 'prospect_store'])->name('web.prospect_store.stores');
     Route::get('search-countrie/{id}',  [IntegrationController::class, 'searchCountries']);
 });

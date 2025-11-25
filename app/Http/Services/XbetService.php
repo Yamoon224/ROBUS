@@ -108,7 +108,7 @@ class XbetService
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
 
             $walletXbet->update([
@@ -195,7 +195,7 @@ class XbetService
 
 
         $amount_commission = $amount + ($percent_robus->percent_with_drawal * $amount);
-        
+
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
         $walletXbet->update([
@@ -209,7 +209,7 @@ class XbetService
         ]);
 
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
 
             $valuer_deposit =  $percent_robus->percent_merchands * $amount;

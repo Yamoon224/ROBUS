@@ -202,7 +202,7 @@ class VersementController extends Controller
                     if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
                         $reel_amount = $this->validatedamountDays->search_amount($request->amount);
-                        
+
                         $percent_amount = $percent_robus->percent * $reel_amount;
 
                         $valeur_received = $request->amount -  $percent_amount;
@@ -211,7 +211,7 @@ class VersementController extends Controller
 
                         if ($this->validatedamountDays->validateAmount($amount_valeur)) {
 
-                            $walletPayment =  $this->paymentService->createRobusWalletTransactionPayment($reel_amount  , $valeur_received, $amount_valeur, $request->provider, $percent_robus, $request->num_accompte, $request->bank_code,  $request->guichet_code , $request->num_authers);
+                            $walletPayment =  $this->paymentService->createRobusWalletTransactionPayment($reel_amount, $valeur_received, $amount_valeur, $request->provider, $percent_robus, $request->num_accompte, $request->bank_code,  $request->guichet_code, $request->num_authers);
 
                             if ($walletPayment != null) {
 
@@ -266,39 +266,28 @@ class VersementController extends Controller
     }
     /**
      * Delete Payment invoice
-     * @OA\Delete (
-     *      path="/user/payment/delete/{id}",
-     *      tags={"Paiement  User"},
+     * 
+     * @OA\Delete(
+     *      path="/user/versements/delete/{id}",
+     *      tags={"Paiement User"},
      *      summary="Delete payment",
-     *      description="Supprimer les paiements", 
-     *     @OA\Parameter(
-     *         in="path",
-     *         name="id",
-     *         required=true,
-     *         @OA\Schema(type="integer")
-     *     ),
-     *     @OA\Response(
-     *         response=200,
-     *         description="success",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="msg", type="integer", example="delete virement success")
-     *         )
-     *     ),
-     *  @OA\RequestBody(
-     *         @OA\MediaType(
-     *             mediaType="application/json",
-     *             @OA\Schema(
-     *                 @OA\Property(
-     *                      type="object",
-     *                      @OA\Property(
-     *                          property="payment_id",
-     *                          type="number"
-     *                      ),
-     *                 ),
-     *                
-     *             )
-     *         )
+     *      description="Supprimer les paiements",
+     *      @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="ID du versement à supprimer",
+     *          required=true,
+     *          @OA\Schema(type="integer")
      *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="Versement supprimé avec succès",
+     *          @OA\JsonContent(
+     *              @OA\Property(property="msg", type="string", example="delete virement success")
+     *          )
+     *      ),
+     *      @OA\Response(response=404, description="Versement non trouvé"),
+     *      @OA\Response(response=401, description="Non authentifié")
      * )
      */
     public function delete_payment(Request $request)
@@ -326,7 +315,7 @@ class VersementController extends Controller
     }
 
     // Search Valeur receive and valeur pay of Virement
-    public function search_versement($amount_paiement , $request)
+    public function search_versement($amount_paiement, $request)
     {
 
         $wallet_user = robus();
@@ -341,13 +330,13 @@ class VersementController extends Controller
                 $reel_amount = $this->validatedamountDays->search_amount($amount_paiement);
 
                 $commission_invoice =  $this->percentRobus->getRobusPercentageVersement($request->provider);
-                $commission_paiement =  $commission_invoice->percent  * $amount_paiement ;
+                $commission_paiement =  $commission_invoice->percent  * $amount_paiement;
 
                 if ($wallet_user->country->code == 'CI') {
 
                     if ($wallet_user->is_under_distributer == 1) {
 
-                        $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_merchands  * $amount_paiement ;
+                        $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_merchands  * $amount_paiement;
 
                         $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_paiement;
 
@@ -379,7 +368,7 @@ class VersementController extends Controller
         }
     }
 
-    public function search_versement_received($amount_paiement , $request)
+    public function search_versement_received($amount_paiement, $request)
     {
 
         $wallet_user = robus();
@@ -394,13 +383,13 @@ class VersementController extends Controller
                 $reel_amount = $this->validatedamountDays->search_amount($amount_paiement);
 
                 $commission_invoice =  $this->percentRobus->getRobusPercentageVersement($request->provider);
-                $commission_paiement =  $commission_invoice->percent  * $amount_paiement ;
+                $commission_paiement =  $commission_invoice->percent  * $amount_paiement;
 
                 if ($wallet_user->country->code == 'CI') {
 
-                   if ($wallet_user->is_under_distributer == 1) {
+                    if ($wallet_user->is_under_distributer == 1) {
 
-                        $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_merchands  * $amount_paiement ;
+                        $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_merchands  * $amount_paiement;
 
                         $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount + (float) $commission_paiement;
 
@@ -431,5 +420,4 @@ class VersementController extends Controller
             ], 200);
         }
     }
-  
 }

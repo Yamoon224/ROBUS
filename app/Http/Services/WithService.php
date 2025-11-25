@@ -43,19 +43,25 @@ class WithService
     {
 
 
-        $amount_solde = (float)robus()->wallet->amount;
+        $user = auth_user();
+
+        if (!$user || !$user->wallet) {
+            throw new \Exception('Utilisateur ou wallet non disponible.');
+        }
+
+        $amount_solde = (float) $user->wallet->amount;
 
 
         return $this->tresortRepository->create([
-            'wallet_id' =>   robus()->wallet->id,
+            'wallet_id' =>  $user->wallet->id,
             'amount' => $amount_valeur,
-            'description'  => 'Demande  de transaction Tresort Money',
-            'PushPercent_id' => 1,
-            'created_by' => robus()->id,
+            'description'  => 'Demande de transaction Tresort Money',
+            'argent_tresort_id' => 1,
+            'created_by' => $user->id,
             'amount_solde'  => $amount_solde  ?? null,
             'provider_id'  =>  $provider,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
-            'choose_type_transaction' => 1,
+            // 'choose_type_transaction' => 1,
             'phone'  =>  $phone,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
@@ -68,19 +74,25 @@ class WithService
     {
 
 
-        $amount_solde = (float)robus()->wallet->amount;
+        $user = auth_user();
+
+        if (!$user || !$user->wallet) {
+            throw new \Exception('Utilisateur ou wallet non disponible.');
+        }
+
+        $amount_solde = (float) $user->wallet->amount;
 
 
         return $this->djamoRepository->create([
-            'wallet_id' =>   robus()->wallet->id,
+            'wallet_id' =>  $user->wallet->id,
             'amount' => $amount_valeur,
             'description'  => 'Demande  de transaction Djamo',
-            'DjamoPercent_id' => 1,
-            'created_by' => robus()->id,
+            'djamo_percent_id' => 1,
+            'created_by' => $user->id,
             'amount_solde'  => $amount_solde  ?? null,
             'provider_id'  =>  $provider,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
-            'choose_type_transaction' => 1,
+            'is_livewire' => false,
             'phone'  =>  $phone,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
@@ -95,19 +107,25 @@ class WithService
     {
 
 
-        $amount_solde = (float)robus()->wallet->amount;
+
+        $user = auth_user();
+
+        if (!$user || !$user->wallet) {
+            throw new \Exception('Utilisateur ou wallet non disponible.');
+        }
+
+        $amount_solde = (float) $user->wallet->amount;
 
 
         return $this->pushRepository->create([
-            'wallet_id' =>   robus()->wallet->id,
+            'wallet_id' =>  $user->wallet->id,
             'amount' => $amount_valeur,
             'description'  => 'Demande  de transaction Push',
-            'PushPercent_id' => 1,
-            'created_by' => robus()->id,
+            'push_percent_id' => 1,
+            'created_by' => $user->id,
             'amount_solde'  => $amount_solde  ?? null,
             'provider_id'  =>  $provider,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
-            'choose_type_transaction' => 1,
             'phone'  =>  $phone,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
@@ -120,10 +138,13 @@ class WithService
     public function updateamountPushReceveid($admin_civ, $percent_robus, $walletWith, $amount)
     {
 
-        $userId = robus()->id;
+        $user = auth_user();
+
+        $userId = $user->id;
+
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-        $account_accepted = robus()->is_accepted_companie ?? false;
-        $company_id = robus()->company_id ?? null;
+        $account_accepted = $user->is_accepted_companie ?? false;
+        $company_id      = $user->company_id ?? null;
 
         if ($company_id) {
             $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
@@ -138,21 +159,21 @@ class WithService
         } else {
             $activeCButtons = [];
         }
-        if (robus()->is_under_distributer) {
+        if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
         } else {
             $amount_commission = $amount + ($percent_robus->percent * $amount);
         }
 
-        $amount_solde = robus()->wallet->amount - $amount_commission;
+        $amount_solde = $user->wallet->amount - $amount_commission;
 
         $walletWith->update([
             'amount_solde' => $amount_solde,
         ]);
 
-        robus()->wallet->update([
-            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-            'sid_user_relod' => robus()->id,
+        $user->wallet->update([
+            'reload_by' => $user->firstname . ' ' . $user->lastname,
+            'sid_user_relod' => $user->id,
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
@@ -161,7 +182,7 @@ class WithService
         $valeur_percent_no_under  = $percent_robus->percent * $amount;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
             $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
             $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
@@ -172,7 +193,7 @@ class WithService
                     'commissions' => DB::raw('commissions+'  . $valuer_deposit),
                 ]);
 
-                $account_accepted = robus()->is_accepted_companie ?? false;
+                $account_accepted = $user->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterPushCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
@@ -187,16 +208,16 @@ class WithService
 
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_push_id', $walletWith->id, $valeur_percent_no_under);
 
-            if (robus()->country->code == 'CI') {
+            if ($user->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletWith->amount .  robus()->wallet->currencie->code .
+                $message =  'Vous avez effectué un paiement de ' . $walletWith->amount .  $user->wallet->currencie->code .
                     ' ' .
                     'par ' . $walletWith->provider->name .
                     ' a ' . $walletWith->created_at .
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr(robus()->phone, -10);
+                $encode = substr($user->phone, -10);
 
                 Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
             }
@@ -208,10 +229,11 @@ class WithService
     public function updateamountDjamoReceveid($admin_civ, $percent_robus, $walletWith, $amount)
     {
 
-        $userId = robus()->id;
+        $user = auth_user();
+        $userId = $user->id;
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-        $account_accepted = robus()->is_accepted_companie ?? false;
-        $company_id = robus()->company_id ?? null;
+        $account_accepted = $user->is_accepted_companie ?? false;
+        $company_id      = $user->company_id ?? null;
 
         if ($company_id) {
             $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
@@ -226,21 +248,21 @@ class WithService
         } else {
             $activeCButtons = [];
         }
-        if (robus()->is_under_distributer) {
+        if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
         } else {
             $amount_commission = $amount + ($percent_robus->percent * $amount);
         }
 
-        $amount_solde = robus()->wallet->amount - $amount_commission;
+        $amount_solde = $user->wallet->amount - $amount_commission;
 
         $walletWith->update([
             'amount_solde' => $amount_solde,
         ]);
 
-        robus()->wallet->update([
-            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-            'sid_user_relod' => robus()->id,
+        $user->wallet->update([
+            'reload_by' => $user->firstname . ' ' . $user->lastname,
+            'sid_user_relod' => $user->id,
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
@@ -249,7 +271,7 @@ class WithService
         $valeur_percent_no_under  = $percent_robus->percent * $amount;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
             $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
             $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
@@ -260,7 +282,7 @@ class WithService
                     'commissions' => DB::raw('commissions+'  . $valuer_deposit),
                 ]);
 
-                $account_accepted = robus()->is_accepted_companie ?? false;
+                $account_accepted = $user->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterDjamoCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
@@ -274,16 +296,16 @@ class WithService
 
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_djamo_id', $walletWith->id, $valeur_percent_no_under);
 
-            if (robus()->country->code == 'CI') {
+            if ($user->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un réchargement de ' . $walletWith->amount .  robus()->wallet->currencie->code .
+                $message =  'Vous avez effectué un réchargement de ' . $walletWith->amount .  $user->wallet->currencie->code .
                     ' ' .
                     'par ' . $walletWith->provider->name .
                     ' a ' . $walletWith->created_at .
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr(robus()->phone, -10);
+                $encode = substr($user->phone, -10);
 
                 Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
             }
@@ -296,10 +318,11 @@ class WithService
     public function updateamountTresortReceveid($admin_civ, $percent_robus, $walletWith, $amount)
     {
 
-        $userId = robus()->id;
+        $user = auth_user();
+        $userId = $user->id;
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-        $account_accepted = robus()->is_accepted_companie ?? false;
-        $company_id = robus()->company_id ?? null;
+        $account_accepted = $user->is_accepted_companie ?? false;
+        $company_id      = $user->company_id ?? null;
 
         if ($company_id) {
             $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
@@ -314,21 +337,21 @@ class WithService
         } else {
             $activeCButtons = [];
         }
-        if (robus()->is_under_distributer) {
+        if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
         } else {
             $amount_commission = $amount + ($percent_robus->percent * $amount);
         }
 
-        $amount_solde = robus()->wallet->amount - $amount_commission;
+        $amount_solde = $user->wallet->amount - $amount_commission;
 
         $walletWith->update([
             'amount_solde' => $amount_solde,
         ]);
 
-        robus()->wallet->update([
-            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-            'sid_user_relod' => robus()->id,
+        $user->wallet->update([
+            'reload_by' => $user->firstname . ' ' . $user->lastname,
+            'sid_user_relod' => $user->id,
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
@@ -337,7 +360,7 @@ class WithService
         $valeur_percent_no_under  = $percent_robus->percent * $amount;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
             $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
             $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
@@ -348,7 +371,7 @@ class WithService
                     'commissions' => DB::raw('commissions+'  . $valuer_deposit),
                 ]);
 
-                $account_accepted = robus()->is_accepted_companie ?? false;
+                $account_accepted = $user->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterTresortCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
@@ -357,22 +380,21 @@ class WithService
             } else {
 
                 $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
-
             }
         } else {
 
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valeur_percent_no_under);
 
-            if (robus()->country->code == 'CI') {
+            if ($user->country->code == 'CI') {
 
-                $message =  'Vous avez effectué un paiement de ' . $walletWith->amount .  robus()->wallet->currencie->code .
+                $message =  'Vous avez effectué un paiement de ' . $walletWith->amount .  $user->wallet->currencie->code .
                     ' ' .
                     'par ' . $walletWith->provider->name .
                     ' a ' . $walletWith->created_at .
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr(robus()->phone, -10);
+                $encode = substr($user->phone, -10);
 
                 Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
             }

@@ -91,7 +91,7 @@ class ReloadCardService
         ]);
 
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
             $valuer_deposit =  $percent_merchands;
 
@@ -110,24 +110,20 @@ class ReloadCardService
                 if ($account_accepted && !empty($activeCButtons['showRemonterRechargementCButton'])) {
                     $valuer_companie = $commissionCompanie;
                     $walletOrderCard->increment('commission_companie', $valuer_companie);
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_deposit_id' , $walletOrderCard->id, $valuer_companie, $valuer_deposit);
-
-                }else {
-
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_companie, $valuer_deposit);
+                } else {
                 }
-
             } else {
 
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id' ,$walletOrderCard->id, $admin_valeur_no);
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $admin_valeur_no);
             }
         } else {
 
             $admin_valeur =  $amount_commission;
 
-            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id' ,$walletOrderCard->id, $admin_valeur);
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $admin_valeur);
         }
 
         return true;
     }
-
 }

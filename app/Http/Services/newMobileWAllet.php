@@ -86,10 +86,10 @@ class MobileWalletTransactionServiceAncien
         $wallet->update($updatedValues);
 
         $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
-        
+
         $valuer_deposit = $percent_robus->percent_deposit *  $valeur_percent_valeur;
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             // 50 %
             $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
@@ -97,7 +97,7 @@ class MobileWalletTransactionServiceAncien
             // 20%
 
 
-            if ($country_civ->currencie->value >robus()->country->currencie->value) {
+            if ($country_civ->currencie->value > robus()->country->currencie->value) {
 
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
@@ -113,8 +113,6 @@ class MobileWalletTransactionServiceAncien
             $walletTransaction->update([
                 'commissions' => DB::raw('commissions+'  . $valuer_deposit),
             ]);
-
-     
         } else {
 
 
@@ -157,10 +155,9 @@ class MobileWalletTransactionServiceAncien
                     'wallet_reload_id' => null,
                     'bank_card_id' => null,
                     'description' => 'Commission administrateur',
-                    'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                    'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
+                    'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
                 ]);
-
             }
         }
 
@@ -189,7 +186,7 @@ class MobileWalletTransactionServiceAncien
         $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             // 50 %
             $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
@@ -204,7 +201,6 @@ class MobileWalletTransactionServiceAncien
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
 
                 $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
-
             } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
                 //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit;
@@ -225,7 +221,7 @@ class MobileWalletTransactionServiceAncien
             if ($admin_civ->count() > 0) {
 
                 $nmbre_admin = $admin_civ->count();
-               
+
                 $valeur_single = robus()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $admin_valeur_convertion / $nmbre_admin;
 
                 foreach ($admin_civ as $user) {
@@ -244,10 +240,9 @@ class MobileWalletTransactionServiceAncien
                         'wallet_reload_id' => null,
                         'bank_card_id' => null,
                         'description' => robus()->country->name_groupe == 'MAG' ? 'Paiement commission sous-distributer' : 'Commission administrateur',
-                        'amount_under'=>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                        'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                        'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
+                        'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
                     ]);
-
                 }
             }
         }

@@ -458,6 +458,9 @@
             $('#create-reloadWalletCommission-modal').removeClass('show');
             $('#create-reloadWalletCommission-modal').addClass('hide');
 
+            $('#create-transactionWalletCommission-modal').removeClass('show');
+            $('#create-transactionWalletCommission-modal').addClass('hide');
+
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
 
@@ -1463,6 +1466,9 @@
             $('#create-reloadWalletCommission-modal').removeClass('show');
             $('#create-reloadWalletCommission-modal').addClass('hide');
 
+              $('#create-transactionWalletCommission-modal').removeClass('show');
+            $('#create-transactionWalletCommission-modal').addClass('hide');
+
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
 
@@ -1508,6 +1514,10 @@
 
             $('#create-reloadWalletCommission-modal').removeClass('show');
             $('#create-reloadWalletCommission-modal').addClass('hide');
+
+                $('#create-transactionWalletCommission-modal').removeClass('show');
+            $('#create-transactionWalletCommission-modal').addClass('hide');
+
 
             $('#update-reloadWallet-modal').removeClass('show');
             $('#update-reloadWallet-modal').addClass('hide');
@@ -2979,6 +2989,9 @@
             $('#reload-nav').addClass('active');
             $('reload-nav').attr('aria-selected', true);
             $('#reload').addClass('active');
+                 $('#comTransaction-nav').removeClass('active');
+            $('comTransaction-nav').attr('aria-selected', false);
+            $('#comTransaction').removeClass('active');
 
         });
 
@@ -2992,6 +3005,23 @@
             $('#reload-nav').removeClass('active');
             $('reload-nav').attr('aria-selected', false);
             $('#reload').removeClass('active');
+            $('#comTransaction-nav').removeClass('active');
+            $('comTransaction-nav').attr('aria-selected', false);
+            $('#comTransaction').removeClass('active');
+        });
+
+          Livewire.on('modal-transactionWalletCommission-show', () => {
+            $('#create-transactionWalletCommission-modal').removeClass('hide');
+            $('#create-transactionWalletCommission-modal').addClass('show');
+            $('#commission-nav').removeClass('active');
+            $('commission-nav').attr('aria-selected', true);
+            $('#commission').removeClass('active');
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+                $('#comTransaction-nav').addClass('active');
+            $('comTransaction-nav').attr('aria-selected', false);
+            $('#comTransaction').addClass('active');
         });
 
 

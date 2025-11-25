@@ -123,18 +123,19 @@ class withTransactionController extends Controller
          * 
          *  ),
          */
-        public function create_PushTranaction(Request $request)
+        public function create_PushTransaction(Request $request)
         {
 
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
-                $valeur_ceiling  =  robus()->silver_ceiling;
-                // valueur User send days
+                $valeur_ceiling  = auth_user()->silver_ceiling;
                 $percent_robus =  $this->percentRobus->getRobusPercentagePush();
 
                 try {
 
 
-                        if (robus()->is_under_distributer) {
+                        $user = auth_user();
+
+                        if ($user && $user->is_under_distributer || $user->is_api) {
 
                                 $validator = Validator::make(
 
@@ -194,7 +195,7 @@ class withTransactionController extends Controller
                         }
 
 
-                        if ($request->provider == 107) {
+                        if ($request->provider == 105) {
 
                                 if ($percent_robus != null) {
 
@@ -234,18 +235,19 @@ class withTransactionController extends Controller
                 }
         }
 
-        public function create_TresortTranaction(Request $request)
+        public function create_TresortTransaction(Request $request)
         {
 
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
-                $valeur_ceiling  =  robus()->silver_ceiling;
+                $valeur_ceiling  =  auth_user()->silver_ceiling;;
                 // valueur User send days
                 $percent_robus =  $this->percentRobus->getRobusPercentageTresort();
 
                 try {
 
+                        $user = auth_user();
 
-                        if (robus()->is_under_distributer) {
+                        if ($user && $user->is_under_distributer || $user->is_api) {
 
                                 $validator = Validator::make(
 
@@ -345,18 +347,19 @@ class withTransactionController extends Controller
                 }
         }
 
-        public function create_DjamoTranaction(Request $request)
+        public function create_DjamoTransaction(Request $request)
         {
 
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
-                $valeur_ceiling  =  robus()->silver_ceiling;
+                $valeur_ceiling  =  auth_user()->silver_ceiling;
                 // valueur User send days
                 $percent_robus =  $this->percentRobus->getRobusPercentageDjamo();
 
                 try {
 
+                        $user = auth_user();
 
-                        if (robus()->is_under_distributer) {
+                        if ($user && $user->is_under_distributer || $user->is_api) {
 
                                 $validator = Validator::make(
 
@@ -364,14 +367,14 @@ class withTransactionController extends Controller
                                         [
                                                 "phone" => 'required',
                                                 "amount" => 'required',
-                                                "name_custumer" => 'required',
+                                                "full_name" => 'required',
                                                 "image_piece" => 'required',
                                         ],
                                         [
 
                                                 'phone.required' => 'Votre numero est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
-                                                'name_custumer.required' => 'Nom est obligatoire',
+                                                'full_name.required' => 'Nom est obligatoire',
                                                 'image_piece.required' => 'date de validité est obligatoire',
 
                                         ]
@@ -420,7 +423,7 @@ class withTransactionController extends Controller
                         }
 
 
-                        if ($request->provider == 107) {
+                        if ($request->provider == 104) {
 
                                 if ($percent_robus != null) {
 
@@ -435,7 +438,7 @@ class withTransactionController extends Controller
 
                                                 if ($file_front) {
                                                         // Chemin de destination
-                                                        $destination_path = public_path('image_inters/' . $request->name_custumer . '/');
+                                                        $destination_path = public_path('image_inters/' . $request->full_name . '/');
 
                                                         // Création du dossier si inexistant
                                                         if (!file_exists($destination_path)) {
@@ -449,7 +452,7 @@ class withTransactionController extends Controller
                                                         $file_front->move($destination_path, $front_file);
 
                                                         // Construire l’URL de l’image
-                                                        $imagePath = env('APP_URL') . "/image_inters/" . $request->name_custumer . "/$front_file";
+                                                        $imagePath = env('APP_URL') . "/image_inters/" . $request->full_name . "/$front_file";
                                                 }
 
                                                 $transactionResult = $this->processDjamoTransaction($request, $percent_robus, $amountReceved,  $imagePath);
@@ -489,7 +492,17 @@ class withTransactionController extends Controller
         {
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                if (robus()->is_under_distributer) {
+                $user = auth_user();
+
+                if (!$user || !$user->wallet) {
+                        return [
+                                'success' => false,
+                                'message' => 'Utilisateur ou wallet non disponible.'
+                        ];
+                }
+
+
+                if ($user && $user->is_under_distributer || $user->is_api) {
                         $val_amount_send = $reel_amount;
                 } else {
                         $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
@@ -504,19 +517,20 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
-                // Mettre à jour le montant reçu dans le service OneXbet
                 if (!$this->withService->updateamountPushReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
-                return ['success' => true, 'walletPush' => $walletPush];
+                return ['success' => true, 'walletWith' => $walletPush];
         }
 
         private function processTresortTransaction($request, $percent_robus, $amountReceved)
         {
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                if (robus()->is_under_distributer) {
+                $user = auth_user();
+
+                if ($user && $user->is_under_distributer || $user->is_api) {
                         $val_amount_send = $reel_amount;
                 } else {
                         $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
@@ -536,14 +550,16 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
-                return ['success' => true, 'walletPush' => $walletPush];
+                return ['success' => true, 'walletWith' => $walletPush];
         }
 
         private function processDjamoTransaction($request, $percent_robus, $amountReceved, $imagePath)
         {
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                if (robus()->is_under_distributer) {
+                $user = auth_user();
+
+                if ($user && $user->is_under_distributer || $user->is_api) {
                         $val_amount_send = $reel_amount;
                 } else {
                         $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
@@ -563,7 +579,7 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
-                return ['success' => true, 'walletPush' => $walletPush];
+                return ['success' => true, 'walletWith' => $walletPush];
         }
 
 
@@ -579,7 +595,7 @@ class withTransactionController extends Controller
                                 'amount' => $walletPush->amount,
                                 'status' => $walletPush->status,
                         ],
-                        'message' =>  $walletPush->choose_type_transaction == 1 ? ('Votre demande de rechargement  a bien été prise en compte.') : ('Votre demande de retrait  a bien été prise en compte.')
+                        'message' =>  $walletPush->choose_type_transaction == 1 ? ('Votre demande de transaction a bien été prise en compte.') : ('Votre demande de transaction a bien été prise en compte.')
                 ], 200);
         }
         /**

@@ -36,15 +36,16 @@ class VirementService
     public function createRobusVirement($amount_valeur, $amount_send, $provider, $description, $percent_robus, $number_compte, $firstname, $lastname, $comission_distributer, $phone, $amountReceved)
     {
 
-        $amount_solde = robus()->wallet->amount - $amount_valeur;
+        $userAuth = auth_user();
+        $amount_solde = $userAuth->wallet->amount - $amount_valeur;
 
         return $this->virementRepository->create([
             'amount_solde' => $amount_solde ?? null,
-            'wallet_id' =>  robus()->wallet->id,
+            'wallet_id' =>  $userAuth->wallet->id,
             'amount' => $amount_send,
             'description'  => $description,
             'bank_cost_id' =>  $percent_robus->id,
-            'created_by' => robus()->id,
+            'created_by' => $userAuth->id,
             'provider_id'  => $provider,
             'number_compte' =>  $number_compte,
             'firstname' =>  $firstname,
@@ -60,11 +61,12 @@ class VirementService
     public function updateamountVirementReceveid($admin_civ, $amount_user, $walletBank, $amount_valeur)
     {
 
-        // $master_id = $this->robusMasterTransaction->mastersId();
-        $userId = robus()->id;
+       $userAuth = auth_user();
+        $userId = $userAuth->id;
+
         $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
-        $account_accepted = robus()->is_accepted_companie ?? false;
-        $company_id = robus()->company_id ?? null;
+        $account_accepted = $userAuth->is_accepted_companie ?? false;
+        $company_id = $userAuth->company_id ?? null;
         if ($company_id) {
             $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
             $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
@@ -81,13 +83,13 @@ class VirementService
 
         $amount_commission = $amount_valeur;
 
-        robus()->wallet->update([
-            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-            'sid_user_relod' => robus()->id,
+        $userAuth->wallet->update([
+            'reload_by' => $userAuth->firstname . ' ' . $userAuth->lastname,
+            'sid_user_relod' => $userAuth->id,
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        if (robus()->is_under_distributer) {
+        if ($userAuth->is_under_distributer || $userAuth->is_api) {
 
             if (!empty($activeButtons['showRemonterVirementButton'])) {
 
@@ -100,7 +102,7 @@ class VirementService
                     'commissions' => DB::raw('commissions+'  .  $amountDepositUnder),
                 ]);
 
-                $account_accepted = robus()->is_accepted_companie ?? false;
+                $account_accepted = $userAuth->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterVirementCButton'])) {
                     $walletBank->increment('commission_companie', $amountCompanie);

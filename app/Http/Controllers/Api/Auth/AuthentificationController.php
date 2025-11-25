@@ -743,7 +743,6 @@ class AuthentificationController extends Controller
     public function loginProspect(Request $request)
     {
 
-        dd('-------------- iic----------');
         try {
 
             $apiKey = $request->header('X-API-Key');
@@ -780,7 +779,6 @@ class AuthentificationController extends Controller
             Auth::login($user);
             $tokenResult = $user->createToken('auth_token');
 
-            // Mettre à jour le last_login
             $user->update([
                 'last_login' => Carbon::now()->toDateTimeString(),
                 'last_logout' => null
@@ -789,6 +787,11 @@ class AuthentificationController extends Controller
             return response()->json([
                 'success' => true,
                 'token' => $tokenResult,
+                'integration' => [
+                    'company_name' => "ROBUS",
+                    'logo_url' => "https://robus.home.ci/public/dist/images/logo_violet.jpeg" ?? null,
+                    'theme_color' => $client->theme_color ?? '#1A73E8',
+                ],
                 'user' => [
                     'id' => $user->id,
                     'firstname' => $user->firstname,

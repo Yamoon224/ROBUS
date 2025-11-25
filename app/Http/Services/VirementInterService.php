@@ -98,7 +98,7 @@ class VirementInterService
         ]);
     }
 
-    public function updateamountVirementInterReceveid($admin_civ, $amount_user, $walletBank, $amount_valeur, $percent_valeur , $amount_commission_compagnie)
+    public function updateamountVirementInterReceveid($admin_civ, $amount_user, $walletBank, $amount_valeur, $percent_valeur, $amount_commission_compagnie)
     {
 
         $userId = robus()->id;
@@ -112,11 +112,11 @@ class VirementInterService
             $compagnie = null;
             $sidUserId = null;
         }
-        
+
         if ($sidUserId) {
             $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
         } else {
-            $activeCButtons = []; 
+            $activeCButtons = [];
         }
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;
@@ -132,7 +132,7 @@ class VirementInterService
         ]);
 
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
             $valuer_deposit = $amount_user;
 
@@ -160,7 +160,6 @@ class VirementInterService
                     $walletBank->increment('commission_companie', $amountCompanie);
 
                     $this->distributeAdminCommissionAccepteds($admin_civ, $walletBank, $admin_cumul_convertion, $valeur_amount_admin);
-
                 } else {
 
                     $this->distributeAdminCommissionAccepteds($admin_civ, $walletBank, $valeur_amount_admin, $admin_valeur_convertion);
@@ -215,8 +214,8 @@ class VirementInterService
                     'sid_user_id' => $adminUser->id,
                     'wallet_inter_id' => $walletBank->id,
                     'description' => 'Commission administrateur',
-                    'amount_under' =>  robus()->is_under_distributer ? $amountDeposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                    'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $amountDeposit : 0,
+                    'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
                 ]);
             }
         }

@@ -297,8 +297,8 @@
                                 <!-- Quick Actions -->
                                 <div
                                     class="col-span-12 md:col-span-6 lg:col-span-4
-                bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-6
-                border border-orange-200 hover:shadow-md transition-all duration-300">
+                                        bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl p-6
+                                        border border-orange-200 hover:shadow-md transition-all duration-300">
                                     <div class="text-center mt-6">
                                         <div class="bg-orange-100 rounded-2xl p-4 inline-flex mb-4">
                                             <i class="fas fa-bolt text-orange-600 text-2xl"></i>

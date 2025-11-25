@@ -207,7 +207,7 @@ class IntersPaymentController extends Controller
                     ];
                 } elseif (in_array($request->provider, [48, 49, 50, 55, 71, 72, 73, 74, 75, 76, 77, 78, 93, 94, 95, 96, 97, 98, 100, 101, 102, 103])) {
 
-                    if (robus()->is_under_distributer) {
+                    if (robus()->is_under_distributer || robus()->is_api) {
 
 
                         $validator = Validator::make(
@@ -278,7 +278,7 @@ class IntersPaymentController extends Controller
                     }
                 } elseif (in_array($request->provider, [99])) {
 
-                    if (robus()->is_under_distributer) {
+                    if (robus()->is_under_distributer || robus()->is_api) {
 
 
                         $validator = Validator::make(
@@ -362,7 +362,7 @@ class IntersPaymentController extends Controller
                     }
                 } elseif (in_array($request->provider, [104, 105, 106])) {
 
-                    if (robus()->is_under_distributer) {
+                    if (robus()->is_under_distributer || robus()->is_api) {
 
 
                         $validator = Validator::make(
@@ -453,18 +453,14 @@ class IntersPaymentController extends Controller
 
                                 if ($this->validatedamountDays->validateAmount($request->amount)) {
 
-                                    if (robus()->is_under_distributer) {
+                                    if (robus()->is_under_distributer || robus()->is_api) {
 
                                         $percent_amount = $percent_robus->percent_under_distributer * $request->amount;
-
-                                        // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
                                         $valeur_received = $request->amount -  $percent_amount;
                                     } else {
 
                                         $percent_amount = $percent_robus->percent * $request->amount;
-
-                                        // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
                                         $valeur_received = $request->amount -  $percent_amount;
                                     }
@@ -522,7 +518,7 @@ class IntersPaymentController extends Controller
 
                                     if ($this->validatedamountDays->validateAmount($request->amount)) {
 
-                                        if (robus()->is_under_distributer) {
+                                        if (robus()->is_under_distributer || robus()->is_api) {
 
                                             $percent_amount = $percent_robus->percent_under_distributer * $request->amount;
 
@@ -641,7 +637,7 @@ class IntersPaymentController extends Controller
 
                                     if ($this->validatedamountDays->validateAmount($request->amount)) {
 
-                                        if (robus()->is_under_distributer) {
+                                        if (robus()->is_under_distributer || robus()->is_api) {
 
                                             $percent_amount = $percent_djamo->percent_merchands * $request->amount;
 
@@ -958,11 +954,7 @@ class IntersPaymentController extends Controller
 
                             $valeur_convertion_comi =   $this->convertionservice->convertAdminCommissionPayment($amount_commission);
 
-                            // $valeur_convertion_amount_receved =   $this->convertionservice->convertAdminCommissionPayment($amount_receved);
-
                             $valeur_convertion_amount_receved =   $this->convertionservice->convertAdminCommission($amount_receved);
-
-                            // $valeur_convertion_comi =   $this->convertionservice->convertAdminCommission($amount_commission);
 
                             if ($this->validatedamountDays->validateAmount($amount_valeur)) {
 
@@ -1111,7 +1103,7 @@ class IntersPaymentController extends Controller
 
                                                 $amount_valeur_send = (float)$amount_request +  (float)$percent_distr_cfa;
 
-                                                if (robus()->is_under_distributer) {
+                                                if (robus()->is_under_distributer || robus()->is_api) {
                                                     $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
                                                 } else {
 
@@ -1121,7 +1113,7 @@ class IntersPaymentController extends Controller
                                                 if ($this->validatedamountDays->validateAmountVirement($amount_valeur_convertion_send)) {
 
 
-                                                    if (robus()->is_under_distributer) {
+                                                    if (robus()->is_under_distributer || robus()->is_api) {
 
                                                         $comission_distributer = $amount_user->comission_distributer * $amount_request;
 
@@ -1288,7 +1280,7 @@ class IntersPaymentController extends Controller
 
                                             $amount_valeur = $amount_request;
 
-                                            if (robus()->is_under_distributer) {
+                                            if (robus()->is_under_distributer || robus()->is_api) {
                                                 $comission_distributer = $amount_user->comission_distributer * $amount_request;
                                                 $comission_compagnie = $amount_user->percent_companie * $amount_request;
                                             } else {
@@ -1303,7 +1295,7 @@ class IntersPaymentController extends Controller
 
                                             $amount_valeur = (float)$amount_user->amount + (float)$amount_request;
 
-                                            if (robus()->is_under_distributer) {
+                                            if (robus()->is_under_distributer || robus()->is_api) {
                                                 $comission_distributer = $amount_user->comission_distributer;
                                                 $comission_compagnie = $amount_user->percent_companie;
                                             } else {
@@ -1315,7 +1307,7 @@ class IntersPaymentController extends Controller
                                         }
 
 
-                                        if (robus()->is_under_distributer) {
+                                        if (robus()->is_under_distributer || robus()->is_api) {
                                             $amount_valeur_send = (float)$amount_request +  (float)$percent_valeur;
 
                                             $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
@@ -1414,7 +1406,7 @@ class IntersPaymentController extends Controller
 
                     if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
                             $val_amount_send = $reel_amount;
                             $amountReceved = $reel_amount;
                         } else {
@@ -1959,7 +1951,7 @@ class IntersPaymentController extends Controller
 
                 $commission_reload_inter_val_inter_percent_pay = 0;
 
-                if (robus()->is_under_distributer) {
+                if (robus()->is_under_distributer || robus()->is_api) {
 
                     $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_auther);
 
@@ -2014,7 +2006,7 @@ class IntersPaymentController extends Controller
 
                 $commission_reload_inter_val_inter_percent_pay = 0;
 
-                if (robus()->is_under_distributer) {
+                if (robus()->is_under_distributer || robus()->is_api) {
                     $commission_paiement_invoice_val_inter_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_auther);
 
                     $commission_reload_inter_val_inter_percent_pay = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->amount_auther);
@@ -2084,7 +2076,7 @@ class IntersPaymentController extends Controller
 
                                 $percent_distr_cfa =   $amount_comission->percent * $valeur_amount;
 
-                                if (robus()->is_under_distributer) {
+                                if (robus()->is_under_distributer || robus()->is_api) {
 
                                     $valeur_cfa =   $amount_comission->comission_distributer *  $valeur_amount;
                                 } else {
@@ -2111,7 +2103,7 @@ class IntersPaymentController extends Controller
 
                                 $percent_distr_cfa  = $amount_comission->amount;
 
-                                if (robus()->is_under_distributer) {
+                                if (robus()->is_under_distributer || robus()->is_api) {
 
                                     $valeur_cfa =   $amount_comission->comission_distributer;
                                 } else {
@@ -2199,7 +2191,7 @@ class IntersPaymentController extends Controller
 
                                 $percent_distr_cfa =   $amount_comission->percent * $valeur_amount;
 
-                                if (robus()->is_under_distributer) {
+                                if (robus()->is_under_distributer || robus()->is_api) {
 
                                     $valeur_cfa =   $amount_comission->comission_distributer *  $valeur_amount;
                                 } else {
@@ -2226,7 +2218,7 @@ class IntersPaymentController extends Controller
 
                                 $percent_distr_cfa  = $amount_comission->amount;
 
-                                if (robus()->is_under_distributer) {
+                                if (robus()->is_under_distributer || robus()->is_api) {
 
                                     $valeur_cfa =   $amount_comission->comission_distributer;
                                 } else {
@@ -2391,7 +2383,7 @@ class IntersPaymentController extends Controller
 
                             $percent_distr_cfa =   $amount_comission->percent * $valeur_amount;
 
-                            if (robus()->is_under_distributer) {
+                            if (robus()->is_under_distributer || robus()->is_api) {
 
                                 $valeur_cfa =   $amount_comission->comission_distributer *  $valeur_amount;
                             } else {
@@ -2420,7 +2412,7 @@ class IntersPaymentController extends Controller
 
                             $percent_distr_cfa  = $amount_comission->amount;
 
-                            if (robus()->is_under_distributer) {
+                            if (robus()->is_under_distributer || robus()->is_api) {
 
                                 $valeur_cfa =   $amount_comission->comission_distributer;
                             } else {
@@ -2492,7 +2484,7 @@ class IntersPaymentController extends Controller
 
                             $percent_distr_cfa =   $amount_comission->percent * $valeur_amount;
 
-                            if (robus()->is_under_distributer) {
+                            if (robus()->is_under_distributer || robus()->is_api) {
 
                                 $valeur_cfa =   $amount_comission->comission_distributer *  $valeur_amount;
                             } else {
@@ -2521,7 +2513,7 @@ class IntersPaymentController extends Controller
 
                             $percent_distr_cfa  = $amount_comission->amount;
 
-                            if (robus()->is_under_distributer) {
+                            if (robus()->is_under_distributer || robus()->is_api) {
 
                                 $valeur_cfa =   $amount_comission->comission_distributer;
                             } else {

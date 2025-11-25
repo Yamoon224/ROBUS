@@ -47,7 +47,6 @@ class VirementController extends Controller
         $this->notificationVirement = $notificationVirement;
         $this->authService = $authService;
         $this->initializeAppStatus($this->authService);
-
     }
 
     /**
@@ -153,13 +152,16 @@ class VirementController extends Controller
      */
     public function create_virement(Request $request)
     {
+        $userAuth = auth_user();
         $amount_days = $this->validatedamountDays->getCeilingProperty();
-        $valeur_ceiling  =  robus()->silver_ceiling;
+        $valeur_ceiling  =  $userAuth->silver_ceiling;
         $admin_civ = $this->validatedamountDays->adminCiv();
 
         try {
 
-            if (robus()->country->name_groupe == 'CIV') {
+
+
+            if ($userAuth->country->name_groupe == 'CIV') {
 
                 if (in_array($request->provider, [12, 11])) {
 
@@ -210,7 +212,7 @@ class VirementController extends Controller
 
                                     if ($percent_robus !== null) {
 
-                                        if (robus()->is_under_distributer) {
+                                        if ($userAuth->is_under_distributer || $userAuth->is_api) {
 
                                             $amount_valeur = $reel_amount;
 
@@ -309,6 +311,7 @@ class VirementController extends Controller
 
         try {
 
+            $userAuth = auth_user();
             $percent_robus =  $this->percentRobus->getRobusPercentageVirement();
 
             if ($percent_robus != null) {
@@ -342,7 +345,7 @@ class VirementController extends Controller
 
                                 $commission_virement_val_nat_send = $amount_comission->amount;
 
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
+                                if ($userAuth->is_under_distributer == 1 ||  $userAuth->is_distributer == 1 || $userAuth->is_api == 1) {
 
                                     $valeur_receive =  $reel_amount;
                                 } else {
@@ -365,7 +368,7 @@ class VirementController extends Controller
                     return response()->json([
                         'success' => $percent_robus != null ? true : false,
                         'data' =>  [
-                            'amount_pay' => robus()->is_under_distributer ? $commission_virement_val_nat_pay : $commission_virement_val_nat_send,
+                            'amount_pay' => $userAuth->is_under_distributer || $userAuth->is_api ? $commission_virement_val_nat_pay : $commission_virement_val_nat_send,
                             'amount_send' => $commission_virement_val_nat_pay,
                             'amount_receive' => $commission_virement_val_nat_receive,
                         ],
@@ -389,6 +392,7 @@ class VirementController extends Controller
     {
         try {
 
+            $userAuth = auth_user();
             $percent_robus =  $this->percentRobus->getRobusPercentageVirement();
 
             if ($percent_robus != null) {
@@ -422,7 +426,7 @@ class VirementController extends Controller
 
                                 $commission_virement_val_nat_send = $amount_comission->amount;
 
-                                if (robus()->is_under_distributer == 1 ||  robus()->is_distributer == 1) {
+                                if ($userAuth->is_under_distributer == 1 ||  $userAuth->is_distributer == 1 || $userAuth->is_api == 1) {
 
                                     $valeur_receive =  $reel_amount;
                                 } else {
@@ -445,7 +449,7 @@ class VirementController extends Controller
                     return response()->json([
                         'success' => $percent_robus != null ? true : false,
                         'data' =>  [
-                            'amount_pay' => robus()->is_under_distributer ? $commission_virement_val_nat_pay : $commission_virement_val_nat_send,
+                            'amount_pay' => $userAuth->is_under_distributer || $userAuth->is_api ? $commission_virement_val_nat_pay : $commission_virement_val_nat_send,
                             'amount_send' => $commission_virement_val_nat_pay,
                             'amount_receive' => $commission_virement_val_nat_receive,
                         ],

@@ -129,8 +129,8 @@ class MobileWalletTransactionService
                     'wallet_reload_id' => null,
                     'bank_card_id' => null,
                     'description' => 'Commission administrateur',
-                    'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                    'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
+                    'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
                 ]);
             }
         }
@@ -175,7 +175,7 @@ class MobileWalletTransactionService
         $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             // 50 %
             $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
@@ -242,8 +242,8 @@ class MobileWalletTransactionService
                             'wallet_reload_id' => null,
                             'bank_card_id' => null,
                             'description' => robus()->country->name_groupe == 'MAG' ? 'Paiement commission sous-distributer' : 'Commission administrateur',
-                            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                            'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
+                            'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
                         ]);
                     }
                 }

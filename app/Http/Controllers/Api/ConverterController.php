@@ -12,36 +12,40 @@ use Illuminate\Support\Facades\Auth;
 /**
  * @OA\Get(
  *      path="/converters",
- *      tags={"Faqs"},
- *      summary="Get List converters of currency,
- *      description="Returns all CUrrency converters",
+ *      tags={"converters"},
+ *      summary="Get list of converters of currency",
+ *      description="Returns all currency converters",
  *      @OA\Response(
  *          response=200,
  *          description="Successful operation",
- *          @OA\MediaType(
- *           mediaType="application/json",
- *      )
+ *          @OA\JsonContent(
+ *              type="array",
+ *              @OA\Items(
+ *                  type="object",
+ *                  @OA\Property(property="id", type="integer"),
+ *                  @OA\Property(property="name", type="string"),
+ *                  @OA\Property(property="rate", type="number", format="float")
+ *              )
+ *          )
+ *      ),
+ *      @OA\Response(
+ *          response=400,
+ *          description="Bad Request"
  *      ),
  *      @OA\Response(
  *          response=401,
- *          description="Unauthenticated",
+ *          description="Unauthenticated"
  *      ),
  *      @OA\Response(
  *          response=403,
  *          description="Forbidden"
  *      ),
- * @OA\Response(
- *      response=400,
- *      description="Bad Request"
- *   ),
- * @OA\Response(
- *      response=404,
- *      description="not found"
- *   ),
- *  )
+ *      @OA\Response(
+ *          response=404,
+ *          description="Not Found"
+ *      )
+ * )
  */
-
-
 
 class ConverterController extends Controller
 {

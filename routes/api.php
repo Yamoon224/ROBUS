@@ -70,7 +70,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         });
     });
 
-    Route::middleware(['auth:api'])->group(function () {
+    Route::middleware(['auth:api' , 'check.suspended'])->group(function () {
 
         // User and Under distributors APIS
         Route::prefix('user')->group(function () {
@@ -98,9 +98,9 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('search_onexbet_received/{amount_received}', [OnexbetTransactionController::class, 'search_xbet_received']);
 
             // WithTransactions
-            Route::post('push/store', [withTransactionController::class, 'create_PushTranaction']);
-            Route::post('djamo/store', [withTransactionController::class, 'create_DjamoTranaction']);
-            Route::post('tresorts/store', [withTransactionController::class, 'create_TresortTranaction']);
+            Route::post('push/store', [withTransactionController::class, 'create_PushTransaction']);
+            Route::post('djamo/store', [withTransactionController::class, 'create_DjamoTransaction']);
+            Route::post('tresorts/store', [withTransactionController::class, 'create_TresortTransaction']);
             Route::post('push/delete/{id}', [withTransactionController::class, 'delete_wallet_Push']);
             Route::post('djamo/delete/{id}', [withTransactionController::class, 'delete_wallet_Djamo']);
             Route::post('tresorts/delete/{id}', [withTransactionController::class, 'delete_wallet_Tresort']);
@@ -175,9 +175,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('transactions/first_step', [TransactionController::class, 'first_withdrawal']);
             Route::post('transactions/second_step', [TransactionController::class, 'second_withdrawal']);
 
-            // Transactions Diff
             Route::post('transactions/store', [TransactionController::class, 'create_transaction']);
-            // Route::get('transaction/show/{id}', [TransactionController::class, 'transaction_show']);
             Route::post('transaction/delete/{id}', [TransactionController::class, 'delete_transaction']);
             Route::get('search/{wallet_id}', [TransactionController::class, 'search_transaction']);
             Route::get('search_transaction/{commission_id}', [TransactionController::class, 'search_transaction_money_commission']);

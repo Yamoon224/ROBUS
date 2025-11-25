@@ -68,10 +68,9 @@ class TransactionController extends Controller
         $this->searchTransaction = $searchTransaction;
         $this->authService = $authService;
         $this->initializeAppStatus($this->authService);
-        
     }
 
- 
+
     /**
      * @OA\POST(
      *      path="/user/transactions/store",
@@ -212,7 +211,7 @@ class TransactionController extends Controller
                     ], 333);
                 }
 
-                if (robus()->is_under_distributer) {
+                if (robus()->is_under_distributer || robus()->is_api) {
 
                     $percent_robus = $this->percentRobus->getRobusPercentageSDistributers();
 
@@ -268,7 +267,7 @@ class TransactionController extends Controller
                                                 $this->notifications->sendNotification($walletTransaction);
                                                 return $this->messageAfterValidated($walletTransaction);
                                             } else {
-                                                
+
                                                 return  json_message_response(false, "Error de transferts du montant!", 333);
                                             }
                                         }
@@ -370,7 +369,7 @@ class TransactionController extends Controller
                                 if ($this->validatedamountDays->validateAmount($request->amount)) {
 
                                     $percent_amount = $percent_robus->percent * $request->amount;
-                                    
+
                                     // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
                                     $valeur_received = (float) $request->amount - $percent_amount;
@@ -380,7 +379,7 @@ class TransactionController extends Controller
 
                                     $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
-                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
+                                    $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
                                     $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
 
@@ -426,9 +425,9 @@ class TransactionController extends Controller
                 }
             } else {
 
-                if (robus()->is_under_distributer) {
-            
-             
+                if (robus()->is_under_distributer || robus()->is_api) {
+
+
                     $validator = Validator::make(
 
                         $request->all(),
@@ -522,9 +521,9 @@ class TransactionController extends Controller
 
                             $percent_amount = $percent_robus->percent * $request->amount;
 
-                            $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
-                    
-                            if (robus()->is_under_distributer) {
+                            $percent_real = adjustFeesWithRest($percent_amount, $request->amount);
+
+                            if (robus()->is_under_distributer || robus()->is_api) {
 
 
                                 if (robus()->country->name_groupe == 'CIV') {
@@ -532,7 +531,6 @@ class TransactionController extends Controller
                                     $valeur_received = $request->amount;
 
                                     $amount_payment = $request->amount;
-
                                 } else {
 
                                     $valeur_received = $request->amount - $percent_amount;
@@ -541,7 +539,6 @@ class TransactionController extends Controller
                                 }
 
                                 $cost_payment = $percent_amount;
-
                             } else {
 
                                 $valeur_received = $request->amount - $percent_amount;
@@ -559,7 +556,7 @@ class TransactionController extends Controller
 
                                     if ($this->mobileWalletTransactionService->updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)) {
 
-                                        if (robus()->is_under_distributer) {
+                                        if (robus()->is_under_distributer || robus()->is_api) {
                                             $processCommission = $this->mobileWalletTransactionService->processCommissionsMobileDistributer($request->amount, $percent_robus, $walletTransaction, $admin_civ);
                                         } else {
 
@@ -634,7 +631,7 @@ class TransactionController extends Controller
         try {
 
             // If Distributer and S-distributer
-            if (robus()->is_under_distributer) {
+            if (robus()->is_under_distributer || robus()->is_api) {
 
                 if ($request->provider == 9) {
 
@@ -761,7 +758,7 @@ class TransactionController extends Controller
             $verify_code =  $this->validatedamountDays->validatedTransaction($request->code_validated);
 
             $walletUserSearch = $this->validatedamountDays->validatedWallet($request->num_wallet);
-          
+
             $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
 
 
@@ -774,7 +771,6 @@ class TransactionController extends Controller
                         'success' => false,
                         'message' => ('Vous avez déjà fait un retrait par rapport à ce chiffre.')
                     ], 200);
-
                 } else {
 
                     $ecoule = strtotime($verify_code->created_at);
@@ -798,7 +794,7 @@ class TransactionController extends Controller
                         );
                     } else {
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
 
                             $percent_robus = $this->percentRobus->getRobusPercentageSDistributers();
 
@@ -820,7 +816,7 @@ class TransactionController extends Controller
 
                                 $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$verify_code->amount;
 
-                                if ($this->transactionWalletDrawal->updateDrawalTransaction($verify_code, $walletUserSearch, $valuer_with_drawal , $percent_robus , $admin_civ)) {
+                                if ($this->transactionWalletDrawal->updateDrawalTransaction($verify_code, $walletUserSearch, $valuer_with_drawal, $percent_robus, $admin_civ)) {
 
                                     $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $verify_code->amount . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
@@ -836,7 +832,7 @@ class TransactionController extends Controller
                                         Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
                                     }
 
-                                    return $this->transactionWalletDrawal->sendNotificationWithDrawal($verify_code , $walletUserSearch, $admins);
+                                    return $this->transactionWalletDrawal->sendNotificationWithDrawal($verify_code, $walletUserSearch, $admins);
                                 } else {
 
                                     return  json_message_response(false, "Erreur de demande de retait ! ", 333);
@@ -959,10 +955,10 @@ class TransactionController extends Controller
 
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
 
-                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_transaction);
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay, $amount_transaction);
 
-               
-                    if (robus()->is_under_distributer) {
+
+                    if (robus()->is_under_distributer || robus()->is_api) {
 
                         if (robus()->country->name_groupe == 'MAG') {
 
@@ -973,7 +969,6 @@ class TransactionController extends Controller
                         }
 
                         $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * (float)$amount_transaction;
-
                     } else {
 
                         $commission_transaction_val_nat_pay =  $commission_transaction_val_percent_pay;
@@ -1023,13 +1018,11 @@ class TransactionController extends Controller
 
                     $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
 
-                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer , $amount_transaction);
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer, $amount_transaction);
 
                     $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay_custumer;
 
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $commission_transaction_val_nat_receive;
-
-
                 }
 
 
@@ -1041,11 +1034,11 @@ class TransactionController extends Controller
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
-            }else {
+            } else {
                 return response()->json([
                     'success' =>  false,
                     'message' => 'Saisie le montant SVP',
-                ], 200); 
+                ], 200);
             }
         } catch (\Exception $exception) {
             return response()->json([
@@ -1072,12 +1065,11 @@ class TransactionController extends Controller
 
                     $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
 
-                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer , $amount_transaction);
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer, $amount_transaction);
 
                     $commission_transaction_val_nat_receive = (float)$amount_transaction + ($percent_real['adjust'] == 0 ?  $percent_real['rest'] : $percent_real['adjust']);
 
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $commission_transaction_val_nat_receive;
-
                 }
 
 
@@ -1089,11 +1081,11 @@ class TransactionController extends Controller
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
-            }else {
+            } else {
                 return response()->json([
                     'success' =>  false,
                     'message' => 'Saisie le montant SVP',
-                ], 200); 
+                ], 200);
             }
         } catch (\Exception $exception) {
             return response()->json([
@@ -1123,9 +1115,9 @@ class TransactionController extends Controller
 
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
 
-                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_transaction);
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay, $amount_transaction);
 
-                    if (robus()->is_under_distributer) {
+                    if (robus()->is_under_distributer || robus()->is_api) {
 
                         if (robus()->country->name_groupe == 'MAG') {
 
@@ -1161,11 +1153,11 @@ class TransactionController extends Controller
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
-            }else {
+            } else {
                 return response()->json([
                     'success' =>  false,
                     'message' => 'Saisie le montant SVP',
-                ], 200); 
+                ], 200);
             }
         } catch (\Exception $exception) {
             return response()->json([
@@ -1203,14 +1195,13 @@ class TransactionController extends Controller
                     if ($conversion_valeur_end < $amount_transaction) {
                         $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
                     }
-
                 } else {
 
 
                     // Si l'utilisateur n'est pas sous distributeur, admin ou distributeur
                     $commission_transaction = $this->searchTransaction->getCommissionTransactionForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
-                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_transaction);
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay, $amount_transaction);
 
                     if ($commission_transaction) {
 
@@ -1272,20 +1263,19 @@ class TransactionController extends Controller
 
                 // Si l'utilisateur est sous distributeur, admin ou distributeur
                 if ($data->sidUser->is_under_distributer || $data->sidUser->is_admin || $data->sidUser->is_distributer) {
-                    
+
                     $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
 
                     if ($conversion_valeur_end < $amount_transaction) {
                         $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
                     }
-
                 } else {
 
 
                     // Si l'utilisateur n'est pas sous distributeur, admin ou distributeur
                     $commission_transaction = $this->searchTransaction->getCommissionTransactionForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
-                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay , $amount_transaction);
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay, $amount_transaction);
 
                     if ($commission_transaction) {
 

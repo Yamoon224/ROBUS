@@ -136,7 +136,7 @@ class OrderCardService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
 
             $valuer_deposit = (float) $percent_robus->percent_merchands;

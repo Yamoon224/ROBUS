@@ -39,6 +39,7 @@ class CommissionService
         }
 
         $walletCommission = WalletCommission::find(1);
+        $userUnder = auth_user();
 
         if ($adminCiv->count() > 0) {
 
@@ -51,8 +52,8 @@ class CommissionService
                     'amount' => $commissionPerAdmin,
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
-                    'amount_under' => robus()->is_under_distributer ? $amountDeposit : 0,
-                    'description_underdistributer' => robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null,
+                    'amount_under' => $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
                 ], [$walletColumn => $walletId]));
 
                 $total_commission = (float) $amountDeposit  + (float) $totalCommission;
@@ -123,6 +124,7 @@ class CommissionService
     {
 
 
+        $user = auth_user();
 
         $admin_single = SidUser::find($userId);
 
@@ -133,8 +135,8 @@ class CommissionService
             'description' => 'Commission administrateur',
             'status'  => "SUCCESS",
             "amount_compagnie" => $amountCompagie ?? 0,
-            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+            'amount_under' =>  $user->is_under_distributer ? $valuer_deposit : 0,
+            'description_underdistributer' =>  $user->is_under_distributer ? 'Paiement commission sous-distributer' : null
         ]);
 
         $amount_all = (float)$valuer_deposit +  (float)$amountCompagie;
@@ -152,7 +154,7 @@ class CommissionService
     public function processAdminCommissionSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
     {
 
-
+        $user = auth_user();
 
         $admin_single = SidUser::find($userId);
 
@@ -163,8 +165,8 @@ class CommissionService
             'description' => 'Commission administrateur',
             'status'  => "SUCCESS",
             "amount_compagnie" => 0,
-            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+            'amount_under' =>  $user->is_under_distributer ? $valuer_deposit : 0,
+            'description_underdistributer' =>  $user->is_under_distributer ? 'Paiement commission sous-distributer' : null
         ]);
 
         $walletCommission = WalletCommission::find(1);
@@ -186,6 +188,7 @@ class CommissionService
             return;
         }
 
+        $userUnder = auth_user();
 
         $walletCommission = WalletCommission::find(1);
 
@@ -199,8 +202,8 @@ class CommissionService
                     'amount' => $commissionPerAdmin,
                     'sid_user_id' => $adminUser->id,
                     'description' => 'Commission administrateur',
-                    'amount_under' =>  robus()->is_under_distributer ? $amountDeposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                    'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ], [$walletColumn => $walletId]));
 
                 if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
@@ -215,12 +218,15 @@ class CommissionService
 
     public function convertAdminCommission($amount)
     {
-        $country_civ = Country::find(107);
-        $robus_currency = robus()->country->currencie->value;
 
-        if ($country_civ->currencie->value > robus()->country->currencie->value) {
+        $user = auth_user();
+
+        $country_civ = Country::find(107);
+        $robus_currency = $user->country->currencie->value;
+
+        if ($country_civ->currencie->value > $user->country->currencie->value) {
             return $amount * $robus_currency;
-        } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
+        } elseif ($country_civ->currencie->value == $user->country->currencie->value) {
             return $amount;
         } else {
             return $amount * $robus_currency;

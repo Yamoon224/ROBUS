@@ -32,7 +32,7 @@ class ReloadCardController extends Controller
     protected $reloadCardService;
     private $authService;
 
-    
+
     public function __construct(
         ReloadCardRepository $reload_cardReposi,
         DeletedService $deletedService,
@@ -50,7 +50,6 @@ class ReloadCardController extends Controller
         $this->notificationOrderCard = $notificationOrderCard;
         $this->reloadCardService = $reloadCardService;
         $this->initializeAppStatus($this->authService);
-
     }
 
     /**
@@ -189,7 +188,7 @@ class ReloadCardController extends Controller
                 $isIvoires = ($request->provider == 14 || $request->provider == 15);
                 $propertyToCheck = $isIvoires ? 'is_ivoires' : 'is_inter_bank';
 
-                if (robus()->is_under_distributer) {
+                if (robus()->is_under_distributer || robus()->is_api) {
                     $valeur_first = $percent_robus->levelDepositIvories->where('is_ivoires', true)->first();
                     $valeur_end = $percent_robus->levelDepositIvories->where('is_ivoires', true)->last();
                     $all_valeurs = $percent_robus->levelDepositIvories->where('is_ivoires', true);
@@ -236,7 +235,7 @@ class ReloadCardController extends Controller
 
                                             $percent_valeur = $amount_user->percent * $request->amount;
 
-                                            if (robus()->is_under_distributer) {
+                                            if (robus()->is_under_distributer || robus()->is_api) {
                                                 $amount_verify = $request->amount;
                                                 $valuer_deposit_com = $amount_user->comission_distributer * $request->amount;
                                                 $valuer_admin_com = $percent_valeur - $valuer_deposit_com;
@@ -250,13 +249,12 @@ class ReloadCardController extends Controller
                                                 $valuer_deposit_com = 0;
                                                 $amountReceved = (float)$request->amount - (float)$percent_valeur;
                                                 $commissionCompanie = $amount_user->percent_companie * $request->amount;
-
                                             }
                                         } else {
 
                                             $percent_valeur = (float)$amount_user->amount + (float)$request->amount;
 
-                                            if (robus()->is_under_distributer) {
+                                            if (robus()->is_under_distributer || robus()->is_api) {
 
                                                 $amount_verify =  (float)$request->amount;
                                                 $valuer_deposit_com = $amount_user->comission_distributer;
@@ -549,19 +547,17 @@ class ReloadCardController extends Controller
 
                 if ($amount_comission->amount === null) {
 
-                    if (robus()->is_under_distributer) {
+                    if (robus()->is_under_distributer || robus()->is_api) {
                         $commission_reload_val_nat_pay = $amount_comission->comission_distributer * $amount_virement;
-                       $receive_valeur =  $amount_virement;
-
+                        $receive_valeur =  $amount_virement;
                     } else {
                         $commission_reload_val_nat_pay = $amount_comission->percent * $amount_virement;
                         $receive_valeur =  $amount_virement -  $commission_reload_val_nat_pay;
-
                     }
                     $commission_transaction_val_nat_pay = $amount_comission->percent * $amount_virement;
                 } else {
 
-                    if (robus()->is_under_distributer) {
+                    if (robus()->is_under_distributer || robus()->is_api) {
                         $commission_reload_val_nat_pay = (float) $amount_comission->comission_distributer;
                         $receive_valeur = (float) $amount_virement;
                     } else {
@@ -601,7 +597,7 @@ class ReloadCardController extends Controller
 
                 if ($amount_comission->amount === null) {
 
-                    if (robus()->is_under_distributer) {
+                    if (robus()->is_under_distributer || robus()->is_api) {
                         $commission_reload_val_nat_pay = $amount_comission->comission_distributer * $amount_virement;
                         $receive_valeur =  $amount_virement;
                     } else {
@@ -611,7 +607,7 @@ class ReloadCardController extends Controller
                     $commission_transaction_val_nat_pay = $amount_comission->percent * $amount_virement;
                 } else {
 
-                    if (robus()->is_under_distributer) {
+                    if (robus()->is_under_distributer || robus()->is_api) {
                         $commission_reload_val_nat_pay = $amount_comission->comission_distributer;
                         $receive_valeur = (float) $amount_virement;
                     } else {

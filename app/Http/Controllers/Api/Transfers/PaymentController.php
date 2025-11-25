@@ -54,7 +54,6 @@ class PaymentController extends Controller
         $this->authService = $authService;
         $this->convertionservice = $convertionservice;
         $this->initializeAppStatus($this->authService);
-
     }
 
     /**
@@ -158,15 +157,21 @@ class PaymentController extends Controller
     public function create_payment(Request $request)
     {
 
+        $userAuth = auth_user();
+
+        if ($userAuth->is_suspended) {
+            return json_message_response(false, "Votre compte est suspendu, contactez le support client !", 333);
+        }
+
         $offers =  Offer::whereId($request->offer)->whereStatus(true)->first();
         $amount_days = $this->validatedamountDays->getCeilingProperty();
-        $valeur_ceiling  =  robus()->silver_ceiling;
+        $valeur_ceiling  =  $userAuth->silver_ceiling;
         $admin_civ = $this->validatedamountDays->adminCiv();
         $percent_robus =  $this->percentRobus->getRobusPercentagePayment();
 
         try {
 
-            if (robus()->country->name_groupe == 'CIV') {
+            if ($userAuth->country->name_groupe == 'CIV') {
 
                 $validationRules = [];
                 $validationMessages = [];
@@ -246,18 +251,22 @@ class PaymentController extends Controller
 
                             $amount_send = $reel_amount;
                             $amount_valeur = $reel_amount + (float) $percent_robus->amount_auther;
+
+                            $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
                         } else {
 
                             $amount_send = $offers->amount;
                             $amount_valeur = $offers->amount + $percent_robus->amount_canal;
+                            $amountReceved = $reel_amount - (float) ($percent_robus->amount_canal);
                         }
+
 
                         if ($this->validatedamountDays->validateAmount($amount_valeur)) {
 
 
                             if ($request->provider != 7) {
 
-                                $walletPayment =  $this->paymentService->createRobusWalletTransactionPayment($amount_send, $request->provider, $percent_robus, $request->number_phone, $offers,  $request->paiementChoix_phone, $request->facture_choix_type, $request->number_decoder, $request->id_invoice, $request->number_contract);
+                                $walletPayment =  $this->paymentService->createRobusWalletTransactionPayment($amount_send, $request->provider, $percent_robus, $request->number_phone, $offers,  $request->paiementChoix_phone, $request->facture_choix_type, $request->number_decoder, $request->id_invoice, $request->number_contract, $amountReceved);
 
                                 if ($walletPayment != null) {
 
@@ -421,8 +430,7 @@ class PaymentController extends Controller
 
                         $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_invoice->amount_auther;
 
-                        $commission_transaction_val_percent_pay =  (float) $reel_amount ;
-
+                        $commission_transaction_val_percent_pay =  (float) $reel_amount;
                     }
 
                     return response()->json([
@@ -467,16 +475,14 @@ class PaymentController extends Controller
 
                         $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount;
 
-                        $commission_transaction_val_percent_pay =  (float) $commission_invoice->amount_auther; 
-
+                        $commission_transaction_val_percent_pay =  (float) $commission_invoice->amount_auther;
                     } else {
 
                         $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->amount_auther;
 
-                        $commission_paiement_invoice_val_nat_receive =   (float) $reel_amount + $commission_invoice->amount_auther ;
+                        $commission_paiement_invoice_val_nat_receive =   (float) $reel_amount + $commission_invoice->amount_auther;
 
                         $commission_transaction_val_percent_pay =   (float) $commission_invoice->amount_auther;
-
                     }
 
                     return response()->json([
@@ -531,7 +537,7 @@ class PaymentController extends Controller
 
                         $commission_reload_inter_val_inter_percent_pay = 0;
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
 
                             $commission_paiement_invoice_canal_val_inter = $this->convertionservice->convertAdminCommissionInvoice($commission_invoice->comission_canal);
 
@@ -564,7 +570,7 @@ class PaymentController extends Controller
 
                         $offer_amount = $offer->whereId($amount_offer)->first();
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
 
                             $valeur_offer =  $offer_amount->amount + $commission_invoice->amount_canal;
 

@@ -6,6 +6,9 @@ use App\Events\AdminNotifEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\InterTransactionSingleCollection;
 use App\Http\Resources\OneXbetSingleCollection;
+use App\Http\Resources\WithTransactionSingleCollection;
+use App\Http\Resources\DjamoTransactionSingleCollection;
+use App\Http\Resources\VirementTransactionSingleCollection;
 use App\Http\Resources\PaymentSingleCollection;
 use App\Http\Resources\PhoneCreditSingleCollection;
 use App\Http\Resources\ReloadCardSingle;
@@ -41,6 +44,11 @@ use App\Models\Wallets\WalletPhoneCredit;
 use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
 use App\Models\Wallets\WalletWave;
+use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletTresortMoney;
+use App\Models\Wallets\WalletVersement;
+use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletXbet;
 use App\Models\WithMerchant;
 use App\Notifications\AdminNotification;
@@ -123,8 +131,6 @@ class UserController extends Controller
     public function dashboard()
     {
 
-
-        // Vérifier l'état de l'application
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
         $userSession = SidUser::findOrFail(robus()->id);
         $is_under = robus()->is_under_distributer;
@@ -174,14 +180,24 @@ class UserController extends Controller
         $walletRemonte = $this->transactionAccount->getUserRemonte(WithMerchant::class, robus()->id);
         $wallet1xbets = $this->transactionAccount->getUserAllTransactions(WalletXbet::class, $wallet_solde);
         $walletWave = $this->transactionAccount->getUserAllTransactions(WalletWave::class, $wallet_solde);
-
+        // New Transactions
+        $walletPush = $this->transactionAccount->getUserAllTransactions(WalletPush::class, $wallet_solde);
+        $walletDjamo = $this->transactionAccount->getUserAllTransactions(WalletDjamo::class, $wallet_solde);
+        $walletTresorMoney = $this->transactionAccount->getUserAllTransactions(WalletTresortMoney::class, $wallet_solde);
+        $walletVirements = $this->transactionAccount->getUserAllTransactions(WalletVersement::class, $wallet_solde);
+        $walletBankSend = $this->transactionAccount->getUserAllTransactions(WalletBankSend::class, $wallet_solde);
 
         $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
             $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
             + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) + $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
             $this->transactionAccount->getWalletSumGainUser(WalletInter::class) +
             $this->transactionAccount->getWalletSumGainUser(WalletXbet::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletWave::class);
+            $this->transactionAccount->getWalletSumGainUser(WalletWave::class) + 
+            $this->transactionAccount->getWalletSumGainUser(WalletPush::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletDjamo::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletTresortMoney::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletVersement::class) +
+            $this->transactionAccount->getWalletSumGainUser(WalletBankSend::class);
 
         $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
@@ -195,6 +211,13 @@ class UserController extends Controller
         $dashboard_data['Achat UV wave'] = WaveSingleCollection::collection($walletWave);
         $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
 
+        // new Transactions
+        $dashboard_data['Push'] = WithTransactionSingleCollection::collection($walletPush);
+        $dashboard_data['Djamo'] = DjamoTransactionSingleCollection::collection($walletDjamo);
+        $dashboard_data['Tresort Money'] = WithTransactionSingleCollection::collection($walletTresorMoney);
+        $dashboard_data['Virements'] = VirementTransactionSingleCollection::collection($walletVirements);
+        $dashboard_data['Bank send'] = WithTransactionSingleCollection::collection($walletBankSend);
+       
         return response()->json([
             'success' => true,
             'historicals' =>  $dashboard_data,
@@ -1112,6 +1135,26 @@ class UserController extends Controller
         ], 200);
     }
 
+     public function historical_integrate()
+    {
+
+        return response()->json([
+            'success' => true,
+            'sum_transaction_days' =>
+            $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletBank::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletDeposit::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletPayment::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(BankCard::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletPhoneCredit::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletTransaction::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletReload::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletInter::class)   +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletXbet::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletWave::class),
+        ], 200);
+    }
+
+
 
     public function historical_distributer_master()
     {
@@ -1169,6 +1212,42 @@ class UserController extends Controller
         ], 200);
     }
 
+      public function historical_distributer_evolution_integrate()
+    {
+
+
+        return response()->json([
+            'success' => true,
+
+            'success_transaction_days' =>   $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletBank::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletDeposit::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPayment::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(BankCard::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPhoneCredit::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletTransaction::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletReload::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletInter::class, 'SUCCESS'),
+
+            'error_transaction_days' =>   $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletBank::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletDeposit::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPayment::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(BankCard::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPhoneCredit::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletTransaction::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletReload::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletInter::class, 'ERROR'),
+
+            'pendding_transaction_days' =>   $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletBank::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletDeposit::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPayment::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(BankCard::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPhoneCredit::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletTransaction::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletReload::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletInter::class, 'PENDING'),
+
+        ], 200);
+    }
 
     public function historical_distributer_evolution_master()
     {
@@ -1302,8 +1381,6 @@ class UserController extends Controller
 
                     $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                    // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
-
                     Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                 } else {
 
@@ -1327,6 +1404,7 @@ class UserController extends Controller
             ]);
         }
     }
+
 
     public function historical_month_distributer()
     {
@@ -1352,6 +1430,34 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletTransaction::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletReload::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletInter::class),
+            'som_commission' =>  $som_commission_month . ' ' . robus()->wallet->currencie->code,
+        ], 200);
+    }
+
+     public function historical_month_integrate()
+    {
+
+        $som_commission_month =
+            $this->transactionAccount->getMonthTransactionGainIntegrate(WalletBank::class) +
+            $this->transactionAccount->getMonthTransactionGainIntegrate(WalletDeposit::class) +
+            $this->transactionAccount->getMonthTransactionGainIntegrate(WalletPayment::class) +
+            $this->transactionAccount->getMonthTransactionGainIntegrate(BankCard::class) +
+            $this->transactionAccount->getMonthTransactionGainIntegrate(WalletPhoneCredit::class) +
+            $this->transactionAccount->getMonthTransactionGainIntegrate(WalletTransaction::class) +
+            $this->transactionAccount->getMonthTransactionGainIntegrate(WalletReload::class) +
+            $this->transactionAccount->getMonthTransactionGainIntegrate(WalletInter::class);
+
+        return response()->json([
+            'success' => true,
+            'sum_transaction_month' =>
+            $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletBank::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletDeposit::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletPayment::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(BankCard::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletPhoneCredit::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletTransaction::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletReload::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletInter::class),
             'som_commission' =>  $som_commission_month . ' ' . robus()->wallet->currencie->code,
         ], 200);
     }
@@ -1411,6 +1517,33 @@ class UserController extends Controller
         ], 200);
     }
 
+
+      public function historical_year_integrate()
+    {
+
+
+        $som_commission_year =
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletBank::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletDeposit::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletPayment::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(BankCard::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletPhoneCredit::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletTransaction::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletReload::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletInter::class);
+
+        return response()->json([
+            'success' => true,
+            'bank_transaction_month' =>    $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletBank::class),
+            'deposit_transaction_month' => $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletDeposit::class),
+            'payment_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletPayment::class),
+            'reload_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletReload::class),
+            'transaction_transaction_month' => $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletTransaction::class),
+            'inter_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletInter::class),
+            'phonecredit_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletPhoneCredit::class),
+            'som_commission' =>  $som_commission_year . ' ' . robus()->wallet->currencie->code,
+        ], 200);
+    }
 
 
 

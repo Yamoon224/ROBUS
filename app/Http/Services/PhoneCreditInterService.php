@@ -86,11 +86,11 @@ class PhoneCreditInterService
             $compagnie = null;
             $sidUserId = null;
         }
-        
+
         if ($sidUserId) {
             $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
         } else {
-            $activeCButtons = []; 
+            $activeCButtons = [];
         }
 
         $walletPhone->update([
@@ -111,7 +111,7 @@ class PhoneCreditInterService
 
         $commission_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
             if (!empty($activeButtons['showRemonterInterButton'])) {
 
@@ -121,7 +121,7 @@ class PhoneCreditInterService
 
                 $admin_valeur = (float) $amount_percent - (float) $cumul_valeurs;
 
-               $admin_convertion =  $this->convertionService->convertAdminCommission($admin_valeur);
+                $admin_convertion =  $this->convertionService->convertAdminCommission($admin_valeur);
 
                 $walletPhone->increment('commissions', $valuer_deposit);
 
@@ -142,7 +142,7 @@ class PhoneCreditInterService
             $this->distributeAdminCommissions($admin_civ, $walletPhone, $admin_valeur_convertion);
         }
 
-        
+
         return true;
     }
 
@@ -179,8 +179,8 @@ class PhoneCreditInterService
                     'sid_user_id' => $adminUser->id,
                     'wallet_inter_id' => $walletPhone->id,
                     'description' => 'Commission administrateur',
-                    'amount_under' =>  robus()->is_under_distributer ? $amountDeposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                    'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $amountDeposit : 0,
+                    'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
                 ]);
             }
         }

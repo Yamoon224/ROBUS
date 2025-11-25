@@ -87,12 +87,6 @@ class Kernel extends HttpKernel
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
 
-        // 'auth.api_client' => [
-        //     'throttle:api',
-        //     \Illuminate\Routing\Middleware\SubstituteBindings::class,
-        //     \App\Http\Middleware\AuthenticateApiIntegrateClient::class,   // Auth API Key / Secret
-        // ],
-
 
     ];
 
@@ -118,5 +112,6 @@ class Kernel extends HttpKernel
          * Middleware pour guard API client (Passport)
          */
         'auth.api_client' => \App\Http\Middleware\AuthenticateApiIntegrateClient::class,
+        'check.suspended' => \App\Http\Middleware\CheckSuspendedUser::class,
     ];
 }

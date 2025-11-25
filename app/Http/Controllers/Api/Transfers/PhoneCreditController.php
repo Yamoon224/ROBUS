@@ -49,7 +49,6 @@ class PhoneCreditController extends Controller
         $this->notificationPhone = $notificationPhone;
         $this->phoneCreditService = $phoneCreditService;
         $this->initializeAppStatus($this->authService);
-
     }
 
     /**
@@ -188,7 +187,7 @@ class PhoneCreditController extends Controller
 
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            if (robus()->is_under_distributer) {
+                            if (robus()->is_under_distributer || robus()->is_api) {
                                 $val_amount_send = $reel_amount;
                                 $amountReceved = $reel_amount;
                             } else {
@@ -351,7 +350,7 @@ class PhoneCreditController extends Controller
                         $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
 
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
@@ -442,7 +441,7 @@ class PhoneCreditController extends Controller
                         $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 

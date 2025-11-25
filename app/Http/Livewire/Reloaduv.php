@@ -115,7 +115,7 @@ class Reloaduv extends Component
 
                 $this->resetField();
                 return  $this->errorWalletAccount();
-            } else if ($wallet_search->sidUser->is_distributer == true || $wallet_search->sidUser->is_under_distributer == true  || $wallet_search->sidUser->is_admin == true  || $wallet_search->sidUser->is_supervisor == true || $wallet_search->sidUser->is_company == true) { {
+            } else if ($wallet_search->sidUser->is_distributer == true || $wallet_search->sidUser->is_under_distributer == true  || $wallet_search->sidUser->is_admin == true  || $wallet_search->sidUser->is_supervisor == true || $wallet_search->sidUser->is_company == true || $wallet_search->sidUser->is_api == true) { {
 
                     $val_amount = $this->relaod_uv_amout_robus;
 
@@ -189,7 +189,7 @@ class Reloaduv extends Component
 
                             $encode = substr(Auth::guard('web')->user()->phone,  -10);
 
-                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                            // Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
                         }
 
                         $msg_title = 'Achat d\'UV';
@@ -210,6 +210,10 @@ class Reloaduv extends Component
                         if ($wallet_search->sidUser->email != null) {
                             Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes'));
                         }
+
+                        $this->resetField();
+                        $this->emit('modal-hide', 'hide');
+                        $this->emit('success', 'Rechargement effectué avec succès ! !');
                     }
                 }
             } else if ($wallet_search->sidUser->is_custumers == true) {
@@ -299,6 +303,10 @@ class Reloaduv extends Component
                     if ($wallet_search->sidUser->email != null) {
                         Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande d\'achat d\'UV de ' . $reload_unders->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . $walletUser->firstname . $walletUser->lastname . ' ' . ' Le ' .  $reload_unders->created_at  . ' Validé avec succes'));
                     }
+
+                    $this->resetField();
+                    $this->emit('modal-hide', 'hide');
+                    $this->emit('success', 'Rechargement effectué avec succès ! !');
                 }
             } else  return  $this->errorWalletAccountDist();
         } else {
@@ -308,6 +316,100 @@ class Reloaduv extends Component
         }
     }
 
+
+    public function addTransactionCommission()
+    {
+
+        $walletUser = Auth::guard('web')->user();
+        $rt = rand(40, 5000) * time();
+        $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        $transactionCode = sprintf("%0.9s", str_shuffle($rt . $tr));
+        $admins = SidUser::where('status', true)->where('is_admin', true)->where('country_id', Auth::guard('web')->user()->country->id)->get();
+
+        try {
+
+            $this->validate([
+                'relaod_uv_amout_robus' => 'required',
+                'account_reload_uv' => 'required',
+            ], [
+                'relaod_uv_amout_robus.required' => 'Votre montant est obligatoire',
+                'account_reload_uv.required' => 'le numero est obligatoire',
+
+            ]);
+
+
+            $wallet_search = Wallet::where('wallet_id',  $this->account_reload_uv)
+                ->whereStatus(true)
+                ->first();
+
+            if ($wallet_search == null  || $wallet_search->sidUser->status == false) {
+
+                $this->resetField();
+                return  $this->errorWalletAccount();
+            } else if ($wallet_search->sidUser->is_distributer == true || $wallet_search->sidUser->is_under_distributer == true  || $wallet_search->sidUser->is_admin == true  || $wallet_search->sidUser->is_supervisor == true || $wallet_search->sidUser->is_company == true || $wallet_search->sidUser->is_custumers == true) { {
+
+                    $val_amount = $this->relaod_uv_amout_robus;
+
+                    if ($val_amount > $walletUser->wallet->amount) {
+
+                        $this->resetField();
+                        $this->emit('modal-hide', 'hide');
+                        $this->emit('success', 'Verifier votre montant ! !');
+                    } else {
+
+                        $wallet = WalletAdmin::first();
+                        $amountBefore = $wallet ? (float) $wallet->amount : 0;
+                        $walletAfter = $wallet ? (float) $wallet->amount  -  (float) $val_amount : 0;
+                        $valeur_receive =  $this->convertAdminCommission($this->relaod_uv_amout_robus, $wallet_search);
+                        $walletAmountSend = Wallet::where('wallet_id',  $this->account_reload_uv)->first();
+                        $amount_solde_drawal = (float)$walletAmountSend->amount +  (float)$valeur_receive;
+                        $walletTransaction = TransactionCommission::create(
+                            [
+                                'pay_amount' => $val_amount,
+                                'sid_user_id' => Auth::guard('web')->user()->id,
+                                'description' => 'Transfert de commission par ' . sabdy()->firstname,
+                                'amount_received'  => $valeur_receive,
+                                'type_transaction' =>  "Transferts",
+                                'status'  => "SUCCESS",
+                                'account_wallet' => $this->account_reload_uv,
+                                "transaction_id" => "Robus_" . $transactionCode,
+                                "operator_transaction_name" => "Robus_" . $transactionCode,
+                                'amount_solde'  => $amount_solde_drawal ?? null,
+                                'amount_solde_after' => $walletAfter ?? null,
+                                'amount_solde_befor' => $amountBefore ?? null,
+                                'is_tranfert' => true,
+                            ]
+                        );
+
+
+                        $wallet->update([
+                            'amount' => DB::raw('amount-'  . $val_amount),
+                        ]);
+
+                        $msg_title = 'Transfert de commission';
+                        $msg = 'Le transfert de commission a été effectué avec succès ';
+                        $wallet_search->sidUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                        $walletUser->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+                        // event(new CreateReloadEvent($walletTransaction));
+                        Notification::send($admins, new AdminNotification('Transaction de commission par ' . ' ' . sabdy()->firstname));
+                        if ($admins->count() > 0) {
+                            app(NotificationServiceBackend::class)->notifyAdmins($admins);
+                        }
+                        if ($wallet_search->sidUser->email != null) {
+                            Mail::to($wallet_search->sidUser->email)->send(new UvSend('Votre demande de transfert de commission de ' . $walletTransaction->amount_received . ' ' . $wallet_search->currencie->code  . ' chez  : '  . sabdy()->firstname . sabdy()->lastname . ' ' . ' Le ' .  $walletTransaction->created_at  . ' Validé avec succes'));
+                        }
+                        $this->resetField();
+                        $this->emit('modal-hide', 'hide');
+                        $this->emit('success', 'Transfert effectué avec succès ! !');
+                    }
+                }
+            } else  return  $this->errorWalletAccountDist();
+        } catch (\Exception $e) {
+            $this->resetField();
+            $this->emit('modal-hide', 'hide');
+            $this->emit('error', 'Une erreur est survenue lors du transfert de commission. Veuillez réessayer.');
+        }
+    }
 
     public function addReloadCommission()
     {
@@ -406,6 +508,7 @@ class Reloaduv extends Component
             $this->emit('error', 'Selectionnez une valeur  !');
         }
     }
+
 
     private function convertAdminCommission($amount, $wallet)
     {

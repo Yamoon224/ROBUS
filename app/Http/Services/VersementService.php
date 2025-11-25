@@ -97,7 +97,7 @@ class VersementService
             'amount_solde' => $amount_solde,
         ]);
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
             $valuer_deposit =  $percent_robus->percent_merchands * $walletPayment->amount;
             $admin_nocomission =  $percent_robus->percent * $walletPayment->amount;
@@ -121,21 +121,20 @@ class VersementService
 
                     $walletPayment->increment('commission_companie', $valuer_companie);
 
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_versement_id' ,$walletPayment->id, $compagnie_amount, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_versement_id', $walletPayment->id, $compagnie_amount, $valuer_deposit);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_versement_id' ,$walletPayment->id, $admin_valeur, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur, $valuer_deposit);
                 }
             } else {
 
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_versement_id' ,$walletPayment->id, $admin_nocomission);
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_nocomission);
             }
         } else {
 
             $admin_valeur =  (float)  $percent_robus->amount_auther;
-            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_versement_id' ,$walletPayment->id, $admin_valeur);
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur);
         }
 
         return true;
     }
-
 }

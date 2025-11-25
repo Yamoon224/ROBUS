@@ -1,4 +1,5 @@
 <!-- Montant reçu -->
+
 <div class="amount-section">
     <div class="amount-label">Ancien Solde</div>
     <div class="amount-befor">
@@ -12,6 +13,9 @@
         </div>
     </div>
 </div>
+
+
+
 
 
 <!-- Solde -->

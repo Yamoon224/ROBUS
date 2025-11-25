@@ -71,7 +71,7 @@ class PushService
             $activeCButtons = [];
         }
 
-        $amount_commission = robus()->is_under_distributer ? $amount  : $amount + ($percent_robus->percent * $amount);
+        $amount_commission = (robus()?->is_under_distributer || robus()?->is_api) ?  $amount  : $amount + ($percent_robus->percent * $amount);
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
         $walletPush->update([
@@ -88,7 +88,7 @@ class PushService
 
         $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
             if (!empty($activeButtons['showRemonterPushButton'])) {
 

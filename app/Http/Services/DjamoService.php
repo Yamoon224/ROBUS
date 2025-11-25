@@ -29,7 +29,7 @@ class DjamoService
     }
 
 
-    public function createRobusWalletTransactionDjamo($amount_valeur, $provider, $percent_robus, $phone , $fullName , $savedImage, $amountReceved)
+    public function createRobusWalletTransactionDjamo($amount_valeur, $provider, $percent_robus, $phone, $fullName, $savedImage, $amountReceved)
     {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;
@@ -43,7 +43,7 @@ class DjamoService
             'amount_solde'  => $amount_solde ?? null,
             'provider_id'  =>  $provider,
             'image'  =>  $savedImage ?? null,
-             'full_name' =>  $fullName ?? null,
+            'full_name' =>  $fullName ?? null,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
             'phone'  =>  robus()->country->indecative . $phone,
             'status'  => "PENDING",
@@ -72,7 +72,7 @@ class DjamoService
             $activeCButtons = [];
         }
 
-        $amount_commission = robus()->is_under_distributer ? $amount  : $amount + ($percent_robus->percent * $amount);
+        $amount_commission = (robus()?->is_under_distributer || robus()?->is_api) ?  $amount  : $amount + ($percent_robus->percent * $amount);
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
         $walletPhone->update([
@@ -89,7 +89,7 @@ class DjamoService
 
         $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
             if (!empty($activeButtons['showRemonterDjamoButton'])) {
 
@@ -105,24 +105,23 @@ class DjamoService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterDjamoCButton'])) {
                     $walletPhone->increment('commission_companie', $valuer_companie);
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_phone_credit_id' ,  $walletPhone->id, $valuer_companie, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_phone_credit_id',  $walletPhone->id, $valuer_companie, $valuer_deposit);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_phone_credit_id' ,  $walletPhone->id, $amount_percent, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_phone_credit_id',  $walletPhone->id, $amount_percent, $valuer_deposit);
                 }
             } else {
 
                 $admin_valeur =  $amount * $percent_robus->percent;
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_phone_credit_id' ,  $walletPhone->id, $admin_valeur);
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_phone_credit_id',  $walletPhone->id, $admin_valeur);
             }
         } else {
 
             $admin_valeur =  $amount * $percent_robus->percent;
 
-            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_phone_credit_id' ,  $walletPhone->id, $admin_valeur);
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_phone_credit_id',  $walletPhone->id, $admin_valeur);
         }
 
 
         return true;
     }
-
 }

@@ -199,7 +199,13 @@ class PercentRobusAuthService
     public function getRobusPercentageVirement()
     {
 
-        return  BankCost::when(robus()->is_under_distributer, function ($query) {
+        $userAuth = auth_user();
+
+        if (!$userAuth) {
+            return null;
+        }
+
+        return  BankCost::when($userAuth->is_under_distributer || $userAuth->is_api, function ($query) {
             return $query->whereId(2);
         }, function ($query) {
             return $query->whereId(3);
@@ -209,14 +215,20 @@ class PercentRobusAuthService
     public function getRobusPercentagePhoneCredit()
     {
 
-        return  PhoneCreditCost::when(robus()->is_under_distributer, function ($query) {
+         $userAuth = auth_user();
+
+        if (!$userAuth) {
+            return null;
+        }
+
+        return  PhoneCreditCost::when($userAuth->is_under_distributer || $userAuth->is_api, function ($query) {
             return $query->whereId(1);
         }, function ($query) {
             return $query->whereId(21);
         })->first();
     }
 
-        public function getRobusPercentageDjamo()
+    public function getRobusPercentageDjamo()
     {
         $countryNameGroup = robus()->country->name_groupe;
 
@@ -308,7 +320,7 @@ class PercentRobusAuthService
 
     public function getRobusPercentagePhoneInter()
     {
-        return  PhoneCreditCost::when(robus()->is_under_distributer, function ($query) {
+        return  PhoneCreditCost::when(robus()->is_under_distributer || robus()->is_api, function ($query) {
             return $query->whereId(2);
         }, function ($query) {
             return $query->whereId(22);

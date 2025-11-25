@@ -31,6 +31,17 @@ class ProvidersService
         return $operatorServices;
     }
 
+     public function operatorIntegrateServices()
+    {
+
+        $operatorServices = OperatorService::getOperatorsWithIntegrateTranactions(integrate()->id);
+        event(new assignementEvent($operatorServices));
+
+        
+        return $operatorServices;
+    }
+
+
 
     public function operatorServiceCommissions()
     {

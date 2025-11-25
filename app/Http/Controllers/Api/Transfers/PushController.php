@@ -185,7 +185,7 @@ class PushController extends Controller
 
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            if (robus()->is_under_distributer) {
+                            if (robus()->is_under_distributer || robus()->is_api) {
                                 $val_amount_send = $reel_amount;
                                 $amountReceved = $reel_amount;
                             } else {
@@ -197,7 +197,7 @@ class PushController extends Controller
 
                             if ($this->validatedamountDays->validateAmount($val_amount_send)) {
 
-                                $walletPush =  $this->pushService->createRobusWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone , $request->full_name_push, $amountReceved);
+                                $walletPush =  $this->pushService->createRobusWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone, $request->full_name_push, $amountReceved);
 
                                 if ($walletPush != null) {
 
@@ -347,7 +347,7 @@ class PushController extends Controller
                         $commission_transaction_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
 
 
                             $commission_amount_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
@@ -434,7 +434,7 @@ class PushController extends Controller
                         $commission_transaction_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
 
                             $commission_amount_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 

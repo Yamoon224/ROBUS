@@ -64,6 +64,20 @@ class OperatorService extends Model
             });
     }
 
+    public static function getOperatorsWithIntegrateTranactions($userId)
+    {
 
-  
+        $operatorCommissionIds = self::where('sid_user_id', $userId)
+            ->pluck('operator_id')
+            ->toArray();
+
+        return Operator::whereIsApi(true)
+            ->whereIn('id', $operatorCommissionIds)
+            ->orderBy("name", 'desc')
+            ->get()
+            ->map(function ($operator) {
+                $operator->isChecked = true;
+                return $operator;
+            });
+    }
 }

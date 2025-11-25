@@ -162,6 +162,23 @@
                     des comptes commissions</button>
             @endif
 
+            @if (Auth::guard('web')->user()->hasPermissionTo('rechargement-commissions'))
+                <button class="user-badge user-badge--distributor w-22 mr-1 mb-1 "
+                    wire:click="$emit('modal-transactionWalletCommission-show' , 'create-transactionWalletCommission-modal')">
+
+                    <div class="btn-icon">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                    </div>
+
+                    <span class="btn-text"> Transfert des commissions</span>
+
+                </button>
+            @endif
+
         </div>
 
         <ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center mt-3"
@@ -182,8 +199,9 @@
                         fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
                         stroke-linejoin="round" class="feather feather-shield w-4 h-4 mr-2">
                         <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                    </svg>Rechargements des comptes commissions</a>
+                    </svg>Rechargements des comptes commissions et transferts</a>
             </li>
+
         </ul>
 
         <div class="tab-content mt-6">
@@ -220,7 +238,7 @@
                         <div id="new-products" class="tiny-slider py-5">
                             <div class="px-5">
                                 <div class="overflow-x-auto">
-                                   @include('components.tableReload')
+                                    @include('components.tableReload')
                                 </div>
                             </div>
                         </div>
@@ -259,6 +277,7 @@
                             <option selected>Type de rechargement</option>
                             <option value="Commission">Commissions</option>
                             <option value="Admin">Compte Admin</option>
+                            <option value="Transferts">Transferts</option>
                         </select>
                     </div>
                     <div class="hidden md:block mx-auto text-slate-500"></div>
@@ -302,6 +321,10 @@
                                                     class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
                                                     Info transaction
                                                 </th>
+                                                <th
+                                                    class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
+                                                    Info beneficiaire
+                                                </th>
 
                                                 <th
                                                     class="border-b-2 dark:border-darkmode-400 text-center whitespace-nowrap">
@@ -320,6 +343,17 @@
                                                                         style="color: white;">
                                                                         <div class="fc-event-title fc-sticky">
                                                                             Commission
+
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            @elseif ($item->type_transaction == 'Transferts')
+                                                                <div
+                                                                    class="px-3 py-2 text-dark amount-after dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                                    <div class="fc-event-title-container"
+                                                                        style="color: white;">
+                                                                        <div class="fc-event-title fc-sticky">
+                                                                            Transfert
 
                                                                         </div>
                                                                     </div>
@@ -405,6 +439,34 @@
                                                                 @include('components.info_admin_treatment')
                                                             </div>
                                                             @include('components.walletBalanceBeforConvertion')
+
+                                                        </td>
+                                                        <td class="w-40">
+                                                            @if ($item->account_wallet != null)
+                                                                <div class="user-name">
+                                                                    {{ $item->account_wallet ?? null }}
+                                                                </div>
+                                                                @include('components.infoUserReload')
+                                                                <div class="amount-section mt-3">
+                                                                    <div class="amount-label">Solde bénéficiaire </div>
+                                                                    <div class="amount-befor">
+                                                                        <div
+                                                                            class="flex items-baseline justify-between">
+                                                                            <span class="amount-received-value">
+                                                                                {{ number_format($item->amount_solde, 2, ',', ' ') ?? '0,00' }}
+                                                                            </span>
+                                                                            <span class="amount-received-currency">
+                                                                                {{ $item->sidUser->wallet->currencie->code ?? 'EUR' }}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            @else
+                                                                <div class="user-name">
+                                                                   Pas un transfert de compte wallet
+                                                                </div>
+                                                            @endif
 
                                                         </td>
 
@@ -496,6 +558,7 @@
 
                 </div>
             </div>
+
         </div>
         <script>
             window.addEventListener('DOMContentLoaded', function() {
@@ -511,6 +574,7 @@
     @include('livewire.commissions.modals.transactions.updateReload')
     @include('livewire.commissions.modals.transactions.addReload')
     @include('livewire.commissions.modals.transactions.addCommission')
+    @include('livewire.commissions.modals.transactions.addTransactionCommission')
 
 </div>
 

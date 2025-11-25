@@ -82,7 +82,7 @@ class WaveService
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
 
             $walletWave->update([

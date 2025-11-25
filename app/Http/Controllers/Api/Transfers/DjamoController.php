@@ -185,7 +185,7 @@ class DjamoController extends Controller
 
                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                            if (robus()->is_under_distributer) {
+                            if (robus()->is_under_distributer || robus()->is_api) {
                                 $val_amount_send = $reel_amount;
                                 $amountReceved = $reel_amount;
                             } else {
@@ -202,7 +202,7 @@ class DjamoController extends Controller
                                 $savedPath = $request->image->storeAs($userFolder, $filename, 'public');
 
 
-                                $walletPush =  $this->djamoService->createRobusWalletTransactionDjamo($reel_amount, $request->provider, $percent_robus, $request->phone, $request->full_name , $savedPath, $amountReceved);
+                                $walletPush =  $this->djamoService->createRobusWalletTransactionDjamo($reel_amount, $request->provider, $percent_robus, $request->phone, $request->full_name, $savedPath, $amountReceved);
 
                                 if ($walletPush != null) {
 
@@ -351,7 +351,7 @@ class DjamoController extends Controller
                         $commission_amount_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
 
 
                             $commission_transaction_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
@@ -437,7 +437,7 @@ class DjamoController extends Controller
                         $commission_amount_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
                     } else {
 
-                        if (robus()->is_under_distributer) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
 
                             $commission_transaction_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 

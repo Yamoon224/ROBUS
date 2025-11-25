@@ -15,6 +15,10 @@
            <div class="user-badge user-badge--compagnie">
                Société
            </div>
+         @elseif ($user && $user->is_api == 1)
+           <div class="user-badge user-badge--compagnie">
+               Integrateur
+           </div>
        @else
            <div class="user-badge user-badge--admin">
                Administrateur

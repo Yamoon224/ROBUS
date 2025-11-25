@@ -23,9 +23,14 @@ class PushHisto extends Component
         
         $walletTransaction =  WalletPush::whereIsWeb(false);
 
-        $walletUser = Auth::guard('web')->user();
+       
+        $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
 
-        if ($walletUser->is_under_distributer) {
+        if ($walletUser->is_under_distributer  || $walletUser->is_api) {
             $walletTransaction->where('wallet_pushes.created_by', $walletUser->id);
         }
 

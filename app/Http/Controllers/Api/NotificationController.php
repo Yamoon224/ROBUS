@@ -50,6 +50,35 @@ class NotificationController extends Controller
         ]);
     }
 
+     public function indexIntegrate()
+    {
+
+        return response()->json([
+            'noread' => integrate()->unreadNotifications()->orderBy('created_at', 'desc')->latest()->get(),
+            'data' => integrate()->notifications()->orderBy('created_at' , 'desc')->latest()->get(),
+            'status' => true,
+        ]);
+    }
+
+    public function notification_integrate_show($id)
+    {
+
+
+        $notification = integrate()->notifications()->where('id', $id)->first();
+
+        if ($notification) {
+            $notification->markAsRead();
+            return response()->json([
+                'success' => true,
+                'message' => 'Marque comme lu.',
+                'data' => $notification
+            ], 200);
+        } else {
+            $message = __('message.is not notiification');
+            return json_message_response($message, 333);
+        }
+    }
+
     public function notification_show($id)
     {
 

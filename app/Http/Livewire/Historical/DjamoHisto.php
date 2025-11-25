@@ -11,21 +11,27 @@ use App\Models\Wallets\WalletDjamo;
 class DjamoHisto extends Component
 {
 
-        use WithPagination;
+    use WithPagination;
     protected $paginationTheme = "bootstrap";
     public $searchHistorical = "";
     public $statusFilter = "";
     public  $startDate = "";
     public  $endDate =  "";
 
-     public function render()
+    public function render()
     {
 
         $walletTransaction =  WalletDjamo::whereIsWeb(false);
 
         $walletUser = Auth::guard('web')->user();
 
-        if ($walletUser->is_under_distributer) {
+        $walletUser = Auth::guard('web')->check()
+            ? Auth::guard('web')->user()
+            : (Auth::guard('integration')->check()
+                ? Auth::guard('integration')->user()
+                : null);
+
+        if ($walletUser->is_under_distributer  || $walletUser->is_api) {
             $walletTransaction->where('wallet_djamos.created_by', $walletUser->id);
         }
 
@@ -86,5 +92,4 @@ class DjamoHisto extends Component
             ]
         );
     }
-
 }

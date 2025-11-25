@@ -53,7 +53,18 @@ class IntegrationController extends Controller
         ]);
     }
 
-      public function browse_commissions()
+    public function prospect_documents()
+    {
+        return view('pages.integrations.browse_documents_public');
+    }
+
+
+    public function prospect_contact()
+    {
+        return view('pages.integrations.contact_us');
+    }
+
+    public function browse_commissions()
     {
         if (propect()) {
             return view('pages.integrations.browse_commissions');
@@ -154,35 +165,35 @@ class IntegrationController extends Controller
 
             $integratedClient = IntegrationClient::where('sid_user_id', $userId)->first();
 
-            if(!$integratedClient){
-                return back()
-                ->with('color', 'danger')
-                ->with('status', 'Client introuvable')
-                ->withInput();
-            }
-
-            if($integratedClient->is_active) {
-                return back()
-                    ->with('color', 'warning')
-                    ->with('status', 'Vos documents ont déjà été validés et ne peuvent plus être modifiés.')
-                    ->withInput();
-            }
-
-            if($integratedClient->deleted_at) {
+            if (!$integratedClient) {
                 return back()
                     ->with('color', 'danger')
                     ->with('status', 'Client introuvable')
                     ->withInput();
             }
 
-            if($integratedClient->terms_accepted == false) {
+            if ($integratedClient->is_active) {
+                return back()
+                    ->with('color', 'warning')
+                    ->with('status', 'Vos documents ont déjà été validés et ne peuvent plus être modifiés.')
+                    ->withInput();
+            }
+
+            if ($integratedClient->deleted_at) {
+                return back()
+                    ->with('color', 'danger')
+                    ->with('status', 'Client introuvable')
+                    ->withInput();
+            }
+
+            if ($integratedClient->terms_accepted == false) {
                 return back()
                     ->with('color', 'danger')
                     ->with('status', 'Vous devez accepter les conditions générales avant de soumettre des documents.')
                     ->withInput();
             }
 
-            if($integratedClient->front_document && $integratedClient->piece_document && $integratedClient->juridict_form) {
+            if ($integratedClient->front_document && $integratedClient->piece_document && $integratedClient->juridict_form) {
                 return back()
                     ->with('color', 'warning')
                     ->with('status', 'Vous avez déjà soumis des documents. Veuillez contacter le support pour toute modification.')
@@ -202,7 +213,6 @@ class IntegrationController extends Controller
             return redirect()->route('propects.identifications')
                 ->with('color', 'success')
                 ->with('status', 'Documents téléchargés avec succès.');
-
         } catch (\Exception $exception) {
 
             return back()

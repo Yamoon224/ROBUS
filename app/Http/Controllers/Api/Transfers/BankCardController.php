@@ -294,7 +294,7 @@ class BankCardController extends Controller
 
             // if (in_array($request->provider, [1, 3, 4, 5, 6])) {
 
-            if (robus()->is_under_distributer) {
+            if (robus()->is_under_distributer || robus()->is_api) {
 
                 $validator = Validator::make(
 

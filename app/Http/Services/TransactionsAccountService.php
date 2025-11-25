@@ -482,6 +482,17 @@ class TransactionsAccountService
         return $account_valeur;
     }
 
+        public function getWalletTransactionDaysAccountGainIntegrate($wallet)
+    {
+
+        $account_valeur = $wallet::whereDate('created_at', Carbon::now())
+            ->where('created_by', integrate()->id)
+            ->whereStatus('SUCCESS')
+            ->count();
+
+        return $account_valeur;
+    }
+
     public function getWalletTransactionDaysAccountStatusUser($wallet, $status)
     {
 
@@ -492,6 +503,18 @@ class TransactionsAccountService
 
         return $account_valeur;
     }
+
+      public function getWalletTransactionDaysAccountStatusIntegrate($wallet, $status)
+    {
+
+        $account_valeur = $wallet::whereDate('created_at', Carbon::now())
+            ->where('created_by', integrate()->id)
+            ->whereStatus($status)
+            ->count();
+
+        return $account_valeur;
+    }
+
 
 
 
@@ -533,11 +556,23 @@ class TransactionsAccountService
         }
 
         return $totalAmount;
-        // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
-        // $amounts = $walletModel::whereStatus('SUCCESS')->whereMonth('created_at', now()->month)->pluck('commissions');
-        // // Calculer la somme des amounts
-        // $totalAmounts = $amounts->sum();
-        // return $totalAmounts;
+    }
+
+       public function getMonthTransactionGainIntegrate($walletModel)
+    {
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', integrate()->wallet->id)
+            // ->whereMonth('created_at', now()->month)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
     }
 
     public function getYearTransactionGainUser($walletModel)
@@ -557,13 +592,25 @@ class TransactionsAccountService
         }
 
         return $totalAmount;
-        // Récupérer toutes les amounts des banques avec le statut 'SUCCESS'
-        // $amounts = $walletModel::whereStatus('SUCCESS')
-        //     ->whereYear('created_at', $year)
-        //     ->pluck('commissions');
-        // // Calculer la somme des amounts
-        // $totalAmounts = $amounts->sum();
-        // return $totalAmounts;
+    }
+
+      public function getYearTransactionGainIntegrate($walletModel)
+    {
+
+        $year = Carbon::now()->year;
+
+        $totalAmount = 0;
+
+        $amount = $walletModel::where('wallet_id', integrate()->wallet->id)
+            ->whereYear('created_at', $year)
+            ->whereStatus('SUCCESS')
+            ->sum('commissions');
+
+        if ($amount !== null) {
+            $totalAmount += $amount;
+        }
+
+        return $totalAmount;
     }
 
 
@@ -578,6 +625,16 @@ class TransactionsAccountService
         return $account_valeur;
     }
 
+     public function getWalletTransactionMonthAccountStatusIntegrate($wallet)
+    {
+
+        $account_valeur = $wallet::whereMonth('created_at', now()->month)
+            ->where('created_by', integrate()->id)
+            ->count();
+
+        return $account_valeur;
+    }
+
     public function getYearTransactionSingleGainUser($walletModel)
     {
 
@@ -587,6 +644,17 @@ class TransactionsAccountService
 
         return $totalAmount;
     }
+
+       public function getYearTransactionSingleGainIntegrate($walletModel)
+    {
+
+        $totalAmount = $walletModel::where('created_by', integrate()->id)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->sum('amount');
+
+        return $totalAmount;
+    }
+
 
 
     public function getUnderDistributorsUser()

@@ -41,7 +41,8 @@ class PaymentService
         $facture_choix_type,
         $number_decoder,
         $id_invoice,
-        $number_contract
+        $number_contract,
+        $amount_received
     ) {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;
@@ -58,6 +59,7 @@ class PaymentService
             'name' => $name ?? null,
             'created_by' => robus()->id,
             'provider_id'  =>    $provider,
+            'amount_received' => $amount_received ?? null,
             'number_phone' => $number_phone ?? null,
             'costs_amount' => $percent_robus->amount_auther ?? null,
             'offer_id'  =>  $offers->id ?? null,
@@ -140,7 +142,7 @@ class PaymentService
             'amount_solde' => $amount_solde,
         ]);
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
             $valuer_deposit =  $percent_robus->comission_auther;
             $admin_nocomission =  $percent_robus->amount_auther;
@@ -215,7 +217,7 @@ class PaymentService
 
         $admin_nocomission =  $percent_robus->amount_auther;
 
-        if (robus()->is_under_distributer) {
+        if (robus()->is_under_distributer || robus()->is_api) {
 
             $valuer_deposit =  $percent_robus->comission_canal;
 

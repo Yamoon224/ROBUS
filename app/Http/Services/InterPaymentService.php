@@ -119,7 +119,7 @@ class InterPaymentService
         $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             $valeur_amount_admin  = $percent_robus->percent_under_distributer * $amount;
             $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
@@ -193,7 +193,7 @@ class InterPaymentService
 
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
             $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
@@ -250,7 +250,7 @@ class InterPaymentService
         $valuer_deposit = $percent_robus->percent_deposit_under_distributer *  $amount;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             // Percent admin 
             $valeur_amount_admin  = $percent_robus->percent_under_distributer * $amount;
@@ -378,7 +378,7 @@ class InterPaymentService
 
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             // Percent admin 
             $valeur_amount_admin  = $percent_robus->percent * $amount;
@@ -628,7 +628,7 @@ class InterPaymentService
             'num_piece' => $num_piece_custumers ?? null,
             'name_benef' => $name_sender ?? null,
             'validated_date' => $date_piece ?? null,
-            'costs_amount' => robus()->is_under_distributer ? ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
             'provider_type' => 1,
             'status' => 'PENDING',
             'country_id' => $country_robus->id,
@@ -679,7 +679,7 @@ class InterPaymentService
             'num_piece' => $num_piece_custumers ?? null,
             'name_benef' => $name_sender ?? null,
             'validated_date' => $date_piece ?? null,
-            'costs_amount' => robus()->is_under_distributer ? ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
             'provider_type' => 1,
             'status' => 'PENDING',
             'country_id' => $country_robus->id,
@@ -798,7 +798,6 @@ class InterPaymentService
             InvoiceInter::create([
                 'title' => "Transfers d'argent",
                 'transaction_inter_id' => $transaction->id,
-                // 'company_id' => robus()->company_id,
                 'description' => $walletInter->description,
                 'is_send' => true,
                 'status' => $walletInter->status,
@@ -816,7 +815,6 @@ class InterPaymentService
 
         $wallet_search = Wallet::where('wallet_id', $wallet)
             ->where('country_id', $country_robus->id)
-            //   ->where('status', true)
             ->first();
 
         $rt = rand(40, 5000) * time();
@@ -952,7 +950,7 @@ class InterPaymentService
             'number_compte' => strtoupper($number_compte),
             'created_by' => robus()->id,
             'provider_id' => $provider_payment,
-            'costs_amount' => robus()->is_under_distributer ? ($percent_robus->percent_under_distributer * $val_amount) : ($percent_robus->percent * $val_amount),
+            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_under_distributer * $val_amount) : ($percent_robus->percent * $val_amount),
             'provider_type' => 1,
             'type_transaction' => 'Depot',
             'type_received' => 'Transfert',
@@ -1002,7 +1000,7 @@ class InterPaymentService
         $valuer_deposit = $percent_robus->percent_deposit_under_distributer *  $valeur_amount_admin;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             $valuer_admin = $percent_robus->percent_admin_under_distributer * $valeur_amount_admin;
 
@@ -1123,8 +1121,8 @@ class InterPaymentService
             'wallet_inter_id' => $walletTransactionId,
             'description' => 'Commission administrateur',
             'status'  => "SUCCESS",
-            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+            'amount_under' =>  (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
+            'description_underdistributer' =>  (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
         ]);
 
         $admin_single->wallet->increment('amount', $amount);
@@ -1152,7 +1150,7 @@ class InterPaymentService
         $valuer_deposit = $percent_robus->percent_deposit *  $valeur_amount_admin;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             // 50 %
             $valuer_admin = $percent_robus->percent_admin * $valeur_amount_admin;
@@ -1240,7 +1238,7 @@ class InterPaymentService
         $valuer_deposit = $percent_robus->percent_deposit *  $valeur_amount_admin;
 
         // Commissions Inters 
-        if (robus()->is_under_distributer == 1) {
+        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
             // 50 %
             $valuer_admin = $percent_robus->percent_admin * $valeur_amount_admin;

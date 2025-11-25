@@ -17,17 +17,12 @@
             <!-- Menu central (optionnel) -->
             <ul class="navbar-nav mx-auto d-none d-lg-flex">
                 <li class="nav-item mx-2">
-                    <a class="nav-link text-dark fw-medium hover-primary" href="#features">
-                        <i class="fas fa-rocket me-1"></i>Fonctionnalités
+                    <a class="nav-link text-dark fw-medium hover-primary" href="{{ route('web.prospect_documents') }}">
+                        <i class="fas fa-rocket me-1"></i>Documentations
                     </a>
                 </li>
                 <li class="nav-item mx-2">
-                    <a class="nav-link text-dark fw-medium hover-primary" href="#pricing">
-                        <i class="fas fa-tags me-1"></i>Tarifs
-                    </a>
-                </li>
-                <li class="nav-item mx-2">
-                    <a class="nav-link text-dark fw-medium hover-primary" href="#contact">
+                    <a class="nav-link text-dark fw-medium hover-primary" href="{{ route('web.prospect_contact') }}">
                         <i class="fas fa-headset me-1"></i>Support
                     </a>
                 </li>

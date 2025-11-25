@@ -73,7 +73,6 @@ class CreateRobusWalletWithDrawalService
             'transaction_cost_id' => 1,
             'created_by' => robus()->id,
             'provider_id'  => $provider,
-            // 'costs_amount' => $percent_robus->percent * $request->amount,
             'num_wallet' => strtoupper($compte_number_robus),
             'choose_type_transaction' => 1,
             'type_transaction' => 'Retrait',
@@ -84,7 +83,7 @@ class CreateRobusWalletWithDrawalService
         ]);
     }
 
-    public function updateDrawalTransaction($verify_code, $wallet_user_search, $valuer_with_drawal , $percent_robus , $admin_civ)
+    public function updateDrawalTransaction($verify_code, $wallet_user_search, $valuer_with_drawal, $percent_robus, $admin_civ)
     {
 
         $rt = rand(40, 500000) * time();
@@ -102,11 +101,11 @@ class CreateRobusWalletWithDrawalService
             $compagnie = null;
             $sidUserId = null;
         }
-        
+
         if ($sidUserId) {
             $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
         } else {
-            $activeCButtons = []; 
+            $activeCButtons = [];
         }
 
         $walletAmountSend = Wallet::where('wallet_id',  $wallet_user_search->wallet_id)->first();
@@ -118,12 +117,12 @@ class CreateRobusWalletWithDrawalService
         $percent_drawal = $percent_robus->percent_custum_drawal * $verify_code->amount;
 
         $commissionAdmin_drawal =  $percent_robus->percent_custum_drawal_admin * $percent_drawal;
-        
+
         $amount_payment_drawal = $verify_code->amount + $percent_drawal;
 
         $amount_payment_receved = $verify_code->amount - $percent_drawal;
 
-        $percent_under =  $percent_robus->percent_with_drawal  *  $verify_code->amount; 
+        $percent_under =  $percent_robus->percent_with_drawal  *  $verify_code->amount;
 
         $commission_valeur = $percent_robus->percent * $verify_code->amount;
 
@@ -187,7 +186,7 @@ class CreateRobusWalletWithDrawalService
                 $valuer_admimCom = (float)$percent_drawal - (float)$valuer_companie;
 
                 $verify_code->increment('commission_companie', $valuer_companie);
-               
+
                 $valeur_percent_admin = (float)$commissionAdmin_drawal;
 
                 $admin_valeur_convertion = $this->convertAdminCommission($valuer_admimCom);
@@ -197,11 +196,10 @@ class CreateRobusWalletWithDrawalService
                     $valeur_single = ($admin_valeur_convertion) / $nmbre_admin;
                     foreach ($admin_civ as $user) {
                         $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-                        $this->processAdminCommissionAmountSDistributer($user->id , $valuer_with_drawal, $verify_code);
+                        $this->processAdminCommissionAmountSDistributer($user->id, $valuer_with_drawal, $verify_code);
                         $this->processAdminCommission($user->id, $verify_code->id, $valeur_single);
                     }
                 }
-
             } else {
 
                 $valeur_percent_admin = (float)$percent_drawal;
@@ -209,28 +207,26 @@ class CreateRobusWalletWithDrawalService
                 if ($admin_civ->count() > 0) {
                     $nmbre_admin = $admin_civ->count();
                     foreach ($admin_civ as $user) {
-                         $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-                        $this->processAdminCommissionAmountSDistributer($user->id , $valuer_with_drawal, $verify_code);
+                        $valeur_single = $admin_valeur_convertion / $nmbre_admin;
+                        $this->processAdminCommissionAmountSDistributer($user->id, $valuer_with_drawal, $verify_code);
                         $this->processAdminCommission($user->id, $verify_code->id, $valeur_single);
                     }
                 }
             }
-            
-
         } else {
 
-                $valeur_percent_admin = (float)$percent_drawal;
+            $valeur_percent_admin = (float)$percent_drawal;
 
-                $admin_valeur_convertion = $this->convertAdminCommission($valeur_percent_admin);
+            $admin_valeur_convertion = $this->convertAdminCommission($valeur_percent_admin);
 
-                if ($admin_civ->count() > 0) {
-                    $nmbre_admin = $admin_civ->count();
-                    $valeur_single = $admin_valeur_convertion / $nmbre_admin;
+            if ($admin_civ->count() > 0) {
+                $nmbre_admin = $admin_civ->count();
+                $valeur_single = $admin_valeur_convertion / $nmbre_admin;
 
-                    foreach ($admin_civ as $user) {
-                        $this->processAdminCommission($user->id, $verify_code->id, $valeur_single);
-                    }
+                foreach ($admin_civ as $user) {
+                    $this->processAdminCommission($user->id, $verify_code->id, $valeur_single);
                 }
+            }
         }
 
         return true;
@@ -270,8 +266,8 @@ class CreateRobusWalletWithDrawalService
             'bank_card_id' => null,
             'description' => 'Retrait d\'argent',
             'status'  => "SUCCESS",
-            'amount_under' =>  robus()->is_under_distributer ? $valeur_single : 0,
-            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+            'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $valeur_single : 0,
+            'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
         ]);
 
         $admin_single->wallet->update([
@@ -281,7 +277,6 @@ class CreateRobusWalletWithDrawalService
             'sid_user_relod' => robus()->id,
             'amount' => DB::raw('amount-' . $valeur_single),
         ]);
-     
     }
 
     private function convertAdminCommission($amount)

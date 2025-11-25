@@ -123,8 +123,8 @@ class TransactionAdminService
             'sid_user_id' => $admin_single->id,
             'wallet_transaction_id' => $walletTransactionId,
             'description' => 'Commission administrateur',
-            'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-            'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+            'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
+            'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
         ]);
 
         $admin_single->wallet->increment('amount', $amount);
@@ -441,8 +441,8 @@ class TransactionAdminService
                     'wallet_reload_id' => null,
                     'bank_card_id' => null,
                     'description' => 'Commission administrateur',
-                    'amount_under' =>  robus()->is_under_distributer ? $valuer_deposit : 0,
-                    'description_underdistributer' =>  robus()->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                    'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
+                    'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
                 ]);
 
                 $admin_single->wallet->update([

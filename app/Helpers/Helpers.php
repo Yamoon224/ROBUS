@@ -178,6 +178,27 @@ function propect()
 }
 
 
+function integrate()
+{
+    return Auth::guard('api_client')->user();
+}
+
+if (!function_exists('auth_user')) {
+
+    function auth_user()
+    {
+        if (Auth::guard('api')->check()) {
+            return Auth::guard('api')->user();
+        }
+
+        if (Auth::guard('api_client')->check()) {
+            return Auth::guard('api_client')->user();
+        }
+
+        return null;
+    }
+}
+
 
 function sabdy()
 {
@@ -447,10 +468,33 @@ function comzone()
     return Auth::guard('web')->user();
 }
 
-function robus()
-{
-    return Auth::guard('api')->user();
+// function robus()
+// {
+//     return Auth::guard('api')->user();
+// }
+
+if (!function_exists('robus')) {
+
+    function robus()
+    {
+
+        $guards = ['api', 'api_client'];
+
+        foreach ($guards as $guard) {
+            try {
+                if (Auth::guard($guard)->check()) {
+                    return Auth::guard($guard)->user();
+                }
+            } catch (\Throwable $e) {
+                // Log en cas d’erreur de guard manquant ou cassé
+                // \Log::warning("Guard '$guard' non valide : " . $e->getMessage());
+            }
+        }
+
+        return null;
+    }
 }
+
 
 function getOpenRobus()
 {
@@ -458,7 +502,7 @@ function getOpenRobus()
 }
 function json_message_response($status, $message, $status_code)
 {
-    return response()->json(['success' => $status, 'message' => $message], $status_code);
+    return response()->json(['success' => $status, 'message' => $message , 'status_code' => $status_code], $status_code);
 }
 
 function json_custom_response($response, $status_code = 200)

@@ -268,8 +268,6 @@ class NotificationSendService
                 'success' => true,
                 'data' => [
                     'id'      => $walletOrderCard->id,
-                    // 'phone' => $walletOrderCard->wallet->sidUser->phone,
-                    // 'email' => $walletOrderCard->wallet->sidUser->email,
                     'status' => $walletOrderCard->status,
                 ],
                 'message' => ('Votre commande de carte a bien été prise en compte.')
@@ -648,15 +646,15 @@ class NotificationSendService
     public function sendNotificationVirement($walletBank)
     {
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
+        $userAuth = auth_user();
+        if ($userAuth->is_custumers) {
+            if ($userAuth->country->code == "CI") {
 
-                $message = 'Votre transaction de ' . $walletBank->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                $message = 'Votre transaction de ' . $walletBank->amount .  $userAuth->wallet->currencie->code . ' ' .   'par '
                     . $walletBank->provider->name  .  ' le '
                     . $walletBank->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
-
+                $encode = substr($userAuth->phone,  -10);
 
                 http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
@@ -671,7 +669,7 @@ class NotificationSendService
 
 
         $admins = $this->getAdminCIVProperty();
-        $notifs =  robus()->unreadNotifications;
+        $notifs =  $userAuth->unreadNotifications;
         event(new CreateWalletBankEvent($walletBank));
         Notification::send($admins, new AdminNotification('Demande de virement de ' . ' ' . $walletBank->wallet->sidUser->firstname));
         if ($admins->count() > 0) {
@@ -697,11 +695,7 @@ class NotificationSendService
             'success' => true,
             'data' => [
                 'id'      => $walletBank->id,
-                // 'provider' => $walletBank->provider->name,
                 'amount' => $walletBank->amount,
-                // 'phone' => $walletBank->phone,
-                // 'firstname' => $walletBank->firstname,
-                // 'lastname' => $walletBank->lastname,
                 'status' => $walletBank->status,
             ],
             'message' => ('Votre transaction a bien été prise en compte.')

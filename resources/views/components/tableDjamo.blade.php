@@ -55,9 +55,15 @@
                               <div class="flex flex-col items-center justify-center gap-2 p-2 bg-gray-50 mt-3">
                                   <i class="fas fa-qrcode text-gray-400 text-xl"></i>
 
+
                                   @if ($item->image)
-                                      <img src="{{ asset('storage/' . $item->image) }}" alt="QR Code Djamo"
-                                          class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                      @if ($item->is_livewire === true)
+                                          <img src="{{ asset('storage/' . $item->image) }}" alt="QR Code Djamo"
+                                              class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                      @else
+                                          <img src="{{ $item->image }}" alt="QR Code Djamo"
+                                              class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
+                                      @endif
                                   @else
                                       <span class="text-gray-400 italic">Aucune image
                                           disponible</span>
@@ -66,9 +72,9 @@
                           </td>
 
                           <td class="w-40">
-                             <div class="mb-3">
-                               @include('components.infoValidtedUser')
-                           </div>
+                              <div class="mb-3">
+                                  @include('components.infoValidtedUser')
+                              </div>
 
                               @include('components.info_status')
 
@@ -84,13 +90,13 @@
 
                                       </div>
                                   @elseif ($item->status == 'SUCCESS')
-                                      @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                          <a target="_bank"
-                                              href="{{ route('djamo_transactions.invoice.print', $item->id) }}"
-                                              class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
-                                              Facture
-                                          </a>
-                                      @endif
+                                      {{-- @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande')) --}}
+                                      <a target="_bank"
+                                          href="{{ route('djamo_transactions.invoice.print', $item->id) }}"
+                                          class="btn btn-primary mr-1 mb-2 btn-sm" title="Facture">
+                                          Facture
+                                      </a>
+                                      {{-- @endif --}}
                                   @else
                                       <div class="flex items-center justify-center text-dark">
                                           <div class="flex items-center justify-center text-pending">
