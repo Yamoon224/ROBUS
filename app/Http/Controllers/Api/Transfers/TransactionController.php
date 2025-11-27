@@ -276,13 +276,13 @@ class TransactionController extends Controller
                                         return  json_message_response(false, "Error de creation de transfert du montant!", 333);
                                     }
                                 } else {
-                                    return json_message_response(false, "Verifié votre solde !!", 333);
+                                    return json_message_response(false, "Verifié votre solde !!", 341);
                                 }
                             } else {
-                                return json_message_response(false, "Votre montant journalier est atteint !!", 333);
+                                return json_message_response(false, "Votre montant journalier est atteint !!", 350);
                             }
                         } else {
-                            return  json_message_response(false, "Niveau de pourcentage introuvable !", 333);
+                            return  json_message_response(false, "Niveau de pourcentage introuvable !", 403);
                         }
                     } else {
 

@@ -5,7 +5,7 @@
 @section('content')
 
     <section class="contact-info-section py-5 mt-8">
-        <div class="container container-large my-4">
+        <div class="auto-container my-4">
             <!-- Header Section -->
             <div class="text-center mb-5 mt-6" style="padding-top: 2rem;">
                 <!-- Badge d'en-tête -->
@@ -18,12 +18,12 @@
                 <!-- Titre principal avec animation -->
                 <h1 class="fw-bold text-dark mb-3 display-5"
                     style="
-                background: linear-gradient(135deg, #a30071 0%, #8a0060 100%);
-                -webkit-background-clip: text;
-                -webkit-text-fill-color: transparent;
-                background-clip: text;
-                line-height: 1.2;
-            ">
+                        background: linear-gradient(135deg, #a30071 0%, #8a0060 100%);
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        background-clip: text;
+                        line-height: 1.2;
+                    ">
                     Intégrez les paiements avec l'API <span class="text-dark">ROBUS</span>
                 </h1>
 
@@ -56,14 +56,11 @@
                                             <i class="fas fa-code fa-2x"></i>
                                         </div>
                                         <h3 class="fw-bold mb-2 display-6">API Robus</h3>
-                                        {{-- <p class="mb-0 opacity-90 small">Solution de paiement complète pour développeurs</p> --}}
                                     </div>
                                     <h3 class="fw-bold mb-4 display-8">Pourquoi choisir ROBUS ?</h3>
 
                                     <div class="flex-grow-1">
                                         <!-- Features List -->
-
-
                                         <div class="feature-item d-flex mb-4">
                                             <div class="feature-icon me-3">
                                                 <i class="fas fa-shield-alt fa-lg"></i>

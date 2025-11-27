@@ -157,7 +157,7 @@ class ProviderController extends Controller
         try {
 
 
-            if (robus()->is_under_distributer == true) {
+            if (robus()->is_under_distributer == true || robus()->is_api == true) {
 
                 if (!empty($activeButtons['showCreditButton'])) {
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
@@ -240,6 +240,15 @@ class ProviderController extends Controller
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
+                    // New transaction
+                    $dashboard_data['Push'] = ProviderSingleCollection::collection($walletTransaction);
+                    $dashboard_data['Djamo'] = ProviderSingleCollection::collection($walletDjamo);
+                    $dashboard_data['Tresort Money'] = ProviderSingleCollection::collection($walletTresort);
+                    $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
+                    $dashboard_data['Versement'] = ProviderSingleCollection::collection($walletVersement);
+                    $dashboard_data['Xbets'] = ProviderSingleCollection::collection($walletXbet);
+
+
                     // $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);
                     $dashboard_data['Transfert international'] = [
                         "Transfert" => ProviderSingleCollection::collection($walletInter),

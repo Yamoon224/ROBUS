@@ -134,6 +134,7 @@ class UserController extends Controller
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
         $userSession = SidUser::findOrFail(robus()->id);
         $is_under = robus()->is_under_distributer;
+        $is_api_integrate = robus()->is_api;
 
         if ($is_under) {
 
@@ -221,7 +222,7 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'historicals' =>  $dashboard_data,
-            'som_commission' => $is_under ? $som_commissions . ' ' . robus()->wallet->currencie->code  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
+            'som_commission' => $is_under || $is_api_integrate ? $som_commissions . ' ' . robus()->wallet->currencie->code  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
         ], 200);
     }
 

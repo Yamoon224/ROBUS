@@ -126,6 +126,11 @@
                      <i class="fas fa-user-plus"></i>
                      Panel compte Api
                  </a>
+                 <a href="{{ route('web.prospect_documents') }}"
+                     class="inline-flex items-center btn-virement justify-center gap-2 mt-6 px-6 py-3 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                     <i class="fas fa-rocket me-1"></i>
+                     Documentations
+                 </a>
                  <div
                      style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px; padding: 1rem; margin-top: 1rem;">
                      <div style="display: flex; align-items: start; gap: 0.5rem;">
@@ -134,7 +139,7 @@
                              <strong style="color: #856404; font-size: 0.9rem;">Sécurité</strong>
                              <p style="color: #856404; font-size: 0.8rem; margin: 0.25rem 0 0 0;">
                                  Ne partagez jamais vos identifiants de connexion.
-                                 PayFlow ne vous demandera jamais votre mot de passe par email ou téléphone.
+                                 ROBUS ne vous demandera jamais votre mot de passe par email ou téléphone.
                              </p>
                          </div>
                      </div>
@@ -160,7 +165,7 @@
                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                      </svg>
-                     Prochaine Ouverture
+                     Prochaine Ouverture pour les sous distributeurs
                  </h3>
 
                  <div class="grid grid-cols-2 gap-3">

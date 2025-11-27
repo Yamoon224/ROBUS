@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Http\Services\AuthenticationService;
 use App\Repositories\RegisterRepository;
 use App\Models\Sid\SidUser;
+use App\Mail\NewMessage;
+use App\Mail\NewMessageSend;
+use App\Http\Controllers\Admin\MailController;
 use App\Models\Custumers\Country;
 use App\Models\Wallets\Wallet;
 use Illuminate\Http\Request;
 use App\Models\IntegrationClient;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\Encoding\Encoding;
-use App\Models\Custumers\City;
-use PhpParser\Node\Stmt\TryCatch;
 
 class IntegrationController extends Controller
 {
@@ -422,6 +423,87 @@ class IntegrationController extends Controller
             return redirect()->route('admin.login_integration')
                 ->with('color', 'success')
                 ->with('status', 'Compte créé avec succès! Un commercial vous contactera sous peu.');
+        } catch (\Exception $exception) {
+
+            return back()
+                ->withErrors($validator)
+                ->with('color', 'danger')
+                ->with('status', 'Erreur de la demande')
+                ->withInput();
+        }
+    }
+
+    public function prospect_sends(Request $request)
+    {
+        try {
+
+
+            $validator = Validator::make(
+
+                $request->all(),
+                [
+                    'name_firm' => 'required',
+                    'email' => 'required|email',
+                    'phone' => 'required',
+                    'sector_of_activity' => 'required',
+                    'description' => 'required',
+                ],
+                [
+
+                    'name_firm.required' => 'Le nom de l\'entreprise est obligatoire',
+                    'email.required' => 'L\'email est obligatoire',
+                    'phone.required' => 'Le numéro de téléphone est obligatoire',
+                    'sector_of_activity' => 'Le secteur d\'activité doit etre obligatoire',
+                    'description' => 'La description doit etre obligatoire',
+                ]
+            );
+
+            if ($validator->fails()) {
+                return back()
+                    ->withErrors($validator)
+                    ->with('color', 'danger')
+                    ->with('status', 'Veuillez corriger les erreurs')
+                    ->withInput();
+            }
+
+
+
+
+
+            $rt = rand(40, 5000) * time();
+            $tr = str_shuffle('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+            $walletTicket = sprintf("%0.6s", str_shuffle($rt . $tr));
+
+
+            try {
+
+
+                Mail::to(env('MAIL_USERNAME'))  
+                    ->send(new NewMessage(
+                        ticket: $walletTicket,
+                        name_firm: $request->name_firm,
+                        email: $request->email,
+                        phone: $request->phone,
+                        sector: $request->sector_of_activity,
+                        description: $request->description
+                    ));
+
+             Mail::to($request->email)  
+                    ->send(new NewMessageSend(
+                        ticket: $walletTicket,
+                        name_firm: $request->name_firm,
+                        email: $request->email,
+                        phone: $request->phone,
+                        sector: $request->sector_of_activity,
+                        description: $request->description
+                    ));
+            } catch (\Throwable $th) {
+                // Continuer même si le QR code échoue
+            }
+
+            return back()
+                ->with('color', 'success')
+                ->with('status', 'Votre message a été envoyer avec succès! Un commercial vous contactera sous peu.');
         } catch (\Exception $exception) {
 
             return back()

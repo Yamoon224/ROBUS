@@ -220,4 +220,13 @@ class MailController extends Controller
             throw $th;
         }
     }
+
+    public function emailSend($dt)
+    {
+        try {
+            Mail::to($dt->email)->send(new modifyPassword($dt));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
 }

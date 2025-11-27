@@ -5,7 +5,7 @@
 @section('content')
 
     <section class="py-5 mt-8">
-        <div class="container my-4">
+        <div class="auto-container my-4">
             <!-- Header -->
             <header class="mb-4">
                 <div
@@ -21,142 +21,19 @@
             </header>
 
             <div class="row g-3 g-md-4 justify-content-center">
-                <!-- Sidebar Navigation - Mobile Collapsible -->
-                <div class="col-12 d-lg-none mb-3">
-                    <div class="card shadow-sm">
-                        <div class="card-header bg-white py-3">
-                            <button class="btn btn-outline-primary w-100 d-flex justify-content-between align-items-center"
-                                type="button" data-bs-toggle="collapse" data-bs-target="#mobileSidebar">
-                                <span>Informations de contact</span>
-                                <i class="bi bi-chevron-down"></i>
-                            </button>
-                        </div>
-                        <div class="collapse" id="mobileSidebar">
-                            <div class="card-body">
-                                <h5 class="card-title fw-semibold mb-3">Nos canaux</h5>
-                                <ul class="nav nav-pills flex-column gap-2">
-                                    <li class="nav-item">
-                                        <a href="#support-technique" class="nav-link active d-flex align-items-center"
-                                            data-bs-toggle="collapse" data-bs-target="#mobileSidebar">
-                                            <i class="bi bi-headset me-2"></i>
-                                            Support technique
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#contact-commercial" class="nav-link text-dark d-flex align-items-center"
-                                            data-bs-toggle="collapse" data-bs-target="#mobileSidebar">
-                                            <i class="bi bi-person-badge me-2"></i>
-                                            Contact commercial
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#urgences" class="nav-link text-dark d-flex align-items-center"
-                                            data-bs-toggle="collapse" data-bs-target="#mobileSidebar">
-                                            <i class="bi bi-exclamation-triangle me-2"></i>
-                                            Urgences
-                                        </a>
-                                    </li>
-                                </ul>
-
-                                <hr class="my-4">
-
-                                <h5 class="card-title fw-semibold mb-3">Horaires d'ouverture</h5>
-                                <ul class="list-unstyled small">
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted">Lundi - Vendredi</span>
-                                        <span class="fw-semibold">8h00 - 18h00</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted">Samedi</span>
-                                        <span class="fw-semibold">9h00 - 13h00</span>
-                                    </li>
-                                    <li class="d-flex justify-content-between mb-2">
-                                        <span class="text-muted">Dimanche</span>
-                                        <span class="fw-semibold text-danger">Fermé</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Sidebar Navigation - Desktop -->
-                <div class="col-lg-3 d-lg-block">
-                    <nav class="card shadow-sm sticky-top" style="top: 20px;">
-                        <div class="card-body">
-                            <h5 class="card-title fw-semibold mb-3">Nos canaux de contact</h5>
-                            <ul class="nav nav-pills flex-column gap-2">
-                                <li class="nav-item">
-                                    <a href="#support-technique" class="nav-link active d-flex align-items-center">
-                                        <i class="bi bi-headset me-2"></i>
-                                        Support technique
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#contact-commercial" class="nav-link text-dark d-flex align-items-center">
-                                        <i class="bi bi-person-badge me-2"></i>
-                                        Contact commercial
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#urgences" class="nav-link text-dark d-flex align-items-center">
-                                        <i class="bi bi-exclamation-triangle me-2"></i>
-                                        Urgences
-                                    </a>
-                                </li>
-                            </ul>
-
-                            <hr class="my-4">
-
-                            <h5 class="card-title fw-semibold mb-3">Horaires d'ouverture</h5>
-                            <ul class="list-unstyled small">
-                                <li class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted">Lundi - Vendredi</span>
-                                    <span class="fw-semibold">8h00 - 18h00</span>
-                                </li>
-                                <li class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted">Samedi</span>
-                                    <span class="fw-semibold">9h00 - 13h00</span>
-                                </li>
-                                <li class="d-flex justify-content-between mb-2">
-                                    <span class="text-muted">Dimanche</span>
-                                    <span class="fw-semibold text-danger">Fermé</span>
-                                </li>
-                            </ul>
-
-                            <hr class="my-4">
-
-                            <h5 class="card-title fw-semibold mb-3">Contact rapide</h5>
-                            <ul class="list-unstyled small">
-                                <li class="d-flex align-items-center text-primary mb-2">
-                                    <i class="bi bi-telephone-fill me-2"></i>
-                                    <span>+225 27 22 25 21 47</span>
-                                </li>
-                                <li class="d-flex align-items-center text-primary mb-2">
-                                    <i class="bi bi-whatsapp me-2"></i>
-                                    <span>WhatsApp Business</span>
-                                </li>
-                                <li class="d-flex align-items-center text-primary mb-2">
-                                    <i class="bi bi-envelope-fill me-2"></i>
-                                    <span>support@robus.ci</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </nav>
-                </div>
-
-                <!-- Main Content -->
-                <div class="col-12 col-lg-9">
-                    <!-- Support Technique Section -->
+                <div class="col-lg-6 d-lg-block">
                     <section id="support-technique" class="card border-0 shadow-lg mb-5">
                         <div class="card-header bg-gradient-primary text-white border-0 py-4">
                             <div class="d-flex align-items-center">
-                                <div class="bg-white bg-opacity-20 rounded-circle p-3 me-3">
+                                <div class=" rounded-circle p-3 me-3">
                                     <i class="bi bi-headset fs-4"></i>
                                 </div>
                                 <div>
                                     <h2 class="h4 fw-bold mb-1">Support technique</h2>
-                                    <p class="mb-0 text-white opacity-90 small">Notre équipe d'experts API à votre service</p>
+                                    <p class="mb-0 text-white opacity-90 small">Notre équipe d'experts API à votre service
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -167,9 +44,10 @@
                                 <div class="d-flex">
                                     <i class="bi bi-info-circle-fill text-info fs-4 me-3"></i>
                                     <div class="flex-grow-1">
-                                        <h5 class="alert-heading fw-semibold mb-2">Comment bénéficier du meilleur support ?</h5>
+                                        <h5 class="alert-heading fw-semibold mb-2">Comment bénéficier du meilleur support ?
+                                        </h5>
                                         <p class="mb-3">
-                                            Pour une résolution rapide de vos problèmes techniques, veuillez nous fournir 
+                                            Pour une résolution rapide de vos problèmes techniques, veuillez nous fournir
                                             les informations suivantes dans votre demande :
                                         </p>
                                         <ul class="mb-0">
@@ -181,7 +59,6 @@
                                     </div>
                                 </div>
                             </div>
-
                             <!-- Contact Methods -->
                             <div class="row g-4 mt-3">
                                 <!-- Email Support -->
@@ -195,16 +72,16 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="text-muted mb-3">
-                                                Pour les problèmes complexes nécessitant des explications détaillées ou 
+                                                Pour les problèmes complexes nécessitant des explications détaillées ou
                                                 l'envoi de fichiers.
                                             </p>
                                             <div class="d-flex align-items-center mb-3">
                                                 <i class="bi bi-clock text-primary me-2"></i>
                                                 <span class="small">Réponse sous 24h ouvrées</span>
                                             </div>
-                                            <a href="mailto:support@robus.ci" class="btn btn-primary w-100">
+                                            <a href="mailto:info@robus.africa" class="btn btn-primary w-100">
                                                 <i class="bi bi-envelope me-2"></i>
-                                                support@robus.ci
+                                                info@robus.africa
                                             </a>
                                         </div>
                                     </div>
@@ -229,7 +106,7 @@
                                             </div>
                                             <a href="tel:+2252722252147" class="btn btn-success w-100">
                                                 <i class="bi bi-telephone me-2"></i>
-                                                +225 27 22 25 21 47
+                                                +225 07 11 74 58 81
                                             </a>
                                         </div>
                                     </div>
@@ -246,13 +123,15 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="text-muted mb-3">
-                                                Pour des échanges rapides, partage de screenshots et résolution en temps réel.
+                                                Pour des échanges rapides, partage de screenshots et résolution en temps
+                                                réel.
                                             </p>
                                             <div class="d-flex align-items-center mb-3">
                                                 <i class="bi bi-check-circle text-info me-2"></i>
                                                 <span class="small">Réponse rapide garantie</span>
                                             </div>
-                                            <a href="https://wa.me/2252722252147" target="_blank" class="btn btn-info text-white w-100">
+                                            <a href="https://wa.me/2250711745881" target="_blank"
+                                                class="btn btn-info text-white w-100">
                                                 <i class="bi bi-whatsapp me-2"></i>
                                                 Démarrer une conversation
                                             </a>
@@ -285,268 +164,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- FAQ Section -->
-                            <div class="mt-5">
-                                <h5 class="fw-semibold mb-4 d-flex align-items-center">
-                                    <i class="bi bi-question-circle-fill text-primary me-2"></i>
-                                    Questions fréquentes
-                                </h5>
-
-                                <div class="accordion" id="faqAccordion">
-                                    <div class="accordion-item border-0 mb-3">
-                                        <h2 class="accordion-header" id="faqHeading1">
-                                            <button class="accordion-button collapsed rounded-3" type="button" 
-                                                data-bs-toggle="collapse" data-bs-target="#faqCollapse1">
-                                                <i class="bi bi-clock-history text-primary me-2"></i>
-                                                Quel est le délai moyen de réponse ?
-                                            </button>
-                                        </h2>
-                                        <div id="faqCollapse1" class="accordion-collapse collapse" 
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body bg-light rounded-bottom-3">
-                                                <p class="mb-0">
-                                                    Nous nous engageons à répondre à toutes les demandes dans un délai maximum de 24 heures ouvrées. 
-                                                    Pour les problèmes urgents (incidents critiques), nous fournissons une réponse initiale dans l'heure.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="accordion-item border-0 mb-3">
-                                        <h2 class="accordion-header" id="faqHeading2">
-                                            <button class="accordion-button collapsed rounded-3" type="button" 
-                                                data-bs-toggle="collapse" data-bs-target="#faqCollapse2">
-                                                <i class="bi bi-shield-check text-primary me-2"></i>
-                                                Mes données sont-elles sécurisées ?
-                                            </button>
-                                        </h2>
-                                        <div id="faqCollapse2" class="accordion-collapse collapse" 
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body bg-light rounded-bottom-3">
-                                                <p class="mb-0">
-                                                    Absolument. Toutes nos communications sont chiffrées et nous ne partageons 
-                                                    jamais vos informations avec des tiers. Vos clés API privées ne doivent 
-                                                    jamais être partagées par email - utilisez notre portail sécurisé pour 
-                                                    toute transmission d'informations sensibles.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="accordion-item border-0 mb-3">
-                                        <h2 class="accordion-header" id="faqHeading3">
-                                            <button class="accordion-button collapsed rounded-3" type="button" 
-                                                data-bs-toggle="collapse" data-bs-target="#faqCollapse3">
-                                                <i class="bi bi-translate text-primary me-2"></i>
-                                                Proposez-vous un support en plusieurs langues ?
-                                            </button>
-                                        </h2>
-                                        <div id="faqCollapse3" class="accordion-collapse collapse" 
-                                            data-bs-parent="#faqAccordion">
-                                            <div class="accordion-body bg-light rounded-bottom-3">
-                                                <p class="mb-0">
-                                                    Oui, notre équipe de support parle couramment français et anglais. 
-                                                    Nous pouvons également traiter les demandes en espagnol avec un léger 
-                                                    délai supplémentaire pour certaines requêtes complexes.
-                                                </p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Contact Commercial Section -->
-                    <section id="contact-commercial" class="card border-0 shadow-lg mb-5">
-                        <div class="card-header bg-gradient-success text-white border-0 py-4">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-white bg-opacity-20 rounded-circle p-3 me-3">
-                                    <i class="bi bi-person-badge fs-4"></i>
-                                </div>
-                                <div>
-                                    <h2 class="h4 fw-bold mb-1">Contact commercial</h2>
-                                    <p class="mb-0 text-white opacity-90 small">Développez votre activité avec nos solutions</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-body p-4">
-                            <!-- Description -->
-                            <div class="alert alert-success border-start border-success border-4 bg-light mb-4">
-                                <div class="d-flex">
-                                    <i class="bi bi-info-circle-fill text-success fs-4 me-3"></i>
-                                    <div class="flex-grow-1">
-                                        <h5 class="alert-heading fw-semibold mb-2">Un partenariat sur mesure</h5>
-                                        <p class="mb-0">
-                                            Notre équipe commerciale est à votre disposition pour étudier vos besoins spécifiques, 
-                                            vous proposer des solutions adaptées et négocier des conditions avantageuses pour 
-                                            votre entreprise.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Contact Form -->
-                            <div class="row g-4">
-                                <div class="col-12">
-                                    <h5 class="fw-semibold mb-3 d-flex align-items-center">
-                                        <i class="bi bi-send-fill text-success me-2"></i>
-                                        Demande d'information commerciale
-                                    </h5>
-                                </div>
-
-                                <div class="col-12 col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="companyName" placeholder="Nom de votre entreprise">
-                                        <label for="companyName">Nom de l'entreprise *</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 col-md-6">
-                                    <div class="form-floating">
-                                        <input type="text" class="form-control" id="contactPerson" placeholder="Personne à contacter">
-                                        <label for="contactPerson">Personne à contacter *</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 col-md-6">
-                                    <div class="form-floating">
-                                        <input type="email" class="form-control" id="commercialEmail" placeholder="Adresse email">
-                                        <label for="commercialEmail">Adresse email *</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 col-md-6">
-                                    <div class="form-floating">
-                                        <input type="tel" class="form-control" id="commercialPhone" placeholder="Numéro de téléphone">
-                                        <label for="commercialPhone">Numéro de téléphone</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <select class="form-select" id="businessType">
-                                            <option selected>Sélectionnez votre secteur d'activité</option>
-                                            <option value="fintech">Fintech / Services financiers</option>
-                                            <option value="ecommerce">E-commerce</option>
-                                            <option value="telecom">Télécommunications</option>
-                                            <option value="logistics">Logistique & Transport</option>
-                                            <option value="other">Autre</option>
-                                        </select>
-                                        <label for="businessType">Secteur d'activité *</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="form-floating">
-                                        <textarea class="form-control" placeholder="Décrivez votre projet" id="projectDescription" style="height: 120px"></textarea>
-                                        <label for="projectDescription">Description de votre projet *</label>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="newsletterConsent">
-                                        <label class="form-check-label small text-muted" for="newsletterConsent">
-                                            Je souhaite recevoir la newsletter Robus avec les dernières actualités et offres
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <div class="col-12">
-                                    <button class="btn btn-success btn-lg px-4">
-                                        <i class="bi bi-send me-2"></i>
-                                        Envoyer ma demande
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Additional Contact Info -->
-                            <div class="row g-4 mt-5">
-                                <div class="col-12">
-                                    <h5 class="fw-semibold mb-3 d-flex align-items-center">
-                                        <i class="bi bi-geo-alt-fill text-success me-2"></i>
-                                        Rencontrons-nous
-                                    </h5>
-                                </div>
-
-                                <div class="col-12 col-md-6">
-                                    <div class="card border-success h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-start mb-3">
-                                                <i class="bi bi-building text-success fs-5 me-3 mt-1"></i>
-                                                <div>
-                                                    <h6 class="fw-semibold mb-1">Siège social</h6>
-                                                    <p class="text-muted mb-0 small">
-                                                        Abidjan, Plateau<br>
-                                                        Avenue Chardy, Immeuble CCIA<br>
-                                                        01 BP 1234 Abidjan 01
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <a href="#" class="btn btn-outline-success btn-sm w-100">
-                                                <i class="bi bi-map me-1"></i>
-                                                Voir sur la carte
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="col-12 col-md-6">
-                                    <div class="card border-success h-100">
-                                        <div class="card-body">
-                                            <div class="d-flex align-items-start mb-3">
-                                                <i class="bi bi-calendar-check text-success fs-5 me-3 mt-1"></i>
-                                                <div>
-                                                    <h6 class="fw-semibold mb-1">Prendre rendez-vous</h6>
-                                                    <p class="text-muted mb-0 small">
-                                                        Réservez un créneau avec notre équipe commerciale 
-                                                        pour une démonstration personnalisée.
-                                                    </p>
-                                                </div>
-                                            </div>
-                                            <a href="#" class="btn btn-outline-success btn-sm w-100">
-                                                <i class="bi bi-calendar-plus me-1"></i>
-                                                Planifier un rendez-vous
-                                            </a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-
-                    <!-- Urgences Section -->
-                    <section id="urgences" class="card border-0 shadow-lg mb-5">
-                        <div class="card-header bg-gradient-danger text-white border-0 py-4">
-                            <div class="d-flex align-items-center">
-                                <div class="bg-white bg-opacity-20 rounded-circle p-3 me-3">
-                                    <i class="bi bi-exclamation-triangle fs-4"></i>
-                                </div>
-                                <div>
-                                    <h2 class="h4 fw-bold mb-1">Service d'urgences</h2>
-                                    <p class="mb-0 text-white opacity-90 small">Pour les incidents critiques affectant votre production</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="card-body p-4">
-                            <!-- Warning Alert -->
-                            <div class="alert alert-danger border-start border-danger border-4 bg-light mb-4">
-                                <div class="d-flex">
-                                    <i class="bi bi-exclamation-triangle-fill text-danger fs-4 me-3"></i>
-                                    <div class="flex-grow-1">
-                                        <h5 class="alert-heading fw-semibold mb-2">Utilisation réservée aux urgences critiques</h5>
-                                        <p class="mb-0">
-                                            Ce service est exclusivement réservé aux incidents bloquant votre activité en production. 
-                                            Pour les problèmes non urgents, utilisez les canaux de support standard.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-
                             <!-- Emergency Contacts -->
                             <div class="row g-4">
                                 <div class="col-12 col-md-6">
@@ -559,7 +176,7 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="text-muted mb-3">
-                                                Pour les incidents critiques affectant votre production (API inaccessible, 
+                                                Pour les incidents critiques affectant votre production (API inaccessible,
                                                 transactions bloquées, etc.).
                                             </p>
                                             <div class="d-flex align-items-center mb-3">
@@ -568,7 +185,7 @@
                                             </div>
                                             <a href="tel:+2250700000000" class="btn btn-danger w-100">
                                                 <i class="bi bi-telephone me-2"></i>
-                                                +225 07 00 00 00 00
+                                                +225 07 11 74 58 81
                                             </a>
                                         </div>
                                     </div>
@@ -584,98 +201,349 @@
                                         </div>
                                         <div class="card-body">
                                             <p class="text-muted mb-3">
-                                                Pour signaler des vulnérabilités de sécurité, fuites de données 
+                                                Pour signaler des vulnérabilités de sécurité, fuites de données
                                                 ou activités suspectes.
                                             </p>
                                             <div class="d-flex align-items-center mb-3">
                                                 <i class="bi bi-envelope-check text-warning me-2"></i>
                                                 <span class="small">Réponse immédiate</span>
                                             </div>
-                                            <a href="mailto:security@robus.ci" class="btn btn-warning w-100">
+                                            <a href="mailto:info@robus.africa" class="btn btn-warning w-100">
                                                 <i class="bi bi-envelope me-2"></i>
-                                                security@robus.ci
+                                                info@robus.africa
                                             </a>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Emergency Protocol -->
+                            <!-- FAQ Section -->
                             <div class="mt-5">
-                                <h5 class="fw-semibold mb-3 d-flex align-items-center">
-                                    <i class="bi bi-list-check text-danger me-2"></i>
-                                    Protocole d'urgence
+                                <h5 class="fw-semibold mb-4 d-flex align-items-center">
+                                    <i class="bi bi-question-circle-fill text-primary me-2"></i>
+                                    Questions fréquentes
                                 </h5>
 
-                                <div class="row g-3">
-                                    <div class="col-12 col-md-6 col-lg-3">
-                                        <div class="card border-danger h-100">
-                                            <div class="card-body text-center p-3">
-                                                <div class="bg-danger bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
-                                                    <i class="bi bi-1-circle-fill text-danger fs-4"></i>
-                                                </div>
-                                                <h6 class="fw-semibold mb-2">Identifier l'urgence</h6>
-                                                <p class="text-muted small mb-0">Vérifiez que l'incident affecte votre production</p>
+                                <div class="accordion" id="faqAccordion">
+                                    <div class="accordion-item border-0 mb-3">
+                                        <h2 class="accordion-header" id="faqHeading1">
+                                            <button class="accordion-button collapsed rounded-3" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#faqCollapse1">
+                                                <i class="bi bi-clock-history text-primary me-2"></i>
+                                                Quel est le délai moyen de réponse ?
+                                            </button>
+                                        </h2>
+                                        <div id="faqCollapse1" class="accordion-collapse collapse"
+                                            data-bs-parent="#faqAccordion">
+                                            <div class="accordion-body bg-light rounded-bottom-3">
+                                                <p class="mb-0">
+                                                    Nous nous engageons à répondre à toutes les demandes dans un délai
+                                                    maximum de 24 heures ouvrées.
+                                                    Pour les problèmes urgents (incidents critiques), nous fournissons une
+                                                    réponse initiale dans l'heure.
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-12 col-md-6 col-lg-3">
-                                        <div class="card border-danger h-100">
-                                            <div class="card-body text-center p-3">
-                                                <div class="bg-danger bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
-                                                    <i class="bi bi-2-circle-fill text-danger fs-4"></i>
-                                                </div>
-                                                <h6 class="fw-semibold mb-2">Collecter les informations</h6>
-                                                <p class="text-muted small mb-0">Rassemblez logs, codes d'erreur et preuves</p>
+                                    <div class="accordion-item border-0 mb-3">
+                                        <h2 class="accordion-header" id="faqHeading2">
+                                            <button class="accordion-button collapsed rounded-3" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#faqCollapse2">
+                                                <i class="bi bi-shield-check text-primary me-2"></i>
+                                                Mes données sont-elles sécurisées ?
+                                            </button>
+                                        </h2>
+                                        <div id="faqCollapse2" class="accordion-collapse collapse"
+                                            data-bs-parent="#faqAccordion">
+                                            <div class="accordion-body bg-light rounded-bottom-3">
+                                                <p class="mb-0">
+                                                    Absolument. Toutes nos communications sont chiffrées et nous ne
+                                                    partageons
+                                                    jamais vos informations avec des tiers. Vos clés API privées ne doivent
+                                                    jamais être partagées par email - utilisez notre portail sécurisé pour
+                                                    toute transmission d'informations sensibles.
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div class="col-12 col-md-6 col-lg-3">
-                                        <div class="card border-danger h-100">
-                                            <div class="card-body text-center p-3">
-                                                <div class="bg-danger bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
-                                                    <i class="bi bi-3-circle-fill text-danger fs-4"></i>
-                                                </div>
-                                                <h6 class="fw-semibold mb-2">Contacter l'urgence</h6>
-                                                <p class="text-muted small mb-0">Utilisez les numéros dédiés aux urgences</p>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-12 col-md-6 col-lg-3">
-                                        <div class="card border-danger h-100">
-                                            <div class="card-body text-center p-3">
-                                                <div class="bg-danger bg-opacity-10 rounded-circle p-3 mx-auto mb-3" style="width: 60px; height: 60px;">
-                                                    <i class="bi bi-4-circle-fill text-danger fs-4"></i>
-                                                </div>
-                                                <h6 class="fw-semibold mb-2">Suivre les instructions</h6>
-                                                <p class="text-muted small mb-0">Notre équipe vous guide vers la résolution</p>
+                                    <div class="accordion-item border-0 mb-3">
+                                        <h2 class="accordion-header" id="faqHeading3">
+                                            <button class="accordion-button collapsed rounded-3" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#faqCollapse3">
+                                                <i class="bi bi-translate text-primary me-2"></i>
+                                                Proposez-vous un support en plusieurs langues ?
+                                            </button>
+                                        </h2>
+                                        <div id="faqCollapse3" class="accordion-collapse collapse"
+                                            data-bs-parent="#faqAccordion">
+                                            <div class="accordion-body bg-light rounded-bottom-3">
+                                                <p class="mb-0">
+                                                    Oui, notre équipe de support parle couramment français et anglais.
+                                                    Nous pouvons également traiter les demandes en espagnol avec un léger
+                                                    délai supplémentaire pour certaines requêtes complexes.
+                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Emergency Checklist -->
-                            <div class="mt-4">
-                                <div class="alert alert-light border d-flex align-items-start">
-                                    <i class="bi bi-lightbulb-fill text-warning fs-4 me-3 mt-1"></i>
-                                    <div>
-                                        <strong class="text-dark">Checklist avant d'appeler :</strong>
-                                        <ul class="mb-0 mt-2">
-                                            <li class="text-muted">Vérifiez votre connexion Internet</li>
-                                            <li class="text-muted">Testez l'endpoint avec différents paramètres</li>
-                                            <li class="text-muted">Vérifiez vos clés API et leur validité</li>
-                                            <li class="text-muted">Consultez le statut de nos services sur status.robus.ci</li>
-                                        </ul>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Main Content -->
+                <div class="col-12 col-lg-6">
+                    <!-- Contact Commercial Section -->
+                    <section id="contact-commercial" class="card border-0 shadow-lg mb-5">
+                        <div class="card-header bg-gradient-success text-white border-0 py-4">
+                            <div class="d-flex align-items-center">
+                                <div class=" rounded-circle p-3 me-3">
+                                    <i class="bi bi-person-badge fs-4"></i>
+                                </div>
+                                <div>
+                                    <h2 class="h4 fw-bold mb-1">Contact commercial</h2>
+                                    <p class="mb-0 text-white opacity-90 small">Développez votre activité avec nos
+                                        solutions</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-body p-4">
+                            <!-- Description -->
+                            <div class="alert alert-success border-start border-success border-4 bg-light mb-4">
+                                <div class="d-flex">
+                                    <i class="bi bi-info-circle-fill text-success fs-4 me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <h5 class="alert-heading fw-semibold mb-2">Un partenariat sur mesure</h5>
+                                        <p class="mb-0">
+                                            Notre équipe commerciale est à votre disposition pour étudier vos besoins
+                                            spécifiques,
+                                            vous proposer des solutions adaptées et négocier des conditions avantageuses
+                                            pour
+                                            votre entreprise.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Contact Form -->
+                            <div class="row g-4">
+                                <div class="col-12">
+                                    <h5 class="fw-semibold mb-3 d-flex align-items-center">
+                                        <i class="bi bi-send-fill text-success me-2"></i>
+                                        Demande d'information commerciale
+                                    </h5>
+                                </div>
+
+                                <form method="POST" action="{{ route('web.prospect_store.sends') }}" method="post"
+                                    enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="row g-4">
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-floating">
+                                                <input type="text" name="name_firm" maxlength="80"
+                                                    class="form-control border border-2 border-light rounded-3 shadow-sm @error('name_firm') is-invalid @enderror"
+                                                    value="{{ old('name_firm') }}" id="name_firm"
+                                                    placeholder="Nom de votre entreprise" required>
+                                                <label for="name_firm" class="fw-medium text-muted">
+                                                    <i class="fas fa-building me-2 text-primary"></i>
+                                                    Nom entreprise <span class="text-danger">*</span>
+                                                </label>
+                                                @error('name_firm')
+                                                    <div class="invalid-feedback d-block">
+                                                        <strong>{{ $message }}</strong>
+                                                    </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-floating">
+                                                <input type="text" name="phone" maxlength="80"
+                                                    class="form-control border border-2 border-light rounded-3 shadow-sm @error('phone') is-invalid @enderror"
+                                                    value="{{ old('phone') }}" id="phone"
+                                                    placeholder="Nom de votre entreprise" required>
+                                                <label for="phone" class="fw-medium text-muted">
+                                                    <i class="bi bi-phone me-2 text-primary"></i>
+                                                    Téléphone <span class="text-danger">*</span>
+                                                </label>
+                                                @error('phone')
+                                                    <div class="invalid-feedback d-block">
+                                                        <strong>{{ $message }}</strong>
+                                                    </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-floating">
+                                                <input type="email" name="email" maxlength="80"
+                                                    class="form-control border border-2 border-light rounded-3 shadow-sm @error('email') is-invalid @enderror"
+                                                    id="email" placeholder="votre@email.com"
+                                                    value="{{ old('email') }}" required>
+                                                <label for="email" class="fw-medium text-muted">
+                                                    <i class="fas fa-envelope me-2 text-primary"></i>
+                                                    Email <span class="text-danger">*</span>
+                                                </label>
+                                                @error('email')
+                                                    <div class="invalid-feedback d-block">
+                                                        <strong>{{ $message }}</strong>
+                                                    </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+
+                                        <div class="col-12 col-md-6">
+                                            <div class="form-floating">
+                                                <select required name="sector_of_activity"
+                                                    class="form-select border border-2 border-light rounded-3 shadow-sm @error('sector_of_activity') is-invalid @enderror">
+                                                    <option disabled selected>Sélectionnez votre secteur d'activité
+                                                    </option>
+                                                    @php
+                                                        $sectors = [
+                                                            'ecommerce' => 'Commerce en ligne (E-commerce)',
+                                                            'retail' => 'Commerce de détail',
+                                                            'services' => 'Services aux entreprises',
+                                                            'digital' => 'Services Digitaux & Tech',
+                                                            'health' => 'Santé & Bien-être',
+                                                            'food' => 'Alimentation & Restauration',
+                                                            'education' => 'Éducation & Formation',
+                                                            'tourism' => 'Tourisme & Voyage',
+                                                            'real_estate' => 'Immobilier',
+                                                            'finance' => 'Services Financiers',
+                                                            'transport' => 'Transport & Logistique',
+                                                            'manufacturing' => 'Industrie & Production',
+                                                            'agriculture' => 'Agriculture',
+                                                            'art_culture' => 'Art & Culture',
+                                                            'other' => 'Autre secteur',
+                                                        ];
+                                                    @endphp
+                                                    @foreach ($sectors as $value => $label)
+                                                        <option value="{{ $value }}"
+                                                            {{ old('sector_of_activity') == $value ? 'selected' : '' }}>
+                                                            {{ $label }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                                <label for="sector_of_activity" class="fw-medium text-muted">
+                                                    <i class="fas fa-industry me-2 text-primary"></i>
+                                                    Secteur d'activité <span class="text-danger">*</span>
+                                                </label>
+                                                @error('sector_of_activity')
+                                                    <div class="invalid-feedback d-block">
+                                                        <strong>{{ $message }}</strong>
+                                                    </div>
+                                                @enderror
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12">
+                                            <div>
+                                                <label for="description">Description de votre projet <span class="text-danger">*</span></label>
+
+                                                <textarea class="form-control mt-3" name="description" placeholder="Décrivez votre préoccupation" cols="15"
+                                                    rows="10"></textarea>
+                                            </div>
+                                        </div>
+
+
+
+                                    </div>
+
+                                    <div class="col-12 mt-3">
+                                        <button class="btn btn-success btn-lg px-4">
+                                            <i class="bi bi-send me-2"></i>
+                                            Envoyer ma demande
+                                        </button>
+                                    </div>
+
+                                </form>
+
+                            </div>
+
+                            <!-- Additional Contact Info -->
+                            <div class="row g-4 mt-5">
+
+                                <!-- Emergency Protocol -->
+                                <div class="mt-5">
+                                    <h5 class="fw-semibold mb-3 d-flex align-items-center">
+                                        <i class="bi bi-list-check text-danger me-2"></i>
+                                        Protocole d'urgence
+                                    </h5>
+
+                                    <div class="row g-3">
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="card border-danger h-100">
+                                                <div class="card-body text-center p-3">
+                                                    <div class="bg-danger bg-opacity-10 rounded-circle p-3 mx-auto mb-3"
+                                                        style="width: 60px; height: 60px;">
+                                                        <i class="bi bi-1-circle-fill text-white fs-4"></i>
+                                                    </div>
+                                                    <h6 class="fw-semibold mb-2">Identifier l'urgence</h6>
+                                                    <p class="text-muted small mb-0">Vérifiez que l'incident affecte votre
+                                                        production</p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="card border-danger h-100">
+                                                <div class="card-body text-center p-3">
+                                                    <div class="bg-danger bg-opacity-10 rounded-circle p-3 mx-auto mb-3"
+                                                        style="width: 60px; height: 60px;">
+                                                        <i class="bi bi-2-circle-fill text-white fs-4"></i>
+                                                    </div>
+                                                    <h6 class="fw-semibold mb-2">Contacter l'urgence</h6>
+                                                    <p class="text-muted small mb-0">Utilisez les numéros dédiés aux
+                                                        urgences
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-12 col-md-6 col-lg-4">
+                                            <div class="card border-danger h-100">
+                                                <div class="card-body text-center p-3">
+                                                    <div class="bg-danger bg-opacity-10 rounded-circle p-3 mx-auto mb-3"
+                                                        style="width: 60px; height: 60px;">
+                                                        <i class="bi bi-3-circle-fill text-white fs-4"></i>
+                                                    </div>
+                                                    <h6 class="fw-semibold mb-2">Suivre les instructions</h6>
+                                                    <p class="text-muted small mb-0">Notre équipe vous guide vers la
+                                                        résolution
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Emergency Checklist -->
+                                <div class="mt-4">
+                                    <div class="alert alert-light border d-flex align-items-start">
+                                        <i class="bi bi-lightbulb-fill text-warning fs-4 me-3 mt-1"></i>
+                                        <div>
+                                            <strong class="text-dark">Checklist avant d'appeler :</strong>
+                                            <ul class="mb-0 mt-2">
+                                                <li class="text-muted">Vérifiez votre connexion Internet</li>
+                                                <li class="text-muted">Testez l'endpoint avec différents paramètres</li>
+                                                <li class="text-muted">Vérifiez vos clés API et leur validité</li>
+                                                <li class="text-muted">Consultez le statut de nos services sur
+                                                    status.robus.ci
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
                     </section>
                 </div>
+
             </div>
         </div>
     </section>

@@ -1367,7 +1367,7 @@ class IntersPaymentController extends Controller
                 } else {
                     return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                 }
-            } elseif ($request->provider_type == 24) {
+            } elseif ($request->provider_type == 9) {
 
                 $percent_robus =  $this->percentRobus->getRobusPercentagePushInter();
 
@@ -1376,13 +1376,15 @@ class IntersPaymentController extends Controller
                     $request->all(),
                     [
                         'phone' => 'required',
-                        'full_name_push' => 'required',
-                        'amount_push' => 'required',
+                        'full_name' => 'required',
+                        'amount' => 'required',
+                        'country' => 'required',
                     ],
                     [
                         'phone.required' => 'Numero est obligatoire',
-                        'full_name_push.required' => 'Nom & prénom sont obligatoire',
-                        'amount_push.required' => 'Montant est obligatoire',
+                        'full_name.required' => 'Nom & prénom sont obligatoire',
+                        'amount.required' => 'Montant est obligatoire',
+                        'country.required' => 'Pays est obligatoire',
                     ]
                 );
 
@@ -1390,7 +1392,7 @@ class IntersPaymentController extends Controller
                     return response()->json(
                         [
                             'success' => false,
-                            'message' => 'Numero et montant sont obligatoire',
+                            'message' => 'Verifier les champs obligatoires sont obligatoire',
                             'data' => $validator->errors()
                         ],
                         333

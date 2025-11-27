@@ -17,6 +17,10 @@
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
 }
 
+.bg-gradient-danger{
+    background: linear-gradient(135deg, #ec4899 0%, #e11d48 100%) !important;
+}
+
 .nav-pills .nav-link {
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
@@ -1369,7 +1373,7 @@
 
 .auto-container {
     position: static;
-    max-width: 1200px;
+    max-width: 1600px;
     padding: 0px 15px;
     margin: 0 auto;
 }

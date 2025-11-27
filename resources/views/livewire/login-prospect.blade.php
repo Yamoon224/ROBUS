@@ -122,10 +122,15 @@
                  </div>
                  <p class="text-sm text-gray-600">Service en maintenance - Réouverture prochaine</p>
                  <!-- Lien vers l'inscription -->
-                 <a href="{{ route('admin.login') }}"
+                 <a href="{{ route('admin.login_integration') }}"
                      class="inline-flex items-center justify-center gap-2 mt-6 px-6 py-3 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
                      <i class="fas fa-user-plus"></i>
-                     Panel Admin
+                     Panel compte Api
+                 </a>
+                 <a href="{{ route('web.prospect_documents') }}"
+                     class="inline-flex items-center btn-virement justify-center gap-2 mt-6 px-6 py-3 border-2 border-blue-500 text-blue-500 rounded-lg font-semibold hover:bg-blue-500 hover:text-white transition-all duration-300 shadow-sm hover:shadow-md">
+                     <i class="fas fa-rocket me-1"></i>
+                     Documentations
                  </a>
                  <div
                      style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 10px; padding: 1rem; margin-top: 1rem;">

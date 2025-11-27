@@ -58,7 +58,7 @@ Route::prefix('v1')->group(function () {
             Route::get('notifications', [NotificationController::class, 'indexIntegrate']);
             Route::get('notifications/{id}', [NotificationController::class, 'notification_show']);
 
-            Route::get('providers', [ProviderController::class, 'indexProvidersProspect']);
+            Route::get('providers', [ProviderController::class, 'index']);
             Route::get('offers', [ProviderController::class, 'offers']);
         
 
@@ -70,6 +70,7 @@ Route::prefix('v1')->group(function () {
             });
 
 
+            
           // Virements
             Route::post('virements/store', [VirementController::class, 'create_virement']);
             Route::get('virement/show/{id}', [VirementController::class, 'virement_show']);
