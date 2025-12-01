@@ -41,6 +41,7 @@ class TransactionCiv extends Component
     public $transaction_amount_robus;
     public $provider_transaction;
     public $choose_type_transaction;
+    public $choose_transaction;
     public $compte_number_robus;
     public $transaction_amount_money;
     public $transactionId;
@@ -89,6 +90,10 @@ class TransactionCiv extends Component
     public $showBancInterButton = false;
     public $showCarteInterButton = false;
     public $showFacInterButton = false;
+
+    public $need_identity_number = false;
+    public $identity_number;
+
 
     public function mount()
     {
@@ -207,8 +212,6 @@ class TransactionCiv extends Component
         return $totalAmount;
     }
 
-
-
     public function getTodayTransactionRobusRetraitCommissionAmountTotal($walletModel)
     {
 
@@ -231,6 +234,15 @@ class TransactionCiv extends Component
         // Si la valeur change, mettez à jour les montants
         $this->calculateAmounts();
     }
+
+    public function updated($property, $value)
+    {
+        if ($property === 'transaction_amount_money') {
+            $amount = (int) $value;
+            $this->need_identity_number = $amount >= 100000 && $amount <= 200000;
+        }
+    }
+
 
     public function updatedTransactionAmountMoney()
     {
@@ -392,14 +404,27 @@ class TransactionCiv extends Component
                     $this->step = 2;
                 } else {
 
-                    $this->validate([
-                        'transaction_amount_money' => 'required',
-                        'transaction_phone' => 'required',
-                    ], [
-                        'transaction_amount_money.required' => 'Votre montant est obligatoire',
-                        'transaction_phone.required' => 'le numero est obligatoire',
+                    if ($this->choose_transaction == 1) {
+                        $this->validate([
+                            'transaction_amount_money' => 'required',
+                            'transaction_phone' => 'required',
+                        ], [
+                            'transaction_amount_money.required' => 'Votre montant est obligatoire',
+                            'transaction_phone.required' => 'le numero est obligatoire',
 
-                    ]);
+                        ]);
+                    } else {
+
+                        $this->validate([
+                            'transaction_amount_money' => 'required',
+                            'transaction_phone' => 'required',
+                            'name_custumers' => 'required',
+                        ], [
+                            'transaction_amount_money.required' => 'Votre montant est obligatoire',
+                            'transaction_phone.required' => 'le numero est obligatoire',
+                            'name_custumers.required' => 'le nom  est obligatoire',
+                        ]);
+                    }
 
 
                     $this->step = 2;
@@ -729,21 +754,33 @@ class TransactionCiv extends Component
                     if (sabdy()->is_under_distributer) {
 
 
-                        $this->validate([
-                            'transaction_amount_money' => 'required',
-                            'transaction_phone' => 'required',
-                            // "name_custumer" => 'required',
-                            // "num_piece_custumer" => 'required',
-                            // "date_piece" => 'required',
-                        ], [
-                            'transaction_amount_money.required' => 'Votre montant est obligatoire',
-                            'transaction_phone.required' => 'le numero est obligatoire',
-                            // 'name_custumer.required' => 'Nom est obligatoire',
-                            // 'num_piece_custumer.required' => 'Numero piece est obligatoire',
-                            // 'date_piece.required' => 'date de validité est obligatoire',
+                        if ($this->choose_transaction == 1) {
+                            $this->validate([
+                                'transaction_amount_money' => 'required',
+                                'transaction_phone' => 'required',
+                                // "name_custumer" => 'required',
+                                // "num_piece_custumer" => 'required',
+                                // "date_piece" => 'required',
+                            ], [
+                                'transaction_amount_money.required' => 'Votre montant est obligatoire',
+                                'transaction_phone.required' => 'le numero est obligatoire',
+                                // 'name_custumer.required' => 'Nom est obligatoire',
+                                // 'num_piece_custumer.required' => 'Numero piece est obligatoire',
+                                // 'date_piece.required' => 'date de validité est obligatoire',
 
-                        ]);
+                            ]);
+                        } else {
 
+                            $this->validate([
+                                'transaction_amount_money' => 'required',
+                                'transaction_phone' => 'required',
+                                'name_custumers' => 'required',
+                            ], [
+                                'transaction_amount_money.required' => 'Votre montant est obligatoire',
+                                'transaction_phone.required' => 'le numero est obligatoire',
+                                'name_custumers.required' => 'le nom  est obligatoire',
+                            ]);
+                        }
 
 
                         if (sabdy()->country->name_groupe == 'CIV') {
@@ -817,7 +854,7 @@ class TransactionCiv extends Component
 
                                 if ($this->validateVerifyAmount($amount_payment)) {
 
-                                    $walletTransaction =  $this->createRobusWalletTransactionDistributer($percent_robus, $provider, $reel_amount, $cost_payment, $this->transaction_phone);
+                                    $walletTransaction =  $this->createRobusWalletTransactionDistributer($percent_robus, $provider, $reel_amount, $cost_payment, $this->transaction_phone , $this->choose_transaction  , $this->name_custumers ,  $this->identity_number);
 
                                     if ($walletTransaction != null) {
 
@@ -1616,7 +1653,7 @@ class TransactionCiv extends Component
         );
     }
 
-    private function createRobusWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $valuer_deposit_com, $transaction_phone)
+    private function createRobusWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $valuer_deposit_com, $transaction_phone , $choose_transaction , $name_custumers , $num_piece_custumers)
     {
 
         $val_amount = $transaction_amount_money;
@@ -1634,9 +1671,9 @@ class TransactionCiv extends Component
                 'provider_id'  =>   $provider->id,
                 'num_wallet'   =>  null,
                 'costs_amount' => $valuer_deposit_com,
-                // 'name_complet' => $name_custumers ?? null,
-                // 'num_piece' => $num_piece_custumers ?? null,
-                // 'validated_date' => $date_piece ?? null,
+                'name_complet' => $name_custumers ?? null,
+                'num_piece' => $identity_number ?? null,
+                'choose_transaction' => $choose_transaction ?? 1,
                 'choose_type_transaction' => 1,
                 'amount_received'  => 0,
                 'type_transaction' => 'Depot',

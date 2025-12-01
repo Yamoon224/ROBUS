@@ -594,6 +594,55 @@ class InterPaymentService
         return true;
     }
 
+     public function sendNotificationVirementInters($walletInter)
+    {
+
+        $msg_title = 'Transfert internationnal Robus';
+        $msg = 'Votre transfert vers Robus effectué avec success ';
+        robus()->notify(
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg,
+            ])
+        );
+        $notifs = robus()->unreadNotifications;
+        event(new CreateWalletInterEvent($walletInter));
+        $admins = $this->getAdminCIVProperty();
+        Notification::send(
+            $admins,
+            new AdminNotification(
+                'Transfert Robus de ' .
+                    ' ' . $walletInter->wallet->sidUser->firstname
+            )
+        );
+        Notification::send($admins, new AdminNotification('Transfers d\'argent Robus de ' .
+            ' ' . $walletInter->wallet->sidUser->firstname));
+
+        if ($admins->count() > 0) {
+
+            foreach ($admins  as $user) {
+
+                $admin_single = SidUser::find($user->id);
+
+                $notifs = $admin_single->unreadNotifications;
+
+                event(new AdminNotifEvent($notifs));
+            }
+
+            if (robus()->email != null) {
+                $notify = new MailController();
+                $notify->newVirement($walletInter);
+            }
+        }
+
+        if (robus()->email != null) {
+            $notify = new MailController();
+            $notify->newVirement($walletInter);
+        }
+
+        return true;
+    }
+
     // Validated WALLET mobile
     public function createMobileWalletInter(
         $amount_transaction,
@@ -688,6 +737,44 @@ class InterPaymentService
             'image' => $imagePath ?? null,
         ]);
     }
+
+    public function createWithVersementWalletInter(
+        $amount_transaction,
+        $percent_robus,
+        $country_robus,
+        $provider_payment,
+        $provider_type,
+        $name_custumers,
+        $guichet_code,
+        $bank_code,
+        $account_number,
+
+    ) {
+
+        $amount_solde = robus()->wallet->amount - $amount_transaction;
+
+        return WalletInter::create([
+            'wallet_id' => robus()->wallet->id,
+            'amount' => $amount_transaction,
+            'description' => null,
+            'inter_cost_id' => null,
+            'virement_percent_id' => $percent_robus->id ?? null,
+            'number_compte' => $account_number,
+            'created_by' => robus()->id,
+            'provider_id' => $provider_payment,
+            'num_authers' => $name_custumers ?? null,
+            'bank_code' => $bank_code ?? null,
+            'guichet_code' => $guichet_code ?? null,
+            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'provider_type' => 1,
+            'status' => 'PENDING',
+            'country_id' => $country_robus->id,
+            'choose_type_transaction' => $provider_type,
+            'amount_solde' => $amount_solde ?? null,
+            // 'amount_received' => $amount_received ?? null
+        ]);
+    }
+
 
     public function createMobileWalletInterCIV($amount_transaction, $percent_robus, $country_robus, $provider_payment, $phone, $provider_type,  $amount_cost, $name_custumers, $num_piece_custumers, $date_piece)
     {

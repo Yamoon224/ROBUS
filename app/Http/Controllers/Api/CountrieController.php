@@ -158,7 +158,7 @@ class CountrieController extends Controller
 
 
 
-        if (robus()->is_under_distributer && robus()->country->id != 107) {
+        if ((robus()->is_under_distributer || robus()->is_api) && robus()->country->id != 107) {
 
 
             $walletsData['Transfert international'] = [
@@ -169,7 +169,7 @@ class CountrieController extends Controller
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
             ];
             
-        } elseif (robus()->is_under_distributer && robus()->country->id == 107) {
+        } elseif ((robus()->is_under_distributer || robus()->is_api) && robus()->country->id == 107) {
 
             $walletsData['Transfert international'] = [
                 "Factures" => [],

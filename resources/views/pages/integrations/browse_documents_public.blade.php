@@ -14,7 +14,7 @@
                         <h1 class="h3 h2-md fw-bold text-dark mb-1">Documentation API</h1>
                         <p class="text-muted mb-0">Intégrez facilement les services Robus dans votre application</p>
                     </div>
-                    <div class="badge bg-info text-dark px-3 py-2 align-self-start align-self-md-center">
+                    <div class="badge bg-info text-dark px-3 py-2 text-white align-self-start align-self-md-center">
                         <span class="fw-semibold">Environnement :</span> Production
                     </div>
                 </div>
@@ -35,84 +35,84 @@
                             <div class="card-body">
                                 <h5 class="card-title fw-semibold mb-3">Endpoints</h5>
                                 <ul class="nav nav-pills flex-column gap-2">
-                                      <li class="nav-item">
-                                    <a href="#authentication" class="nav-link active d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#authentication">
-                                        <i class="bi bi-key me-2"></i>
-                                        Authentification
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#dashboard" class="nav-link  d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#dashboard">
-                                        <i class="bi bi-speedometer2 me-2"></i>
-                                        Dashboard
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#providers" class="nav-link text-dark d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#providers">
-                                        <i class="bi bi-people me-2"></i>
-                                        Providers
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#phone-credit" class="nav-link text-dark d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#phone-credit">
-                                        <i class="bi bi-phone me-2"></i>
-                                        Crédit Téléphonique
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#transaction" class="nav-link text-dark d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#transaction">
-                                        <i class="bi bi-shuffle me-2"></i>
-                                        Transactions
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#push_tresort" class="nav-link text-dark d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#push_tresort">
-                                         <i class="bi bi-arrow-left-right me-2"></i>
-                                        Transactions Push & Tresort Money
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href="#authentication" class="nav-link active d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#authentication">
+                                            <i class="bi bi-key me-2"></i>
+                                            Authentification
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#dashboard" class="nav-link  d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#dashboard">
+                                            <i class="bi bi-speedometer2 me-2"></i>
+                                            Dashboard
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#providers" class="nav-link text-dark d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#providers">
+                                            <i class="bi bi-people me-2"></i>
+                                            Providers
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#phone-credit" class="nav-link text-dark d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#phone-credit">
+                                            <i class="bi bi-phone me-2"></i>
+                                            Crédit Téléphonique
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#transaction" class="nav-link text-dark d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#transaction">
+                                            <i class="bi bi-shuffle me-2"></i>
+                                            Transactions
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#push_tresort" class="nav-link text-dark d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#push_tresort">
+                                            <i class="bi bi-arrow-left-right me-2"></i>
+                                            Transactions Push & Tresort Money
+                                        </a>
+                                    </li>
 
-                                <li class="nav-item">
-                                    <a href="#djamo" class="nav-link text-dark d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#djamo">
-                                         <i class="bi bi-wallet2 me-2"></i>
-                                        Transactions Djamo
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#paiements" class="nav-link text-dark d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#paiements">
-                                        <i class="bi bi-credit-card me-2"></i>
-                                        Transactions des Paiements
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#virements" class="nav-link text-dark d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#virements">
-                                         <i class="bi bi-bank me-2"></i>
-                                        Transactions des Virements
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#xbets" class="nav-link text-dark d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#xbets">
-                                        <i class="bi bi-dice-5 me-2"></i>
-                                        Transactions des Xbets
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="#transaction_inters" class="nav-link text-dark d-flex align-items-center"
-                                        data-bs-toggle="collapse" data-bs-target="#transaction_inters">
-                                         <i class="bi bi-globe me-2"></i>
-                                        Transactions internationales
-                                    </a>
-                                </li>
+                                    <li class="nav-item">
+                                        <a href="#djamo" class="nav-link text-dark d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#djamo">
+                                            <i class="bi bi-wallet2 me-2"></i>
+                                            Transactions Djamo
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#paiements" class="nav-link text-dark d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#paiements">
+                                            <i class="bi bi-credit-card me-2"></i>
+                                            Transactions des Paiements
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#virements" class="nav-link text-dark d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#virements">
+                                            <i class="bi bi-bank me-2"></i>
+                                            Transactions des Virements
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#xbets" class="nav-link text-dark d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#xbets">
+                                            <i class="bi bi-dice-5 me-2"></i>
+                                            Transactions des Xbets
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#transaction_inters" class="nav-link text-dark d-flex align-items-center"
+                                            data-bs-toggle="collapse" data-bs-target="#transaction_inters">
+                                            <i class="bi bi-globe me-2"></i>
+                                            Transactions internationales
+                                        </a>
+                                    </li>
                                 </ul>
 
                                 <hr class="my-4">
@@ -300,7 +300,7 @@
                                 <li class="nav-item">
                                     <a href="#push_tresort" class="nav-link text-dark d-flex align-items-center"
                                         data-bs-toggle="collapse" data-bs-target="#push_tresort">
-                                         <i class="bi bi-arrow-left-right me-2"></i>
+                                        <i class="bi bi-arrow-left-right me-2"></i>
                                         Transactions Push & Tresort Money
                                     </a>
                                 </li>
@@ -308,7 +308,7 @@
                                 <li class="nav-item">
                                     <a href="#djamo" class="nav-link text-dark d-flex align-items-center"
                                         data-bs-toggle="collapse" data-bs-target="#djamo">
-                                         <i class="bi bi-wallet2 me-2"></i>
+                                        <i class="bi bi-wallet2 me-2"></i>
                                         Transactions Djamo
                                     </a>
                                 </li>
@@ -322,7 +322,7 @@
                                 <li class="nav-item">
                                     <a href="#virements" class="nav-link text-dark d-flex align-items-center"
                                         data-bs-toggle="collapse" data-bs-target="#virements">
-                                         <i class="bi bi-bank me-2"></i>
+                                        <i class="bi bi-bank me-2"></i>
                                         Transactions des Virements
                                     </a>
                                 </li>
@@ -336,7 +336,7 @@
                                 <li class="nav-item">
                                     <a href="#transaction_inters" class="nav-link text-dark d-flex align-items-center"
                                         data-bs-toggle="collapse" data-bs-target="#transaction_inters">
-                                         <i class="bi bi-globe me-2"></i>
+                                        <i class="bi bi-globe me-2"></i>
                                         Transactions internationales
                                     </a>
                                 </li>
@@ -656,20 +656,40 @@
                                 </div>
                             </div>
                         </div>
+                        
 
                         <div class="card-body p-4">
-                            <!-- Information Message -->
+                               <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary badge-method">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">/api_clients/v1/user/dashboard</code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour récupérer la liste des providers disponibles dans le dashboard</p>
+                                </div>
+                                <span class="badge bg-success">Authentification requise</span>
+                            </div>
+
+                                     <!-- Information Message -->
                             <div class="alert alert-info border-start border-info border-4 bg-light">
                                 <div class="d-flex">
                                     <i class="bi bi-info-circle-fill text-info fs-4 me-3"></i>
                                     <div class="flex-grow-1">
-                                        <h5 class="alert-heading fw-semibold mb-2">Comment utiliser vos providers du
-                                            dashboard ?</h5>
+                                        <h5 class="alert-heading fw-semibold mb-2">Comment utiliser vos dashboard ?</h5>
                                         <p class="mb-3">
-                                            Utilisez votre API Key et Secret Key pour authentifier vos requêtes HTTP.
-                                            Incluez-les dans les en-têtes de votre requête GET.
-                                        </p>
-                                        <div class="bg-dark rounded-3 p-4 border position-relative mt-3">
+                                            Pour accéder au Dashboard, vous devez inclure dans chaque requête votre
+                                            <strong>token d’accès</strong> obtenu lors de l’authentification.
+                                            Ajoutez-le dans l'en-tête HTTP :
+                                                                    </p>
+                                                                    <div class="bg-dark rounded-3 p-4 border position-relative mt-3">
+                                                                        <button class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-2 copy-btn"
+                                                data-clipboard-target="#token-header" data-bs-toggle="tooltip"
+                                                data-bs-title="Copier le code">
+                                                <i class="bi bi-copy"></i>
+                                            </button>
+
+                                            <code id="token-header" class="text-light small">
+                             Authorization: Bearer VOTRE_TOKEN
+                                            </code>
                                             <button
                                                 class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-3 copy-btn"
                                                 data-clipboard-target="#auth-code" data-bs-toggle="tooltip"
@@ -691,6 +711,103 @@
                                     </div>
                                 </div>
                             </div>
+                            <!-- Description & Workflow -->
+                            <div class="alert alert-primary border-start border-primary border-4 bg-light">
+                                <div class="d-flex">
+                                    <i class="bi bi-info-circle-fill text-primary fs-4 me-3"></i>
+                                    <div class="flex-grow-1">
+                                        <h5 class="alert-heading fw-semibold mb-3">Description du service</h5>
+                                        <p class="mb-4">
+                                            Cet endpoint retourne une liste structurée des providers (opérateurs)
+                                            disponibles
+                                            pour l'utilisateur connecté, basée sur ses permissions et restrictions
+                                            d'opérateur.
+                                        </p>
+
+                                        <!-- Workflow -->
+                                        <div class="mb-4">
+                                            <h6 class="fw-semibold mb-3">Processus de filtrage :</h6>
+                                            <div class="row g-3">
+                                                <div class="col-12 col-md-4">
+                                                    <div class="d-flex align-items-start">
+                                                        <span class="badge bg-primary rounded-circle me-2 mt-1">1</span>
+                                                        <div>
+                                                            <h6 class="fw-semibold mb-1">Vérification application</h6>
+                                                            <p class="text-muted small mb-0">Statut de l'application
+                                                                Robus</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4">
+                                                    <div class="d-flex align-items-start">
+                                                        <span class="badge bg-primary rounded-circle me-2 mt-1">2</span>
+                                                        <div>
+                                                            <h6 class="fw-semibold mb-1">Récupération permissions</h6>
+                                                            <p class="text-muted small mb-0">Services autorisés pour
+                                                                l'opérateur</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-4">
+                                                    <div class="d-flex align-items-start">
+                                                        <span class="badge bg-primary rounded-circle me-2 mt-1">3</span>
+                                                        <div>
+                                                            <h6 class="fw-semibold mb-1">Filtrage providers</h6>
+                                                            <p class="text-muted small mb-0">Providers disponibles par
+                                                                type</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Features Grid -->
+                                        <div class="row g-3 mb-4">
+                                            <div class="col-12 col-md-6">
+                                                <div class="d-flex align-items-start">
+                                                    <i class="bi bi-shield-check text-primary me-2 mt-1 flex-shrink-0"></i>
+                                                    <div>
+                                                        <h6 class="fw-semibold mb-1">Gestion des permissions</h6>
+                                                        <p class="text-muted small mb-0">Filtrage basé sur les
+                                                            restrictions d'opérateur configurées</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="d-flex align-items-start">
+                                                    <i class="bi bi-diagram-3 text-primary me-2 mt-1 flex-shrink-0"></i>
+                                                    <div>
+                                                        <h6 class="fw-semibold mb-1">Structure hiérarchique</h6>
+                                                        <p class="text-muted small mb-0">Organisation par catégories et
+                                                            sous-catégories</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="d-flex align-items-start">
+                                                    <i class="bi bi-geo-alt text-primary me-2 mt-1 flex-shrink-0"></i>
+                                                    <div>
+                                                        <h6 class="fw-semibold mb-1">Filtrage par pays</h6>
+                                                        <p class="text-muted small mb-0">Providers spécifiques au pays
+                                                            de l'utilisateur</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-12 col-md-6">
+                                                <div class="d-flex align-items-start">
+                                                    <i class="bi bi-building text-primary me-2 mt-1 flex-shrink-0"></i>
+                                                    <div>
+                                                        <h6 class="fw-semibold mb-1">Support distributeur/API</h6>
+                                                        <p class="text-muted small mb-0">Adaptation selon le type de
+                                                            compte</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                   
 
                             <!-- Code Examples with Tabs -->
                             <div class="mt-5">
@@ -1213,6 +1330,35 @@
                                 </div>
                             </div>
 
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary fs-6 px-3 py-2">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_phone_credit/{amount}
+                                    </code>
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_phone_credit_received/{amount_received}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour les recherches des montants envoyés
+                                        et reçus</p>
+                                </div>
+                            </div>
+                            <!-- DELETE -->
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-danger fs-6 px-3 py-2">DELETE</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/phone_credit/delete/{id}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        Endpoint pour supprimer une transaction de crédit téléphonique
+                                    </p>
+                                </div>
+                            </div>
+
+
                             <!-- Description & Parameters -->
                             <div class="alert alert-success border-start border-success border-4 bg-light">
                                 <div class="d-flex">
@@ -1401,6 +1547,60 @@
                                         </div>
                                     </div>
                                 </div>
+                                 <div class="col-12 col-lg-6">
+                                    <div class="card border-primary h-100">
+                                        <div class="card-header bg-primary text-white py-3">
+                                            <h6 class="fw-semibold mb-0 d-flex align-items-center">
+                                                <i class="bi bi-send-fill me-2"></i>
+                                                Exemple de requête pour montant envoyé et du montant reçu
+                                            </h6>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div class="bg-dark rounded-bottom p-4 position-relative">
+                                                <button
+                                                    class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-3 copy-btn"
+                                                    data-clipboard-target="#request-example" data-bs-toggle="tooltip"
+                                                    data-bs-title="Copier la requête">
+                                                    <i class="bi bi-copy me-1"></i>Copier
+                                                </button>
+                                                <pre id="request-example" class="text-light small mb-0 code-block">{
+                                        <span class="text-success">"amount_pay"</span>: <span class="text-info">10</span>,
+                                        <span class="text-success">"amount_send"</span>: <span class="text-warning">2000</span>,
+                                        <span class="text-success">"amount_receive"</span>: <span class="text-info">1990</span>
+                                        }</pre>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="col-12 col-lg-6">
+                                    <div class="card border-success h-100">
+                                        <div class="card-header bg-success text-white py-3">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <h6 class="fw-semibold mb-0 d-flex align-items-center">
+                                                    <i class="bi bi-check-circle-fill me-2"></i>
+                                                     Réponse de succès pour la recherche des montants envoyés et reçus
+                                                </h6>
+                                                <span class="badge bg-white text-success">200 OK</span>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-0">
+                                            <div class="bg-dark rounded-bottom p-4 position-relative">
+                                                <button
+                                                    class="btn btn-sm btn-outline-light position-absolute top-0 end-0 m-3 copy-btn"
+                                                    data-clipboard-target="#response-example" data-bs-toggle="tooltip"
+                                                    data-bs-title="Copier la réponse">
+                                                    <i class="bi bi-copy me-1"></i>Copier
+                                                </button>
+                                             <pre id="response-example" class="text-light small mb-0 code-block">{
+                                                <span class="text-success">"Montant à payer"</span>: <span class="text-warning">"10"</span>,
+                                                <span class="text-success">"Montant envoyé"</span>: <span class="text-warning">"2000"</span>,
+                                                <span class="text-success">"Montant à recevoir"</span>: <span class="text-info">1990</span>
+                                            }</pre>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
 
@@ -1441,6 +1641,34 @@
                                     <code
                                         class="text-dark font-monospace fs-6">/api_clients/v1/user/transactions/store</code>
                                     <p class="text-muted small mb-0 mt-1">Endpoint pour les transactions
+                                    </p>
+                                </div>
+                            </div>
+
+                             <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary fs-6 px-3 py-2">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_transaction/{amount}
+                                    </code>
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_transaction_received/{amount_received}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour les recherches des montants envoyés
+                                        et reçus</p>
+                                </div>
+                            </div>
+                            <!-- DELETE -->
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-danger fs-6 px-3 py-2">DELETE</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/transaction/delete/{id}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        Endpoint pour supprimer une transaction 
                                     </p>
                                 </div>
                             </div>
@@ -1728,6 +1956,60 @@
                                 <div class="flex-grow-1">
                                     <code class="text-dark font-monospace fs-6">/api_clients/v1/user/tresorts/store</code>
                                     <p class="text-muted small mb-0 mt-1">Endpoint pour les transactions Tresort Money</p>
+                                </div>
+                            </div>
+
+                             <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary fs-6 px-3 py-2">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_push/{amount}
+                                    </code>
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_push_received/{amount_received}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour les recherches des montants envoyés pour Push
+                                        et reçus</p>
+                                </div>
+                            </div>
+                             <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary fs-6 px-3 py-2">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_tresorts/{amount}
+                                    </code>
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_tresort_received/{amount_received}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour les recherches des montants envoyés pour Trésort Money
+                                        et reçus</p>
+                                </div>
+                            </div>
+                            <!-- DELETE -->
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-danger fs-6 px-3 py-2">DELETE</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/push/delete/{id}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        Endpoint pour supprimer une transaction Push
+                                    </p>
+                                </div>
+                            </div>
+                             <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-danger fs-6 px-3 py-2">DELETE</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/tresorts/delete/{id}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        Endpoint pour supprimer une transaction Tresort Money
+                                    </p>
                                 </div>
                             </div>
 
@@ -2035,6 +2317,33 @@
                                     </p>
                                 </div>
                             </div>
+                             <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary fs-6 px-3 py-2">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_djamo/{amount}
+                                    </code>
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_djamo_received/{amount_received}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour les recherches des montants envoyés Djamo
+                                        et reçus</p>
+                                </div>
+                            </div>
+                            <!-- DELETE -->
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-danger fs-6 px-3 py-2">DELETE</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/djamo/delete/{id}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        Endpoint pour supprimer une transaction de crédit téléphonique
+                                    </p>
+                                </div>
+                            </div>
 
                             <!-- Description & Parameters -->
                             <div class="alert alert-success border-start border-success border-4 bg-light">
@@ -2284,6 +2593,33 @@
                                 </div>
                             </div>
 
+                             <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary fs-6 px-3 py-2">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_payment/{amount}
+                                    </code>
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_payment_received/{amount_received}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour les recherches des montants envoyés des paiements
+                                        et reçus</p>
+                                </div>
+                            </div>
+                            <!-- DELETE -->
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-danger fs-6 px-3 py-2">DELETE</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/payment/delete/{id}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        Endpoint pour supprimer une transaction des paiements
+                                    </p>
+                                </div>
+                            </div>
                             <!-- Description & Parameters -->
                             <div class="alert alert-success border-start border-success border-4 bg-light">
                                 <div class="d-flex">
@@ -2654,6 +2990,33 @@
                                 </div>
                             </div>
 
+                             <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary fs-6 px-3 py-2">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_virement/{amount}
+                                    </code>
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_virement_received/{amount_received}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour les recherches des montants envoyés pour les virements
+                                        et reçus</p>
+                                </div>
+                            </div>
+                            <!-- DELETE -->
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-danger fs-6 px-3 py-2">DELETE</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/virement/delete/{id}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        Endpoint pour supprimer une transaction des virements
+                                    </p>
+                                </div>
+                            </div>
                             <!-- Description & Parameters -->
                             <div class="alert alert-success border-start border-success border-4 bg-light">
                                 <div class="d-flex">
@@ -2924,6 +3287,33 @@
                                     </p>
                                 </div>
                             </div>
+                             <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary fs-6 px-3 py-2">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_onexbet/{amount}
+                                    </code>
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_onexbet_received/{amount_received}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour les recherches des montants envoyés
+                                        et reçus</p>
+                                </div>
+                            </div>
+                            <!-- DELETE -->
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-danger fs-6 px-3 py-2">DELETE</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/oneXbet/delete/{id}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        Endpoint pour supprimer une transaction des Xbets
+                                    </p>
+                                </div>
+                            </div>
 
                             <!-- Description & Parameters -->
                             <div class="alert alert-success border-start border-success border-4 bg-light">
@@ -3168,6 +3558,33 @@
                             </div>
 
 
+                             <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-primary fs-6 px-3 py-2">GET</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_phone_credit/{amount}
+                                    </code>
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/search_phone_credit/{amount_received}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">Endpoint pour les recherches des montants envoyés
+                                        et reçus</p>
+                                </div>
+                            </div>
+                            <!-- DELETE -->
+                            <div
+                                class="d-flex flex-column flex-md-row align-items-start align-items-md-center gap-3 mb-4 p-4 bg-light rounded-3 border">
+                                <span class="badge bg-danger fs-6 px-3 py-2">DELETE</span>
+                                <div class="flex-grow-1">
+                                    <code class="text-dark font-monospace fs-6">
+                                        /api_clients/v1/user/phone_credit/delete/{id}
+                                    </code>
+                                    <p class="text-muted small mb-0 mt-1">
+                                        Endpoint pour supprimer une transaction de crédit téléphonique
+                                    </p>
+                                </div>
+                            </div>
                             <!-- Description & Parameters -->
                             <div class="alert alert-success border-start border-success border-4 bg-light">
                                 <div class="d-flex">
@@ -3219,6 +3636,150 @@
                                             </div>
                                         </div>
 
+                                        <div class="mt-4">
+                                            <h6 class="fw-semibold mb-3 d-flex align-items-center">
+                                                <i class="bi bi-list-check text-success me-2"></i>
+                                                Paramètres de la requête des transactions a l'international sont faites par
+                                                type
+                                            </h6>
+                                            <div class="table-responsive">
+                                                <table class="table table-bordered table-hover mb-0">
+                                                    <thead class="table-success">
+                                                        <tr>
+                                                            <th class="text-nowrap">Paramètre</th>
+                                                            <th class="text-nowrap">Type</th>
+                                                            <th class="text-nowrap">Obligatoire</th>
+                                                            <th>Description</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td class="fw-semibold text-nowrap">
+                                                                <code>provider_type </code>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-secondary">integer</span>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-success">Oui</span>
+                                                            </td>
+                                                            <td>
+                                                                ID de type
+                                                                <span class="text-muted">1</span>
+                                                                <span class="text-muted">Ce type est pour les operations
+                                                                    (ROBUS , PUSH, DJAMO , etc...)</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="fw-semibold text-nowrap">
+                                                                <code>provider_type </code>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-secondary">integer</span>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-success">Oui</span>
+                                                            </td>
+                                                            <td>
+                                                                ID de type
+                                                                <span class="text-muted">1</span>
+                                                                <span class="text-muted">Ce type est pour les operations
+                                                                    ROBUS</span>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td class="fw-semibold text-nowrap">
+                                                                <code>provider_type </code>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-secondary">integer</span>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-success">Oui</span>
+                                                            </td>
+                                                            <td>
+                                                                ID de type
+                                                                <span class="text-muted">5</span>
+                                                                <span class="text-muted">Ce type est pour les operations
+                                                                    SODECI; CIE and SODECI</span>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td class="fw-semibold text-nowrap">
+                                                                <code>provider_type </code>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-secondary">integer</span>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-success">Oui</span>
+                                                            </td>
+                                                            <td>
+                                                                ID de type
+                                                                <span class="text-muted">6</span>
+                                                                <span class="text-muted">Ce type est pour les operations
+                                                                    Crédit téléphonique</span>
+                                                            </td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td class="fw-semibold text-nowrap">
+                                                                <code>provider_type </code>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-secondary">integer</span>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-success">Oui</span>
+                                                            </td>
+                                                            <td>
+                                                                ID de type
+                                                                <span class="text-muted">7</span>
+                                                                <span class="text-muted">Ce type est pour les operations
+                                                                    de rechargement des cartes(ECOBANK , NSIA)</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="fw-semibold text-nowrap">
+                                                                <code>provider_type </code>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-secondary">integer</span>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-success">Oui</span>
+                                                            </td>
+                                                            <td>
+                                                                ID de type
+                                                                <span class="text-muted">8</span>
+                                                                <span class="text-muted">Ce type est pour les operations
+                                                                    de virements bancaires(ECOBANK , NSIA)</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="fw-semibold text-nowrap">
+                                                                <code>provider_type </code>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-secondary">integer</span>
+                                                            </td>
+                                                            <td class="text-nowrap">
+                                                                <span class="badge bg-success">Oui</span>
+                                                            </td>
+                                                            <td>
+                                                                ID de type
+                                                                <span class="text-muted">9</span>
+                                                                <span class="text-muted">Ce type est pour les operations
+                                                                    de versements bancaires(UBA,GT BANK , BDA, NSIA ,
+                                                                    etc...)</span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                         <!-- Parameters Table -->
                                         <div class="mt-4">
                                             <h6 class="fw-semibold mb-3 d-flex align-items-center">

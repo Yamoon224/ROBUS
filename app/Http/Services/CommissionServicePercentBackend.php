@@ -16,7 +16,7 @@ class CommissionServicePercentBackend
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
 
-     public function getRobusPercentageVersement($id)
+    public function getRobusPercentageVersement($id)
     {
 
         switch ($id) {
@@ -52,6 +52,9 @@ class CommissionServicePercentBackend
     }
 
 
+
+
+
     public function getRobusPercentageOnexbet()
     {
         $countryNameGroup = sabdy()->country->name_groupe;
@@ -64,7 +67,7 @@ class CommissionServicePercentBackend
         }
     }
 
-     public function getRobusPercentageTresortMoney()
+    public function getRobusPercentageTresortMoney()
     {
         $countryNameGroup = sabdy()->country->name_groupe;
 
@@ -89,7 +92,7 @@ class CommissionServicePercentBackend
         }
     }
 
-     public function getRobusPercentageDjamo()
+    public function getRobusPercentageDjamo()
     {
         $countryNameGroup = sabdy()->country->name_groupe;
 

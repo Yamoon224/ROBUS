@@ -2368,8 +2368,8 @@ textarea.form-control:focus {
     /* width: 5rem; */
     margin-left: auto;
     margin-right: auto;
-    width: 100px;
-    height: 100px;
+    width: 75px;
+    height: 75px;
     border-radius: 50%;
     object-fit: cover;
 }

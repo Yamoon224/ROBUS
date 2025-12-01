@@ -14,6 +14,7 @@ use App\Http\Services\PhoneCreditInterService;
 use App\Http\Services\SearchTransactionService;
 use App\Http\Services\ValidateDailyLimitService;
 use App\Http\Services\VirementInterService;
+use App\Http\Services\WithInterService;
 use App\Models\AppStatus;
 use App\Models\Costs\BankCost;
 use App\Models\Costs\DepositCost;
@@ -47,6 +48,7 @@ class IntersPaymentController extends Controller
     protected $paymentCreditService;
     protected $convertionservice;
     protected $virementInterService;
+    protected $withInterService;
     protected $searchTransaction;
     private $authService;
     protected $appStatusResult;
@@ -58,6 +60,7 @@ class IntersPaymentController extends Controller
         ValidateDailyLimitService $validatedamountDays,
         InterPaymentService $interServices,
         PaymentInterService $paymentServices,
+        WithInterService $withInterService,
         PhoneCreditInterService $paymentCreditService,
         ConvertionService $convertionservice,
         NotificationSendService $notificationPayment,
@@ -77,6 +80,7 @@ class IntersPaymentController extends Controller
         $this->notificationPayment = $notificationPayment;
         $this->virementInterService = $virementInterService;
         $this->searchTransaction = $searchTransaction;
+        $this->withInterService = $withInterService;
         $this->authService = $authService;
         $this->initializeAppStatus($this->authService);
     }
@@ -388,7 +392,7 @@ class IntersPaymentController extends Controller
                             return response()->json(
                                 [
                                     'success' => false,
-                                    'message' => 'Verifiez les champs',
+                                    'message' => 'Verifiez les champs obligatoires',
                                     'data' => $validator->errors()
                                 ],
                                 333
@@ -617,11 +621,9 @@ class IntersPaymentController extends Controller
                         if ($request->provider == 104) {
                             $percent_djamo =  $this->percentRobus->getRobusPercentageDjamoInter();
                             $percent_djamo_action = $this->percentRobus->getRobusPercentageDjamoInter()->id;
-
                         } elseif ($request->provider == 105) {
                             $percent_djamo =  $this->percentRobus->getRobusPercentagePushInter();
                             $percent_push_action = $this->percentRobus->getRobusPercentagePushInter()->id;
-                       
                         } elseif ($request->provider == 106) {
                             $percent_djamo =  $this->percentRobus->getRobusPercentageTresortInter();
                             $percent_tresort_action = $this->percentRobus->getRobusPercentageTresortInter()->id;
@@ -1369,21 +1371,27 @@ class IntersPaymentController extends Controller
                 }
             } elseif ($request->provider_type == 9) {
 
-                $percent_robus =  $this->percentRobus->getRobusPercentagePushInter();
+                // Virement accompts
+                $percent_robus =  $this->percentRobus->getRobusPercentageInterVersement();
 
                 $validator = Validator::make(
 
                     $request->all(),
                     [
-                        'phone' => 'required',
-                        'full_name' => 'required',
+                        'num_accompte' => 'required',
+                        'provider' => 'required',
+                        'bank_code' => 'required',
+                        'guichet_code' => 'required',
+                        'num_authers' => 'required',
                         'amount' => 'required',
                         'country' => 'required',
                     ],
                     [
-                        'phone.required' => 'Numero est obligatoire',
-                        'full_name.required' => 'Nom & prénom sont obligatoire',
-                        'amount.required' => 'Montant est obligatoire',
+                        'num_accompte.required' => 'Votre numero est obligatoire',
+                        'amount.required' => 'Votre montant est obligatoire',
+                        'bank_code.required' => 'Code banque est obligatoire',
+                        'guichet_code.required' => 'Code du guichet est obligatoire',
+                        'num_authers.required' => 'Numero est obligatoire',
                         'country.required' => 'Pays est obligatoire',
                     ]
                 );
@@ -1400,37 +1408,47 @@ class IntersPaymentController extends Controller
                 }
 
 
-                $percent_robus =  $this->percentRobus->getRobusPercentagePush();
 
                 if ($percent_robus != null) {
 
-                    $reel_amount = $this->validatedamountDays->search_amount($request->amount_push);
+                    $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
                     if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
                         if (robus()->is_under_distributer || robus()->is_api) {
-                            $val_amount_send = $reel_amount;
-                            $amountReceved = $reel_amount;
+
+                            $percent_amount = $percent_robus->percent_merchands * $request->amount;
+                            $valeur_received = $request->amount -  $percent_amount;
+                            $valeur_amount = $request->amount;
                         } else {
 
-                            $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
-                            $amountReceved = $reel_amount - (float) ($percent_robus->percent * $reel_amount);
+                            $percent_amount = $percent_robus->percent * $request->amount;
+                            $valeur_received = $request->amount -  $percent_amount;
+                            $valeur_amount = $request->amount + $percent_amount;
                         }
 
 
-                        if ($this->validatedamountDays->validateAmount($val_amount_send)) {
+                        if ($this->validatedamountDays->validateAmount($reel_amount)) {
 
-                            $walletPush =  $this->pushService->createRobusWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone, $request->full_name_push, $amountReceved);
+                            $walletVersement =  $this->interServices->createWithVersementWalletInter($reel_amount, $percent_robus, $country_robus, $request->provider, $request->provider_type, $request->num_authers, $request->guichet_code, $request->bank_code, $request->num_accompte);
 
-                            if ($walletPush != null) {
+                            if ($walletVersement != null) {
 
-                                if ($this->pushService->updateamountPushReceveid($admin_civ, $percent_robus, $walletPush, $reel_amount)) {
-                                    $this->notificationPhone->sendNotificationPush($walletPush);
-                                    return $this->messageAfterValidated($walletPush);
+                                if ($this->interServices->updateAmountReceived($walletVersement, $country_robus, $valeur_received)) {
+
+                                    if ($this->interServices->processCommissionWithMobiles($valeur_amount, $percent_robus, $country_robus, $walletVersement, $admin_civ)) {
+                                        $this->interServices->sendNotificationVirementInters($walletVersement);
+                                        return $this->messageAfterValidated($walletVersement);
+                                    } else {
+
+                                        return   json_message_response(false, "Error de transferts du montant !", 300);
+                                    }
+                                } else {
+
+                                    return   json_message_response(false, "Error de demande transferts  !", 300);
                                 }
                             } else {
-
-                                return  json_message_response(false, "Error de creation de transfert du montant!", 333);
+                                return   json_message_response(false, "Error de demande transferts  !", 300);
                             }
                         } else {
                             return json_message_response(false, "Verifié votre solde !!", 333);

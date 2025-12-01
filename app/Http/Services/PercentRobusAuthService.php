@@ -215,7 +215,7 @@ class PercentRobusAuthService
     public function getRobusPercentagePhoneCredit()
     {
 
-         $userAuth = auth_user();
+        $userAuth = auth_user();
 
         if (!$userAuth) {
             return null;
@@ -304,6 +304,16 @@ class PercentRobusAuthService
                 return VirementPercent::whereId(13)->first();
             default:
                 return null;
+        }
+    }
+
+    public function getRobusPercentageInterVersement()
+    {
+
+        if (sabdy()->is_under_distributer || sabdy()->is_api) {
+            return VirementPercent::whereId(14)->first();
+        } else {
+            return VirementPercent::whereId(15)->first();
         }
     }
 

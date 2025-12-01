@@ -13,7 +13,7 @@
             <div class="intro-x lg:text-center flex items-center lg:block flex-1 z-10">
                 <a href="#step-1"
                     class="w-10 h-10 rounded-full btn btn-circle {{ $step != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
-                <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Saisissez les informations requises
+                <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Saisissez les informations
                 </div>
             </div>
 
@@ -123,58 +123,95 @@
                             'error' => 'transaction_amount_robus',
                         ])
                     @else
-                        {{-- @if (sabdy()->is_under_distributer == 1)
-                        
-                            @include('components.transaction-custumer-input', [
-                                'id' => 'name_custumer',
-                                'model' => 'name_custumer',
-                                'label' => 'Nom & prenom',
-                                'error' => 'name_custumer',
-                            ])
-
-                            @include('components.transaction-custumer-input', [
-                                'id' => 'num_piece_custumer',
-                                'model' => 'num_piece_custumer',
-                                'label' => 'Numero piece',
-                                'error' => 'num_piece_custumer',
-                            ])
-
-                            <div class="col-span-12 mt-3">
-                                <label for="date_piece" class="form-label">Date piece<span
-                                        class="text-danger">*</span></label>
-
-                                <div class="flex">
-
-                                    <input wire:model.defer="date_piece" id="date_piece" type="date"
-                                        class="form-control" placeholder="Date">
-                                    @error('date_piece')
-                                        <span class="text-danger">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                        @endif --}}
-                        <div class="col-span-6 mt-3 form-group required">
-                            <label for="transaction_phone" class="form-label">Numero de telephone <span
-                                    class="text-danger">*</span></label>
-                            <div class="flex">
-                                <div
-                                    class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
-                                    {{ $countrie_indicative->indecative ?? null }}
-                                </div>
-                                <input wire:model.defer="transaction_phone" id="transaction_phone" type="number"
-                                    class="form-control" placeholder="Numero" maxlength="15" required>
-                            </div>
-                            @error('transaction_phone')
+                        <div class="col-span-12 form-group required">
+                            <label class="form-label" for="choose_transaction">Choisir le type de transaction</label>
+                            <select wire:model="choose_transaction" id="choose_transaction" class="form-control"
+                                required>
+                                <option value="" selected>Selectionnez type de transaction</option>
+                                <option value="1">Transfert</option>
+                                <option value="2">Rétrait</option>
+                            </select>
+                            @error('choose_transaction')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
                         </div>
 
-                        @include('components.transaction-amount-input', [
-                            'id' => 'transaction_amount_money',
-                            'model' => 'transaction_amount_money',
-                            'label' => 'Montant',
-                            'error' => 'transaction_amount_money',
-                        ])
+                        @if ($choose_transaction)
+                            @if ($choose_transaction == '1')
+                                <div class="col-span-6 mt-3 form-group required">
+                                    <label for="transaction_phone" class="form-label">Numero de telephone <span
+                                            class="text-danger">*</span></label>
+                                    <div class="flex">
+                                        <div
+                                            class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
+                                            {{ $countrie_indicative->indecative ?? null }}
+                                        </div>
+                                        <input wire:model.defer="transaction_phone" id="transaction_phone"
+                                            type="number" class="form-control" placeholder="Numero" maxlength="15"
+                                            required>
+                                    </div>
+                                    @error('transaction_phone')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                @include('components.transaction-amount-input', [
+                                    'id' => 'transaction_amount_money',
+                                    'model' => 'transaction_amount_money',
+                                    'label' => 'Montant',
+                                    'error' => 'transaction_amount_money',
+                                ])
+                            @else
+                                <div class="col-span-6 mt-3 form-group required">
+                                    <label for="transaction_phone" class="form-label">Numero de telephone </label>
+                                    <div class="flex">
+                                        <div
+                                            class="z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-indicatif">
+                                            {{ $countrie_indicative->indecative ?? null }}
+                                        </div>
+                                        <input wire:model.defer="transaction_phone" id="transaction_phone"
+                                            type="number" class="form-control" placeholder="Numero" maxlength="15"
+                                            required>
+                                    </div>
+                                    @error('transaction_phone')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                @include('components.transaction-amount-input', [
+                                    'id' => 'transaction_amount_money',
+                                    'model' => 'transaction_amount_money',
+                                    'label' => 'Montant a retirer',
+                                    'error' => 'transaction_amount_money',
+                                ])
+
+                                <div class="col-span-12 mt-3 form-group required">
+                                    <label for="name_custumers" class="form-label">Nom && Prénom </label>
+                                    <div class="flex">
+
+                                        <input wire:model.defer="name_custumers" id="name_custumers" type="text"
+                                            class="form-control" placeholder="Nom & Prénom" required>
+                                    </div>
+                                    @error('name_custumers')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                @if ($need_identity_number)
+                                    <div class="col-span-12 mt-3 form-group required">
+                                        <label for="identity_number" class="form-label">Numéro de la pièce
+                                            d'identité</label>
+                                        <input type="text" id="identity_number" wire:model.defer="identity_number"
+                                            class="form-control" placeholder="Veuillez entrer le numéro de la pièce"
+                                            required>
+                                        @error('identity_number')
+                                            <span class="text-danger">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                @endif
+
+                            @endif
+                        @endif
+
                     @endif
                 </div>
 
@@ -238,8 +275,8 @@
                 class="btn btn-outline-secondary w-20 mr-1">Annuler</button>
 
             @if (!is_null($provider_transaction) && $provider_transaction != '')
-                <button wire:click="addTransaction" type="button" wire:loading.remove="" wire:loading.attr="disabled"
-                    class="btn btn-primary w-50">Envoyer
+                <button wire:click="addTransaction" type="button" wire:loading.remove=""
+                    wire:loading.attr="disabled" class="btn btn-primary w-50">Envoyer
                     la demande</button>
                 <div wire:loading wire:target="addTransaction">
                     Traitement en cours...

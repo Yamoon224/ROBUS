@@ -45,16 +45,11 @@
                             <tr class="intro-x">
                                 <td class="w-65">
                                     {{-- <p class="font-medium whitespace-nowrap"> --}}
-                                    {{ $item->id ?? null }}
-                                    {{-- </p> --}}
-
-                                </td>
-                                <td class="w-65">
-                                    {{-- <p class="font-medium whitespace-nowrap"> --}}
                                     {{ $item->name ?? null }}
                                     {{-- </p> --}}
 
                                 </td>
+                               
                                 <td class="text-center">
                                     <p class="font-medium whitespace-nowrap">
                                         {{ $item->percent * 100 ?? null }} %
