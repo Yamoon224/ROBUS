@@ -57,6 +57,67 @@ class TransfertServiceBackend
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
 
+    public function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $choose_transaction)
+    {
+
+        $amount_solde = (float)sabdy()->wallet->amount - (float)$transaction_amount_robus;
+
+        return WalletTransaction::create(
+            [
+                'wallet_id' => sabdy()->wallet->id,
+                'amount' => $transaction_amount_robus,
+                'description' => "Transfert d'argent vers Robus",
+                'transaction_cost_id' =>  $percent_robus->id,
+                'phone' =>  null,
+                'costs_amount' => $percent_robus->percent * $transaction_amount_robus,
+                'amount_received' => $transaction_amount_robus - ($percent_robus->percent * $transaction_amount_robus),
+                'num_wallet' => strtoupper($compte_number_robus),
+                'name_complet' => null,
+                'num_piece' => null,
+                'validated_date' => null,
+                'created_by' => sabdy()->id,
+                'provider_id' => $provider->id,
+                'choose_type_transaction' => 1,
+                'type_transaction' => 'Depot',
+                'type_received' => 'Transfert',
+                'status' => 'SUCCESS',
+                'amount_solde' => $amount_solde ?? null,
+                'amount_solde_drawal' => $amount_drawal ?? null,
+                'choose_transaction' => $choose_transaction ?? 1
+            ]
+        );
+    }
+
+
+    public function createWalletTransactionCiv($percent_robus, $provider, $transaction_amount_money, $valuer_deposit_com, $transaction_phone, $choose_transaction, $name_custumers, $identity_number)
+    {
+
+        $amount_solde = (float)sabdy()->wallet->amount - (float)$transaction_amount_money;
+
+        return  WalletTransaction::create(
+            [
+                'wallet_id' =>   sabdy()->wallet->id,
+                'amount' => $transaction_amount_money,
+                'description'  => $transaction_description ?? null,
+                'transaction_cost_id' => $percent_robus->id,
+                'phone'   => sabdy()->country->indecative . $transaction_phone,
+                'created_by' => sabdy()->id,
+                'provider_id'  =>   $provider->id,
+                'num_wallet'   =>  null,
+                'costs_amount' => $valuer_deposit_com,
+                'name_complet' => $name_custumers ?? null,
+                'num_piece' => $identity_number ?? null,
+                'choose_transaction' => $choose_transaction ?? 1,
+                'choose_type_transaction' => 1,
+                'amount_received'  => 0,
+                'type_transaction' => 'Retrait',
+                'status'  => "PENDING",
+                'amount_solde' => $amount_solde ?? null
+            ]
+        );
+    }
+
+
     public function createWalletTransactionReloadReload($walletUser, $relaod_uv_amout_robus, $provider, $account_reload_uv, $valeur_receive, $amount_solde, $amount_drawal)
     {
 
@@ -211,7 +272,7 @@ class TransfertServiceBackend
         ]);
     }
 
-    public function createPushTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $phoneNumber, $amountReceved)
+    public function createPushTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $phoneNumber, $amountReceved, $identity_number, $choose_transaction)
     {
 
         return WalletPush::create([
@@ -225,12 +286,15 @@ class TransfertServiceBackend
             'costs_amount' => ($percent_robus->percent * $val_amount),
             'phone'  =>  $phoneNumber ?? null,
             'full_name' =>  $fullName ?? null,
+            'identity_number' =>  $identity_number ?? null,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
+            'choose_transaction' => $choose_transaction ?? 1
+
         ]);
     }
 
-    public function createTresortTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $phoneNumber, $amountReceved)
+    public function createTresortTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $phoneNumber, $amountReceved, $choose_transaction, $identity_number)
     {
 
         return WalletTresortMoney::create([
@@ -246,6 +310,9 @@ class TransfertServiceBackend
             'full_name' =>  $fullName ?? null,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
+            'identity_number' =>  $identity_number ?? null,
+            'choose_transaction' => $choose_transaction ?? 1
+
         ]);
     }
 
@@ -271,7 +338,7 @@ class TransfertServiceBackend
     }
 
 
-    public function createDjamoTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $image, $amountReceved)
+    public function createDjamoTransaction($val_amount, $provider, $percent_robus, $amount_solde, $fullName, $image, $amountReceved, $choose_transaction, $identity_number)
     {
 
         return WalletDjamo::create([
@@ -286,7 +353,10 @@ class TransfertServiceBackend
             'image'  =>  $image ?? null,
             'full_name' =>  $fullName ?? null,
             'status'  => "PENDING",
+            'identity_number' =>  $identity_number ?? null,
             'amount_received'  =>  $amountReceved ?? 0.0,
+            'choose_transaction' => $choose_transaction ?? 1
+
         ]);
     }
 

@@ -70,7 +70,7 @@ class CountrieController extends Controller
 
         return  new AllCountrieCollection($countrie);
     }
-    
+
     public function  index_search_country($id)
     {
         $city = City::query();
@@ -154,8 +154,10 @@ class CountrieController extends Controller
         $walletVirementBank = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 10);
         $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 11);
         $walletInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 8);
+        $walletPushInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 21);
+        $walletDjamoInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 22);
+        $walletTresortInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 20);
         $walletInterUnder =  $this->percentRobus->getProvidersByUnderDistributerType(new Provider, $country_inter_out_civ, 8);
-
 
 
         if ((robus()->is_under_distributer || robus()->is_api) && robus()->country->id != 107) {
@@ -167,8 +169,10 @@ class CountrieController extends Controller
                 "Crédit téléphonique" => [],
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
+                "Rechargement Push" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletPushInter) : [],
+                "Rechargement Djamo" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletDjamoInter) : [],
+                "Rechargement Tresort Money" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletTresortInter) : [],
             ];
-            
         } elseif ((robus()->is_under_distributer || robus()->is_api) && robus()->country->id == 107) {
 
             $walletsData['Transfert international'] = [
@@ -195,6 +199,9 @@ class CountrieController extends Controller
                 "Crédit téléphonique" => $walletPhoneInter ? ProviderSingleCollection::collection($walletPhoneInter) : [],
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
+                "Rechargement Push" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletPushInter) : [],
+                "Rechargement Djamo" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletDjamoInter) : [],
+                "Rechargement Tresort Money" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletTresortInter) : [],
             ];
         }
 

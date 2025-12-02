@@ -21,7 +21,7 @@ class TransfertPush extends Component
 {
 
     public $stepPush = 1;
-
+    public $choose_transaction;
     public $number_phone;
     public $amount_push;
     public $full_name_push;
@@ -39,6 +39,8 @@ class TransfertPush extends Component
     public $commission_transaction_val_admin_push_receive;
     public $commission_transaction_val_nat_push_receive;
     public $commission_transaction_drawal;
+    public $need_identity_number = false;
+    public $identity_number;
 
     public function mount()
     {
@@ -89,6 +91,14 @@ class TransfertPush extends Component
         }
     }
 
+    public function updated($property, $value)
+    {
+        if ($property === 'amount_push') {
+            $amount = (int) $value;
+            $this->need_identity_number = $amount >= 100000 && $amount <= 200000;
+        }
+    }
+
     public function checkPassword()
     {
 
@@ -116,6 +126,8 @@ class TransfertPush extends Component
                 'number_phone' => 'required',
                 'full_name_push' => 'required',
                 'amount_push' => 'required',
+                'choose_transaction' => 'required',
+
             ],
             [
                 'number_phone.required' =>
@@ -124,6 +136,8 @@ class TransfertPush extends Component
                 'Nom & prénom sont obligatoire',
                 'amount_push.required' =>
                 'Montant est obligatoire',
+                'choose_transaction.required' => 'Le choix est obligatoire est obligatoire',
+
             ]
         );
 
@@ -155,8 +169,8 @@ class TransfertPush extends Component
                 }
 
                 $reel_amount = $this->search_amount($this->amount_push);
-                
-                $val_amount = $reel_amount ;
+
+                $val_amount = $reel_amount;
 
                 if ($val_amount > $walletUser->wallet->amount) {
                     $this->resetPushField();
@@ -201,11 +215,13 @@ class TransfertPush extends Component
                 'number_phone' => 'required',
                 'full_name_push' => 'required',
                 'amount_push' => 'required',
+                'choose_transaction' => 'required',
             ], [
                 'password_validated.required' => 'Mot de passe est obligatoire',
                 'number_phone.required' => 'Numero est obligatoire',
                 'full_name_push.required' => 'Nom & prénom sont obligatoire',
                 'amount_push.required' => 'Montant est obligatoire',
+                'choose_transaction.required' => 'Le choix est obligatoire est obligatoire',
             ]);
 
             if (!Hash::check($this->password_validated, sabdy()->password)) {
@@ -234,7 +250,7 @@ class TransfertPush extends Component
 
             $reel_amount = $this->search_amount($this->amount_push);
             $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentagePush();
-            
+
             $val_amount = $reel_amount;
 
             if ($val_amount > $walletUser->wallet->amount) {
@@ -249,6 +265,7 @@ class TransfertPush extends Component
 
                 $amountReceved = $reel_amount;
 
+                // dd($this->choose_transaction);
                 $walletPush =  app(TransfertServiceBackend::class)->createPushTransaction(
                     $val_amount,
                     $provider,
@@ -256,7 +273,9 @@ class TransfertPush extends Component
                     $amount_solde,
                     $this->full_name_push,
                     $this->number_phone,
-                    $amountReceved
+                    $amountReceved,
+                    $this->identity_number,
+                    $this->choose_transaction,
                 );
 
                 $message =
@@ -320,10 +339,17 @@ class TransfertPush extends Component
 
                 $commission_transaction = app(CommissionServicePercentBackend::class)->getRobusPercentagePush();
 
-                $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
-                $this->commission_transaction_val_admin_push_receive = (float) $commission_percent_transaction;
-                $this->commission_transaction_val_nat_push_receive = (float) $reel_amount;
-                $this->commission_transaction_val_nat_push_pay = (float) $commission_transaction->percent_merchands * $reel_amount;
+                if ($this->choose_transaction == 1) {
+                    $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+                    $this->commission_transaction_val_admin_push_receive = (float) $commission_percent_transaction;
+                    $this->commission_transaction_val_nat_push_receive = (float) $reel_amount;
+                    $this->commission_transaction_val_nat_push_pay = (float) $commission_transaction->percent_merchands * $reel_amount;
+                } else {
+                    $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+                    $this->commission_transaction_val_admin_push_receive = (float) $commission_percent_transaction;
+                    $this->commission_transaction_val_nat_push_receive = (float) $reel_amount;
+                    $this->commission_transaction_val_nat_push_pay = (float) $commission_transaction->percent_with_drawal * $reel_amount;
+                }
             }
         }
     }
@@ -364,7 +390,11 @@ class TransfertPush extends Component
 
         $amount_percent = $percent_robus->percent * $amount;
 
-        $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
+        $percent = ($this->choose_transaction == 1)
+            ? $percent_robus->percent_merchands
+            : $percent_robus->percent_with_drawal;
+
+        $valuer_deposit = (float) $percent * $amount;
 
         $amount_commission = $amount + ($percent_robus->percent * $amount);
 
@@ -420,5 +450,4 @@ class TransfertPush extends Component
 
         return $reel_amount;
     }
-
 }

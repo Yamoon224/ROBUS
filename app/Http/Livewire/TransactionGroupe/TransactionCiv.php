@@ -2,43 +2,32 @@
 
 namespace App\Http\Livewire\TransactionGroupe;
 
-use App\Events\AdminNotifEvent;
-use App\Events\CreateWalletTransfersEvent;
-use App\Http\Controllers\Admin\MailController;
 use App\Mail\CodeValidated;
-use App\Models\AdminsCom;
-use App\Models\Banks\BankCard;
-use App\Models\Costs\TransactionCost;
 use App\Models\Custumers\Country;
 use App\Models\Invoices\InvoiceTransaction;
-use App\Models\Moneys\LevelMoney;
 use App\Models\OperatorService;
 use App\Models\Payments\Transaction;
 use App\Models\Providers\Provider;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
-use App\Models\Wallets\WalletBank;
-use App\Models\Wallets\WalletDeposit;
-use App\Models\Wallets\WalletInter;
-use App\Models\Wallets\WalletPayment;
-use App\Models\Wallets\WalletPhoneCredit;
-use App\Models\Wallets\WalletReload;
 use App\Models\Wallets\WalletTransaction;
-use App\Notifications\AdminNotification;
-use App\Notifications\UserNotification;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Livewire\Component;
+use App\Http\Services\CommissionServicePercentBackend;
+use App\Http\Services\TotalAmoutUserServiveBackend;
+use App\Http\Services\NotificationServiceBackend;
+use App\Http\Services\TransfertServiceBackend;
+use App\Http\Services\CommissionServiceBackend;
 
 class TransactionCiv extends Component
 {
 
     public $step = 1;
     public $transaction_amount_robus;
+    public $name_custumers;
     public $provider_transaction;
     public $choose_type_transaction;
     public $choose_transaction;
@@ -158,77 +147,7 @@ class TransactionCiv extends Component
     }
 
 
-    public function getTodayTransactionCommissionAmountTotal($walletModel)
-    {
 
-
-        $totalAmount = 0;
-
-        $amount = $walletModel::where('wallet_id', sabdy()->wallet->id)
-            ->whereStatus('SUCCESS')
-            ->sum('commissions');
-
-        if ($amount !== null) {
-            $totalAmount += $amount;
-        }
-
-        return $totalAmount;
-    }
-
-    public function getTodayTransactionMobileCommissionAmountTotal($walletModel)
-    {
-
-
-        $totalAmount = 0;
-
-        $amount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
-            ->whereStatus('SUCCESS')
-            ->where('provider_id', '!=', 9)
-            ->sum('commissions');
-
-        if ($amount !== null) {
-            $totalAmount += $amount;
-        }
-
-        return $totalAmount;
-    }
-
-    public function getTodayTransactionRobusDepotCommissionAmountTotal($walletModel)
-    {
-
-
-        $totalAmount = 0;
-
-        $amount = $walletModel::where('wallet_id',  sabdy()->wallet->id)
-            ->whereStatus('SUCCESS')
-            ->where('provider_id', 9)
-            ->where('type_transaction', 'Depot')
-            ->sum('commissions');
-
-        if ($amount !== null) {
-            $totalAmount += $amount;
-        }
-
-        return $totalAmount;
-    }
-
-    public function getTodayTransactionRobusRetraitCommissionAmountTotal($walletModel)
-    {
-
-        $totalAmount = 0;
-
-        $amount = $walletModel::where('wallet_id', sabdy()->wallet->id)
-            ->whereStatus('SUCCESS')
-            ->where('provider_id', 9)
-            ->where('type_transaction', 'Retrait')
-            ->sum('commissions');
-
-        if ($amount !== null) {
-            $totalAmount += $amount;
-        }
-
-        return $totalAmount;
-    }
     public function updatedTransactionAmountRobus()
     {
         // Si la valeur change, mettez à jour les montants
@@ -266,7 +185,7 @@ class TransactionCiv extends Component
             $reel_amount = $this->search_amount($this->transaction_amount_robus);
 
             if ($reel_amount != '') {
-                $commission_transaction = $this->getRobusPercentageSDistributers();
+                $commission_transaction = app(CommissionServicePercentBackend::class)->getRobusPercentageSDistributers();
 
                 // Calculs
                 $this->commission_transaction_val_admin_receive = (float) $commission_transaction->percent * $reel_amount;
@@ -281,20 +200,33 @@ class TransactionCiv extends Component
 
             if ($reel_amount_money != '') {
                 if (sabdy()->country->name_groupe == 'CIV') {
-                    $commission_transfert_phone = $this->getRobusPercentageMobile();
+                    $commission_transfert_phone = app(CommissionServicePercentBackend::class)->getRobusPercentageMobile();
                 } elseif (sabdy()->country->name_groupe == 'MAG') {
-                    $commission_transfert_phone = $this->getRobusPercentageMobileMaroc();
+                    $commission_transfert_phone = app(CommissionServicePercentBackend::class)->getRobusPercentageMobileMaroc();
                 }
 
                 // Calculs
-                $this->commission_transaction_money_val_admin_receive = $commission_transfert_phone->percent * $reel_amount_money;
-                $this->commission_transaction_money_val_nat_pay = (float) $reel_amount_money * (float) $commission_transfert_phone->percent_deposit;
-                $valeur_receive = (float) $reel_amount_money;
+                if ($this->choose_transaction == 1) {
+                    $this->commission_transaction_money_val_admin_receive = $commission_transfert_phone->percent * $reel_amount_money;
+                    $this->commission_transaction_money_val_nat_pay = (float) $reel_amount_money * (float) $commission_transfert_phone->percent_deposit;
+                    $valeur_receive = (float) $reel_amount_money;
 
-                if ($valeur_receive < 0) {
-                    $this->commission_transaction_money_val_nat_receive = "Montant négatif";
+                    if ($valeur_receive < 0) {
+                        $this->commission_transaction_money_val_nat_receive = "Montant négatif";
+                    } else {
+                        $this->commission_transaction_money_val_nat_receive = $valeur_receive;
+                    }
                 } else {
-                    $this->commission_transaction_money_val_nat_receive = $valeur_receive;
+
+                    $this->commission_transaction_money_val_admin_receive = $commission_transfert_phone->percent_custum_drawal * $reel_amount_money;
+                    $this->commission_transaction_money_val_nat_pay = (float) $reel_amount_money * (float) $commission_transfert_phone->percent_with_drawal;
+                    $valeur_receive = (float) $reel_amount_money;
+
+                    if ($valeur_receive < 0) {
+                        $this->commission_transaction_money_val_nat_receive = "Montant négatif";
+                    } else {
+                        $this->commission_transaction_money_val_nat_receive = $valeur_receive;
+                    }
                 }
             }
         }
@@ -371,7 +303,8 @@ class TransactionCiv extends Component
     public function addTransaction()
     {
         $provider = Provider::whereId($this->provider_transaction)->first();
-        $som_transfers =  $this->getSumValTransactionProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
+
         // Verifier plafond days
         $valeur_ceiling = sabdy()->silver_ceiling;
 
@@ -426,9 +359,18 @@ class TransactionCiv extends Component
                         ]);
                     }
 
+                    /**
+                     * 🔥 Ajouter automatiquement l'identité si besoin
+                     */
+                    if ($this->need_identity_number) {
+                        $rules['identity_number'] = 'required';
+                        $messages['identity_number.required'] = 'Le numéro de la pièce est obligatoire';
+                    }
+
 
                     $this->step = 2;
                 }
+
 
 
                 if (!$this->validateAmount()) {
@@ -452,13 +394,13 @@ class TransactionCiv extends Component
 
     public function validatedPassword()
     {
-        $admin_civ = $this->getAdminCIVProperty();
-        $som_transfers =  $this->getSumValTransactionProperty();
+
         // Verifier plafond days
         $valeur_ceiling = sabdy()->silver_ceiling;
         $valeur_max_send  =  sabdy()->country->amount_max_send;
         $provider = Provider::whereId($this->provider_transaction)->first();
-
+        $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
+        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
         try {
 
@@ -509,7 +451,7 @@ class TransactionCiv extends Component
 
                     if (sabdy()->is_under_distributer) {
 
-                        $percent_robus = $this->getRobusPercentageSDistributers();
+                        $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageSDistributers();
                         $isCustomer = $wallet_search->sidUser->is_custumers;
                         $isNotDistributor = !$wallet_search->sidUser->is_under_distributer;
                         $isNotAdmin = !$wallet_search->sidUser->is_admin;
@@ -533,7 +475,7 @@ class TransactionCiv extends Component
 
                                             $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
-                                            $walletTransaction =  $this->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
+                                            $walletTransaction =  app(TransfertServiceBackend::class)->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
 
                                             if ($walletTransaction != null) {
 
@@ -554,7 +496,7 @@ class TransactionCiv extends Component
                                                     }
 
                                                     if ($this->processCommissionsDistributerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
-                                                        $this->sendNotification($walletTransaction);
+                                                        app(NotificationServiceBackend::class)->sendCivGroupeNotification($walletTransaction);
                                                         $this->resetTransactionField();
                                                         $this->emit('modal-hide-transfers');
                                                         $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
@@ -610,7 +552,7 @@ class TransactionCiv extends Component
                                         $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
 
-                                        $walletTransaction =  $this->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
+                                        $walletTransaction =  app(TransfertServiceBackend::class)->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
 
                                         if ($walletTransaction != null) {
 
@@ -629,7 +571,7 @@ class TransactionCiv extends Component
                                             }
                                             if ($this->updateAmountRobusReceivedDistributer($this->compte_number_robus, $walletTransaction)) {
                                                 if ($this->processCommissionsRobusDistributer($reel_amount)) {
-                                                    $this->sendNotification($walletTransaction);
+                                                    app(NotificationServiceBackend::class)->sendCivGroupeNotification($walletTransaction);
                                                     $this->resetTransactionField();
                                                     $this->emit('modal-hide-transfers');
                                                     $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
@@ -664,15 +606,9 @@ class TransactionCiv extends Component
                         }
                     } else {
 
-                        $percent_robus = $this->getRobusPercentageCustumers();
+                        $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageCustumers();
 
-                        // Code validated
-                        $isWalletSearchNull = $wallet_search === null;
                         $isCustomer = $wallet_search->sidUser->is_custumers;
-                        $isCustomerStatusFalse = $wallet_search->sidUser->status === false;
-                        $isSameWalletAsUser = $this->compte_number_robus === sabdy()->wallet->wallet_id;
-                        $isUnderDistributor = $wallet_search->sidUser->is_under_distributer === true;
-                        $isAdmin_all = $wallet_search->sidUser->is_admin === true;
 
                         // Is custumers
                         if ($percent_robus !== null) {
@@ -690,7 +626,7 @@ class TransactionCiv extends Component
 
                                     if ($walletAmountSend) {
 
-                                        $walletTransaction = $this->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
+                                        $walletTransaction = app(TransfertServiceBackend::class)->createRobusWalletTransaction($reel_amount, $percent_robus, $provider, $this->compte_number_robus, $amount_solde_drawal);
 
                                         if ($walletTransaction != null) {
 
@@ -709,7 +645,7 @@ class TransactionCiv extends Component
                                             }
                                             if ($this->updateAmountRobusReceived($this->compte_number_robus, $walletTransaction, $valeur_received)) {
                                                 if ($this->processCommissionsCustumerRobus($reel_amount, $percent_robus, $walletTransaction, $admin_civ)) {
-                                                    $this->sendNotification($walletTransaction);
+                                                    app(NotificationServiceBackend::class)->sendTransactionGroupeNotification($walletTransaction);
                                                     $this->resetTransactionField();
                                                     $this->emit('modal-hide-transfers');
                                                     $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
@@ -782,13 +718,21 @@ class TransactionCiv extends Component
                             ]);
                         }
 
+                        /**
+                         * 🔥 Ajouter automatiquement l'identité si besoin
+                         */
+                        if ($this->need_identity_number) {
+                            $rules['identity_number'] = 'required';
+                            $messages['identity_number.required'] = 'Le numéro de la pièce est obligatoire';
+                        }
+
 
                         if (sabdy()->country->name_groupe == 'CIV') {
 
-                            $percent_robus = $this->getRobusPercentageMobile();
+                            $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageMobile();
                         } elseif (sabdy()->country->name_groupe == 'MAG') {
 
-                            $percent_robus = $this->getRobusPercentageMobileMaroc();
+                            $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageMobileMaroc();
                         } else {
 
                             $this->resetTransactionField();
@@ -810,7 +754,7 @@ class TransactionCiv extends Component
 
                         if (sabdy()->country->name_groupe == 'CIV') {
 
-                            $percent_robus = $this->getRobusPercentageMobileTwo();
+                            $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageMobileTwo();
                         } else {
 
                             $this->resetTransactionField();
@@ -837,12 +781,20 @@ class TransactionCiv extends Component
                                         $amount_payment = $reel_amount;
                                     } else {
 
-                                        $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
+                                        $percent = ($this->choose_transaction == 1)
+                                            ? $percent_robus->percent
+                                            : $percent_robus->percent_with_drawal;
 
-                                        $amount_payment =  $reel_amount + ($percent_robus->percent * $reel_amount);
+                                        $valeur_received = $reel_amount - $percent;
+
+                                        $amount_payment = $reel_amount + $percent;
                                     }
 
-                                    $cost_payment = $percent_robus->percent *  $reel_amount;
+                                    if ($this->choose_transaction == 1) {
+                                        $cost_payment = $percent_robus->percent *  $reel_amount;
+                                    } else {
+                                        $cost_payment = $percent_robus->percent_with_drawal *  $reel_amount;
+                                    }
                                 } else {
 
                                     $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
@@ -854,7 +806,7 @@ class TransactionCiv extends Component
 
                                 if ($this->validateVerifyAmount($amount_payment)) {
 
-                                    $walletTransaction =  $this->createRobusWalletTransactionDistributer($percent_robus, $provider, $reel_amount, $cost_payment, $this->transaction_phone , $this->choose_transaction  , $this->name_custumers ,  $this->identity_number);
+                                    $walletTransaction = app(TransfertServiceBackend::class)->createWalletTransactionCiv($percent_robus, $provider, $reel_amount, $cost_payment, $this->transaction_phone, $this->choose_transaction, $this->name_custumers,  $this->identity_number);
 
                                     if ($walletTransaction != null) {
 
@@ -869,7 +821,7 @@ class TransactionCiv extends Component
 
                                             if ($processCommission) {
 
-                                                $this->sendNotificationMobile($walletTransaction);
+                                                app(NotificationServiceBackend::class)->sendNotificationMobile($walletTransaction);
 
                                                 $this->resetTransactionField();
                                                 $this->emit('modal-hide-transfers');
@@ -982,41 +934,7 @@ class TransactionCiv extends Component
     }
 
 
-    public function getRobusPercentageMobile()
-    {
-        $countryNameGroup = sabdy()->country->name_groupe;
 
-        switch ($countryNameGroup) {
-            case 'CIV':
-                return TransactionCost::whereId(27)->first();
-            default:
-                return null;
-        }
-    }
-
-    public function getRobusPercentageMobileMaroc()
-    {
-        $countryNameGroup = sabdy()->country->name_groupe;
-
-        switch ($countryNameGroup) {
-            case 'MAG':
-                return TransactionCost::whereId(44)->first();
-            default:
-                return null;
-        }
-    }
-
-    public function getRobusPercentageMobileTwo()
-    {
-        $countryNameGroup = sabdy()->country->name_groupe;
-
-        switch ($countryNameGroup) {
-            case 'CIV':
-                return TransactionCost::whereId(29)->first();
-            default:
-                return null;
-        }
-    }
 
     public function search_amount($amount_received)
     {
@@ -1028,57 +946,8 @@ class TransactionCiv extends Component
         return $reel_amount;
     }
 
-    public function getRobusPercentageSDistributers()
-    {
-        $countryNameGroup = sabdy()->country->name_groupe;
 
-        switch ($countryNameGroup) {
-            case 'CIV':
-                return TransactionCost::whereId(26)->first();
-            case 'AFL':
-                return TransactionCost::whereId(32)->first();
-            case 'AFC':
-                return TransactionCost::whereId(33)->first();
-            case 'USA':
-                return TransactionCost::whereId(34)->first();
-            case 'URP':
-                return TransactionCost::whereId(35)->first();
-            case 'MAG':
-                return TransactionCost::whereId(36)->first();
-            case 'ASIE':
-                return TransactionCost::whereId(44)->first();
-            case 'AFE':
-                return TransactionCost::whereId(45)->first();
-            default:
-                return null;
-        }
-    }
 
-    public function getRobusPercentageCustumers()
-    {
-        $countryNameGroup = sabdy()->country->name_groupe;
-
-        switch ($countryNameGroup) {
-            case 'CIV':
-                return TransactionCost::whereId(28)->first();
-            case 'AFL':
-                return TransactionCost::whereId(37)->first();
-            case 'AFC':
-                return TransactionCost::whereId(38)->first();
-            case 'USA':
-                return TransactionCost::whereId(39)->first();
-            case 'URP':
-                return TransactionCost::whereId(40)->first();
-            case 'MAG':
-                return TransactionCost::whereId(41)->first();
-            case 'ASIE':
-                return TransactionCost::whereId(46)->first();
-            case 'AFE':
-                return TransactionCost::whereId(48)->first();
-            default:
-                return null;
-        }
-    }
 
     public function updateProviderTransaction()
     {
@@ -1150,124 +1019,6 @@ class TransactionCiv extends Component
         return $providers;
     }
 
-
-    private function sendNotification($walletTransaction)
-    {
-
-        if (sabdy()->is_custumers) {
-            if (sabdy()->country->code == "CI") {
-
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
-
-                $encode = substr(sabdy()->phone,  -10);
-
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-            }
-        }
-        $msg_title = 'Transfert Notional Robus';
-        $msg = 'Vous avez effectué un transfert vers Robus avec succes';
-        sabdy()->notify(
-            new UserNotification([
-                'title' => $msg_title,
-                'message' => $msg,
-            ])
-        );
-        $notifs = sabdy()->unreadNotifications;
-        event(new CreateWalletTransfersEvent($walletTransaction));
-        // $this->emit('transaction_inter_sends', $walletTransaction->id);
-        $admins = $this->getAdminCIVProperty();
-        Notification::send(
-            $admins,
-            new AdminNotification(
-                'Transfert Robus vers le client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
-        );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Robus vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
-
-        if ($admins->count() > 0) {
-
-            foreach ($admins  as $user) {
-
-                $admin_single = SidUser::find($user->id);
-
-                $notifs = $admin_single->unreadNotifications;
-
-                event(new AdminNotifEvent($notifs));
-            }
-        }
-
-        if (sabdy()->email != null) {
-            $notify = new MailController();
-            $notify->newTransaction($walletTransaction);
-        }
-
-        $this->resetTransactionField();
-        $this->emit('modal-hide-transfers');
-        $this->emit('success', 'Transfers effectué !');
-    }
-
-    private function sendNotificationMobile($walletTransaction)
-    {
-
-        if (sabdy()->is_custumers) {
-            if (sabdy()->country->code == "CI") {
-
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
-
-                $encode = substr(sabdy()->phone,  -10);
-
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-            }
-        }
-
-        $msg_title = 'Transfert Mobile money';
-        $msg = 'Vous avez effectué un transfert vers Mobile Money ';
-        sabdy()->notify(
-            new UserNotification([
-                'title' => $msg_title,
-                'message' => $msg,
-            ])
-        );
-        $notifs = sabdy()->unreadNotifications;
-        event(new CreateWalletTransfersEvent($walletTransaction));
-        $admins = $this->getAdminCIVProperty();
-        Notification::send(
-            $admins,
-            new AdminNotification(
-                'Transfert Robus vers le client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
-        );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Mobile Money vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
-
-        if ($admins->count() > 0) {
-
-            foreach ($admins  as $user) {
-
-                $admin_single = SidUser::find($user->id);
-
-                $notifs = $admin_single->unreadNotifications;
-
-                event(new AdminNotifEvent($notifs));
-            }
-        }
-
-        if (sabdy()->email != null) {
-            $notify = new MailController();
-            $notify->newTransaction($walletTransaction);
-        }
-
-        $this->resetTransactionField();
-        $this->emit('modal-hide-transfers');
-        $this->emit('success', 'Transfers effectué !');
-    }
 
     private function updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)
     {
@@ -1383,24 +1134,8 @@ class TransactionCiv extends Component
             $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) sabdy()->country->currencie->value;
         }
 
-        if ($admin_civ->count() > 0) {
 
-            $nmbre_admin = $admin_civ->count();
-
-            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_transaction_id' => $walletTransaction->id,
-                    'amount_with_draw' =>  0,
-                    'description' => 'Commission administrateur',
-                ]);
-            }
-        }
+        app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion);
 
 
         return true;
@@ -1440,7 +1175,10 @@ class TransactionCiv extends Component
                 $admin_valeur_convertion = (float)$valeur_admin * (float)sabdy()->country->currencie->value;
             }
 
+
             if ($walletTransaction->type_transaction == "Depot") {
+
+
 
                 if ($this->showRemonterDepotButton) {
 
@@ -1448,18 +1186,18 @@ class TransactionCiv extends Component
 
                     $account_accepted = sabdy()->is_accepted_companie ?? false;
 
+                    $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
+
+                    $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
+
+                    $adminAmount = (float) $valeur_percent_admin - (float) $cumul_valeurs;
+
                     if ($account_accepted) {
-                        $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
                         $walletTransaction->increment('commission_companie', $valuer_companie);
-                    }
-
-                    if ($admin_civ->count() > 0) {
-                        $nmbre_admin = $admin_civ->count();
-                        $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
-
-                        foreach ($admin_civ as $user) {
-                            $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
-                        }
+                        $totalCommission =  $valuer_companie + $valuer_deposit;
+                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $totalCommission, $adminAmount);
+                    } else {
+                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $adminAmount, $valuer_deposit);
                     }
                 }
             } elseif ($walletTransaction->type_transaction == "Retrait") {
@@ -1469,80 +1207,39 @@ class TransactionCiv extends Component
 
                     $account_accepted = sabdy()->is_accepted_companie ?? false;
 
+                    $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
+
+                    $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
+
+                    $adminAmount = (float) $valeur_percent_admin - (float) $cumul_valeurs;
+
                     if ($account_accepted) {
                         $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
                         $walletTransaction->increment('commission_companie', $valuer_companie);
-                    }
+                        $totalCommission =  $valuer_companie + $valuer_deposit;
 
-                    if ($admin_civ->count() > 0) {
-                        $nmbre_admin = $admin_civ->count();
-                        $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
-
-                        foreach ($admin_civ as $user) {
-                            $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
-                        }
+                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $totalCommission, $adminAmount);
+                    } else {
+                        app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $adminAmount, $valuer_deposit);
                     }
                 }
             } else {
 
-                if ($admin_civ->count() > 0) {
-                    $nmbre_admin = $admin_civ->count();
-                    $valeur_single = ($valeur_percent_admin) / $nmbre_admin;
 
-                    foreach ($admin_civ as $user) {
-                        $this->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
-                    }
-                }
+                app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $valeur_percent_admin, $valuer_deposit);
             }
         } else {
 
             $valeur_percent_admin = $valeur_percent_admin;
             $admin_valeur_convertion = $this->convertAdminCommission($valeur_percent_admin);
 
-            if ($admin_civ->count() > 0) {
-                $nmbre_admin = $admin_civ->count();
-                $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-                foreach ($admin_civ as $user) {
-                    $this->processAdminCommission($user->id, $walletTransaction->id, $valeur_single);
-                }
-            }
+            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion);
         }
 
         return true;
     }
 
-    private function processAdminCommissionSDistributer($userId, $walletTransactionId, $amount, $valuer_deposit)
-    {
-        $admin_single = SidUser::find($userId);
 
-        AdminsCom::create([
-            'amount' => $amount,
-            'sid_user_id' => $admin_single->id,
-            'wallet_transaction_id' => $walletTransactionId,
-            'description' => 'Commission administrateur',
-            'status'  => "SUCCESS",
-            'amount_under' =>  sabdy()->is_under_distributer ? $valuer_deposit : 0,
-            'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
-        ]);
-
-        $admin_single->wallet->increment('amount', $amount);
-    }
-
-    private function processAdminCommission($userId, $walletTransactionId, $amount)
-    {
-        $admin_single = SidUser::find($userId);
-
-        AdminsCom::create([
-            'amount' => $amount,
-            'sid_user_id' => $admin_single->id,
-            'status'  => "SUCCESS",
-            'wallet_transaction_id' => $walletTransactionId,
-            'description' => 'Commission administrateur',
-        ]);
-
-        $admin_single->wallet->increment('amount', $amount);
-    }
 
     private function convertAdminCommission($amount)
     {
@@ -1623,66 +1320,6 @@ class TransactionCiv extends Component
     }
     // Validated wallet Robus
 
-    private function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal)
-    {
-        $val_amount = $this->transaction_amount_robus;
-        $amount_solde = (float)sabdy()->wallet->amount - (float)$val_amount;
-
-        return WalletTransaction::create(
-            [
-                'wallet_id' => sabdy()->wallet->id,
-                'amount' => $transaction_amount_robus,
-                'description' => "Transfert d'argent vers Robus",
-                'transaction_cost_id' =>  $percent_robus->id,
-                'phone' =>  null,
-                'costs_amount' => $percent_robus->percent * $transaction_amount_robus,
-                'amount_received' => $transaction_amount_robus - ($percent_robus->percent * $transaction_amount_robus),
-                'num_wallet' => strtoupper($compte_number_robus),
-                'name_complet' => null,
-                'num_piece' => null,
-                'validated_date' => null,
-                'created_by' => sabdy()->id,
-                'provider_id' => $provider->id,
-                'choose_type_transaction' => 1,
-                'type_transaction' => 'Depot',
-                'type_received' => 'Transfert',
-                'status' => 'SUCCESS',
-                'amount_solde' => $amount_solde ?? null,
-                'amount_solde_drawal' => $amount_drawal ?? null
-            ]
-        );
-    }
-
-    private function createRobusWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $valuer_deposit_com, $transaction_phone , $choose_transaction , $name_custumers , $num_piece_custumers)
-    {
-
-        $val_amount = $transaction_amount_money;
-
-        $amount_solde = (float)sabdy()->wallet->amount - (float)$val_amount;
-
-        return WalletTransaction::create(
-            [
-                'wallet_id' =>   sabdy()->wallet->id,
-                'amount' => $transaction_amount_money,
-                'description'  => $transaction_description ?? null,
-                'transaction_cost_id' => $percent_robus->id,
-                'phone'   => sabdy()->country->indecative . $transaction_phone,
-                'created_by' => sabdy()->id,
-                'provider_id'  =>   $provider->id,
-                'num_wallet'   =>  null,
-                'costs_amount' => $valuer_deposit_com,
-                'name_complet' => $name_custumers ?? null,
-                'num_piece' => $identity_number ?? null,
-                'choose_transaction' => $choose_transaction ?? 1,
-                'choose_type_transaction' => 1,
-                'amount_received'  => 0,
-                'type_transaction' => 'Depot',
-                'status'  => "PENDING",
-                'amount_solde' => $amount_solde ?? null
-            ]
-        );
-    }
-
     public function processCommissionsMobileDistributer($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ)
     {
 
@@ -1731,70 +1368,31 @@ class TransactionCiv extends Component
                 ]);
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
+                $valuer_companie = $percent_robus->percent_companie * $valeur_percent_valeur;
+                $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
+                $adminAmount = (float) $valuer_admin - (float) $cumul_valeurs;
 
                 if ($account_accepted) {
-                    $valuer_companie = $percent_robus->percent_companie * $valeur_percent_valeur;
                     $walletTransaction->increment('commission_companie', $valuer_companie);
-                }
-
-                if ($admin_civ->count() > 0) {
-
-                    $nmbre_admin = $admin_civ->count();
-
-                    $valeur_single = sabdy()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $admin_valeur_convertion / $nmbre_admin;
-
-                    foreach ($admin_civ as $user) {
-                        $admin_single = SidUser::find($user->id);
-
-                        AdminsCom::create([
-                            'amount' =>   $valeur_single,
-                            'sid_user_id' =>   $admin_single->id,
-                            'wallet_transaction_id' => $walletTransaction->id,
-                            'wallet_bank_id' => null,
-                            'wallet_deposit_id' => null,
-                            'amount_with_draw' =>  0,
-                            'wallet_inter_id' => null,
-                            'wallet_payment_id' => null,
-                            'wallet_phone_credit_id' => null,
-                            'wallet_reload_id' => null,
-                            'bank_card_id' => null,
-                            'description' => sabdy()->country->name_groupe == 'MAG' ? 'Paiement commission sous-distributer' : 'Commission administrateur',
-                            'amount_under' =>  sabdy()->is_under_distributer ? $valuer_deposit : 0,
-                            'description_underdistributer' =>  sabdy()->is_under_distributer ? 'Paiement commission sous-distributer' : null
-                        ]);
-                    }
+                    $totalCommission =  $valuer_companie + $valuer_deposit;
+                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $totalCommission, $adminAmount);
+                } else {
+                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $adminAmount, $valuer_deposit);
                 }
             } else {
 
-
-                if ($admin_civ->count() > 0) {
-
-                    $nmbre_admin = $admin_civ->count();
-
-                    $valeur_single = sabdy()->country->name_groupe == 'MAG' ?  $percent_valeur_convertion / $nmbre_admin : $percent_valeur_convertion / $nmbre_admin;
-
-                    foreach ($admin_civ as $user) {
-                        $admin_single = SidUser::find($user->id);
-
-                        AdminsCom::create([
-                            'amount' =>   $valeur_single,
-                            'sid_user_id' =>   $admin_single->id,
-                            'wallet_transaction_id' => $walletTransaction->id,
-                            'wallet_bank_id' => null,
-                            'wallet_deposit_id' => null,
-                            'amount_with_draw' =>  0,
-                            'wallet_inter_id' => null,
-                            'wallet_payment_id' => null,
-                            'wallet_phone_credit_id' => null,
-                            'wallet_reload_id' => null,
-                            'bank_card_id' => null,
-                            'description' =>  'Commission administrateur',
-                            'amount_under' =>   0,
-                            'description_underdistributer' =>  null
-                        ]);
-                    }
-                }
+                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_convertion);
             }
+        } else {
+
+            if ($country_civ->currencie->value > sabdy()->country->currencie->value) {
+                $percent_valeur_convertion =   (float)  $valeur_percent_valeur *   (float) sabdy()->country->currencie->value;
+            } elseif ($country_civ->currencie->value == sabdy()->country->currencie->value) {
+                $percent_valeur_convertion =   (float)  $valeur_percent_valeur;
+            } else {
+                $percent_valeur_convertion =   (float)  $valeur_percent_valeur *   (float) sabdy()->country->currencie->value;
+            }
+            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_convertion);
         }
 
         return true;
@@ -1851,43 +1449,18 @@ class TransactionCiv extends Component
             ]);
 
             $account_accepted = sabdy()->is_accepted_companie ?? false;
+            $valuer_companie = $percent_robus->percent_companie * $valuer_deposit;
+            $cumul_valeurs = (float) $valuer_companie + (float) $valuer_deposit;
+            $adminAmount = (float) $valuer_admin - (float) $cumul_valeurs;
 
             if ($account_accepted) {
                 $valuer_companie = $percent_robus->percent_companie * $valeur_percent_admin;
+                $totalCommission =  $valuer_companie + $valuer_deposit;
+
                 $walletTransaction->increment('commission_companie', $valuer_companie);
-            }
-
-            if ($admin_civ->count() > 0) {
-
-                $nmbre_admin = $admin_civ->count();
-
-                $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-                foreach ($admin_civ as $user) {
-                    $admin_single = SidUser::find($user->id);
-
-                    AdminsCom::create([
-                        'amount' =>   $valeur_single,
-                        'sid_user_id' =>   $admin_single->id,
-                        'wallet_transaction_id' => $walletTransaction->id,
-                        'wallet_bank_id' => null,
-                        'wallet_deposit_id' => null,
-                        'amount_with_draw' =>  0,
-                        'wallet_inter_id' => null,
-                        'wallet_payment_id' => null,
-                        'wallet_phone_credit_id' => null,
-                        'wallet_reload_id' => null,
-                        'bank_card_id' => null,
-                        'description' => 'Commission',
-                    ]);
-                    $admin_single->wallet->update([
-                        'reload_by' => sabdy()->firstname .
-                            ' ' .
-                            sabdy()->lastname,
-                        'sid_user_relod' => sabdy()->id,
-                        'amount' => DB::raw('amount+' . $valeur_single),
-                    ]);
-                }
+                app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $totalCommission, $adminAmount);
+            } else {
+                app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $adminAmount, $valuer_deposit);
             }
         } else {
 
@@ -1908,39 +1481,7 @@ class TransactionCiv extends Component
                 $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) sabdy()->country->currencie->value;
             }
 
-            if ($admin_civ->count() > 0) {
-
-                $nmbre_admin = $admin_civ->count();
-
-                $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-                foreach ($admin_civ as $user) {
-                    $admin_single = SidUser::find($user->id);
-
-                    AdminsCom::create([
-                        'amount' =>   $valeur_single,
-                        'sid_user_id' =>   $admin_single->id,
-                        'wallet_transaction_id' => $walletTransaction->id,
-                        'wallet_bank_id' => null,
-                        'wallet_deposit_id' => null,
-                        'amount_with_draw' =>  0,
-                        'wallet_inter_id' => null,
-                        'wallet_payment_id' => null,
-                        'wallet_phone_credit_id' => null,
-                        'wallet_reload_id' => null,
-                        'bank_card_id' => null,
-                        'description' => 'Commission',
-                    ]);
-
-                    $admin_single->wallet->update([
-                        'reload_by' => sabdy()->firstname .
-                            ' ' .
-                            sabdy()->lastname,
-                        'sid_user_relod' => sabdy()->id,
-                        'amount' => DB::raw('amount+' . $valeur_single),
-                    ]);
-                }
-            }
+            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion);
         }
 
         return true;
@@ -2017,269 +1558,5 @@ class TransactionCiv extends Component
         }
 
         return true;
-    }
-
-
-    public function getSumValTransactionProperty()
-    {
-
-        $somm_valeur =  $this->WalletBanksCeiling + $this->WalletDepositsCeiling +
-            $this->WalletIntersCeiling +
-            $this->WalletPaymentsCeiling +
-            $this->WalletTransactionsCeiling +
-            $this->WalletPhoneCreditsCeiling +
-            $this->WalletReloadsCeiling + $this->WalletBankCardCeiling;
-
-        return  $somm_valeur;
-    }
-
-    // Verify ceilling
-
-    public function getWalletBanksCeilingProperty()
-    {
-        $data = [];
-        foreach (
-            WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_banks.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_banks.created_at', Carbon::today())
-                ->select('wallet_banks.*')
-                ->where('wallet_banks.status', 'SUCCESS')
-                ->get()
-            as $bank
-        ) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletDepositsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletDeposit::join(
-                'wallets',
-                'wallet_deposits.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_deposits.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_deposits.created_at', Carbon::today())
-                ->select('wallet_deposits.*')
-                ->where('wallet_deposits.status', 'SUCCESS')
-                ->get()
-            as $deposit
-        ) {
-            $data[] = $deposit->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletIntersCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletInter::join(
-                'wallets',
-                'wallet_inters.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_inters.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_inters.created_at', Carbon::today())
-                ->select('wallet_inters.*')
-                ->where('wallet_inters.status', 'SUCCESS')
-                ->get()
-            as $inter
-        ) {
-            $data[] = $inter->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPaymentsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletPayment::join(
-                'wallets',
-                'wallet_payments.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_payments.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_payments.created_at', Carbon::today())
-                ->select('wallet_payments.*')
-                ->where('wallet_payments.status', 'SUCCESS')
-                ->get()
-            as $payment
-        ) {
-            $data[] = $payment->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletTransactionsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletTransaction::join(
-                'wallets',
-                'wallet_transactions.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_transactions.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_transactions.created_at', Carbon::today())
-                ->select('wallet_transactions.*')
-                ->where('wallet_transactions.status', 'SUCCESS')
-                ->get()
-            as $transaction
-        ) {
-            $data[] = $transaction->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletPhoneCreditsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletPhoneCredit::join(
-                'wallets',
-                'wallet_phone_credits.wallet_id',
-                'wallets.id'
-            )
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )
-                ->where(
-                    'wallet_phone_credits.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-                ->select('wallet_phone_credits.*')
-                ->where('wallet_phone_credits.status', 'SUCCESS')
-                ->get()
-            as $phone
-        ) {
-            $data[] = $phone->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletBankCardCeilingProperty()
-    {
-        $data = [];
-        foreach (
-            BankCard::where('created_by', sabdy()->id)
-                ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank
-        ) {
-            $data[] = $bank->amount;
-        }
-
-        return array_sum($data);
-    }
-
-    public function getWalletReloadsCeilingProperty()
-    {
-        $data = [];
-
-        foreach (
-            WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-                ->where(
-                    'wallets.country_id',
-                    sabdy()->country->id
-                )->where(
-                    'wallet_reloads.created_by',
-                    sabdy()->id
-                )
-                ->whereDate('wallet_reloads.created_at', Carbon::today())
-                ->select('wallet_reloads.*')
-                ->where('wallet_reloads.status', 'SUCCESS')
-                ->get()
-            as $reload
-        ) {
-            $data[] = $reload->amount;
-        }
-
-        return array_sum($data);
-    }
-
-
-    public function getAdminDrawalCIVProperty()
-    {
-
-        $admin_drawal =  SidUser::whereStatus(true)
-            ->whereIsAdmin(true)
-            ->whereId(1)
-            ->where('country_id', 107)
-            ->first();
-
-        return $admin_drawal;
-    }
-
-    public function getAdminValeurProperty()
-    {
-
-        $admins = SidUser::whereStatus(true)
-            ->whereIsAdmin(true)
-            ->where('country_id', sabdy()->country->id)
-            ->get();
-
-        return  $admins;
-    }
-
-    public function getAdminCIVProperty()
-    {
-
-        $admin_civ =  SidUser::whereStatus(true)
-            ->whereIsAdmin(true)
-            ->where('country_id', 107)
-            ->get();
-
-        return  $admin_civ;
     }
 }

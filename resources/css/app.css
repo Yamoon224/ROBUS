@@ -21,6 +21,44 @@
 
 /* Classe pour flouter l'image */
 
+.transaction-badges-container {
+  display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.transaction-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Badge type Transfert */
+.transaction-badge--distributor {
+    background-color: #4caf50; /* vert */
+}
+
+/* Badge type Dépot */
+.transaction-badge--customer {
+    background-color: #2196f3; /* bleu */
+}
+
+/* Pour éventuellement un petit sous-texte */
+.badge-title {
+    line-height: 1.2;
+}
+
+
 .badge-validé {
     background-color: #10b981;
     color: white;

@@ -186,7 +186,7 @@
                                 ])
 
                                 <div class="col-span-12 mt-3 form-group required">
-                                    <label for="name_custumers" class="form-label">Nom && Prénom </label>
+                                    <label for="name_custumers" class="form-label">Nom & Prénom </label>
                                     <div class="flex">
 
                                         <input wire:model.defer="name_custumers" id="name_custumers" type="text"

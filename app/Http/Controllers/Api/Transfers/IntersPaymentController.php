@@ -1219,14 +1219,7 @@ class IntersPaymentController extends Controller
                     );
                 }
 
-                // $isIvoires = ($request->provider == 63 || $request->provider == 62 ||  $request->provider == 61);
-
-                // if ($isIvoires != null) {
-                //     $valeur_first = $percent_robus->levelDeposits->where('is_inter_bank', false)->first();
-                //     $valeur_end = $percent_robus->levelDeposits->where('is_inter_bank', false)->last();
-                //     $all_valeurs = $percent_robus->levelDeposits->where('is_inter_bank', false);
-                // } else {
-                // }
+     
 
                 $valeur_first = $percent_robus->levelDeposits->where('is_inter_bank', true)->first();
                 $valeur_end = $percent_robus->levelDeposits->where('is_inter_bank', true)->last();
@@ -1459,6 +1452,185 @@ class IntersPaymentController extends Controller
                 } else {
 
                     return  json_message_response(false, "Pas de poucentage defini dans cette zone !", 333);
+                }
+            } elseif ($request->provider_type == 10) {
+
+                // Transaction Bank Send
+                $percent_robus =  $this->percentRobus->getRobusPercentageOrderCard();
+
+                $validator = Validator::make(
+
+                    $request->all(),
+                    [
+                        'account_number' => 'required',
+                        'amount' => 'required',
+                        'country' => 'required',
+                        'name' => 'required',
+                    ],
+                    [
+
+                        'amount.required' => 'Votre montant est obligatoire',
+                        'country.required' => 'Votre pays est obligatoire',
+                        'account_number.required' => 'Votre numero compte est obligatoire',
+                        'name.required' => 'Votre Nom est obligatoire',
+
+                    ]
+
+                );
+
+                if ($validator->fails()) {
+                    return response()->json(
+                        [
+                            'success' => false,
+                            'message' => 'Champ est requis',
+                            'data' => $validator->errors()
+                        ],
+                        333
+                    );
+                }
+
+     
+
+                $valeur_first = $percent_robus->levelDeposits->where('is_inter_bank', true)->first();
+                $valeur_end = $percent_robus->levelDeposits->where('is_inter_bank', true)->last();
+                $all_valeurs = $percent_robus->levelDeposits->where('is_inter_bank', true);
+
+
+                if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+
+                    $convertion_amount_begin =  $this->convertionservice->convertAdminCommissionPayment($valeur_first->amount_begin);
+
+                    $convertion_amount_end =  $this->convertionservice->convertAdminCommissionPayment($valeur_end->amount_end);
+
+                    $amount_valeur =  $this->convertionservice->convertAdminCommissionPayment($request->amount);
+
+                    if ($percent_robus != null) {
+
+                        if ($convertion_amount_begin > $request->amount) {
+
+                            return response()->json(
+                                [
+                                    'success' => false,
+                                    'message' => 'Montant minimun est de .' . $valeur_first->amount_begin,
+                                ],
+                                341
+                            );
+                        } elseif ($convertion_amount_end < $request->amount) {
+
+                            return response()->json(
+                                [
+                                    'success' => false,
+                                    'message' => 'Montant maximum est de .' . $$valeur_end->amount_end,
+                                ],
+                                341
+                            );
+                        } else {
+
+                            $amount_request =  $this->convertionservice->convertAdminCommission($request->amount);
+
+
+                            foreach ($all_valeurs as $amount_user) {
+
+                                if ($amount_request >= $amount_user->amount_begin && $amount_request <= $amount_user->amount_end) {
+
+
+                                    if ($percent_robus !== null) {
+
+                                        $amount_receved_valeur =  $amount_request;
+
+
+                                        if ($amount_user->amount == null) {
+
+                                            $percent_valeur = $amount_user->percent * $amount_request;
+
+                                            $amount_valeur = $amount_request;
+
+                                            if (robus()->is_under_distributer || robus()->is_api) {
+                                                $comission_distributer = $amount_user->comission_distributer * $amount_request;
+                                                $comission_compagnie = $amount_user->percent_companie * $amount_request;
+                                            } else {
+                                                $comission_distributer = $percent_valeur;
+                                                $comission_compagnie = 0;
+                                            }
+
+                                            $amount_receved_valeur = $amount_request - $percent_valeur;
+                                        } else {
+
+                                            $percent_valeur = $amount_user->amount;
+
+                                            $amount_valeur = (float)$amount_user->amount + (float)$amount_request;
+
+                                            if (robus()->is_under_distributer || robus()->is_api) {
+                                                $comission_distributer = $amount_user->comission_distributer;
+                                                $comission_compagnie = $amount_user->percent_companie;
+                                            } else {
+                                                $comission_distributer = $amount_user->amount;
+                                                $comission_compagnie = 0;
+                                            }
+
+                                            $amount_receved_valeur = $amount_request - $amount_user->amount;
+                                        }
+
+
+                                        if (robus()->is_under_distributer || robus()->is_api) {
+                                            $amount_valeur_send = (float)$amount_request +  (float)$percent_valeur;
+
+                                            $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
+                                        } else {
+
+                                            $amount_valeur_send = (float)$amount_request +  (float)$percent_valeur;
+
+                                            $amount_valeur_convertion_send =  $this->convertionservice->convertAdminCommissionPayment($amount_valeur_send);
+                                        }
+
+                                        if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+
+
+                                            if ($this->validatedamountDays->validateAmountVirement($amount_valeur_convertion_send)) {
+
+
+                                                $amount_valeur_convertion =  $this->convertionservice->convertAdminCommissionPayment($amount_valeur);
+
+                                                $amount_commission_convertion =  $this->convertionservice->convertAdminCommissionPayment($percent_valeur);
+
+                                                $amount_commission_convertion_under =  $this->convertionservice->convertAdminCommissionPayment($comission_distributer);
+
+                                                $amount_commission_convertion_compagnie =  $this->convertionservice->convertAdminCommissionPayment($comission_compagnie);
+
+                                                $amount_conv_countrie =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
+
+                                                // $valeur_convertion_amount_receved =   $this->convertionservice->convertAdminCommission($amount_receved_valeur);
+
+                                                $walletReloadCard =  $this->virementInterService->createRobusWalletTransactionOrderCard($request->amount, $request->account_number, $country_robus, $request->provider, $amount_commission_convertion,  $request->name, $amount_receved_valeur);
+
+                                                if ($walletReloadCard != null) {
+
+                                                    if ($this->virementInterService->updateamountVirementInterReceveid($admin_civ, $amount_commission_convertion_under, $walletReloadCard, $amount_valeur_convertion_send, $percent_valeur, $amount_commission_convertion_compagnie)) {
+                                                        $this->interServices->sendNotificationPayment($walletReloadCard);
+                                                        return $this->messageAfterValidated($walletReloadCard);
+                                                    }
+                                                } else {
+
+                                                    return json_message_response(false, "Error de creation de transfert du montant!", 333);
+                                                }
+                                            } else {
+                                                return json_message_response(false, "Verifié votre solde SVP !", 333);
+                                            }
+                                        } else {
+                                            return json_message_response(false, "Votre plafond quotidien est atteint !", 333);
+                                        }
+                                    } else {
+                                        return  json_message_response(false, "Niveau de pourcentage introuvable !", 333);
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+
+                        return json_message_response(false, "Erreur de pourcentage !", 333);
+                    }
+                } else {
+                    return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                 }
             }
         } catch (\Exception $exception) {

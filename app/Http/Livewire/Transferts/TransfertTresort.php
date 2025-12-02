@@ -24,6 +24,7 @@ class TransfertTresort extends Component
     public $number_phone;
     public $amount_tresort;
     public $full_name_tresort;
+    public $choose_transaction;
 
     public $operators;
     public $operatorsCompagnie;
@@ -36,6 +37,8 @@ class TransfertTresort extends Component
     public $commission_transaction_val_nat_tresort_pay;
     public $commission_transaction_val_admin_tresort_receive;
     public $commission_transaction_val_nat_tresort_receive;
+    public $need_identity_number = false;
+    public $identity_number;
 
     public function mount()
     {
@@ -86,6 +89,13 @@ class TransfertTresort extends Component
         }
     }
 
+    public function updated($property, $value)
+    {
+        if ($property === 'amount_tresort') {
+            $amount = (int) $value;
+            $this->need_identity_number = $amount >= 100000 && $amount <= 200000;
+        }
+    }
     public function checkPassword()
     {
 
@@ -113,6 +123,8 @@ class TransfertTresort extends Component
                 'number_phone' => 'required',
                 'full_name_tresort' => 'required',
                 'amount_tresort' => 'required',
+                'choose_transaction' => 'required',
+
             ],
             [
                 'number_phone.required' =>
@@ -121,6 +133,8 @@ class TransfertTresort extends Component
                 'Nom & prénom sont obligatoire',
                 'amount_tresort.required' =>
                 'Montant est obligatoire',
+                'choose_transaction.required' => 'Le choix est obligatoire est obligatoire',
+
             ]
         );
 
@@ -198,11 +212,13 @@ class TransfertTresort extends Component
                 'number_phone' => 'required',
                 'full_name_tresort' => 'required',
                 'amount_tresort' => 'required',
+                'choose_transaction' => 'required',
             ], [
                 'password_validated.required' => 'Mot de passe est obligatoire',
                 'number_phone.required' => 'Numero est obligatoire',
                 'full_name_tresort.required' => 'Nom & prénom sont obligatoire',
                 'amount_tresort.required' => 'Montant est obligatoire',
+                'choose_transaction.required' => 'Le choix est obligatoire est obligatoire',
             ]);
 
             if (!Hash::check($this->password_validated, sabdy()->password)) {
@@ -253,7 +269,9 @@ class TransfertTresort extends Component
                     $amount_solde,
                     $this->full_name_tresort,
                     $this->number_phone,
-                    $amountReceved
+                    $amountReceved,
+                    $this->identity_number,
+                    $this->choose_transaction
                 );
 
                 $message =
@@ -317,10 +335,17 @@ class TransfertTresort extends Component
 
                 $commission_transaction = app(CommissionServicePercentBackend::class)->getRobusPercentageTresortMoney();
 
-                $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
-                $this->commission_transaction_val_admin_tresort_receive = (float) $commission_percent_transaction;
-                $this->commission_transaction_val_nat_tresort_receive = (float) $reel_amount;
-                $this->commission_transaction_val_nat_tresort_pay = (float) $commission_transaction->percent_merchands * $reel_amount;
+                if ($this->choose_transaction == 1) {
+                    $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+                    $this->commission_transaction_val_admin_tresort_receive = (float) $commission_percent_transaction;
+                    $this->commission_transaction_val_nat_tresort_receive = (float) $reel_amount;
+                    $this->commission_transaction_val_nat_tresort_pay = (float) $commission_transaction->percent_merchands * $reel_amount;
+                } else {
+                    $commission_percent_transaction = (float) $commission_transaction->percent * $reel_amount;
+                    $this->commission_transaction_val_admin_tresort_receive = (float) $commission_percent_transaction;
+                    $this->commission_transaction_val_nat_tresort_receive = (float) $reel_amount;
+                    $this->commission_transaction_val_nat_tresort_pay = (float) $commission_transaction->percent_with_drawal * $reel_amount;
+                }
             }
         }
     }
@@ -362,7 +387,11 @@ class TransfertTresort extends Component
 
         $amount_percent = $percent_robus->percent * $amount;
 
-        $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
+        $percent = ($this->choose_transaction == 1)
+            ? $percent_robus->percent_merchands
+            : $percent_robus->percent_with_drawal;
+
+        $valuer_deposit = (float) $percent * $amount;
 
         $amount_commission = $amount + ($percent_robus->percent * $amount);
 
@@ -419,6 +448,4 @@ class TransfertTresort extends Component
 
         return $reel_amount;
     }
-
-
 }

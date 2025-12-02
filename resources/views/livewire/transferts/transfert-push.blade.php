@@ -19,7 +19,7 @@
                     <a href="#step-1"
                         class="w-10 h-10 rounded-full btn btn-circle {{ $stepPush != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
                     <div class="lg:w-32 font-medium text-base lg:mt-3 ml-3 lg:mx-auto"> Saisissez les informations
-                        
+
                     </div>
                 </div>
             </div>
@@ -39,28 +39,62 @@
                         src="{{ asset_url('dist/providers/push.png') }}" alt="Provider Xbet">
                 </div>
 
-                 @include('components.transaction-phone-input', [
+                <div class="col-span-12 form-group required">
+                    <label class="form-label" for="choose_transaction">Choisir le type de transaction</label>
+                    <select wire:model="choose_transaction" id="choose_transaction" class="form-control" required>
+                        <option value="" selected>Selectionnez type de transaction</option>
+                        <option value="1">Transfert</option>
+                        <option value="2">Rétrait</option>
+                    </select>
+                    @error('choose_transaction')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                @if ($choose_transaction)
+
+                    @include('components.transaction-phone-input', [
                         'id' => 'number_phone',
                         'model' => 'number_phone',
                         'label' => 'Numero de teléphone',
                         'error' => 'number_phone',
                     ])
 
-                @include('components.transaction-text-input', [
+                    @include('components.transaction-text-input', [
                         'id' => 'full_name_push',
                         'model' => 'full_name_push',
                         'label' => 'Nom et Prénom',
                         'error' => 'full_name_push',
                     ])
 
-                <div class="col-span-12 mt-1">
-                    @include('components.transaction-amount-input', [
-                        'id' => 'amount_push',
-                        'model' => 'amount_push',
-                        'label' => 'Montant',
-                        'error' => 'amount_push',
-                    ])
-                </div>
+                    <div class="col-span-12 mt-1">
+                        @include('components.transaction-amount-input', [
+                            'id' => 'amount_push',
+                            'model' => 'amount_push',
+                            'label' => 'Montant',
+                            'error' => 'amount_push',
+                        ])
+                    </div>
+
+                    @if ($choose_transaction == '2')
+
+                        @if ($need_identity_number)
+                            <div class="col-span-12 mt-3 form-group required">
+                                <label for="identity_number" class="form-label">Numéro de la pièce
+                                    d'identité</label>
+                                <input type="text" id="identity_number" wire:model.defer="identity_number"
+                                    class="form-control" placeholder="Veuillez entrer le numéro de la pièce" required>
+                                @error('identity_number')
+                                    <span class="text-danger">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        @endif
+                    @endif
+
+                @endif
+
+
+
             </div>
             @if ($amount_push)
                 @php

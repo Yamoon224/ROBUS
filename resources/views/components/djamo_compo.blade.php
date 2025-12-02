@@ -72,6 +72,7 @@
                                       @foreach ($djamos as $key => $item)
                                           <tr class="intro-x">
                                               <td class="text-center w-40">
+                                                @include('components.infoTypeTransaction')
 
                                                   <div
                                                       class="px-3 py-2 text-dark btn-rose dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">

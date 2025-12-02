@@ -54,7 +54,6 @@ class CommissionServicePercentBackend
 
 
 
-
     public function getRobusPercentageOnexbet()
     {
         $countryNameGroup = sabdy()->country->name_groupe;
@@ -176,7 +175,7 @@ class CommissionServicePercentBackend
 
         switch ($countryNameGroup) {
             case 'MAG':
-                return TransactionCost::whereId(44)->first();
+                return TransactionCost::whereId(48)->first();
             default:
                 return null;
         }

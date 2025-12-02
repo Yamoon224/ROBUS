@@ -23,6 +23,8 @@ class TransfertDjamo extends Component
 
     use WithFileUploads;
     public $stepDjamo = 1;
+    public $choose_transaction;
+
     public $image;
     public $amount_djamo;
     public $full_name_djamo;
@@ -40,6 +42,8 @@ class TransfertDjamo extends Component
     public $commission_transaction_val_admin_djamo_receive;
     public $commission_transaction_val_nat_djamo_receive;
     public $commission_transaction_drawal;
+    public $need_identity_number = false;
+    public $identity_number;
 
     protected $rules = [
         'image' => 'required|image|mimes:png,jpg,jpeg|max:102400',
@@ -95,6 +99,13 @@ class TransfertDjamo extends Component
         }
     }
 
+    public function updated($property, $value)
+    {
+        if ($property === 'amount_djamo') {
+            $amount = (int) $value;
+            $this->need_identity_number = $amount >= 100000 && $amount <= 200000;
+        }
+    }
     public function checkPassword()
     {
 
@@ -123,6 +134,8 @@ class TransfertDjamo extends Component
                 'image' => 'required|image|mimes:png,jpg,jpeg|max:102400',
                 'full_name_djamo' => 'required',
                 'amount_djamo' => 'required',
+                'choose_transaction' => 'required',
+
             ],
             [
                 'image.required' =>
@@ -131,6 +144,8 @@ class TransfertDjamo extends Component
                 'Nom & prénom sont obligatoire',
                 'amount_djamo.required' =>
                 'Montant est obligatoire',
+                'choose_transaction.required' => 'Le choix est obligatoire est obligatoire',
+
             ]
         );
 
@@ -205,11 +220,15 @@ class TransfertDjamo extends Component
                 'image' => 'required|image|mimes:png,jpg,jpeg|max:102400',
                 'full_name_djamo' => 'required',
                 'amount_djamo' => 'required',
+                'choose_transaction' => 'required',
+
             ], [
                 'password_validated.required' => 'Mot de passe est obligatoire',
                 'image.required' => 'Numero est obligatoire',
                 'full_name_djamo.required' => 'Nom & prénom sont obligatoire',
                 'amount_djamo.required' => 'Montant est obligatoire',
+                'choose_transaction.required' => 'Le choix est obligatoire est obligatoire',
+
             ]);
 
             if (!Hash::check($this->password_validated, sabdy()->password)) {
@@ -265,7 +284,9 @@ class TransfertDjamo extends Component
                     $amount_solde,
                     $this->full_name_djamo,
                     $savedPath,
-                    $amountReceved
+                    $amountReceved,
+                    $this->identity_number,
+                    $this->choose_transaction
                 );
 
                 $message =
@@ -400,7 +421,11 @@ class TransfertDjamo extends Component
 
         $amount_percent = $percent_robus->percent * $amount;
 
-        $valuer_deposit = (float) $percent_robus->percent_merchands * $amount;
+        $percent = ($this->choose_transaction == 1)
+            ? $percent_robus->percent_merchands
+            : $percent_robus->percent_with_drawal;
+
+        $valuer_deposit = (float) $percent * $amount;
 
         $amount_commission = $amount + ($percent_robus->percent * $amount);
 
@@ -457,6 +482,4 @@ class TransfertDjamo extends Component
 
         return $reel_amount;
     }
-
-
 }
