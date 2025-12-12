@@ -31,13 +31,13 @@ class ProvidersService
         return $operatorServices;
     }
 
-     public function operatorIntegrateServices()
+    public function operatorIntegrateServices()
     {
 
         $operatorServices = OperatorService::getOperatorsWithIntegrateTranactions(integrate()->id);
         event(new assignementEvent($operatorServices));
 
-        
+
         return $operatorServices;
     }
 
@@ -234,7 +234,7 @@ class ProvidersService
 
         if ($isUnderDistributer) {
             if ($countryNameGroup == "CIV") {
-                $providerMap = ['AFL', 'AFC','MAG', 'ASIE', 'AFE', 'URP'];
+                $providerMap = ['AFL', 'AFC', 'MAG', 'ASIE', 'AFE', 'URP'];
             } else {
                 $providerMap = ['AFL', 'CIV', 'MAG', 'AFC', 'ASIE', 'AFE'];
             }
@@ -269,6 +269,20 @@ class ProvidersService
             ->where('country_services.country_id', $countryId)
             ->where('providers.status', true)
             ->where('providers.provider_type_id', $providerType)
+            ->select('providers.*')
+            ->orderBy('providers.name', 'asc')
+            ->get();
+    }
+
+    public static function getProvidersReloadByType($query, $countryId, $providerTypes)
+    {
+
+
+        return $query
+            ->join('country_services', 'country_services.provider_id', 'providers.id')
+            ->where('country_services.country_id', $countryId)
+            ->where('providers.status', true)
+            ->whereIn('providers.provider_type_id', (array) $providerTypes)
             ->select('providers.*')
             ->orderBy('providers.name', 'asc')
             ->get();
@@ -338,7 +352,7 @@ class ProvidersService
             ->pluck('providers.name');
     }
 
-      public static function getCountrieType($query, $countryId)
+    public static function getCountrieType($query, $countryId)
     {
 
 

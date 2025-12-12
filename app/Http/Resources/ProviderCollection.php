@@ -43,6 +43,7 @@ class ProviderCollection extends ResourceCollection
                 return [
                     'id'  => (int) $data->id,
                     'name' => $data->name,
+                    'provider' => $data->name,
                     'country' =>  optional($data->country)->name,
                     'provider_type' =>  optional($data->providerType)->name,
                     'image' => $data->image,

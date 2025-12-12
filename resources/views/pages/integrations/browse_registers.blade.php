@@ -566,7 +566,7 @@
 
                                         <!-- Submit Button -->
                                         <button type="submit" id="submit-btn"
-                                            class="btn btn-primary-custom btn-lg w-100 text-white py-3 mb-2 fs-6" disabled>
+                                            class="btn btn-primary-custom btn-lg w-100 text-white py-3 mb-2 fs-6">
                                             <i class="fas fa-rocket me-2"></i>Créer mon compte
                                         </button>
                                     </form>
@@ -592,7 +592,6 @@
 
     @push('scripts')
         <!-- reCAPTCHA Script -->
-        {{-- Le script reCAPTCHA doit être inclus une seule fois --}}
         <script src="https://www.google.com/recaptcha/api.js" async defer></script>
         <script type="text/javascript">
             $(document).ready(function() {

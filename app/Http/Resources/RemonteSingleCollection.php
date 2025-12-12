@@ -16,6 +16,7 @@ class RemonteSingleCollection extends JsonResource
     {
         return [
             'id' => (int) $this->id,
+            'provider'  => "Robus",
             'amount_with_draw' =>  number_format((float)$this->amount_with_draw	, 2, '.', ' '),
             'date_created' =>  $this->date_removed,
             'date_treatment' =>  $this->date_removed,

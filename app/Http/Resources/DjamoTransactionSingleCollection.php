@@ -27,13 +27,15 @@ class DjamoTransactionSingleCollection extends JsonResource
             'full_name' =>  $this->full_name,
             'image' =>  $this->image,
             'description'  =>  $this->description,
-            'amount_received'  =>  $this->amount_received,
+            'amount_received'  => number_format((double)$this->amount_received, 2, '.', ' ') ,
             'master_cost_percent' =>  number_format((float)$this->commission_masters, 2, '.', '') ?? null,
             'with_cost_percent' =>  number_format((double)$this->commissions, 2, '.', '') ?? null,
             'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ,
             'devise'  => optional($this->wallet->currencie)->code,
             'status'  =>  $this->status,
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
+
+
 
         ];
     }

@@ -149,14 +149,14 @@ class CountrieController extends Controller
         $walletsData = [];
 
 
+        
         $walletPaymentInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 7);
         $walletPhoneInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 9);
-        $walletVirementBank = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 10);
-        $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 11);
+        $walletVirementBank = $this->percentRobus->getProvidersReloadByType(new Provider, $country_inter_out_civ, [10, 18]);
+        // $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 11);
+        $walletReloadCardInter = $this->percentRobus->getProvidersReloadByType(new Provider, $country_inter_out_civ, [11, 21, 22]);
         $walletInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 8);
-        $walletPushInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 21);
-        $walletDjamoInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 22);
-        $walletTresortInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 20);
+        $walletBankInter =  $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 28);
         $walletInterUnder =  $this->percentRobus->getProvidersByUnderDistributerType(new Provider, $country_inter_out_civ, 8);
 
 
@@ -166,21 +166,21 @@ class CountrieController extends Controller
             $walletsData['Transfert international'] = [
                 "Factures" =>   [],
                 "Transfert" => $walletInterUnder ? ProviderSingleCollection::collection($walletInterUnder) : [],
-                "Crédit téléphonique" => [],
+                "Crédit téléphonique" => $walletPhoneInter ? ProviderSingleCollection::collection($walletPhoneInter) : [],
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
-                "Rechargement Push" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletPushInter) : [],
-                "Rechargement Djamo" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletDjamoInter) : [],
-                "Rechargement Tresort Money" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletTresortInter) : [],
+                "Bank send" => $walletBankInter ? ProviderSingleCollection::collection($walletBankInter) : [],
+
             ];
         } elseif ((robus()->is_under_distributer || robus()->is_api) && robus()->country->id == 107) {
 
             $walletsData['Transfert international'] = [
                 "Factures" => [],
                 "Transfert" => $walletInterUnder ? ProviderSingleCollection::collection($walletInterUnder) : [],
-                "Crédit téléphonique" =>  [],
-                "Versement bancaire" => [],
-                "Rechargement de carte" => [],
+                "Crédit téléphonique" => $walletPhoneInter ? ProviderSingleCollection::collection($walletPhoneInter) : [],
+                "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
+                "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
+                "Bank send" => $walletBankInter ? ProviderSingleCollection::collection($walletBankInter) : [],
             ];
         } elseif (robus()->is_custumers && robus()->country->id == 107) {
 
@@ -199,9 +199,8 @@ class CountrieController extends Controller
                 "Crédit téléphonique" => $walletPhoneInter ? ProviderSingleCollection::collection($walletPhoneInter) : [],
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
                 "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
-                "Rechargement Push" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletPushInter) : [],
-                "Rechargement Djamo" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletDjamoInter) : [],
-                "Rechargement Tresort Money" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletTresortInter) : [],
+                "Bank send" => $walletBankInter ? ProviderSingleCollection::collection($walletBankInter) : [],
+
             ];
         }
 

@@ -18,6 +18,10 @@ class WithTransactionSingleCollection extends JsonResource
             'id' => (int) $this->id,
             'provider'  =>  optional($this->provider)->name,
             'amount' =>  number_format((double)$this->amount, 2, '.', ''),
+            'name_user_desti' =>   null,
+            'phone_user_desti' =>  $this->phone ,
+            'name_user_send' => isset(optional($this->wallet)->sidUser->firstname) ? (optional($this->wallet)->sidUser->firstname) . ' ' . (optional($this->wallet)->sidUser->lastname) : null,
+            'phone_user_send' => optional($this->wallet)->sidUser->phone ?? null,
             'amount_wallet' =>  optional($this->wallet)->amount . ' ' . optional($this->wallet->currencie)->code,
             'type' => optional($this->provider)->name == "PUSH" ? 'Push' : 'Tresort Money' ,
             'date_created' =>  $this->created_at,
@@ -26,13 +30,18 @@ class WithTransactionSingleCollection extends JsonResource
             'phone' =>  $this->phone,
             'full_name' =>  $this->full_name,
             'description'  =>  $this->description,
-            'amount_received'  =>  $this->amount_received,
+            'amount_received'  =>number_format((double)$this->amount_received, 2, '.', ' '),
+            'number_phone' =>  $this->number_phone,
+            'paiementChoix_phone' =>  $this->paiementChoix_phone,
             'master_cost_percent' =>  number_format((float)$this->commission_masters, 2, '.', '') ?? null,
             'with_cost_percent' =>  number_format((double)$this->commissions, 2, '.', '') ?? null,
             'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ,
             'devise'  => optional($this->wallet->currencie)->code,
             'status'  =>  $this->status,
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
+            'amount_solde_drawal' => $this->amount_solde_drawal . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")
+
+           
 
         ];
     }

@@ -142,6 +142,7 @@ class withTransactionController extends Controller
                                         $request->all(),
                                         [
                                                 "phone" => 'required',
+                                                "provider" => 'required',
                                                 "amount" => 'required',
                                                 "full_name" => 'required',
                                         ],
@@ -149,7 +150,9 @@ class withTransactionController extends Controller
 
                                                 'phone.required' => 'Votre numero est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
+                                                'provider.required' => 'Votre fournisseur est obligatoire',
                                                 'full_name.required' => 'Nom est obligatoire'
+
 
                                         ]
                                 );
@@ -170,12 +173,14 @@ class withTransactionController extends Controller
 
                                         $request->all(),
                                         [
+                                                "provider" => 'required',
                                                 "phone" => 'required',
                                                 "amount" => 'required',
                                         ],
                                         [
 
                                                 'phone.required' => 'Votre numero est obligatoire',
+                                                'provider.required' => 'Votre fournisseur est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
 
 
@@ -195,7 +200,7 @@ class withTransactionController extends Controller
                         }
 
 
-                        if ($request->provider == 105) {
+                        if ($request->provider == 91) {
 
                                 if ($percent_robus != null) {
 
@@ -253,6 +258,7 @@ class withTransactionController extends Controller
 
                                         $request->all(),
                                         [
+                                                "provider" => 'required',
                                                 "phone" => 'required',
                                                 "amount" => 'required',
                                                 "full_name" => 'required',
@@ -260,6 +266,7 @@ class withTransactionController extends Controller
                                         [
 
                                                 'phone.required' => 'Votre numero est obligatoire',
+                                                'provider.required' => 'Votre fournisseur est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
                                                 'full_name.required' => 'Nom est obligatoire'
 
@@ -282,11 +289,13 @@ class withTransactionController extends Controller
 
                                         $request->all(),
                                         [
+                                                "provider" => 'required',
                                                 "phone" => 'required',
                                                 "amount" => 'required',
                                         ],
                                         [
 
+                                                'provider.required' => 'Votre fournisseur est obligatoire',
                                                 'phone.required' => 'Votre numero est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
 
@@ -307,7 +316,7 @@ class withTransactionController extends Controller
                         }
 
 
-                        if ($request->provider == 106) {
+                        if ($request->provider == 122) {
 
                                 if ($percent_robus != null) {
 
@@ -373,6 +382,7 @@ class withTransactionController extends Controller
                                         [
 
                                                 'phone.required' => 'Votre numero est obligatoire',
+                                                'provider.required' => 'Votre fournisseur est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
                                                 'full_name.required' => 'Nom est obligatoire',
                                                 'image_piece.required' => 'date de validité est obligatoire',
@@ -403,6 +413,7 @@ class withTransactionController extends Controller
                                         [
 
                                                 'phone.required' => 'Votre numero est obligatoire',
+                                                'provider.required' => 'Votre fournisseur est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
                                                 'country.required' => 'Votre pays est obligatoire',
 
@@ -545,11 +556,8 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
-                // Mettre à jour le montant reçu dans le service OneXbet
-                if (!$this->withService->updateamountTresortReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount)) {
-                        return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
-                }
-
+                $this->withService->updateamountTresortReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount);
+              
                 return ['success' => true, 'walletWith' => $walletPush];
         }
 

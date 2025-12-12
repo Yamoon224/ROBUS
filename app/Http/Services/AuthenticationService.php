@@ -231,39 +231,39 @@ class AuthenticationService
                 try {
 
 
-                        $cacheKey = 'app_status_mobile';
-                        $cacheDuration = 5;
+                        // $cacheKey = 'app_status_mobile';
+                        // $cacheDuration = 5;
 
-                        if (Cache::has($cacheKey)) {
-                                return Cache::get($cacheKey);
-                        }
+                        // if (Cache::has($cacheKey)) {
+                        //         return Cache::get($cacheKey);
+                        // }
 
-                        if ($this->shouldCheckAppStatus()) {
-                                Artisan::call('app:close-status');
-                        }
+                        // if ($this->shouldCheckAppStatus()) {
+                        //         Artisan::call('app:close-status');
+                        // }
 
 
-                        $appStatus = $model::latest()->first();
+                        // $appStatus = $model::latest()->first();
 
-                        if ($appStatus && $appStatus->status_app === 'closed') {
-                                $response = $this->formatClosedAppResponse($appStatus);
-                                Cache::put($cacheKey, $response, now()->addMinutes($cacheDuration));
-                                return $response;
-                        }
+                        // if ($appStatus && $appStatus->status_app === 'closed') {
+                        //         $response = $this->formatClosedAppResponse($appStatus);
+                        //         Cache::put($cacheKey, $response, now()->addMinutes($cacheDuration));
+                        //         return $response;
+                        // }
 
-                        // Vérifier le cache
-                        $cachedResult = Cache::get($cacheKey);
+                        // // Vérifier le cache
+                        // $cachedResult = Cache::get($cacheKey);
 
-                        if ($cachedResult) {
-                                return $cachedResult;
-                        }
+                        // if ($cachedResult) {
+                        //         return $cachedResult;
+                        // }
 
-                        if ($appStatus && $appStatus->status_app === 'closed') {
-                                return $this->formatClosedAppResponse($appStatus);
-                        }
+                        // if ($appStatus && $appStatus->status_app === 'closed') {
+                        //         return $this->formatClosedAppResponse($appStatus);
+                        // }
 
                         $successResponse = ['success' => true];
-                        Cache::put('app_status_mobile', $successResponse, now()->addMinutes($cacheDuration));
+                        // Cache::put('app_status_mobile', $successResponse, now()->addMinutes($cacheDuration));
                         return $successResponse;
                 } catch (\Exception $e) {
                         // Gérer les exceptions et retourner une erreur générique

@@ -164,8 +164,8 @@
                 </form>
             </div>
             <div class="col-span-12 sm:col-span-4 xl:col-span-3 intro-y">
-                   <form method="POST"
-                    action="{{ route('remonte.remonteAllCountryCompanies.companies', ['id' => $countrie->id]) }}">
+                <form method="POST"
+                    action="{{ route('remonte.remonteAllCountryCompanies.unders', ['id' => $countrie->id]) }}">
                     @csrf
                     <div class="report-box zoom-in">
                         <div class="box p-5 style_table3 flex flex-col justify-between h-full">

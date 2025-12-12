@@ -72,11 +72,11 @@ class ProviderController extends Controller
     {
 
         // Vérifier l'état de l'application
-        $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+        // $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
-        if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 301);
-        }
+        // if (!$appStatusResult['success']) {
+        //     return response()->json($appStatusResult, 301);
+        // }
 
         $assignations = $this->percentRobus->operatorServices();
 
@@ -130,10 +130,10 @@ class ProviderController extends Controller
         $walletTransactionMoney = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, 1);
         $walletPayment = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 2);
         $walletPaymentInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 7);
-        $walletRetrait = Provider::whereId(9)->whereStatus(true)->get();
-        $walletBank = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 4);
+        $walletRetrait = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 29);
+        $walletBank = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, [4, 18]);
         $walletPhone = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 6);
-        $walletReloadCard = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 5);
+        $walletReloadCard = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, [24, 25, 5]);
         $walletInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 8);
         $walletPhoneInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 9);
         $walletVirementBank = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 10);
@@ -153,7 +153,6 @@ class ProviderController extends Controller
         $walletInterXbet =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 26);
 
 
-
         try {
 
 
@@ -167,17 +166,17 @@ class ProviderController extends Controller
                     $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
                 }
 
-                if (!empty($activeButtons['showPushButton'])) {
-                    $dashboard_data['Push'] = ProviderSingleCollection::collection($walletPush);
-                }
+                // if (!empty($activeButtons['showPushButton'])) {
+                //     $dashboard_data['Push'] = ProviderSingleCollection::collection($walletPush);
+                // }
 
-                if (!empty($activeButtons['showDjamBoutton'])) {
-                    $dashboard_data['Djamo'] = ProviderSingleCollection::collection($walletDjamo);
-                }
+                // if (!empty($activeButtons['showDjamBoutton'])) {
+                //     $dashboard_data['Djamo'] = ProviderSingleCollection::collection($walletDjamo);
+                // }
 
-                if (!empty($activeButtons['showTresortButton'])) {
-                    $dashboard_data['Tresort'] = ProviderSingleCollection::collection($walletTresort);
-                }
+                // if (!empty($activeButtons['showTresortButton'])) {
+                //     $dashboard_data['Tresort'] = ProviderSingleCollection::collection($walletTresort);
+                // }
 
                 if (!empty($activeButtons['showBankSendButton'])) {
                     $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
@@ -191,9 +190,9 @@ class ProviderController extends Controller
                     $dashboard_data['Xbets'] = ProviderSingleCollection::collection($walletXbet);
                 }
 
-                if (!empty($activeButtons['showVersementButton'])) {
-                    $dashboard_data['Versement'] = ProviderSingleCollection::collection($walletVersement);
-                }
+                // if (!empty($activeButtons['showVersementButton'])) {
+                //     $dashboard_data['Versement'] = ProviderSingleCollection::collection($walletVersement);
+                // }
 
                 if (!empty($activeButtons['showInterButton'])) {
                     $dashboard_data['Transfert international'] = [
@@ -225,6 +224,7 @@ class ProviderController extends Controller
                     $dashboard_data['Transfert national'] = [
                         "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($walletTransactionDepot) : [],
                         "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($walletTransactionMoney) : [],
+                        "Tresort Money" => !empty($activeButtons['showTresortButton']) ? ProviderSingleCollection::collection($walletTresort) : [],
                     ];
                 }
 
@@ -241,11 +241,11 @@ class ProviderController extends Controller
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
                     // New transaction
-                    $dashboard_data['Push'] = ProviderSingleCollection::collection($walletTransaction);
-                    $dashboard_data['Djamo'] = ProviderSingleCollection::collection($walletDjamo);
-                    $dashboard_data['Tresort Money'] = ProviderSingleCollection::collection($walletTresort);
-                    $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
-                    $dashboard_data['Versement'] = ProviderSingleCollection::collection($walletVersement);
+                    // $dashboard_data['Push'] = ProviderSingleCollection::collection($walletTransaction);
+                    // $dashboard_data['Djamo'] = ProviderSingleCollection::collection($walletDjamo);
+                    // $dashboard_data['Tresort Money'] = ProviderSingleCollection::collection($walletTresort);
+                    // $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
+                    // $dashboard_data['Versement'] = ProviderSingleCollection::collection($walletVersement);
                     $dashboard_data['Xbets'] = ProviderSingleCollection::collection($walletXbet);
 
 

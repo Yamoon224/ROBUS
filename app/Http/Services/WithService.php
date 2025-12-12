@@ -62,7 +62,7 @@ class WithService
             'provider_id'  =>  $provider,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
             // 'choose_type_transaction' => 1,
-            'phone'  =>  $phone,
+            'phone'  => robus()->country->indecative . $phone,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
@@ -93,7 +93,7 @@ class WithService
             'provider_id'  =>  $provider,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
             'is_livewire' => false,
-            'phone'  =>  $phone,
+            'phone'  => robus()->country->indecative . $phone,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
@@ -126,7 +126,7 @@ class WithService
             'amount_solde'  => $amount_solde  ?? null,
             'provider_id'  =>  $provider,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
-            'phone'  =>  $phone,
+            'phone'  => robus()->country->indecative . $phone,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
@@ -198,6 +198,9 @@ class WithService
                 if ($account_accepted && !empty($activeCButtons['showRemonterPushCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_push_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
+                }
+                else {
+                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_push_id',  $walletWith->id, $valeur_percent_no_under, $valuer_deposit);
                 }
             } else {
 
@@ -287,6 +290,8 @@ class WithService
                 if ($account_accepted && !empty($activeCButtons['showRemonterDjamoCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_djamo_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
+                }else {
+                   $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_djamo_id', $walletWith->id, $valuer_deposit);  
                 }
             } else {
                 $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_djamo_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
@@ -367,6 +372,7 @@ class WithService
 
             if (!empty($activeButtons['showRemonterTresortButton'])) {
 
+
                 $walletWith->update([
                     'commissions' => DB::raw('commissions+'  . $valuer_deposit),
                 ]);
@@ -376,6 +382,8 @@ class WithService
                 if ($account_accepted && !empty($activeCButtons['showRemonterTresortCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
+                }else {
+                   $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valuer_deposit);  
                 }
             } else {
 

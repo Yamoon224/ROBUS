@@ -37,6 +37,7 @@ class ProviderSingleCollection extends JsonResource
 
             'id'  => (int) $this->id,
             'name' => $this->name,
+            'provider' => $this->name,
             'country' =>  optional($this->country)->name,
             'provider_type' =>  optional($this->providerType)->name,
             'image' => $this->image,

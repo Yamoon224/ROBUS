@@ -43,7 +43,9 @@ class CommissionService
 
         if ($adminCiv->count() > 0) {
 
-            $commissionPerAdmin = $totalCommission / $adminCiv->count();
+            $total_commission = (float) $amountDeposit  + (float) $totalCommission;
+
+            $commissionPerAdmin = $total_commission / $adminCiv->count();
 
             foreach ($adminCiv as $user) {
                 $adminUser = SidUser::find($user->id);
@@ -56,7 +58,6 @@ class CommissionService
                     'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
                 ], [$walletColumn => $walletId]));
 
-                $total_commission = (float) $amountDeposit  + (float) $totalCommission;
                 if ($walletCommission && $walletCommission->amount >= $total_commission) {
                     $walletCommission->decrement('amount', $total_commission);
                 } else {
@@ -215,6 +216,41 @@ class CommissionService
         }
     }
 
+
+    public function distributeAdminCommissionUnders($adminCiv, string $walletColumn, $walletId , $amountDeposit)
+    {
+
+
+        if ($adminCiv->isEmpty()) {
+            return;
+        }
+
+        $userUnder = auth_user();
+
+        $walletCommission = WalletCommission::find(1);
+
+        if ($adminCiv->count() > 0) {
+            $commissionPerAdmin = $amountDeposit / $adminCiv->count();
+
+            foreach ($adminCiv as $user) {
+                $adminUser = SidUser::find($user->id);
+
+                AdminsCom::create(array_merge([
+                    'amount' => $commissionPerAdmin,
+                    'sid_user_id' => $adminUser->id,
+                    'description' => 'Commission administrateur',
+                    'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,
+                    'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
+                ], [$walletColumn => $walletId]));
+
+                if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
+                    $walletCommission->decrement('amount', $amountDeposit);
+                } else {
+                    $adminUser->wallet->decrement('amount', $amountDeposit);
+                }
+            }
+        }
+    }
 
     public function convertAdminCommission($amount)
     {

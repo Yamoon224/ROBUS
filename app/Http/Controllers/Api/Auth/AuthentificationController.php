@@ -685,8 +685,10 @@ class AuthentificationController extends Controller
             $device_meta_data = $request->input('device_meta_data');
             $active_code = $request->input('code');
 
+            
             $result = $this->authService->$loginMethod($email, $password, $active_code, $device_meta_data);
 
+           
             if ($result['success']) {
                 return $this->loginSuccess($result['token'], $result['user']);
             } else {
@@ -707,22 +709,22 @@ class AuthentificationController extends Controller
     public function loginMaster(Request $request)
     {
         // Vérifier l'état de l'application
-        $appStatusResult = $this->authService->appDispoMasterRobus(AppMasterStatus::class);
+        // $appStatusResult = $this->authService->appDispoMasterRobus(AppMasterStatus::class);
 
-        if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 200);
-        }
+        // if (!$appStatusResult['success']) {
+        //     return response()->json($appStatusResult, 200);
+        // }
 
         return $this->loginAll($request, 'masterLogin');
     }
 
     public function loginComZone(Request $request)
     {
-        $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
+        // $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
 
-        if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 200);
-        }
+        // if (!$appStatusResult['success']) {
+        //     return response()->json($appStatusResult, 200);
+        // }
 
         return $this->loginAll($request, 'comZoneLogin');
     }
@@ -731,11 +733,12 @@ class AuthentificationController extends Controller
     {
 
         // Vérifier l'état de l'application
-        $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+        // $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
-        if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 200);
-        }
+        // if (!$appStatusResult['success']) {
+        //     return response()->json($appStatusResult, 200);
+        // }
+      
 
         return $this->loginAll($request, 'underDistributorLogin');
     }

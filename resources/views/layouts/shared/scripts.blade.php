@@ -21,7 +21,7 @@
 <script src="{{ asset('js/app.js') }}"></script>
 
 <script src="https://kit.fontawesome.com/612bf07328.js" crossorigin="anonymous"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+{{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> --}}
 
 
 <script>

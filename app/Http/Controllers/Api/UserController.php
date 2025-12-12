@@ -136,37 +136,37 @@ class UserController extends Controller
         $is_under = robus()->is_under_distributer;
         $is_api_integrate = robus()->is_api;
 
-        if ($is_under) {
+        // if ($is_under) {
 
-            $userSession = SidUser::findOrFail(robus()->id);
+        //     $userSession = SidUser::findOrFail(robus()->id);
         
-            if (!$userSession->session_id ) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Vous avez été déconnecté pour inactivité. Veuillez vous reconnecter pour accéder au service.'
-                ], 333);
-            }
+        //     if (!$userSession->session_id ) {
+        //         return response()->json([
+        //             'success' => false,
+        //             'message' => 'Vous avez été déconnecté pour inactivité. Veuillez vous reconnecter pour accéder au service.'
+        //         ], 333);
+        //     }
         
-            // Pas besoin de Carbon::parse si ton champ est bien casté en datetime
-            // $expirationDate = $userSession->session_expires_at;
-            // || !$userSession->session_expires_at
+        //     // Pas besoin de Carbon::parse si ton champ est bien casté en datetime
+        //     // $expirationDate = $userSession->session_expires_at;
+        //     // || !$userSession->session_expires_at
         
-            // if (now()->gt($expirationDate)) {
-            //     $userSession->update([
-            //         'session_id' => null,
-            //         'session_expires_at' => null
-            //     ]);
+        //     // if (now()->gt($expirationDate)) {
+        //     //     $userSession->update([
+        //     //         'session_id' => null,
+        //     //         'session_expires_at' => null
+        //     //     ]);
         
-            //     return response()->json([
-            //         'success' => false,
-            //         'message' => 'Session expirée pour inactivité. Veuillez vous reconnecter pour accéder au service.'
-            //     ], 333);
-            // }
-        }
+        //     //     return response()->json([
+        //     //         'success' => false,
+        //     //         'message' => 'Session expirée pour inactivité. Veuillez vous reconnecter pour accéder au service.'
+        //     //     ], 333);
+        //     // }
+        // }
 
-        if (!$appStatusResult['success']) {
-            return response()->json($appStatusResult, 200);
-        }
+        // if (!$appStatusResult['success']) {
+        //     return response()->json($appStatusResult, 200);
+        // }
 
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
@@ -331,7 +331,7 @@ class UserController extends Controller
     public function dashboard_historique()
     {
 
-        $wallet_user = Auth::guard('api')->user();
+        $wallet_user =  robus();
         $wallet_solde = Wallet::where('sid_user_id', $wallet_user->id)->first();
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
 
@@ -342,6 +342,10 @@ class UserController extends Controller
             ->paginate(20);
 
         $walletPayment = $this->transactionAccount->getTransactionsWallet(WalletPayment::class, $wallet_solde->id);
+
+        $walletPush = $this->transactionAccount->getTransactionsWallet(WalletPush::class, $wallet_solde->id);
+        $walletTresortMoney = $this->transactionAccount->getTransactionsWallet(WalletTresortMoney::class, $wallet_solde->id);
+        $walletDjamo = $this->transactionAccount->getTransactionsWallet(WalletDjamo::class, $wallet_solde->id);
 
         $walletBank = $this->transactionAccount->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
 
@@ -376,6 +380,9 @@ class UserController extends Controller
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletInter::class);
 
         $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
+        $dashboard_data['Push'] = WithTransactionSingleCollection::collection($walletPush);
+        $dashboard_data['Djamo'] = DjamoTransactionSingleCollection::collection($walletDjamo);
+        $dashboard_data['Tresort Money'] = WithTransactionSingleCollection::collection($walletTresortMoney);
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
         $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
         $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);
