@@ -449,6 +449,11 @@ class UserController extends Controller
             $walletInter = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletInter::class);
             $walletOrderCarte = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(BankCard::class);
 
+            $walletPush = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPush::class);
+            $walletTresort = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class);
+            $walletDjamo = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDjamo::class);
+            $walletBankSend = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBankSend::class);
+
             if ($gain_amount <= 0) {
                 return response()->json([
                     'success' => false,
@@ -457,32 +462,44 @@ class UserController extends Controller
             }
 
 
-            if ($commissions == "Paiements" &&  $walletPayment != 0) {
+            if ($commissions == "Commission sur Paiements" &&  $walletPayment != 0) {
 
                 $gain_amount =  $walletPayment;
-            } else if ($commissions == "Crédits" &&  $walletPhone != 0) {
+            } else if ($commissions == "Commission sur Crédits" &&  $walletPhone != 0) {
 
                 $gain_amount =  $walletPhone;
-            } else if ($commissions == "International" &&  $walletInter != 0) {
+            } else if ($commissions == "Commission sur International" &&  $walletInter != 0) {
 
                 $gain_amount =  $walletInter;
-            } else if ($commissions == "Virements" &&  $walletBank != 0) {
+            } else if ($commissions == "Commission sur Virements" &&  $walletBank != 0) {
 
                 $gain_amount =  $walletBank;
-            } else if ($commissions == "Rechargements" &&  $walletReloadCard != 0) {
+            } else if ($commissions == "Commission sur Rechargements" &&  $walletReloadCard != 0) {
 
                 $gain_amount =  $walletReloadCard;
-            } else if ($commissions == "Depots" &&  $walletTransactionDepot != 0) {
+            } else if ($commissions == "Commission sur Depots" &&  $walletTransactionDepot != 0) {
                 $gain_amount =  $walletTransactionDepot;
-            } else if ($commissions == "Retraits" &&  $walletTransactionRetrait != 0) {
+            } else if ($commissions == "Commission sur Retraits" &&  $walletTransactionRetrait != 0) {
 
                 $gain_amount =  $walletTransactionRetrait;
-            } else if ($commissions == "Moneys" &&  $walletTransactionMobile != 0) {
+            } else if ($commissions == "Commission sur Moneys" &&  $walletTransactionMobile != 0) {
 
                 $gain_amount =  $walletTransactionMobile;
-            } else if ($commissions == "Commande de carte" &&  $walletOrderCarte != 0) {
+            } else if ($commissions == "Commission sur Commande de carte" &&  $walletOrderCarte != 0) {
 
                 $gain_amount =  $walletOrderCarte;
+            } else if ($commissions == "Commission sur Push" &&  $walletPush != 0) {
+
+                $gain_amount =  $walletPush;
+            } else if ($commissions == "Commission sur Tresort Money" &&  $walletTresort != 0) {
+
+                $gain_amount =  $walletTresort;
+            } else if ($commissions == "Commission sur Djamo" &&  $walletDjamo != 0) {
+
+                $gain_amount =  $walletDjamo;
+            } else if ($commissions == "Commission sur Bank send" &&  $walletBankSend != 0) {
+
+                $gain_amount =  $walletBankSend;
             } else {
                 return response()->json([
                     'success' => false,
@@ -496,26 +513,34 @@ class UserController extends Controller
 
                 $this->transactionAccount->updateWallet($withRemonte);
 
-                if ($commissions == "Paiements") {
+                if ($commissions == "Commission sur Paiements") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletPayment::class);
-                } else if ($commissions == "Transactions") {
+                } else if ($commissions == "Commission sur Transactions") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletTransaction::class);
-                } else if ($commissions == "Crédits") {
+                } else if ($commissions == "Commission sur Crédits") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletPhoneCredit::class);
-                } else if ($commissions == "International") {
+                } else if ($commissions == "Commission sur International") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletInter::class);
-                } else if ($commissions == "Virements") {
+                } else if ($commissions == "Commission sur Virements") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletBank::class);
-                } else if ($commissions == "Rechargements") {
+                } else if ($commissions == "Commission sur Rechargements") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletDeposit::class);
-                } else if ($commissions == "Depots") {
+                } else if ($commissions == "Commission sur Depots") {
                     $this->transactionAccount->getUpdateTransactionDepotRobusCommissionAmountNullTotal(WalletTransaction::class);
-                } else if ($commissions == "Retraits") {
+                } else if ($commissions == "Commission sur Retraits") {
                     $this->transactionAccount->getUpdateTransactionRetraitRobusCommissionAmountNullTotal(WalletTransaction::class);
-                } else if ($commissions == "Moneys") {
+                } else if ($commissions == "Commission sur Moneys") {
                     $this->transactionAccount->getUpdateTransactionMoneyCommissionAmountNullTotal(WalletTransaction::class);
-                } else if ($commissions == "Commande de carte") {
+                } else if ($commissions == "Commission sur Commande de carte") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(BankCard::class);
+                }else if ($commissions == "Commission sur Push") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletPush::class);
+                }else if ($commissions == "Commission sur Tresort Money") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletTresortMoney::class);
+                }else if ($commissions == "Commission sur Djamo") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletDjamo::class);
+                }else if ($commissions == "Commission sur Bank send") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletBankSend::class);
                 } else {
 
                     return response()->json([
