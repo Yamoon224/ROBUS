@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\Transfers\TransactionController;
 use App\Http\Controllers\Api\Transfers\VirementController;
 use App\Http\Controllers\Api\Transfers\WaveTransactionController;
 use App\Http\Controllers\Api\Transfers\withTransactionController;
+use App\Http\Controllers\Api\Transfers\VersementController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -99,16 +100,19 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
             // WithTransactions
             Route::post('push/store', [withTransactionController::class, 'create_PushTransaction']);
+            Route::post('versments/store', [VersementController::class, 'create_versement']);
             Route::post('djamo/store', [withTransactionController::class, 'create_DjamoTransaction']);
             Route::post('tresorts/store', [withTransactionController::class, 'create_TresortTransaction']);
             Route::post('push/delete/{id}', [withTransactionController::class, 'delete_wallet_Push']);
             Route::post('djamo/delete/{id}', [withTransactionController::class, 'delete_wallet_Djamo']);
             Route::post('tresorts/delete/{id}', [withTransactionController::class, 'delete_wallet_Tresort']);
             Route::get('search_push/{amount_send}', [withTransactionController::class, 'search_Push']);
+            Route::get('search_versement/{amount_send}/{provider}', [VersementController::class, 'search_versement']);
             Route::get('search_djamo/{amount_send}', [withTransactionController::class, 'search_Djamo']);
             Route::get('search_tresorts/{amount_send}', [withTransactionController::class, 'search_Tresort']);
             Route::get('search_push_received/{amount_received}', [withTransactionController::class, 'search_received_Push']);
             Route::get('search_djamo_received/{amount_received}', [withTransactionController::class, 'search_received_Djamo']);
+            Route::get('search_versement_received/{amount_received}/{provider}', [VersementController::class, 'search_versement_received']);
             Route::get('search_tresort_received/{amount_received}', [withTransactionController::class, 'search_receveid_Tresort']);
 
 

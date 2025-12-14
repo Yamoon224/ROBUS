@@ -20,6 +20,7 @@ class RemonteSingleCollection extends JsonResource
             'amount_with_draw' =>  number_format((float)$this->amount_with_draw	, 2, '.', ' '),
             'date_created' =>  $this->date_removed,
             'date_treatment' =>  $this->date_removed,
+            'reference' =>  $this->ref,
             'type'  =>  $this->type_transaction,
             'status'  =>  $this->status,
             'devise'  =>optional($this->sidUser->wallet->currencie)->code,

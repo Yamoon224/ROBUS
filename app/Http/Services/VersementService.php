@@ -54,7 +54,7 @@ class VersementService
             'num_accompte'   => $number_decoder ?? null,
             'bank_code' => $id_invoice ?? null,
             'guichet_code' => $number_contract ?? null,
-            'name' => $name ?? null,
+            // 'name' => $name ?? null,
             'created_by' => robus()->id,
             'provider_id'  =>    $provider,
             'num_authers' => $number_phone ?? null,

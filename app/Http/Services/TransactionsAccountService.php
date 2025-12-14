@@ -383,9 +383,15 @@ class TransactionsAccountService
 
     public function createWithCommission($amount_solde, $gain_amount, $typeRemonte)
     {
+
+        $rt = rand(40, 5000) * time();
+        $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
+        $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
+
         return WithMerchant::create([
             'amount_with_draw' =>  $gain_amount,
             'sid_user_id' =>   robus()->id,
+            'ref' => 'RB_' . 'ROBUS' . '_' . $transactionCode,
             'amount_solde' =>   $amount_solde,
             'type_transaction' => $typeRemonte,
             'status' =>  "SUCCESS",

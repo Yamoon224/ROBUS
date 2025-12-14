@@ -346,6 +346,7 @@ class UserController extends Controller
         $walletPush = $this->transactionAccount->getTransactionsWallet(WalletPush::class, $wallet_solde->id);
         $walletTresortMoney = $this->transactionAccount->getTransactionsWallet(WalletTresortMoney::class, $wallet_solde->id);
         $walletDjamo = $this->transactionAccount->getTransactionsWallet(WalletDjamo::class, $wallet_solde->id);
+        $walletVirement = $this->transactionAccount->getTransactionsWallet(WalletVersement::class, $wallet_solde->id);
 
         $walletBank = $this->transactionAccount->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
 
@@ -377,11 +378,17 @@ class UserController extends Controller
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPhoneCredit::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDeposit::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(BankCard::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPush::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDjamo::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTresortMoney::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletVersement::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBankSend::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletInter::class);
 
         $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
         $dashboard_data['Push'] = WithTransactionSingleCollection::collection($walletPush);
         $dashboard_data['Djamo'] = DjamoTransactionSingleCollection::collection($walletDjamo);
+        $dashboard_data['Virements'] = VirementTransactionSingleCollection::collection($walletVirement);
         $dashboard_data['Tresort Money'] = WithTransactionSingleCollection::collection($walletTresortMoney);
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
         $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
