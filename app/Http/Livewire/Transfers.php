@@ -1941,7 +1941,7 @@ class Transfers extends Component
         $admin_civ = $transactionData['admin_civ'];
         DB::beginTransaction();
 
-        try {
+        // try {
 
             if ($check->status == 'PENDING') {
 
@@ -2132,12 +2132,12 @@ class Transfers extends Component
                 return;
             }
             DB::commit();
-        } catch (\Exception $exception) {
-            $this->cancelVersementField();
-            $this->emit('modal-hide-versement-validated');
-            $this->emit('modal-hide-versement');
-            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        }
+        // } catch (\Exception $exception) {
+        //     $this->cancelVersementField();
+        //     $this->emit('modal-hide-versement-validated');
+        //     $this->emit('modal-hide-versement');
+        //     $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        // }
     }
 
     public function updatePush()

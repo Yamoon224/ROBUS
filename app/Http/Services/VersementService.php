@@ -58,7 +58,7 @@ class VersementService
             'created_by' => robus()->id,
             'provider_id'  =>    $provider,
             'num_authers' => $number_phone ?? null,
-            'costs_amount' => $percent_robus->amount_auther ?? null,
+            'costs_amount' => ($percent_robus->percent * $amount_valeur),
             'status'  => "PENDING",
         ]);
     }
