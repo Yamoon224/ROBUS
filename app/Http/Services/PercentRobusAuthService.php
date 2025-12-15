@@ -33,6 +33,22 @@ class PercentRobusAuthService
         $this->transctionRepository = $transactionReposi;
     }
 
+    public function calculateCommissionPay($commission, float $amount, bool $isDistributor): float
+    {
+        $percent = $isDistributor
+            ? $commission->percent_under_distributer
+            : $commission->percent;
+
+        return (float) $percent * $amount;
+    }
+
+    public function calculateInterPay($commission, float $amount, bool $isDistributor): float
+    {
+        return $isDistributor
+            ? (float) $commission->percent_deposit_under_distributer * $amount
+            : (float) $commission->percent * $amount;
+    }
+
 
     public function getRobusPercentageSDistributers()
     {
@@ -161,7 +177,7 @@ class PercentRobusAuthService
             case 'CIV':
                 return Onexbet::whereId(1)->first();
             default:
-                return null;
+                return Onexbet::whereId(1)->first();
         }
     }
 
@@ -173,7 +189,7 @@ class PercentRobusAuthService
             case 'CIV':
                 return PushPercent::whereId(1)->first();
             default:
-                return null;
+                return PushPercent::whereId(2)->first();
         }
     }
 
@@ -187,7 +203,7 @@ class PercentRobusAuthService
             case 'CIV':
                 return ArgentTresort::whereId(1)->first();
             default:
-                return null;
+                return ArgentTresort::whereId(2)->first();
         }
     }
 
@@ -236,7 +252,7 @@ class PercentRobusAuthService
             case 'CIV':
                 return DjamoPercent::whereId(2)->first();
             default:
-                return null;
+                return DjamoPercent::whereId(1)->first();
         }
     }
 
@@ -310,7 +326,7 @@ class PercentRobusAuthService
     public function getRobusPercentageInterVersement()
     {
 
-        if (sabdy()->is_under_distributer || sabdy()->is_api) {
+        if (robus()->is_under_distributer || robus()->is_api) {
             return VirementPercent::whereId(14)->first();
         } else {
             return VirementPercent::whereId(15)->first();

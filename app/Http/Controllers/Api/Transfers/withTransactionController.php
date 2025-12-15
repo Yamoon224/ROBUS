@@ -795,6 +795,7 @@ class withTransactionController extends Controller
                 }
         }
 
+
         private function searchAmountReceivedWallet(string $type, $amount)
         {
                 try {

@@ -236,7 +236,7 @@ class ProviderController extends Controller
 
                 if (robus()->country->code == 'CI') {
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
-                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
+                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPaymentInter);
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
@@ -417,7 +417,7 @@ class ProviderController extends Controller
                         "Tresort" => !empty($activeButtons['showTresortInterButton']) ? ProviderSingleCollection::collection($walletInterTresort) : [],
                         "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($walletInterBankSend) : [],
                         "Versement" => !empty($activeButtons['showVersementInterButton']) ? ProviderSingleCollection::collection($walletInterVersement) : [],
-                        "Xbets" => !empty($activeButtons['showXbetsInterButton']) ? ProviderSingleCollection::collection($walletInterXbet) : [],
+                        // "Xbets" => !empty($activeButtons['showXbetsInterButton']) ? ProviderSingleCollection::collection($walletInterXbet) : [],
                     ];
                 }
 

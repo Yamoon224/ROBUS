@@ -594,7 +594,7 @@ class InterPaymentService
         return true;
     }
 
-     public function sendNotificationVirementInters($walletInter)
+    public function sendNotificationVirementInters($walletInter)
     {
 
         $msg_title = 'Transfert internationnal Robus';
@@ -699,9 +699,7 @@ class InterPaymentService
         $name,
         $name_sender,
         $account_number,
-        $percent_push_action = null,
-        $percent_djamo_action = null,
-        $percent_tresort_action = null,
+        $action_percent_id,
         $imagePath,
 
     ) {
@@ -714,11 +712,11 @@ class InterPaymentService
             'description' => null,
             'inter_cost_id' => null,
             'transaction_cost_id' => $percent_robus->id,
-            'djamo_percent_id' => $percent_djamo_action ?? null,
-            'push_percent_id' => $percent_push_action ?? null,
-            'virement_percent_id' => $percent_push_action ?? null,
-            'argent_tresort_id' => $percent_tresort_action ?? null,
-            'bank_commission_id' => $percent_push_action ?? null,
+            'virement_percent_id' =>null,
+            'djamo_percent_id' => $provider_payment == 104 ? $action_percent_id : null,
+            'push_percent_id'       => $provider_payment == 105 ? $action_percent_id : null,
+            'argent_tresort_id'       => $provider_payment == 106 ? $action_percent_id : null,
+            // 'bank_commission_id' => $percent_push_action ?? null,
             'phone' => $country_robus->indecative . $phone ?? null,
             'number_compte' => $account_number,
             'created_by' => robus()->id,
@@ -728,7 +726,7 @@ class InterPaymentService
             'num_piece' => $num_piece_custumers ?? null,
             'name_benef' => $name_sender ?? null,
             'validated_date' => $date_piece ?? null,
-            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_merchands * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
             'provider_type' => 1,
             'status' => 'PENDING',
             'country_id' => $country_robus->id,
@@ -765,7 +763,7 @@ class InterPaymentService
             'num_authers' => $name_custumers ?? null,
             'bank_code' => $bank_code ?? null,
             'guichet_code' => $guichet_code ?? null,
-            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_under_distributer * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'costs_amount' => (robus()?->is_under_distributer || robus()?->is_api) ?  ($percent_robus->percent_merchands * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
             'provider_type' => 1,
             'status' => 'PENDING',
             'country_id' => $country_robus->id,
@@ -1208,8 +1206,8 @@ class InterPaymentService
             'wallet_inter_id' => $walletTransactionId,
             'description' => 'Commission administrateur',
             'status'  => "SUCCESS",
-            'amount_under' =>  (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
-            'description_underdistributer' =>  (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
+            'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $valuer_deposit : 0,
+            'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
         ]);
 
         $admin_single->wallet->increment('amount', $amount);

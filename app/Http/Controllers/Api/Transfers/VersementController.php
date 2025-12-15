@@ -368,7 +368,7 @@ class VersementController extends Controller
         }
     }
 
-    public function search_versement_received($amount_paiement, $request)
+    public function search_versement_received($amount_paiement, $providerId)
     {
 
         $wallet_user = robus();
@@ -382,7 +382,7 @@ class VersementController extends Controller
 
                 $reel_amount = $this->validatedamountDays->search_amount($amount_paiement);
 
-                $commission_invoice =  $this->percentRobus->getRobusPercentageVersement($request->provider);
+                $commission_invoice =  $this->percentRobus->getRobusPercentageVersement($providerId);
                 $commission_paiement =  $commission_invoice->percent  * $amount_paiement;
 
                 if ($wallet_user->country->code == 'CI') {

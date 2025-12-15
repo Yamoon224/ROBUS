@@ -149,7 +149,7 @@ class CountrieController extends Controller
         $walletsData = [];
 
 
-        
+
         $walletPaymentInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 7);
         $walletPhoneInter = $this->percentRobus->getProvidersByType(new Provider, $country_inter_out_civ, 9);
         $walletVirementBank = $this->percentRobus->getProvidersReloadByType(new Provider, $country_inter_out_civ, [10, 18]);
@@ -164,7 +164,7 @@ class CountrieController extends Controller
 
 
             $walletsData['Transfert international'] = [
-                "Factures" =>   [],
+                "Paiements Factures" =>  $walletPaymentInter ? ProviderSingleCollection::collection($walletPaymentInter) : [],
                 "Transfert" => $walletInterUnder ? ProviderSingleCollection::collection($walletInterUnder) : [],
                 "Crédit téléphonique" => $walletPhoneInter ? ProviderSingleCollection::collection($walletPhoneInter) : [],
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
@@ -175,7 +175,7 @@ class CountrieController extends Controller
         } elseif ((robus()->is_under_distributer || robus()->is_api) && robus()->country->id == 107) {
 
             $walletsData['Transfert international'] = [
-                "Factures" => [],
+                "Paiements Factures" =>  $walletPaymentInter ? ProviderSingleCollection::collection($walletPaymentInter) : [],
                 "Transfert" => $walletInterUnder ? ProviderSingleCollection::collection($walletInterUnder) : [],
                 "Crédit téléphonique" => $walletPhoneInter ? ProviderSingleCollection::collection($walletPhoneInter) : [],
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
@@ -185,7 +185,7 @@ class CountrieController extends Controller
         } elseif (robus()->is_custumers && robus()->country->id == 107) {
 
             $walletsData['Transfert international'] = [
-                "Factures" => [],
+                "Paiements Factures" => [],
                 "Transfert" => $walletInter ? ProviderSingleCollection::collection($walletInter) : [],
                 "Crédit téléphonique" =>  [],
                 "Versement bancaire" => [],
@@ -194,7 +194,7 @@ class CountrieController extends Controller
         } else {
 
             $walletsData['Transfert international'] = [
-                "Factures" => $walletPaymentInter ? ProviderSingleCollection::collection($walletPaymentInter)  : [],
+                "Paiements Factures" => $walletPaymentInter ? ProviderSingleCollection::collection($walletPaymentInter)  : [],
                 "Transfert" => $walletInter ? ProviderSingleCollection::collection($walletInter) : [],
                 "Crédit téléphonique" => $walletPhoneInter ? ProviderSingleCollection::collection($walletPhoneInter) : [],
                 "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],

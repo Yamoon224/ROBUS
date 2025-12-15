@@ -71,7 +71,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         });
     });
 
-    Route::middleware(['auth:api' , 'check.suspended'])->group(function () {
+    Route::middleware(['auth:api', 'check.suspended'])->group(function () {
 
         // User and Under distributors APIS
         Route::prefix('user')->group(function () {
@@ -106,6 +106,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('push/delete/{id}', [withTransactionController::class, 'delete_wallet_Push']);
             Route::post('djamo/delete/{id}', [withTransactionController::class, 'delete_wallet_Djamo']);
             Route::post('tresorts/delete/{id}', [withTransactionController::class, 'delete_wallet_Tresort']);
+            
             Route::get('search_push/{amount_send}', [withTransactionController::class, 'search_Push']);
             Route::get('search_versement/{amount_send}/{provider}', [VersementController::class, 'search_versement']);
             Route::get('search_djamo/{amount_send}', [withTransactionController::class, 'search_Djamo']);
@@ -160,7 +161,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('inter/show/{id}', [IntersPaymentController::class, 'inter_show']);
             Route::post('inter/delete/{id}', [IntersPaymentController::class, 'delete_inter']);
             Route::get('search_inter/{wallet_id}', [IntersPaymentController::class, 'search_transaction_inter']);
-            
+
             // Route::get('search_payment_inter/{commission_id}', [IntersPaymentController::class, 'search_payment_robus_inter']);
             Route::get('paiement_invoice_inter/{invoice_commission_id}', [IntersPaymentController::class, 'paiement_invoice_inter']);
             Route::get('paiement_invoice_inter_received/{amount_received}', [IntersPaymentController::class, 'paiement_invoice_received']);
@@ -174,6 +175,16 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('search_payment_mooney_inter/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_mooney_inter']);
             Route::get('search_payment_inter_out/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_robus_inter']);
             Route::get('search_payment_inter_out_received/{country_id}/{paiement_amount}/{provider_out}', [IntersPaymentController::class, 'search_payment_robus_inter_out']);
+
+            // Inter new send
+            Route::get('search_inter_push/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_Push']);
+            Route::get('search_inter_versement/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_versement']);
+            Route::get('search_inter_djamo/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_Djamo']);
+            Route::get('search_inter_tresorts/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_Tresort']);
+            Route::get('search_inter_push_received/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_received_Push']);
+            Route::get('search_inter_djamo_received/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_received_Djamo']);
+            Route::get('search_inter_versement_received/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_versement_received']);
+            Route::get('search_inter_tresort_received/{country_id}/{paiement_amount}', [IntersPaymentController::class, 'search_receveid_Tresort']);
 
             // Drawal transaction
             Route::post('transactions/first_step', [TransactionController::class, 'first_withdrawal']);
@@ -282,7 +293,6 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('locations', [UserController::class, 'locations_unders']);
             Route::get('locations/{id}', [UserController::class, 'locations_unders_zone']);
         });
-
     });
 
 

@@ -185,7 +185,6 @@ class WithService
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
             $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
-            $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
 
             if (!empty($activeButtons['showRemonterPushButton'])) {
 
