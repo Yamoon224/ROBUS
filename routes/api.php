@@ -106,11 +106,12 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('push/delete/{id}', [withTransactionController::class, 'delete_wallet_Push']);
             Route::post('djamo/delete/{id}', [withTransactionController::class, 'delete_wallet_Djamo']);
             Route::post('tresorts/delete/{id}', [withTransactionController::class, 'delete_wallet_Tresort']);
-            
-            Route::get('search_push/{amount_send}', [withTransactionController::class, 'search_Push']);
+
+            Route::get('search_push/{amount_send}/{is_drawal?}', [withTransactionController::class, 'search_Push']);
+            Route::get('search_drawal_mooney/{amount_send}/{provider}', [withTransactionController::class, 'search_drawal_mooney']);
             Route::get('search_versement/{amount_send}/{provider}', [VersementController::class, 'search_versement']);
-            Route::get('search_djamo/{amount_send}', [withTransactionController::class, 'search_Djamo']);
-            Route::get('search_tresorts/{amount_send}', [withTransactionController::class, 'search_Tresort']);
+            Route::get('search_djamo/{amount_send}/{is_drawal?}', [withTransactionController::class, 'search_Djamo']);
+            Route::get('search_tresorts/{amount_send}/{is_drawal?}', [withTransactionController::class, 'search_Tresort']);
             Route::get('search_push_received/{amount_received}', [withTransactionController::class, 'search_received_Push']);
             Route::get('search_djamo_received/{amount_received}', [withTransactionController::class, 'search_received_Djamo']);
             Route::get('search_versement_received/{amount_received}/{provider}', [VersementController::class, 'search_versement_received']);

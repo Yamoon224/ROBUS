@@ -715,20 +715,78 @@ class withTransactionController extends Controller
         }
         // Search Valeur receive and valeur pay of UV
 
-
-        public function search_Djamo($amount_send)
+        public function search_drawal_mooney($amount_paiement, $providerId)
         {
-                return $this->searchWallet('djamo', $amount_send);
+
+                $wallet_user = robus();
+
+                try {
+
+                        // Invoice auther
+                        if ($amount_paiement != '') {
+
+                                $reel_amount = $this->validatedamountDays->search_amount($amount_paiement);
+
+                                $commission_invoice =  $this->percentRobus->getRobusPercentageDrawal($providerId);
+
+                                $commission_paiement =  $commission_invoice->percent  * $amount_paiement;
+
+                                if ($wallet_user->country->code == 'CI') {
+
+                                        if ($wallet_user->is_under_distributer == 1 || $wallet_user->is_api) {
+
+                                                $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_with_drawal  * $amount_paiement;
+
+                                                $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_paiement;
+
+                                                $commission_transaction_val_percent_pay =  (float) $commission_paiement;
+                                        } else {
+
+                                                $commission_paiement_invoice_val_nat_pay =   $commission_paiement;
+
+                                                $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_paiement;
+
+                                                $commission_transaction_val_percent_pay =  (float) $commission_paiement;
+                                        }
+
+                                        return response()->json([
+                                                'success' => $commission_invoice != null ? true : false,
+                                                'data' =>  [
+                                                        'amount_pay' => $commission_paiement_invoice_val_nat_pay,
+                                                        'amount_send' => $commission_transaction_val_percent_pay,
+                                                        'amount_receive' => $commission_paiement_invoice_val_nat_receive,
+                                                ],
+                                        ], 200);
+                                }
+                        }
+                } catch (\Exception $exception) {
+                        return response()->json([
+                                'success' =>  false,
+                                'message' => 'Pas d\'utilisateur',
+                        ], 200);
+                }
         }
 
-        public function search_Push($amount_send)
+
+        public function search_Djamo($amount_send, $is_drawal = false)
         {
-                return $this->searchWallet('push', $amount_send);
+                $is_drawal = filter_var($is_drawal, FILTER_VALIDATE_BOOLEAN);
+
+                return $this->searchWallet('djamo', $amount_send, $is_drawal);
         }
 
-        public function search_Tresort($amount_send)
+        public function search_Push($amount_send, $is_drawal = false)
         {
-                return $this->searchWallet('tresort', $amount_send);
+                $is_drawal = filter_var($is_drawal, FILTER_VALIDATE_BOOLEAN);
+
+                return $this->searchWallet('push', $amount_send, $is_drawal);
+        }
+
+        public function search_Tresort($amount_send, $is_drawal = false)
+        {
+                $is_drawal = filter_var($is_drawal, FILTER_VALIDATE_BOOLEAN);
+
+                return $this->searchWallet('tresort', $amount_send, $is_drawal);
         }
 
         // search received
@@ -749,7 +807,7 @@ class withTransactionController extends Controller
         }
 
 
-        private function searchWallet(string $type, $amount)
+        private function searchWallet(string $type, $amount, $is_drawal = false)
         {
                 try {
                         // Choisir la bonne méthode pour récupérer le pourcentage
@@ -774,9 +832,24 @@ class withTransactionController extends Controller
                                 ], 400);
                         }
 
-                        // Validation et calcul
                         $reel_amount = $this->validatedamountDays->search_amount($amount);
-                        $commission = $percent_robus->percent * $reel_amount;
+
+                        if ($is_drawal) {
+
+                                if (robus()->is_under_distributer || robus()->is_api) {
+                                        $commission = $percent_robus->percent_with_drawal_merchands * $reel_amount;
+                                } else {
+                                        $commission = $percent_robus->percent_with_drawal * $reel_amount;
+                                }
+                        } else {
+
+                                if (robus()->is_under_distributer || robus()->is_api) {
+                                        $commission = $percent_robus->percent_merchands * $reel_amount;
+                                } else {
+                                        $commission = $percent_robus->percent * $reel_amount;
+                                }
+                        }
+
                         $net_amount = $reel_amount - $commission;
 
                         return response()->json([

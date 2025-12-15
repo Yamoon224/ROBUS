@@ -334,7 +334,7 @@ class VersementController extends Controller
 
                 if ($wallet_user->country->code == 'CI') {
 
-                    if ($wallet_user->is_under_distributer == 1) {
+                    if ($wallet_user->is_under_distributer == 1 || $wallet_user->is_api) {
 
                         $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_merchands  * $amount_paiement;
 
