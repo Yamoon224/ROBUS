@@ -480,6 +480,51 @@ class TransfertServiceBackend
             'image' => $imagePath ?? null,
         ]);
     }
+
+     public function createMobileWalletBankSendWith(
+        $amount_transaction,
+        $percent_robus,
+        $country_robus,
+        $provider_payment,
+        $phone,
+        $name_custumers,
+        $num_piece_custumers,
+        $date_piece,
+        $name,
+        $name_sender,
+        $account_number,
+        $phone_inter_expe,
+        $swit_code,
+        $imagePath,
+    ) {
+
+        $amount_solde = sabdy()->wallet->amount - $amount_transaction;
+
+        return WalletBankSend::create([
+            'wallet_id' => sabdy()->wallet->id,
+            'amount' => $amount_transaction,
+            'description' => "Demande de transaction Bank send",
+            'bank_cost_id' => $percent_robus->id,
+            'phone' => $country_robus->indecative . $phone ?? null,
+            'number_compte' => $account_number,
+            'created_by' => sabdy()->id,
+            'provider_id' => $provider_payment,
+            'name_complet' => $name_custumers ?? null,
+            'name' => $name ?? null,
+            'num_piece' => $num_piece_custumers ?? null,
+            'name_benef' => $name_sender ?? null,
+            'phone_inter_expe' => $phone_inter_expe ?? null,
+            'swit_code' => $swit_code ?? null,
+            'validated_date' => $date_piece ?? null,
+            'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->amount ) : ($percent_robus->amount),
+            'provider_type' => 1,
+            'status' => 'PENDING',
+            'countrie_id' => $country_robus->id,
+            'choose_type_transaction' => 1,
+            'amount_solde' => $amount_solde ?? null,
+            'image' => $imagePath ?? null,
+        ]);
+    }
     public function updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $wallet)
     {
 

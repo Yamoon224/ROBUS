@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use App\Models\AdminsCom;
 use App\Models\Wallets\Wallet;
 use App\Models\Payments\Deposit;
-use App\Models\Costs\DepositCost;
+use App\Models\Costs\BankCommission;
 use App\Models\Providers\Provider;
 use Spatie\Activitylog\LogOptions;
 use App\Models\Invoices\InvoiceDeposit;
@@ -69,7 +69,7 @@ class WalletBankSend extends Model
 
     public function depositCost()
     {
-        return $this->belongsTo(DepositCost::class, 'deposit_cost_id', 'id')->withTrashed();
+        return $this->belongsTo(BankCommission::class, 'bank_cost_id', 'id')->withTrashed();
     }
 
     public function getActivitylogOptions(): LogOptions

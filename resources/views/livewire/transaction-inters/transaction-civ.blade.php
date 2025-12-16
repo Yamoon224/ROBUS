@@ -238,8 +238,6 @@
                                         'error' => 'date_piece',
                                     ])
                                 @elseif ($provider_inter_out_civ == 124)
-
-
                                     <div class="col-span-12 flex flex-col items-center gap-4">
 
                                         <!-- Preview avec Base64 ou image existante -->
@@ -341,8 +339,8 @@
                                                 {{ $countrie_indicative->indecative ?? null }}
                                             </div>
                                             <input wire:model.defer="phone_inter_out_civ" id="phone_inter_out_civ"
-                                                type="number" class="form-control" placeholder="Numero" value=""
-                                                minlength="6" maxlength="15">
+                                                type="number" class="form-control" placeholder="Numero"
+                                                value="" minlength="6" maxlength="15">
                                             @error('phone_inter_out_civ')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -373,8 +371,8 @@
                                                 {{ $countrie_indicative->indecative ?? null }}
                                             </div>
                                             <input wire:model.defer="phone_inter_expe" id="phone_inter_expe"
-                                                type="number" class="form-control" placeholder="Numero" value=""
-                                                minlength="6" maxlength="15">
+                                                type="number" class="form-control" placeholder="Numero"
+                                                value="" minlength="6" maxlength="15">
                                             @error('phone_inter_expe')
                                                 <span class="text-danger">{{ $message }}</span>
                                             @enderror
@@ -416,7 +414,6 @@
                                         'label' => 'Montant',
                                         'error' => 'transaction_bank_amount',
                                     ])
-
                                 @else
                                     @if ($provider_inter_out_civ == 104)
                                         <div class="col-span-12 flex flex-col items-center gap-4">
@@ -640,7 +637,7 @@
                                 country="{{ $usersCountry }}" />
 
 
-                                
+
                             <div class="col-span-6 mt-3">
                                 <label for="transaction_inter_amount_money_receved" class="form-label">Montant
                                     à recevoir<span class="text-danger">*</span></label>
@@ -704,6 +701,7 @@
             @endphp
 
             @if ($provider_inter_out_civ == 51)
+
                 <div class="col-span-6 mt-space-padding">
                     <label for="number_phone_credit_edit" class="form-label">Montant de la transaction Robus<span
                             class="text-danger">
@@ -713,7 +711,8 @@
 
                         <div
                             class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                            {{ $transaction_inter_amount_money ?? null }} {{ $usersCountry ?? null }}
+                            {{ $transaction_inter_amount_money ?? $transaction_bank_amount }}
+                            {{ $usersCountry ?? null }}
                         </div>
                     </div>
 
@@ -732,7 +731,142 @@
 
                 </div>
             @else
-                <div class="col-span-6 mt-space-padding">
+                @if ($provider_inter_out_civ == 124)
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Nom & prenom du bénéficiaire<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $name_sender ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Numero de telephone du
+                            bénéficiaire<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $countrie_indicative->indecative . $phone_inter_out_civ ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-span-6 mt-space-padding mt-3">
+                        <label class="form-label">Numero du compte du bénéficiaire<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $account_number ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                     <div class="col-span-6 mt-space-padding mt-3">
+                        <label class="form-label">Numero piece<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $num_piece_custumer ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                     <div class="col-span-6 mt-space-padding mt-3">
+                        <label class="form-label">Date piece<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $date_piece ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-span-6 mt-space-padding mt-3">
+                        <label class="form-label">Nom de la banque<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $name ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-span-6 mt-space-padding mt-3">
+                        <label class="form-label">Code swift/IFSC/Bic Code<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $swit_code ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-span-6 mt-space-padding mt-3">
+                        <label class="form-label">Nom & prenom de l\'expediteur<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $name_custumer ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-span-6 mt-space-padding mt-3">
+                        <label class="form-label">Numero de telephone de
+                            l'expediteur<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $phone_inter_expe ?? null }}
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-span-6 mt-space-padding mt-3">
+                        <label class="form-label">Montant de la transaction<span class="text-danger">
+                                *</span></label>
+
+                        <div class="flex">
+
+                            <div
+                                class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
+                                {{ $transaction_bank_amount ?? null }} {{ $usersCountry }}
+                            </div>
+                        </div>
+
+                    </div>
+                @endif
+                <div class="col-span-6 mt-space-padding mt-3">
                     <label class="form-label">Montant de la transaction<span class="text-danger">
                             *</span></label>
 
@@ -740,13 +874,12 @@
 
                         <div
                             class="mr-6 z-10 pl-1 text-center pointer-events-none flex items-center justify-center style-validated">
-                            {{ $transaction_inter_amount_money ?? null }} {{ $usersCountry }}
+                            {{ $transaction_inter_amount_money ?? $transaction_bank_amount }} {{ $usersCountry }}
                         </div>
                     </div>
 
-
                 </div>
-                <div class="col-span-6 mt-space-padding">
+                <div class="col-span-6 mt-space-padding mt-3">
                     <label class="form-label">Numéro du bénéficiaire<span class="text-danger">
                             *</span></label>
                     <div class="flex">

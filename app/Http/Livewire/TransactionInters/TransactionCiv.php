@@ -65,6 +65,8 @@ class TransactionCiv extends Component
     public $showRemonterCreditButton = false;
     public $showRemonterPaiementButton = false;
     public $showRemonterInterButton = false;
+    public $showRemonterBankButton = false;
+    public $showRemonterBankCButton = false;
     public $showRemonterRechargementButton = false;
     public $showRemonterVirementButton = false;
     public $showRemonterDepotButton = false;
@@ -165,11 +167,13 @@ class TransactionCiv extends Component
         }
 
         $restrictionMap = [
-            'Active International' => 'showRemonterInterButton'
+            'Active International' => 'showRemonterInterButton',
+            'Active Bank Send' => 'showRemonterBankButton',
         ];
 
         $restrictionCompangieMap = [
-            'Active International' => 'showRemonterInterCButton'
+            'Active International' => 'showRemonterInterCButton',
+            'Active Bank Send' => 'showRemonterBankCButton',
         ];
 
 
@@ -323,8 +327,7 @@ class TransactionCiv extends Component
     {
         $this->resetCommissionValues();
 
-        $countryRobus = Country::find($this->country_inter_out_civ);
-        $countryBankRobus = Country::find(107); // Banque en CFA
+        $countryBankRobus = Country::find(107);
         $reelAmount = $this->transaction_bank_amount;
 
         if ($reelAmount === '') {
@@ -772,7 +775,7 @@ class TransactionCiv extends Component
 
                         $this->validate(
                             [
-                                'transaction_inter_amount_money' => 'required',
+                                'transaction_bank_amount' => 'required',
                                 'phone_inter_out_civ' => 'required',
                                 'country_inter_out_civ' => 'required',
                                 "name_custumer" => 'required',
@@ -790,7 +793,7 @@ class TransactionCiv extends Component
                                 'image.required' => 'Image est obligatoire',
                                 'phone_inter_expe.required' => 'Le numero expediteur est obligatoire',
                                 'swit_code.required' => 'Le Code swift/IFSC/Bic Code est obligatoire',
-                                'transaction_inter_amount_money.required' =>
+                                'transaction_bank_amount.required' =>
                                 'Votre montant est obligatoire',
                                 'country_inter_out_civ.required' => 'Pays  est obligatoire',
                                 'name_custumer.required' => 'Nom est obligatoire',
@@ -1036,7 +1039,7 @@ class TransactionCiv extends Component
 
                         $this->validate(
                             [
-                                'transaction_inter_amount_money' => 'required',
+                                'transaction_bank_amount' => 'required',
                                 'phone_inter_out_civ' => 'required',
                                 'country_inter_out_civ' => 'required',
                                 "name_custumer" => 'required',
@@ -1054,7 +1057,7 @@ class TransactionCiv extends Component
                                 'image.required' => 'Image est obligatoire',
                                 'phone_inter_expe.required' => 'Le numero expediteur est obligatoire',
                                 'swit_code.required' => 'Le Code swift/IFSC/Bic Code est obligatoire',
-                                'transaction_inter_amount_money.required' =>
+                                'transaction_bank_amount.required' =>
                                 'Votre montant est obligatoire',
                                 'country_inter_out_civ.required' => 'Pays  est obligatoire',
                                 'name_custumer.required' => 'Nom est obligatoire',
@@ -1069,7 +1072,7 @@ class TransactionCiv extends Component
 
                         $this->validate(
                             [
-                                'transaction_inter_amount_money' => 'required',
+                                'transaction_bank_amount' => 'required',
                                 'phone_inter_out_civ' => 'required',
                                 'country_inter_out_civ' => 'required',
                                 "name_custumer" => 'required',
@@ -1087,7 +1090,7 @@ class TransactionCiv extends Component
                                 'image.required' => 'Image est obligatoire',
                                 'phone_inter_expe.required' => 'Le numero expediteur est obligatoire',
                                 'swit_code.required' => 'Le Code swift/IFSC/Bic Code est obligatoire',
-                                'transaction_inter_amount_money.required' =>
+                                'transaction_bank_amount.required' =>
                                 'Votre montant est obligatoire',
                                 'country_inter_out_civ.required' => 'Pays  est obligatoire',
                                 'name_custumer.required' => 'Nom est obligatoire',
@@ -1167,7 +1170,7 @@ class TransactionCiv extends Component
                     $percent_robus =  app(CommissionServicePercentBackend::class)->getRobusPercentagePushInter();
                 } elseif ($this->provider_inter_out_civ == 106) {
                     $percent_robus =  app(CommissionServicePercentBackend::class)->getRobusPercentageTresortInter();
-                }elseif ($this->provider_inter_out_civ == 124) {
+                } elseif ($this->provider_inter_out_civ == 124) {
                     $percent_robus =  app(CommissionServicePercentBackend::class)->getRobusPercentageBankSend($this->country_inter_out_civ);
                 } else {
                     $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageInter($country_robus, $this->provider_inter_out_civ);
@@ -1458,106 +1461,152 @@ class TransactionCiv extends Component
 
                     if ($this->validatePhone($this->phone_inter_out_civ)) {
 
-                        if ($percent_robus != null) {
-
-                            $valeur_max_send  =  $country_robus->amount_max_send;
-
-                            if ($this->validateAmountSendLimit($reel_amount, $valeur_max_send)) {
-
-                                if ($this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
-
-                                    if ($this->validateAmount($reel_amount)) {
-
-                                        if (sabdy()->is_under_distributer) {
-
-                                            if ($this->provider_inter_out_civ == 104 || $this->provider_inter_out_civ == 105 || $this->provider_inter_out_civ == 106) {
-                                                $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
-                                            } else {
-                                                $valeur_received = $reel_amount - ($percent_robus->percent_under_distributer * $reel_amount);
-                                            }
-                                        } else {
-
-                                            $valeur_received = $reel_amount - ($percent_robus->percent * $reel_amount);
-                                        }
-
-                                        $actionPercentId = $percent_robus?->id;
-
-                                        if ($this->image) {
-                                            // Chemin de destination
-                                            $userFolder = 'transactions/' . sabdy()->firstname;
-                                            $filename = date('YmdHis') . '_' . uniqid() . '.' . $this->image->getClientOriginalExtension();
-                                            $imagePath = $this->image->storeAs($userFolder, $filename, 'public');
-                                        }
-                                        $imagePath = null;
-
-                                        $walletInter = app(TransfertServiceBackend::class)->createMobileWalletInterWith(
-                                            $reel_amount,
-                                            $percent_robus,
-                                            $country_robus,
-                                            $this->provider_inter_out_civ,
-                                            $this->phone_inter_out_civ,
-                                            $this->name_custumer,
-                                            $this->num_piece_custumer,
-                                            $this->date_piece,
-                                            $this->name,
-                                            $this->name_sender,
-                                            $this->account_number,
-                                            $actionPercentId,
-                                            $imagePath
-                                        );
-
-                                        if ($walletInter != null) {
-
-                                            if (app(TransfertServiceBackend::class)->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
-
-                                                if ($this->processCommissionMobiles($reel_amount, $percent_robus, $country_robus, $walletInter, $admin_civ)) {
-                                                    app(NotificationServiceBackend::class)->sendNotificationRobus($walletInter);
-                                                    if (sabdy()->email != null) {
-                                                        $notify = new MailController();
-                                                        $notify->newPaiementInter($walletInter);
-                                                    }
-                                                    $this->resetInterField();
-                                                    $this->emit('modal-hide-inters');
-                                                    $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
-                                                } else {
-
-                                                    $this->resetInterField();
-                                                    $this->emit('modal-hide-inters');
-                                                    $this->emit('error', 'Error de transferts du montant  !');
-                                                }
-                                            } else {
-
-                                                $this->resetInterField();
-                                                $this->emit('modal-hide-inters');
-                                                $this->emit('error', 'Error de demande transferts   !');
-                                            }
-                                        } else {
-                                            $this->resetInterField();
-                                            $this->emit('modal-hide-inters');
-                                            $this->emit('error', 'Error de demande transferts  !');
-                                        }
-                                    } else {
-
-                                        $this->resetInterField();
-                                        $this->emit('modal-hide-inters');
-                                        $this->emit('error', 'Verifier votre Solde SVP  !');
-                                    }
-                                } else {
-
-                                    $this->resetInterField();
-                                    $this->emit('modal-hide-inters');
-                                    $this->emit('error', 'Le  montant maxi jounalier est atteint !');
-                                }
-                            } else {
-                                $this->resetInterField();
-                                $this->emit('modal-hide-inters');
-                                $this->emit('error',  "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $country_robus->currencie->code);
-                            }
-                        } else {
-                            $this->resetInterField();
-                            $this->emit('modal-hide-inters');
-                            $this->emit('error', 'Niveau de pourcentage introuvable !!');
+                        if (!$percent_robus) {
+                            return $this->failInter('Niveau de pourcentage introuvable !!');
                         }
+
+                        // Montant utilisateur (devise utilisateur)
+                        $amountUser = $this->search_amount($this->transaction_bank_amount);
+                        if ($amountUser <= 0) {
+                            return;
+                        }
+
+                        $valeur_max_send = $country_robus->amount_max_send;
+
+                        if (!$this->validateAmountSendLimit($amountUser, $valeur_max_send)) {
+                            return $this->failInter(
+                                "Le montant maximum à envoyer est de : {$valeur_max_send} {$country_robus->currencie->code}"
+                            );
+                        }
+
+                        if (!$this->validateDailyLimit($som_transfers, $valeur_ceiling)) {
+                            return $this->failInter('Le montant maxi journalier est atteint !');
+                        }
+
+                        if (!$this->validateAmount($amountUser)) {
+                            return $this->failInter('Vérifiez votre solde SVP !');
+                        }
+
+                        /* ===============================
+       Conversion devise → CFA
+    ================================ */
+
+                        $countryBank = Country::findOrFail(107); // CFA
+                        $userRate    = sabdy()->country->currencie->value;
+                        $bankRate    = $countryBank->currencie->value;
+
+                        // Montant converti en CFA
+                        $amountCfa = $amountUser * ($userRate / $bankRate);
+
+                        /* ===============================
+       Niveaux de commission
+    ================================ */
+
+                        $levels = $percent_robus->levelBankAuthers()
+                            ->orderBy('amount_begin', 'asc')
+                            ->get();
+
+                        if ($levels->isEmpty()) {
+                            return $this->failInter('Configuration de commission invalide');
+                        }
+
+                        $min = $levels->first()->amount_begin;
+                        $max = $levels->last()->amount_end;
+
+                        if ($amountCfa < $min) {
+                            return $this->failInter("Montant minimum : " . number_format($min, 2, ',', ' ') . ' CFA');
+                        }
+
+                        if ($amountCfa > $max) {
+                            return $this->failInter("Montant maximum : " . number_format($max, 2, ',', ' ') . ' CFA');
+                        }
+
+                        /* ===============================
+       Recherche du bon niveau
+    ================================ */
+
+                        $level = $levels->first(
+                            fn($l) =>
+                            $amountCfa >= $l->amount_begin && $amountCfa <= $l->amount_end
+                        );
+
+                        if (!$level) {
+                            return $this->failInter('Aucun niveau de commission trouvé');
+                        }
+
+                        /* ===============================
+       Vérification solde
+    ================================ */
+
+                        if ($amountCfa > sabdy()->wallet->amount) {
+                            return $this->failInter('Solde insuffisant');
+                        }
+
+                        /* ===============================
+       Upload image
+    ================================ */
+
+                        $imagePath = null;
+                        if ($this->image) {
+                            $userFolder = 'transactions/' . sabdy()->firstname;
+                            $filename = now()->format('YmdHis') . '_' . uniqid() . '.' . $this->image->getClientOriginalExtension();
+                            $imagePath = $this->image->storeAs($userFolder, $filename, 'public');
+                        }
+
+                        /* ===============================
+       Création transaction
+    ================================ */
+
+                        $walletInter = app(TransfertServiceBackend::class)
+                            ->createMobileWalletBankSendWith(
+                                $amountUser,
+                                $level,
+                                $country_robus,
+                                $this->provider_inter_out_civ,
+                                $this->phone_inter_out_civ,
+                                $this->name_custumer,
+                                $this->num_piece_custumer,
+                                $this->date_piece,
+                                $this->name,
+                                $this->name_sender,
+                                $this->account_number,
+                                $this->phone_inter_expe,
+                                $this->swit_code,
+                                $imagePath
+                            );
+
+                        if (!$walletInter) {
+                            return $this->failInter('Erreur de création de la transaction');
+                        }
+
+                        /* ===============================
+       Montant reçu (CFA)
+    ================================ */
+
+                        $valeur_received = $amountCfa - (float) $level->amount;
+
+                        if (!app(TransfertServiceBackend::class)
+                            ->updateAmountReceived($walletInter, $country_robus, $valeur_received)) {
+                            return $this->failInter('Erreur de mise à jour du montant reçu');
+                        }
+
+                        /* ===============================
+       Commission + notifications
+    ================================ */
+
+                        if (!$this->processCommissionBankSend($amountUser, $level, $country_robus, $walletInter, $admin_civ)) {
+                            return $this->failInter('Erreur lors du traitement des commissions');
+                        }
+
+                        app(NotificationServiceBackend::class)->sendNotificationRobus($walletInter);
+
+                        if (sabdy()->email) {
+                            (new MailController())->newPaiementInter($walletInter);
+                        }
+
+                        $this->resetInterField();
+                        $this->emit('modal-hide-inters');
+                        $this->emit('info', 'Votre demande de transaction a bien été prise en compte.');
                     } else {
                         $this->resetInterField();
                         $this->emit('modal-hide-inters');
@@ -1579,6 +1628,14 @@ class TransactionCiv extends Component
             $this->emit('modal-hide-inters');
             $this->emit('error', 'Error de message demande a l\'admin !');
         }
+    }
+
+    private function failInter(string $message)
+    {
+        $this->resetInterField();
+        $this->emit('modal-hide-inters');
+        $this->emit('error', $message);
+        return;
     }
 
     public function render()
@@ -1604,6 +1661,7 @@ class TransactionCiv extends Component
                 ->indecative,
             'countrie_inter_ivoires' => $this->ProvidersForCountryInters,
             'showRemonterInterButton' => $this->showRemonterInterButton,
+            'showRemonterBankButton' => $this->showRemonterBankButton,
             'showTransacInterButton' => $this->showTransacInterButton,
 
         ]);
@@ -1785,6 +1843,90 @@ class TransactionCiv extends Component
         return true;
     }
 
+    private function processCommissionBankSend($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
+    {
+
+
+        $wallet = sabdy()->wallet;
+
+        // Préparez les valeurs mises à jour
+        $updatedValues = [
+            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+            'sid_user_relod' => sabdy()->id,
+            'amount' => DB::raw('amount - ' . $amount),
+        ];
+
+        $wallet->update($updatedValues);
+
+        $valuer_deposit = $percent_robus->percent_under;
+        $valeur_amount_admin  = $percent_robus->amount;
+        $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
+        $valuer_companie = $percent_robus->percent_companie;
+
+        // Commissions Inters 
+
+        if (sabdy()->country->currencie->value > $country_robus->currencie->value) {
+
+            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) sabdy()->country->currencie->value;
+            $percent_companie_convertion =   (float)  $valuer_companie *   (float) sabdy()->country->currencie->value;
+            $percent_noUnder_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
+        } elseif (sabdy()->country->currencie->value == $country_robus->currencie->value) {
+
+            $admin_valeur_convertion =   (float)  $valeur_percent_admin;
+            $percent_companie_convertion =   (float)  $valuer_companie;
+            $percent_noUnder_convertion =   (float)  $valuer_deposit;
+        } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
+
+            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) sabdy()->country->currencie->value;
+            $percent_companie_convertion =   (float)  $valuer_companie *   (float) sabdy()->country->currencie->value;
+            $percent_noUnder_convertion =   (float)  $valuer_deposit *   (float) sabdy()->country->currencie->value;
+        }
+
+
+        if (sabdy()->is_under_distributer == 1) {
+
+
+            if ($this->showRemonterBankButton) {
+
+
+
+                $walletInter->update([
+                    'commissions' => DB::raw('commissions+'  . $valuer_deposit),
+                ]);
+
+                $account_accepted = sabdy()->is_accepted_companie ?? false;
+
+                if ($account_accepted && $this->showRemonterBankCButton) {
+                    $walletInter->increment('commission_companie', $valuer_companie);
+
+                    $totalCommission =  $percent_companie_convertion +  $percent_noUnder_convertion;
+
+                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAcceptedCompanies($admin_civ, 'wallet_bank_send_id', $walletInter->id, $totalCommission, $admin_valeur_convertion);
+                } else {
+                    app(CommissionServiceBackend::class)->distributeAdminNoCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletInter->id, $admin_valeur_convertion, $valuer_deposit);
+                }
+            } else {
+
+
+                app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_bank_send_id', $walletInter->id, $admin_valeur_convertion);
+            }
+        } else {
+
+            app(CommissionServiceBackend::class)->distributeAdminNoCommissions($admin_civ, 'wallet_bank_send_id', $walletInter->id, $admin_valeur_convertion);
+
+            $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  sabdy()->wallet->currencie->code .
+                ' ' .
+                'par ' . $walletInter->provider->name .
+                ' a ' . $walletInter->created_at .
+                ' votre demande est en-cours de validation ' .
+                'Robus vous remercie';
+
+            app(NotificationServiceBackend::class)->notificationRobusSend($message);
+        }
+
+
+        return true;
+    }
 
     private function processCommissionsRobus($amount_valeur, $percent_robus, $walletInter)
     {
@@ -1958,6 +2100,8 @@ class TransactionCiv extends Component
 
         return true;
     }
+
+
 
     // Validated date daily
     private function validateDailyLimit($som_transfers, $valeur_ceiling)
