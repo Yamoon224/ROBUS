@@ -39,7 +39,7 @@ class WithService
     }
 
 
-    public function createWalletTransactionTresortMoney($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved)
+    public function createWalletTransactionTresortMoney($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal)
     {
 
 
@@ -50,6 +50,10 @@ class WithService
         }
 
         $amount_solde = (float) $user->wallet->amount;
+
+        $percent = $is_drawal
+            ? $percent_robus->percent_with_drawal
+            : $percent_robus->percent;
 
 
         return $this->tresortRepository->create([
@@ -60,8 +64,8 @@ class WithService
             'created_by' => $user->id,
             'amount_solde'  => $amount_solde  ?? null,
             'provider_id'  =>  $provider,
-            'costs_amount' => ($percent_robus->percent * $amount_valeur),
-            // 'choose_type_transaction' => 1,
+            'costs_amount' => ($percent * $amount_valeur),
+            'choose_transaction'  => $is_drawal ? 2 : 1,
             'phone'  => robus()->country->indecative . $phone,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
@@ -70,7 +74,7 @@ class WithService
     }
 
 
-    public function createWalletTransactionDjamo($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved,  $imagePath)
+    public function createWalletTransactionDjamo($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved,  $imagePath, $is_drawal)
     {
 
 
@@ -81,6 +85,10 @@ class WithService
         }
 
         $amount_solde = (float) $user->wallet->amount;
+
+        $percent = $is_drawal
+            ? $percent_robus->percent_with_drawal
+            : $percent_robus->percent;
 
 
         return $this->djamoRepository->create([
@@ -91,11 +99,12 @@ class WithService
             'created_by' => $user->id,
             'amount_solde'  => $amount_solde  ?? null,
             'provider_id'  =>  $provider,
-            'costs_amount' => ($percent_robus->percent * $amount_valeur),
+            'costs_amount' => ($percent * $amount_valeur),
             'is_livewire' => false,
             'phone'  => robus()->country->indecative . $phone,
             'full_name' =>  $fullName,
             'status'  => "PENDING",
+            'choose_transaction'  => $is_drawal ? 2 : 1,
             'amount_received'  =>  $amountReceved ?? 0.0,
             'image'  =>  $imagePath ?? null,
         ]);
@@ -103,9 +112,8 @@ class WithService
 
 
 
-    public function createWalletTransactionPush($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved)
+    public function createWalletTransactionPush($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal)
     {
-
 
 
         $user = auth_user();
@@ -115,19 +123,22 @@ class WithService
         }
 
         $amount_solde = (float) $user->wallet->amount;
-
+        $percent = $is_drawal
+            ? $percent_robus->percent_with_drawal
+            : $percent_robus->percent;
 
         return $this->pushRepository->create([
             'wallet_id' =>  $user->wallet->id,
             'amount' => $amount_valeur,
-            'description'  => 'Demande  de transaction Push',
+            'description'  => $is_drawal ? 'Demande  de retrait Push' : 'Demande  de transaction Push',
             'push_percent_id' => 1,
             'created_by' => $user->id,
             'amount_solde'  => $amount_solde  ?? null,
             'provider_id'  =>  $provider,
-            'costs_amount' => ($percent_robus->percent * $amount_valeur),
+            'costs_amount' => ($percent * $amount_valeur),
             'phone'  => robus()->country->indecative . $phone,
             'full_name' =>  $fullName,
+            'choose_transaction'  => $is_drawal ? 2 : 1,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
         ]);
@@ -135,7 +146,7 @@ class WithService
 
 
 
-    public function updateamountPushReceveid($admin_civ, $percent_robus, $walletWith, $amount)
+    public function updateamountPushReceveid($admin_civ, $percent_robus, $walletWith, $amount, $is_drawal)
     {
 
         $user = auth_user();
@@ -159,10 +170,24 @@ class WithService
         } else {
             $activeCButtons = [];
         }
+
+        $percent = $is_drawal
+            ? $percent_robus->percent_with_drawal
+            : $percent_robus->percent;
+
+
+        $percent_commission = $is_drawal
+            ? $percent_robus->percent_with_drawal_merchands
+            : $percent_robus->percent_merchands;
+
+        $percent_compagnie = $is_drawal
+            ? $percent_robus->percent_with_drawal_companie
+            : $percent_robus->percent_companie;
+
         if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
         } else {
-            $amount_commission = $amount + ($percent_robus->percent * $amount);
+            $amount_commission = $amount + ($percent * $amount);
         }
 
         $amount_solde = $user->wallet->amount - $amount_commission;
@@ -177,9 +202,9 @@ class WithService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        $valuer_deposit = $percent_robus->percent_merchands *  $amount;
-        $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
-        $valeur_percent_no_under  = $percent_robus->percent * $amount;
+        $valuer_deposit = $percent_commission *  $amount;
+        $percent_valeur_compagnie = $percent_compagnie *  $amount;
+        $valeur_percent_no_under  = $percent * $amount;
 
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
@@ -197,8 +222,7 @@ class WithService
                 if ($account_accepted && !empty($activeCButtons['showRemonterPushCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_push_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
-                }
-                else {
+                } else {
                     $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_push_id',  $walletWith->id, $valeur_percent_no_under, $valuer_deposit);
                 }
             } else {
@@ -228,7 +252,7 @@ class WithService
         return true;
     }
 
-    public function updateamountDjamoReceveid($admin_civ, $percent_robus, $walletWith, $amount)
+    public function updateamountDjamoReceveid($admin_civ, $percent_robus, $walletWith, $amount, $is_drawal)
     {
 
         $user = auth_user();
@@ -268,15 +292,27 @@ class WithService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        $valuer_deposit = $percent_robus->percent_merchands *  $amount;
-        $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
-        $valeur_percent_no_under  = $percent_robus->percent * $amount;
+        $percent = $is_drawal
+            ? $percent_robus->percent_with_drawal
+            : $percent_robus->percent;
+
+
+        $percent_commission = $is_drawal
+            ? $percent_robus->percent_with_drawal_merchands
+            : $percent_robus->percent_merchands;
+
+        $percent_compagnie = $is_drawal
+            ? $percent_robus->percent_with_drawal_companie
+            : $percent_robus->percent_companie;
+
+        $valuer_deposit = $percent_commission *  $amount;
+        $percent_valeur_compagnie = $$percent_compagnie *  $amount;
+        $valeur_percent_no_under  = $percent * $amount;
 
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
             $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
-            $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
 
             if (!empty($activeButtons['showRemonterDjamoButton'])) {
 
@@ -289,8 +325,8 @@ class WithService
                 if ($account_accepted && !empty($activeCButtons['showRemonterDjamoCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_djamo_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
-                }else {
-                   $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_djamo_id', $walletWith->id, $valuer_deposit);  
+                } else {
+                    $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_djamo_id', $walletWith->id, $valuer_deposit);
                 }
             } else {
                 $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_djamo_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
@@ -319,7 +355,7 @@ class WithService
         return true;
     }
 
-    public function updateamountTresortReceveid($admin_civ, $percent_robus, $walletWith, $amount)
+    public function updateamountTresortReceveid($admin_civ, $percent_robus, $walletWith, $amount, $is_drawal)
     {
 
         $user = auth_user();
@@ -359,15 +395,27 @@ class WithService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        $valuer_deposit = $percent_robus->percent_merchands *  $amount;
-        $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
-        $valeur_percent_no_under  = $percent_robus->percent * $amount;
+        $percent = $is_drawal
+            ? $percent_robus->percent_with_drawal
+            : $percent_robus->percent;
+
+
+        $percent_commission = $is_drawal
+            ? $percent_robus->percent_with_drawal_merchands
+            : $percent_robus->percent_merchands;
+
+        $percent_compagnie = $is_drawal
+            ? $percent_robus->percent_with_drawal_companie
+            : $percent_robus->percent_companie;
+
+        $valuer_deposit = $percent_commission *  $amount;
+        $percent_valeur_compagnie = $percent_compagnie *  $amount;
+        $valeur_percent_no_under  = $percent * $amount;
 
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
             $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
-            $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
 
             if (!empty($activeButtons['showRemonterTresortButton'])) {
 
@@ -381,8 +429,8 @@ class WithService
                 if ($account_accepted && !empty($activeCButtons['showRemonterTresortCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
-                }else {
-                   $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valuer_deposit);  
+                } else {
+                    $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valuer_deposit);
                 }
             } else {
 

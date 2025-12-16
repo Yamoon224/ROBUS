@@ -120,7 +120,7 @@
                                     <x-transaction-detail title="Commission" value="{{ $commission }}"
                                         country="{{ $usersCountry }}" />
                                 @else
-                                    <x-transaction-detail title="Pas de commission" value="" />
+                                    <x-transaction-detail title="Pas de commission" value="" country="" />
                                 @endif
                                 <x-transaction-detail-received title="Montant à recevoir"
                                     value="{{ $amount_to_receive }}" country="{{ $usersCountry }}" />
@@ -187,7 +187,7 @@
 
 
                     </div>
-                     <div class="col-span-6 mt-3">
+                    <div class="col-span-6 mt-3">
                         <label class="form-label">Code de la banque</label>
 
                         <div class="flex">

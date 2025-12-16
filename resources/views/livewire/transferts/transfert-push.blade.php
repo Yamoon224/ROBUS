@@ -176,7 +176,6 @@
                     </div>
 
 
-
                 </div>
                 <div class="col-span-6 mt-1">
                     <label class="form-label">Nom et prénom</label>
@@ -246,3 +245,4 @@
         </div>
     </div>
 @endif
+

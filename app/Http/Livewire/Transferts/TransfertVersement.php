@@ -29,7 +29,7 @@ class TransfertVersement extends Component
     public $amount_versement;
     public $provider_versement;
     public $password_validated = '';
-
+    public string $country;
     public $showRemonterVersementButton = false;
     public $showRemonterVersementCButton = false;
     public $operators;
@@ -43,6 +43,7 @@ class TransfertVersement extends Component
     public function mount()
     {
 
+        $this->country = '';
         $this->operators = OperatorService::getOperatorsWithCommissions(sabdy()->id);
         $this->operatorsTransaction = OperatorService::getOperatorsWithTranactions(sabdy()->id);
         $account_accepted = sabdy()->is_accepted_companie ?? false;
@@ -367,7 +368,7 @@ class TransfertVersement extends Component
         );
     }
 
-     public function getVersementTransactionProperty()
+    public function getVersementTransactionProperty()
     {
         $walletUser = Auth::guard('web')->user();
 

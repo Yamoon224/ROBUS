@@ -166,17 +166,6 @@ class ProviderController extends Controller
                     $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
                 }
 
-                // if (!empty($activeButtons['showPushButton'])) {
-                //     $dashboard_data['Push'] = ProviderSingleCollection::collection($walletPush);
-                // }
-
-                // if (!empty($activeButtons['showDjamBoutton'])) {
-                //     $dashboard_data['Djamo'] = ProviderSingleCollection::collection($walletDjamo);
-                // }
-
-                // if (!empty($activeButtons['showTresortButton'])) {
-                //     $dashboard_data['Tresort'] = ProviderSingleCollection::collection($walletTresort);
-                // }
 
                 if (!empty($activeButtons['showBankSendButton'])) {
                     $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
@@ -190,9 +179,6 @@ class ProviderController extends Controller
                     $dashboard_data['Xbets'] = ProviderSingleCollection::collection($walletXbet);
                 }
 
-                // if (!empty($activeButtons['showVersementButton'])) {
-                //     $dashboard_data['Versement'] = ProviderSingleCollection::collection($walletVersement);
-                // }
 
                 if (!empty($activeButtons['showInterButton'])) {
                     $dashboard_data['Transfert international'] = [
@@ -240,14 +226,8 @@ class ProviderController extends Controller
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
-                    // New transaction
-                    // $dashboard_data['Push'] = ProviderSingleCollection::collection($walletTransaction);
-                    // $dashboard_data['Djamo'] = ProviderSingleCollection::collection($walletDjamo);
-                    // $dashboard_data['Tresort Money'] = ProviderSingleCollection::collection($walletTresort);
-                    // $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
-                    // $dashboard_data['Versement'] = ProviderSingleCollection::collection($walletVersement);
+                    $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
                     $dashboard_data['Xbets'] = ProviderSingleCollection::collection($walletXbet);
-
 
                     // $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);
                     $dashboard_data['Transfert international'] = [

@@ -123,7 +123,7 @@ class withTransactionController extends Controller
          * 
          *  ),
          */
-        public function create_PushTransaction(Request $request)
+        public function create_PushTransaction(Request $request, $is_drawal = false)
         {
 
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
@@ -200,7 +200,7 @@ class withTransactionController extends Controller
                         }
 
 
-                        if ($request->provider == 91) {
+                        if ($request->provider == 91 || $request->provider == 143) {
 
                                 if ($percent_robus != null) {
 
@@ -209,7 +209,7 @@ class withTransactionController extends Controller
                                                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
                                                 $amountReceved =  $reel_amount;
-                                                $transactionResult = $this->processPushTransaction($request, $percent_robus, $amountReceved);
+                                                $transactionResult = $this->processPushTransaction($request, $percent_robus, $amountReceved, $is_drawal);
 
                                                 if ($transactionResult['success']) {
 
@@ -240,7 +240,7 @@ class withTransactionController extends Controller
                 }
         }
 
-        public function create_TresortTransaction(Request $request)
+        public function create_TresortTransaction(Request $request, $is_drawal= false)
         {
 
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
@@ -316,7 +316,7 @@ class withTransactionController extends Controller
                         }
 
 
-                        if ($request->provider == 122) {
+                        if ($request->provider == 122  || $request->provider == 144) {
 
                                 if ($percent_robus != null) {
 
@@ -325,7 +325,7 @@ class withTransactionController extends Controller
                                                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
                                                 $amountReceved =  $reel_amount;
-                                                $transactionResult = $this->processTresortTransaction($request, $percent_robus, $amountReceved);
+                                                $transactionResult = $this->processTresortTransaction($request, $percent_robus, $amountReceved, $is_drawal);
 
                                                 if ($transactionResult['success']) {
 
@@ -356,7 +356,7 @@ class withTransactionController extends Controller
                 }
         }
 
-        public function create_DjamoTransaction(Request $request)
+        public function create_DjamoTransaction(Request $request, $is_drawal= false)
         {
 
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
@@ -434,7 +434,7 @@ class withTransactionController extends Controller
                         }
 
 
-                        if ($request->provider == 121) {
+                        if ($request->provider == 121 || $request->provider == 142) {
 
                                 if ($percent_robus != null) {
 
@@ -466,7 +466,7 @@ class withTransactionController extends Controller
                                                         $imagePath = env('APP_URL') . "/image_inters/" . $request->full_name . "/$front_file";
                                                 }
 
-                                                $transactionResult = $this->processDjamoTransaction($request, $percent_robus, $amountReceved,  $imagePath);
+                                                $transactionResult = $this->processDjamoTransaction($request, $percent_robus, $amountReceved,  $imagePath, $is_drawal);
 
                                                 if ($transactionResult['success']) {
 
@@ -497,9 +497,8 @@ class withTransactionController extends Controller
                 }
         }
 
-
         // Fonction pour traiter la transaction de dépôt
-        private function processPushTransaction($request, $percent_robus, $amountReceved)
+        private function processPushTransaction($request, $percent_robus, $amountReceved, $is_drawal)
         {
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
@@ -516,26 +515,30 @@ class withTransactionController extends Controller
                 if ($user && $user->is_under_distributer || $user->is_api) {
                         $val_amount_send = $reel_amount;
                 } else {
-                        $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
+
+                        $percent = $is_drawal
+                                ? $percent_robus->percent_with_drawal
+                                : $percent_robus->percent;
+                        $val_amount_send = $reel_amount + ($reel_amount * (float) $percent);
                 }
 
                 if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved);
+                $walletPush =  $this->withService->createWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
-                if (!$this->withService->updateamountPushReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount)) {
+                if (!$this->withService->updateamountPushReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount , $is_drawal)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
                 return ['success' => true, 'walletWith' => $walletPush];
         }
 
-        private function processTresortTransaction($request, $percent_robus, $amountReceved)
+        private function processTresortTransaction($request, $percent_robus, $amountReceved, $is_drawal)
         {
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
@@ -551,17 +554,17 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionTresortMoney($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved);
+                $walletPush =  $this->withService->createWalletTransactionTresortMoney($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved , $is_drawal);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
-                $this->withService->updateamountTresortReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount);
+                $this->withService->updateamountTresortReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount, $is_drawal);
 
                 return ['success' => true, 'walletWith' => $walletPush];
         }
 
-        private function processDjamoTransaction($request, $percent_robus, $amountReceved, $imagePath)
+        private function processDjamoTransaction($request, $percent_robus, $amountReceved, $imagePath, $is_drawal)
         {
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
@@ -577,13 +580,13 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionDjamo($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $imagePath);
+                $walletPush =  $this->withService->createWalletTransactionDjamo($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $imagePath, $is_drawal);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
                 // Mettre à jour le montant reçu dans le service OneXbet
-                if (!$this->withService->updateamountDjamoReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount)) {
+                if (!$this->withService->updateamountDjamoReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount, $is_drawal)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
@@ -603,7 +606,7 @@ class withTransactionController extends Controller
                                 'amount' => $walletPush->amount,
                                 'status' => $walletPush->status,
                         ],
-                        'message' =>  $walletPush->choose_type_transaction == 1 ? ('Votre demande de transaction a bien été prise en compte.') : ('Votre demande de transaction a bien été prise en compte.')
+                        'message' =>  $walletPush->choose_type_transaction == 1 ? ('Votre demande de transaction a bien été prise en compte.') : ('Votre demande de retrait a bien été prise en compte.')
                 ], 200);
         }
         /**

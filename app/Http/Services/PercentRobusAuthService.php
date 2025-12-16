@@ -9,6 +9,7 @@ use App\Models\Costs\PaymentCost;
 use App\Models\Costs\PhoneCreditCost;
 use App\Models\Costs\ReloadCost;
 use App\Models\Costs\TransactionCost;
+use App\Models\Costs\BankCommission;
 use App\Models\LevelCountry;
 use App\Models\VirementPercent;
 use App\Models\Moneys\LevelMoney;
@@ -184,26 +185,27 @@ class PercentRobusAuthService
     public function getRobusPercentagePush()
     {
         $countryNameGroup = robus()->country->name_groupe;
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
 
         switch ($countryNameGroup) {
             case 'CIV':
-                return PushPercent::whereId(1)->first();
+                return  $isSpecialProfile ? PushPercent::whereId(1)->first() : PushPercent::whereId(3)->first();
             default:
-                return PushPercent::whereId(2)->first();
+                return  $isSpecialProfile ? PushPercent::whereId(2)->first() : PushPercent::whereId(4)->first();
         }
     }
-
 
 
     public function getRobusPercentageTresort()
     {
         $countryNameGroup = robus()->country->name_groupe;
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
 
         switch ($countryNameGroup) {
             case 'CIV':
-                return ArgentTresort::whereId(1)->first();
+                return  $isSpecialProfile ?  ArgentTresort::whereId(2)->first() : ArgentTresort::whereId(4)->first();
             default:
-                return ArgentTresort::whereId(2)->first();
+                return  $isSpecialProfile ?  ArgentTresort::whereId(1)->first() : ArgentTresort::whereId(3)->first();
         }
     }
 
@@ -247,12 +249,14 @@ class PercentRobusAuthService
     public function getRobusPercentageDjamo()
     {
         $countryNameGroup = robus()->country->name_groupe;
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
 
         switch ($countryNameGroup) {
             case 'CIV':
-                return DjamoPercent::whereId(2)->first();
+                return $isSpecialProfile ? DjamoPercent::whereId(2)->first() : DjamoPercent::whereId(4)->first();
+
             default:
-                return DjamoPercent::whereId(1)->first();
+                return $isSpecialProfile ? DjamoPercent::whereId(1)->first() : DjamoPercent::whereId(3)->first();
         }
     }
 
@@ -380,7 +384,9 @@ class PercentRobusAuthService
 
     public function getRobusPercentagePushInter()
     {
-        return PushPercent::whereId(2)->first();
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
+
+        return  $isSpecialProfile ? PushPercent::whereId(2)->first() : PushPercent::whereId(4)->first();
     }
 
 
@@ -392,12 +398,16 @@ class PercentRobusAuthService
 
     public function getRobusPercentageDjamoInter()
     {
-        return DjamoPercent::whereId(1)->first();
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
+
+        return $isSpecialProfile ? DjamoPercent::whereId(1)->first() : DjamoPercent::whereId(3)->first();
     }
 
     public function getRobusPercentageTresortInter()
     {
-        return ArgentTresort::whereId(2)->first();
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
+
+        return  $isSpecialProfile ?  ArgentTresort::whereId(1)->first() : ArgentTresort::whereId(3)->first();
     }
 
 
@@ -449,7 +459,7 @@ class PercentRobusAuthService
                     107 => ($provider_valeur != 51) ? 1 : 44, // CIV
                     112 => ($provider_valeur != 51) ? 4529 : 4002, // Keneya
                     116 => ($provider_valeur != 51) ? 4530 : 4003, // Koweit
-                    116 => ($provider_valeur != 51) ? 6341 : 6342, // Liban
+                    120 => ($provider_valeur != 51) ? 6341 : 6342, // Liban
                     122 => ($provider_valeur != 51) ? 133 : 182, // Liberia
                     133 => ($provider_valeur != 51) ? 3 : 38, // Mali
                     137 => ($provider_valeur != 51) ? 6343 : 6344, // Mauritanie
@@ -478,7 +488,6 @@ class PercentRobusAuthService
                 ],
                 // Is BF
                 36 =>  [
-
 
                     1 => ($provider_valeur != 51) ? 4600 : 4073, // USA
                     5 => ($provider_valeur != 51) ? 6354 : 6353, // Algerie
@@ -3413,5 +3422,112 @@ class PercentRobusAuthService
         }
 
         return  LevelCountry::whereId($levelValeur)->select('percent', 'percent_admin')->first();
+    }
+
+
+    // public function getRobusPercentageBankSend($countrie)
+    // {
+
+
+    //     if (robus()->country->name_groupe == 'CIV') {
+    //         // Countrie Europ
+
+    //         if (
+    //             $countrie == 74 ||
+    //             $countrie == 106 ||
+    //             $countrie == 199 ||
+    //             $countrie == 182 ||
+    //             $countrie == 152 ||
+    //             $countrie == 23 ||
+    //             $countrie == 172 ||
+    //             $countrie == 126 ||
+    //             $countrie == 173 ||
+    //             $countrie == 226
+    //         ) {
+    //             return  BankCommission::whereId(1)->first();
+    //         }
+
+    //         // Countrie Asie
+    //         else if (
+    //             $countrie == 45 ||
+    //             $countrie == 175 ||
+    //             $countrie == 187 ||
+    //             $countrie == 120 ||
+    //             $countrie == 116
+    //         ) {
+    //             return  BankCommission::whereId(2)->first();
+    //         } else if (
+    //             $countrie == 45 ||
+    //             $countrie == 157
+    //         ) {
+    //             return  BankCommission::whereId(3)->first();
+    //         }
+    //         // Countrie Afrique
+    //         else if (
+    //             $countrie == 39 ||
+    //             $countrie == 50 ||
+    //             $countrie == 69 ||
+    //             $countrie == 57 ||
+    //             $countrie == 79 ||
+    //             $countrie == 66 ||
+    //             $countrie == 112 ||
+    //             $countrie == 137 ||
+    //             $countrie == 223 ||
+    //             $countrie == 180
+    //         ) {
+    //             return  BankCommission::whereId(4)->first();
+    //         }
+    //         // Countrie Afrique L'ouest
+    //         else if (
+    //             $countrie == 36 ||
+    //             $countrie == 133 ||
+    //             $countrie == 188 ||
+    //             $countrie == 25 ||
+    //             $countrie == 214 ||
+    //             $countrie == 92 ||
+    //             $countrie == 157 ||
+    //             $countrie == 191 ||
+    //             $countrie == 40 ||
+    //             $countrie == 91
+    //         ) {
+    //             return  BankCommission::whereId(5)->first();
+    //         }
+    //     }else {
+    //         return null;
+    //     }
+    // }
+
+    public function getRobusPercentageBankSend(int $countryId): ?BankCommission
+    {
+        // On ne traite que la CIV
+        if (robus()->country->name_groupe !== 'CIV') {
+            return null;
+        }
+
+        // Mapping des pays par commission
+        $groups = [
+            // Europe
+            1 => [74, 106, 199, 182, 152, 23, 172, 126, 173, 226],
+
+            // Asie
+            2 => [175, 187, 120, 116],
+
+            // Amérique / autre zone spécifique
+            3 => [45, 157],
+
+            // Afrique
+            4 => [39, 50, 69, 57, 79, 66, 112, 137, 223, 180],
+
+            // Afrique de l’Ouest
+            5 => [36, 133, 188, 25, 214, 92, 191, 40, 91],
+        ];
+
+        foreach ($groups as $commissionId => $countries) {
+            if (in_array($countryId, $countries, true)) {
+                return BankCommission::find($commissionId);
+            }
+        }
+
+        return null;
     }
 }

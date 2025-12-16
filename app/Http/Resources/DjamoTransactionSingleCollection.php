@@ -27,6 +27,7 @@ class DjamoTransactionSingleCollection extends JsonResource
             'full_name' =>  $this->full_name,
             'image' =>  $this->image,
             'description'  =>  $this->description,
+            'choose_transaction' => $this->choose_transaction == 1 ? 'Transfert' : 'Retrait',
             'amount_received'  => number_format((double)$this->amount_received, 2, '.', ' ') ,
             'master_cost_percent' =>  number_format((float)$this->commission_masters, 2, '.', '') ?? null,
             'with_cost_percent' =>  number_format((double)$this->commissions, 2, '.', '') ?? null,

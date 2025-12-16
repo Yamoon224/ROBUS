@@ -99,10 +99,10 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('search_onexbet_received/{amount_received}', [OnexbetTransactionController::class, 'search_xbet_received']);
 
             // WithTransactions
-            Route::post('push/store', [withTransactionController::class, 'create_PushTransaction']);
-            Route::post('versments/store', [VersementController::class, 'create_versement']);
-            Route::post('djamo/store', [withTransactionController::class, 'create_DjamoTransaction']);
-            Route::post('tresorts/store', [withTransactionController::class, 'create_TresortTransaction']);
+            Route::post('push/store/{is_drawal?}', [withTransactionController::class, 'create_PushTransaction']);
+            Route::post('versments/store/{is_drawal?}', [VersementController::class, 'create_versement']);
+            Route::post('djamo/store/{is_drawal?}', [withTransactionController::class, 'create_DjamoTransaction']);
+            Route::post('tresorts/store/{is_drawal?}', [withTransactionController::class, 'create_TresortTransaction']);
             Route::post('push/delete/{id}', [withTransactionController::class, 'delete_wallet_Push']);
             Route::post('djamo/delete/{id}', [withTransactionController::class, 'delete_wallet_Djamo']);
             Route::post('tresorts/delete/{id}', [withTransactionController::class, 'delete_wallet_Tresort']);

@@ -434,6 +434,52 @@ class TransfertServiceBackend
             'amount_solde' => $amount_solde ?? null
         ]);
     }
+
+    public function createMobileWalletInterWith(
+        $amount_transaction,
+        $percent_robus,
+        $country_robus,
+        $provider_payment,
+        $phone,
+        $name_custumers,
+        $num_piece_custumers,
+        $date_piece,
+        $name,
+        $name_sender,
+        $account_number,
+        $action_percent_id,
+        $imagePath,
+    ) {
+
+        $amount_solde = sabdy()->wallet->amount - $amount_transaction;
+
+        return WalletInter::create([
+            'wallet_id' => sabdy()->wallet->id,
+            'amount' => $amount_transaction,
+            'description' => null,
+            'inter_cost_id' => null,
+            'transaction_cost_id' => $percent_robus->id,
+            'djamo_percent_id' => $provider_payment == 104 ? $action_percent_id : null,
+            'push_percent_id'       => $provider_payment == 105 ? $action_percent_id : null,
+            'argent_tresort_id'       => $provider_payment == 106 ? $action_percent_id : null,
+            'phone' => $country_robus->indecative . $phone ?? null,
+            'number_compte' => $account_number,
+            'created_by' => sabdy()->id,
+            'provider_id' => $provider_payment,
+            'name_complet' => $name_custumers ?? null,
+            'name' => $name ?? null,
+            'num_piece' => $num_piece_custumers ?? null,
+            'name_benef' => $name_sender ?? null,
+            'validated_date' => $date_piece ?? null,
+            'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->percent_merchands * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
+            'provider_type' => 1,
+            'status' => 'PENDING',
+            'country_id' => $country_robus->id,
+            'choose_type_transaction' => 1,
+            'amount_solde' => $amount_solde ?? null,
+            'image' => $imagePath ?? null,
+        ]);
+    }
     public function updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $wallet)
     {
 

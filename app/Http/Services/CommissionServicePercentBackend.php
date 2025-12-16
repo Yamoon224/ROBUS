@@ -9,12 +9,68 @@ use App\Models\Onexbet;
 use App\Models\PushPercent;
 use App\Models\DjamoPercent;
 use App\Models\VirementPercent;
+use App\Models\Costs\BankCommission;
 
 class CommissionServicePercentBackend
 {
     /**
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
+
+     public function getRobusPercentageBankSend(int $countryId): ?BankCommission
+    {
+        // On ne traite que la CIV
+        if (sabdy()->country->name_groupe !== 'CIV') {
+            return null;
+        }
+
+        // Mapping des pays par commission
+        $groups = [
+            // Europe
+            1 => [74, 106, 199, 182, 152, 23, 172, 126, 173, 226],
+
+            // Asie
+            2 => [175, 187, 120, 116],
+
+            // Amérique / autre zone spécifique
+            3 => [45, 157],
+
+            // Afrique
+            4 => [39, 50, 69, 57, 79, 66, 112, 137, 223, 180],
+
+            // Afrique de l’Ouest
+            5 => [36, 133, 188, 25, 214, 92, 191, 40, 91],
+        ];
+
+        foreach ($groups as $commissionId => $countries) {
+            if (in_array($countryId, $countries, true)) {
+                return BankCommission::find($commissionId);
+            }
+        }
+
+        return null;
+    }
+    public function getRobusPercentagePushInter()
+    {
+        $isSpecialProfile = sabdy()->is_under_distributer || sabdy()->is_api;
+
+        return  $isSpecialProfile ? PushPercent::whereId(2)->first() : PushPercent::whereId(4)->first();
+    }
+
+    public function getRobusPercentageDjamoInter()
+    {
+        $isSpecialProfile = sabdy()->is_under_distributer || sabdy()->is_api;
+
+        return $isSpecialProfile ? DjamoPercent::whereId(1)->first() : DjamoPercent::whereId(3)->first();
+    }
+
+    public function getRobusPercentageTresortInter()
+    {
+        $isSpecialProfile = sabdy()->is_under_distributer || sabdy()->is_api;
+
+        return  $isSpecialProfile ?  ArgentTresort::whereId(1)->first() : ArgentTresort::whereId(3)->first();
+    }
+
 
     public function getRobusPercentageVersement($id)
     {

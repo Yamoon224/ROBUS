@@ -175,7 +175,7 @@
 
                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                     @if ($is_under)
-                        @if ($showRemonterPushButton)
+                        @if ($showRemonterDjamoButton)
                             <x-transaction-detail title="Commission" value="{{ $commission }}"
                                 country="{{ $usersCountry }}" />
                         @else
@@ -341,3 +341,4 @@
             });
     });
 </script>
+

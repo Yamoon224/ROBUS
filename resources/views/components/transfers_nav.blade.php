@@ -1,8 +1,10 @@
+
 @php
     $is_under = sabdy()->is_under_distributer;
 @endphp
 
-<ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center" role="tablist">
+
+<ul class="nav nav-link-tabs flex-col sm:flex-row justify-center lg:justify-start text-center mb-3" role="tablist">
 
     @if (sabdy()->country->code == 'CI')
 
@@ -14,8 +16,9 @@
             @if ($showDepotButton && sabdy()->hasPermissionTo('transfers-argent'))
                 <li id="transfers-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-blue py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-400 bg-white text-gray-600 
+              hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-500 hover:border-3 
+              transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center"
                         id="transfers-nav" data-tw-target="#transfers" aria-controls="transfers" aria-selected="false"
                         role="tab">
                         <svg class="w-5 h-5 " fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -32,8 +35,9 @@
             @if ($showPaiementButton && sabdy()->hasPermissionTo('paiement-factures'))
                 <li id="paiement-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-green py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2  border-gray-400 bg-white text-gray-600 
+                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-500 hover:border-3 
+                       transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-green py-4 items-center"
                         id="paiement-nav" data-tw-target="#paiement" aria-controls="paiement" aria-selected="false"
                         role="tab">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"

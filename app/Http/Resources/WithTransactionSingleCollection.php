@@ -30,6 +30,7 @@ class WithTransactionSingleCollection extends JsonResource
             'phone' =>  $this->phone,
             'full_name' =>  $this->full_name,
             'description'  =>  $this->description,
+            'choose_transaction' => $this->choose_transaction == 1 ? 'Transfert' : 'Retrait',
             'amount_received'  =>number_format((double)$this->amount_received, 2, '.', ' '),
             'number_phone' =>  $this->number_phone,
             'paiementChoix_phone' =>  $this->paiementChoix_phone,
@@ -40,8 +41,6 @@ class WithTransactionSingleCollection extends JsonResource
             'status'  =>  $this->status,
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
             'amount_solde_drawal' => $this->amount_solde_drawal . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")
-
-           
 
         ];
     }

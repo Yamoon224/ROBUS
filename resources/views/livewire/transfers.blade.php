@@ -140,8 +140,358 @@
     </div>
     <div class="intro-y box px-5 pt-1 mt-1 ">
         <div class="grid grid-cols-12 gap-6 mt-6">
-
             @if ($is_under || $is_distributer)
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                    <div class="report-box zoom-in">
+                        <div class="box p-wallet style_table_factures">
+
+
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+                                @if ($showMoneyButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès transferts {{ $transaction_success }}
+                                    </div>
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente transferts {{ $transaction_pendding }}
+                                    </div>
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec transferts {{ $transaction_error }}
+                                    </div>
+                                @endif
+
+                                @if ($showCreditButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès crédits {{ $djamo_success }}
+                                    </div>
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente crédits {{ $phone_pendding }}
+                                    </div>
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec crédits {{ $phone_error }}
+                                    </div>
+                                @endif
+
+
+                            </div>
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+
+                                @if ($showRechargementButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès Cartes {{ $card_success }}
+                                    </div>
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente Cartes {{ $card_pendding }}
+                                    </div>
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec Cartes {{ $card_error }}
+                                    </div>
+                                @endif
+
+                                @if ($showVersementButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès Versements {{ $versement_success }}
+                                    </div>
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente Versements {{ $versement_pendding }}
+                                    </div>
+
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec Versements {{ $versement_error }}
+                                    </div>
+                                @endif
+
+                            </div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+
+                            <div class="flex flex-wrap items-center gap-4">
+                                @if ($showCreditButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletPhoneCredits ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Achats Crédits téléphoniques
+                                            {{ $usersCountry }}</div>
+                                    </div>
+                                @endif
+                            </div>
+                            <div class="flex flex-wrap items-center gap-4 mt-3">
+
+
+                                @if ($showRechargementButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletDeposits ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Rechargements Cartes {{ $usersCountry }}
+                                        </div>
+                                    </div>
+                                @endif
+                                @if ($showVersementButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletBanks ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Versements bancaires {{ $usersCountry }}
+                                        </div>
+                                    </div>
+                                @endif
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                    <div class="report-box zoom-in btn-pink">
+                        <div class="box p-wallet btn-pink">
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+
+                                @if ($showPaiementButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès Factures {{ $payment_success }}
+                                    </div>
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente Factures {{ $payment_pendding }}
+                                    </div>
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec Factures {{ $payment_error }}
+                                    </div>
+                                @endif
+
+
+                                @if ($showTransButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès Virements {{ $bank_success }}
+                                    </div>
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente Virements {{ $bank_pendding }}
+                                    </div>
+
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec Virements {{ $bank_error }}
+                                    </div>
+                                @endif
+
+
+                            </div>
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+
+                                @if ($showPushButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès Push {{ $push_success }}
+                                    </div>
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente Push {{ $push_pendding }}
+                                    </div>
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec Push {{ $push_error }}
+                                    </div>
+                                @endif
+
+                                @if ($showDjamoButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès Djamo {{ $djamo_success }}
+                                    </div>
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente Djamo {{ $djamo_pendding }}
+                                    </div>
+
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec Djamo {{ $djamo_error }}
+                                    </div>
+                                @endif
+
+                            </div>
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="flex flex-wrap items-center gap-4">
+
+                                @if ($showPaiementButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletPayments ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Paiements Factures {{ $usersCountry }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if ($showVirementButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletBanks ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Virements bancaires {{ $usersCountry }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                            </div>
+                            <div class="flex flex-wrap items-center gap-4 mt-3">
+
+                                @if ($showPushButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletPushs ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Réchargements Push {{ $usersCountry }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if ($showDjamoButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletDjamos ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Réchargements Djamo {{ $usersCountry }}
+                                        </div>
+                                    </div>
+                                @endif
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
+                    <div class="report-box zoom-in btn-purple">
+                        <div class="box p-wallet btn-purple">
+                            <div class="flex flex-wrap gap-2 mb-transactions">
+
+                                @if ($showTresortButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès Tresorts {{ $tresortMoney_success }}
+                                    </div>
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente Tresorts {{ $tresortMoney_pendding }}
+                                    </div>
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec Tresorts {{ $tresortMoney_error }}
+                                    </div>
+                                @endif
+
+                                @if ($showXbetButton)
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès 1Xbets {{ $xbet_success }}
+                                    </div>
+
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente 1Xbets {{ $xbet_pendding }}
+                                    </div>
+
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec 1Xbets {{ $xbet_error }}
+                                    </div>
+                                @endif
+
+
+                            </div>
+                            @if ($showInterButton)
+                                <div class="flex flex-wrap gap-2 mb-transactions">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès Inters {{ $inter_success }}
+                                    </div>
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente Inters {{ $inter_pendding }}
+                                    </div>
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec Inters {{ $inter_error }}
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if ($showBankSendButton)
+                                <div class="flex flex-wrap gap-2 mb-transactions">
+                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                        Succès Bank sends {{ $bank_send_success }}
+                                    </div>
+                                    <div class="report-box__indicator bg-pending tooltip cursor-pointer">
+                                        Attente Bank sends {{ $bank_send_pendding }}
+                                    </div>
+                                    <div class="report-box__indicator bg-danger tooltip cursor-pointer">
+                                        Echec Bank sends {{ $bank_send_error }}
+                                    </div>
+                                </div>
+                            @endif
+
+
+
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
+                                class="lucide lucide-credit-card report-box__icon text-secondary">
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
+                                <line x1="1" y1="10" x2="23" y2="10"></line>
+                            </svg>
+                            <div class="flex flex-wrap items-center gap-4">
+                                @if ($showTresortButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $walletTresortMoneys ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Tresort Money {{ $usersCountry }}</div>
+                                    </div>
+                                @endif
+
+                                @if ($showXbetButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletXbets ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Transactions 1Xbets {{ $usersCountry }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                            </div>
+                            <div class="flex flex-wrap items-center gap-4">
+                                @if ($showInterButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletInters ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Paiements Internationaux
+                                            {{ $usersCountry }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                                @if ($showBankSendButton)
+                                    <div class="flex flex-col items-start">
+                                        <div class="text-3xl font-medium leading-8">
+                                            {{ $WalletBankSends ?? null }}
+                                        </div>
+                                        <div class="text-base text-slate-500">Bank send {{ $usersCountry }}
+                                        </div>
+                                    </div>
+                                @endif
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             @else
                 <div class="col-span-12 sm:col-span-6 lg:col-span-4 intro-y info-paiement-show">
                     <div class="report-box zoom-in">
@@ -191,11 +541,13 @@
                                     Echec Versements {{ $versement_error }}
                                 </div>
                             </div>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" icon-name="credit-card" data-lucide="credit-card"
+                            <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" icon-name="credit-card"
+                                data-lucide="credit-card"
                                 class="lucide lucide-credit-card report-box__icon text-secondary">
-                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
+                                </rect>
                                 <line x1="1" y1="10" x2="23" y2="10"></line>
                             </svg>
 
@@ -297,7 +649,8 @@
                                     <div class="text-3xl font-medium leading-8">
                                         {{ $WalletPayments ?? null }}
                                     </div>
-                                    <div class="text-base text-slate-500">Paiements Factures {{ $usersCountry }}</div>
+                                    <div class="text-base text-slate-500">Paiements Factures {{ $usersCountry }}
+                                    </div>
                                 </div>
 
                                 <div class="flex flex-col items-start">
@@ -313,7 +666,8 @@
                                     <div class="text-3xl font-medium leading-8">
                                         {{ $WalletPushs ?? null }}
                                     </div>
-                                    <div class="text-base text-slate-500">Réchargements Push {{ $usersCountry }}</div>
+                                    <div class="text-base text-slate-500">Réchargements Push {{ $usersCountry }}
+                                    </div>
                                 </div>
 
                                 <div class="flex flex-col items-start">
@@ -343,7 +697,7 @@
                                     Echec Tresorts {{ $tresortMoney_error }}
                                 </div>
 
-                                 <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                <div class="report-box__indicator bg-success tooltip cursor-pointer">
                                     Succès 1Xbets {{ $xbet_success }}
                                 </div>
 
@@ -410,7 +764,8 @@
                                     <div class="text-3xl font-medium leading-8">
                                         {{ $WalletInters ?? null }}
                                     </div>
-                                    <div class="text-base text-slate-500">Paiements Internationaux  {{ $usersCountry }}</div>
+                                    <div class="text-base text-slate-500">Paiements Internationaux
+                                        {{ $usersCountry }}</div>
                                 </div>
 
                                 <div class="flex flex-col items-start">
@@ -427,7 +782,6 @@
                 </div>
             @endif
 
-
         </div>
 
 
@@ -438,28 +792,26 @@
 
                 @if ($is_under || $is_distributer)
 
-                    @if ($showDepotButton)
-                        @if (sabdy()->hasPermissionTo('transfers-argent'))
-                            <button class="btn-modern btn-primary"
-                                wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
-                                <div class="btn-icon">
-                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
-                                        stroke-width="1.5">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-                                    </svg>
-                                </div>
-                                <span
-                                    class="btn-text">{{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}</span>
-                            </button>
+                    <div class="flex flex-wrap gap-3 p-4">
+                        @if ($showDepotButton)
+                            @if (sabdy()->hasPermissionTo('transfers-argent'))
+                                <button class="btn-modern btn-primary"
+                                    wire:click="$emit('modal-transfers-show', 'create-transfersUV-modal')">
+                                    <div class="btn-icon">
+                                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor" stroke-width="1.5">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                        </svg>
+                                    </div>
+                                    <span
+                                        class="btn-text">{{ sabdy()->is_under_distributer ? 'Dépot d\'argent' : 'Transfers d\'argent' }}</span>
+                                </button>
+                            @endif
+
                         @endif
 
-                    @endif
-
-                    @if ($showPaiementButton)
-
-
-                        @if (sabdy()->hasPermissionTo('paiement-factures'))
+                        @if ($showPaiementButton)
                             <button class="btn-modern btn-success"
                                 wire:click="$emit('modal-paiements-show' , 'create-paiementInvoice-modal')">
                                 <div class="btn-icon">
@@ -473,11 +825,7 @@
                             </button>
                         @endif
 
-                    @endif
-
-                    @if ($showVirementButton)
-
-                        @if (sabdy()->hasPermissionTo('virement-compte'))
+                        @if ($showVirementButton)
                             <button class="btn-modern btn-info"
                                 wire:click="$emit('modal-virements-show' , 'create-virementBank-modal')">
                                 <div class="btn-icon">
@@ -490,11 +838,9 @@
                                 <span class="btn-text">Virement bancaire</span>
                             </button>
                         @endif
-                    @endif
 
 
-                    @if ($showRechargementButton)
-                        @if (sabdy()->hasPermissionTo('rechargement-carte'))
+                        @if ($showRechargementButton)
                             <button class="btn-modern btn-warning"
                                 wire:click="$emit('modal-reloadCards-show' , 'create-reloadCards-modal')">
                                 <div class="btn-icon">
@@ -507,10 +853,8 @@
                                 <span class="btn-text">Rechargement de carte</span>
                             </button>
                         @endif
-                    @endif
 
-                    @if ($showCreditButton)
-                        @if (sabdy()->hasPermissionTo('rechargement-credit'))
+                        @if ($showCreditButton)
                             <button class="btn-modern btn-purple"
                                 wire:click="$emit('modal-phoneCredit-show' , 'create-phoneCredit-modal')">
                                 <div class="btn-icon">
@@ -523,10 +867,8 @@
                                 <span class="btn-text">Crédit téléphonique</span>
                             </button>
                         @endif
-                    @endif
 
-                    @if ($showTransacInterButton)
-                        @if (sabdy()->hasPermissionTo('rechargement-inters'))
+                        @if ($showTransacInterButton)
                             <button class="btn-modern btn-indigo"
                                 wire:click="$emit('modal-interCivs-show' , 'create-interCivTransfers-modal')">
                                 <div class="btn-icon">
@@ -539,10 +881,8 @@
                                 <span class="btn-text">International</span>
                             </button>
                         @endif
-                    @endif
 
-                    @if ($showXbetButton)
-                        @if (sabdy()->hasPermissionTo('rechargement-xbets'))
+                        @if ($showXbetButton)
                             <button class="btn-modern btn-orange"
                                 wire:click="$emit('modal-xbet-show' , 'create-xbet-modal')">
                                 <div class="btn-icon">
@@ -555,10 +895,8 @@
                                 <span class="btn-text">Xbets</span>
                             </button>
                         @endif
-                    @endif
 
-                    @if ($showVersementButton)
-                        @if (sabdy()->hasPermissionTo('rechargement-versements'))
+                        @if ($showVersementButton)
                             <button class="btn-modern btn-teal"
                                 wire:click="$emit('modal-versement-show' , 'create-versement-modal')">
                                 <div class="btn-icon">
@@ -571,10 +909,8 @@
                                 <span class="btn-text">Versements</span>
                             </button>
                         @endif
-                    @endif
 
-                    @if ($showPushButton)
-                        @if (sabdy()->hasPermissionTo('rechargement-push'))
+                        @if ($showPushButton)
                             <button class="btn-modern btn-pink"
                                 wire:click="$emit('modal-push-show' , 'create-push-modal')">
                                 <div class="btn-icon">
@@ -587,9 +923,7 @@
                                 <span class="btn-text">Push</span>
                             </button>
                         @endif
-                    @endif
-                    @if ($showDjamoButton)
-                        @if (sabdy()->hasPermissionTo('rechargement-djamo'))
+                        @if ($showDjamoButton)
                             <button class="btn-modern btn-rose"
                                 wire:click="$emit('modal-djamo-show' , 'create-djamo-modal')">
                                 <div class="btn-icon">
@@ -602,9 +936,7 @@
                                 <span class="btn-text">Djamo</span>
                             </button>
                         @endif
-                    @endif
-                    @if ($showTresortButton)
-                        @if (sabdy()->hasPermissionTo('rechargement-tresort'))
+                        @if ($showTresortButton)
                             <button class="btn-modern btn-amber"
                                 wire:click="$emit('modal-tresort-show' , 'create-tresort-modal')">
                                 <div class="btn-icon">
@@ -617,7 +949,7 @@
                                 <span class="btn-text">Trésor Money</span>
                             </button>
                         @endif
-                    @endif
+                    </div>
                 @else
                     <div class="flex flex-wrap gap-3 p-4">
                         @if (sabdy()->hasPermissionTo('transfers-argent'))
