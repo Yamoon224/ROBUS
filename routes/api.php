@@ -100,6 +100,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
             // WithTransactions
             Route::post('push/store/{is_drawal?}', [withTransactionController::class, 'create_PushTransaction']);
+            Route::post('bank_send/store/{country_id}', [withTransactionController::class, 'create_bankSend']);
             Route::post('versments/store/{is_drawal?}', [VersementController::class, 'create_versement']);
             Route::post('djamo/store/{is_drawal?}', [withTransactionController::class, 'create_DjamoTransaction']);
             Route::post('tresorts/store/{is_drawal?}', [withTransactionController::class, 'create_TresortTransaction']);
@@ -108,6 +109,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('tresorts/delete/{id}', [withTransactionController::class, 'delete_wallet_Tresort']);
 
             Route::get('search_push/{amount_send}/{is_drawal?}', [withTransactionController::class, 'search_Push']);
+            Route::get('search_bank_send/{amount_send}/{country_id}', [withTransactionController::class, 'search_bank_send']);
             Route::get('search_drawal_mooney/{amount_send}/{provider}', [withTransactionController::class, 'search_drawal_mooney']);
             Route::get('search_versement/{amount_send}/{provider}', [VersementController::class, 'search_versement']);
             Route::get('search_djamo/{amount_send}/{is_drawal?}', [withTransactionController::class, 'search_Djamo']);

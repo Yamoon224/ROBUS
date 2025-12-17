@@ -1,4 +1,3 @@
-
 @php
     $is_under = sabdy()->is_under_distributer;
 @endphp
@@ -55,8 +54,11 @@
             @if ($showVirementButton && sabdy()->hasPermissionTo('virement-compte'))
                 <li id="virement-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-purple py-4 items-center"
+                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="virement-nav" data-tw-target="#virement" aria-controls="virement" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -74,8 +76,11 @@
             @if ($showRechargementButton && sabdy()->hasPermissionTo('rechargement-carte'))
                 <li id="carte-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-orange py-4 items-center"
+                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="carte-nav" data-tw-target="#carte" aria-controls="carte" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -93,8 +98,11 @@
             @if ($showCreditButton && sabdy()->hasPermissionTo('rechargement-credit'))
                 <li id="phone-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-pink py-4 items-center"
+                       class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="phone-nav" data-tw-target="#phone" aria-controls="phone" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -112,8 +120,11 @@
             @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-indigo  py-4 items-center"
+                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="inter-nav" data-tw-target="#inter" aria-controls="inter" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -131,8 +142,11 @@
             @if ($showXbetButton && sabdy()->hasPermissionTo('rechargement-xbets'))
                 <li id="xbet-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-red py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="xbet-nav" data-tw-target="#xbet" aria-controls="xbet" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -149,8 +163,11 @@
             @if ($showVersementButton && sabdy()->hasPermissionTo('rechargement-versements'))
                 <li id="versment-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-teal py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="versment-nav" data-tw-target="#versment" aria-controls="versment" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -165,11 +182,14 @@
                 </li>
             @endif
 
-            {{-- @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
+            @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
                 <li id="bank-send-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-cyan py-4 items-center"
+                       class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="bank-send-nav" data-tw-target="#bank-send" aria-controls="bank-send"
                         aria-selected="false" role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -182,13 +202,16 @@
 
                     </a>
                 </li>
-            @endif --}}
+            @endif
 
             @if ($showPushButton && sabdy()->hasPermissionTo('rechargement-push'))
                 <li id="push-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-amber py-4 items-center"
+                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="push-nav" data-tw-target="#push" aria-controls="push" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -206,8 +229,11 @@
             @if ($showDjamoButton && sabdy()->hasPermissionTo('rechargement-tresort'))
                 <li id="tresort-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-rose  py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="tresort-nav" data-tw-target="#tresort" aria-controls="tresort" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -225,8 +251,11 @@
             @if ($showDjamoButton && sabdy()->hasPermissionTo('rechargement-djamo'))
                 <li id="djamo-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-yellow  py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="djamo-nav" data-tw-target="#djamo" aria-controls="djamo" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -245,8 +274,11 @@
             @if (sabdy()->hasPermissionTo('transfers-argent'))
                 <li id="transfers-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-blue py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="transfers-nav" data-tw-target="#transfers" aria-controls="transfers"
                         aria-selected="false" role="tab">
                         <svg class="w-5 h-5 " fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -254,7 +286,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
                         </svg>
-                        <span class="nav-label"> Transferts d'argent
+                        <span class="nav-label font-medium"> Transferts d'argent
                         </span>
                     </a>
                 </li>
@@ -263,8 +295,11 @@
             @if (sabdy()->hasPermissionTo('paiement-factures'))
                 <li id="paiement-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-green py-4 items-center"
+                     class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="paiement-nav" data-tw-target="#paiement" aria-controls="paiement" aria-selected="false"
                         role="tab">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -282,8 +317,11 @@
             @if (sabdy()->hasPermissionTo('virement-compte'))
                 <li id="virement-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-purple py-4 items-center"
+                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="virement-nav" data-tw-target="#virement" aria-controls="virement" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -301,8 +339,11 @@
             @if (sabdy()->hasPermissionTo('rechargement-carte'))
                 <li id="carte-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-orange py-4 items-center"
+                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="carte-nav" data-tw-target="#carte" aria-controls="carte" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -320,8 +361,11 @@
             @if (sabdy()->hasPermissionTo('rechargement-credit'))
                 <li id="phone-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-pink py-4 items-center"
+                       class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="phone-nav" data-tw-target="#phone" aria-controls="phone" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -339,8 +383,11 @@
             @if (sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-indigo  py-4 items-center"
+                      class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="inter-nav" data-tw-target="#inter" aria-controls="inter" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -358,8 +405,11 @@
             @if (sabdy()->hasPermissionTo('rechargement-xbets'))
                 <li id="xbet-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-red py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="xbet-nav" data-tw-target="#xbet" aria-controls="xbet" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -376,8 +426,11 @@
             @if (sabdy()->hasPermissionTo('rechargement-versements'))
                 <li id="versment-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-teal py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="versment-nav" data-tw-target="#versment" aria-controls="versment" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -392,11 +445,14 @@
                 </li>
             @endif
 
-            {{-- @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
+            @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
                 <li id="bank-send-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-cyan py-4 items-center"
+                       class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="bank-send-nav" data-tw-target="#bank-send" aria-controls="bank-send"
                         aria-selected="false" role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -409,13 +465,16 @@
 
                     </a>
                 </li>
-            @endif --}}
+            @endif
 
             @if (sabdy()->hasPermissionTo('rechargement-push'))
                 <li id="push-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-amber py-4 items-center"
+                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="push-nav" data-tw-target="#push" aria-controls="push" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -433,8 +492,11 @@
             @if (sabdy()->hasPermissionTo('rechargement-tresort'))
                 <li id="tresort-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-rose  py-4 items-center"
+                    class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="tresort-nav" data-tw-target="#tresort" aria-controls="tresort" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -452,8 +514,11 @@
             @if (sabdy()->hasPermissionTo('rechargement-djamo'))
                 <li id="djamo-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-yellow  py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="djamo-nav" data-tw-target="#djamo" aria-controls="djamo" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -475,8 +540,11 @@
             @if ($showDepotButton && sabdy()->hasPermissionTo('transfers-argent'))
                 <li id="transfers-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-blue py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="transfers-nav" data-tw-target="#transfers" aria-controls="transfers"
                         aria-selected="false" role="tab">
                         <svg class="w-5 h-5 " fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -493,8 +561,11 @@
             @if ($showTransacInterButton && sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-indigo  py-4 items-center"
+                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="inter-nav" data-tw-target="#inter" aria-controls="inter" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -513,8 +584,11 @@
             @if (sabdy()->hasPermissionTo('transfers-argent'))
                 <li id="transfers-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-blue py-4 items-center"
+                        class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="transfers-nav" data-tw-target="#transfers" aria-controls="transfers"
                         aria-selected="false" role="tab">
                         <svg class="w-5 h-5 " fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -530,8 +604,11 @@
             @if (sabdy()->hasPermissionTo('rechargement-inters'))
                 <li id="inter-tab" class="nav-item" role="presentation">
                     <a href="javascript:;"
-                        class="flex items-center px-4 py-2 mt-3 rounded-lg border border-gray-200 bg-white text-gray-600 
-                      hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-300 transition-all duration-200 ease-in-out shadow-sm nav-link nav-link-indigo  py-4 items-center"
+                         class="flex items-center px-4 py-2 mt-3 rounded-lg border-2 border-gray-500 bg-white text-gray-700 
+                        hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-500 hover:border-3
+                        active:border-indigo-600 active:border-3 active:ring-2 active:ring-indigo-200
+                        transition-all duration-200 ease-in-out shadow-md nav-link nav-link-blue py-4 items-center
+                        focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-600"
                         id="inter-nav" data-tw-target="#inter" aria-controls="inter" aria-selected="false"
                         role="tab">
                         <svg class="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"

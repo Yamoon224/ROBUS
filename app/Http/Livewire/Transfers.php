@@ -118,7 +118,6 @@ class Transfers extends Component
     public $paiementChoix_type_edit;
 
     // Edit Inter valeurs
-
     public $interId;
     public $inter_description_edit;
     public $inter_description_robus_edit;
@@ -165,6 +164,22 @@ class Transfers extends Component
     public $amount_virement_edit;
     public $account_number_user_edit;
 
+    // Wallet Bank Send
+    public $bankId;
+    public $bank_description_edit;
+    public $bankStatus;
+    public $provider_bank_edit;
+    public $country_bank_edit;
+    public $amount_bank_edit;
+    public $account_number_bank_edit;
+    public $phone_bank_edit;
+    public $name_bank_edit;
+    public $name_sender_bank_edit;
+    public $num_piece_bank_edit;
+    public $phone_exp_bank_edit;
+    public $swit_bank_edit;
+    public $date_bank_edit;
+    public $image_bank_edit;
 
     // Transactions
     public $transaction_description;
@@ -1402,6 +1417,32 @@ class Transfers extends Component
         $this->emit($state);
     }
 
+    public function editBankSend($id, $state)
+    {
+        $check = WalletBankSend::whereId($id)->first();
+        $provider = Provider::whereId($check->provider_id)->first();
+
+        $this->bankId = $id;
+        $this->bank_description_edit = $check->description ?? null;
+        $this->bankStatus = null;
+        $this->provider_bank_edit = $provider->name;
+        $this->country_bank_edit = $country->id ?? null;
+        $this->amount_bank_edit = $check->amount ?? null;
+        $this->account_number_bank_edit = $check->number_compte ?? null;
+        $this->phone_bank_edit = $check->phone ?? null;
+        $this->name_bank_edit = $check->name_complet ?? null;
+        $this->name_sender_bank_edit = $check->name ?? null;
+        $this->num_piece_bank_edit = $check->num_piece ?? null;
+        $this->phone_exp_bank_edit = $check->phone_inter_expe ?? null;
+        $this->swit_bank_edit = $check->swit_code ?? null;
+        $this->date_bank_edit = $check->validated_date ?? null;
+        $this->image_bank_edit = $check->image ?? null;
+        $this->currency_custumers = $check->wallet->currencie->code ?? null;
+
+        $this->emit($state);
+    }
+
+
     // Edit Virement
     public function editVirement($id, $state)
     {
@@ -1625,6 +1666,210 @@ class Transfers extends Component
         }
     }
 
+    public function updateBankSend()
+    {
+        $check = WalletBankSend::whereId($this->bankId)->first();
+        $transactionData = $this->generateTransactionData();
+        $transactionCode = $transactionData['transactionCode'];
+        $transactionCompiCode = $transactionData['transactionCompiCode'];
+        $user_auth = $transactionData['user_auth'];
+        $admins = $transactionData['admins'];
+        $admin_civ = $transactionData['admin_civ'];
+        DB::beginTransaction();
+
+        try {
+
+
+            if ($check->status == 'PENDING') {
+
+                $this->validate([
+                    'bankStatus' => 'required',
+                    'password_transaction' => 'required',
+                ]);
+
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
+
+                    $check->update([
+                        'description' => $this->bank_description_edit ?? null,
+                        'updated_by' => Auth::guard('web')->user()->id,
+                        'status' => $this->bankStatus,
+                    ]);
+
+                    $this->password_transaction = "";
+                    $this->bankStatus = "";
+                    $this->bankId = "";
+
+                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+                        if ($check->status == 'SUCCESS') {
+
+                            if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                                $commission_transaction = $check->amount;
+
+                                app(TransfertServiceBackend::class)->createBankSend($check, $transactionCode, $transactionCompiCode);
+
+                                $this->updateUserWallet($commission_transaction);
+
+                                if (Auth::guard('web')->user()->is_distributer == 1) {
+
+                                    $this->updateAdminCom($check, $commission_transaction);
+                                }
+
+                                $valeur_amount_com = $check->adminCom->amount;
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Credit telephonique");
+                                    } else {
+
+                                        $this->cancelBankSendField();
+                                        $this->emit('modal-hide-bankSend-validated');
+                                        $this->emit('modal-hide-bankSend');
+                                        $this->emit('success', 'Credit téléphonique Acceptée sans commission sous-distibuteur !');
+
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+
+                                $this->notifyUsers($check, $admins, 'Bank Send', 'Demande de paiement bank send a été validé', 'Demande de paiement bank send validé');
+
+                                $message = 'Votre demande de bank Send de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été acceptée avec succès ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                $this->cancelBankSendField();
+                                $this->emit('modal-hide-bankSend-validated');
+                                $this->emit('modal-hide-bankSend');
+                                $this->emit('success', 'Bank send accepté !');
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+                                $this->sendMailPhoneCreditNotification($check);
+                            } else {
+                                $this->cancelBankSendField();
+                                $this->emit('modal-hide-bankSend-validated');
+                                $this->emit('modal-hide-bankSend');
+                                $this->emit('success', 'Bank send accepté !');
+                                $this->emit('error', 'Pas vous le valideur !!');
+                                return;
+                            }
+                        } elseif ($check->status == 'ERROR') {
+
+                            if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                                $commission = $check->amount + $check->costs_amount;
+
+                                $this->updateReloadWallet($check, $commission);
+
+                                $this->updateWalletNull($check, $commission);
+
+
+                                $this->handleReloadClientCommission($check, $admin_civ);
+
+                                $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createErrorBankSend($check, $transactionCode, $transactionCompiCode);
+
+
+                                $this->notifyUsers($check, $admins, 'Bank Send', 'Demande de Bank Send refusé', 'Demande de Bank Send refusé');
+
+                                $message = 'Votre demande de Bank Send de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été refusée ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                $this->cancelBankSendField();
+                                $this->emit('modal-hide-bankSend-validated');
+                                $this->emit('modal-hide-bankSend');
+                                $this->emit('success', 'Bank send accepté !');
+                                $this->emit('error', 'Bank Send refusé !');
+                                $this->sendMailPhoneCreditNotification($check);
+                            } else {
+                                $this->cancelBankSendField();
+                                $this->emit('modal-hide-bankSend-validated');
+                                $this->emit('modal-hide-bankSend');
+                                $this->emit('success', 'Bank send accepté !');
+                                $this->emit('error', 'Pas de modification !');
+                                return;
+                            }
+                        } else {
+                            $this->cancelBankSendField();
+                            $this->emit('modal-hide-bankSend-validated');
+                            $this->emit('modal-hide-bankSend');
+                            $this->emit('success', 'Bank send accepté !');
+                            $this->emit('error', 'Pas de modification !');
+                            return;
+                        }
+                    } else {
+                        $this->cancelBankSendField();
+                        $this->emit('modal-hide-bankSend-validated');
+                        $this->emit('modal-hide-bankSend');
+                        $this->emit('success', 'Bank send accepté !');
+                        $this->emit('error', 'Pas le valideur !');
+                        return;
+                    }
+                } else {
+                    $this->cancelBankSendField();
+                    $this->emit('modal-hide-bankSend-validated');
+                    $this->emit('modal-hide-bankSend');
+                    $this->emit('error', 'Bank send refusé pour mot de passe incorrecte !');
+                    return;
+                }
+            } elseif ($this->password_transaction = "" ||  $this->bankStatus = "") {
+                $this->cancelBankSendField();
+                $this->emit('modal-hide-bankSend-validated');
+                $this->emit('modal-hide-bankSend');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
+                return;
+            } else {
+                $this->cancelBankSendField();
+                $this->emit('modal-hide-bankSend-validated');
+                $this->emit('modal-hide-bankSend');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+                return;
+            }
+            DB::commit();
+        } catch (\Exception $exception) {
+            $this->cancelBankSendField();
+            $this->emit('modal-hide-bankSend-validated');
+            $this->emit('modal-hide-bankSend');
+            $this->emit('success', 'Bank send accepté !');
+            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
     public function updateXbet()
     {
         $check = WalletXbet::whereId($this->xbetId)->first();
@@ -1852,7 +2097,7 @@ class Transfers extends Component
         $this->emit('modal-hide-push');
     }
 
-      public function tryOpenModalVirement($modalName)
+    public function tryOpenModalVirement($modalName)
     {
         // Vérifie si le champ est vide
         if (empty($this->virementStatus)) {
@@ -1865,7 +2110,7 @@ class Transfers extends Component
         $this->emit('modal-hide-virement');
     }
 
-      public function tryOpenModalPaiementInvoice($modalName)
+    public function tryOpenModalPaiementInvoice($modalName)
     {
         // Vérifie si le champ est vide
         if (empty($this->paiementStatus)) {
@@ -1878,7 +2123,7 @@ class Transfers extends Component
         $this->emit('modal-hide-paiement');
     }
 
-        public function tryOpenModalReloadCard($modalName)
+    public function tryOpenModalReloadCard($modalName)
     {
         // Vérifie si le champ est vide
         if (empty($this->reloadcardStatus)) {
@@ -1891,7 +2136,7 @@ class Transfers extends Component
         $this->emit('modal-hide-reloadCard');
     }
 
-     public function tryOpenModalDjamo($modalName)
+    public function tryOpenModalDjamo($modalName)
     {
         // Vérifie si le champ est vide
         if (empty($this->djamoStatus)) {
@@ -1904,7 +2149,7 @@ class Transfers extends Component
         $this->emit('modal-hide-djamo');
     }
 
-      public function tryOpenModalInter($modalName)
+    public function tryOpenModalInter($modalName)
     {
         // Vérifie si le champ est vide
         if (empty($this->interStatus)) {
@@ -1914,6 +2159,20 @@ class Transfers extends Component
 
         $this->resetErrorBag('interStatus');
         $this->emit('modal-inter-validted-show', $modalName);
+        // $this->emit('modal-hide-inter');
+    }
+
+
+    public function tryOpenModalBankSend($modalName)
+    {
+        // Vérifie si le champ est vide
+        if (empty($this->bankStatus)) {
+            $this->addError('bankStatus', 'Veuillez sélectionner un statut avant de continuer.');
+            return;
+        }
+
+        $this->resetErrorBag('bankStatus');
+        $this->emit('modal-bankSend-validted-show', $modalName);
         // $this->emit('modal-hide-inter');
     }
 
@@ -1943,160 +2202,153 @@ class Transfers extends Component
 
         // try {
 
-            if ($check->status == 'PENDING') {
+        if ($check->status == 'PENDING') {
 
-                $this->validate(
-                    [
-                        'versementStatus' => 'required',
-                        'password_transaction' => 'required',
-                    ],
-                    [
+            $this->validate(
+                [
+                    'versementStatus' => 'required',
+                    'password_transaction' => 'required',
+                ],
+                [
 
-                        'versementStatus.required' =>
-                        'Le statut est obligatoire',
-                        'password_transaction.required' =>
-                        'Le mot de passe est obligatoire'
-                    ]
-                );
+                    'versementStatus.required' =>
+                    'Le statut est obligatoire',
+                    'password_transaction.required' =>
+                    'Le mot de passe est obligatoire'
+                ]
+            );
 
-                if (Hash::check($this->password_transaction, $user_auth->password)) {
+            if (Hash::check($this->password_transaction, $user_auth->password)) {
 
-                    $check->update([
-                        'description' => $this->versementDescription ?? null,
-                        'updated_by' => sabdy()->id,
-                        'status' => $this->versementStatus,
-                    ]);
+                $check->update([
+                    'description' => $this->versementDescription ?? null,
+                    'updated_by' => sabdy()->id,
+                    'status' => $this->versementStatus,
+                ]);
 
-                    $this->password_transaction = "";
-                    $this->versementStatus = "";
-                    $this->versementId = "";
+                $this->password_transaction = "";
+                $this->versementStatus = "";
+                $this->versementId = "";
 
-                    if ($check->updated_by == sabdy()->id) {
+                if ($check->updated_by == sabdy()->id) {
 
-                        if ($check->status == 'SUCCESS') {
+                    if ($check->status == 'SUCCESS') {
 
-                            if ($check->updated_by == sabdy()->id) {
+                        if ($check->updated_by == sabdy()->id) {
 
 
-                                $commission_transaction = $check->amount;
+                            $commission_transaction = $check->amount;
 
-                                $paymentXbet = app(TransfertServiceBackend::class)->createVersement($check, $transactionCode, $transactionCompiCode);
+                            $paymentXbet = app(TransfertServiceBackend::class)->createVersement($check, $transactionCode, $transactionCompiCode);
 
-                                app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
+                            app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
 
-                                $this->updateUserWallet($commission_transaction);
+                            $this->updateUserWallet($commission_transaction);
 
-                                if (sabdy()->is_distributer == 1) {
+                            if (sabdy()->is_distributer == 1) {
 
-                                    $this->updateAdminCom($check, $commission_transaction);
-                                }
+                                $this->updateAdminCom($check, $commission_transaction);
+                            }
 
-                                $valeur_amount_com = $check->adminCom->amount;
+                            $valeur_amount_com = $check->adminCom->amount;
 
-                                if ($check->wallet->sidUser->is_under_distributer == true) {
+                            if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+                                if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Versement Bancaires");
-                                    } else {
-                                        $this->cancelVersementField();
-                                        $this->emit('modal-hide-versement-validated');
-                                        $this->emit('modal-hide-versement');
-                                        $this->emit('success', 'Versement Acceptée sans commission sous-distibuteur !');
-                                        return;
-                                    }
+                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Versement Bancaires");
                                 } else {
-
-                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                    $this->cancelVersementField();
+                                    $this->emit('modal-hide-versement-validated');
+                                    $this->emit('modal-hide-versement');
+                                    $this->emit('success', 'Versement Acceptée sans commission sous-distibuteur !');
+                                    return;
                                 }
-
-                                $this->notifyUsers($check, $admins, 'Versement', 'Demande de paiement de Versement a été validé', 'Demande de paiement de Versement validé');
-
-                                $message = 'Votre demande de Versement de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' le ' .
-                                    $check->updated_at .
-                                    ' a été acceptée avec succès ' .
-                                    'Robus vous remercie';
-
-                                if ($this->shouldNotifyCI($check)) {
-
-                                    $this->sendSuccessMessageNotification($check, $message);
-                                }
-
-                                $this->cancelVersementField();
-                                $this->emit('modal-hide-versement-validated');
-                                $this->emit('modal-hide-versement');
-                                $this->emit('success', 'Achat de transaction 1xbet validez avec succes !');
-                                if ($admins->count() > 0) {
-                                    $this->notifyAdmins($admins);
-                                }
-
-                                app(NotificationServiceBackend::class)->sendMailVersementNotification($check);
                             } else {
 
-                                $this->cancelVersementField();
-                                $this->emit('modal-hide-versement-validated');
-                                $this->emit('modal-hide-versement');
-                                $this->emit('error', 'Pas vous le valideur !!');
-                                return;
+                                app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                             }
-                        } elseif ($check->status == 'ERROR') {
 
-                            if ($check->updated_by == Auth::guard('web')->user()->id) {
+                            $this->notifyUsers($check, $admins, 'Versement', 'Demande de paiement de Versement a été validé', 'Demande de paiement de Versement validé');
 
+                            $message = 'Votre demande de Versement de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' le ' .
+                                $check->updated_at .
+                                ' a été acceptée avec succès ' .
+                                'Robus vous remercie';
 
-                                $commission = $check->amount + $check->costs_amount;
+                            if ($this->shouldNotifyCI($check)) {
 
-                                $this->updateReloadWallet($check, $commission);
-
-                                $this->updateWalletNull($check, $commission);
-
-
-                                $this->handleReloadClientCommission($check, $admin_civ);
-
-                                $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createVersement($check, $transactionCode, $transactionCompiCode);
-
-                                app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPhoneCredit);
-
-                                $this->notifyUsers($check, $admins, 'Versement', 'Demande de Versement a été refusé', 'Demande de Versement refusé');
-
-                                $message = 'Votre demande de Versement de ' .
-                                    $check->amount .
-                                    $check->wallet->currencie->code .
-                                    ' ' .
-                                    'par ' .
-                                    $check->provider->name .
-                                    ' le ' .
-                                    $check->updated_at .
-                                    ' a été refusée ' .
-                                    'Robus vous remercie';
-
-                                if ($this->shouldNotifyCI($check)) {
-
-                                    $this->sendSuccessMessageNotification($check, $message);
-                                }
-
-                                if ($admins->count() > 0) {
-                                    $this->notifyAdmins($admins);
-                                }
-
-                                $this->cancelVersementField();
-                                $this->emit('modal-hide-versement-validated');
-                                $this->emit('modal-hide-versement');
-                                $this->emit('error', 'Achat de credit refusé !');
-                                app(NotificationServiceBackend::class)->sendMailVersementNotification($check);
-                            } else {
-                                $this->cancelVersementField();
-                                $this->emit('modal-hide-versement-validated');
-                                $this->emit('modal-hide-versement');
-                                $this->emit('error', 'Pas de modification !');
-                                return;
+                                $this->sendSuccessMessageNotification($check, $message);
                             }
+
+                            $this->cancelVersementField();
+                            $this->emit('modal-hide-versement-validated');
+                            $this->emit('modal-hide-versement');
+                            $this->emit('success', 'Achat de transaction 1xbet validez avec succes !');
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
+                            app(NotificationServiceBackend::class)->sendMailVersementNotification($check);
+                        } else {
+
+                            $this->cancelVersementField();
+                            $this->emit('modal-hide-versement-validated');
+                            $this->emit('modal-hide-versement');
+                            $this->emit('error', 'Pas vous le valideur !!');
+                            return;
+                        }
+                    } elseif ($check->status == 'ERROR') {
+
+                        if ($check->updated_by == Auth::guard('web')->user()->id) {
+
+
+                            $commission = $check->amount + $check->costs_amount;
+
+                            $this->updateReloadWallet($check, $commission);
+
+                            $this->updateWalletNull($check, $commission);
+
+
+                            $this->handleReloadClientCommission($check, $admin_civ);
+
+                            $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createVersement($check, $transactionCode, $transactionCompiCode);
+
+                            app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPhoneCredit);
+
+                            $this->notifyUsers($check, $admins, 'Versement', 'Demande de Versement a été refusé', 'Demande de Versement refusé');
+
+                            $message = 'Votre demande de Versement de ' .
+                                $check->amount .
+                                $check->wallet->currencie->code .
+                                ' ' .
+                                'par ' .
+                                $check->provider->name .
+                                ' le ' .
+                                $check->updated_at .
+                                ' a été refusée ' .
+                                'Robus vous remercie';
+
+                            if ($this->shouldNotifyCI($check)) {
+
+                                $this->sendSuccessMessageNotification($check, $message);
+                            }
+
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
+                            $this->cancelVersementField();
+                            $this->emit('modal-hide-versement-validated');
+                            $this->emit('modal-hide-versement');
+                            $this->emit('error', 'Achat de credit refusé !');
+                            app(NotificationServiceBackend::class)->sendMailVersementNotification($check);
                         } else {
                             $this->cancelVersementField();
                             $this->emit('modal-hide-versement-validated');
@@ -2106,32 +2358,39 @@ class Transfers extends Component
                         }
                     } else {
                         $this->cancelVersementField();
-                        $this->emit('modal-hide-versement');
                         $this->emit('modal-hide-versement-validated');
-                        $this->emit('error', 'Pas le valideur !');
+                        $this->emit('modal-hide-versement');
+                        $this->emit('error', 'Pas de modification !');
                         return;
                     }
                 } else {
                     $this->cancelVersementField();
                     $this->emit('modal-hide-versement');
                     $this->emit('modal-hide-versement-validated');
-                    $this->emit('error', 'Mot de passe Incorrect !');
+                    $this->emit('error', 'Pas le valideur !');
                     return;
                 }
-            } elseif ($this->password_transaction = "" ||  $this->versementStatus = "") {
-                $this->cancelVersementField();
-                $this->emit('modal-hide-versement-validated');
-                $this->emit('modal-hide-versement');
-                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
-                return;
             } else {
                 $this->cancelVersementField();
                 $this->emit('modal-hide-versement');
                 $this->emit('modal-hide-versement-validated');
-                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+                $this->emit('error', 'Mot de passe Incorrect !');
                 return;
             }
-            DB::commit();
+        } elseif ($this->password_transaction = "" ||  $this->versementStatus = "") {
+            $this->cancelVersementField();
+            $this->emit('modal-hide-versement-validated');
+            $this->emit('modal-hide-versement');
+            $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
+            return;
+        } else {
+            $this->cancelVersementField();
+            $this->emit('modal-hide-versement');
+            $this->emit('modal-hide-versement-validated');
+            $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
+            return;
+        }
+        DB::commit();
         // } catch (\Exception $exception) {
         //     $this->cancelVersementField();
         //     $this->emit('modal-hide-versement-validated');
@@ -2350,7 +2609,7 @@ class Transfers extends Component
         }
     }
 
-      public function updateDjamo()
+    public function updateDjamo()
     {
         $check = WalletDjamo::whereId($this->djamoId)->first();
         $transactionData = $this->generateTransactionData();
@@ -4045,6 +4304,47 @@ class Transfers extends Component
         }
     }
 
+    public function ChooseUpdateBankSend($id)
+    {
+
+        DB::beginTransaction();
+
+        $sidAuth = Auth::guard('web')->user();
+
+        try {
+
+            $walletUpdate = WalletBankSend::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
+                DB::rollBack();
+                $this->emit('menu-paiement-active');
+                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
+                event(new ChoosePaymentEvent($walletUpdate));
+                return;
+            }
+
+            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
+
+                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
+
+                    $this->updateWallet($walletUpdate, ChoosePaymentEvent::class, 'modal-hide-paiement', 'menu-paiement-active', 'Vous avez choisi un paiement');
+                } else {
+                    $this->emit('menu-paiement-active');
+                    $this->emit(
+                        'error',
+                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
+                    );
+                }
+            } else {
+                $this->emit('menu-paiement-active');
+                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+            }
+        } catch (\Exception $exception) {
+            $this->emit('menu-paiement-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
     public function ChooseUpdateInter($id)
     {
         DB::beginTransaction();
@@ -4225,10 +4525,57 @@ class Transfers extends Component
         $this->choose_type_paiement = null;
         $this->currentStep = 1;
         $this->code_validated = '';
+        $this->bankId = null;
+        $this->bank_description_edit = null;
+        $this->bankStatus = null;
+        $this->provider_bank_edit = null;
+        $this->country_bank_edit = null;
+        $this->amount_bank_edit = null;
+        $this->account_number_bank_edit = null;
+        $this->phone_bank_edit = null;
+        $this->name_bank_edit = null;
+        $this->name_sender_bank_edit = null;
+        $this->num_piece_bank_edit = null;
+        $this->phone_exp_bank_edit = null;
+        $this->swit_bank_edit = null;
+        $this->date_bank_edit = null;
+        $this->image_bank_edit = null;
+        $this->transaction_description = '';
+        $this->transaction_phone = '';
+        $this->provider_transaction = null;
+        $this->choose_type_transaction = null;
+        $this->compte_number_robus = '';
+        $this->transaction_amount_robus = '';
+        $this->transaction_amount_money = '';
+        $this->transaction_description_robus = '';
         $this->emit('modal-hide-inters');
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
     }
+
+    public function cancelBankSendField()
+    {
+
+        $this->bankId = null;
+        $this->bank_description_edit = null;
+        $this->bankStatus = null;
+        $this->provider_bank_edit = null;
+        $this->country_bank_edit = null;
+        $this->amount_bank_edit = null;
+        $this->account_number_bank_edit = null;
+        $this->phone_bank_edit = null;
+        $this->name_bank_edit = null;
+        $this->name_sender_bank_edit = null;
+        $this->num_piece_bank_edit = null;
+        $this->phone_exp_bank_edit = null;
+        $this->swit_bank_edit = null;
+        $this->date_bank_edit = null;
+        $this->image_bank_edit = null;
+        $this->emit('modal-hide-bankSend');
+        $this->emit('modal-hide-bankSend-validated');
+        $this->emit('menu-bankSend-active');
+    }
+
 
 
     public function cancelPhoneCreditField()
@@ -4291,8 +4638,8 @@ class Transfers extends Component
     {
         $this->virementDescription = '';
         $this->virementStatus = '';
-         $this->password_validated = null;
-         $this->emit('modal-hide-virement-validated');
+        $this->password_validated = null;
+        $this->emit('modal-hide-virement-validated');
         $this->emit('modal-hide-virement');
     }
 
@@ -4829,7 +5176,6 @@ class Transfers extends Component
         ]);
     }
 
-
     protected function updateUserWallet($commission_transaction)
     {
         return Auth::guard('web')->user()->wallet->update([
@@ -4960,7 +5306,6 @@ class Transfers extends Component
             'description_distributer' => 'Validation distributeur',
         ]);
     }
-    // End amount admins
 
 
     // Begin Nofitication CIV
@@ -5517,7 +5862,7 @@ class Transfers extends Component
         }
     }
 
- 
+
 
 
     public function getReloadTransactionProperty()

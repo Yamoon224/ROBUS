@@ -1234,9 +1234,9 @@
                 @if ($showVersementButton && sabdy()->hasPermissionTo('rechargement-versements'))
                     @include('components.versement_compo')
                 @endif
-                {{-- @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
+                @if ($showBankSendButton && sabdy()->hasPermissionTo('rechargement-bank-sends'))
                     @include('components.bank_send_compo')
-                @endif --}}
+                @endif
                 @if ($showPushButton && sabdy()->hasPermissionTo('rechargement-push'))
                     @include('components.push_compo')
                 @endif
@@ -1273,9 +1273,9 @@
                 @if (sabdy()->hasPermissionTo('rechargement-versements'))
                     @include('components.versement_compo')
                 @endif
-                {{-- @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
+                @if (sabdy()->hasPermissionTo('rechargement-bank-sends'))
                     @include('components.bank_send_compo')
-                @endif --}}
+                @endif
                 @if (sabdy()->hasPermissionTo('rechargement-push'))
                     @include('components.push_compo')
                 @endif
@@ -1296,6 +1296,7 @@
     @include('livewire.commissions.modals.transactions.updatePhoneCredit')
     @include('livewire.commissions.modals.transactions.updateVirementBank')
     @include('livewire.commissions.modals.transactions.updateInterTransfer')
+    @include('livewire.commissions.modals.transactions.updateBankSend')
     @include('livewire.commissions.modals.transactions.updateRelaodCards')
     @include('livewire.commissions.modals.transactions.updateTransfersUV')
     @include('livewire.commissions.modals.transactions.updateXbet')

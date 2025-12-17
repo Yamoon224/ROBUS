@@ -443,6 +443,9 @@
             $('#update-paiementInvoice-modal').removeClass('show');
             $('#update-paiementInvoice-modal').addClass('hide');
 
+            $('#update-bankSend-modal').removeClass('show');
+            $('#update-bankSend-modal').addClass('hide');
+
             // Paiement Histo
 
             $('#update-paiementHisto-modal').removeClass('show');
@@ -480,6 +483,10 @@
 
             $('#validated-inter-modal').removeClass('show');
             $('#validated-inter-modal').addClass('hide');
+
+
+            $('#validated-bankSend-modal').removeClass('show');
+            $('#validated-bankSend-modal').addClass('hide');
 
             $('#validated-transfersUV-modal').removeClass('show');
             $('#validated-transfersUV-modal').addClass('hide');
@@ -1094,6 +1101,55 @@
             $('#phone').removeClass('active');
         });
 
+        Livewire.on('modal-bankSend-validted-show', () => {
+            $('#validated-bankSend-modal').removeClass('hide');
+            $('#validated-bankSend-modal').addClass('show');
+            // $('body').removeClass('overflow');
+        });
+
+        Livewire.on('modal-hide-bankSend-validated', () => {
+
+
+            $('#update-bankSend-modal').removeClass('show');
+            $('#update-bankSend-modal').addClass('hide');
+
+            $('#validated-bankSend-modal').removeClass('show');
+            $('#validated-bankSend-modal').addClass('hide');
+
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+            $('#transfers-nav').removeClass('active');
+            $('transfers-nav').attr('aria-selected', false);
+            $('transfers').removeClass('active');
+            $('#paiement-nav').removeClass('active');
+            $('paiement-nav').attr('aria-selected', false);
+            $('#bank-send-nav').addClass('active');
+            $('bank-send-nav').attr('aria-selected', true);
+            $('#bank-send').addClass('active');
+            $('#virement-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
+            $('virement-nav').attr('aria-selected', false);
+            $('#virement').removeClass('active');
+            $('#inter-nav').removeClass('active');
+            $('inter-nav').attr('aria-selected', false);
+            $('#inter').removeClass('active');
+            $('#carte-nav').removeClass('active');
+            $('carte-nav').attr('aria-selected', false);
+            $('#carte').removeClass('active');
+            $('#phone-nav').removeClass('active');
+            $('phone-nav').attr('aria-selected', false);
+            $('#phone').removeClass('active');
+        });
+
         Livewire.on('modal-hide-virement-validated', () => {
 
             // Virement Bank
@@ -1450,6 +1506,54 @@
             $('#phone').removeClass('active');
         });
 
+        Livewire.on('modal-hide-bankSend', () => {
+
+            // Paiement Invoice
+            $('#create-bankSend-modal').removeClass('show');
+            $('#create-bankSend-modal').addClass('hide');
+
+            $('#update-bankSend-modal').removeClass('show');
+            $('#update-bankSend-modal').addClass('hide');
+
+            $('#validated-bankSend-modal').removeClass('show');
+            $('#validated-bankSend-modal').addClass('hide');
+
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+            $('#transfers-nav').removeClass('active');
+            $('transfers-nav').attr('aria-selected', false);
+            $('transfers').removeClass('active');
+            $('#paiement-nav').addClass('active');
+            $('paiement-nav').attr('aria-selected', false);
+
+            $('#bank-send-nav').addClass('active');
+            $('bank-send-nav').attr('aria-selected', true);
+
+            $('#bank-send').addClass('active');
+            $('#virement-nav').removeClass('active');
+            $('virement-nav').attr('aria-selected', false);
+            $('#virement').removeClass('active');
+            $('#inter-nav').removeClass('active');
+            $('inter-nav').attr('aria-selected', false);
+            $('#inter').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
+            $('#carte-nav').removeClass('active');
+            $('carte-nav').attr('aria-selected', false);
+            $('#carte').removeClass('active');
+            $('#phone-nav').removeClass('active');
+            $('phone-nav').attr('aria-selected', false);
+            $('#phone').removeClass('active');
+        });
+
         Livewire.on('modal-hide-paiementHisto', () => {
             // Paiement Invoice
             $('#update-paiementHisto-modal').removeClass('show');
@@ -1466,7 +1570,7 @@
             $('#create-reloadWalletCommission-modal').removeClass('show');
             $('#create-reloadWalletCommission-modal').addClass('hide');
 
-              $('#create-transactionWalletCommission-modal').removeClass('show');
+            $('#create-transactionWalletCommission-modal').removeClass('show');
             $('#create-transactionWalletCommission-modal').addClass('hide');
 
             $('#update-reloadWallet-modal').removeClass('show');
@@ -1515,7 +1619,7 @@
             $('#create-reloadWalletCommission-modal').removeClass('show');
             $('#create-reloadWalletCommission-modal').addClass('hide');
 
-                $('#create-transactionWalletCommission-modal').removeClass('show');
+            $('#create-transactionWalletCommission-modal').removeClass('show');
             $('#create-transactionWalletCommission-modal').addClass('hide');
 
 
@@ -2173,6 +2277,47 @@
             $('#phone-nav').addClass('active');
             $('phone-nav').attr('aria-selected', true);
             $('#phone').addClass('active');
+
+        });
+
+        Livewire.on('menu-bankSend-active', () => {
+
+
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+            $('#transfers-nav').removeClass('active');
+            $('transfers-nav').attr('aria-selected', false);
+            $('#transfers').removeClass('active');
+            $('#paiement-nav').removeClass('active');
+            $('paiement-nav').attr('aria-selected', false);
+            $('#paiement').removeClass('active');
+            $('#virement-nav').removeClass('active');
+            $('virement-nav').attr('aria-selected', false);
+            $('#virement').removeClass('active');
+            $('#inter-nav').removeClass('active');
+            $('inter-nav').attr('aria-selected', false);
+            $('#inter').removeClass('active');
+            $('#carte-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+            $('#xbet').removeClass('active');
+
+            $('carte-nav').attr('aria-selected', false);
+            $('#carte').removeClass('active');
+
+            $('#phone-nav').removeClass('active');
+            $('phone-nav').attr('aria-selected', false);
+            $('#phone').removeClass('active');
+
+            $('#bank-send-nav').addClass('active');
+            $('bank-send-nav').attr('aria-selected', true);
+            $('#bank-send').addClass('active');
 
         });
 
@@ -2989,7 +3134,7 @@
             $('#reload-nav').addClass('active');
             $('reload-nav').attr('aria-selected', true);
             $('#reload').addClass('active');
-                 $('#comTransaction-nav').removeClass('active');
+            $('#comTransaction-nav').removeClass('active');
             $('comTransaction-nav').attr('aria-selected', false);
             $('#comTransaction').removeClass('active');
 
@@ -3010,7 +3155,7 @@
             $('#comTransaction').removeClass('active');
         });
 
-          Livewire.on('modal-transactionWalletCommission-show', () => {
+        Livewire.on('modal-transactionWalletCommission-show', () => {
             $('#create-transactionWalletCommission-modal').removeClass('hide');
             $('#create-transactionWalletCommission-modal').addClass('show');
             $('#commission-nav').removeClass('active');
@@ -3019,7 +3164,7 @@
             $('#reload-nav').removeClass('active');
             $('reload-nav').attr('aria-selected', false);
             $('#reload').removeClass('active');
-                $('#comTransaction-nav').addClass('active');
+            $('#comTransaction-nav').addClass('active');
             $('comTransaction-nav').attr('aria-selected', false);
             $('#comTransaction').addClass('active');
         });
@@ -3363,6 +3508,42 @@
             $('#xbet-nav').removeClass('active');
             $('xbet-nav').attr('aria-selected', false);
         });
+
+        Livewire.on('update-bankSend-modal', () => {
+            $('#update-bankSend-modal').removeClass('hide');
+            $('#update-bankSend-modal').addClass('show');
+            $('#reload-nav').removeClass('active');
+            $('reload-nav').attr('aria-selected', false);
+            $('#reload').removeClass('active');
+            $('#transfers-nav').removeClass('active');
+            $('transfers-nav').attr('aria-selected', false);
+            $('transfers').removeClass('active');
+            $('#paiement-nav').addClass('active');
+            $('paiement-nav').attr('aria-selected', false);
+            $('#bank-send-nav').addClass('active');
+            $('bank-send-nav').attr('aria-selected', true);
+            $('#bank-send').addClass('active');
+            $('#virement-nav').removeClass('active');
+            $('virement-nav').attr('aria-selected', false);
+            $('#virement').removeClass('active');
+            $('#inter-nav').removeClass('active');
+
+            $('#wave-nav').removeClass('active');
+            $('wave-nav').attr('aria-selected', false);
+            $('#wave').removeClass('active');
+
+            $('inter-nav').attr('aria-selected', false);
+            $('#inter').removeClass('active');
+            $('#carte-nav').removeClass('active');
+            $('carte-nav').attr('aria-selected', false);
+            $('#carte').removeClass('active');
+            $('#phone-nav').removeClass('active');
+            $('phone-nav').attr('aria-selected', false);
+            $('#phone').removeClass('active');
+            $('#xbet-nav').removeClass('active');
+            $('xbet-nav').attr('aria-selected', false);
+        });
+
 
         Livewire.on('update-xbet-modal', () => {
             $('#update-xbet-modal').removeClass('hide');

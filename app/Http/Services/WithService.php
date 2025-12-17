@@ -6,6 +6,7 @@ namespace App\Http\Services;
 use App\Models\AdminsCom;
 use App\Models\Invoices\OneBetInvoice;
 use App\Models\Payments\OneBetTransaction;
+use App\Models\Wallets\WalletBankSend;
 use App\Models\Sid\SidUser;
 use App\Repositories\TresortRepository;
 use App\Repositories\PushRepository;
@@ -145,6 +146,57 @@ class WithService
     }
 
 
+    public function createWalletTransactionBanSend(
+       $amount_transaction,
+        $percent_robus,
+        $country_robus,
+        $provider_payment,
+        $phone,
+        $name_custumers,
+        $num_piece_custumers,
+        $date_piece,
+        $name,
+        $name_sender,
+        $account_number,
+        $phone_inter_expe,
+        $swit_code,
+        $imagePath,
+        )
+    {
+
+        $user = auth_user();
+
+        if (!$user || !$user->wallet) {
+            throw new \Exception('Utilisateur ou wallet non disponible.');
+        }
+
+        $amount_solde = (float) $user->wallet->amount;
+
+       return WalletBankSend::create([
+            'wallet_id' => robus()->wallet->id,
+            'amount' => $amount_transaction,
+            'description' => "Demande de transaction Bank send",
+            'bank_cost_id' => $percent_robus->id,
+            'phone' => $country_robus->indecative . $phone ?? null,
+            'number_compte' => $account_number,
+            'created_by' => robus()->id,
+            'provider_id' => $provider_payment,
+            'name_complet' => $name_custumers ?? null,
+            'name' => $name ?? null,
+            'num_piece' => $num_piece_custumers ?? null,
+            'name_benef' => $name_sender ?? null,
+            'phone_inter_expe' => $phone_inter_expe ?? null,
+            'swit_code' => $swit_code ?? null,
+            'validated_date' => $date_piece ?? null,
+            'costs_amount' => robus()->is_under_distributer ? ($percent_robus->amount) : ($percent_robus->amount),
+            'provider_type' => 1,
+            'status' => 'PENDING',
+            'countrie_id' => $country_robus->id,
+            'choose_type_transaction' => 1,
+            'amount_solde' => $amount_solde ?? null,
+            'image' => $imagePath ?? null,
+        ]);
+    }
 
     public function updateamountPushReceveid($admin_civ, $percent_robus, $walletWith, $amount, $is_drawal)
     {
@@ -233,6 +285,107 @@ class WithService
 
 
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_push_id', $walletWith->id, $valeur_percent_no_under);
+
+            if ($user->country->code == 'CI') {
+
+                $message =  'Vous avez effectué un paiement de ' . $walletWith->amount .  $user->wallet->currencie->code .
+                    ' ' .
+                    'par ' . $walletWith->provider->name .
+                    ' a ' . $walletWith->created_at .
+                    ' votre demande est en-cours de validation ' .
+                    'Robus vous remercie';
+
+                $encode = substr($user->phone, -10);
+
+                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+            }
+        }
+
+        return true;
+    }
+
+      public function updateamountReceveidBankSend($admin_civ, $percent_robus, $walletWith, $amount , $amountReceveid)
+    {
+
+        $user = auth_user();
+
+        $userId = $user->id;
+
+        $activeButtons = $this->operatorRestrictionService->getActiveButtons($userId);
+        $account_accepted = $user->is_accepted_companie ?? false;
+        $company_id      = $user->company_id ?? null;
+
+        if ($company_id) {
+            $compagnie = SidUser::whereIsCompany(true)->where('company_id', $company_id)->first();
+            $sidUserId = $account_accepted && $compagnie ? $compagnie->id : null;
+        } else {
+            $compagnie = null;
+            $sidUserId = null;
+        }
+
+        if ($sidUserId) {
+            $activeCButtons = $this->operatorRestrictionService->getActiveCButtons($sidUserId);
+        } else {
+            $activeCButtons = [];
+        }
+
+        $percent = $percent_robus->amount;
+
+
+        $percent_commission =  $percent_robus->percent_under;
+
+        $percent_compagnie = $percent_robus->percent_companie;
+
+        if ($user && $user->is_under_distributer || $user->is_api) {
+            $amount_commission = $amount;
+        } else {
+            $amount_commission = $amount + ($percent);
+        }
+
+        $amount_solde = $user->wallet->amount - $amount_commission;
+
+        $walletWith->update([
+            'amount_solde' => $amount_solde,
+            'amount_received' => $amountReceveid,
+        ]);
+
+        $user->wallet->update([
+            'reload_by' => $user->firstname . ' ' . $user->lastname,
+            'sid_user_relod' => $user->id,
+            'amount' => DB::raw('amount-'  .  $amount_commission),
+        ]);
+
+        $valuer_deposit = $percent_commission *  $amount;
+        $percent_valeur_compagnie = $percent_compagnie *  $amount;
+        $valeur_percent_no_under  = $percent * $amount;
+
+        // Commissions Inters 
+        if ($user && $user->is_under_distributer || $user->is_api == 1) {
+
+            $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
+
+            if (!empty($activeButtons['showRemonterPushButton'])) {
+
+                $walletWith->update([
+                    'commissions' => DB::raw('commissions+'  . $valuer_deposit),
+                ]);
+
+                $account_accepted = $user->is_accepted_companie ?? false;
+
+                if ($account_accepted && !empty($activeCButtons['showRemonterPushCButton'])) {
+                    $walletWith->increment('commission_companie', $percent_valeur_compagnie);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
+                } else {
+                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_bank_send_id',  $walletWith->id, $valeur_percent_no_under, $valuer_deposit);
+                }
+            } else {
+
+                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
+            }
+        } else {
+
+
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_bank_send_id', $walletWith->id, $valeur_percent_no_under);
 
             if ($user->country->code == 'CI') {
 

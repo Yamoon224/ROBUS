@@ -14,6 +14,7 @@ use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletTresortMoney;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use App\Models\Custumers\Country;
 
 class withTransactionController extends Controller
 {
@@ -240,7 +241,207 @@ class withTransactionController extends Controller
                 }
         }
 
-        public function create_TresortTransaction(Request $request, $is_drawal= false)
+        public function create_bankSend(Request $request, $country_id)
+        {
+                $countryBank = Country::findOrFail(107);
+                $user        = auth_user();
+
+                $userRate = robus()->country->currencie->value;
+                $bankRate = $countryBank->currencie->value;
+                $country_robus = Country::whereId($request->country_id)
+                        // ->whereStatus(true)
+                        ->first();
+                $percentRobus = $this->percentRobus->getRobusPercentageBankSend($country_id);
+
+                if (!$percentRobus) {
+                        return json_message_response(false, "Pas de commission définie pour ce pays", 422);
+                }
+
+                $validator = Validator::make($request->all(), [
+                        'amount' => 'required|numeric|min:1',
+                        'provider'                => 'required|integer',
+                        'phone_out'      => 'required',
+                        'country_id'    => 'required',
+                        'name_custumer'            => 'required|string',
+                        'name_sender'              => 'required|string',
+                        'num_piece'       => 'required|string',
+                        'date_piece'               => 'required|date',
+                        'account_number'           => 'required|string',
+                        'name'                     => 'required|string',
+                        'phone_expe'          => 'required|string',
+                        'swit_code'                => 'required|string',
+                        'image_piece'                    => 'required|image|mimes:jpg,jpeg,png|max:10240',
+                ]);
+
+                if ($validator->fails()) {
+                        return response()->json([
+                                'success' => false,
+                                'errors'  => $validator->errors(),
+                        ], 422);
+                }
+
+                try {
+                        /** ===============================
+                         *  1️⃣ Montant utilisateur
+                         * =============================== */
+                        $amountUser = (float) $this->validatedamountDays
+                                ->search_amount($request->amount);
+
+                        if ($amountUser <= 0) {
+                                return json_message_response(false, "Montant invalide", 422);
+                        }
+
+                        /** ===============================
+                         *  2️⃣ Conversion en CFA (banque)
+                         * =============================== */
+                        $amountCfa = $amountUser * ($userRate / $bankRate);
+
+                        /** ===============================
+                         *  3️⃣ Vérification plafond journalier
+                         * =============================== */
+                        if (!$this->validatedamountDays->validateDailyLimit(
+                                $this->validatedamountDays->getCeilingProperty(),
+                                $user->silver_ceiling
+                        )) {
+                                return json_message_response(false, "Plafond journalier atteint", 422);
+                        }
+
+                        /** ===============================
+                         *  4️⃣ Niveaux de commission
+                         * =============================== */
+                        $levels = $percentRobus->levelBankAuthers()
+                                ->orderBy('amount_begin')
+                                ->get();
+
+                        if ($levels->isEmpty()) {
+                                return json_message_response(false, "Configuration commission invalide", 422);
+                        }
+
+                        $min = $levels->first()->amount_begin;
+                        $max = $levels->last()->amount_end;
+
+                        if ($amountCfa < $min || $amountCfa > $max) {
+                                return json_message_response(
+                                        false,
+                                        "Montant autorisé entre " .
+                                                number_format($min, 0, ',', ' ') . " et " .
+                                                number_format($max, 0, ',', ' ') . " CFA",
+                                        422
+                                );
+                        }
+
+                        $level = $levels->first(
+                                fn($l) =>
+                                $amountCfa >= $l->amount_begin &&
+                                        $amountCfa <= $l->amount_end
+                        );
+
+                        if (!$level) {
+                                return json_message_response(false, "Aucun niveau de commission trouvé", 422);
+                        }
+
+                        /** ===============================
+                         *  5️⃣ Calcul commission CFA
+                         * =============================== */
+                        $isDistributor = $user->is_under_distributer || $user->is_api;
+
+                        $totalDebitCfa = $isDistributor
+                                ? (float) $amountCfa
+                                : (float) $level->amount + $amountCfa;
+
+                        /** ===============================
+                         *  6️⃣ Vérification solde utilisateur
+                         * =============================== */
+                        $totalDebitUser = $totalDebitCfa * ($bankRate / $userRate);
+
+                        if ($totalDebitUser > robus()->wallet->amount) {
+                                return json_message_response(false, "Solde insuffisant", 422);
+                        }
+
+                        /**ivalents
+                        /** ===============================
+                         *  7️⃣ Upload image
+                         * =============================== */
+                        $file_front = $request->file('image_piece');
+                        $imagePath = null;
+
+                        if ($file_front) {
+                                // Chemin de destination
+                                $destination_path = public_path('image_inters/' . $request->full_name . '/');
+
+                                // Création du dossier si inexistant
+                                if (!file_exists($destination_path)) {
+                                        mkdir($destination_path, 0777, true);
+                                }
+
+                                // Générer un nom unique
+                                $front_file = date('YmdHis') . "." . $file_front->getClientOriginalExtension();
+
+                                // Déplacer le fichier
+                                $file_front->move($destination_path, $front_file);
+
+                                // Construire l’URL de l’image
+                                $imagePath = env('APP_URL') . "/image_inters/" . $request->full_name . "/$front_file";
+                        }
+
+                        /** ===============================
+                         *  8️⃣ Création transaction
+                         * =============================== */
+                        $wallet = $this->withService->createWalletTransactionBanSend(
+                                $amountUser,
+                                $level,
+                                $country_robus,
+                                $request->provider,
+                                $request->phone_out,
+                                $request->name_custumer,
+                                $request->num_piece,
+                                $request->date_piece,
+                                $request->name,
+                                $request->name_sender,
+                                $request->account_number,
+                                $request->phone_expe,
+                                $request->swit_code,
+                                $imagePath
+                        );
+
+                        if (!$wallet) {
+                                return json_message_response(false, "Erreur création transaction bank Send", 500);
+                        }
+
+                        /** ===============================
+                         *  9️⃣ Mise à jour montants reçus
+                         * =============================== */
+
+                        $totalAmountReceivedCfa = $isDistributor
+                                ? (float) $amountCfa
+                                : (float) $level->amount + $amountCfa;
+
+                        $totalAmountRecevedUser = $totalAmountReceivedCfa * ($bankRate / $userRate);
+
+                        $this->withService->updateamountReceveidBankSend(
+                                $this->validatedamountDays->adminCiv(),
+                                $percentRobus,
+                                $wallet,
+                                $amountCfa,
+                                $totalAmountRecevedUser
+                        );
+
+                        /** ===============================
+                         *  🔟 Notifications
+                         * =============================== */
+                        $this->notificationPhone->sendNotificationWiths($wallet);
+                } catch (\Throwable $e) {
+                        report($e);
+
+                        return json_message_response(
+                                false,
+                                "Erreur inattendue. Veuillez contacter le support ROBUS",
+                                500
+                        );
+                }
+        }
+
+        public function create_TresortTransaction(Request $request, $is_drawal = false)
         {
 
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
@@ -356,7 +557,7 @@ class withTransactionController extends Controller
                 }
         }
 
-        public function create_DjamoTransaction(Request $request, $is_drawal= false)
+        public function create_DjamoTransaction(Request $request, $is_drawal = false)
         {
 
                 $amount_days = $this->validatedamountDays->getCeilingProperty();
@@ -531,12 +732,13 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
-                if (!$this->withService->updateamountPushReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount , $is_drawal)) {
+                if (!$this->withService->updateamountPushReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount, $is_drawal)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
                 return ['success' => true, 'walletWith' => $walletPush];
         }
+
 
         private function processTresortTransaction($request, $percent_robus, $amountReceved, $is_drawal)
         {
@@ -554,7 +756,7 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionTresortMoney($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved , $is_drawal);
+                $walletPush =  $this->withService->createWalletTransactionTresortMoney($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -784,6 +986,109 @@ class withTransactionController extends Controller
 
                 return $this->searchWallet('push', $amount_send, $is_drawal);
         }
+
+        public function search_bank_send(float $amount_send, int $countryId)
+        {
+                // Pays banque (CFA)
+                $bankCountry = Country::find(107);
+
+                if (!$amount_send || $amount_send <= 0) {
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'Montant invalide.',
+                        ], 400);
+                }
+
+                // Récupération du pourcentage Robus
+                $commissionBank = $this->percentRobus->getRobusPercentageBankSend($countryId);
+
+                if (!$commissionBank) {
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'Pas de rechargement bancaire pour ce pays.',
+                        ], 200);
+                }
+
+                // Valeurs de devises
+                $userCurrencyValue   = robus()->country->currencie->value;
+                $bankCurrencyValue   = $bankCountry->currencie->value;
+
+                if ($bankCurrencyValue <= 0) {
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'Devise bancaire invalide.',
+                        ], 500);
+                }
+
+                /**
+                 * 🔁 Conversion utilisateur → CFA
+                 */
+                $amountCfa = $amount_send * ($userCurrencyValue / $bankCurrencyValue);
+
+                $levels = $commissionBank->levelBankAuthers()
+                        ->orderBy('amount_begin', 'asc')
+                        ->get();
+
+                if ($levels->isEmpty()) {
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'Aucune tranche de commission disponible.',
+                        ], 200);
+                }
+
+                $minAmount = $levels->first()->amount_begin;
+                $maxAmount = $levels->last()->amount_end;
+
+                if ($minAmount !== null && $amountCfa < $minAmount) {
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'Montant minimum : ' . number_format($minAmount, 2, ',', ' ') . ' CFA',
+                        ], 200);
+                }
+
+                if ($maxAmount !== null && $amountCfa > $maxAmount) {
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'Montant maximum : ' . number_format($maxAmount, 2, ',', ' ') . ' CFA',
+                        ], 200);
+                }
+
+                $isDistributor = robus()->is_under_distributer || robus()->is_distributer;
+
+                foreach ($levels as $level) {
+
+                        if ($amountCfa >= $level->amount_begin && $amountCfa <= $level->amount_end) {
+
+                                /**
+                                 * 💰 Commission en CFA
+                                 */
+                                $commissionCfa = $isDistributor
+                                        ? (float) $level->percent_under
+                                        : (float) $level->amount;
+
+                                /**
+                                 * 🔁 Conversion CFA → devise utilisateur
+                                 */
+                                $commissionUser = $commissionCfa * ($bankCurrencyValue / $userCurrencyValue);
+                                $amountUser     = $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
+
+                                return response()->json([
+                                        'success' => true,
+                                        'data' => [
+                                                'amount_send'    => $amountUser,
+                                                'amount_pay'     => $commissionUser,
+                                                'amount_receive' => $amountUser,
+                                        ],
+                                ], 200);
+                        }
+                }
+
+                return response()->json([
+                        'success' => false,
+                        'message' => 'Aucune tranche correspondante.',
+                ], 200);
+        }
+
 
         public function search_Tresort($amount_send, $is_drawal = false)
         {

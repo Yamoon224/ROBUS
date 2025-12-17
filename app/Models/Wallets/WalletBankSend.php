@@ -9,11 +9,12 @@ use App\Models\Payments\Deposit;
 use App\Models\Costs\BankCommission;
 use App\Models\Providers\Provider;
 use Spatie\Activitylog\LogOptions;
-use App\Models\Invoices\InvoiceDeposit;
+use App\Models\Invoices\InvoiceBankSend;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\Activitylog\Traits\LogsActivity;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Sid\SidUser;
+use App\Models\Custumers\Country;
 
 class WalletBankSend extends Model
 {
@@ -62,14 +63,19 @@ class WalletBankSend extends Model
         return $this->hasOne(Deposit::class);
     }
 
-    public function invoiceDeposit()
+    public function invoiceBankSend()
     {
-        return $this->hasOne(InvoiceDeposit::class);
+        return $this->hasOne(InvoiceBankSend::class);
     }
 
     public function depositCost()
     {
         return $this->belongsTo(BankCommission::class, 'bank_cost_id', 'id')->withTrashed();
+    }
+
+      public function country()
+    {
+        return $this->belongsTo(Country::class, 'countrie_id', 'id')->withTrashed();
     }
 
     public function getActivitylogOptions(): LogOptions

@@ -344,22 +344,11 @@ class TransactionCiv extends Component
         }
 
         $levels = $commissionBank->levelBankAuthers()
-            ->orderBy('amount_begin', 'asc') // Tri par montant début
+            ->orderBy('amount_begin', 'asc')
             ->get();
 
         $valeur_first = $levels->first()?->amount_begin;
         $valeur_end   = $levels->last()?->amount_end;
-
-        // Vérification limites
-        if ($valeur_first !== null && $reelAmount < $valeur_first) {
-            $msg = "Montant min est : " . number_format($valeur_first, 2, ',', ' ');
-            return [$msg, $msg];
-        }
-
-        if ($valeur_end !== null && $reelAmount > $valeur_end) {
-            $msg = "Montant maxi est : " . number_format($valeur_end, 2, ',', ' ');
-            return [$msg, $msg];
-        }
 
         // Conversion en devise utilisateur
         $currencyValue = sabdy()->country->currencie->value;
@@ -367,6 +356,17 @@ class TransactionCiv extends Component
 
         // Conversion selon ratio
         $reelAmountConvertion = $reelAmount * ($currencyValue / $countryCurrencyValue);
+
+        // Vérification limites
+        if ($valeur_first !== null && $reelAmountConvertion < $valeur_first) {
+            $msg = "Montant min est : " . number_format($valeur_first, 2, ',', ' ');
+            return [$msg, $msg];
+        }
+
+        if ($valeur_end !== null && $reelAmountConvertion > $valeur_end) {
+            $msg = "Montant maxi est : " . number_format($valeur_end, 2, ',', ' ');
+            return [$msg, $msg];
+        }
 
         // Calcul de la commission correspondant au niveau
         foreach ($levels as $level) {
@@ -1465,13 +1465,16 @@ class TransactionCiv extends Component
                             return $this->failInter('Niveau de pourcentage introuvable !!');
                         }
 
-                        // Montant utilisateur (devise utilisateur)
+                        $countryBank = Country::findOrFail(107); 
+                        $userRate    = sabdy()->country->currencie->value;
+                        $bankRate    = $countryBank->currencie->value;
+
                         $amountUser = $this->search_amount($this->transaction_bank_amount);
                         if ($amountUser <= 0) {
                             return;
                         }
-
-                        $valeur_max_send = $country_robus->amount_max_send;
+                        $amountCfa = $amountUser * ($userRate / $bankRate);
+                        $valeur_max_send = $country_robus->amount_max_send * ($userRate / $bankRate);
 
                         if (!$this->validateAmountSendLimit($amountUser, $valeur_max_send)) {
                             return $this->failInter(
@@ -1491,12 +1494,7 @@ class TransactionCiv extends Component
        Conversion devise → CFA
     ================================ */
 
-                        $countryBank = Country::findOrFail(107); // CFA
-                        $userRate    = sabdy()->country->currencie->value;
-                        $bankRate    = $countryBank->currencie->value;
 
-                        // Montant converti en CFA
-                        $amountCfa = $amountUser * ($userRate / $bankRate);
 
                         /* ===============================
        Niveaux de commission

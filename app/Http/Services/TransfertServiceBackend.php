@@ -8,6 +8,7 @@ use App\Models\Invoices\InvoiceBank;
 use App\Models\Invoices\InvoiceDeposit;
 use App\Models\Invoices\InvoiceInter;
 use App\Models\Invoices\InvoicePayment;
+use App\Models\Invoices\InvoiceBankSend;
 use App\Models\Invoices\InvoicePhoneCredit;
 use App\Models\Invoices\InvoiceTransaction;
 use App\Models\Invoices\OneBetInvoice;
@@ -481,7 +482,7 @@ class TransfertServiceBackend
         ]);
     }
 
-     public function createMobileWalletBankSendWith(
+    public function createMobileWalletBankSendWith(
         $amount_transaction,
         $percent_robus,
         $country_robus,
@@ -516,7 +517,7 @@ class TransfertServiceBackend
             'phone_inter_expe' => $phone_inter_expe ?? null,
             'swit_code' => $swit_code ?? null,
             'validated_date' => $date_piece ?? null,
-            'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->amount ) : ($percent_robus->amount),
+            'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->amount) : ($percent_robus->amount),
             'provider_type' => 1,
             'status' => 'PENDING',
             'countrie_id' => $country_robus->id,
@@ -739,6 +740,21 @@ class TransfertServiceBackend
             'status' => $check->status,
         ]);
     }
+
+        public function createErrorBankSend($check, $transactionCode, $transactionCompiCode)
+    {
+        return  InvoiceBankSend::create([
+            'wallet_bank_send_id' => $check->id,
+            'created_by' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
+            'pay_amount' => 0.0,
+            'fee_amount' => 0.0,
+            'received_amount' => $check->amount + $check->costs_amount,
+            'status' => $check->status,
+        ]);
+    }
+
 
     public function createErrorDeposit($check, $transactionCode, $transactionCompiCode)
     {
@@ -1008,6 +1024,20 @@ class TransfertServiceBackend
             'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
             'operator_transaction_name' => $check->provider->name,
             'trans_comp_id' => 'ROBUS_' . $transactionCompiCode,
+            'pay_amount' => $check->amount,
+            'fee_amount' => $check->costs_amount ?? null,
+            'received_amount' => $check->amount,
+            'status' => $check->status,
+        ]);
+    }
+
+    public function createBankSend($check, $transactionCode, $transactionCompiCode)
+    {
+        return InvoiceBankSend::create([
+            'wallet_bank_send_id' => $check->id,
+            'created_by' => Auth::guard('web')->user()->id,
+            'transaction_id' => 'ROBUS_' . $check->provider->name . '_' . $transactionCode,
+            'operator_transaction_name' => $check->provider->name,
             'pay_amount' => $check->amount,
             'fee_amount' => $check->costs_amount ?? null,
             'received_amount' => $check->amount,
