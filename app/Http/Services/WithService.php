@@ -147,7 +147,7 @@ class WithService
 
 
     public function createWalletTransactionBanSend(
-       $amount_transaction,
+        $amount_transaction,
         $percent_robus,
         $country_robus,
         $provider_payment,
@@ -161,8 +161,7 @@ class WithService
         $phone_inter_expe,
         $swit_code,
         $imagePath,
-        )
-    {
+    ) {
 
         $user = auth_user();
 
@@ -172,7 +171,7 @@ class WithService
 
         $amount_solde = (float) $user->wallet->amount;
 
-       return WalletBankSend::create([
+        return WalletBankSend::create([
             'wallet_id' => robus()->wallet->id,
             'amount' => $amount_transaction,
             'description' => "Demande de transaction Bank send",
@@ -304,7 +303,7 @@ class WithService
         return true;
     }
 
-      public function updateamountReceveidBankSend($admin_civ, $percent_robus, $walletWith, $amount , $amountReceveid)
+    public function updateamountReceveidBankSend($admin_civ, $percent_robus, $walletWith, $amount, $amountReceveid)
     {
 
         $user = auth_user();
@@ -355,24 +354,25 @@ class WithService
             'amount' => DB::raw('amount-'  .  $amount_commission),
         ]);
 
-        $valuer_deposit = $percent_commission *  $amount;
-        $percent_valeur_compagnie = $percent_compagnie *  $amount;
-        $valeur_percent_no_under  = $percent * $amount;
+        $valuer_deposit = $percent_commission;
+        $percent_valeur_compagnie = $percent_compagnie;
+        $valeur_percent_no_under  = $percent;
 
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
-            $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
+            $valeur_amount_admin  = $percent_robus->percent_admin;
 
-            if (!empty($activeButtons['showRemonterPushButton'])) {
+            if (!empty($activeButtons['showRemonterBankSendButton'])) {
+
 
                 $walletWith->update([
-                    'commissions' => DB::raw('commissions+'  . $valuer_deposit),
+                    'commissions' => DB::raw('COALESCE(commissions, 0) + ' . (float) $valuer_deposit),
                 ]);
 
                 $account_accepted = $user->is_accepted_companie ?? false;
 
-                if ($account_accepted && !empty($activeCButtons['showRemonterPushCButton'])) {
+                if ($account_accepted && !empty($activeCButtons['showRemonterBankSendCButton'])) {
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
                 } else {

@@ -208,9 +208,16 @@
                                             title="Modifier">
                                             Modifier
                                         </a>
-                                        <a class="btn btn-primary  mr-1 mb-2 btn-sm"
+                                        <a class="mr-1 mb-2"
                                             href="{{ route('employes.show', ['id' => $item->id]) }}">
-                                            Détails
+                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                icon-name="eye" data-lucide="eye"
+                                                class="lucide lucide-eye block mx-auto h-15 mr-1">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
                                         </a>
                                     </div>
                                 </td>

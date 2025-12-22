@@ -209,21 +209,29 @@ class PaymentController extends Controller
                         $validationRules = [
                             'number_phone' => 'required',
                             'offer' => 'required',
+                            'name' => 'required',
+
+
                         ];
 
                         $validationMessages = [
                             'number_phone.required' => 'Votre numero est obligatoire',
                             'offer.required' => 'Offre est obligatoire',
+                            'name.required' => 'Nom est obligatoire',
+
                         ];
                     } else {
                         $validationRules = [
                             'number_decoder' => 'required|max:14',
                             'offer' => 'required',
+                            'name' => 'required',
+
                         ];
 
                         $validationMessages = [
                             'number_decoder.required' => 'Votre numero est obligatoire',
                             'offer.required' => 'Offre est obligatoire',
+                            'name.required' => 'Nom est obligatoire',
                         ];
                     }
                 } else {
@@ -282,7 +290,7 @@ class PaymentController extends Controller
                                 }
                             } else {
 
-                                $walletPayment =  $this->paymentService->createRobusWalletTransactionPaymentOffer($amount_send, $request->provider, $percent_robus, $request->number_phone, $offers,  $request->paiementChoix_phone, $request->facture_choix_type, $request->number_decoder, $request->id_invoice, $request->number_contract);
+                                $walletPayment =  $this->paymentService->createRobusWalletTransactionPaymentOffer($amount_send, $request->provider, $percent_robus, $request->number_phone, $offers,  $request->paiementChoix_phone, $request->facture_choix_type, $request->number_decoder, $request->id_invoice, $request->number_contract , $request->name);
 
                                 if ($walletPayment != null) {
 

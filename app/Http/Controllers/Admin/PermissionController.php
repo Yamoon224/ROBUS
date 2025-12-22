@@ -50,6 +50,25 @@ class PermissionController extends Controller
         return view('pages.admin.add_messages');
     }
 
+
+    public function send_custumers_messages()
+    {
+         if (!Auth::user()->hasPermissionTo('envoie-messages')) {
+            abort(403);
+        }
+        return view('pages.admin.add_custumers_messages');
+    }
+
+
+    public function send_companie_messages()
+    {
+         if (!Auth::user()->hasPermissionTo('envoie-messages')) {
+            abort(403);
+        }
+        return view('pages.admin.add_compagnie_messages');
+    }
+
+
     public function add_pubs()
     {
 
@@ -273,7 +292,9 @@ class PermissionController extends Controller
             $users = SidUser::where('is_under_distributer', true)->get();
         } elseif ($request->typ_user === "custumers") {
             $users = SidUser::where('is_custumers', true)->get();
-        } else {
+        }  elseif ($request->typ_user === "companies") {
+            $users = SidUser::where('is_company', true)->get();
+        }else {
             return redirect('application/messages/add')
                 ->with('color', 'danger')
                 ->with('status', 'Type d’utilisateur invalide')
@@ -306,6 +327,10 @@ class PermissionController extends Controller
         return redirect(route('messages.browse'))->with('status', 'Les messages ont été envoyés avec succès');
     }
 
+
+
+    public function store_custumers_messages()
+    {}
 
 
     public function store(Request $request)

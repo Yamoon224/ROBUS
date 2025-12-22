@@ -82,7 +82,11 @@ Route::group(['middleware' => ['auth:web']], function () {
     Route::group(['prefix' => 'messages'], function () {
         Route::get('/browse',  [PermissionController::class, 'browse_messages'])->name('messages.browse');
         Route::get('/add', [PermissionController::class, 'add_messages'])->name('messages.add');
+        Route::get('/send_custumers', [PermissionController::class, 'send_custumers_messages'])->name('send_custumers_messages.add');
+        Route::get('/send_companies', [PermissionController::class, 'send_companie_messages'])->name('send_custumers_messages.add');
         Route::post('/store', [PermissionController::class, 'store_messages'])->name('messages.admin.store');
+        Route::post('/custumers/store', [PermissionController::class, 'store_custumers_messages'])->name('messages.admin.store.custumers');
+        Route::post('/companies/store', [PermissionController::class, 'store_companies_messages'])->name('messages.admin.store.companies');
         Route::post('/store/{id}', [PermissionController::class, 'store_one_messages'])->name('messages.one.store');
     });
 

@@ -9,6 +9,7 @@ use App\Mail\WalletCard;
 use App\Mail\WalletInter;
 use App\Mail\WalletXbet;
 use App\Mail\WalletReload;
+use App\Mail\WalletBankSendEmail;
 use App\Mail\WalletPush;
 use App\Mail\WalletDjamo;
 use App\Mail\sendValidated;
@@ -26,6 +27,7 @@ use App\Mail\WalletTresort;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeValidated;
+use App\Models\Wallets\WalletBankSend;
 
 class MailController extends Controller
 {
@@ -197,6 +199,15 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletPhoneCredit($data));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+     public function newBankSend($data)
+    {
+        try {
+            Mail::to($data->wallet->sidUser->email)->send(new WalletBankSendEmail($data));
         } catch (\Throwable $th) {
             throw $th;
         }

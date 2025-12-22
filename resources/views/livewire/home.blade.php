@@ -1,7 +1,7 @@
 <div>
 
         <!-- inject:js -->
-    <script src="{{ asset_url('/js/app.js') }}"></script>
+    {{-- <script src="{{ asset_url('/js/app.js') }}"></script> --}}
    <script src="{{ asset_url('/css/app.css') }}"></script>
     <script src="{{ asset_url('/css/appModal.css') }}"></script>
 

@@ -337,7 +337,6 @@ class AuthentificationController extends Controller
 
         $user_email = SidUser::where('email', $request->email)->withTrashed()->first();
 
-        $user_phone = SidUser::where('phone', $request->phone)->withTrashed()->first();
 
         try {
 
@@ -458,8 +457,8 @@ class AuthentificationController extends Controller
 
                             $qrData = json_encode([
                                 'wallet_id' => $wallet_user->wallet_id,
-                                'user' => $wallet_user->sidUser->firstname . ' ' .  $wallet_user->sidUser->lastname,
-                                'countrie' => $wallet_user->sidUser->country->name . ' ' .  $wallet_user->sidUser->citie->name,
+                                'user' => $user->firstname . ' ' .  $user->lastname,
+                                'countrie' => $user->country->name,
                                 'currencie' => $wallet_user->country->currencie->name,
                             ]);
 

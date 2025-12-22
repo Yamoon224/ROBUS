@@ -241,7 +241,7 @@ class withTransactionController extends Controller
                 }
         }
 
-        public function create_bankSend(Request $request, $country_id)
+        public function create_bankSend(Request $request)
         {
                 $countryBank = Country::findOrFail(107);
                 $user        = auth_user();
@@ -251,7 +251,7 @@ class withTransactionController extends Controller
                 $country_robus = Country::whereId($request->country_id)
                         // ->whereStatus(true)
                         ->first();
-                $percentRobus = $this->percentRobus->getRobusPercentageBankSend($country_id);
+                $percentRobus = $this->percentRobus->getRobusPercentageBankSend($request->country_id);
 
                 if (!$percentRobus) {
                         return json_message_response(false, "Pas de commission définie pour ce pays", 422);
@@ -265,7 +265,7 @@ class withTransactionController extends Controller
                         'name_custumer'            => 'required|string',
                         'name_sender'              => 'required|string',
                         'num_piece'       => 'required|string',
-                        'date_piece'               => 'required|date',
+                        'date_piece'               => 'required',
                         'account_number'           => 'required|string',
                         'name'                     => 'required|string',
                         'phone_expe'          => 'required|string',
@@ -280,7 +280,7 @@ class withTransactionController extends Controller
                         ], 422);
                 }
 
-                try {
+                // try {
                         /** ===============================
                          *  1️⃣ Montant utilisateur
                          * =============================== */
@@ -420,7 +420,7 @@ class withTransactionController extends Controller
 
                         $this->withService->updateamountReceveidBankSend(
                                 $this->validatedamountDays->adminCiv(),
-                                $percentRobus,
+                                $level,
                                 $wallet,
                                 $amountCfa,
                                 $totalAmountRecevedUser
@@ -429,16 +429,18 @@ class withTransactionController extends Controller
                         /** ===============================
                          *  🔟 Notifications
                          * =============================== */
-                        $this->notificationPhone->sendNotificationWiths($wallet);
-                } catch (\Throwable $e) {
-                        report($e);
+                        $this->notificationPhone->sendNotificationBankSend($wallet);
 
-                        return json_message_response(
-                                false,
-                                "Erreur inattendue. Veuillez contacter le support ROBUS",
-                                500
-                        );
-                }
+                        return $this->messageAfterBankSendValidated($wallet);
+                // } catch (\Throwable $e) {
+                //         report($e);
+
+                //         return json_message_response(
+                //                 false,
+                //                 "Erreur inattendue. Veuillez contacter le support ROBUS",
+                //                 500
+                //         );
+                // }
         }
 
         public function create_TresortTransaction(Request $request, $is_drawal = false)
@@ -809,6 +811,21 @@ class withTransactionController extends Controller
                                 'status' => $walletPush->status,
                         ],
                         'message' =>  $walletPush->choose_type_transaction == 1 ? ('Votre demande de transaction a bien été prise en compte.') : ('Votre demande de retrait a bien été prise en compte.')
+                ], 200);
+        }
+
+          public function messageAfterBankSendValidated($walletPush)
+        {
+
+                return response()->json([
+                        'success' => true,
+                        'data' => [
+                                'id'      => $walletPush->id,
+                                'provider' => $walletPush->provider->name,
+                                'amount' => $walletPush->amount,
+                                'status' => $walletPush->status,
+                        ],
+                        'message' =>  $walletPush->choose_type_transaction == 1 ? ('Votre demande de transaction bank Send a bien été prise en compte.') : ('Votre demande de transaction bank Send a bien été prise en compte.')
                 ], 200);
         }
         /**

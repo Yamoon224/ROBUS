@@ -20,6 +20,6 @@
 <!-- END: Page CSS-->
 <link rel="stylesheet" href="{{ asset_url('web/css/animation.css') }}">
 
-@vite(['resources/css/app.css', 'resources/js/app.js'])
+{{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
 
 <!-- BEGIN: Custom CSS-->

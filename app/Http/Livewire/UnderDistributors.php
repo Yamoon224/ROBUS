@@ -473,7 +473,10 @@ class UnderDistributors extends Component
         }
 
         return view('livewire.under-distributors', [
-            "users" => $users->where('is_under_distributer', true)->orderBy('created_at', 'desc')->latest()->paginate(30),
+            "users" => $users->where('is_under_distributer', true)
+                ->withSum('wallet as wallet_balance', 'amount')
+                ->orderByDesc('wallet_balance')
+                ->paginate(30),
             "countries" => Country::where('robus', true)->orderBy("name", 'desc')->get(),
             "operators" => Operator::whereStatus(true)->whereIsUnder(true)->orderBy("name", 'desc')->get(),
             "operatorsCommissions" => Operator::whereStatus(true)->whereIsCommission(true)->orderBy("name", 'desc')->get(),

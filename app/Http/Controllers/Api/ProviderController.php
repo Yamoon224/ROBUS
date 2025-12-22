@@ -72,11 +72,27 @@ class ProviderController extends Controller
     {
 
         // Vérifier l'état de l'application
-        // $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+        $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
+        
+        $countrieId = robus()->country->id;
+        $dashboard_data = [];
+       
+        if (!$appStatusResult['success']) {
+            if (!$appStatusResult['success']) {
+                $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
 
-        // if (!$appStatusResult['success']) {
-        //     return response()->json($appStatusResult, 301);
-        // }
+                $dashboard_data['Transfert national'] = [
+                    "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
+                    "Mobile Money" =>  [],
+                    "Tresort Money" => [],
+                ];
+
+                return response()->json([
+                    'success' => true,
+                    'Wallets' => $dashboard_data,
+                ], 200);
+            }
+        }
 
         $assignations = $this->percentRobus->operatorServices();
 
@@ -124,8 +140,7 @@ class ProviderController extends Controller
             }
         }
 
-        $countrieId = robus()->country->id;
-        $dashboard_data = [];
+
         $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
         $walletTransactionMoney = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, 1);
         $walletPayment = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 2);
@@ -139,11 +154,8 @@ class ProviderController extends Controller
         $walletVirementBank = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 10);
         $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 11);
         $walletTransaction =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 1);
-        $walletPush =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 24);
-        $walletDjamo =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 25);
         $walletTresort =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 23);
         $walletBankSend =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 27);
-        $walletVersement =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 18);
         $walletInterPush =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 21);
         $walletInterDjamo =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 22);
         $walletInterTresort =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 20);
@@ -374,7 +386,7 @@ class ProviderController extends Controller
                 if (!empty($activeButtons['showVersementButton'])) {
                     $dashboard_data['Versement'] = ProviderSingleCollection::collection($walletVersement);
                 }
-                
+
                 if (!empty($activeButtons['showVirementButton'])) {
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
                 }

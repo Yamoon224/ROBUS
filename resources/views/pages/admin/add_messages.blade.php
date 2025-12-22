@@ -42,13 +42,14 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="crud-form-1 mt-3">
+                        <div class="crud-form-1 mt-6">
                             <label class="form-label"> Type utilisateur <span class="text-danger"> *</span></label>
                             <select required id="typ_user" name="typ_user"
                                 class="select2 form-select @error('typ_user') is-invalid @enderror">
                                 <option disabled selected>-</option>
-                                <option value="under">Sous distributeur</option>
-                                <option value="custumers">Client</option>
+                                <option value="under">Sous distributeurs</option>
+                                <option value="custumers">Clients</option>
+                                <option value="companies">Compagnies</option>
                             </select>
                             @error('typ_user')
                                 <span class="invalid-feedback" role="alert">

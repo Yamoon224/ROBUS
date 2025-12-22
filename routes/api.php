@@ -94,13 +94,13 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
             // 1Xbets
             Route::post('oneXbet/store', [OnexbetTransactionController::class, 'create_OnexbetTranaction']);
-            Route::post('oneXbet/delete/{id}', [OnexbetTransactionController::class, 'delete_wallet_xbet']);
+            Route::post('oneXbet/delete/{inter_providersid}', [OnexbetTransactionController::class, 'delete_wallet_xbet']);
             Route::get('search_onexbet/{amount_wave}', [OnexbetTransactionController::class, 'search_xbet']);
             Route::get('search_onexbet_received/{amount_received}', [OnexbetTransactionController::class, 'search_xbet_received']);
 
             // WithTransactions
             Route::post('push/store/{is_drawal?}', [withTransactionController::class, 'create_PushTransaction']);
-            Route::post('bank_send/store/{country_id}', [withTransactionController::class, 'create_bankSend']);
+            Route::post('bank_send/store', [withTransactionController::class, 'create_bankSend']);
             Route::post('versments/store/{is_drawal?}', [VersementController::class, 'create_versement']);
             Route::post('djamo/store/{is_drawal?}', [withTransactionController::class, 'create_DjamoTransaction']);
             Route::post('tresorts/store/{is_drawal?}', [withTransactionController::class, 'create_TresortTransaction']);

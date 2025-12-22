@@ -491,7 +491,6 @@ class CountrieController extends Controller
 
         // Sum commissions
         $push_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPush::class, 'wallet_pushes.wallet_id', $countrie->id,  'wallet_pushes.status',  'wallet_pushes.commissions');
-     
         $payment_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id,  'wallet_payments.status',  'wallet_payments.commissions');
         $transaction_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id,  'wallet_transactions.status',  'wallet_transactions.commissions');
         $phoneCredit_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id,  'wallet_phone_credits.status',  'wallet_phone_credits.commissions');
@@ -507,7 +506,7 @@ class CountrieController extends Controller
         $push_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPush::class, 'wallet_pushes.wallet_id', $countrie->id,  'wallet_pushes.status',  'wallet_pushes.commission_companie');
         $payment_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id,  'wallet_payments.status',  'wallet_payments.commission_companie');
         $transaction_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id,  'wallet_transactions.status',  'wallet_transactions.commission_companie');
-        $phoneCredit_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id,  'wallet_phone_credits.status',  'wallet_phone_credits.commission_companie');        
+        $phoneCredit_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id,  'wallet_phone_credits.status',  'wallet_phone_credits.commission_companie');
         $inter_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id,  'wallet_inters.status',  'wallet_inters.commission_companie');
         $bank_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id,  'wallet_banks.status',  'wallet_banks.commission_companie');
         $deposit_c_commission =  $this->historiqueService->getCommissionTransactionCountrie(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id,  'wallet_deposits.status',  'wallet_deposits.commission_companie');
@@ -522,6 +521,10 @@ class CountrieController extends Controller
             $xbet_commission + $djamo_commission + $tresort_commission +  $versment_commission;
 
         $sumCTotalCommission = $push_c_commission +  $payment_c_commission + $transaction_c_commission + $phoneCredit_c_commission + $inter_c_commission + $bank_c_commission + $deposit_c_commission +
+            $xbet_c_commission + $djamo_c_commission + $tresort_c_commission +  $versment_c_commission;
+
+
+        $sumApiTotalCommission = $push_c_commission +  $payment_c_commission + $transaction_c_commission + $phoneCredit_c_commission + $inter_c_commission + $bank_c_commission + $deposit_c_commission +
             $xbet_c_commission + $djamo_c_commission + $tresort_c_commission +  $versment_c_commission;
         // Infos uses
 

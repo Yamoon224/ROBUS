@@ -80,7 +80,8 @@ class PaymentService
         $facture_choix_type,
         $number_decoder,
         $id_invoice,
-        $number_contract
+        $number_contract,
+        $name,
     ) {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;

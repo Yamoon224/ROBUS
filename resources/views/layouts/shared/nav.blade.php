@@ -82,6 +82,18 @@
                                 <div class="side-menu__title"> Transferts d'argent </div>
                             </a>
                         </li>
+
+                       @if (Auth::guard('web')->user()->hasPermissionTo('voir-transaction-visiteurs'))
+                            <li>
+                                <a href="{{ route('transactions.visitors') }}"
+                                    class="side-menu {{ $route == 'transactions.visitors' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon"> <i data-feather="activity"
+                                            class="block mx-auto"></i>
+                                    </div>
+                                    <div class="side-menu__title">Transactions Visiteurs </div>
+                                </a>
+                            </li>
+                        @endif
                     </ul>
                 </li>
             @endif
@@ -312,17 +324,7 @@
                     <ul class="{{ request()->is('visitors*') ? 'side-menu__sub-open' : '' }}">
 
 
-                        @if (Auth::guard('web')->user()->hasPermissionTo('voir-transaction-visiteurs'))
-                            <li>
-                                <a href="{{ route('transactions.visitors') }}"
-                                    class="side-menu {{ $route == 'transactions.visitors' ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-feather="activity"
-                                            class="block mx-auto"></i>
-                                    </div>
-                                    <div class="side-menu__title">Transactions Visiteurs </div>
-                                </a>
-                            </li>
-                        @endif
+                        
                         @if (Auth::guard('web')->user()->hasPermissionTo('voir-historique-transfers'))
                             <li>
                                 <a href="{{ route('transactions.historiques.visitors') }}"

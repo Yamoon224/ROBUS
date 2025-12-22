@@ -227,7 +227,13 @@ class AdminController extends Controller
                 $msg = "Modification de profil avec succès";
                 $color = 'success';
 
-                return redirect(route('unders.admins.browse'))->with('color', $color)->with('status', $msg);
+                if ($user->is_api) {
+                    return redirect(route('users.prospects.browse'))->with('color', $color)->with('status', $msg);
+                } else if ($user->is_distributer) {
+                    return redirect(route('operators.admins.browse'))->with('color', $color)->with('status', $msg);
+                } else {
+                    return redirect(route('unders.admins.browse'))->with('color', $color)->with('status', $msg);
+                }
             } else {
 
                 $message = $response['message'];
@@ -1663,7 +1669,7 @@ class AdminController extends Controller
             ['name' => 'Front CNI', 'url' => $documents->front_document ?? null, 'status' => 'Validé'],
             ['name' => 'Verso CNI', 'url' => $documents->piece_document ?? null, 'status' => 'Validé'],
             ['name' => 'Juridict Form', 'url' => $documents->juridict_form ?? null, 'status' => 'Validé'],
-        ])->filter(fn($doc) => $doc['url']); 
+        ])->filter(fn($doc) => $doc['url']);
 
         // Calcul des statistiques
         $validatedCount = $documentsCollection->where('status', 'Validé')->count();
@@ -1671,7 +1677,7 @@ class AdminController extends Controller
         $rejectedCount  = $documentsCollection->where('status', 'Rejeté')->count();
         $totalCount     = $documentsCollection->count();
 
-   
+
         return view('pages.admin.show_unders', compact(
             'user',
             'documents',

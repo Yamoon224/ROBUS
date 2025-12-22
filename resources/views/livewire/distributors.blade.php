@@ -139,8 +139,7 @@
 
                                                 </a>
 
-                                                 <div class="dropdown-menu w-90"
-                                                    data-popper-placement="bottom-end"
+                                                <div class="dropdown-menu w-90" data-popper-placement="bottom-end"
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px); z-index: 50;">
 
                                                     <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
@@ -166,13 +165,33 @@
 
                                     <div class="flex justify-center items-center">
 
-                                        @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
-                                            <a class="btn btn-primary mr-1 mb-2 btn-sm"
-                                                href="{{ route('operators.admins.show', ['id' => $item->id]) }}">
-                                                Voir Détails
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('modifier-utilisateur'))
+                                            <a class="flex items-center mr-3"
+                                                href="{{ route('unders.show_edit', ['id' => $item->id]) }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="lucide lucide-edit block mx-auto h-15 mr-1">
+                                                    <path d="M12 20h9"></path>
+                                                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
+                                                </svg>
                                             </a>
                                         @endif
-                                    @include('components.tableDeleted')
+                                        @if (Auth::guard('web')->user()->hasPermissionTo('modifier-administrateur'))
+                                            <a class="mr-1 mb-2 "
+                                                href="{{ route('operators.admins.show', ['id' => $item->id]) }}">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                icon-name="eye" data-lucide="eye"
+                                                class="lucide lucide-eye block mx-auto h-15 mr-1">
+                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                <circle cx="12" cy="12" r="3"></circle>
+                                            </svg>
+
+                                            </a>
+                                        @endif
+                                        @include('components.tableDeleted')
 
 
                                     </div>
