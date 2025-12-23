@@ -550,7 +550,7 @@ class TransactionController extends Controller
 
                             if ($this->validatedamountDays->validateAmount($amount_payment)) {
 
-                                $walletTransaction =  $this->mobileWalletTransactionService->createRobusWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone);
+                                $walletTransaction =  $this->mobileWalletTransactionService->createRobusWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone, 1);
 
                                 if ($walletTransaction != null) {
 
@@ -601,6 +601,138 @@ class TransactionController extends Controller
         }
     }
 
+    public function mooney_withdrawal(Request $request)
+    {
+        $wallet_user = Auth::guard('api')->user();
+        $amount_days = $this->validatedamountDays->getCeilingProperty();
+        $admin_civ = $this->validatedamountDays->adminCiv();
+        $valeur_ceiling  =  $wallet_user->silver_ceiling;
+        $valeur_max_send  =  robus()->country->amount_max_send;
+
+
+        try {
+
+            $validator = Validator::make(
+
+                $request->all(),
+                [
+                    "phone" => 'required',
+                    "amount" => 'required',
+                    "name_custumer" => 'required',
+                ],
+                [
+
+                    'phone.required' => 'Votre numero est obligatoire',
+                    'amount.required' => 'Votre montant est obligatoire',
+                    'name_custumer.required' => 'Nom est obligatoire',
+
+                ]
+            );
+
+            if ($validator->fails()) {
+                return response()->json(
+                    [
+                        'success' => false,
+                        'message' => 'Numero et le montant indisponible',
+                        'data' => $validator->errors()
+                    ],
+                    333
+                );
+            }
+
+            if (robus()->country->name_groupe == 'CIV') {
+
+                $percent_robus = $this->percentRobus->getRobusPercentageDrawal($request->provider);
+            } else {
+
+                return  json_message_response(false, "Pa de Transfert Mobile Money dans la zone !", 333);
+            }
+
+            if ($percent_robus !== null) {
+
+                if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+
+                    if ($this->validatedamountDays->validateAmountSendLimit($request->amount, $valeur_max_send)) {
+
+                        $percent_amount = $percent_robus->percent * $request->amount;
+
+
+                        if (robus()->is_under_distributer || robus()->is_api) {
+
+
+                            if (robus()->country->name_groupe == 'CIV') {
+
+                                $valeur_received = $request->amount;
+
+                                $amount_payment = $request->amount;
+                            } else {
+
+                                $valeur_received = $request->amount - $percent_amount;
+
+                                $amount_payment =  $request->amount + $percent_amount;
+                            }
+
+                            $cost_payment = $percent_amount;
+                        } else {
+
+                            $valeur_received = $request->amount - $percent_amount;
+
+                            $cost_payment = $percent_amount;
+
+                            $amount_payment =  $request->amount + $percent_amount;
+                        }
+
+                        if ($this->validatedamountDays->validateAmount($amount_payment)) {
+
+                            $walletTransaction =  $this->mobileWalletTransactionService->createRobusWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone , 2);
+
+                            if ($walletTransaction != null) {
+
+                                if ($this->mobileWalletTransactionService->updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)) {
+
+                                    if (robus()->is_under_distributer || robus()->is_api) {
+                                        $processCommission = $this->mobileWalletTransactionService->processCommissionsMobileDistributer($request->amount, $percent_robus, $walletTransaction, $admin_civ);
+                                    } else {
+
+                                        $processCommission = $this->mobileWalletTransactionService->processCommissionsMobile($request->amount, $percent_robus, $walletTransaction, $admin_civ);
+                                    }
+
+                                    if ($processCommission) {
+
+                                        $this->notifications->sendNotificationMobile($walletTransaction);
+
+                                        return $this->messageAfterValidated($walletTransaction);
+                                    } else {
+
+                                        return  json_message_response(false, "Error de transferts du montant!", 333);
+                                    }
+                                }
+                            } else {
+
+                                return  json_message_response(false, "Error de createtion transferts !", 333);
+                            }
+                        } else {
+
+                            return   json_message_response(false, "Verifié votre solde SVP !", 333);
+                        }
+                    } else {
+
+
+                        return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . robus()->country->currencie->code, 333);
+                    }
+                } else {
+                    return   json_message_response(false, "Votre montant journalier est atteint !", 333);
+                }
+            } else {
+                return json_message_response(false, "Niveau de pourcentage introuvable", 333);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+            ], 333);
+        }
+    }
 
     public function messageAfterValidated($walletTransaction)
     {

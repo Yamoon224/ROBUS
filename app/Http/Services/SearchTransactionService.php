@@ -32,7 +32,11 @@ class SearchTransactionService
         return response()->json([
             'success' => $data != null ? true : false,
             'data' =>  [
+                'walletId' => $data->wallet_id ?? null,
                 'name' => $data->sidUser->firstname . ' ' . $data->sidUser->lastname,
+                'user' => $data->sidUser->firstname . ' ' . $data->sidUser->lastname,
+                'countrie' => $data->country->name ?? null,
+                'currencie' => $data->currencie->currency ?? null,
                 'image' => $data->sidUser->image ?? null,
             ],
         ], 200);
@@ -50,7 +54,7 @@ class SearchTransactionService
         return  $data;
     }
 
-    public function searchTransactionWalletInter($country_robus,$search)
+    public function searchTransactionWalletInter($country_robus, $search)
     {
 
         // Search Wallet Send
@@ -69,9 +73,9 @@ class SearchTransactionService
 
         if ($countryGroup == 'CIV') {
             $commissionTransaction = ($underDistributer == true) ? TransactionCost::whereId(27)->first() :  TransactionCost::whereId(29)->first();
-        } elseif($countryGroup == 'MAG') {
+        } elseif ($countryGroup == 'MAG') {
             $commissionTransaction = ($underDistributer == true) ? TransactionCost::whereId(44)->first() :  null;
-        }else {
+        } else {
 
             return response()->json(
                 [
@@ -119,7 +123,4 @@ class SearchTransactionService
             return $defaultValeur;
         }
     }
-
-
-  
 }

@@ -315,6 +315,7 @@ class UserController extends Controller
             'Moneys' => $this->transactionAccount->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class),
             'Paiements' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPayment::class),
             'Virements' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBank::class),
+            '1xbet' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletXbet::class),
             'Crédits' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPhoneCredit::class),
             'Rechargements' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDeposit::class),
             'Commande de carte' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(BankCard::class),
@@ -355,6 +356,7 @@ class UserController extends Controller
             ->orWhere('account_wallet', $wallet_solde->wallet_id)
             ->orderBy('created_at', 'desc')
             ->paginate(20);
+        $wallet1xbets = $this->transactionAccount->getTransactionsWallet(WalletXbet::class, $wallet_solde->id);
 
         $walletReloadCard = $this->transactionAccount->getTransactionsWallet(WalletDeposit::class, $wallet_solde->id);
 
@@ -379,6 +381,7 @@ class UserController extends Controller
             $this->transactionAccount->getTransactionCommissionAmountTotal(BankCard::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPush::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDjamo::class) +
+            $this->transactionAccount->getTransactionCommissionAmountTotal(WalletXbet::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTresortMoney::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletVersement::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBankSend::class) +
@@ -391,6 +394,7 @@ class UserController extends Controller
         $dashboard_data['Tresort Money'] = WithTransactionSingleCollection::collection($walletTresortMoney);
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
         $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
+        $dashboard_data['1xbet'] = OneXbetSingleCollection::collection($wallet1xbets);
         $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);
         $dashboard_data['Credit telephoniques'] = PhoneCreditSingleCollection::collection($walletPhone);
         $dashboard_data['Rechargement de carte'] = ReloadCardSingle::collection($walletReloadCard);
@@ -455,6 +459,7 @@ class UserController extends Controller
             $walletReloadCard = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDeposit::class);
             $walletInter = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletInter::class);
             $walletOrderCarte = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(BankCard::class);
+            $walletXbet = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletXbet::class);
 
             $walletPush = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPush::class);
             $walletTresort = $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class);
@@ -507,6 +512,9 @@ class UserController extends Controller
             } else if ($commissions == "Commission sur Bank send" &&  $walletBankSend != 0) {
 
                 $gain_amount =  $walletBankSend;
+            } else if ($commissions == "Commission sur Xbet" &&  $walletXbet != 0) {
+
+                $gain_amount =  $walletXbet;
             } else {
                 return response()->json([
                     'success' => false,
@@ -548,6 +556,8 @@ class UserController extends Controller
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletDjamo::class);
                 } else if ($commissions == "Commission sur Bank send") {
                     $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletBankSend::class);
+                } else if ($commissions == "Commission sur Xbet") {
+                    $this->transactionAccount->getUpdateTransactionCommissionAmountNullTotal(WalletXbet::class);
                 } else {
 
                     return response()->json([
@@ -1172,7 +1182,7 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletXbet::class) +
 
                 $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletBankSend::class) +
-                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(walletPush::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletPush::class) +
                 $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletDjamo::class) +
                 $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletTresortMoney::class) +
                 $this->transactionAccount->getWalletTransactionDaysAccountGainUser(WalletVersement::class) +
@@ -1198,7 +1208,7 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletXbet::class) +
 
                 $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletBankSend::class) +
-                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(walletPush::class) +
+                $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletPush::class) +
                 $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletDjamo::class) +
                 $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletTresortMoney::class) +
                 $this->transactionAccount->getWalletTransactionDaysAccountGainIntegrate(WalletVersement::class) +
@@ -1224,7 +1234,7 @@ class UserController extends Controller
                 $this->transactionAccount->getTodayTransactionGainTotal(WalletInter::class) +
                 $this->transactionAccount->getTodayTransactionGainTotal(WalletXbet::class) +
                 $this->transactionAccount->getTodayTransactionGainTotal(WalletBankSend::class) +
-                $this->transactionAccount->getTodayTransactionGainTotal(walletPush::class) +
+                $this->transactionAccount->getTodayTransactionGainTotal(WalletPush::class) +
                 $this->transactionAccount->getTodayTransactionGainTotal(WalletDjamo::class) +
                 $this->transactionAccount->getTodayTransactionGainTotal(WalletTresortMoney::class) +
                 $this->transactionAccount->getTodayTransactionGainTotal(WalletVersement::class) +
@@ -1254,6 +1264,7 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletTresortMoney::class, 'SUCCESS') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletVersement::class, 'SUCCESS') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletDjamo::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletXbet::class, 'SUCCESS') +
 
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletInter::class, 'SUCCESS'),
 
@@ -1264,6 +1275,7 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPhoneCredit::class, 'ERROR') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletTransaction::class, 'ERROR') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletReload::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletXbet::class, 'ERROR') +
 
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletBankSend::class, 'ERROR') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPush::class, 'ERROR') +
@@ -1280,6 +1292,7 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPhoneCredit::class, 'PENDING') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletTransaction::class, 'PENDING') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletReload::class, 'PENDING') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletXbet::class, 'PENDING') +
 
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletBankSend::class, 'PENDING') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusUser(WalletPush::class, 'PENDING') +
@@ -1308,6 +1321,7 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletReload::class, 'SUCCESS') +
 
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletBankSend::class, 'SUCCESS') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletXbet::class, 'SUCCESS') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPush::class, 'SUCCESS') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletTresortMoney::class, 'SUCCESS') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletVersement::class, 'SUCCESS') +
@@ -1322,6 +1336,7 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPhoneCredit::class, 'ERROR') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletTransaction::class, 'ERROR') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletReload::class, 'ERROR') +
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletXbet::class, 'ERROR') +
 
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletBankSend::class, 'ERROR') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPush::class, 'ERROR') +
@@ -1337,6 +1352,8 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(BankCard::class, 'PENDING') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPhoneCredit::class, 'PENDING') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletTransaction::class, 'PENDING') +
+
+                $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletXbet::class, 'PENDING') +
 
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletBankSend::class, 'PENDING') +
                 $this->transactionAccount->getWalletTransactionDaysAccountStatusIntegrate(WalletPush::class, 'PENDING') +
@@ -1368,6 +1385,7 @@ class UserController extends Controller
                 $this->transactionAccount->getTransactionMasterCount(WalletTresortMoney::class, 'SUCCESS') +
                 $this->transactionAccount->getTransactionMasterCount(WalletPush::class, 'SUCCESS') +
                 $this->transactionAccount->getTransactionMasterCount(WalletBankSend::class, 'SUCCESS') +
+                $this->transactionAccount->getTransactionMasterCount(WalletXbet::class, 'SUCCESS') +
                 $this->transactionAccount->getTransactionMasterCount(WalletReload::class, 'SUCCESS') +
                 $this->transactionAccount->getTransactionMasterCount(WalletInter::class, 'SUCCESS'),
 
@@ -1377,6 +1395,7 @@ class UserController extends Controller
                 $this->transactionAccount->getTransactionMasterCount(BankCard::class, 'ERROR') +
                 $this->transactionAccount->getTransactionMasterCount(WalletPhoneCredit::class, 'ERROR') +
                 $this->transactionAccount->getTransactionMasterCount(WalletTransaction::class, 'ERROR') +
+                $this->transactionAccount->getTransactionMasterCount(WalletXbet::class, 'ERROR') +
 
                 $this->transactionAccount->getTransactionMasterCount(WalletDjamo::class, 'ERROR') +
                 $this->transactionAccount->getTransactionMasterCount(WalletVersement::class, 'ERROR') +
@@ -1393,6 +1412,7 @@ class UserController extends Controller
                 $this->transactionAccount->getTransactionMasterCount(BankCard::class, 'PENDING') +
                 $this->transactionAccount->getTransactionMasterCount(WalletPhoneCredit::class, 'PENDING') +
                 $this->transactionAccount->getTransactionMasterCount(WalletTransaction::class, 'PENDING') +
+                $this->transactionAccount->getTransactionMasterCount(WalletXbet::class, 'PENDING') +
 
                 $this->transactionAccount->getTransactionMasterCount(WalletDjamo::class, 'PENDING') +
                 $this->transactionAccount->getTransactionMasterCount(WalletVersement::class, 'PENDING') +
@@ -1421,6 +1441,7 @@ class UserController extends Controller
             $this->transactionAccount->getMonthTransactionGain(WalletVersement::class) +
             $this->transactionAccount->getMonthTransactionGain(WalletTresortMoney::class) +
             $this->transactionAccount->getMonthTransactionGain(WalletPush::class) +
+            $this->transactionAccount->getMonthTransactionGain(WalletXbet::class) +
             $this->transactionAccount->getMonthTransactionGain(WalletBankSend::class) +
             $this->transactionAccount->getMonthTransactionGain(WalletInter::class);
 
@@ -1434,6 +1455,7 @@ class UserController extends Controller
                 $this->transactionAccount->getTransactionMasterMonthCount(WalletPhoneCredit::class) +
                 $this->transactionAccount->getTransactionMasterMonthCount(WalletTransaction::class) +
                 $this->transactionAccount->getTransactionMasterMonthCount(WalletReload::class) +
+                $this->transactionAccount->getTransactionMasterMonthCount(WalletXbet::class) +
 
                 $this->transactionAccount->getTransactionMasterMonthCount(WalletDjamo::class) +
                 $this->transactionAccount->getTransactionMasterMonthCount(WalletVersement::class) +
@@ -1467,6 +1489,7 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletSumGainUser(WalletTresortMoney::class) +
                 $this->transactionAccount->getWalletSumGainUser(WalletPush::class) +
                 $this->transactionAccount->getWalletSumGainUser(WalletBankSend::class) +
+                $this->transactionAccount->getWalletSumGainUser(WalletXbet::class) +
                 $this->transactionAccount->getWalletSumGainUser(WalletInter::class);
 
 
@@ -1486,6 +1509,7 @@ class UserController extends Controller
                 $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(BankCard::class);
 
                 $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletDjamo::class) +
+                    $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletXbet::class) +
                     $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletVersement::class) +
                     $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletTresortMoney::class) +
                     $this->transactionAccount->getUpdateTransactionCommissionCreatedAmountNullTotal(WalletPush::class) +
@@ -1564,7 +1588,8 @@ class UserController extends Controller
             $this->transactionAccount->getMonthTransactionGainUser(WalletReload::class) +
 
             $this->transactionAccount->getMonthTransactionGainUser(WalletBankSend::class) +
-            $this->transactionAccount->getMonthTransactionGainUser(walletPush::class) +
+            $this->transactionAccount->getMonthTransactionGainUser(WalletPush::class) +
+            $this->transactionAccount->getMonthTransactionGainUser(WalletXbet::class) +
             $this->transactionAccount->getMonthTransactionGainUser(WalletDjamo::class) +
             $this->transactionAccount->getMonthTransactionGainUser(WalletTresortMoney::class) +
             $this->transactionAccount->getMonthTransactionGainUser(WalletVersement::class) +
@@ -1582,8 +1607,9 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletTransaction::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletReload::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletBankSend::class) +
-                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(walletPush::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletPush::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletDjamo::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletXbet::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletTresortMoney::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusUser(WalletVersement::class) +
 
@@ -1605,7 +1631,8 @@ class UserController extends Controller
             $this->transactionAccount->getMonthTransactionGainIntegrate(WalletReload::class) +
 
             $this->transactionAccount->getMonthTransactionGainIntegrate(WalletBankSend::class) +
-            $this->transactionAccount->getMonthTransactionGainIntegrate(walletPush::class) +
+            $this->transactionAccount->getMonthTransactionGainIntegrate(WalletXbet::class) +
+            $this->transactionAccount->getMonthTransactionGainIntegrate(WalletPush::class) +
             $this->transactionAccount->getMonthTransactionGainIntegrate(WalletDjamo::class) +
             $this->transactionAccount->getMonthTransactionGainIntegrate(WalletTresortMoney::class) +
             $this->transactionAccount->getMonthTransactionGainIntegrate(WalletVersement::class) +
@@ -1622,9 +1649,10 @@ class UserController extends Controller
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletPhoneCredit::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletTransaction::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletReload::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletXbet::class) +
 
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletBankSend::class) +
-                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(walletPush::class) +
+                $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletPush::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletDjamo::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletTresortMoney::class) +
                 $this->transactionAccount->getWalletTransactionMonthAccountStatusIntegrate(WalletVersement::class) +
@@ -1649,8 +1677,9 @@ class UserController extends Controller
             $this->transactionAccount->getYearTransactionGainUser(WalletReload::class) +
 
             $this->transactionAccount->getYearTransactionGainUser(WalletBankSend::class) +
-            $this->transactionAccount->getYearTransactionGainUser(walletPush::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletPush::class) +
             $this->transactionAccount->getYearTransactionGainUser(WalletDjamo::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletXbet::class) +
             $this->transactionAccount->getYearTransactionGainUser(WalletTresortMoney::class) +
             $this->transactionAccount->getYearTransactionGainUser(WalletVersement::class) +
 
@@ -1667,7 +1696,8 @@ class UserController extends Controller
             'phonecredit_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletPhoneCredit::class),
 
             'bank_send_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletBankSend::class),
-            'push_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(walletPush::class),
+            'push_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletPush::class),
+            'xbet_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletXbet::class),
             'djamo_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletDjamo::class),
             'tresort_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletTresortMoney::class),
             'versment_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletVersement::class),
@@ -1690,7 +1720,8 @@ class UserController extends Controller
             $this->transactionAccount->getYearTransactionGainUser(WalletReload::class) +
 
             $this->transactionAccount->getYearTransactionGainUser(WalletBankSend::class) +
-            $this->transactionAccount->getYearTransactionGainUser(walletPush::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletPush::class) +
+            $this->transactionAccount->getYearTransactionGainUser(WalletXbet::class) +
             $this->transactionAccount->getYearTransactionGainUser(WalletDjamo::class) +
             $this->transactionAccount->getYearTransactionGainUser(WalletTresortMoney::class) +
             $this->transactionAccount->getYearTransactionGainUser(WalletVersement::class) +
@@ -1700,6 +1731,7 @@ class UserController extends Controller
 
         return response()->json([
             'success' => true,
+
             'bank_transaction_month' =>    $this->transactionAccount->getYearTransactionSingleGainUser(WalletBank::class),
             'deposit_transaction_month' => $this->transactionAccount->getYearTransactionSingleGainUser(WalletDeposit::class),
             'payment_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainUser(WalletPayment::class),
@@ -1707,6 +1739,14 @@ class UserController extends Controller
             'transaction_transaction_month' => $this->transactionAccount->getYearTransactionSingleGainUser(WalletTransaction::class),
             'inter_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainUser(WalletInter::class),
             'phonecredit_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletPhoneCredit::class),
+
+            'bank_send_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletBankSend::class),
+            'push_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletPush::class),
+            'xbet_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletXbet::class),
+            'djamo_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletDjamo::class),
+            'tresort_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletTresortMoney::class),
+            'versment_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletVersement::class),
+
             'som_commission' =>  $som_commission_year . ' ' . robus()->wallet->currencie->code,
         ], 200);
     }
@@ -1724,6 +1764,13 @@ class UserController extends Controller
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletPhoneCredit::class) +
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletTransaction::class) +
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletReload::class) +
+                    $this->transactionAccount->getYearTransactionGainIntegrate(WalletBankSend::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletPush::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletXbet::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletDjamo::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletTresortMoney::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletVersement::class) +
+
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletInter::class);
 
         return response()->json([
@@ -1734,12 +1781,13 @@ class UserController extends Controller
             'reload_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletReload::class),
             'transaction_transaction_month' => $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletTransaction::class),
             'inter_transaction_month' =>  $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletInter::class),
+            'xbet_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletXbet::class),
 
-            'bank_send_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletBankSend::class),
-            'push_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(walletPush::class),
-            'djamo_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletDjamo::class),
-            'tresort_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletTresortMoney::class),
-            'versment_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainUser(WalletVersement::class),
+            'bank_send_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletBankSend::class),
+            'push_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletPush::class),
+            'djamo_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletDjamo::class),
+            'tresort_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletTresortMoney::class),
+            'versment_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletVersement::class),
 
             'phonecredit_transaction_month' =>   $this->transactionAccount->getYearTransactionSingleGainIntegrate(WalletPhoneCredit::class),
             'som_commission' =>  $som_commission_year . ' ' . robus()->wallet->currencie->code,
@@ -1766,7 +1814,8 @@ class UserController extends Controller
                 WalletInter::class,
                 WalletPhoneCredit::class,
                 WalletBankSend::class,
-                walletPush::class,
+                WalletPush::class,
+                WalletXbet::class,
                 WalletDjamo::class,
                 WalletTresortMoney::class,
                 WalletVersement::class,

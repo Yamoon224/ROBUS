@@ -25,7 +25,7 @@ class MobileWalletTransactionService
         $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
-    public function createRobusWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone)
+    public function createRobusWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone , $choose_type_transaction)
     {
 
         $val_amount = $transaction_amount_money;
@@ -46,7 +46,7 @@ class MobileWalletTransactionService
                 'name_complet' => $name_custumers ?? null,
                 'num_piece' => $num_piece_custumers ?? null,
                 'validated_date' => $date_piece ?? null,
-                'choose_type_transaction' => 1,
+                'choose_type_transaction' => $choose_type_transaction ?? 1,
                 'amount_received'  => 0,
                 'type_transaction' => 'Depot',
                 'status'  => "PENDING",
@@ -54,6 +54,8 @@ class MobileWalletTransactionService
             ]
         );
     }
+
+    
 
     public function updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)
     {

@@ -179,13 +179,13 @@ class ProviderController extends Controller
                 }
 
 
-                if (!empty($activeButtons['showBankSendButton'])) {
-                    $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
-                }
+                // if (!empty($activeButtons['showBankSendButton'])) {
+                //     $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
+                // }
 
-                if (!empty($activeButtons['showXbetsRetraitButton'])) {
-                    $dashboard_data['Retrait Xbets'] = ProviderSingleCollection::collection($walletXbet);
-                }
+                // if (!empty($activeButtons['showXbetsRetraitButton'])) {
+                //     $dashboard_data['Retrait Xbets'] = ProviderSingleCollection::collection($walletXbet);
+                // }
 
                 if (!empty($activeButtons['showXbetsButton'])) {
                     $dashboard_data['Xbets'] = ProviderSingleCollection::collection($walletXbet);
@@ -238,7 +238,7 @@ class ProviderController extends Controller
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
-                    $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
+                    // $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
                     $dashboard_data['Xbets'] = ProviderSingleCollection::collection($walletXbet);
 
                     // $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);

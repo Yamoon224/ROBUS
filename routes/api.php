@@ -191,6 +191,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
             // Drawal transaction
             Route::post('transactions/first_step', [TransactionController::class, 'first_withdrawal']);
+            Route::post('transactions/drawal_mooney', [TransactionController::class, 'mooney_withdrawal']);
             Route::post('transactions/second_step', [TransactionController::class, 'second_withdrawal']);
 
             Route::post('transactions/store', [TransactionController::class, 'create_transaction']);

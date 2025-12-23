@@ -184,7 +184,7 @@ class OnexbetTransactionController extends Controller
                                         'data' => $validator->errors()
                                 ], 333);
                         }
-                        if ($request->provider == 107) {
+                        if ($request->provider == 87) {
 
                                 if ($percent_robus != null) {
 

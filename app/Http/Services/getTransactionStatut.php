@@ -19,7 +19,7 @@ use App\Models\Wallets\WalletXbet;
 use App\Repositories\TransactionRepository;
 use App\Models\Wallets\WalletInter;
 
-class SearchTransactionService
+class getTransactionStatutService
 {
 
     /** @var  TransactionRepository */
@@ -46,7 +46,11 @@ class SearchTransactionService
         return response()->json([
             'success' => $data != null ? true : false,
             'data' =>  [
+                'walletId' => $data->wallet_id ?? null,
                 'name' => $data->sidUser->firstname . ' ' . $data->sidUser->lastname,
+                'user' => $data->sidUser->firstname . ' ' . $data->sidUser->lastname,
+                'countrie' => $data->country->name ?? null,
+                'currencie' => $data->currencie->currency ?? null,
                 'image' => $data->sidUser->image ?? null,
             ],
         ], 200);
