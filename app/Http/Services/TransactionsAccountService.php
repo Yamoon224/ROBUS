@@ -27,6 +27,15 @@ class TransactionsAccountService
     }
 
 
+    public function getTransactionsPaginatedWallet($wallet, $id, $page = 1, $perPage = 20)
+    {
+        return $wallet::where('wallet_id', $id)
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage, ['*'], 'page', $page);
+    }
+
+
+
     public function updateWallet($withRemonte)
     {
         robus()->wallet->update([
@@ -332,37 +341,36 @@ class TransactionsAccountService
     public function getUserTransactions($wallets, $wallet_solde, $numWallet)
     {
 
-        $startOfWeek = Carbon::now()->startOfWeek(); 
-        $endOfWeek = Carbon::now()->endOfDay();
-        
-        return $wallets::query()
-                ->where(function ($query) use ($wallet_solde, $numWallet) {
-                    $query->where('wallet_id', $wallet_solde->id)
-                        ->orWhere($numWallet, $wallet_solde->wallet_id);
-                })
-        
-                ->limit(6)
-                ->orderBy('created_at', 'desc')
-                ->get();
+   
 
+        return $wallets::query()
+            ->where(function ($query) use ($wallet_solde, $numWallet) {
+                $query->where('wallet_id', $wallet_solde->id)
+                    ->orWhere($numWallet, $wallet_solde->wallet_id);
+            })
+
+            ->limit(6)
+            ->orderBy('created_at', 'desc')
+            ->get();
     }
 
 
     public function getUserAllTransactions($wallets, $wallet_solde)
     {
-        $startOfWeek = Carbon::now()->startOfWeek(); 
-        $endOfWeek = Carbon::now()->endOfDay();
+      
 
         return   $wallets::query()
-                ->where(function ($query) use ($wallet_solde) {
-                    $query->where('wallet_id', $wallet_solde->id);
-                })
+            ->where(function ($query) use ($wallet_solde) {
+                $query->where('wallet_id', $wallet_solde->id);
+            })
             // ->where('created_at', '>=', $startOfWeek)
             // ->where('created_at', '<=', $endOfWeek)
             ->limit(6)
             ->orderBy('created_at', 'desc')
             ->get();
     }
+
+
 
 
     public function getUserAllCumulTransactions($wallets)
@@ -402,14 +410,14 @@ class TransactionsAccountService
 
     public function getUserRemonte($wallets, $userId)
     {
-        $startOfWeek = Carbon::now()->startOfWeek(); 
+        $startOfWeek = Carbon::now()->startOfWeek();
         $endOfWeek = Carbon::now()->endOfDay();
 
         return    $wallets::query()
             ->where(function ($query) use ($userId) {
                 $query->where('sid_user_id', $userId);
             })
-            
+
             // ->where('created_at', '>=', $startOfWeek)
             // ->where('created_at', '<=', $endOfWeek)
             ->limit(6)
@@ -488,7 +496,7 @@ class TransactionsAccountService
         return $account_valeur;
     }
 
-        public function getWalletTransactionDaysAccountGainIntegrate($wallet)
+    public function getWalletTransactionDaysAccountGainIntegrate($wallet)
     {
 
         $account_valeur = $wallet::whereDate('created_at', Carbon::now())
@@ -510,7 +518,7 @@ class TransactionsAccountService
         return $account_valeur;
     }
 
-      public function getWalletTransactionDaysAccountStatusIntegrate($wallet, $status)
+    public function getWalletTransactionDaysAccountStatusIntegrate($wallet, $status)
     {
 
         $account_valeur = $wallet::whereDate('created_at', Carbon::now())
@@ -564,7 +572,7 @@ class TransactionsAccountService
         return $totalAmount;
     }
 
-       public function getMonthTransactionGainIntegrate($walletModel)
+    public function getMonthTransactionGainIntegrate($walletModel)
     {
 
         $totalAmount = 0;
@@ -600,7 +608,7 @@ class TransactionsAccountService
         return $totalAmount;
     }
 
-      public function getYearTransactionGainIntegrate($walletModel)
+    public function getYearTransactionGainIntegrate($walletModel)
     {
 
         $year = Carbon::now()->year;
@@ -631,7 +639,7 @@ class TransactionsAccountService
         return $account_valeur;
     }
 
-     public function getWalletTransactionMonthAccountStatusIntegrate($wallet)
+    public function getWalletTransactionMonthAccountStatusIntegrate($wallet)
     {
 
         $account_valeur = $wallet::whereMonth('created_at', now()->month)
@@ -651,7 +659,7 @@ class TransactionsAccountService
         return $totalAmount;
     }
 
-       public function getYearTransactionSingleGainIntegrate($walletModel)
+    public function getYearTransactionSingleGainIntegrate($walletModel)
     {
 
         $totalAmount = $walletModel::where('created_by', integrate()->id)

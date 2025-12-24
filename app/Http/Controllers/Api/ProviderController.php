@@ -68,200 +68,269 @@ class ProviderController extends Controller
         $this->initializeAppStatus($this->authService);
     }
 
+    //    public function dashboard_historique()
+    // {
+
+    //     $wallet_user =  robus();
+    //     $wallet_solde = Wallet::where('sid_user_id', $wallet_user->id)->first();
+    //     $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
+
+    //     $page = request()->query('page', 1);       
+    //     $perPage = request()->query('per_page', 20);
+
+    //     $walletTransaction =  WalletTransaction::where('wallet_id', $wallet_solde->id)
+    //         ->orWhere('num_wallet', $wallet_solde->wallet_id)
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate($perPage, ['*'], 'page', $page);
+
+    //     $walletPayment = $this->transactionAccount->getTransactionsPaginatedWallet(WalletPayment::class, $wallet_solde->id, $page, $perPage);
+    //     $walletPush = $this->transactionAccount->getTransactionsPaginatedWallet(WalletPush::class, $wallet_solde->id, $page, $perPage);
+    //     $walletTresortMoney = $this->transactionAccount->getTransactionsPaginatedWallet(WalletTresortMoney::class, $wallet_solde->id, $page, $perPage);
+    //     $walletDjamo = $this->transactionAccount->getTransactionsPaginatedWallet(WalletDjamo::class, $wallet_solde->id, $page, $perPage);
+    //     $walletVirement = $this->transactionAccount->getTransactionsPaginatedWallet(WalletVersement::class, $wallet_solde->id, $page, $perPage);
+    //     $walletBankSend = $this->transactionAccount->getTransactionsPaginatedWallet(WalletBankSend::class, $wallet_solde->id, $page, $perPage);
+    //     $walletBank = $this->transactionAccount->getTransactionsPaginatedWallet(WalletBank::class, $wallet_solde->id, $page, $perPage);
+    //     $walletPhone = $this->transactionAccount->getTransactionsPaginatedWallet(WalletPhoneCredit::class, $wallet_solde->id, $page, $perPage);
+    //     $walletReload = WalletReload::where('wallet_id', $wallet_solde->id)
+    //         ->orWhere('account_wallet', $wallet_solde->wallet_id)
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate($perPage, ['*'], 'page', $page);
+    //     $wallet1xbets = $this->transactionAccount->getTransactionsPaginatedWallet(WalletXbet::class, $wallet_solde->id, $page, $perPage);
+
+    //     $walletReloadCard = $this->transactionAccount->getTransactionsPaginatedWallet(WalletDeposit::class, $wallet_solde->id, $page, $perPage);
+
+    //     $walletInter = WalletInter::where('wallet_id', $wallet_solde->id)
+    //         ->orWhere('number_compte', $wallet_solde->wallet_id)
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate($perPage, ['*'], 'page', $page);
+
+    //     $walletOrderCarte = $this->transactionAccount->getTransactionsPaginatedWallet(BankCard::class, $wallet_solde->id, $page, $perPage);
+
+
+    //     $walletRemonte = WithMerchant::where('sid_user_id', $wallet_user->id)
+    //         ->orderBy('created_at', 'desc')
+    //         ->paginate($perPage, ['*'], 'page', $page);
+
+
+    //     $som_commissions =  $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPayment::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBank::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPhoneCredit::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDeposit::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(BankCard::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPush::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDjamo::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletXbet::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTresortMoney::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletVersement::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBankSend::class) +
+    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletInter::class);
+
+
+    //     $transformPaginate = function ($paginator, $collectionClass) {
+    //         return [
+    //             'data' => $collectionClass::collection($paginator),
+    //             'pagination' => [
+    //                 'current_page' => $paginator->currentPage(),
+    //                 'last_page' => $paginator->lastPage(),
+    //                 'per_page' => $paginator->perPage(),
+    //                 'total' => $paginator->total(),
+    //             ],
+    //         ];
+    //     };
+
+    //     $dashboard_data['Transactions'] = $transformPaginate($walletTransaction, TransactionSingleCollection::class);
+    //     $dashboard_data['Push'] = $transformPaginate($walletPush, WithTransactionSingleCollection::class);
+    //     $dashboard_data['Djamo'] = $transformPaginate($walletDjamo, DjamoTransactionSingleCollection::class);
+    //     $dashboard_data['Virements'] = $transformPaginate($walletVirement, VirementTransactionSingleCollection::class);
+    //     $dashboard_data['Tresort Money'] = $transformPaginate($walletTresortMoney, WithTransactionSingleCollection::class);
+    //     $dashboard_data['Commission remonté'] = $transformPaginate($walletRemonte, RemonteSingleCollection::class);
+    //     $dashboard_data['Paiements'] = $transformPaginate($walletPayment, PaymentSingleCollection::class);
+    //     $dashboard_data['1xbet'] = $transformPaginate($wallet1xbets, OneXbetSingleCollection::class);
+    //     $dashboard_data['Versements'] = $transformPaginate($walletBank, VirementSingleCollection::class);
+    //     $dashboard_data['Credit telephoniques'] = $transformPaginate($walletPhone, PhoneCreditSingleCollection::class);
+    //     $dashboard_data['Rechargement de carte'] = $transformPaginate($walletReloadCard, ReloadCardSingle::class);
+    //     $dashboard_data['Rechargement d\'UV'] = $transformPaginate($walletReload, ReloadSingleCollection::class);
+    //     $dashboard_data['Commande de carte'] = $transformPaginate($walletOrderCarte, ReloadCartCollection::class);
+    //     $dashboard_data['Transfers inter'] = $transformPaginate($walletInter, InterTransactionSingleCollection::class);
+    //     $dashboard_data['Bank send'] = $transformPaginate($walletBankSend, WithBankSendSingleCollection::class);
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'historicals' =>  $dashboard_data,
+    //         'som_commission' =>  $som_commissions . ' ' . Auth::guard('api')->user()->wallet->currencie->code,
+    //     ], 200);
+    // }
+
+
     public function index()
     {
-
-        // Vérifier l'état de l'application
         $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
-        
         $countrieId = robus()->country->id;
         $dashboard_data = [];
-       
-        if (!$appStatusResult['success']) {
-            if (!$appStatusResult['success']) {
-                $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
-
-                $dashboard_data['Transfert national'] = [
-                    "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
-                    "Mobile Money" =>  [],
-                    "Tresort Money" => [],
-                ];
-
-                return response()->json([
-                    'success' => true,
-                    'Wallets' => $dashboard_data,
-                ], 200);
-            }
-        }
-
-        $assignations = $this->percentRobus->operatorServices();
-
-        $restrictionMapTransaction = [
-            'TRANSFERT CREDIT' => 'showCreditButton',
-            'PAIEMENT DE FACTURE' => 'showPaiementButton',
-            'TRANSFERT INTERNATIONNAL MOBILE MONEY' => 'showInterButton',
-            'RECHARGEMENT DE CARTE' => 'showRechargementButton',
-            'VERSEMENT BANCAIRE' => 'showVirementButton',
-            'RETRAIT' => 'showRetraitButton',
-            'DEPOTS' => 'showDepotButton',
-            'MOBILE MONEY' => 'showMobileButton',
-            'DEPOT ET TRANSFERT MOBILE MONEY' => 'showMoneyButton',
-            'TRANSFERT A INTER' => 'showTransacInterButton',
-            'CREDIT TELEPHONIQUE A INTER' => 'showTelInterButton',
-
-            'TRANSFERT PUSH A INTER' => 'showPushInterButton',
-            'TRANSFERT DJAMO A INTER' => 'showDjamoInterButton',
-            'TRANSFERT TRESORT A INTER' => 'showTresortInterButton',
-            'TRANSFERT BANK SEND A INTER' => 'showFacBankSendInterButton',
-            'RETRAIT XBETS A INTER' => 'showXbetsRetraitInterButton',
-            'XBETS A INTER' => 'showXbetsInterButton',
-            'VERSEMENT A INTER' => 'showVersementInterButton',
-
-            'VERSEMENT BANCAIRE A INTER' => 'showBancInterButton',
-            'RECHARGEMENT DE CARTE A INTER' => 'showCarteInterButton',
-            'PAIMENT FACTURE A INTER' => 'showFacInterButton',
-            'TRANSFERT PUSH' => 'showPushButton',
-            'TRANSFERT DJAMO' => 'showDjamBoutton',
-            'TRANSFERT TRESORT' => 'showTresortButton',
-            'TRANSFERT BANK SEND' => 'showFacBankSendButton',
-            'RETRAIT XBETS' => 'showXbetsRetraitButton',
-            'XBETS' => 'showXbetsButton',
-            'VERSEMENT' => 'showVersementButton',
-        ];
-
-        $activeButtons = [];
-
-        foreach ($assignations as $operator) {
-            $restrictions = explode(',', $operator->name);
-            foreach ($restrictionMapTransaction as $restriction => $buttonVar) {
-                if (in_array($restriction, $restrictions)) {
-                    $activeButtons[$buttonVar] = true;
-                }
-            }
-        }
-
-
-        $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
-        $walletTransactionMoney = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, 1);
-        $walletPayment = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 2);
-        $walletPaymentInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 7);
-        $walletRetrait = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 29);
-        $walletBank = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, [4, 18]);
-        $walletPhone = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 6);
-        $walletReloadCard = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, [24, 25, 5]);
-        $walletInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 8);
-        $walletPhoneInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 9);
-        $walletVirementBank = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 10);
-        $walletReloadCardInter = $this->percentRobus->getProvidersByType(new Provider, $countrieId, 11);
-        $walletTransaction =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 1);
-        $walletTresort =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 23);
-        $walletBankSend =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 27);
-        $walletInterPush =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 21);
-        $walletInterDjamo =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 22);
-        $walletInterTresort =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 20);
-        $walletInterBankSend =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 28);
-        $walletInterVersement =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 10);
-        $walletXbet =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 13);
-        $walletInterXbet =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 26);
-
 
         try {
+            // 1️⃣ Cas où l'app est indisponible
+            if (!$appStatusResult['success']) {
+                $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
+                $dashboard_data['Transfert national'] = [
+                    "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
+                    "Mobile Money" => [],
+                    "Tresort Money" => [],
+                ];
+                return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
+            }
 
+            // 2️⃣ Récupération des assignations et mapping restrictions
+            $assignations = $this->percentRobus->operatorServices();
+            $restrictionMap = [
+                'TRANSFERT CREDIT' => 'showCreditButton',
+                'PAIEMENT DE FACTURE' => 'showPaiementButton',
+                'TRANSFERT INTERNATIONNAL MOBILE MONEY' => 'showInterButton',
+                'RECHARGEMENT DE CARTE' => 'showRechargementButton',
+                'VERSEMENT BANCAIRE' => 'showVirementButton',
+                'RETRAIT' => 'showRetraitButton',
+                'DEPOTS' => 'showDepotButton',
+                'MOBILE MONEY' => 'showMobileButton',
+                'DEPOT ET TRANSFERT MOBILE MONEY' => 'showMoneyButton',
+                'TRANSFERT A INTER' => 'showTransacInterButton',
+                'CREDIT TELEPHONIQUE A INTER' => 'showTelInterButton',
+                'TRANSFERT PUSH A INTER' => 'showPushInterButton',
+                'TRANSFERT DJAMO A INTER' => 'showDjamoInterButton',
+                'TRANSFERT TRESORT A INTER' => 'showTresortInterButton',
+                'TRANSFERT BANK SEND A INTER' => 'showFacBankSendInterButton',
+                'RETRAIT XBETS A INTER' => 'showXbetsRetraitInterButton',
+                'XBETS A INTER' => 'showXbetsInterButton',
+                'VERSEMENT A INTER' => 'showVersementInterButton',
+                'VERSEMENT BANCAIRE A INTER' => 'showBancInterButton',
+                'RECHARGEMENT DE CARTE A INTER' => 'showCarteInterButton',
+                'PAIMENT FACTURE A INTER' => 'showFacInterButton',
+                'TRANSFERT PUSH' => 'showPushButton',
+                'TRANSFERT DJAMO' => 'showDjamBoutton',
+                'TRANSFERT TRESORT' => 'showTresortButton',
+                'TRANSFERT BANK SEND' => 'showFacBankSendButton',
+                'RETRAIT XBETS' => 'showXbetsRetraitButton',
+                'XBETS' => 'showXbetsButton',
+                'VERSEMENT' => 'showVersementButton',
+            ];
 
-            if (robus()->is_under_distributer == true || robus()->is_api == true) {
+            $activeButtons = [];
+            foreach ($assignations as $operator) {
+                $restrictions = explode(',', $operator->name);
+                foreach ($restrictionMap as $restriction => $button) {
+                    if (in_array($restriction, $restrictions)) $activeButtons[$button] = true;
+                }
+            }
+
+            // 3️⃣ Charger **tous les providers en une seule fois** pour éviter les multiples requêtes
+            $providerTypes = [
+                'walletTransactionDepot' => [1, 'depot'],
+                'walletTransactionMoney' => [1, 'money'],
+                'walletPayment' => [2, 'payment'],
+                'walletPaymentInter' => [7, 'paymentInter'],
+                'walletRetrait' => [29, 'retrait'],
+                'walletBank' => [[4, 18], 'bank'],
+                'walletPhone' => [6, 'phone'],
+                'walletReloadCard' => [[24, 25, 5], 'reloadCard'],
+                'walletInter' => [8, 'inter'],
+                'walletPhoneInter' => [9, 'phoneInter'],
+                'walletVirementBank' => [10, 'virementBank'],
+                'walletReloadCardInter' => [11, 'reloadCardInter'],
+                'walletTransaction' => [1, 'transaction'],
+                'walletTresort' => [23, 'tresort'],
+                'walletBankSend' => [27, 'bankSend'],
+                'walletInterPush' => [21, 'interPush'],
+                'walletInterDjamo' => [22, 'interDjamo'],
+                'walletInterTresort' => [20, 'interTresort'],
+                'walletInterBankSend' => [28, 'interBankSend'],
+                'walletInterVersement' => [10, 'interVersement'],
+                'walletXbet' => [13, 'xbet'],
+                'walletInterXbet' => [26, 'interXbet'],
+            ];
+
+            $providers = [];
+            foreach ($providerTypes as $key => [$type, $alias]) {
+                if (is_array($type)) {
+                    $providers[$alias] = $this->percentRobus->getProvidersReloadByType(new Provider, $countrieId, $type);
+                } elseif ($alias === 'depot') {
+                    $providers[$alias] = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, $type);
+                } elseif ($alias === 'money') {
+                    $providers[$alias] = $this->percentRobus->getProvidersMoneyByType(new Provider, $countrieId, $type);
+                } else {
+                    $providers[$alias] = $this->percentRobus->getProvidersByType(new Provider, $countrieId, $type);
+                }
+            }
+
+            // 4️⃣ Construire le dashboard de manière dynamique
+            if (robus()->is_under_distributer || robus()->is_api) {
 
                 if (!empty($activeButtons['showCreditButton'])) {
-                    $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
+                    $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($providers['phone']);
                 }
-
                 if (!empty($activeButtons['showPaiementButton'])) {
-                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPayment);
+                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($providers['payment']);
                 }
-
-
-                // if (!empty($activeButtons['showBankSendButton'])) {
-                //     $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
-                // }
-
-                // if (!empty($activeButtons['showXbetsRetraitButton'])) {
-                //     $dashboard_data['Retrait Xbets'] = ProviderSingleCollection::collection($walletXbet);
-                // }
-
                 if (!empty($activeButtons['showXbetsButton'])) {
-                    $dashboard_data['Xbets'] = ProviderSingleCollection::collection($walletXbet);
+                    $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
                 }
-
 
                 if (!empty($activeButtons['showInterButton'])) {
                     $dashboard_data['Transfert international'] = [
-                        "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($walletPaymentInter) : [],
-                        "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($walletInter) : [],
-                        "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($walletPhoneInter) : [],
-                        "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($walletVirementBank) : [],
-                        "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
-
-                        // New transactions
-                        "Push" => !empty($activeButtons['showPushInterButton']) ? ProviderSingleCollection::collection($walletInterPush) : [],
-                        "Djamo" => !empty($activeButtons['showDjamoInterButton']) ? ProviderSingleCollection::collection($walletInterDjamo) : [],
-                        "Tresort" => !empty($activeButtons['showTresortInterButton']) ? ProviderSingleCollection::collection($walletInterTresort) : [],
-                        "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($walletInterBankSend) : [],
-                        "Versement" => !empty($activeButtons['showVersementInterButton']) ? ProviderSingleCollection::collection($walletInterVersement) : [],
-                        "Xbets" => !empty($activeButtons['showXbetsInterButton']) ? ProviderSingleCollection::collection($walletInterXbet) : [],
+                        "Factures" => !empty($activeButtons['showFacInterButton']) ? ProviderSingleCollection::collection($providers['paymentInter']) : [],
+                        "Transfert" => !empty($activeButtons['showTransacInterButton']) ? ProviderSingleCollection::collection($providers['inter']) : [],
+                        "Crédit téléphonique" => !empty($activeButtons['showTelInterButton']) ? ProviderSingleCollection::collection($providers['phoneInter']) : [],
+                        "Versement bancaire" => !empty($activeButtons['showBancInterButton']) ? ProviderSingleCollection::collection($providers['virementBank']) : [],
+                        "Rechargement de carte" => !empty($activeButtons['showCarteInterButton']) ? ProviderSingleCollection::collection($providers['reloadCardInter']) : [],
+                        "Push" => !empty($activeButtons['showPushInterButton']) ? ProviderSingleCollection::collection($providers['interPush']) : [],
+                        "Djamo" => !empty($activeButtons['showDjamoInterButton']) ? ProviderSingleCollection::collection($providers['interDjamo']) : [],
+                        "Tresort" => !empty($activeButtons['showTresortInterButton']) ? ProviderSingleCollection::collection($providers['interTresort']) : [],
+                        "Bank Send" => !empty($activeButtons['showFacBankSendInterButton']) ? ProviderSingleCollection::collection($providers['interBankSend']) : [],
+                        "Versement" => !empty($activeButtons['showVersementInterButton']) ? ProviderSingleCollection::collection($providers['interVersement']) : [],
+                        "Xbets" => !empty($activeButtons['showXbetsInterButton']) ? ProviderSingleCollection::collection($providers['interXbet']) : [],
                     ];
                 }
 
                 if (!empty($activeButtons['showVirementButton'])) {
-                    $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
+                    $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($providers['bank']);
                 }
-
                 if (!empty($activeButtons['showRechargementButton'])) {
-                    $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
+                    $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($providers['reloadCard']);
                 }
-
                 if (!empty($activeButtons['showMoneyButton'])) {
                     $dashboard_data['Transfert national'] = [
-                        "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($walletTransactionDepot) : [],
-                        "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($walletTransactionMoney) : [],
-                        "Tresort Money" => !empty($activeButtons['showTresortButton']) ? ProviderSingleCollection::collection($walletTresort) : [],
+                        "Dépôts" => !empty($activeButtons['showDepotButton']) ? ProviderSingleCollection::collection($providers['depot']) : [],
+                        "Mobile Money" => !empty($activeButtons['showMobileButton']) ? ProviderSingleCollection::collection($providers['money']) : [],
+                        "Tresort Money" => !empty($activeButtons['showTresortButton']) ? ProviderSingleCollection::collection($providers['tresort']) : [],
                     ];
                 }
-
                 if (!empty($activeButtons['showRetraitButton'])) {
-                    $dashboard_data['Retrait'] = ProviderSingleCollection::collection($walletRetrait);
+                    $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
                 }
             } else {
-
-
+                // Cas normal hors distributeur/API
                 if (robus()->country->code == 'CI') {
-                    $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
-                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($walletPaymentInter);
-                    $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($walletBank);
-                    $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($walletPhone);
-                    $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($walletReloadCard);
-                    // $dashboard_data['Bank Send'] = ProviderSingleCollection::collection($walletBankSend);
-                    $dashboard_data['Xbets'] = ProviderSingleCollection::collection($walletXbet);
-
-                    // $dashboard_data['Achat d\'UV'] = ProviderSingleCollection::collection($walletReload);
+                    $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);
+                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($providers['paymentInter']);
+                    $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($providers['bank']);
+                    $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($providers['phone']);
+                    $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($providers['reloadCard']);
+                    $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
                     $dashboard_data['Transfert international'] = [
-                        "Transfert" => ProviderSingleCollection::collection($walletInter),
+                        "Transfert" => ProviderSingleCollection::collection($providers['inter']),
                     ];
                 } else {
-                    $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($walletTransaction);
+                    $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);
                     $dashboard_data['Transfert international'] = [
-                        "Factures" => ProviderSingleCollection::collection($walletPaymentInter),
-                        "Transfert" => ProviderSingleCollection::collection($walletInter),
-                        "Crédit téléphonique" => ProviderSingleCollection::collection($walletPhoneInter),
-                        "Versement bancaire" => ProviderSingleCollection::collection($walletVirementBank),
-                        "Rechargement de carte" => ProviderSingleCollection::collection($walletReloadCardInter),
+                        "Factures" => ProviderSingleCollection::collection($providers['paymentInter']),
+                        "Transfert" => ProviderSingleCollection::collection($providers['inter']),
+                        "Crédit téléphonique" => ProviderSingleCollection::collection($providers['phoneInter']),
+                        "Versement bancaire" => ProviderSingleCollection::collection($providers['virementBank']),
+                        "Rechargement de carte" => ProviderSingleCollection::collection($providers['reloadCardInter']),
                     ];
                 }
             }
 
-
-            return response()->json([
-                'success' => true,
-                'Wallets' => $dashboard_data,
-            ], 200);
+            return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
         } catch (\Exception $exception) {
             return response()->json([
                 'success' => false,
@@ -269,6 +338,7 @@ class ProviderController extends Controller
             ], 500);
         }
     }
+
 
     public function indexProvidersProspect()
     {

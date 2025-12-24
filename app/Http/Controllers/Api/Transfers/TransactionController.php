@@ -617,12 +617,14 @@ class TransactionController extends Controller
                 $request->all(),
                 [
                     "phone" => 'required',
+                    "provider" => 'required',
                     "amount" => 'required',
                     "name_custumer" => 'required',
                 ],
                 [
 
                     'phone.required' => 'Votre numero est obligatoire',
+                    'provider.required' => 'Votre operateur est obligatoire',
                     'amount.required' => 'Votre montant est obligatoire',
                     'name_custumer.required' => 'Nom est obligatoire',
 
@@ -691,10 +693,10 @@ class TransactionController extends Controller
                                 if ($this->mobileWalletTransactionService->updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)) {
 
                                     if (robus()->is_under_distributer || robus()->is_api) {
-                                        $processCommission = $this->mobileWalletTransactionService->processCommissionsMobileDistributer($request->amount, $percent_robus, $walletTransaction, $admin_civ);
+                                        $processCommission = $this->mobileWalletTransactionService->processCommissionsDrawalDistributer($request->amount, $percent_robus, $walletTransaction, $admin_civ);
                                     } else {
 
-                                        $processCommission = $this->mobileWalletTransactionService->processCommissionsMobile($request->amount, $percent_robus, $walletTransaction, $admin_civ);
+                                        $processCommission = $this->mobileWalletTransactionService->processCommissionsDrawalMobile($request->amount, $percent_robus, $walletTransaction, $admin_civ);
                                     }
 
                                     if ($processCommission) {

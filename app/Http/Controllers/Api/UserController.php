@@ -310,7 +310,7 @@ class UserController extends Controller
 
 
         $commissions = [
-            'Depots' => $this->transactionAccount->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class),
+            'Dépôts' => $this->transactionAccount->getTodayTransactionRobusDepotCommissionAmountTotal(WalletTransaction::class),
             'Retraits' => $this->transactionAccount->getTodayTransactionRobusRetraitCommissionAmountTotal(WalletTransaction::class),
             'Moneys' => $this->transactionAccount->getTodayTransactionMobileCommissionAmountTotal(WalletTransaction::class),
             'Paiements' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPayment::class),
@@ -320,7 +320,11 @@ class UserController extends Controller
             'Rechargements' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDeposit::class),
             'Commande de carte' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(BankCard::class),
             'International' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletInter::class),
-            'Commission remonté' => RemonteSingleCollection::collection($this->transactionAccount->getUserRemonte(WithMerchant::class, robus()->id)),
+            'Tresort Money' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletTresortMoney::class),
+            'Push' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletPush::class),
+            'Djamo' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletDjamo::class),
+            'BankSend' => $this->transactionAccount->getTodayTransactionCommissionAmountTotal(WalletBankSend::class),
+            // 'Commission remonté' => RemonteSingleCollection::collection($this->transactionAccount->getUserRemonte(WithMerchant::class, robus()->id)),
         ];
 
         $is_under = robus()->is_under_distributer;
@@ -330,6 +334,8 @@ class UserController extends Controller
         ], 200);
     }
 
+  
+
     public function dashboard_historique()
     {
 
@@ -337,40 +343,41 @@ class UserController extends Controller
         $wallet_solde = Wallet::where('sid_user_id', $wallet_user->id)->first();
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
 
+        $page = request()->query('page', 1);        // pageKey de Flutter
+        $perPage = request()->query('per_page', 20); // _pageSize Flutter
 
         $walletTransaction =  WalletTransaction::where('wallet_id', $wallet_solde->id)
             ->orWhere('num_wallet', $wallet_solde->wallet_id)
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate($perPage, ['*'], 'page', $page);
 
-        $walletPayment = $this->transactionAccount->getTransactionsWallet(WalletPayment::class, $wallet_solde->id);
-
-        $walletPush = $this->transactionAccount->getTransactionsWallet(WalletPush::class, $wallet_solde->id);
-        $walletTresortMoney = $this->transactionAccount->getTransactionsWallet(WalletTresortMoney::class, $wallet_solde->id);
-        $walletDjamo = $this->transactionAccount->getTransactionsWallet(WalletDjamo::class, $wallet_solde->id);
-        $walletVirement = $this->transactionAccount->getTransactionsWallet(WalletVersement::class, $wallet_solde->id);
-        $walletBankSend = $this->transactionAccount->getTransactionsWallet(WalletBankSend::class, $wallet_solde->id);
-        $walletBank = $this->transactionAccount->getTransactionsWallet(WalletBank::class, $wallet_solde->id);
-        $walletPhone = $this->transactionAccount->getTransactionsWallet(WalletPhoneCredit::class, $wallet_solde->id);
+        $walletPayment = $this->transactionAccount->getTransactionsPaginatedWallet(WalletPayment::class, $wallet_solde->id, $page, $perPage);
+        $walletPush = $this->transactionAccount->getTransactionsPaginatedWallet(WalletPush::class, $wallet_solde->id, $page, $perPage);
+        $walletTresortMoney = $this->transactionAccount->getTransactionsPaginatedWallet(WalletTresortMoney::class, $wallet_solde->id, $page, $perPage);
+        $walletDjamo = $this->transactionAccount->getTransactionsPaginatedWallet(WalletDjamo::class, $wallet_solde->id, $page, $perPage);
+        $walletVirement = $this->transactionAccount->getTransactionsPaginatedWallet(WalletVersement::class, $wallet_solde->id, $page, $perPage);
+        $walletBankSend = $this->transactionAccount->getTransactionsPaginatedWallet(WalletBankSend::class, $wallet_solde->id, $page, $perPage);
+        $walletBank = $this->transactionAccount->getTransactionsPaginatedWallet(WalletBank::class, $wallet_solde->id, $page, $perPage);
+        $walletPhone = $this->transactionAccount->getTransactionsPaginatedWallet(WalletPhoneCredit::class, $wallet_solde->id, $page, $perPage);
         $walletReload = WalletReload::where('wallet_id', $wallet_solde->id)
             ->orWhere('account_wallet', $wallet_solde->wallet_id)
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
-        $wallet1xbets = $this->transactionAccount->getTransactionsWallet(WalletXbet::class, $wallet_solde->id);
+            ->paginate($perPage, ['*'], 'page', $page);
+        $wallet1xbets = $this->transactionAccount->getTransactionsPaginatedWallet(WalletXbet::class, $wallet_solde->id, $page, $perPage);
 
-        $walletReloadCard = $this->transactionAccount->getTransactionsWallet(WalletDeposit::class, $wallet_solde->id);
+        $walletReloadCard = $this->transactionAccount->getTransactionsPaginatedWallet(WalletDeposit::class, $wallet_solde->id, $page, $perPage);
 
         $walletInter = WalletInter::where('wallet_id', $wallet_solde->id)
             ->orWhere('number_compte', $wallet_solde->wallet_id)
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate($perPage, ['*'], 'page', $page);
 
-        $walletOrderCarte = $this->transactionAccount->getTransactionsWallet(BankCard::class, $wallet_solde->id);;
+        $walletOrderCarte = $this->transactionAccount->getTransactionsPaginatedWallet(BankCard::class, $wallet_solde->id, $page, $perPage);
 
 
         $walletRemonte = WithMerchant::where('sid_user_id', $wallet_user->id)
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate($perPage, ['*'], 'page', $page);
 
 
         $som_commissions =  $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) +
@@ -387,22 +394,34 @@ class UserController extends Controller
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBankSend::class) +
             $this->transactionAccount->getTransactionCommissionAmountTotal(WalletInter::class);
 
-        $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
-        $dashboard_data['Push'] = WithTransactionSingleCollection::collection($walletPush);
-        $dashboard_data['Djamo'] = DjamoTransactionSingleCollection::collection($walletDjamo);
-        $dashboard_data['Virements'] = VirementTransactionSingleCollection::collection($walletVirement);
-        $dashboard_data['Tresort Money'] = WithTransactionSingleCollection::collection($walletTresortMoney);
-        $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
-        $dashboard_data['Paiements'] = PaymentSingleCollection::collection($walletPayment);
-        $dashboard_data['1xbet'] = OneXbetSingleCollection::collection($wallet1xbets);
-        $dashboard_data['Versements'] = VirementSingleCollection::collection($walletBank);
-        $dashboard_data['Credit telephoniques'] = PhoneCreditSingleCollection::collection($walletPhone);
-        $dashboard_data['Rechargement de carte'] = ReloadCardSingle::collection($walletReloadCard);
-        $dashboard_data['Rechargement d\'UV'] = ReloadSingleCollection::collection($walletReload);
-        $dashboard_data['Commande de carte'] = ReloadCartCollection::collection($walletOrderCarte);
-        $dashboard_data['Transfers inter'] = InterTransactionSingleCollection::collection($walletInter);
-        $dashboard_data['Bank send'] = WithBankSendSingleCollection::collection($walletBankSend);
 
+        $transformPaginate = function ($paginator, $collectionClass) {
+            return [
+                'data' => $collectionClass::collection($paginator),
+                'pagination' => [
+                    'current_page' => $paginator->currentPage(),
+                    'last_page' => $paginator->lastPage(),
+                    'per_page' => $paginator->perPage(),
+                    'total' => $paginator->total(),
+                ],
+            ];
+        };
+
+        $dashboard_data['Transactions'] = $transformPaginate($walletTransaction, TransactionSingleCollection::class);
+        $dashboard_data['Push'] = $transformPaginate($walletPush, WithTransactionSingleCollection::class);
+        $dashboard_data['Djamo'] = $transformPaginate($walletDjamo, DjamoTransactionSingleCollection::class);
+        $dashboard_data['Virements'] = $transformPaginate($walletVirement, VirementTransactionSingleCollection::class);
+        $dashboard_data['Tresort Money'] = $transformPaginate($walletTresortMoney, WithTransactionSingleCollection::class);
+        $dashboard_data['Commission remonté'] = $transformPaginate($walletRemonte, RemonteSingleCollection::class);
+        $dashboard_data['Paiements'] = $transformPaginate($walletPayment, PaymentSingleCollection::class);
+        $dashboard_data['1xbet'] = $transformPaginate($wallet1xbets, OneXbetSingleCollection::class);
+        $dashboard_data['Versements'] = $transformPaginate($walletBank, VirementSingleCollection::class);
+        $dashboard_data['Credit telephoniques'] = $transformPaginate($walletPhone, PhoneCreditSingleCollection::class);
+        $dashboard_data['Rechargement de carte'] = $transformPaginate($walletReloadCard, ReloadCardSingle::class);
+        $dashboard_data['Rechargement d\'UV'] = $transformPaginate($walletReload, ReloadSingleCollection::class);
+        $dashboard_data['Commande de carte'] = $transformPaginate($walletOrderCarte, ReloadCartCollection::class);
+        $dashboard_data['Transfers inter'] = $transformPaginate($walletInter, InterTransactionSingleCollection::class);
+        $dashboard_data['Bank send'] = $transformPaginate($walletBankSend, WithBankSendSingleCollection::class);
 
         return response()->json([
             'success' => true,
@@ -1764,7 +1783,7 @@ class UserController extends Controller
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletPhoneCredit::class) +
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletTransaction::class) +
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletReload::class) +
-                    $this->transactionAccount->getYearTransactionGainIntegrate(WalletBankSend::class) +
+            $this->transactionAccount->getYearTransactionGainIntegrate(WalletBankSend::class) +
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletPush::class) +
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletXbet::class) +
             $this->transactionAccount->getYearTransactionGainIntegrate(WalletDjamo::class) +

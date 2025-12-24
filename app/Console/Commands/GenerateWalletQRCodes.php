@@ -17,19 +17,24 @@ class GenerateWalletQRCodes extends Command
         $wallets = Wallet::all();
         $this->info('Nombre de wallets : ' . $wallets->count());
 
-        $originalLogoPath = public_path('dist/images/logo_violet.jpeg');
+
 
 
         foreach ($wallets as $wallet) {
             // Si le wallet a déjà un QR code, on peut sauter ou régénérer
-            // if ($wallet->qr_code) {
-            //     continue;
-            // }
+            if ($wallet->qr_code) {
+                continue;
+            }
 
+            if ($wallet->sidUser->is_custumers) {
+                $originalLogoPath = public_path('dist/images/logo_orange.png');
+            } else {
+                $originalLogoPath = public_path('dist/images/logo_violet.png');
+            }
             $qrData = json_encode([
                 'wallet_id' => $wallet->wallet_id,
-                'user' => $wallet->sidUser->firstname . ' '.  $wallet->sidUser->lastname,
-                'countrie' => $wallet->sidUser->country->name . ' '.  $wallet->sidUser->citie->name,
+                'user' => $wallet->sidUser->firstname . ' ' .  $wallet->sidUser->lastname,
+                'countrie' => $wallet->sidUser->country->name . ' ' .  $wallet->sidUser->citie->name,
                 'currencie' => $wallet->country->currencie->name,
             ]);
 

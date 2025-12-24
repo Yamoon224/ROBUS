@@ -334,9 +334,9 @@ class PercentRobusAuthService
             case 125:
                 return TransactionCost::whereId(49)->first();
             case 126:
-                return VirementPercent::whereId(50)->first();
+                return TransactionCost::whereId(50)->first();
             case 127:
-                return VirementPercent::whereId(51)->first();
+                return TransactionCost::whereId(51)->first();
             default:
                 return null;
         }

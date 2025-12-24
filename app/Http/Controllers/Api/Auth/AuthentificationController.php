@@ -443,7 +443,7 @@ class AuthentificationController extends Controller
                             'activation_code' => null,
                         ]);
 
-                        $originalLogoPath = public_path('dist/images/logo_violet.jpeg');
+                        $originalLogoPath = public_path('dist/images/logo_orange.png');
 
                         $tokenResult = $user->createToken('auth_token');
 
