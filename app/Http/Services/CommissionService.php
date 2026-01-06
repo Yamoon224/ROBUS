@@ -28,7 +28,7 @@ class CommissionService
 
         //     $encode = substr(robus()->phone, -10);
 
-        //     Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+        //     Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
         // }
     }
     public function distributeAdminCommissionAcceptedCompanies($adminCiv, string $walletColumn, $walletId, $totalCommission, $amountDeposit)
@@ -58,11 +58,11 @@ class CommissionService
                     'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
                 ], [$walletColumn => $walletId]));
 
-                if ($walletCommission && $walletCommission->amount >= $total_commission) {
-                    $walletCommission->decrement('amount', $total_commission);
-                } else {
-                    $adminUser->wallet->decrement('amount', $total_commission);
-                }
+                // if ($walletCommission && $walletCommission->amount >= $total_commission) {
+                //     $walletCommission->decrement('amount', $total_commission);
+                // } else {
+                //     $adminUser->wallet->decrement('amount', $total_commission);
+                // }
             }
         }
     }
@@ -92,11 +92,11 @@ class CommissionService
                 ], [$walletColumn => $walletId]));
 
 
-                if ($walletAdmin && $walletAdmin->amount >= $totalCommission) {
-                    $walletAdmin->increment('amount', $totalCommission);
-                } else {
-                    $adminUser->wallet->increment('amount', $totalCommission);
-                }
+                // if ($walletAdmin && $walletAdmin->amount >= $totalCommission) {
+                //     $walletAdmin->increment('amount', $totalCommission);
+                // } else {
+                //     $adminUser->wallet->increment('amount', $totalCommission);
+                // }
             }
         }
     }
@@ -207,17 +207,17 @@ class CommissionService
                     'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ], [$walletColumn => $walletId]));
 
-                if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
-                    $walletCommission->decrement('amount', $amountDeposit);
-                } else {
-                    $adminUser->wallet->decrement('amount', $totalCommission);
-                }
+                // if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
+                //     $walletCommission->decrement('amount', $amountDeposit);
+                // } else {
+                //     $adminUser->wallet->decrement('amount', $totalCommission);
+                // }
             }
         }
     }
 
 
-    public function distributeAdminCommissionUnders($adminCiv, string $walletColumn, $walletId , $amountDeposit)
+    public function distributeAdminCommissionUnders($adminCiv, string $walletColumn, $walletId, $amountDeposit)
     {
 
 
@@ -243,11 +243,11 @@ class CommissionService
                     'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ], [$walletColumn => $walletId]));
 
-                if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
-                    $walletCommission->decrement('amount', $amountDeposit);
-                } else {
-                    $adminUser->wallet->decrement('amount', $amountDeposit);
-                }
+                // if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
+                //     $walletCommission->decrement('amount', $amountDeposit);
+                // } else {
+                //     $adminUser->wallet->decrement('amount', $amountDeposit);
+                // }
             }
         }
     }

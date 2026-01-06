@@ -95,7 +95,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             // 1Xbets
             Route::post('oneXbet/store', [OnexbetTransactionController::class, 'create_OnexbetTranaction']);
             Route::post('oneXbet/delete/{inter_providersid}', [OnexbetTransactionController::class, 'delete_wallet_xbet']);
-            Route::get('search_onexbet/{amount_wave}', [OnexbetTransactionController::class, 'search_xbet']);
+            Route::get('search_onexbet/{amount_wave}/{is_drawal?}', [OnexbetTransactionController::class, 'search_xbet']);
             Route::get('search_onexbet_received/{amount_received}', [OnexbetTransactionController::class, 'search_xbet_received']);
 
             // WithTransactions

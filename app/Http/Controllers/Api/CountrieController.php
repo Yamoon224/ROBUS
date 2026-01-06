@@ -185,11 +185,12 @@ class CountrieController extends Controller
         } elseif (robus()->is_custumers && robus()->country->id == 107) {
 
             $walletsData['Transfert international'] = [
-                "Paiements Factures" => [],
+                "Paiements Factures" =>  $walletPaymentInter ? ProviderSingleCollection::collection($walletPaymentInter) : [],
                 "Transfert" => $walletInter ? ProviderSingleCollection::collection($walletInter) : [],
-                "Crédit téléphonique" =>  [],
-                "Versement bancaire" => [],
-                "Rechargement de carte" => [],
+                "Crédit téléphonique" => $walletPhoneInter ? ProviderSingleCollection::collection($walletPhoneInter) : [],
+                "Versement bancaire" => $walletVirementBank ? ProviderSingleCollection::collection($walletVirementBank) : [],
+                "Rechargement de carte" => $walletReloadCardInter ? ProviderSingleCollection::collection($walletReloadCardInter) : [],
+                "Bank send" => $walletBankInter ? ProviderSingleCollection::collection($walletBankInter) : [],
             ];
         } else {
 

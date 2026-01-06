@@ -103,8 +103,8 @@ class CardController extends Controller
             + $this->getWalletPaymentsCeilingProperty() + $this->getWalletTransactionsCeilingProperty()
             + $this->getWalletPhoneCreditsCeilingProperty() + $this->getWalletReloadsCeilingProperty()  + $this->getWalletBankCardCeilingProperty();
 
-       
-       
+
+
         try {
 
             $validator = Validator::make($request->all(), [
@@ -116,7 +116,7 @@ class CardController extends Controller
                 'type_card_id' => 'required',
             ]);
 
-            
+
             if ($validator->fails()) {
                 return back()->withErrors($validator)
                     ->with('color', 'danger')
@@ -124,24 +124,22 @@ class CardController extends Controller
                     ->withInput();
             }
 
-            
+
             $percent_robus = Provider::where('provider_type_id',  5)
                 ->whereId($request->type_card_id)
                 ->first();
 
             $valeur_amount =   $this->convertAdminCommission($percent_robus->amount);
 
-            if(!$valeur_amount)
-            {
+            if (!$valeur_amount) {
 
                 return back()
                     ->withErrors($validator)
                     ->with('color', 'danger')
                     ->with('status', 'Cette carte n\'a pas de montant ')
                     ->withInput();
-
             }
-            
+
             if ($amount_days >=  $valeur_ceiling) {
 
                 return back()
@@ -158,7 +156,7 @@ class CardController extends Controller
                     ->with('color', 'danger')
                     ->with('status', 'Verifier votre solde')
                     ->withInput();
-            } 
+            }
 
             if ($percent_robus != null) {
 
@@ -204,8 +202,7 @@ class CardController extends Controller
 
                 if ($this->updateamountOrderCardReceveid($admin_civ, $percent_robus, $card_bank, $valeur_amount)) {
 
-                    if( $this->sendNotificationOrderCard($card_bank))
-                    {
+                    if ($this->sendNotificationOrderCard($card_bank)) {
 
                         $this->sendNotificationOrderCard($card_bank);
                         $msg = "Carte crée avec succès";
@@ -213,19 +210,19 @@ class CardController extends Controller
 
                         return redirect(route('cards.browse'))->with('color', $color)->with('status', $msg);
                     }
-                }else {
+                } else {
                     return back()
+                        ->withErrors($validator)
+                        ->with('color', 'danger')
+                        ->with('status', 'Erreur de MAJ des données')
+                        ->withInput();
+                }
+            } else {
+                return back()
                     ->withErrors($validator)
                     ->with('color', 'danger')
-                    ->with('status', 'Erreur de MAJ des données')
+                    ->with('status', 'Voir le provider selectionner')
                     ->withInput();
-                }
-            }else {
-                return back()
-                ->withErrors($validator)
-                ->with('color', 'danger')
-                ->with('status', 'Voir le provider selectionner')
-                ->withInput();
             }
         } catch (\Throwable $th) {
             return back()
@@ -290,7 +287,6 @@ class CardController extends Controller
         }
 
         return true;
-
     }
 
     private function updateamountOrderCardReceveid($admin_civ, $percent_robus, $walletOrderCard, $amount_commission)
@@ -309,16 +305,16 @@ class CardController extends Controller
                 'commissions' => DB::raw('commissions+'  .  $convertion_commission),
             ]);
 
-            
+
             if ($admin_civ->count() > 0) {
 
                 $nmbre_admin = $admin_civ->count();
-    
+
                 $valeur_single = $admin_valeur / $nmbre_admin;
-    
+
                 foreach ($admin_civ as $user) {
                     $admin_single = SidUser::find($user->id);
-    
+
                     AdminsCom::create([
                         'amount' =>   $admin_valeur,
                         'sid_user_id' =>   $admin_single->id,
@@ -329,11 +325,9 @@ class CardController extends Controller
                     ]);
                 }
             }
-
         } else {
 
             $admin_valeur =  $amount_commission;
-
         }
 
 
@@ -361,7 +355,6 @@ class CardController extends Controller
                     'bank_card_id' =>  $walletOrderCard->id,
                     'description' => 'Commission administrateur',
                 ]);
-
             }
         }
 
@@ -447,7 +440,7 @@ class CardController extends Controller
 
             $message = 'Votre carte a été activé ' . ' ' . 'Le code de la carte est ' . $card->ref_card;
 
-            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
 
             $msg_title = 'Commande de carte';
             $msg = 'Votre commande de carte a été validé';
@@ -497,7 +490,7 @@ class CardController extends Controller
 
                 $message = 'Votre carte a été desactivé ' . ' ' . 'Le code de la carte est ' . $card->ref_card;
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             } else {
                 $card->status = '1';
                 $msg = 'Activation effectuée avec succès';
@@ -507,7 +500,7 @@ class CardController extends Controller
 
                 $message = 'Votre carte a été activé ' . ' ' . 'Le code de la carte est ' . $card->ref_card;
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
             $card->save();
             DB::commit();

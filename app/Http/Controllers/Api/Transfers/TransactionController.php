@@ -686,7 +686,7 @@ class TransactionController extends Controller
 
                         if ($this->validatedamountDays->validateAmount($amount_payment)) {
 
-                            $walletTransaction =  $this->mobileWalletTransactionService->createRobusWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone , 2);
+                            $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone , 2, $request->type , $request->numberPiece);
 
                             if ($walletTransaction != null) {
 

@@ -204,6 +204,15 @@ class MailController extends Controller
         }
     }
 
+     public function newWithTransaction($data)
+    {
+        try {
+            Mail::to($data->wallet->sidUser->email)->send(new WalletPush($data));
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
      public function newBankSend($data)
     {
         try {

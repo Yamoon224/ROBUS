@@ -176,7 +176,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 
@@ -231,7 +231,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $msg = 'Votre demande est en cours de validation';
@@ -288,7 +288,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -342,7 +342,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -395,7 +395,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -450,7 +450,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -503,7 +503,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -553,8 +553,7 @@ class NotificationSendService
                     . $walletWith->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
                 $encode = substr(robus()->phone,  -10);
-
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -579,7 +578,16 @@ class NotificationSendService
         if (robus()->email != null) {
 
             $notify = new MailController;
-            $notify->newPhoneCredit($walletWith);
+
+            if ($walletWith->provider_id == 91 || $walletWith->provider_id == 143) {
+                $notify->newPush($walletWith);
+            } else if ($walletWith->provider_id == 122 || $walletWith->provider_id == 144) {
+                $notify->newTresort($walletWith);
+            } else if ($walletWith->provider_id == 121  || $walletWith->provider_id == 142) {
+                $notify->newDjamo($walletWith);
+            } else {
+                $notify->newWithTransaction($walletWith);
+            }
         }
         return response()->json([
             'success' => true,
@@ -592,7 +600,7 @@ class NotificationSendService
         ], 200);
     }
 
-     public function sendNotificationBankSend($walletWith)
+    public function sendNotificationBankSend($walletWith)
     {
 
 
@@ -605,7 +613,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                // http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -656,7 +664,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https:https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -707,7 +715,7 @@ class NotificationSendService
 
                 $encode = substr($userAuth->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $msg = 'Votre demande de virement est en cours ';
@@ -766,7 +774,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 
@@ -833,7 +841,7 @@ class NotificationSendService
 
                 $encode = substr(robus()->phone,  -10);
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 

@@ -306,7 +306,7 @@ class VirementTransaction extends Component
                                                     $encode = substr(sabdy()->phone, -10);
 
                                                     Http::get(
-                                                        "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                                                        "https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af
                                                     );
                                                 }
 
@@ -441,7 +441,7 @@ class VirementTransaction extends Component
                                                     $encode = substr(sabdy()->phone, -10);
 
                                                     Http::get(
-                                                        "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                                                        "https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af
                                                     );
                                                 }
 
@@ -674,7 +674,7 @@ class VirementTransaction extends Component
                                                     $encode = substr(sabdy()->phone, -10);
 
                                                     Http::get(
-                                                        "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                                                        "https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af
                                                     );
                                                 }
 
@@ -805,7 +805,7 @@ class VirementTransaction extends Component
                                                     $encode = substr(sabdy()->phone, -10);
 
                                                     Http::get(
-                                                        "https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message"
+                                                        "https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af
                                                     );
                                                 }
 
@@ -1025,7 +1025,7 @@ class VirementTransaction extends Component
 
                                                     $encode = substr(sabdy()->phone, -10);
 
-                                                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                                 }
 
                                                 $msg_title = 'Transfert internationnal';
@@ -1137,7 +1137,7 @@ class VirementTransaction extends Component
 
                                                     $encode = substr(sabdy()->phone, -10);
 
-                                                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                                 }
 
                                                 $msg_title = 'Transfert internationnal';

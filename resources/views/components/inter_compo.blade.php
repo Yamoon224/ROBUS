@@ -337,7 +337,7 @@
                                                      <div class="flex items-center justify-center text-success mt-3">
 
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                              <x-take-action-button action="ChooseUpdatePayment"
+                                                              <x-take-action-button action="ChooseUpdateInter"
                                                                   :itemId="$item->id" label="Je prends en charge"
                                                                   speed="ultra-fast" color="warning" />
                                                           @endif

@@ -96,9 +96,11 @@ class PhoneTransaction extends Component
 
             if (!$check) {
 
-                if ( $this->provider_phone_credit_inter == 56 ||
+                if (
+                    $this->provider_phone_credit_inter == 56 ||
                     $this->provider_phone_credit_inter == 57 ||
-                    $this->provider_phone_credit_inter == 58) {
+                    $this->provider_phone_credit_inter == 58
+                ) {
 
                     $this->validate(
                         [
@@ -201,14 +203,12 @@ class PhoneTransaction extends Component
                                 $valeur_percent_admin  = $percent_robus->percent * $walletInter->amount;
 
                                 $valuer_deposit =   $valeur_percent_admin  *   $percent_robus->percent_merchands;
-                                
+
                                 $valuer_admin =   $valeur_percent_admin - $valuer_deposit;
 
-                                if (sabdy()->wallet->currencie->value >  $country_civ->currencie->value)
-                                {
-                                    if (sabdy()->country->id  != 107)
-                                    {
-                                       
+                                if (sabdy()->wallet->currencie->value >  $country_civ->currencie->value) {
+                                    if (sabdy()->country->id  != 107) {
+
                                         $valeur_received = $walletInter->amount -  ($percent_robus->percent * $walletInter->amount);
 
                                         $walletInter->update([
@@ -216,8 +216,7 @@ class PhoneTransaction extends Component
                                         ]);
 
                                         $admin_convertion =   $valuer_admin  *  sabdy()->country->currencie->value;
-                                        
-                                    }else {
+                                    } else {
 
                                         $valeur_received = $walletInter->amount -  ($percent_robus->percent * $walletInter->amount);
 
@@ -226,21 +225,17 @@ class PhoneTransaction extends Component
                                         ]);
 
                                         $admin_convertion =   $valuer_admin  /   $country_civ->currencie->value;
-
                                     }
-
-                                }elseif(sabdy()->wallet->currencie->code == 'CFA'){
+                                } elseif (sabdy()->wallet->currencie->code == 'CFA') {
 
                                     $valeur_received = $walletInter->amount -  ($percent_robus->percent * $walletInter->amount);
 
                                     $walletInter->update([
-                                        'amount_received'  =>  $valeur_received ,
+                                        'amount_received'  =>  $valeur_received,
                                     ]);
 
-                                    $admin_convertion =   $valuer_admin ;
-
-                                }elseif(sabdy()->country->currencie->value < $country_robus->currencie->value)
-                                {
+                                    $admin_convertion =   $valuer_admin;
+                                } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
 
                                     $valeur_received = $walletInter->amount -  ($percent_robus->percent * $walletInter->amount);
 
@@ -249,7 +244,6 @@ class PhoneTransaction extends Component
                                     ]);
 
                                     $admin_convertion =   $valuer_admin  /   $country_civ->currencie->value;
-
                                 }
 
                                 $walletInter->update([
@@ -347,38 +341,28 @@ class PhoneTransaction extends Component
 
                                     $encode = substr(sabdy()->phone, -10);
 
-                                    Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                    Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                 }
                                 // Percent admin 
                                 $valeur_percent_admin  = $percent_robus->percent * $walletInter->amount;
 
 
-                                if (sabdy()->wallet->currencie->value >  $country_civ->currencie->value)
-                                {
-                                    if (sabdy()->country->id  != 107)
-                                    {
-                                       
-                                        $valeur_deposit_conver =   $valeur_percent_admin  *  sabdy()->wallet->currencie->value;
+                                if (sabdy()->wallet->currencie->value >  $country_civ->currencie->value) {
+                                    if (sabdy()->country->id  != 107) {
 
-                                        
-                                    }else {
+                                        $valeur_deposit_conver =   $valeur_percent_admin  *  sabdy()->wallet->currencie->value;
+                                    } else {
 
                                         $valeur_deposit_conver =   $valeur_percent_admin  / $country_civ->currencie->value;
-
                                     }
+                                } elseif (sabdy()->wallet->currencie->code == 'CFA') {
 
-                                }elseif(sabdy()->wallet->currencie->code == 'CFA'){
-
-                                    $valeur_deposit_conver =   $valeur_percent_admin ;
-
-
-                                }elseif(sabdy()->country->currencie->value < $country_robus->currencie->value)
-                                {
+                                    $valeur_deposit_conver =   $valeur_percent_admin;
+                                } elseif (sabdy()->country->currencie->value < $country_robus->currencie->value) {
 
                                     $valeur_deposit_conver =   $valeur_percent_admin  / $country_civ->currencie->value;
-
                                 }
-                                
+
 
                                 if ($admin_civ->count() > 0) {
 
@@ -422,8 +406,8 @@ class PhoneTransaction extends Component
                                     ])
                                 );
                                 $notifs = sabdy()->unreadNotifications;
-                                  event(new CreateWalletInterEvent($walletInter));
-                                        $this->emit('transaction_inter_sends', $walletInter->id);
+                                event(new CreateWalletInterEvent($walletInter));
+                                $this->emit('transaction_inter_sends', $walletInter->id);
                                 $admins = SidUser::whereStatus(true)->whereIsAdmin(true)->where('country_id', $walletInter->country_id)->get();
                                 Notification::send($admins, new AdminNotification('Demande de credit telephonique de ' .
                                     ' ' . $walletInter->wallet->sidUser->firstname));
@@ -463,7 +447,7 @@ class PhoneTransaction extends Component
                             }
                         }
                     }
-                }else {
+                } else {
                     $this->resetInterField();
                     $this->emit('modal-hide-inters');
                     $this->emit('error', 'Vous n\'avez Pas selectionnez de Providers Merci bien !');
@@ -617,20 +601,22 @@ class PhoneTransaction extends Component
     public function getWalletBanksCeilingProperty()
     {
         $data = [];
-        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
-            )
-            ->where(
-                'wallet_banks.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_banks.created_at', Carbon::today())
-            ->select('wallet_banks.*')
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->get()
-            as $bank) {
+        foreach (
+            WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_banks.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_banks.created_at', Carbon::today())
+                ->select('wallet_banks.*')
+                ->where('wallet_banks.status', 'SUCCESS')
+                ->get()
+            as $bank
+        ) {
             $data[] = $bank->amount;
         }
 
@@ -641,24 +627,26 @@ class PhoneTransaction extends Component
     {
         $data = [];
 
-        foreach (WalletDeposit::join(
-            'wallets',
-            'wallet_deposits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletDeposit::join(
+                'wallets',
+                'wallet_deposits.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_deposits.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_deposits.created_at', Carbon::today())
-            ->select('wallet_deposits.*')
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->get()
-            as $deposit) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_deposits.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_deposits.created_at', Carbon::today())
+                ->select('wallet_deposits.*')
+                ->where('wallet_deposits.status', 'SUCCESS')
+                ->get()
+            as $deposit
+        ) {
             $data[] = $deposit->amount;
         }
 
@@ -669,24 +657,26 @@ class PhoneTransaction extends Component
     {
         $data = [];
 
-        foreach (WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletInter::join(
+                'wallets',
+                'wallet_inters.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_inters.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_inters.created_at', Carbon::today())
-            ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'SUCCESS')
-            ->get()
-            as $inter) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_inters.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_inters.created_at', Carbon::today())
+                ->select('wallet_inters.*')
+                ->where('wallet_inters.status', 'SUCCESS')
+                ->get()
+            as $inter
+        ) {
             $data[] = $inter->amount;
         }
 
@@ -697,24 +687,26 @@ class PhoneTransaction extends Component
     {
         $data = [];
 
-        foreach (WalletPayment::join(
-            'wallets',
-            'wallet_payments.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletPayment::join(
+                'wallets',
+                'wallet_payments.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_payments.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_payments.created_at', Carbon::today())
-            ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->get()
-            as $payment) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_payments.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_payments.created_at', Carbon::today())
+                ->select('wallet_payments.*')
+                ->where('wallet_payments.status', 'SUCCESS')
+                ->get()
+            as $payment
+        ) {
             $data[] = $payment->amount;
         }
 
@@ -725,24 +717,26 @@ class PhoneTransaction extends Component
     {
         $data = [];
 
-        foreach (WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletTransaction::join(
+                'wallets',
+                'wallet_transactions.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_transactions.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_transactions.created_at', Carbon::today())
-            ->select('wallet_transactions.*')
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->get()
-            as $transaction) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_transactions.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_transactions.created_at', Carbon::today())
+                ->select('wallet_transactions.*')
+                ->where('wallet_transactions.status', 'SUCCESS')
+                ->get()
+            as $transaction
+        ) {
             $data[] = $transaction->amount;
         }
 
@@ -753,24 +747,26 @@ class PhoneTransaction extends Component
     {
         $data = [];
 
-        foreach (WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletPhoneCredit::join(
+                'wallets',
+                'wallet_phone_credits.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_phone_credits.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-            ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->get()
-            as $phone) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_phone_credits.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
+                ->select('wallet_phone_credits.*')
+                ->where('wallet_phone_credits.status', 'SUCCESS')
+                ->get()
+            as $phone
+        ) {
             $data[] = $phone->amount;
         }
 
@@ -780,8 +776,10 @@ class PhoneTransaction extends Component
     public function getWalletBankCardCeilingProperty()
     {
         $data = [];
-        foreach (BankCard::where('created_by', sabdy()->id)
-            ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank) {
+        foreach (
+            BankCard::where('created_by', sabdy()->id)
+                ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank
+        ) {
             $data[] = $bank->amount;
         }
 
@@ -792,19 +790,21 @@ class PhoneTransaction extends Component
     {
         $data = [];
 
-        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
-            )->where(
-                'wallet_reloads.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_reloads.created_at', Carbon::today())
-            ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->get()
-            as $reload) {
+        foreach (
+            WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )->where(
+                    'wallet_reloads.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_reloads.created_at', Carbon::today())
+                ->select('wallet_reloads.*')
+                ->where('wallet_reloads.status', 'SUCCESS')
+                ->get()
+            as $reload
+        ) {
             $data[] = $reload->amount;
         }
 

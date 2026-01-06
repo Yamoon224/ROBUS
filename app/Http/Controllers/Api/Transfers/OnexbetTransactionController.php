@@ -354,9 +354,11 @@ class OnexbetTransactionController extends Controller
         // Search Valeur receive and valeur pay of UV
 
 
-        public function search_xbet($amount_wave)
+        public function search_xbet($amount_wave, $is_drawal = false)
         {
                 try {
+                        $is_drawal = filter_var($is_drawal, FILTER_VALIDATE_BOOLEAN);
+
                         $percent_robus = $this->percentRobus->getRobusPercentageOnexbet();
 
                         if ($percent_robus == null) {
@@ -374,7 +376,11 @@ class OnexbetTransactionController extends Controller
 
                                 $reel_amount = $this->validatedamountDays->search_amount($amount_wave);
                                 // Conversion valeur
-                                $commission_wave_val_nat_pay = $percent_robus->percent * $reel_amount;
+                                if ($is_drawal) {
+                                        $commission_wave_val_nat_pay = $percent_robus->percent_with_drawal * $reel_amount;
+                                } else {
+                                        $commission_wave_val_nat_pay = $percent_robus->percent * $reel_amount;
+                                }
                                 $commission_wave_val_nat_receive = $reel_amount - $commission_wave_val_nat_pay;
                         } else {
                                 return response()->json([

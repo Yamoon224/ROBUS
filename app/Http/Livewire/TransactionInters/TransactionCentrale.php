@@ -221,8 +221,6 @@ class TransactionCentrale extends Component
                     $this->emit('modal-hide-inters');
                     $this->emit('error', 'Ce providers n\'est pas encore disponible chez Robus !');
                 }
-
-             
             } else {
                 $this->emit('error', 'Internationnal existante !');
             }
@@ -264,15 +262,14 @@ class TransactionCentrale extends Component
 
                 //     $commission_inter = $this->provider_inter_out_civ == 51 ? LevelMoney::whereId(17)->first() : LevelMoney::whereId(20)->first();
                 // }
-                
+
                 if ($commission_inter) {
-                    
+
                     if (sabdy()->is_under_distributer == 1 ||  sabdy()->is_distributer == 1) {
-    
+
                         $commission_transaction_val_percent_pay =  (float)$commission_inter->percent_under_distributer  * (float) $this->amount_inter_out_civ;
-                   
                     } else {
-    
+
                         $commission_transaction_val_percent_pay =  (float)$commission_inter->percent  * (float) $this->amount_inter_out_civ;
                     }
 
@@ -759,7 +756,7 @@ class TransactionCentrale extends Component
 
                 $encode = substr(sabdy()->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
             // Percent admin 
             $valeur_percent_admin  = $percent_robus->percent_admin * $this->amount_inter_out_civ;
@@ -1188,7 +1185,7 @@ class TransactionCentrale extends Component
 
                 $encode = substr(sabdy()->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
             // Percent admin 
             $valeur_percent_admin  = $percent_robus->percent_admin * $this->amount_inter_out_civ;
@@ -1322,20 +1319,22 @@ class TransactionCentrale extends Component
     public function getWalletBanksCeilingProperty()
     {
         $data = [];
-        foreach (WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
-            )
-            ->where(
-                'wallet_banks.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_banks.created_at', Carbon::today())
-            ->select('wallet_banks.*')
-            ->where('wallet_banks.status', 'SUCCESS')
-            ->get()
-            as $bank) {
+        foreach (
+            WalletBank::join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_banks.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_banks.created_at', Carbon::today())
+                ->select('wallet_banks.*')
+                ->where('wallet_banks.status', 'SUCCESS')
+                ->get()
+            as $bank
+        ) {
             $data[] = $bank->amount;
         }
 
@@ -1346,24 +1345,26 @@ class TransactionCentrale extends Component
     {
         $data = [];
 
-        foreach (WalletDeposit::join(
-            'wallets',
-            'wallet_deposits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletDeposit::join(
+                'wallets',
+                'wallet_deposits.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_deposits.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_deposits.created_at', Carbon::today())
-            ->select('wallet_deposits.*')
-            ->where('wallet_deposits.status', 'SUCCESS')
-            ->get()
-            as $deposit) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_deposits.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_deposits.created_at', Carbon::today())
+                ->select('wallet_deposits.*')
+                ->where('wallet_deposits.status', 'SUCCESS')
+                ->get()
+            as $deposit
+        ) {
             $data[] = $deposit->amount;
         }
 
@@ -1374,24 +1375,26 @@ class TransactionCentrale extends Component
     {
         $data = [];
 
-        foreach (WalletInter::join(
-            'wallets',
-            'wallet_inters.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletInter::join(
+                'wallets',
+                'wallet_inters.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_inters.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_inters.created_at', Carbon::today())
-            ->select('wallet_inters.*')
-            ->where('wallet_inters.status', 'SUCCESS')
-            ->get()
-            as $inter) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_inters.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_inters.created_at', Carbon::today())
+                ->select('wallet_inters.*')
+                ->where('wallet_inters.status', 'SUCCESS')
+                ->get()
+            as $inter
+        ) {
             $data[] = $inter->amount;
         }
 
@@ -1402,24 +1405,26 @@ class TransactionCentrale extends Component
     {
         $data = [];
 
-        foreach (WalletPayment::join(
-            'wallets',
-            'wallet_payments.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletPayment::join(
+                'wallets',
+                'wallet_payments.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_payments.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_payments.created_at', Carbon::today())
-            ->select('wallet_payments.*')
-            ->where('wallet_payments.status', 'SUCCESS')
-            ->get()
-            as $payment) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_payments.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_payments.created_at', Carbon::today())
+                ->select('wallet_payments.*')
+                ->where('wallet_payments.status', 'SUCCESS')
+                ->get()
+            as $payment
+        ) {
             $data[] = $payment->amount;
         }
 
@@ -1430,24 +1435,26 @@ class TransactionCentrale extends Component
     {
         $data = [];
 
-        foreach (WalletTransaction::join(
-            'wallets',
-            'wallet_transactions.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletTransaction::join(
+                'wallets',
+                'wallet_transactions.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_transactions.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_transactions.created_at', Carbon::today())
-            ->select('wallet_transactions.*')
-            ->where('wallet_transactions.status', 'SUCCESS')
-            ->get()
-            as $transaction) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_transactions.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_transactions.created_at', Carbon::today())
+                ->select('wallet_transactions.*')
+                ->where('wallet_transactions.status', 'SUCCESS')
+                ->get()
+            as $transaction
+        ) {
             $data[] = $transaction->amount;
         }
 
@@ -1458,24 +1465,26 @@ class TransactionCentrale extends Component
     {
         $data = [];
 
-        foreach (WalletPhoneCredit::join(
-            'wallets',
-            'wallet_phone_credits.wallet_id',
-            'wallets.id'
-        )
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
+        foreach (
+            WalletPhoneCredit::join(
+                'wallets',
+                'wallet_phone_credits.wallet_id',
+                'wallets.id'
             )
-            ->where(
-                'wallet_phone_credits.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_phone_credits.created_at', Carbon::today())
-            ->select('wallet_phone_credits.*')
-            ->where('wallet_phone_credits.status', 'SUCCESS')
-            ->get()
-            as $phone) {
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )
+                ->where(
+                    'wallet_phone_credits.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_phone_credits.created_at', Carbon::today())
+                ->select('wallet_phone_credits.*')
+                ->where('wallet_phone_credits.status', 'SUCCESS')
+                ->get()
+            as $phone
+        ) {
             $data[] = $phone->amount;
         }
 
@@ -1485,8 +1494,10 @@ class TransactionCentrale extends Component
     public function getWalletBankCardCeilingProperty()
     {
         $data = [];
-        foreach (BankCard::where('created_by', sabdy()->id)
-            ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank) {
+        foreach (
+            BankCard::where('created_by', sabdy()->id)
+                ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank
+        ) {
             $data[] = $bank->amount;
         }
 
@@ -1497,19 +1508,21 @@ class TransactionCentrale extends Component
     {
         $data = [];
 
-        foreach (WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
-            ->where(
-                'wallets.country_id',
-                sabdy()->country->id
-            )->where(
-                'wallet_reloads.created_by',
-                sabdy()->id
-            )
-            ->whereDate('wallet_reloads.created_at', Carbon::today())
-            ->select('wallet_reloads.*')
-            ->where('wallet_reloads.status', 'SUCCESS')
-            ->get()
-            as $reload) {
+        foreach (
+            WalletReload::join('wallets', 'wallet_reloads.wallet_id', 'wallets.id')
+                ->where(
+                    'wallets.country_id',
+                    sabdy()->country->id
+                )->where(
+                    'wallet_reloads.created_by',
+                    sabdy()->id
+                )
+                ->whereDate('wallet_reloads.created_at', Carbon::today())
+                ->select('wallet_reloads.*')
+                ->where('wallet_reloads.status', 'SUCCESS')
+                ->get()
+            as $reload
+        ) {
             $data[] = $reload->amount;
         }
 

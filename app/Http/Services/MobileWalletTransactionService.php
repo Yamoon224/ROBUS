@@ -30,6 +30,37 @@ class MobileWalletTransactionService
         $this->commissionServices = $commissionServices;
     }
 
+      public function createRobusDrawalWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone, $choose_type_transaction, $type , $numberPiece)
+    {
+
+        $val_amount = $transaction_amount_money;
+
+        $amount_solde = (float)robus()->wallet->amount - (float)$val_amount;
+
+        return $this->transctionRepository->create(
+            [
+                'wallet_id' =>   robus()->wallet->id,
+                'amount' => $transaction_amount_money,
+                'description'  => $transaction_description ?? null,
+                'transaction_cost_id' => $percent_robus->id,
+                'phone'   => robus()->country->indecative . $transaction_phone,
+                'created_by' => robus()->id,
+                'provider_id'  =>   $provider,
+                'num_wallet'   =>  null,
+                'costs_amount' => $valuer_deposit_com,
+                'name_complet' => $name_custumers ?? null,
+                'num_piece' => $num_piece_custumers ?? null,
+                'validated_date' => $date_piece ?? null,
+                'choose_type_transaction' => $choose_type_transaction ?? 1,
+                'amount_received'  => 0,
+                'type_transaction' => $choose_type_transaction == 1 ? 'Depot' : 'Retrait',
+                'status'  => "PENDING",
+                'amount_solde' => $amount_solde ?? null,
+                'type_piece' => $type ?? null,
+                'num_piece' => $numberPiece ?? null
+            ]
+        );
+    }
     public function createRobusWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone, $choose_type_transaction)
     {
 

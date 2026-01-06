@@ -42,15 +42,14 @@ class NotificationSendAdminService
 
                 event(new AdminNotifEvent($notifs));
             }
-      
-        } 
+        }
 
         if (sabdy()->email != null) {
 
             $notify = new MailController;
             $notify->newPaiement($walletPayment);
         }
-        return true ;
+        return true;
     }
 
     public function sendNotificationPaymentOffer($walletPayment)
@@ -73,8 +72,7 @@ class NotificationSendAdminService
 
                 event(new AdminNotifEvent($notifs));
             }
-      
-        } 
+        }
 
         if (sabdy()->email != null) {
 
@@ -94,7 +92,7 @@ class NotificationSendAdminService
 
                 $encode = substr(sabdy()->phone,  -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 
@@ -137,7 +135,7 @@ class NotificationSendAdminService
 
                 $encode = substr(sabdy()->phone,  -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $msg = 'Votre demande est en cours de validation';
@@ -187,7 +185,7 @@ class NotificationSendAdminService
 
                 $encode = substr(sabdy()->phone,  -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -228,7 +226,7 @@ class NotificationSendAdminService
 
                 $encode = substr(sabdy()->phone,  -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
         $msg = 'Votre demande de virement est en cours ';
@@ -278,7 +276,7 @@ class NotificationSendAdminService
 
                 $encode = substr(sabdy()->phone,  -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 
@@ -334,7 +332,7 @@ class NotificationSendAdminService
 
                 $encode = substr(sabdy()->phone,  -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 

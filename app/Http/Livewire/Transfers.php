@@ -120,7 +120,7 @@ class Transfers extends Component
     // Edit Inter valeurs
     public $interId;
     public $inter_description_edit;
-    public $inter_description_robus_edit;
+    public $inter_description_robus;
     public $interStatus;
     public $provider_inter_edit;
     public $country_inter_edit;
@@ -1338,7 +1338,7 @@ class Transfers extends Component
         // Mooney paiement
         $this->interId = $id;
         $this->inter_description_edit = $check->description ?? null;
-        $this->inter_description_robus_edit = $check->description ?? null;
+        $this->inter_description_robus = $check->description ?? null;
         $this->interStatus = null;
         $this->provider_inter_edit = $provider->id;
         $this->country_inter_edit = $country->id ?? null;
@@ -3715,7 +3715,8 @@ class Transfers extends Component
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
-                                        $this->handleUnderDistributorInterCommission($check, $admin_civ);
+                                       app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Paiement international");
+
                                     } else {
                                         $this->cancelReloadCardField();
                                         $this->emit('modal-hide-reloadCard');
@@ -3899,7 +3900,7 @@ class Transfers extends Component
 
                                 if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                    $this->handleUnderDistributorPaiementCommission($check, $admin_civ);
+                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Paiement de facture");
                                 } else {
                                     $this->cancelPaiementField();
                                     $this->emit('modal-hide-paiement');

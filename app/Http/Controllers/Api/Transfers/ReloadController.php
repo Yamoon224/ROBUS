@@ -49,13 +49,14 @@ class ReloadController extends Controller
     protected $reloadCardService;
     private $authService;
 
-    public function __construct(ReloadRepository $reloadReposi ,     
-     DeletedService $deletedService,
-    PercentRobusAuthService $percentRobus,
-    ValidateDailyLimitService $validatedamountDays,
-    NotificationSendService $notificationOrderCard ,
-    ReloadCardService $reloadCardService)
-    {
+    public function __construct(
+        ReloadRepository $reloadReposi,
+        DeletedService $deletedService,
+        PercentRobusAuthService $percentRobus,
+        ValidateDailyLimitService $validatedamountDays,
+        NotificationSendService $notificationOrderCard,
+        ReloadCardService $reloadCardService
+    ) {
         $this->reloadRepository = $reloadReposi;
         $this->deletedService = $deletedService;
         $this->percentRobus = $percentRobus;
@@ -166,10 +167,10 @@ class ReloadController extends Controller
         $transactionCompiCode = sprintf("%0.8s", str_shuffle($rt . $tr));
         $wallet_user = Auth::guard('api')->user();
         $admins = SidUser::whereStatus(true)->whereIsAdmin(true)->where('country_id', $wallet_user->country->id)->get();
-        $amount_days = $this->getWalletBanksCeilingProperty() + $this->getWalletDepositsCeilingProperty() 
-        + $this->getWalletIntersCeilingProperty() + $this->getWalletPaymentsCeilingProperty()
-         + $this->getWalletTransactionsCeilingProperty() + $this->getWalletPhoneCreditsCeilingProperty()
-          + $this->getWalletReloadsCeilingProperty() + $this->getWalletBankCardCeilingProperty();
+        $amount_days = $this->getWalletBanksCeilingProperty() + $this->getWalletDepositsCeilingProperty()
+            + $this->getWalletIntersCeilingProperty() + $this->getWalletPaymentsCeilingProperty()
+            + $this->getWalletTransactionsCeilingProperty() + $this->getWalletPhoneCreditsCeilingProperty()
+            + $this->getWalletReloadsCeilingProperty() + $this->getWalletBankCardCeilingProperty();
 
 
         if ($request->provider == 9) {
@@ -247,7 +248,7 @@ class ReloadController extends Controller
                         );
                     } else {
 
-                        $amount_solde =  $wallet_user->wallet->amount -  $valAmount ;
+                        $amount_solde =  $wallet_user->wallet->amount -  $valAmount;
 
                         $walletReload = $this->reloadRepository->create([
                             'wallet_id' =>  $wallet_user->wallet->id,
@@ -311,7 +312,7 @@ class ReloadController extends Controller
 
                             $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                         }
 
                         $msg = 'Demande en cours de validation';
@@ -461,7 +462,7 @@ class ReloadController extends Controller
                             );
                         } else {
 
-                            $amount_solde =  $wallet_user->wallet->amount -  $valAmount ;
+                            $amount_solde =  $wallet_user->wallet->amount -  $valAmount;
 
                             $walletReload =  $this->reloadRepository->create([
                                 'amount_solde' => $amount_solde ?? null,
@@ -493,7 +494,7 @@ class ReloadController extends Controller
 
                                 $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
 
                             $msg = 'Demande en cours de validation';
@@ -609,7 +610,7 @@ class ReloadController extends Controller
                             );
                         } else {
 
-                            $amount_solde =  $wallet_user->wallet->amount -  $valAmount ;
+                            $amount_solde =  $wallet_user->wallet->amount -  $valAmount;
 
                             $walletReload =  $this->reloadRepository->create([
                                 'amount_solde' => $amount_solde ?? null,
@@ -640,7 +641,7 @@ class ReloadController extends Controller
 
                                 $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
 
                             $msg = 'Demande en cours de validation';
@@ -757,8 +758,8 @@ class ReloadController extends Controller
                             );
                         } else {
 
-                            $amount_solde =  $wallet_user->wallet->amount -  $valAmount ;
-                            
+                            $amount_solde =  $wallet_user->wallet->amount -  $valAmount;
+
                             $walletReload =  $this->reloadRepository->create([
                                 'amount_solde' => $amount_solde ?? null,
                                 'wallet_id' =>   $wallet_user->wallet->id,
@@ -788,7 +789,7 @@ class ReloadController extends Controller
 
                                 $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                             }
 
                             $msg = 'Demande en cours de validation';
@@ -919,8 +920,8 @@ class ReloadController extends Controller
                         );
                     } else {
 
-                        $amount_solde =  $wallet_user->wallet->amount -  $valAmount ;
-                        
+                        $amount_solde =  $wallet_user->wallet->amount -  $valAmount;
+
                         $walletReload =  $this->reloadRepository->create([
                             'amount_solde' => $amount_solde ?? null,
                             'wallet_id' =>   $wallet_user->wallet->id,
@@ -951,7 +952,7 @@ class ReloadController extends Controller
 
                             $encode = substr(Auth::guard('api')->user()->phone,  -10);
 
-                            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                         }
 
                         $msg = 'Demande en cours de validation';
@@ -1012,7 +1013,6 @@ class ReloadController extends Controller
                             ], 200);
                         }
                     }
-                
                 }
             }
         } else  return response()->json([
@@ -1095,7 +1095,6 @@ class ReloadController extends Controller
                     'message' => 'Erreur de suppression du virement.'
                 ], 200);
             }
-            
         } catch (\Exception $exception) {
             return   json_message_response(false, "Erreur de suppression !", 300);
         }
@@ -1103,24 +1102,28 @@ class ReloadController extends Controller
 
     // Verify ceilling
 
-    
+
     public function getWalletBankCardCeilingProperty()
     {
         $data = [];
-        foreach (BankCard::where('created_by', Auth::guard('api')->user()->id)
-            ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank) {
+        foreach (
+            BankCard::where('created_by', Auth::guard('api')->user()->id)
+                ->whereDate('created_at', Carbon::today())->whereStatus(1)->get() as $bank
+        ) {
             $data[] = $bank->amount;
         }
 
         return array_sum($data);
     }
-    
+
 
     public function getWalletBanksCeilingProperty()
     {
         $data = [];
-        foreach (WalletBank::where('created_by', Auth::guard('api')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank) {
+        foreach (
+            WalletBank::where('created_by', Auth::guard('api')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $bank
+        ) {
             $data[] = $bank->amount;
         }
 
@@ -1132,8 +1135,10 @@ class ReloadController extends Controller
 
         $data = [];
 
-        foreach (WalletDeposit::where('created_by',  Auth::guard('api')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $deposit) {
+        foreach (
+            WalletDeposit::where('created_by',  Auth::guard('api')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $deposit
+        ) {
             $data[] = $deposit->amount;
         }
 
@@ -1144,8 +1149,10 @@ class ReloadController extends Controller
     {
         $data = [];
 
-        foreach (WalletInter::where('created_by',  Auth::guard('api')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $inter) {
+        foreach (
+            WalletInter::where('created_by',  Auth::guard('api')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $inter
+        ) {
             $data[] = $inter->amount;
         }
 
@@ -1156,8 +1163,10 @@ class ReloadController extends Controller
     {
         $data = [];
 
-        foreach (WalletPayment::where('created_by',  Auth::guard('api')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $payment) {
+        foreach (
+            WalletPayment::where('created_by',  Auth::guard('api')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $payment
+        ) {
             $data[] = $payment->amount;
         }
 
@@ -1169,8 +1178,10 @@ class ReloadController extends Controller
     {
         $data = [];
 
-        foreach (WalletTransaction::where('created_by',  Auth::guard('api')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $transaction) {
+        foreach (
+            WalletTransaction::where('created_by',  Auth::guard('api')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $transaction
+        ) {
             $data[] = $transaction->amount;
         }
 
@@ -1182,8 +1193,10 @@ class ReloadController extends Controller
         $data = [];
 
 
-        foreach (WalletPhoneCredit::where('created_by', Auth::guard('api')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $phone) {
+        foreach (
+            WalletPhoneCredit::where('created_by', Auth::guard('api')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $phone
+        ) {
             $data[] = $phone->amount;
         }
 
@@ -1194,8 +1207,10 @@ class ReloadController extends Controller
     {
         $data = [];
 
-        foreach (WalletReload::where('wallet_reloads.created_by',  Auth::guard('api')->user()->id)
-            ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $reload) {
+        foreach (
+            WalletReload::where('wallet_reloads.created_by',  Auth::guard('api')->user()->id)
+                ->whereDate('created_at', Carbon::today())->where('status', 'SUCCESS')->get() as $reload
+        ) {
             $data[] = $reload->amount;
         }
 

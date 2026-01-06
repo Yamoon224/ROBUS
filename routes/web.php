@@ -591,8 +591,13 @@ Route::get('clear-route-mon_bara',  function () {
 Route::get('/reads_notifications', function () {
     Artisan::call('app:close-company-status');
     Artisan::call('app:close-status');
-    // Artisan::call('wallet:generate-qrcodes');
+    Artisan::call('wallet:generate-qrcodes');
     Artisan::call('status:readNotifications');
+    return 'Artisan commands executed successfully.';
+});
+
+Route::get('/reads_qrCode', function () {
+    Artisan::call('wallet:generate-qrcodes');
     return 'Artisan commands executed successfully.';
 });
 

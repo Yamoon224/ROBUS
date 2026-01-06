@@ -54,6 +54,8 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
+use Endroid\QrCode\Builder\Builder;
+use Endroid\QrCode\Encoding\Encoding;
 
 class AdminController extends Controller
 {
@@ -903,10 +905,47 @@ class AdminController extends Controller
                     Mail::to($user->email)->send(new NewAdmin('Vous etes désormais un sous distributeur marchant de ' . env('APP_NAME') .
                         ' Votre email : '  . $user->email . ' Administrateur Robus vas activé votre compte pour commence les transactions'));
 
+
                     $msg = "Sous distributeur crée avec succès";
                     $color = 'success';
                     $request->session()->forget('key_under_distributer');
+                    try {
 
+                        $originalLogoPath = public_path('dist/images/logo_orange.png');
+
+                        $qrData = json_encode([
+                            'wallet_id' => $user->wallet->wallet_id,
+                            'user' => $user->firstname . ' ' .  $user->lastname,
+                            'countrie' => $user->country->name,
+                            'currencie' => $user->country->currencie->name,
+                        ]);
+
+                        $result = Builder::create()
+                            ->data($qrData)
+                            ->encoding(new Encoding('UTF-8'))
+                            ->size(300)
+                            ->margin(10)
+                            ->logoPath($originalLogoPath)
+                            ->logoResizeToWidth(70)
+                            ->logoResizeToHeight(70)
+
+                            ->build();
+
+
+                        $qrPath = 'qrcodes/wallet_' . $user->wallet->id . '.png';
+                        $result->saveToFile(public_path($qrPath));
+
+                        $user->wallet->update(['qr_code' => $qrPath]);
+                    } catch (\Throwable $th) {
+
+                        return response()->json(
+                            [
+                                'success' => false,
+                                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+                            ],
+                            301
+                        );
+                    }
                     return redirect(route('admin.add_under_distributer'))->with('color', $color)->with('status', $msg);
                 } else {
                     return back()
@@ -1066,6 +1105,43 @@ class AdminController extends Controller
             $msg = "Employé crée avec succès";
             $color = 'success';
 
+            try {
+
+                $originalLogoPath = public_path('dist/images/logo_orange.png');
+
+                $qrData = json_encode([
+                    'wallet_id' => $user->wallet->wallet_id,
+                    'user' => $user->firstname . ' ' .  $user->lastname,
+                    'countrie' => $user->country->name,
+                    'currencie' => $user->country->currencie->name,
+                ]);
+
+                $result = Builder::create()
+                    ->data($qrData)
+                    ->encoding(new Encoding('UTF-8'))
+                    ->size(300)
+                    ->margin(10)
+                    ->logoPath($originalLogoPath)
+                    ->logoResizeToWidth(70)
+                    ->logoResizeToHeight(70)
+
+                    ->build();
+
+
+                $qrPath = 'qrcodes/wallet_' . $user->wallet->id . '.png';
+                $result->saveToFile(public_path($qrPath));
+
+                $user->wallet->update(['qr_code' => $qrPath]);
+            } catch (\Throwable $th) {
+
+                return response()->json(
+                    [
+                        'success' => false,
+                        'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+                    ],
+                    301
+                );
+            }
             return redirect(route('employers.browse'))->with('color', $color)->with('status', $msg);
         } catch (\Throwable $th) {
             return redirect('employes/add')
@@ -1114,6 +1190,43 @@ class AdminController extends Controller
                 $msg = "Superviseur crée avec succès";
                 $color = 'success';
 
+                try {
+
+                    $originalLogoPath = public_path('dist/images/logo_orange.png');
+
+                    $qrData = json_encode([
+                        'wallet_id' => $user->wallet->wallet_id,
+                        'user' => $user->firstname . ' ' .  $user->lastname,
+                        'countrie' => $user->country->name,
+                        'currencie' => $user->country->currencie->name,
+                    ]);
+
+                    $result = Builder::create()
+                        ->data($qrData)
+                        ->encoding(new Encoding('UTF-8'))
+                        ->size(300)
+                        ->margin(10)
+                        ->logoPath($originalLogoPath)
+                        ->logoResizeToWidth(70)
+                        ->logoResizeToHeight(70)
+
+                        ->build();
+
+
+                    $qrPath = 'qrcodes/wallet_' . $user->wallet->id . '.png';
+                    $result->saveToFile(public_path($qrPath));
+
+                    $user->wallet->update(['qr_code' => $qrPath]);
+                } catch (\Throwable $th) {
+
+                    return response()->json(
+                        [
+                            'success' => false,
+                            'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+                        ],
+                        301
+                    );
+                }
                 return redirect(route('admins.browse'))->with('color', $color)->with('status', $msg);
             } else {
 
@@ -1354,7 +1467,43 @@ class AdminController extends Controller
 
             $msg = "Societe crée avec succès";
             $color = 'success';
+            try {
 
+                $originalLogoPath = public_path('dist/images/logo_orange.png');
+
+                $qrData = json_encode([
+                    'wallet_id' => $user->wallet->wallet_id,
+                    'user' => $user->firstname . ' ' .  $user->lastname,
+                    'countrie' => $user->country->name,
+                    'currencie' => $user->country->currencie->name,
+                ]);
+
+                $result = Builder::create()
+                    ->data($qrData)
+                    ->encoding(new Encoding('UTF-8'))
+                    ->size(300)
+                    ->margin(10)
+                    ->logoPath($originalLogoPath)
+                    ->logoResizeToWidth(70)
+                    ->logoResizeToHeight(70)
+
+                    ->build();
+
+
+                $qrPath = 'qrcodes/wallet_' . $user->wallet->id . '.png';
+                $result->saveToFile(public_path($qrPath));
+
+                $user->wallet->update(['qr_code' => $qrPath]);
+            } catch (\Throwable $th) {
+
+                return response()->json(
+                    [
+                        'success' => false,
+                        'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+                    ],
+                    301
+                );
+            }
             return redirect(route('company.browse'))->with('color', $color)->with('status', $msg);
         } catch (\Throwable $th) {
             return redirect('application/admin/add_company')

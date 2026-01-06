@@ -40,7 +40,7 @@ class WithService
     }
 
 
-    public function createWalletTransactionTresortMoney($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal)
+    public function createWalletTransactionTresortMoney($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal , $type , $numberPiece)
     {
 
 
@@ -71,11 +71,13 @@ class WithService
             'full_name' =>  $fullName,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
+            'type_piece'  =>  $type ?? null,
+            'number_piece'  =>  $numberPiece ?? null,
         ]);
     }
 
 
-    public function createWalletTransactionDjamo($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved,  $imagePath, $is_drawal)
+    public function createWalletTransactionDjamo($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved,  $imagePath, $is_drawal, $type , $numberPiece)
     {
 
 
@@ -108,12 +110,14 @@ class WithService
             'choose_transaction'  => $is_drawal ? 2 : 1,
             'amount_received'  =>  $amountReceved ?? 0.0,
             'image'  =>  $imagePath ?? null,
+               'type_piece'  =>  $type ?? null,
+            'number_piece'  =>  $numberPiece ?? null,
         ]);
     }
 
 
 
-    public function createWalletTransactionPush($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal)
+    public function createWalletTransactionPush($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal, $type , $numberPiece)
     {
 
 
@@ -142,6 +146,8 @@ class WithService
             'choose_transaction'  => $is_drawal ? 2 : 1,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
+               'type_piece'  =>  $type ?? null,
+            'number_piece'  =>  $numberPiece ?? null,
         ]);
     }
 
@@ -161,6 +167,8 @@ class WithService
         $phone_inter_expe,
         $swit_code,
         $imagePath,
+        $imageBackendPath,
+        $type_piece
     ) {
 
         $user = auth_user();
@@ -194,6 +202,8 @@ class WithService
             'choose_type_transaction' => 1,
             'amount_solde' => $amount_solde ?? null,
             'image' => $imagePath ?? null,
+            'image_bakend' => $imageBackendPath ?? null,
+            'type_piece' => $type_piece ?? null,
         ]);
     }
 
@@ -296,7 +306,7 @@ class WithService
 
                 $encode = substr($user->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 
@@ -398,7 +408,7 @@ class WithService
 
                 $encode = substr($user->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 
@@ -459,7 +469,7 @@ class WithService
             : $percent_robus->percent_companie;
 
         $valuer_deposit = $percent_commission *  $amount;
-        $percent_valeur_compagnie = $$percent_compagnie *  $amount;
+        $percent_valeur_compagnie = $percent_compagnie *  $amount;
         $valeur_percent_no_under  = $percent * $amount;
 
         // Commissions Inters 
@@ -500,7 +510,7 @@ class WithService
 
                 $encode = substr($user->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 
@@ -604,7 +614,7 @@ class WithService
 
                 $encode = substr($user->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
         }
 

@@ -329,7 +329,7 @@ class InterPaymentService
 
             $encode = substr(robus()->phone, -10);
 
-            Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
         }
 
         $valeur_percent_admin  = $percent_robus;
@@ -404,7 +404,7 @@ class InterPaymentService
 
                 $encode = substr(robus()->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
 
             $valeur_percent_admin  = $percent_robus->percent * $amount;
@@ -657,7 +657,9 @@ class InterPaymentService
         $name,
         $name_sender,
         $account_number,
-        $imagePath
+        $imagePath,
+        $imageBackendPath,
+        $type_piece,
     ) {
 
         $amount_solde = robus()->wallet->amount - $amount_transaction;
@@ -684,6 +686,8 @@ class InterPaymentService
             'choose_type_transaction' => $provider_type,
             'amount_solde' => $amount_solde ?? null,
             'image' => $imagePath ?? null,
+            'image_bakend' => $imageBackendPath ?? null,
+            'type_piece' => $type_piece ?? null,
         ]);
     }
     public function createWithMobileWalletInter(
@@ -701,6 +705,8 @@ class InterPaymentService
         $account_number,
         $action_percent_id,
         $imagePath,
+        $imageBackendPath,
+        $type_piece
 
     ) {
 
@@ -712,7 +718,7 @@ class InterPaymentService
             'description' => null,
             'inter_cost_id' => null,
             'transaction_cost_id' => $percent_robus->id,
-            'virement_percent_id' =>null,
+            'virement_percent_id' => null,
             'djamo_percent_id' => $provider_payment == 104 ? $action_percent_id : null,
             'push_percent_id'       => $provider_payment == 105 ? $action_percent_id : null,
             'argent_tresort_id'       => $provider_payment == 106 ? $action_percent_id : null,
@@ -733,6 +739,9 @@ class InterPaymentService
             'choose_type_transaction' => $provider_type,
             'amount_solde' => $amount_solde ?? null,
             'image' => $imagePath ?? null,
+            'image_bakend' => $imageBackendPath ?? null,
+            'type_piece' => $type_piece ?? null,
+
         ]);
     }
 
@@ -1160,7 +1169,7 @@ class InterPaymentService
 
                 $encode = substr(robus()->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
 
             // Percent admin 
@@ -1262,7 +1271,7 @@ class InterPaymentService
 
                 $encode = substr(robus()->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
 
             // Percent admin 
@@ -1351,7 +1360,7 @@ class InterPaymentService
 
                 $encode = substr(robus()->phone, -10);
 
-                Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=225$encode&from=ROBUS&sms=$message");
+                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
             // Percent admin 
             $valeur_percent_admin  = $percent_robus->percent_admin * $amount_valeur;

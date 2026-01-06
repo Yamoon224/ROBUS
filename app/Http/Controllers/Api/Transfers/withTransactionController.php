@@ -215,7 +215,7 @@ class withTransactionController extends Controller
                                                 if ($transactionResult['success']) {
 
                                                         $this->notificationPhone->sendNotificationWiths($transactionResult['walletWith']);
-                                                        return $this->messageAfterValidated($transactionResult['walletWith']);
+                                                        return $this->messageAfterDjamoValidated($transactionResult['walletWith']);
                                                 } else {
                                                         return json_message_response(false, $transactionResult['message'], 333);
                                                 }
@@ -280,7 +280,7 @@ class withTransactionController extends Controller
                         ], 422);
                 }
 
-                // try {
+                try {
                         /** ===============================
                          *  1️⃣ Montant utilisateur
                          * =============================== */
@@ -363,6 +363,9 @@ class withTransactionController extends Controller
                          *  7️⃣ Upload image
                          * =============================== */
                         $file_front = $request->file('image_piece');
+                        $file_backend = $request->file('image_bakend');
+                        $imageBackendPath = null;
+
                         $imagePath = null;
 
                         if ($file_front) {
@@ -375,13 +378,20 @@ class withTransactionController extends Controller
                                 }
 
                                 // Générer un nom unique
-                                $front_file = date('YmdHis') . "." . $file_front->getClientOriginalExtension();
+                                if ($file_front) {
+                                        $front_file = uniqid('front_') . '.' . $file_front->getClientOriginalExtension();
+                                        $file_front->move($destination_path, $front_file);
 
-                                // Déplacer le fichier
-                                $file_front->move($destination_path, $front_file);
+                                        $imagePath = env('APP_URL') . "/image_inters/" . $request->name_custumer . "/$front_file";
+                                }
 
-                                // Construire l’URL de l’image
-                                $imagePath = env('APP_URL') . "/image_inters/" . $request->full_name . "/$front_file";
+                                // 👉 Image verso
+                                if ($file_backend) {
+                                        $backend_file = uniqid('back_') . '.' . $file_backend->getClientOriginalExtension();
+                                        $file_backend->move($destination_path, $backend_file);
+
+                                        $imageBackendPath = env('APP_URL') . "/image_inters/" . $request->name_custumer . "/$backend_file";
+                                }
                         }
 
                         /** ===============================
@@ -401,7 +411,9 @@ class withTransactionController extends Controller
                                 $request->account_number,
                                 $request->phone_expe,
                                 $request->swit_code,
-                                $imagePath
+                                $imagePath,
+                                $imageBackendPath,
+                                $request->type_piece,
                         );
 
                         if (!$wallet) {
@@ -432,15 +444,15 @@ class withTransactionController extends Controller
                         $this->notificationPhone->sendNotificationBankSend($wallet);
 
                         return $this->messageAfterBankSendValidated($wallet);
-                // } catch (\Throwable $e) {
-                //         report($e);
+                } catch (\Throwable $e) {
+                        report($e);
 
-                //         return json_message_response(
-                //                 false,
-                //                 "Erreur inattendue. Veuillez contacter le support ROBUS",
-                //                 500
-                //         );
-                // }
+                        return json_message_response(
+                                false,
+                                "Erreur inattendue. Veuillez contacter le support ROBUS",
+                                500
+                        );
+                }
         }
 
         public function create_TresortTransaction(Request $request, $is_drawal = false)
@@ -533,7 +545,7 @@ class withTransactionController extends Controller
                                                 if ($transactionResult['success']) {
 
                                                         $this->notificationPhone->sendNotificationWiths($transactionResult['walletWith']);
-                                                        return $this->messageAfterValidated($transactionResult['walletWith']);
+                                                        return $this->messageAfterDjamoValidated($transactionResult['walletWith']);
                                                 } else {
                                                         return json_message_response(false, $transactionResult['message'], 333);
                                                 }
@@ -605,21 +617,23 @@ class withTransactionController extends Controller
                                 }
                         } else {
 
+
                                 $validator = Validator::make(
 
                                         $request->all(),
                                         [
                                                 "phone" => 'required',
                                                 "amount" => 'required',
-                                                'country' => 'required',
+                                                "full_name" => 'required',
+                                                "image_piece" => 'required',
                                         ],
                                         [
 
                                                 'phone.required' => 'Votre numero est obligatoire',
                                                 'provider.required' => 'Votre fournisseur est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
-                                                'country.required' => 'Votre pays est obligatoire',
-
+                                                'full_name.required' => 'Nom est obligatoire',
+                                                'image_piece.required' => 'date de validité est obligatoire',
 
                                         ]
                                 );
@@ -674,7 +688,7 @@ class withTransactionController extends Controller
                                                 if ($transactionResult['success']) {
 
                                                         $this->notificationPhone->sendNotificationWiths($transactionResult['walletWith']);
-                                                        return $this->messageAfterValidated($transactionResult['walletWith']);
+                                                        return $this->messageAfterDjamoValidated($transactionResult['walletWith']);
                                                 } else {
                                                         return json_message_response(false, $transactionResult['message'], 333);
                                                 }
@@ -729,7 +743,7 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal);
+                $walletPush =  $this->withService->createWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal , $request->type , $request->numberPiece);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -758,7 +772,7 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionTresortMoney($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal);
+                $walletPush =  $this->withService->createWalletTransactionTresortMoney($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal , $request->type , $request->numberPiece);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -784,7 +798,7 @@ class withTransactionController extends Controller
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionDjamo($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $imagePath, $is_drawal);
+                $walletPush =  $this->withService->createWalletTransactionDjamo($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $imagePath, $is_drawal , $request->type , $request->numberPiece);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -814,7 +828,22 @@ class withTransactionController extends Controller
                 ], 200);
         }
 
-          public function messageAfterBankSendValidated($walletPush)
+          public function messageAfterDjamoValidated($walletPush)
+        {
+
+                return response()->json([
+                        'success' => true,
+                        'data' => [
+                                'id'      => $walletPush->id,
+                                'provider' => $walletPush->provider->name,
+                                'amount' => $walletPush->amount,
+                                'status' => $walletPush->status,
+                        ],
+                        'message' =>  $walletPush->choose_transaction == 1 ? ('Votre demande de transaction a bien été prise en compte.') : ('Votre demande de retrait a bien été prise en compte.')
+                ], 200);
+        }
+
+        public function messageAfterBankSendValidated($walletPush)
         {
 
                 return response()->json([

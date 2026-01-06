@@ -164,6 +164,12 @@
                             <p class="font-medium whitespace-nowrap">
                                 {{ $item->percent_with_drawal * 100 ?? null }} %
                             </p>
+                             <p class="font-medium whitespace-nowrap">
+                               SD : {{ $item->percent_with_drawal_merchands * 100 ?? null }} %
+                            </p>
+                             <p class="font-medium whitespace-nowrap">
+                               Compagnie : {{ $item->percent_with_drawal_companie * 100 ?? null }} %
+                            </p>
                         </td>
 
                         <td class="w-40">
@@ -242,9 +248,15 @@
                             </p>
 
                         </td>
-                        <td class="w-40">
+                       <td class="w-40">
                             <p class="font-medium whitespace-nowrap">
                                 {{ $item->percent_with_drawal * 100 ?? null }} %
+                            </p>
+                             <p class="font-medium whitespace-nowrap">
+                               SD : {{ $item->percent_with_drawal_merchands * 100 ?? null }} %
+                            </p>
+                             <p class="font-medium whitespace-nowrap">
+                               Compagnie : {{ $item->percent_with_drawal_companie * 100 ?? null }} %
                             </p>
                         </td>
 
@@ -324,9 +336,15 @@
                             </p>
 
                         </td>
-                        <td class="w-40">
+                       <td class="w-40">
                             <p class="font-medium whitespace-nowrap">
                                 {{ $item->percent_with_drawal * 100 ?? null }} %
+                            </p>
+                             <p class="font-medium whitespace-nowrap">
+                               SD : {{ $item->percent_with_drawal_merchands * 100 ?? null }} %
+                            </p>
+                             <p class="font-medium whitespace-nowrap">
+                               Compagnie : {{ $item->percent_with_drawal_companie * 100 ?? null }} %
                             </p>
                         </td>
 

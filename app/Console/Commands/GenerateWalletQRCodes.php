@@ -14,63 +14,66 @@ class GenerateWalletQRCodes extends Command
 
     public function handle()
     {
-        $wallets = Wallet::all();
-        $this->info('Nombre de wallets : ' . $wallets->count());
+        // Désactiver toutes les limites
+        set_time_limit(0);
+        ini_set('memory_limit', '-1');
+        ini_set('max_execution_time', '0');
 
+        // Utiliser chunk pour traiter par lots
+        Wallet::with('sidUser')
+            ->chunk(100, function ($wallets) {
+                foreach ($wallets as $wallet) {
+                    $this->processWallet($wallet);
+                }
+            });
 
+        $this->info('Tous les QR codes ont été générés !');
+    }
 
+    private function processWallet($wallet)
+    {
+        try {
+            $originalLogoPath = $wallet->sidUser?->is_custumers
+                ? public_path('dist/images/logo_orange.png')
+                : public_path('dist/images/logo_violet.png');
 
-        foreach ($wallets as $wallet) {
-            // Si le wallet a déjà un QR code, on peut sauter ou régénérer
-            if ($wallet->qr_code) {
-                continue;
+            // Vérifier si le logo existe
+            if (!file_exists($originalLogoPath)) {
+                $this->error("Logo non trouvé pour wallet ID {$wallet->id}");
+                return;
             }
 
-            if ($wallet->sidUser->is_custumers) {
-                $originalLogoPath = public_path('dist/images/logo_orange.png');
-            } else {
-                $originalLogoPath = public_path('dist/images/logo_violet.png');
-            }
             $qrData = json_encode([
                 'wallet_id' => $wallet->wallet_id,
-                'user' => $wallet->sidUser->firstname . ' ' .  $wallet->sidUser->lastname,
-                'countrie' => $wallet->sidUser->country->name . ' ' .  $wallet->sidUser->citie->name,
-                'currencie' => $wallet->country->currencie->name,
             ]);
 
             $result = Builder::create()
                 ->data($qrData)
                 ->encoding(new Encoding('UTF-8'))
-                // ->errorCorrectionLevel(new ErrorCorrectionLevelHigh())
                 ->size(300)
                 ->margin(10)
-                // ->roundBlockSizeMode(new RoundBlockSizeModeMargin())
-
-                // 🎨 Couleur du QR code
-                // ->foregroundColor(new Color(0, 51, 102))
-                // ->backgroundColor(new Color(255, 255, 255)) 
-
-                // 🖼️ Logo au centre
                 ->logoPath($originalLogoPath)
                 ->logoResizeToWidth(70)
                 ->logoResizeToHeight(70)
-
-                // 🏷️ Optionnel : un texte sous le QR code
-                // ->labelText('Mon Portefeuille')
-                // ->labelFont(new NotoSans(14))
-                // ->labelAlignment(new LabelAlignmentCenter())
-
                 ->build();
 
-
             $qrPath = 'qrcodes/wallet_' . $wallet->id . '.png';
-            $result->saveToFile(public_path($qrPath));
+            $fullPath = public_path($qrPath);
 
+            // Créer le dossier si nécessaire
+            if (!is_dir(dirname($fullPath))) {
+                mkdir(dirname($fullPath), 0755, true);
+            }
+
+            $result->saveToFile($fullPath);
             $wallet->update(['qr_code' => $qrPath]);
 
             $this->info("QR code généré pour wallet ID {$wallet->id}");
-        }
 
-        $this->info('Tous les QR codes ont été générés !');
+            // Libérer la mémoire
+            unset($result);
+        } catch (\Exception $e) {
+            $this->error("Erreur pour wallet ID {$wallet->id}: " . $e->getMessage());
+        }
     }
 }

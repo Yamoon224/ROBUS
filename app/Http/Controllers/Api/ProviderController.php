@@ -68,99 +68,7 @@ class ProviderController extends Controller
         $this->initializeAppStatus($this->authService);
     }
 
-    //    public function dashboard_historique()
-    // {
-
-    //     $wallet_user =  robus();
-    //     $wallet_solde = Wallet::where('sid_user_id', $wallet_user->id)->first();
-    //     $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
-
-    //     $page = request()->query('page', 1);       
-    //     $perPage = request()->query('per_page', 20);
-
-    //     $walletTransaction =  WalletTransaction::where('wallet_id', $wallet_solde->id)
-    //         ->orWhere('num_wallet', $wallet_solde->wallet_id)
-    //         ->orderBy('created_at', 'desc')
-    //         ->paginate($perPage, ['*'], 'page', $page);
-
-    //     $walletPayment = $this->transactionAccount->getTransactionsPaginatedWallet(WalletPayment::class, $wallet_solde->id, $page, $perPage);
-    //     $walletPush = $this->transactionAccount->getTransactionsPaginatedWallet(WalletPush::class, $wallet_solde->id, $page, $perPage);
-    //     $walletTresortMoney = $this->transactionAccount->getTransactionsPaginatedWallet(WalletTresortMoney::class, $wallet_solde->id, $page, $perPage);
-    //     $walletDjamo = $this->transactionAccount->getTransactionsPaginatedWallet(WalletDjamo::class, $wallet_solde->id, $page, $perPage);
-    //     $walletVirement = $this->transactionAccount->getTransactionsPaginatedWallet(WalletVersement::class, $wallet_solde->id, $page, $perPage);
-    //     $walletBankSend = $this->transactionAccount->getTransactionsPaginatedWallet(WalletBankSend::class, $wallet_solde->id, $page, $perPage);
-    //     $walletBank = $this->transactionAccount->getTransactionsPaginatedWallet(WalletBank::class, $wallet_solde->id, $page, $perPage);
-    //     $walletPhone = $this->transactionAccount->getTransactionsPaginatedWallet(WalletPhoneCredit::class, $wallet_solde->id, $page, $perPage);
-    //     $walletReload = WalletReload::where('wallet_id', $wallet_solde->id)
-    //         ->orWhere('account_wallet', $wallet_solde->wallet_id)
-    //         ->orderBy('created_at', 'desc')
-    //         ->paginate($perPage, ['*'], 'page', $page);
-    //     $wallet1xbets = $this->transactionAccount->getTransactionsPaginatedWallet(WalletXbet::class, $wallet_solde->id, $page, $perPage);
-
-    //     $walletReloadCard = $this->transactionAccount->getTransactionsPaginatedWallet(WalletDeposit::class, $wallet_solde->id, $page, $perPage);
-
-    //     $walletInter = WalletInter::where('wallet_id', $wallet_solde->id)
-    //         ->orWhere('number_compte', $wallet_solde->wallet_id)
-    //         ->orderBy('created_at', 'desc')
-    //         ->paginate($perPage, ['*'], 'page', $page);
-
-    //     $walletOrderCarte = $this->transactionAccount->getTransactionsPaginatedWallet(BankCard::class, $wallet_solde->id, $page, $perPage);
-
-
-    //     $walletRemonte = WithMerchant::where('sid_user_id', $wallet_user->id)
-    //         ->orderBy('created_at', 'desc')
-    //         ->paginate($perPage, ['*'], 'page', $page);
-
-
-    //     $som_commissions =  $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTransaction::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPayment::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBank::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPhoneCredit::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDeposit::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(BankCard::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletPush::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletDjamo::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletXbet::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletTresortMoney::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletVersement::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletBankSend::class) +
-    //         $this->transactionAccount->getTransactionCommissionAmountTotal(WalletInter::class);
-
-
-    //     $transformPaginate = function ($paginator, $collectionClass) {
-    //         return [
-    //             'data' => $collectionClass::collection($paginator),
-    //             'pagination' => [
-    //                 'current_page' => $paginator->currentPage(),
-    //                 'last_page' => $paginator->lastPage(),
-    //                 'per_page' => $paginator->perPage(),
-    //                 'total' => $paginator->total(),
-    //             ],
-    //         ];
-    //     };
-
-    //     $dashboard_data['Transactions'] = $transformPaginate($walletTransaction, TransactionSingleCollection::class);
-    //     $dashboard_data['Push'] = $transformPaginate($walletPush, WithTransactionSingleCollection::class);
-    //     $dashboard_data['Djamo'] = $transformPaginate($walletDjamo, DjamoTransactionSingleCollection::class);
-    //     $dashboard_data['Virements'] = $transformPaginate($walletVirement, VirementTransactionSingleCollection::class);
-    //     $dashboard_data['Tresort Money'] = $transformPaginate($walletTresortMoney, WithTransactionSingleCollection::class);
-    //     $dashboard_data['Commission remonté'] = $transformPaginate($walletRemonte, RemonteSingleCollection::class);
-    //     $dashboard_data['Paiements'] = $transformPaginate($walletPayment, PaymentSingleCollection::class);
-    //     $dashboard_data['1xbet'] = $transformPaginate($wallet1xbets, OneXbetSingleCollection::class);
-    //     $dashboard_data['Versements'] = $transformPaginate($walletBank, VirementSingleCollection::class);
-    //     $dashboard_data['Credit telephoniques'] = $transformPaginate($walletPhone, PhoneCreditSingleCollection::class);
-    //     $dashboard_data['Rechargement de carte'] = $transformPaginate($walletReloadCard, ReloadCardSingle::class);
-    //     $dashboard_data['Rechargement d\'UV'] = $transformPaginate($walletReload, ReloadSingleCollection::class);
-    //     $dashboard_data['Commande de carte'] = $transformPaginate($walletOrderCarte, ReloadCartCollection::class);
-    //     $dashboard_data['Transfers inter'] = $transformPaginate($walletInter, InterTransactionSingleCollection::class);
-    //     $dashboard_data['Bank send'] = $transformPaginate($walletBankSend, WithBankSendSingleCollection::class);
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'historicals' =>  $dashboard_data,
-    //         'som_commission' =>  $som_commissions . ' ' . Auth::guard('api')->user()->wallet->currencie->code,
-    //     ], 200);
-    // }
+ 
 
 
     public function index()
@@ -310,7 +218,7 @@ class ProviderController extends Controller
                 // Cas normal hors distributeur/API
                 if (robus()->country->code == 'CI') {
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);
-                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($providers['paymentInter']);
+                    $dashboard_data['Factures'] = ProviderSingleCollection::collection($providers['payment']);
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($providers['bank']);
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($providers['phone']);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($providers['reloadCard']);
