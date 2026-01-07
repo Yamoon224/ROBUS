@@ -33,6 +33,7 @@ class WaveSingleCollection extends JsonResource
             'devise'  => optional($this->wallet->currencie)->code,
             'status'  =>  $this->status,
             'amount_received' =>  number_format((double)$this->amount_received, 2, '.', ' ') ,
+            'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
         ];
     }

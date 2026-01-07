@@ -40,7 +40,7 @@ class WithService
     }
 
 
-    public function createWalletTransactionTresortMoney($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal , $type , $numberPiece)
+    public function createWalletTransactionTresortMoney($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal, $type, $numberPiece)
     {
 
 
@@ -77,7 +77,7 @@ class WithService
     }
 
 
-    public function createWalletTransactionDjamo($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved,  $imagePath, $is_drawal, $type , $numberPiece)
+    public function createWalletTransactionDjamo($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved,  $imagePath, $is_drawal, $type, $numberPiece)
     {
 
 
@@ -110,14 +110,14 @@ class WithService
             'choose_transaction'  => $is_drawal ? 2 : 1,
             'amount_received'  =>  $amountReceved ?? 0.0,
             'image'  =>  $imagePath ?? null,
-               'type_piece'  =>  $type ?? null,
+            'type_piece'  =>  $type ?? null,
             'number_piece'  =>  $numberPiece ?? null,
         ]);
     }
 
 
 
-    public function createWalletTransactionPush($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal, $type , $numberPiece)
+    public function createWalletTransactionPush($amount_valeur, $provider, $percent_robus, $phone, $fullName, $amountReceved, $is_drawal, $type, $numberPiece)
     {
 
 
@@ -146,7 +146,7 @@ class WithService
             'choose_transaction'  => $is_drawal ? 2 : 1,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
-               'type_piece'  =>  $type ?? null,
+            'type_piece'  =>  $type ?? null,
             'number_piece'  =>  $numberPiece ?? null,
         ]);
     }
@@ -255,6 +255,7 @@ class WithService
 
         $walletWith->update([
             'amount_solde' => $amount_solde,
+            'balance_before' => $user->wallet->amount
         ]);
 
         $user->wallet->update([
@@ -356,6 +357,7 @@ class WithService
         $walletWith->update([
             'amount_solde' => $amount_solde,
             'amount_received' => $amountReceveid,
+            'balance_before' => $user->wallet->amount
         ]);
 
         $user->wallet->update([
@@ -447,6 +449,7 @@ class WithService
 
         $walletWith->update([
             'amount_solde' => $amount_solde,
+            'balance_before' => $user->wallet->amount
         ]);
 
         $user->wallet->update([
@@ -550,6 +553,7 @@ class WithService
 
         $walletWith->update([
             'amount_solde' => $amount_solde,
+            'balance_before' => $user->wallet->amount
         ]);
 
         $user->wallet->update([

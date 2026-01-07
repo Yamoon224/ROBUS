@@ -41,6 +41,7 @@ class OrderCardService
 
         return $this->orderCardRepository->create([
             'amount_solde'  => $amount_solde ?? null,
+            'balance_before' =>  robus()->wallet->amount,
             'company_id'   => robus()->company_id,
             'country_id'   => robus()->country->id,
             'city_id'   => robus()->city->id,

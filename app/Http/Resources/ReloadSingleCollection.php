@@ -60,6 +60,7 @@ class ReloadSingleCollection extends JsonResource
             'devise'  => optional($this->wallet->currencie)->code,
             // optional($this->currencie)->code
             'status'  =>  $this->status,
+            'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
             'amount_solde_drawal' =>  $this->amount_solde_drawal .  ' ' . optional($this->wallet->currencie)->code ?? null
         ];

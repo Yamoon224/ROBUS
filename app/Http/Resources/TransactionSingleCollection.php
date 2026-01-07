@@ -61,6 +61,7 @@ class TransactionSingleCollection extends JsonResource
             // optional($this->currencie)->code
             'status'  =>  $this->status,
             'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+            'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'amount_solde_drawal' => $this->amount_solde_drawal . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")
             
         ];

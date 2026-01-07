@@ -56,6 +56,7 @@ class PaymentInterService
         return WalletInter::create([
             'amount_solde' => $amount_solde ?? null,
             'wallet_id' =>   robus()->wallet->id,
+            'balance_before' =>  robus()->wallet->amount,
             'amount' => $val_amount,
             'description'  => "Credit telephonique",
             'inter_cost_id' => null,

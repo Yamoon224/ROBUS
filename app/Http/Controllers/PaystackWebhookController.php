@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\Wallets\WalletReload;
 use App\Models\Sid\SidUser;
 use App\Models\Wallets\Wallet;
+use App\Models\Costs\ReloadCost;
 use App\Models\Payments\PaymentReload;
 use App\Models\Providers\Provider;
 use App\Http\Services\PaystackService;
@@ -259,6 +260,8 @@ class PaystackWebhookController extends Controller
                 return response()->json(['error' => 'Montant incorrect'], 400);
             }
 
+            $wallet = $transaction->wallet;
+
             // Mettre à jour la transaction
             $transaction->update([
                 'status' => 'success',
@@ -266,6 +269,9 @@ class PaystackWebhookController extends Controller
                 'paid_at' => Carbon::parse($data['paid_at']),
                 'payment_method' => $data['channel'],
                 'currency' => $data['currency'],
+                'balance_before' =>  $wallet->amount,
+                'amount_solde' => $wallet->amount,
+                'amount_received' => $data['amount'],
                 'ip_address' => $data['ip_address'] ?? null,
                 'fees' => $data['fees'] / 100 ?? 0, // Convertir en unité normale
                 'authorization' => json_encode($data['authorization'] ?? []),
@@ -280,21 +286,19 @@ class PaystackWebhookController extends Controller
             ]);
 
             // Mettre à jour le solde du portefeuille
-            $wallet = $transaction->wallet;
             if ($wallet) {
                 $oldBalance = $wallet->amount;
                 $newBalance = $oldBalance + $transaction->amount;
 
-
                 // Créer une transaction dans l'historique du portefeuille
-                $paymentTransaction = PaymentReload::create([
+                PaymentReload::create([
                     'wallet_reload_id' => $transaction->id,
                     'sid_user_id' => $wallet->sid_user_id,
                     'type' => 'credit',
                     'transaction_id' => $data['reference'],
                     'pay_amount' => $transaction->amount,
                     'fee_amount' => $data['fees'] / 100 ?? 0,
-                    'received_amount' => $transaction->amount,
+                    'received_amount' => $transaction->amount_received,
                     'balance_before' => $oldBalance,
                     'balance_after' => $newBalance,
                     'description' => 'Recharge via Paystack - ' . $data['reference'],
@@ -306,29 +310,42 @@ class PaystackWebhookController extends Controller
                 ]);
 
 
-                $admin_single =  SidUser::whereStatus(true)
-                    ->whereIsAdmin(true)
+                $admin_single =  SidUser::whereIsAdmin(true)
                     ->where('country_id', 107)
                     ->first();
 
                 $walletAdmin = WalletAdmin::find(1);
 
-                if ($walletAdmin && $walletAdmin->amount >= $transaction->amount) {
-                    $walletAdmin->decrement('amount', $transaction->amount);
+                $percent_robus = ReloadCost::find(2);
+
+                if (!$percent_robus) {
+                    throw new \Exception('Coût Robus introuvable');
+                }
+
+                $commission_robus = (float) $percent_robus->percent * (float) $transaction->amount_received;
+
+                $totalAmount = (float) $transaction->amount_received - $commission_robus;
+
+                if ($totalAmount <= 0) {
+                    throw new \Exception('Montant final invalide');
+                }
+                
+                if ($walletAdmin && $walletAdmin->amount >= $totalAmount) {
+                    $walletAdmin->decrement('amount', $totalAmount);
                 } else {
-                    $admin_single->wallet->decrement('amount', $transaction->amount);
+                    $admin_single->wallet->decrement('amount', $totalAmount);
                 }
                 // Update wallet Transactions
                 $transaction->wallet->update([
                     'reload_by' => $transaction->user_id,
                     'sid_user_relod' => $transaction->user_id,
-                    'amount' => DB::raw('amount+' . $transaction->amount),
+                    'amount' => DB::raw('amount+' . $totalAmount),
                 ]);
 
                 // Mettre à jour les statistiques de l'utilisateur
                 $user = $transaction->wallet->sidUser;
                 if ($user) {
-                    $user->increment('total_deposits', $transaction->amount);
+                    $user->increment('total_deposits', $totalAmount);
                     $user->save();
                 }
             }
@@ -397,7 +414,7 @@ class PaystackWebhookController extends Controller
             $wallet = $transaction->wallet;
 
             if (!$wallet) {
-                 Log::error('Wallet incorrect', [
+                Log::error('Wallet incorrect', [
                     'expected' => $expectedAmount,
                     'received' => $data['amount'],
                     'reference' => $data['reference']
@@ -416,6 +433,7 @@ class PaystackWebhookController extends Controller
                 'currency' => $data['currency'],
                 'ip_address' => $data['ip_address'] ?? null,
                 'amount_solde' => $wallet->amount,
+                'balance_before' =>  $wallet->amount,
                 'amount_solde_drawal' => $oldBalance,
                 'fees' => $data['fees'] / 100 ?? 0, // Convertir en unité normale
                 'authorization' => json_encode($data['authorization'] ?? []),

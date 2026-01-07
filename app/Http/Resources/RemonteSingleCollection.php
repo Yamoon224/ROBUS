@@ -24,6 +24,7 @@ class RemonteSingleCollection extends JsonResource
             'type'  =>  $this->type_transaction,
             'status'  =>  $this->status,
             'devise'  =>optional($this->sidUser->wallet->currencie)->code,
+            'balance_before'  => $this->balance_before . ' ' . (optional($this->sidUser->wallet->currencie)->code ?? "CFA"),
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->sidUser->wallet->currencie)->code ?? null,
         ];
     }

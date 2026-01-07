@@ -47,6 +47,7 @@ class VirementService
             'bank_cost_id' =>  $percent_robus->id,
             'created_by' => $userAuth->id,
             'provider_id'  => $provider,
+            'balance_before' =>  robus()->wallet->amount,
             'number_compte' =>  $number_compte,
             'firstname' =>  $firstname,
             'lastname' =>  $lastname,

@@ -403,6 +403,7 @@ class TransactionsAccountService
             'amount_solde' =>   $amount_solde,
             'type_transaction' => $typeRemonte,
             'status' =>  "SUCCESS",
+            'balance_before' =>  robus()->wallet->amount,
             'date_removed' => Carbon::now(),
         ]);
     }

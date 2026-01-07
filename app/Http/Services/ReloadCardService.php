@@ -46,6 +46,7 @@ class ReloadCardService
             'description'  => $description ?? 'Demande de rechargement de carte',
             'num_carte'  => $num_carte,
             'name'  => $name,
+            'balance_before' =>  robus()->wallet->amount,
             'deposit_cost_id' => $percent_robus->id,
             'costs_amount' =>  $amount_cost,
             'created_by' => robus()->id,

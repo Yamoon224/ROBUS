@@ -36,6 +36,7 @@ class PaymentSingleCollection extends JsonResource
             'factureChoix_type' =>  $this->factureChoix_type,
             'frais' => number_format((float)$this->costs_amount, 2, '.', ' '),
             'devise'  => optional($this->wallet->currencie)->code,
+            'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'status'  =>  $this->status,
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
         ];

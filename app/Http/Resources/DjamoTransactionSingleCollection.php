@@ -34,6 +34,7 @@ class DjamoTransactionSingleCollection extends JsonResource
             'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ,
             'devise'  => optional($this->wallet->currencie)->code,
             'status'  =>  $this->status,
+            'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
 
 

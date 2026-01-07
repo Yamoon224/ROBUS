@@ -40,6 +40,7 @@ class PhoneCreditService
             'description'  => 'Demande de rechargement de credit',
             'phone_credit_cost_id' => 1,
             'created_by' => robus()->id,
+            'balance_before' =>  robus()->wallet->amount,
             'amount_solde'  => $amount_solde ?? null,
             'provider_id'  =>  $provider,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),

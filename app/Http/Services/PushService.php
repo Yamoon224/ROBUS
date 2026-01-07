@@ -43,6 +43,7 @@ class PushService
             'created_by' => robus()->id,
             'amount_solde'  => $amount_solde ?? null,
             'provider_id'  =>  $provider,
+            'balance_before' =>  robus()->wallet->amount,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),
             'phone'  =>  robus()->country->indecative . $phoneNumber,
             'status'  => "PENDING",

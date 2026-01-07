@@ -667,6 +667,7 @@ class InterPaymentService
         return WalletInter::create([
             'wallet_id' => robus()->wallet->id,
             'amount' => $amount_transaction,
+            'balance_before' =>  robus()->wallet->amount,
             'description' => null,
             'inter_cost_id' => null,
             'transaction_cost_id' => $percent_robus->id,
@@ -715,6 +716,7 @@ class InterPaymentService
         return WalletInter::create([
             'wallet_id' => robus()->wallet->id,
             'amount' => $amount_transaction,
+            'balance_before' =>  robus()->wallet->amount,
             'description' => null,
             'inter_cost_id' => null,
             'transaction_cost_id' => $percent_robus->id,
@@ -764,6 +766,7 @@ class InterPaymentService
             'wallet_id' => robus()->wallet->id,
             'amount' => $amount_transaction,
             'description' => null,
+            'balance_before' =>  robus()->wallet->amount,
             'inter_cost_id' => null,
             'virement_percent_id' => $percent_robus->id ?? null,
             'number_compte' => $account_number,
@@ -1038,6 +1041,7 @@ class InterPaymentService
             'wallet_id' => robus()->wallet->id,
             'amount' => $val_amount,
             'description' => "Transfert par Robus",
+            'balance_before' =>  robus()->wallet->amount,
             'inter_cost_id' => null,
             'transaction_cost_id' => $percent_robus->id,
             'phone' =>  null,

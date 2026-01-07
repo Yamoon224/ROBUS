@@ -42,6 +42,7 @@ class DjamoService
             'created_by' => robus()->id,
             'amount_solde'  => $amount_solde ?? null,
             'provider_id'  =>  $provider,
+            'balance_before' =>  robus()->wallet->amount,
             'image'  =>  $savedImage ?? null,
             'full_name' =>  $fullName ?? null,
             'costs_amount' => ($percent_robus->percent * $amount_valeur),

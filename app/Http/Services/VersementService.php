@@ -50,6 +50,7 @@ class VersementService
             'amount_solde' => $amount_solde ?? null,
             'amount_received' => $valeur_received ?? null,
             'description'  => "Paiement versements",
+            'balance_before' =>  robus()->wallet->amount,
             'virement_percent_id' => $percent_robus->id,
             'num_accompte'   => $number_decoder ?? null,
             'bank_code' => $id_invoice ?? null,

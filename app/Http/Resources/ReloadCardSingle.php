@@ -30,6 +30,7 @@ class ReloadCardSingle extends JsonResource
             'devise'  => optional($this->wallet->currencie)->code,
             'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ,
             'status'  =>  $this->status,
+            'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
 
         ];

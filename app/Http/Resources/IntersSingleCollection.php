@@ -68,6 +68,7 @@ class IntersSingleCollection extends JsonResource
             'status'  =>  $this->status,
             // 'amount_received'  => $this->amount_received ?? null,
             'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
+            'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'amount_solde_drawal' =>  $this->amount_solde_drawal .  ' ' . (optional(optional($this->country->currencie))->code ?? "CFA"),
         ];
     }

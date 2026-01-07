@@ -38,8 +38,6 @@ class TransactionSinglePuscherCollection extends JsonResource
             'status'  =>  $this->status,
             'solde_account'  => $this->amount_solde . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'amount_solde_drawal' => $this->amount_solde_drawal . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA")
-
-
         ];
     }
 }

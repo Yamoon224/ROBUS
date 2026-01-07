@@ -51,6 +51,7 @@ class PhoneCreditInterService
             'wallet_id' =>   robus()->wallet->id,
             'amount' => $val_amount,
             'description'  => "Payment de Credit Téléphonique",
+            'balance_before' =>  robus()->wallet->amount,
             'inter_cost_id' => null,
             'provider_type' =>  6,
             'payment_cost_id' => $percent_robus->id,

@@ -59,7 +59,6 @@ class VirementSinglePuscherCollection extends JsonResource
             'devise'  => optional($this->wallet->currencie)->code,
             'status'  =>  $this->status,
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
-
         ];
     }
 }

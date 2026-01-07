@@ -153,6 +153,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('reloads/store', [ReloadController::class, 'create_reload']);
             Route::get('reload/show/{id}', [ReloadController::class, 'reload_show']);
             Route::post('reload/delete/{id}', [ReloadController::class, 'delete_reload']);
+            Route::get('search_reload/{amount_reload}', [ReloadController::class, 'search_reload']);
 
             // Payments
             Route::post('payments/store', [PaymentController::class, 'create_payment']);

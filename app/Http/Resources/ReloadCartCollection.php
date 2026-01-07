@@ -34,6 +34,7 @@ class ReloadCartCollection extends JsonResource
             'email'  => $this->email,
             'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ,
             'status'  =>  $this->status == 0  ? "PENDING" : "SUCCESS",
+            'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),
             'solde_account'  => $this->amount_solde .  ' ' . optional($this->wallet->currencie)->code ?? null,
         ];
     }
