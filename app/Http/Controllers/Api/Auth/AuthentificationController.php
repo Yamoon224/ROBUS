@@ -588,12 +588,7 @@ class AuthentificationController extends Controller
 
         try {
 
-            // Vérifier l'état de l'application
-            $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
 
-            if (!$appStatusResult['success']) {
-                return response()->json($appStatusResult, 301);
-            }
 
             if (!empty($user->forget_password)) {
 
@@ -634,7 +629,7 @@ class AuthentificationController extends Controller
                     $recipient = $user->country->code == 'CI' ? '225' . substr($user->phone, -10) : $user->email;
 
                     if ($user->country->code == 'CI') {
-                        Http::get("https://admin.sms-mail.pro/sms/api?action=send-sms&api_key=PXF0TGpuQ0t4c3dESUpPc2NCRXc=&to=$recipient&from=ROBUS&sms=$message");
+                        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                     } else {
                         Mail::to($recipient)->send(new UpdatePassword($message));
                     }
@@ -684,10 +679,10 @@ class AuthentificationController extends Controller
             $device_meta_data = $request->input('device_meta_data');
             $active_code = $request->input('code');
 
-            
+
             $result = $this->authService->$loginMethod($email, $password, $active_code, $device_meta_data);
 
-           
+
             if ($result['success']) {
                 return $this->loginSuccess($result['token'], $result['user']);
             } else {
@@ -707,37 +702,19 @@ class AuthentificationController extends Controller
 
     public function loginMaster(Request $request)
     {
-        // Vérifier l'état de l'application
-        // $appStatusResult = $this->authService->appDispoMasterRobus(AppMasterStatus::class);
-
-        // if (!$appStatusResult['success']) {
-        //     return response()->json($appStatusResult, 200);
-        // }
+       
 
         return $this->loginAll($request, 'masterLogin');
     }
 
     public function loginComZone(Request $request)
     {
-        // $appStatusResult = $this->authService->appDispoComZoneRobus(AppComZoneStatus::class);
-
-        // if (!$appStatusResult['success']) {
-        //     return response()->json($appStatusResult, 200);
-        // }
-
+        
         return $this->loginAll($request, 'comZoneLogin');
     }
 
     public function loginUnderDistributor(Request $request)
     {
-
-        // Vérifier l'état de l'application
-        // $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
-
-        // if (!$appStatusResult['success']) {
-        //     return response()->json($appStatusResult, 200);
-        // }
-      
 
         return $this->loginAll($request, 'underDistributorLogin');
     }
@@ -791,7 +768,7 @@ class AuthentificationController extends Controller
                 'token' => $tokenResult,
                 'integration' => [
                     'company_name' => "ROBUS",
-                    'logo_url' => "https://robus.home.ci/public/dist/images/logo_violet.jpeg" ?? null,
+                    'logo_url' => "https://robus.home.ci/public/dist/images/logo_violet.png" ?? null,
                     'theme_color' => $client->theme_color ?? '#1A73E8',
                 ],
                 'user' => [

@@ -14,6 +14,7 @@ use App\Http\Controllers\Invoices\InvoiceController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\PaimentController;
 use App\Http\Controllers\RankingController;
+use App\Http\Controllers\PaystackWebhookController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\StatistiqueController;
 use App\Http\Controllers\TransactionController;
@@ -538,6 +539,23 @@ Route::group(['prefix' => 'under_distributers'], function () {
     Route::post('/store_step_two', [AdminController::class, 'store_under_distributerTwo'])->name('admin.store_under_distributer_two');
 });
 
+
+Route::get('/payment/callback', [PaystackWebhookController::class, 'paymentCallback'])
+    ->name('payment.callback');
+
+// Pages de résultat de paiement
+Route::get('/payment/success/{reference}', [PaystackWebhookController::class, 'paymentSuccess'])
+    ->name('payment.success');
+
+Route::get('/payment/failed/{reference}', [PaystackWebhookController::class, 'paymentFailed'])
+    ->name('payment.failed');
+
+// Page d'erreur de callback
+Route::get('/payment/error', function () {
+    return view('payment.callback-error', [
+        'message' => 'Une erreur est survenue lors du traitement du paiement.'
+    ]);
+})->name('payment.error');
 
 
 // Countries

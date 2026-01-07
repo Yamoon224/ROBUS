@@ -322,6 +322,10 @@ class PercentRobusAuthService
                 return VirementPercent::whereId(12)->first();
             case 120:
                 return VirementPercent::whereId(13)->first();
+            case 11:
+                return VirementPercent::whereId(17)->first();
+            case 12:
+                return VirementPercent::whereId(16)->first();
             default:
                 return null;
         }

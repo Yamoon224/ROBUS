@@ -23,7 +23,7 @@ class WithTransactionSingleCollection extends JsonResource
             'name_user_send' => isset(optional($this->wallet)->sidUser->firstname) ? (optional($this->wallet)->sidUser->firstname) . ' ' . (optional($this->wallet)->sidUser->lastname) : null,
             'phone_user_send' => optional($this->wallet)->sidUser->phone ?? null,
             'amount_wallet' =>  optional($this->wallet)->amount . ' ' . optional($this->wallet->currencie)->code,
-            'type' => optional($this->provider)->name == "PUSH" ? 'Push' : 'Tresort Money' ,
+            'type' => optional($this->provider)->name == "PUSH" || optional($this->provider)->name == "Push" ? 'Push' : 'Tresort Money' ,
             'date_created' =>  $this->created_at,
             'date_treatment' =>  optional($this->transaction)->created_at,
             'Reference'  => optional($this->transaction)->transaction_id,

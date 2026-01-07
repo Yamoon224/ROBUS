@@ -33,7 +33,7 @@ use App\Http\Controllers\Api\Transfers\withTransactionController;
 use App\Http\Controllers\Api\Transfers\VersementController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\PaystackWebhookController;
 
 
 
@@ -50,6 +50,20 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
+
+    Route::prefix('paystack')->group(function () {
+        // Webhook Paystack (POST uniquement - sans middleware CSRF)
+        Route::post('/webhook', [PaystackWebhookController::class, 'handleWebhook'])
+            ->name('paystack.webhook');
+
+        // Vérification manuelle d'une transaction
+        Route::get('/verify/{reference}', [PaystackWebhookController::class, 'verifyTransaction'])
+            ->name('paystack.verify');
+
+        // Générer une référence unique
+        Route::post('/generate-reference', [PaystackWebhookController::class, 'generateReference'])
+            ->name('paystack.generate-reference');
+    });
 
     Route::prefix('auth')->group(function () {
 
@@ -73,6 +87,15 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
 
     Route::middleware(['auth:api', 'check.suspended'])->group(function () {
 
+        Route::prefix('paystack')->group(function () {
+            // Initialiser un paiement Paystack (nécessite authentification)
+            Route::post('/initialize', [PaystackWebhookController::class, 'initializePayment'])
+                ->name('paystack.initialize');
+
+            // Vérifier transaction avec POST (alternative)
+            Route::post('/verify/{reference}', [PaystackWebhookController::class, 'verifyTransaction'])
+                ->name('paystack.verify.post');
+        });
         // User and Under distributors APIS
         Route::prefix('user')->group(function () {
 

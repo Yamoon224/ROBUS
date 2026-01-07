@@ -79,15 +79,15 @@ class ProviderController extends Controller
 
         try {
             // 1️⃣ Cas où l'app est indisponible
-            if (!$appStatusResult['success']) {
-                $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
-                $dashboard_data['Transfert national'] = [
-                    "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
-                    "Mobile Money" => [],
-                    "Tresort Money" => [],
-                ];
-                return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
-            }
+            // if (!$appStatusResult['success']) {
+            //     $walletTransactionDepot = $this->percentRobus->getProvidersDepotByType(new Provider, $countrieId, 1);
+            //     $dashboard_data['Transfert national'] = [
+            //         "Dépôts" => ProviderSingleCollection::collection($walletTransactionDepot),
+            //         "Mobile Money" => [],
+            //         "Tresort Money" => [],
+            //     ];
+            //     return response()->json(['success' => true, 'Wallets' => $dashboard_data], 200);
+            // }
 
             // 2️⃣ Récupération des assignations et mapping restrictions
             $assignations = $this->percentRobus->operatorServices();
@@ -154,6 +154,8 @@ class ProviderController extends Controller
                 'walletInterVersement' => [10, 'interVersement'],
                 'walletXbet' => [13, 'xbet'],
                 'walletInterXbet' => [26, 'interXbet'],
+                'walletUv' => [30, 'relaodUv'],
+
             ];
 
             $providers = [];
@@ -171,6 +173,8 @@ class ProviderController extends Controller
 
             // 4️⃣ Construire le dashboard de manière dynamique
             if (robus()->is_under_distributer || robus()->is_api) {
+
+               $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($providers['relaodUv']);
 
                 if (!empty($activeButtons['showCreditButton'])) {
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($providers['phone']);
@@ -221,13 +225,16 @@ class ProviderController extends Controller
                     $dashboard_data['Factures'] = ProviderSingleCollection::collection($providers['payment']);
                     $dashboard_data['Versement bancaire'] = ProviderSingleCollection::collection($providers['bank']);
                     $dashboard_data['Crédit téléphonique'] = ProviderSingleCollection::collection($providers['phone']);
+                    $dashboard_data['Achat UV'] = ProviderSingleCollection::collection($providers['relaodUv']);
                     $dashboard_data['Rechargement & commande de carte'] = ProviderSingleCollection::collection($providers['reloadCard']);
+                    $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
                     $dashboard_data['Xbets'] = ProviderSingleCollection::collection($providers['xbet']);
                     $dashboard_data['Transfert international'] = [
                         "Transfert" => ProviderSingleCollection::collection($providers['inter']),
                     ];
                 } else {
                     $dashboard_data['Transfert national'] = ProviderSingleCollection::collection($providers['transaction']);
+                    $dashboard_data['Retrait'] = ProviderSingleCollection::collection($providers['retrait']);
                     $dashboard_data['Transfert international'] = [
                         "Factures" => ProviderSingleCollection::collection($providers['paymentInter']),
                         "Transfert" => ProviderSingleCollection::collection($providers['inter']),
@@ -329,6 +336,7 @@ class ProviderController extends Controller
         $walletInterTresort =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 20);
         $walletInterBankSend =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 28);
         $walletInterVersement =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 10);
+        $walletUv =  $this->percentRobus->getProvidersByType(new Provider, $countrieId, 30);
 
 
         try {
