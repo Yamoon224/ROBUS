@@ -29,6 +29,7 @@ class ReloadCost extends Model
         'name',
         'percent',
         'percent_merchands',
+        'percent_admin',
         'status',
         'created_by',
     ];
@@ -36,6 +37,7 @@ class ReloadCost extends Model
     protected $casts = [
         'percent' => 'double',
         'percent_merchands' => 'double',
+        'percent_admin' => 'double',
         'created_at' => 'datetime:Y-m-d H:i:s',
         'deleted_at' => 'datetime:Y-m-d H:i:s',
         'updated_at' => 'datetime:Y-m-d H:i:s',
@@ -75,6 +77,12 @@ class ReloadCost extends Model
     {
         $this->attributes['percent'] = $value / 100 ? json_encode($value / 100) : null;
     }
+
+    public function setPercentAdminAttribute($value)
+    {
+        $this->attributes['percent_admin'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+
     public function getPercentMerchandsAttribute($value)
     {
         $val = isset($value) ? json_decode($value, true) : null;

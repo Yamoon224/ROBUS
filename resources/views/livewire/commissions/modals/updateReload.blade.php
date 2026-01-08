@@ -15,7 +15,7 @@
                     @enderror
                 </div>
                 <div class="col-span-6">
-                    <label for="modal-form-1" class="form-label">Pourcentage<span class="text-danger">
+                    <label for="modal-form-1" class="form-label">Pourcentage banque<span class="text-danger">
                                             *</span></label>
                     <input wire:model="reloadPercent" id="modal-form-1" type="text" class="form-control"
                         placeholder="Pourcentage">
@@ -24,10 +24,10 @@
                     @enderror
                 </div>
                 <div class="col-span-6">
-                    <label for="modal-form-1" class="form-label">Pourcentage marchants<span class="text-danger">
+                    <label for="modal-form-1" class="form-label">Pourcentage admin<span class="text-danger">
                                             *</span></label>
                     <input wire:model="orderCardMerchant" id="modal-form-1" type="text" class="form-control"
-                        placeholder="Pourcentage marchant">
+                        placeholder="Pourcentage admin">
                     @error('orderCardMerchant')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror

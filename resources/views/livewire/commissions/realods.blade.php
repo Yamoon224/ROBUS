@@ -29,8 +29,8 @@
                     <tr>
                         <th class="whitespace-nowrap">Date</th>
                         <th class="whitespace-nowrap">Nom</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage marchants</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage Banque</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage Robus</th>
                         <th class="text-center whitespace-nowrap">Status</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -59,7 +59,7 @@
                         </td>
                         <td class="text-center">
                             <p href="" class="font-medium whitespace-nowrap">
-                                {{ $item->percent_merchands * 100 ?? null }} %
+                                {{ $item->percent_admin * 100 ?? null }} %
                             </p>
 
                         </td>

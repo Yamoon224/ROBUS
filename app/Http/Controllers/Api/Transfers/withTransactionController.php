@@ -666,7 +666,7 @@ class withTransactionController extends Controller
 
                                                 if ($file_front) {
                                                         // Chemin de destination
-                                                        $destination_path = public_path('image_inters/' . $request->full_name . '/');
+                                                        $destination_path = public_path('transactions/' . $request->full_name . '/');
 
                                                         // Création du dossier si inexistant
                                                         if (!file_exists($destination_path)) {
@@ -680,7 +680,7 @@ class withTransactionController extends Controller
                                                         $file_front->move($destination_path, $front_file);
 
                                                         // Construire l’URL de l’image
-                                                        $imagePath = env('APP_URL') . "/image_inters/" . $request->full_name . "/$front_file";
+                                                        $imagePath = env('APP_URL') . "/transactions/" . $request->full_name . "/$front_file";
                                                 }
 
                                                 $transactionResult = $this->processDjamoTransaction($request, $percent_robus, $amountReceved,  $imagePath, $is_drawal);

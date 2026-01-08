@@ -50,9 +50,13 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+                <div class="col-span-12 mb-3">
+                    <h1>Les informations sur les retraits</h1>
+
+                </div>
 
                 <div class="col-span-6">
-                    <label for="modal-form-1" class="form-label">Pourcentage  retrait<span class="text-danger">
+                    <label for="modal-form-1" class="form-label">Pourcentage retrait<span class="text-danger">
                             *</span></label>
                     <input wire:model.defer="percent_with_drawal" id="modal-form-1" type="number" class="form-control"
                         placeholder="Pourcentage marchant">
@@ -60,22 +64,22 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                  <div class="col-span-6">
+                <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Pourcentage S-agent retrait<span class="text-danger">
                             *</span></label>
-                    <input wire:model.defer="percent_with_drawal" id="modal-form-1" type="number" class="form-control"
+                    <input wire:model.defer="percent_with_drawal_merchands" id="modal-form-1" type="number" class="form-control"
                         placeholder="Pourcentage marchant">
-                    @error('percent_with_drawal')
+                    @error('percent_with_drawal_merchands')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
 
-                  <div class="col-span-6">
+                <div class="col-span-12">
                     <label for="modal-form-1" class="form-label">Pourcentage compagnie retrait<span class="text-danger">
                             *</span></label>
-                    <input wire:model.defer="percent_with_drawal" id="modal-form-1" type="number" class="form-control"
-                        placeholder="Pourcentage marchant">
-                    @error('percent_with_drawal')
+                    <input wire:model.defer="percent_with_drawal_companie" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage Compagnies">
+                    @error('percent_with_drawal_companie')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>

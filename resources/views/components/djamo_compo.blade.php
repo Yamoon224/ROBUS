@@ -121,7 +121,7 @@
                                                           <i class="fas fa-qrcode text-gray-400 text-xl"></i>
 
                                                           @if ($item->image)
-                                                              <img src="{{ asset('storage/' . $item->image) }}"
+                                                              <img src="{{ asset('storage/' . $item->image) ?? asset('image_inters/' . $item->image)  }}"
                                                                   alt="QR Code Djamo"
                                                                   class="qr-blur w-20 h-20 object-contain rounded-lg border border-gray-300 shadow-sm">
                                                           @else

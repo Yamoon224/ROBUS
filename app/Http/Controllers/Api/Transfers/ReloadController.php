@@ -1235,10 +1235,10 @@ class ReloadController extends Controller
                     $commission_phone_credit_val_nat_pay = 0;
                     $commission_phone_credit_commission = 0;
 
-                    $total_percent = (float) $percent_robus->percent + (float)$percent_robus->percent_admin;
+                    $total_percent = (float) $percent_robus->percent + (float) $percent_robus->percent_admin;
                     $commission_phone_credit_val_nat_pay =   $total_percent  *  $reel_amount;
 
-                    $commission_phone_credit_commission =   $total_percent  *  $reel_amount;
+                    $commission_phone_credit_commission =  (float) $reel_amount -  (float) $total_percent ;
 
                     $countryNameGroup = robus()->country->name_groupe;
 
@@ -1247,8 +1247,8 @@ class ReloadController extends Controller
                     return response()->json([
                         'success' => $percent_robus != null ? true : false,
                         'data' =>  [
-                            'amount_pay' => $commission_phone_credit_commission,
-                            'amount_send' => $commission_phone_credit_val_nat_pay,
+                            'amount_pay' => $commission_phone_credit_val_nat_pay,
+                            'amount_send' => $commission_phone_credit_commission,
                             'amount_receive' => in_array($countryNameGroup, $mobileMoneyGroups)
                                 ? 'Vous devez utiliser les rechargements Mobile Money'
                                 : 'Vous devez utiliser les cartes bancaires',

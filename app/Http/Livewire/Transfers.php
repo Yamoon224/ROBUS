@@ -3266,7 +3266,13 @@ class Transfers extends Component
 
                             $transaction =  app(TransfertServiceBackend::class)->createTransaction($check, $transactionCode, $transactionCompiCode);
                             app(TransfertServiceBackend::class)->createInvoiceTransaction($check, $transaction);
-                            $this->updateUserWallet($commission_transaction);
+
+                            if ($check->type_transaction == "Retrait") {
+                                $this->updateUserDrawalWallet($check->amount_received);
+                                $this->updateReloadWallet($check,$check->amount_received);
+                            } else {
+                                $this->updateUserWallet($commission_transaction);
+                            }
 
                             if (Auth::guard('web')->user()->is_distributer == 1) {
 
@@ -3285,6 +3291,8 @@ class Transfers extends Component
 
                                 app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                             }
+
+
 
                             $this->notifyUsers($check, $admins, 'Transfers', 'Demande de transfert a été validé', 'Demande de transfers validé');
 
@@ -3339,6 +3347,7 @@ class Transfers extends Component
 
                                 $this->handleReloadClientCommission($check, $admin_civ);
                             }
+
 
                             $transaction = app(TransfertServiceBackend::class)->createErrorTransaction($check, $transactionCode, $transactionCompiCode);
                             app(TransfertServiceBackend::class)->createInvoiceTransaction($check, $transaction);
@@ -3715,8 +3724,7 @@ class Transfers extends Component
                                 if ($check->wallet->sidUser->is_under_distributer == true) {
 
                                     if ($valeur_amount_com !== null && $check->commissions !== null) {
-                                       app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Paiement international");
-
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Paiement international");
                                     } else {
                                         $this->cancelReloadCardField();
                                         $this->emit('modal-hide-reloadCard');
@@ -5183,6 +5191,15 @@ class Transfers extends Component
             'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
             'sid_user_relod' => Auth::guard('web')->user()->id,
             'amount' => DB::raw('amount+' . $commission_transaction),
+        ]);
+    }
+
+    protected function updateUserDrawalWallet($commission_transaction)
+    {
+        return Auth::guard('web')->user()->wallet->update([
+            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+            'sid_user_relod' => Auth::guard('web')->user()->id,
+            'amount' => DB::raw('amount-' . $commission_transaction),
         ]);
     }
 

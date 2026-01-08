@@ -268,11 +268,11 @@ class TransfertDjamo extends Component
 
             $amount_solde =  $walletUser->wallet->amount -  $val_amount;
 
-            $userFolder = 'transactions/' . sabdy()->firstname;
+            $userFolder = 'image_inters/' . sabdy()->firstname;
             $filename = date('YmdHis') . '_' . uniqid() . '.' . $this->image->getClientOriginalExtension();
             $savedPath = $this->image->storeAs($userFolder, $filename, 'public');
 
-
+        
             if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
 
                 $amountReceved = $reel_amount;

@@ -53,7 +53,7 @@ class PermissionController extends Controller
 
     public function send_custumers_messages()
     {
-         if (!Auth::user()->hasPermissionTo('envoie-messages')) {
+        if (!Auth::user()->hasPermissionTo('envoie-messages')) {
             abort(403);
         }
         return view('pages.admin.add_custumers_messages');
@@ -62,7 +62,7 @@ class PermissionController extends Controller
 
     public function send_companie_messages()
     {
-         if (!Auth::user()->hasPermissionTo('envoie-messages')) {
+        if (!Auth::user()->hasPermissionTo('envoie-messages')) {
             abort(403);
         }
         return view('pages.admin.add_compagnie_messages');
@@ -179,7 +179,7 @@ class PermissionController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect('application/messages/add')
+            return back()
                 ->withErrors($validator)
                 ->with('color', 'danger')
                 ->with('status', 'Données saisie incorrecte')
@@ -196,10 +196,14 @@ class PermissionController extends Controller
             $messageTransaction->title = $request->title;
             $messageTransaction->type_send = $typ_user;
             $messageTransaction->messages = $request->message;
+            $messageTransaction->is_interface = 1;
             $messageTransaction->save();
             $notification = new Notification();
             $notification->id = $notificationId;
+            $notification->type = "App\Notifications\UserNotification";
+            $notification->notifiable_type = "App\Models\Sid\SidUser";
             $notification->notifiable_id = $user->id;
+            $notification->is_interface = 1;
             $notification->data = json_encode([
                 'title' => $request->title,
                 'message' => $request->message
@@ -209,7 +213,7 @@ class PermissionController extends Controller
             DB::commit();
             return back()->with('status', 'Les messages ont été envoyés avec succès');
         } catch (\Throwable $th) {
-            return redirect('application/permissions/read/' . $id . '/update')
+            return back()
                 ->withErrors($validator)
                 ->with('color', 'danger')
                 ->with('status', 'Une erreure est survenue')
@@ -292,9 +296,9 @@ class PermissionController extends Controller
             $users = SidUser::where('is_under_distributer', true)->get();
         } elseif ($request->typ_user === "custumers") {
             $users = SidUser::where('is_custumers', true)->get();
-        }  elseif ($request->typ_user === "companies") {
+        } elseif ($request->typ_user === "companies") {
             $users = SidUser::where('is_company', true)->get();
-        }else {
+        } else {
             return redirect('application/messages/add')
                 ->with('color', 'danger')
                 ->with('status', 'Type d’utilisateur invalide')
@@ -311,10 +315,14 @@ class PermissionController extends Controller
             $messageTransaction->title = $request->title;
             $messageTransaction->type_send = $request->typ_user;
             $messageTransaction->messages = $request->message;
+            $messageTransaction->is_interface = 1;
             $messageTransaction->save();
             $notification = new Notification();
             $notification->id = $notificationId;
+            $notification->type = "App\Notifications\UserNotification";
+            $notification->notifiable_type = "App\Models\Sid\SidUser";
             $notification->notifiable_id = $user->id;
+            $notification->is_interface = 1;
             $notification->data = json_encode([
                 'title' => $request->title,
                 'message' => $request->message
@@ -329,8 +337,7 @@ class PermissionController extends Controller
 
 
 
-    public function store_custumers_messages()
-    {}
+    public function store_custumers_messages() {}
 
 
     public function store(Request $request)

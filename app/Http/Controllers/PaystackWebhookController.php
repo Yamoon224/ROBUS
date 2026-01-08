@@ -22,6 +22,7 @@ use App\Models\Invoices\InvoiceReload;
 use Carbon\Carbon;
 use App\Models\Wallets\WalletAdmin;
 use App\Http\Controllers\Admin\MailController;
+use App\Http\Services\PercentRobusAuthService;
 
 class PaystackWebhookController extends Controller
 {
@@ -29,12 +30,15 @@ class PaystackWebhookController extends Controller
      * Clé secrète Paystack
      */
     private $paystackSecret;
+    protected $percentRobus;
 
     /**
      * Constructeur
      */
-    public function __construct()
-    {
+    public function __construct(
+        PercentRobusAuthService $percentRobus
+    ) {
+        $this->percentRobus = $percentRobus;
         $this->paystackSecret = config('services.paystack.secret_key');
     }
 
@@ -261,19 +265,30 @@ class PaystackWebhookController extends Controller
             }
 
             $wallet = $transaction->wallet;
-            $amountReceived = $transaction->amount;
+            $wallet_details = Wallet::whereId($transaction->wallet_id)->first();
+            $countryNameGroup = $wallet_details->country->name_groupe;
+            if ($countryNameGroup == 'CIV' || $countryNameGroup == 'AFL' || $countryNameGroup == 'AFC' || $countryNameGroup == 'AFE') {
+                $commission_robus = ReloadCost::whereId(2)->first();
+            } elseif ($countryNameGroup == 'URP' || $countryNameGroup == 'USA' || $countryNameGroup == 'MAG' || $countryNameGroup == 'ASIE') {
+                $commission_robus = ReloadCost::whereId(3)->first();
+            }
+
+            $total_percent = (float) $commission_robus->percent + (float) $commission_robus->percent_admin;
+            $total_commission = $total_percent * $transaction->amount;
+            $amountReceived = (float) $transaction->amount - (float)$total_commission;
             // Mettre à jour la transaction
             $transaction->update([
                 'status' => 'success',
                 'gateway_response' => $data['gateway_response'],
                 'paid_at' => Carbon::parse($data['paid_at']),
                 'payment_method' => $data['channel'],
-                'currency' => $data['currency'],
+                'currency' =>  $data['currency'] ?? 'XOF',
                 'balance_before' =>  $wallet->amount,
                 'amount_solde' => $wallet->amount,
                 'amount_received' => $amountReceived,
                 'ip_address' => $data['ip_address'] ?? null,
-                'fees' => $data['fees'] / 100 ?? 0, // Convertir en unité normale
+                'fees' => $total_commission ?? 0,
+                'costs_amount' => $total_commission ?? 0,
                 'authorization' => json_encode($data['authorization'] ?? []),
                 'customer' => json_encode($data['customer'] ?? []),
                 'metadata' => json_encode(array_merge(
@@ -288,7 +303,7 @@ class PaystackWebhookController extends Controller
             // Mettre à jour le solde du portefeuille
             if ($wallet) {
                 $oldBalance = $wallet->amount;
-                $newBalance = $oldBalance + $transaction->amount;
+                $newBalance = $oldBalance + $transaction->amount_received;
 
                 // Créer une transaction dans l'historique du portefeuille
                 PaymentReload::create([
@@ -297,7 +312,7 @@ class PaystackWebhookController extends Controller
                     'type' => 'credit',
                     'transaction_id' => $data['reference'],
                     'pay_amount' => $transaction->amount,
-                    'fee_amount' => $data['fees'] / 100 ?? 0,
+                    'fee_amount' => $total_commission ?? 0,
                     'received_amount' => $transaction->amount_received,
                     'balance_before' => $oldBalance,
                     'balance_after' => $newBalance,
@@ -316,15 +331,12 @@ class PaystackWebhookController extends Controller
 
                 $walletAdmin = WalletAdmin::find(1);
 
-                $percent_robus = ReloadCost::find(2);
 
-                if (!$percent_robus) {
+                if (!$commission_robus) {
                     throw new \Exception('Coût Robus introuvable');
                 }
 
-                $commission_robus = (float) $percent_robus->percent * (float) $transaction->amount_received;
-
-                $totalAmount = (float) $transaction->amount_received - $commission_robus;
+                $totalAmount = (float) $transaction->amount_received - $total_commission;
 
                 if ($totalAmount <= 0) {
                     throw new \Exception('Montant final invalide');

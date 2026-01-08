@@ -120,8 +120,7 @@
                                                 }
                                             @endphp
                                             <td>
-                                                @include('components.walletBalanceConvertion')
-
+                                                @include('components.walletBalanceTransactionConvertion')
 
                                             </td>
 
@@ -131,23 +130,34 @@
                                                 </div>
                                                 <span style="background-color: red;"
                                                     class="alert alert-primary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                    {{ $item->wallet->sidUser->country->name ?? null }} PDV
+                                                    {{ $item->wallet->sidUser->country->name ?? null }}
                                                 </span>
                                                 @if ($item->updated_by == null)
                                                     <p class="font-medium whitespace-nowrap">
                                                         {{ substr($item->phone ?? ($item->num_wallet ?? null), 0, 6) }}
                                                     </p>
 
-
                                                     <div class="flex items-center justify-center text-success mt-3">
                                                         @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                            <x-take-action-button action="ChooseUpdateTransaction"
-                                                                :itemId="$item->id" label="Je prends en charge"
-                                                                speed="ultra-fast" color="warning" />
+                                                            @if ($item->type_transaction == 'Retrait')
+                                                                <x-take-action-button action="ChooseUpdateTransaction"
+                                                                    :itemId="$item->id" label="Je confirme"
+                                                                    speed="ultra-fast" color="warning" />
+                                                            @else
+                                                                <x-take-action-button action="ChooseUpdateTransaction"
+                                                                    :itemId="$item->id" label="Je prends en charge"
+                                                                    speed="ultra-fast" color="warning" />
+                                                            @endif
                                                         @endif
 
                                                     </div>
                                                 @else
+                                                    @if ($item->type_transaction == 'Retrait' && ($item->provider->name == 'Moov' || $item->provider->name == 'MOOV'))
+                                                        <div
+                                                            class="transaction-badge transaction-badge--customer text-white text-center">
+                                                            Verifier la transaction
+                                                        </div>
+                                                    @endif
                                                     <p class="font-medium whitespace-nowrap">
                                                         {{ $item->phone ?? null }}
                                                         {{ $item->num_wallet ?? null }}
@@ -173,7 +183,12 @@
                                                                             stroke-linejoin="round" stroke-width="2"
                                                                             d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                     </svg>
-                                                                    Modifier
+                                                                    @if ($item->type_transaction == 'Retrait')
+                                                                        Reversement
+                                                                    @else
+                                                                        Modifier
+                                                                    @endif
+
                                                                 </a>
                                                             @endif
                                                         @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)

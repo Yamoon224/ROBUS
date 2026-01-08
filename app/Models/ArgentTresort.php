@@ -84,6 +84,17 @@ class ArgentTresort extends Model
     }
 
 
+       public function setPercentWithDrawalMerchandsAttribute($value)
+    {
+        $this->attributes['percent_with_drawal_merchands'] = ($value / 100) ? json_encode($value / 100) : null;
+    }
+
+    public function setPercentWithDrawalCompanieAttribute($value)
+    {
+        $this->attributes['percent_with_drawal_companie'] = ($value / 100) ? json_encode($value / 100) : null;
+    }
+
+    
     public function setPercentAdminAttribute($value)
     {
 
