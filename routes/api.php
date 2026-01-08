@@ -100,6 +100,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
         Route::prefix('user')->group(function () {
 
             Route::get('dashboard', [UserController::class, 'dashboard']);
+            Route::get('messages', [UserController::class, 'messages_send']);
             Route::get('dashboardCommissions', [UserController::class, 'dashboardCommissions']);
             Route::get('blockCommissions', [UserController::class, 'BlockCommissions']);
             Route::get('historicals', [UserController::class, 'dashboard_historique']);

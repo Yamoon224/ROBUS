@@ -261,7 +261,7 @@ class PaystackWebhookController extends Controller
             }
 
             $wallet = $transaction->wallet;
-
+            $amountReceived = $transaction->amount;
             // Mettre à jour la transaction
             $transaction->update([
                 'status' => 'success',
@@ -271,7 +271,7 @@ class PaystackWebhookController extends Controller
                 'currency' => $data['currency'],
                 'balance_before' =>  $wallet->amount,
                 'amount_solde' => $wallet->amount,
-                'amount_received' => $data['amount'],
+                'amount_received' => $amountReceived,
                 'ip_address' => $data['ip_address'] ?? null,
                 'fees' => $data['fees'] / 100 ?? 0, // Convertir en unité normale
                 'authorization' => json_encode($data['authorization'] ?? []),
@@ -329,7 +329,7 @@ class PaystackWebhookController extends Controller
                 if ($totalAmount <= 0) {
                     throw new \Exception('Montant final invalide');
                 }
-                
+
                 if ($walletAdmin && $walletAdmin->amount >= $totalAmount) {
                     $walletAdmin->decrement('amount', $totalAmount);
                 } else {
@@ -341,13 +341,6 @@ class PaystackWebhookController extends Controller
                     'sid_user_relod' => $transaction->user_id,
                     'amount' => DB::raw('amount+' . $totalAmount),
                 ]);
-
-                // Mettre à jour les statistiques de l'utilisateur
-                $user = $transaction->wallet->sidUser;
-                if ($user) {
-                    $user->increment('total_deposits', $totalAmount);
-                    $user->save();
-                }
             }
 
             // Déclencher l'événement de paiement réussi
@@ -364,7 +357,13 @@ class PaystackWebhookController extends Controller
                 'amount' => $transaction->amount
             ]);
 
-            return response()->json(['status' => 'success'], 200);
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Paiement traité avec succès',
+                'transaction' => $transaction->fresh(),
+                'wallet' => $wallet->fresh(),
+                'paystack_data' => $data
+            ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -378,136 +377,112 @@ class PaystackWebhookController extends Controller
         }
     }
 
-    private function handleCancelfulCharge(array $data)
+    private function handleCancelledCharge(array $data)
     {
         DB::beginTransaction();
 
         try {
-            // Récupérer la transaction
             $transaction = WalletReload::where('reference', $data['reference'])->first();
 
             if (!$transaction) {
+                DB::rollBack();
                 Log::error('Transaction non trouvée', ['reference' => $data['reference']]);
-                DB::rollBack();
-                return response()->json(['error' => 'Transaction non trouvée'], 404);
+                return response()->json(['status' => 'error', 'message' => 'Transaction non trouvée'], 404);
             }
 
-            // Vérifier si la transaction a déjà été traitée
             if ($transaction->status === 'success') {
+                DB::rollBack();
                 Log::info('Transaction déjà traitée', ['reference' => $data['reference']]);
-                DB::rollBack();
                 return response()->json(['status' => 'already_processed'], 200);
-            }
-
-            // Valider le montant
-            $expectedAmount = $transaction->amount * 100; // Convertir en kobo/centimes
-            if ($data['amount'] != $expectedAmount) {
-                Log::error('Montant incorrect', [
-                    'expected' => $expectedAmount,
-                    'received' => $data['amount'],
-                    'reference' => $data['reference']
-                ]);
-                DB::rollBack();
-                return response()->json(['error' => 'Montant incorrect'], 400);
             }
 
             $wallet = $transaction->wallet;
 
             if (!$wallet) {
-                Log::error('Wallet incorrect', [
-                    'expected' => $expectedAmount,
-                    'received' => $data['amount'],
-                    'reference' => $data['reference']
-                ]);
                 DB::rollBack();
-                return response()->json(['error' => 'Wallet incorrect'], 400);
+                Log::error('Wallet introuvable', ['reference' => $data['reference']]);
+                return response()->json(['status' => 'error', 'message' => 'Wallet introuvable'], 400);
             }
-            // Mettre à jour la transaction
-            $oldBalance = $wallet->amount;
 
+            $statusMap = [
+                'success' => 'success',
+                'failed' => 'failed',
+                'abandoned' => 'cancelled',
+                'cancelled' => 'cancelled'
+            ];
+
+            $paymentStatus = $statusMap[$data['status']] ?? 'failed';
+
+            // Mettre à jour la transaction
             $transaction->update([
-                'status' => $data['status'],
-                'gateway_response' => $data['gateway_response'],
-                'paid_at' => Carbon::parse($data['paid_at']),
-                'payment_method' => $data['channel'],
-                'currency' => $data['currency'],
-                'ip_address' => $data['ip_address'] ?? null,
+                'status' => $paymentStatus,
+                'gateway_response' => $data['gateway_response'] ?? null,
+                'paid_at' => isset($data['paid_at']) ? Carbon::parse($data['paid_at']) : null,
+                'payment_method' => $data['channel'] ?? null,
+                'currency' => $data['currency'] ?? 'XOF',
+                'balance_before' => $wallet->amount,
                 'amount_solde' => $wallet->amount,
-                'balance_before' =>  $wallet->amount,
-                'amount_solde_drawal' => $oldBalance,
-                'fees' => $data['fees'] / 100 ?? 0, // Convertir en unité normale
+                'fees' => isset($data['fees']) ? $data['fees'] / 100 : 0,
                 'authorization' => json_encode($data['authorization'] ?? []),
                 'customer' => json_encode($data['customer'] ?? []),
                 'metadata' => json_encode(array_merge(
                     json_decode($transaction->metadata, true) ?? [],
                     $data['metadata'] ?? []
                 )),
-                'verified' => true,
-                'verified_at' => now(),
+                'verified' => $paymentStatus === 'success',
+                'verified_at' => $paymentStatus === 'success' ? now() : null,
                 'raw_response' => json_encode($data),
             ]);
 
-            // Mettre à jour le solde du portefeuille
-            if ($wallet) {
-                $oldBalance = $wallet->amount;
-                $newBalance = $oldBalance + $transaction->amount;
+            // Créditer wallet seulement si succès
+            $oldBalance = $wallet->amount;
+            $newBalance = $oldBalance + $transaction->amount;
 
-
-                // Créer une transaction dans l'historique du portefeuille
-                PaymentReload::create([
-                    'wallet_reload_id' => $transaction->id,
-                    'sid_user_id' => $wallet->sid_user_id,
-                    'type' => 'credit',
-                    'transaction_id' => $data['reference'],
-                    'pay_amount' => $transaction->amount,
-                    'fee_amount' => $data['fees'] / 100 ?? 0,
-                    'received_amount' => $transaction->amount,
-                    'balance_before' => $oldBalance,
-                    'balance_after' => $newBalance,
-                    'description' => 'Recharge via Paystack - ' . $data['reference'],
-                    'reference' => $data['reference'],
-                    'operator_transaction_name' =>  "Paystack",
-                    'status' => $data['status'],
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ]);
-
-
-                // Mettre à jour les statistiques de l'utilisateur
-                $user = $transaction->wallet->sidUser;
-                if ($user) {
-                    $user->increment('total_deposits', $transaction->amount);
-                    $user->save();
-                }
-            }
-
-            // Déclencher l'événement de paiement réussi
+            PaymentReload::create([
+                'wallet_reload_id' => $transaction->id,
+                'sid_user_id' => $wallet->sid_user_id,
+                'type' => 'credit',
+                'transaction_id' => $transaction->reference,
+                'pay_amount' => $transaction->amount,
+                'fee_amount' => isset($data['fees']) ? $data['fees'] / 100 : 0,
+                'received_amount' => $transaction->amount,
+                'balance_before' => $oldBalance,
+                'balance_after' => $newBalance,
+                'description' => 'Recharge via Paystack - ' . $transaction->reference,
+                'reference' => $transaction->reference,
+                'operator_transaction_name' => 'Paystack',
+                'status' => 'completed',
+            ]);
+            // Déclencher l'événement succès et notification
             event(new PaymentSuccessful($transaction, $data));
-
-            // Envoyer une notification
             $this->sendSuccessNotification($transaction);
 
             DB::commit();
 
-            Log::info('Paiement traité avec succès', [
-                'reference' => $data['reference'],
-                'user_id' => $transaction->user_id,
-                'amount' => $transaction->amount
-            ]);
-
-            return response()->json(['status' => 'success'], 200);
-        } catch (\Exception $e) {
+            return response()->json([
+                'status' => $paymentStatus,
+                'message' => match ($paymentStatus) {
+                    'success' => 'Paiement traité avec succès',
+                    'cancelled' => 'Paiement annulé',
+                    'failed' => 'Paiement échoué',
+                    default => 'Erreur de paiement',
+                },
+                'transaction' => $transaction->fresh(),
+                'wallet' => $wallet->fresh(),
+                'paystack_data' => $data
+            ], 200);
+        } catch (\Throwable $e) {
             DB::rollBack();
-
-            Log::error('Erreur lors du traitement du paiement', [
+            Log::error('Erreur traitement paiement', [
                 'reference' => $data['reference'],
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
 
-            return response()->json(['error' => 'Erreur interne'], 500);
+            return response()->json(['status' => 'error', 'message' => 'Erreur interne'], 500);
         }
     }
+
 
     /**
      * Gérer un paiement échoué
@@ -649,7 +624,7 @@ class PaystackWebhookController extends Controller
                             'raw_response' => json_encode($data),
                         ]);
 
-                        return $this->handleCancelfulCharge($data);
+                        return $this->handleCancelledCharge($data);
 
                         return response()->json([
                             'success' => false,

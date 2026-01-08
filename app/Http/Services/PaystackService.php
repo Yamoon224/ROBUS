@@ -25,7 +25,7 @@ class PaystackService
      */
     public function initializeTransaction(array $data)
     {
-        // try {
+        try {
             $response = Http::withHeaders([
                 'Authorization' => 'Bearer ' . $this->secretKey,
                 'Content-Type' => 'application/json',
@@ -41,16 +41,16 @@ class PaystackService
             
             return $result;
             
-        // } catch (\Exception $e) {
-        //     Log::error('Erreur Paystack initialization', [
-        //         'error' => $e->getMessage(),
-        //         'data' => $data
-        //     ]);
-        //     return [
-        //         'status' => false, 
-        //         'message' => 'Erreur de connexion à Paystack: ' . $e->getMessage()
-        //     ];
-        // }
+        } catch (\Exception $e) {
+            Log::error('Erreur Paystack initialization', [
+                'error' => $e->getMessage(),
+                'data' => $data
+            ]);
+            return [
+                'status' => false, 
+                'message' => 'Erreur de connexion à Paystack: ' . $e->getMessage()
+            ];
+        }
     }
     
     /**

@@ -129,6 +129,21 @@ class UserController extends Controller
      * 
      *  ),
      */
+
+    public function messages_send()
+    {
+
+        return response()->json([
+            'data' => robus()
+                ->notifications()
+                ->where('is_interface', true)
+                ->latest() 
+                ->take(3)  
+                ->get(),
+
+            'status' => true,
+        ]);
+    }
     public function dashboard()
     {
 
@@ -334,7 +349,7 @@ class UserController extends Controller
         ], 200);
     }
 
-  
+
 
     public function dashboard_historique()
     {
