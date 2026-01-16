@@ -174,6 +174,8 @@
 
                 <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10 mt-3">
 
+                    @include('components.info_confirme_passe')
+
                     <div class="col-span-6 mt-3">
                         <label class="form-label">Numero du compte</label>
 

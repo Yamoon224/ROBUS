@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class VirementPercent extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     use SoftDeletes;
 
@@ -52,18 +52,13 @@ class VirementPercent extends Model
     public function setPercentAttribute($value)
     {
         $this->attributes['percent'] = json_encode($this->formatPercentage($value));
-
     }
 
-    // public function setPercentAdminAttribute($value)
-    // {
-    //     $this->attributes['percent_admin'] = json_encode($this->formatPercentage($value));
-    // }
+
 
     public function setPercentMerchandsAttribute($value)
     {
         $this->attributes['percent_merchands'] = json_encode($this->formatPercentage($value));
-
     }
 
     public function setPercentMastersAttribute($value)
@@ -93,5 +88,30 @@ class VirementPercent extends Model
     {
 
         $this->attributes['percent_admin'] = json_encode($this->formatPercentage($value));
+    }
+
+
+    public function setPercentCustumerAttribute($value)
+    {
+        $this->attributes['percent_custumer'] = json_encode($this->formatPercentage($value));
+    }
+
+
+    public function setPercentAdminCustumerAttribute($value)
+    {
+
+        $this->attributes['percent_admin_custumer'] = json_encode($this->formatPercentage($value));
+    }
+
+    public function setPercentBankCustumerAttribute($value)
+    {
+
+        $this->attributes['percent_bank_custumer'] = json_encode($this->formatPercentage($value));
+    }
+
+    public function setPercentBankUnderAttribute($value)
+    {
+
+        $this->attributes['percent_bank_under'] = json_encode($this->formatPercentage($value));
     }
 }

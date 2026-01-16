@@ -261,6 +261,8 @@
 
                 </div>
 
+                    @include('components.info_confirme_passe')
+
                 <div class="col-span-6 mt-1">
                     <label class="form-label">Nom et prénom</label>
 

@@ -188,25 +188,49 @@ class PermissionController extends Controller
 
         try {
 
+            $file_front = $request->file('image');
+            $imagePath = null;
+            $messageId = uniqid('message_', true);
+
+            if ($file_front) {
+                // Chemin de destination
+                $destination_path = public_path('messages/' . $messageId . '/');
+
+                // Création du dossier si inexistant
+                if (!file_exists($destination_path)) {
+                    mkdir($destination_path, 0777, true);
+                }
+
+                // Générer un nom unique
+                if ($file_front) {
+                    $front_file = uniqid('message_') . '.' . $file_front->getClientOriginalExtension();
+                    $file_front->move($destination_path, $front_file);
+                    $imagePath = env('APP_URL') . "/messages/" . $messageId . "/$front_file";
+                }
+            }
+
+            $notificationId = uniqid('notif_', true);
             $user = SidUser::whereId($id)->first();
             $typ_user = $user->where('is_under_distributer', true) ? "under" : "custumers";
-            $notificationId = uniqid('notif_', true);
             $messageTransaction = new MessageTransaction();
             $messageTransaction->sid_user_id = $user->id;
             $messageTransaction->title = $request->title;
             $messageTransaction->type_send = $typ_user;
             $messageTransaction->messages = $request->message;
             $messageTransaction->is_interface = 1;
+            $messageTransaction->image = $imagePath;
             $messageTransaction->save();
             $notification = new Notification();
             $notification->id = $notificationId;
             $notification->type = "App\Notifications\UserNotification";
             $notification->notifiable_type = "App\Models\Sid\SidUser";
             $notification->notifiable_id = $user->id;
+            $notification->image = $imagePath;
             $notification->is_interface = 1;
             $notification->data = json_encode([
                 'title' => $request->title,
-                'message' => $request->message
+                'message' => $request->message,
+                'image' => $imagePath,
             ]);
             $notification->read_at = null;
             $notification->save();
@@ -309,6 +333,28 @@ class PermissionController extends Controller
 
         foreach ($users as $user) {
 
+            $file_front = $request->file('image');
+            $imagePath = null;
+
+            $messageId = uniqid('message_', true);
+
+            if ($file_front) {
+                // Chemin de destination
+                $destination_path = public_path('messages/' . $messageId . '/');
+
+                // Création du dossier si inexistant
+                if (!file_exists($destination_path)) {
+                    mkdir($destination_path, 0777, true);
+                }
+
+                // Générer un nom unique
+                if ($file_front) {
+                    $front_file = uniqid('message_') . '.' . $file_front->getClientOriginalExtension();
+                    $file_front->move($destination_path, $front_file);
+                    $imagePath = env('APP_URL') . "/messages/" . $messageId . "/$front_file";
+                }
+            }
+
             $notificationId = uniqid('notif_', true);
             $messageTransaction = new MessageTransaction();
             $messageTransaction->sid_user_id = $user->id;
@@ -316,16 +362,19 @@ class PermissionController extends Controller
             $messageTransaction->type_send = $request->typ_user;
             $messageTransaction->messages = $request->message;
             $messageTransaction->is_interface = 1;
+            $messageTransaction->image = $imagePath;
             $messageTransaction->save();
             $notification = new Notification();
             $notification->id = $notificationId;
             $notification->type = "App\Notifications\UserNotification";
             $notification->notifiable_type = "App\Models\Sid\SidUser";
             $notification->notifiable_id = $user->id;
+            $notification->image = $imagePath;
             $notification->is_interface = 1;
             $notification->data = json_encode([
                 'title' => $request->title,
-                'message' => $request->message
+                'message' => $request->message,
+                'image' => $imagePath,
             ]);
             $notification->read_at = null;
             $notification->save();

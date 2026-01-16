@@ -18,8 +18,8 @@
                     <a href="#step-1"
                         class="w-10 h-10 rounded-full btn btn-circle {{ $stepXbet != 1 ? 'btn-default' : 'btn-primary' }}">1</a>
                     <h3 class="mb-3 mt-3">
-                         Saisissez les informations
-                        
+                        Saisissez les informations
+
                     </h3>
                 </div>
             </div>
@@ -240,8 +240,7 @@
 
             <!-- Footer avec boutons d'action -->
             <div class="modal-footer mt-4">
-                <button wire:click="resetXbetTransactionField" type="button"
-                    class="btn btn-danger-soft w-20 mr-1">
+                <button wire:click="resetXbetTransactionField" type="button" class="btn btn-danger-soft w-20 mr-1">
                     Annuler
                 </button>
 
@@ -281,6 +280,8 @@
             </div>
 
             <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10 mt-3">
+
+                @include('components.info_confirme_passe')
 
                 @if ($choose_type_transaction == 1)
                     <div class="col-span-6 mt-3">

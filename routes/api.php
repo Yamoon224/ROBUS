@@ -34,6 +34,7 @@ use App\Http\Controllers\Api\Transfers\VersementController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaystackWebhookController;
+use App\Http\Controllers\PixelPaymentController;
 
 
 
@@ -96,6 +97,16 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('/verify/{reference}', [PaystackWebhookController::class, 'verifyTransaction'])
                 ->name('paystack.verify.post');
         });
+
+        Route::prefix('pixelInnov')->group(function () {
+            // Initialiser un paiement Paystack (nécessite authentification)
+            Route::post('/initialize', [PixelPaymentController::class, 'initializePayment'])
+                ->name('pixelInnov.initialize');
+
+            // Vérifier transaction avec POST (alternative)
+            Route::post('/verify/{reference}', [PixelPaymentController::class, 'verifyTransaction'])
+                ->name('pixelInnov.verify.post');
+        });
         // User and Under distributors APIS
         Route::prefix('user')->group(function () {
 
@@ -155,6 +166,8 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('reload/show/{id}', [ReloadController::class, 'reload_show']);
             Route::post('reload/delete/{id}', [ReloadController::class, 'delete_reload']);
             Route::get('search_reload/{amount_reload}', [ReloadController::class, 'search_reload']);
+            Route::get('search_pixel_in_reload/{amount_reload}', [ReloadController::class, 'search_pixel_in_reload']);
+            Route::get('search_pixel_out_reload/{amount_reload}', [ReloadController::class, 'search_pixel_out_reload']);
 
             // Payments
             Route::post('payments/store', [PaymentController::class, 'create_payment']);
@@ -217,6 +230,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             // Drawal transaction
             Route::post('transactions/first_step', [TransactionController::class, 'first_withdrawal']);
             Route::post('transactions/drawal_mooney', [TransactionController::class, 'mooney_withdrawal']);
+            Route::post('transactions/drawal_robus', [TransactionController::class, 'robus_withdrawal']);
             Route::post('transactions/second_step', [TransactionController::class, 'second_withdrawal']);
 
             Route::post('transactions/store', [TransactionController::class, 'create_transaction']);

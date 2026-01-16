@@ -142,8 +142,6 @@ class TransactionCiv extends Component
         }
 
 
-        // dd( $this->showDepotButton);
-
     }
 
 

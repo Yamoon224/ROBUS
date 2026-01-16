@@ -22,6 +22,12 @@ class VirementBanks extends Component
     public $distributer_custumer;
     public $comission_master;
     public $comissionCompanie;
+
+    public $percent_custumer;
+    public $percent_admin_custumer;
+    public $percent_bank_custumer;
+    public $percent_bank_under;
+
     public $editTypeTresort = false;
     public $editTypePush = false;
     public $editTypeDjamo = false;
@@ -41,6 +47,12 @@ class VirementBanks extends Component
         $this->percent_deposit = $check->percent_merchands * 100;
         $this->comissionCompanie = $check->percent_companie * 100;
         $this->distributer_custumer = $check->distributer_custumer;
+        
+        $this->percent_custumer = $check->percent_custumer * 100;
+        $this->percent_admin_custumer = $check->percent_admin_custumer * 100;
+        $this->percent_bank_custumer = $check->percent_bank_custumer * 100;
+        $this->percent_bank_under = $check->percent_bank_under * 100;
+
         $this->emit($state);
     }
 
@@ -72,6 +84,12 @@ class VirementBanks extends Component
             'percent_merchands' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'percent_companie'  => $this->comissionCompanie,
+
+            'percent_custumer'  => $this->percent_custumer,
+            'percent_admin_custumer'  => $this->percent_admin_custumer,
+            'percent_bank_custumer'  => $this->percent_bank_custumer,
+            'percent_bank_under'  => $this->percent_bank_under,
+
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
@@ -89,6 +107,10 @@ class VirementBanks extends Component
         $this->percent_with_drawal = '';
         $this->percent_transaction = '';
         $this->comissionCompanie = '';
+        $this->percent_custumer = '';
+        $this->percent_admin_custumer = '';
+        $this->percent_bank_custumer = '';
+        $this->percent_bank_under = '';
         $this->emit('modal-hide', 'hide');
     }
 

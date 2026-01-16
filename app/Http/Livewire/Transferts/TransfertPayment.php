@@ -32,6 +32,7 @@ class TransfertPayment extends Component
     // CIE
     public $paiement_name_cie;
     public $paiement_id_invoice;
+    public $paiement_name;
     public $paiement_amount_total;
     public $paiement_amount_partiel;
     public $paiement_id_invoice_pre;
@@ -336,8 +337,8 @@ class TransfertPayment extends Component
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId($this->provider_payment)->first();
         $offer = Offer::whereId($this->offer_paiement)->first();
-        $admins =app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
-        $admin_civ =app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
+        $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
+        $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
         $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
         $valeur_ceiling = $walletUser->silver_ceiling;
         DB::beginTransaction();
@@ -402,10 +403,12 @@ class TransfertPayment extends Component
                                         $validationRules = [
                                             'paiement_phone_canal' => 'required',
                                             'offer_paiement' => 'required',
+                                            'paiement_name' => 'required',
                                         ];
                                         $validationMessages = [
                                             'offer_paiement.required' => 'Offre est obligatoire',
                                             'paiement_phone_canal.required' => 'Numero est obligatoire',
+                                            'paiement_name.required' => 'Numero est obligatoire',
                                         ];
                                         break;
 
@@ -413,10 +416,12 @@ class TransfertPayment extends Component
                                         $validationRules = [
                                             'paiement_decoder_canal' => 'required',
                                             'offer_paiement' => 'required',
+                                            'paiement_name' => 'required',
                                         ];
                                         $validationMessages = [
                                             'offer_paiement.required' => 'Offre est obligatoire',
                                             'paiement_decoder_canal.required' => 'Code est obligatoire',
+                                            'paiement_name.required' => 'Numero est obligatoire',
                                         ];
                                         break;
                                 }
@@ -442,20 +447,26 @@ class TransfertPayment extends Component
                             case 8: // CIE
                                 $reel_amount = $this->search_amount($this->paiement_amount_total);
                                 $valAmount = $reel_amount + $percent_robus->amount_auther;
+                                $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
+
                                 break;
 
                             case 10: // SODECI
                                 $reel_amount = $this->search_amount($this->paiement_amount_t_sodecie);
                                 $valAmount = $reel_amount + $percent_robus->amount_auther;
+                                $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
+
                                 break;
 
                             case 7: // CANAL+
                                 $valAmount = $offer->amount + $percent_robus->amount_canal;
                                 $reel_amount = $offer->amount;
+                                $amountReceved = $offer->amount;
                                 break;
                         }
 
                         $amount_solde = $walletUser->wallet->amount - $valAmount;
+
 
                         // ✅ Vérification solde
                         if ($valAmount > $walletUser->wallet->amount) {
@@ -493,6 +504,7 @@ class TransfertPayment extends Component
                                     $this->paiementChoix_phone,
                                     $this->paiementChoix_type,
                                     $this->facture_choix_type,
+                                    $amountReceved,
                                     $amount_solde
                                 );
 
@@ -520,6 +532,7 @@ class TransfertPayment extends Component
                                     $this->paiementChoix_phone,
                                     $this->paiementChoix_type,
                                     $this->facture_choix_type,
+                                    $amountReceved,
                                     $amount_solde
                                 );
                                 if ($walletPayment) {
@@ -529,6 +542,8 @@ class TransfertPayment extends Component
                                 break;
 
                             case 7:
+
+
                                 $walletPayment = app(TransfertServiceBackend::class)->createNewPaiementCanal(
                                     $walletUser,
                                     $offer,
@@ -536,6 +551,7 @@ class TransfertPayment extends Component
                                     $this->paiement_id_invoice,
                                     $this->paiement_num_contrat,
                                     $this->pre_phone_invoice,
+                                    $this->paiement_name,
                                     $this->pre_id_invoice,
                                     $this->paiement_name_sodecie,
                                     $provider,
@@ -544,6 +560,7 @@ class TransfertPayment extends Component
                                     $this->paiementChoix_phone,
                                     $this->paiementChoix_type,
                                     $this->facture_choix_type,
+                                    $amountReceved,
                                     $amount_solde
                                 );
                                 if ($walletPayment) {
@@ -624,6 +641,7 @@ class TransfertPayment extends Component
 
                 $walletPayment->update([
                     'commissions' => $valuer_deposit,
+                    'amount_received' => $valuer_deposit,
                 ]);
 
                 $account_accepted = sabdy()->is_accepted_companie ?? false;
@@ -714,6 +732,7 @@ class TransfertPayment extends Component
         $this->paiement_phone_canal = '';
         $this->paiement_amount_p_sodecie = '';
         $this->paiement_amount_t_sodecie = '';
+        $this->paiement_name = '';
         $this->paiement_amount_total = '';
         $this->paiementStatus = '';
         $this->paiementChoix_phone = null;

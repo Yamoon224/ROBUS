@@ -137,6 +137,32 @@ class UserController extends Controller
     }
 
 
+    public function finalize(Request $request)
+    {
+        $request->validate([
+            'password' => 'required',
+            'full_name_djamo' => 'required',
+            'amount_djamo' => 'required|numeric',
+            'image_path' => 'required',
+        ]);
+
+        dd($request);
+        if (!Hash::check($request->password, auth()->user()->password)) {
+            return back()->withErrors(['password' => 'Mot de passe incorrect']);
+        }
+
+        // 👉 TRAITEMENT FINAL ICI
+        // débit wallet
+        // création transaction
+        // envoi provider
+
+        session()->forget('djamo');
+
+        return redirect()->route('wallet.index')
+            ->with('success', 'Transaction Djamo effectuée avec succès');
+    }
+
+
     public function browse_comzone()
     {
 
@@ -1156,7 +1182,7 @@ class UserController extends Controller
                     'api_key' => $credentials['api_key'],
                     'api_secret' => $credentials['api_secret'],
                     'webhook_secret' => $credentials['webhook_secret'],
-                    'rate_limit' => 100, 
+                    'rate_limit' => 100,
                     'allowed_ips' => $request->input('allowed_ips', [])
                 ]);
 

@@ -33,9 +33,9 @@ class CreatePhoneCredit
             'event_name' => $event->phone->provider->name ?? null,
             'event_data' =>  $event->phone ?? null,
             'type_user_event' => $event->phone->updated_by != null ? "Choisir" : "Creation",
-            'user_countrie' => $event->phone->wallet->country->name ,
+            // 'user_countrie' => $event->phone->wallet->country->name ?? null ,
             'amount_send' => $event->phone->amount ,
-            'currencie' => $event->phone->wallet->currencie->name,
+            // 'currencie' => $event->phone->wallet->currencie->name,
             'type_user' => $event->phone->wallet->sidUser->is_under_distributer	 ? "Sous distributeur " : " Client",
             'event_user' =>  $event->phone->wallet->sidUser->firstname . ' ' . $event->phone->wallet->sidUser->lastname,
         ]); 

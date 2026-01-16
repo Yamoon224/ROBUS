@@ -330,11 +330,12 @@ class VersementController extends Controller
                 $reel_amount = $this->validatedamountDays->search_amount($amount_paiement);
 
                 $commission_invoice =  $this->percentRobus->getRobusPercentageVersement($providerId);
-                $commission_paiement =  $commission_invoice->percent  * $amount_paiement;
 
                 if ($wallet_user->country->code == 'CI') {
 
                     if ($wallet_user->is_under_distributer == 1 || $wallet_user->is_api) {
+
+                        $commission_paiement =  $commission_invoice->percent  * $amount_paiement;
 
                         $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_merchands  * $amount_paiement;
 
@@ -343,11 +344,13 @@ class VersementController extends Controller
                         $commission_transaction_val_percent_pay =  (float) $commission_paiement;
                     } else {
 
-                        $commission_paiement_invoice_val_nat_pay =   $commission_paiement;
+                        $commission_custumer_paiement =  $commission_invoice->percent_custumer  * $amount_paiement;
 
-                        $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_paiement;
+                        $commission_paiement_invoice_val_nat_pay =   $commission_custumer_paiement;
 
-                        $commission_transaction_val_percent_pay =  (float) $commission_paiement;
+                        $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_custumer_paiement;
+
+                        $commission_transaction_val_percent_pay =  (float) $commission_custumer_paiement;
                     }
 
                     return response()->json([

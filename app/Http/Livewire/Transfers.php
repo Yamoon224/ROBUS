@@ -14,6 +14,7 @@ use App\Events\ChooseTresortEvent;
 use App\Events\ChooseDjamoEvent;
 use App\Events\ChooseVersementEvent;
 use App\Events\ChoosePushEvent;
+use App\Events\UpdatePhoneCreditEvent;
 use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\NotificationServiceBackend;
@@ -1630,6 +1631,8 @@ class Transfers extends Component
                             $this->emit('error', 'Pas de modification !');
                             return;
                         }
+
+                        event(new UpdatePhoneCreditEvent($check));
                     } else {
                         $this->cancelPhoneCreditField();
                         $this->emit('modal-hide-phoneCredit');
@@ -3269,7 +3272,7 @@ class Transfers extends Component
 
                             if ($check->type_transaction == "Retrait") {
                                 $this->updateUserDrawalWallet($check->amount_received);
-                                $this->updateReloadWallet($check,$check->amount_received);
+                                $this->updateReloadWallet($check, $check->amount_received);
                             } else {
                                 $this->updateUserWallet($commission_transaction);
                             }

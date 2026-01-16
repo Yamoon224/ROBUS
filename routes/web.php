@@ -24,6 +24,7 @@ use App\Http\Livewire\Login;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\PixelPaymentController;
 
 
 
@@ -80,6 +81,8 @@ Route::group(['prefix' => ''], function () {
 
     Route::group(['middleware' => ['auth:web']], function () {
 
+
+        Route::post('djamo/store', [UserController::class, 'finalize'])->name('djamo.finalize');
 
         Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('/');
 
@@ -178,6 +181,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/show/{id}', [AdminController::class, 'showdistributors'])->name('operators.admins.show');
             Route::post('/update/{id}', [MasterController::class, 'updatedistributors'])->name('operators.admins.update');
         });
+
 
         //   Users
         Route::prefix('users')->group(function () {
@@ -543,6 +547,9 @@ Route::group(['prefix' => 'under_distributers'], function () {
 Route::get('/payment/callback', [PaystackWebhookController::class, 'paymentCallback'])
     ->name('payment.callback');
 
+Route::get('/payment_pixelInnov/callback', [PixelPaymentController::class, 'paymentCallback'])
+    ->name('paymentInnov.callback');
+
 // Pages de résultat de paiement
 Route::get('/payment/success/{reference}', [PaystackWebhookController::class, 'paymentSuccess'])
     ->name('payment.success');
@@ -618,6 +625,17 @@ Route::get('/reads_qrCode', function () {
     Artisan::call('wallet:generate-qrcodes');
     return 'Artisan commands executed successfully.';
 });
+
+Route::get('/secure-link-storage', function () {
+    // abort_unless(
+    //     app()->environment('local'),
+    //     403
+    // );
+
+    Artisan::call('storage:link');
+    return response()->json(['status' => 'ok']);
+});
+
 
 Route::get('/reads_applications', function () {
 

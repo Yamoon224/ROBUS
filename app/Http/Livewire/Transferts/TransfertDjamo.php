@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Hash;
 use App\Http\Services\CommissionServicePercentBackend;
 use App\Events\CreateWalletDjamoEvent;
 use Livewire\WithFileUploads;
+use Illuminate\Support\Facades\Storage;
 
 class TransfertDjamo extends Component
 {
@@ -198,22 +199,18 @@ class TransfertDjamo extends Component
 
     public function addValidatedDjamo()
     {
-
         $walletUser = Auth::guard('web')->user();
         $provider = Provider::whereId(104)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminValeurProperty();
         $admin_civ = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
-        $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
+        $som_transfers = app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
 
         try {
-
-
             if (!$provider) {
                 $this->emit('error', 'Rechargement existant !');
                 return;
             }
-
 
             $this->validate([
                 'password_validated' => 'required',
@@ -221,14 +218,12 @@ class TransfertDjamo extends Component
                 'full_name_djamo' => 'required',
                 'amount_djamo' => 'required',
                 'choose_transaction' => 'required',
-
             ], [
                 'password_validated.required' => 'Mot de passe est obligatoire',
                 'image.required' => 'Numero est obligatoire',
                 'full_name_djamo.required' => 'Nom & prénom sont obligatoire',
                 'amount_djamo.required' => 'Montant est obligatoire',
                 'choose_transaction.required' => 'Le choix est obligatoire est obligatoire',
-
             ]);
 
             if (!Hash::check($this->password_validated, sabdy()->password)) {
@@ -236,7 +231,6 @@ class TransfertDjamo extends Component
                 $this->emit('error', 'Vérifiez votre mot de passe SVP !');
                 return;
             }
-
 
             if ($walletUser->country->code != 'CI') {
                 $this->resetDjamoField();
@@ -247,17 +241,14 @@ class TransfertDjamo extends Component
                 return;
             }
 
-
             if ($som_transfers >= $valeur_ceiling) {
                 $this->resetDjamoField();
                 $this->emit('warning', 'Votre montant journier est atteint !');
                 return;
             }
 
-
             $reel_amount = $this->search_amount($this->amount_djamo);
             $percent_robus = app(CommissionServicePercentBackend::class)->getRobusPercentageDjamo();
-
             $val_amount = $reel_amount;
 
             if ($val_amount > $walletUser->wallet->amount) {
@@ -266,24 +257,30 @@ class TransfertDjamo extends Component
                 return;
             }
 
-            $amount_solde =  $walletUser->wallet->amount -  $val_amount;
+            $amount_solde = $walletUser->wallet->amount - $val_amount;
 
-            $userFolder = 'image_inters/' . sabdy()->firstname;
-            $filename = date('YmdHis') . '_' . uniqid() . '.' . $this->image->getClientOriginalExtension();
-            $savedPath = $this->image->storeAs($userFolder, $filename, 'public');
+            // ✅ CHOISIR UNE SEULE MÉTHODE :
+            $customDirectory = public_path('qr_djamos');
+            // Déplacer le fichier vers public/qr_djamos
+            $fileInfo = $this->moveUploadedFileToCustomDirectory(
+                $this->image,
+                $customDirectory,
+                false // Ne pas garder dans storage
+            );
 
-        
+            // Utiliser le chemin dans public/
+            $savedPath = 'qr_djamos/' . $fileInfo['filename'];
+
             if ($walletUser->is_distributer == 1 || $walletUser->is_admin || $walletUser->is_under_distributer) {
-
                 $amountReceved = $reel_amount;
 
-                $walletDjamo =  app(TransfertServiceBackend::class)->createDjamoTransaction(
+                $walletDjamo = app(TransfertServiceBackend::class)->createDjamoTransaction(
                     $val_amount,
                     $provider,
                     $percent_robus,
                     $amount_solde,
                     $this->full_name_djamo,
-                    $savedPath,
+                    $savedPath, // Utiliser le chemin choisi
                     $amountReceved,
                     $this->identity_number,
                     $this->choose_transaction
@@ -301,11 +298,10 @@ class TransfertDjamo extends Component
                     ' votre demande est en cours de validation ' .
                     'Robus vous remercie';
 
-
                 app(NotificationServiceBackend::class)->sendSuccessMessageCreateNotification($walletUser, $message);
 
-                if ($walletDjamo != null  && $walletDjamo->status == 'PENDING') {
-                    $this->updateamountDjamoReceveid($admin_civ, $percent_robus, $walletDjamo,  $walletUser, $reel_amount);
+                if ($walletDjamo != null && $walletDjamo->status == 'PENDING') {
+                    $this->updateamountDjamoReceveid($admin_civ, $percent_robus, $walletDjamo, $walletUser, $reel_amount);
                 }
 
                 event(new CreateWalletDjamoEvent($walletDjamo));
@@ -323,17 +319,121 @@ class TransfertDjamo extends Component
                 }
             } else {
                 $this->resetDjamoField();
-                $this->emit('success', 'Desolez vous n\'etes pas autorisée !');
+                $this->emit('success', 'Désolé vous n\'êtes pas autorisé !');
                 return;
             }
+
             DB::commit();
         } catch (\Exception $exception) {
+            DB::rollBack();
             $this->resetDjamoField();
-            $this->emit('error', 'Error de message demande a l\'admin !');
+            $this->emit('error', 'Erreur: ' . $exception->getMessage());
         }
     }
 
+    private function moveUploadedFileToCustomDirectory($uploadedFile, $customDirectory, $keepInStorage = false)
+    {
+        // S'assurer que le dossier existe
+        if (!file_exists($customDirectory)) {
+            // Créer le dossier avec les bonnes permissions
+            $oldMask = umask(0);
+            @mkdir($customDirectory, 0775, true);
+            umask($oldMask);
+        }
 
+        // Vérifier que le dossier est accessible en écriture
+        if (!is_writable($customDirectory)) {
+            @chmod($customDirectory, 0775);
+
+            // Si toujours pas accessible, utiliser storage à la place
+            if (!is_writable($customDirectory)) {
+                return $this->saveToStorageOnly($uploadedFile);
+            }
+        }
+
+        $originalName = $uploadedFile->getClientOriginalName();
+        $extension = $uploadedFile->getClientOriginalExtension();
+        // Nettoyer le nom de fichier
+        $cleanName = preg_replace('/[^\w\s.-]/', '', $originalName);
+        $cleanName = str_replace(['’', "'", '"', '`'], '', $cleanName); // Enlever guillemets
+        $filename = pathinfo($cleanName, PATHINFO_FILENAME) . '_' .
+            date('YmdHis') . '_' . uniqid() . '.' . $extension;
+        // Remplacer les espaces par des underscores
+        $filename = str_replace(' ', '_', $filename);
+        // Chemin complet
+        $customPath = $customDirectory . '/' . $filename;
+        // Déplacer le fichier avec gestion d'erreur
+        try {
+            $uploadedFile->move($customDirectory, $filename);
+        } catch (\Exception $e) {
+            // Si échec, utiliser copy() à la place
+            $tempPath = $uploadedFile->getRealPath();
+            if (copy($tempPath, $customPath)) {
+                unlink($tempPath);
+            } else {
+                throw new \Exception("Impossible de déplacer le fichier: " . $e->getMessage());
+            }
+        }
+
+        $result = [
+            'custom_path' => $customPath,
+            'filename' => $filename,
+            'storage_path' => null
+        ];
+
+        // Optionnel : garder une copie dans le storage Laravel
+        if ($keepInStorage) {
+            $userFolder = 'qr_djamos/' . sabdy()->id;
+
+            // Copier depuis le chemin public vers storage
+            $storagePath = $userFolder . '/' . $filename;
+            Storage::disk('public')->put($storagePath, file_get_contents($customPath));
+
+            $result['storage_path'] = $storagePath;
+        }
+
+        return $result;
+    }
+
+    private function saveToStorageOnly($uploadedFile)
+    {
+        // Sauvegarder uniquement dans le storage Laravel
+        $filename = date('YmdHis') . '_' . uniqid() . '.' .
+            $uploadedFile->getClientOriginalExtension();
+
+        $path = $uploadedFile->storeAs('qr_djamos', $filename, 'public');
+
+        return [
+            'custom_path' => storage_path('app/public/' . $path),
+            'filename' => $filename,
+            'storage_path' => $path
+        ];
+    }
+
+    private function saveFileBothLocations($uploadedFile)
+    {
+        // Sauvegarder d'abord dans storage
+        $filename = date('YmdHis') . '_' . uniqid() . '.' .
+            $uploadedFile->getClientOriginalExtension();
+
+        // 1. Dans storage
+        $storagePath = $uploadedFile->storeAs('qr_djamos', $filename, 'public');
+
+        // 2. Copier vers public/
+        $publicDir = public_path('qr_djamos');
+        if (!file_exists($publicDir)) {
+            @mkdir($publicDir, 0775, true);
+        }
+
+        $publicPath = $publicDir . '/' . $filename;
+        copy(storage_path('app/public/' . $storagePath), $publicPath);
+
+        return [
+            'storage_path' => $storagePath,
+            'public_path' => 'qr_djamos/' . $filename,
+            'filename' => $filename
+        ];
+    }
     public function updatedImage()
     {
 

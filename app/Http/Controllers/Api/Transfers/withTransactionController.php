@@ -370,7 +370,7 @@ class withTransactionController extends Controller
 
                         if ($file_front) {
                                 // Chemin de destination
-                                $destination_path = public_path('image_inters/' . $request->full_name . '/');
+                                $destination_path = public_path('bank_sends/' . robus()->id . '/');
 
                                 // Création du dossier si inexistant
                                 if (!file_exists($destination_path)) {
@@ -379,10 +379,11 @@ class withTransactionController extends Controller
 
                                 // Générer un nom unique
                                 if ($file_front) {
+                                        
                                         $front_file = uniqid('front_') . '.' . $file_front->getClientOriginalExtension();
                                         $file_front->move($destination_path, $front_file);
 
-                                        $imagePath = env('APP_URL') . "/image_inters/" . $request->name_custumer . "/$front_file";
+                                        $imagePath ="/bank_sends/" . robus()->id .  "/$front_file";
                                 }
 
                                 // 👉 Image verso
@@ -390,7 +391,7 @@ class withTransactionController extends Controller
                                         $backend_file = uniqid('back_') . '.' . $file_backend->getClientOriginalExtension();
                                         $file_backend->move($destination_path, $backend_file);
 
-                                        $imageBackendPath = env('APP_URL') . "/image_inters/" . $request->name_custumer . "/$backend_file";
+                                        $imageBackendPath ="/bank_sends/" . robus()->id .  "/$backend_file";
                                 }
                         }
 
@@ -665,8 +666,9 @@ class withTransactionController extends Controller
                                                 $imagePath = null;
 
                                                 if ($file_front) {
+
                                                         // Chemin de destination
-                                                        $destination_path = public_path('transactions/' . $request->full_name . '/');
+                                                        $destination_path = public_path('qr_djamos/' , robus()->id);
 
                                                         // Création du dossier si inexistant
                                                         if (!file_exists($destination_path)) {
@@ -674,13 +676,13 @@ class withTransactionController extends Controller
                                                         }
 
                                                         // Générer un nom unique
-                                                        $front_file = date('YmdHis') . "." . $file_front->getClientOriginalExtension();
+                                                        $front_file = date('YmdHis') . '_' . uniqid() . $file_front->getClientOriginalExtension();
 
                                                         // Déplacer le fichier
                                                         $file_front->move($destination_path, $front_file);
 
                                                         // Construire l’URL de l’image
-                                                        $imagePath = env('APP_URL') . "/transactions/" . $request->full_name . "/$front_file";
+                                                        $imagePath =  "/qr_djamos/" . robus()->id . "/$front_file";
                                                 }
 
                                                 $transactionResult = $this->processDjamoTransaction($request, $percent_robus, $amountReceved,  $imagePath, $is_drawal);

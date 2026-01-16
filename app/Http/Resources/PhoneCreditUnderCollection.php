@@ -34,6 +34,7 @@ class PhoneCreditUnderCollection extends ResourceCollection
                                         'frais' => number_format((float)$data->costs_amount, 2, '.', ' '),
                                         'devise'  => optional($data->wallet->currencie)->code,
                                         'status'  =>  $data->status,
+                                        'amount_received'  => number_format((float)$data->amount_received, 2, '.', ' '),
                                         'master_cost_percent' =>  number_format((float)$data->commission_masters, 2, '.', '') ?? null,
                                         'solde_account'  => $data->amount_solde .  ' ' . optional($data->wallet->currencie)->code ?? null,
                                 ];

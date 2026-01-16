@@ -127,20 +127,20 @@
 
 
                     @if (Sabdy()->is_distributer == 1)
-                        <div class="modal-header alert alert-secondary ">
+                        <div class="modal-header alert alert-secondary text-white">
                             <h2 class="font-medium text-base mr-auto">En tant qu'opératrice, vous avez la possibilité de
                                 retirer de l'argent chez des clients
                                 et des sous-distributeurs à l'intérieur.</h2>
                         </div>
                     @elseif(Sabdy()->is_supervisor == 1)
-                        <div class="modal-header alert alert-secondary ">
+                        <div class="modal-header alert alert-secondary text-white">
                             <h2 class="font-medium text-base mr-auto">En tant qu'Superviseur, vous avez la possibilité
                                 de retirer de l'argent chez des clients et des sous-distributeurs à l'intérieur et
                                 international.
                             </h2>
                         </div>
                     @elseif(Sabdy()->is_admin == 1)
-                        <div class="modal-header alert alert-secondary ">
+                        <div class="modal-header alert alert-secondary text-white">
                             <h2 class="font-medium text-base mr-auto">En tant qu'Admin, vous avez la possibilité de
                                 retirer de l'argent chez les autres à l'intérieur comme international. </h2>
                         </div>

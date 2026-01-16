@@ -131,8 +131,10 @@
                     </div>
                 </div>
 
+
                 <div class="modal-body-transfers grid grid-cols-12 gap-4 gap-y-3 px-10 mt-3">
 
+                    @include('components.info_confirme_passe')
                     <div class="col-span-6 mt-3">
                         <label class="form-label">Numero de télephone</label>
 
@@ -165,10 +167,10 @@
                     </div>
                 </div>
 
+
                 <div class="modal-footer style-foo">
-                    <button wire:click="cancelPhoneCreditField" type="button"
-                        class="btn btn-danger-soft w-20 mr-1" wire:loading.class="hidden"
-                        wire:target="addValidatedPhoneCredit">Annuler</button>
+                    <button wire:click="cancelPhoneCreditField" type="button" class="btn btn-danger-soft w-20 mr-1"
+                        wire:loading.class="hidden" wire:target="addValidatedPhoneCredit">Annuler</button>
 
 
 

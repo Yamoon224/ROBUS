@@ -114,6 +114,7 @@
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>
+
                                 <div class="col-span-6 form-group required">
                                     <label for="offer_paiement" class="form-label">Offre </label>
                                     <select wire:model.debounce.10ms="offer_paiement" class="form-control"
@@ -124,6 +125,15 @@
                                         @endforeach
                                     </select>
                                     @error('offer_paiement')
+                                        <span class="text-danger">{{ $message }}</span>
+                                    @enderror
+                                </div>
+
+                                 <div class="col-span-12 form-group required">
+                                    <label for="paiement_name" class="form-label">Nom & Prénom</label>
+                                    <input wire:model.defer="paiement_name" id="paiement_name" type="text"
+                                        class="form-control" placeholder="Nom & Prénom" required>
+                                    @error('paiement_name')
                                         <span class="text-danger">{{ $message }}</span>
                                     @enderror
                                 </div>

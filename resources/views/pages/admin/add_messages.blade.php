@@ -29,7 +29,8 @@
                 </div>
 
                 <div class="p-5">
-                    <form class="form-vertical row" action="{{ route('messages.admin.store') }}" method="post">
+                    <form class="form-vertical row" action="{{ route('messages.admin.store') }}" method="post"
+                    enctype="multipart/form-data">
                         @csrf
 
                         <div class="crud-form-1 mt-3">
@@ -68,7 +69,26 @@
                                 </span>
                             @enderror
                         </div>
-                        <div class="text-left">
+
+
+                        <div class="col-span-12 lg:col-span-12 mt-6">
+                            <div class="mx-auto xl:mr-0 xl:ml-6">
+                                <img class="object-none object-center bg-yellow-300 w-30 h-30"
+                                    src="{{ old('image') ?? asset_url('dist/images/food-beverage-1.jpg') }}"
+                                    alt="image" id="imageCaptureId">
+                                <div class="mx-auto cursor-pointer relative mt-5">
+                                    <input id="imageUploadId" type="file" name="image" placeholder="Image du message" capture
+                                        style="display: none" accept="image/png, image/jpeg">
+                                    <h6 class="text-center ">Image du message</h6>
+                                    @error('image')
+                                        <span class="invalid-feedback" role="alert">
+                                            <strong>{{ $message }}</strong>
+                                        </span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-left mt-6">
                             <button type="submit" class="btn btn-primary w-24  mb-2 mt-6 ml-6"
                                 style="margin-left: 1rem;">Envoyer le message</button>
 

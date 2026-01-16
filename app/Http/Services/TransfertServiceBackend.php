@@ -1199,6 +1199,7 @@ class TransfertServiceBackend
         $walletUser,
         $offer,
         $paiement_decoder_canal,
+        $paiement_name,
         $paiement_id_invoice,
         $paiement_num_contrat,
         $pre_phone_invoice,
@@ -1210,6 +1211,7 @@ class TransfertServiceBackend
         $paiementChoix_phone,
         $paiementChoix_type,
         $facture_choix_type,
+        $amount_received,
         $amount_solde,
     ) {
         return WalletPayment::create([
@@ -1222,7 +1224,7 @@ class TransfertServiceBackend
             'number_contract' =>  $paiement_num_contrat ?? null,
             'phone' => $pre_phone_invoice ?? null,
             'id_invoice_pre' => $pre_id_invoice ?? null,
-            'name' => $paiement_name_sodecie ?? null,
+            'name' => $paiement_name_sodecie ?? $paiement_name,
             'created_by' => Auth::guard('web')->user()->id,
             'provider_id' => $provider->id,
             'costs_amount' => $percent_robus->amount_canal,
@@ -1232,6 +1234,7 @@ class TransfertServiceBackend
             'paiementChoix_phone' => $paiementChoix_phone ?? null,
             'paiementChoix_type' =>  $paiementChoix_type ?? null,
             'factureChoix_type' => $facture_choix_type ?? null,
+            'amount_received' => $amount_received ?? null,
             'amount_solde'  =>   $amount_solde ?? null
         ]);
     }
@@ -1254,6 +1257,7 @@ class TransfertServiceBackend
         $paiementChoix_phone,
         $paiementChoix_type,
         $facture_choix_type,
+        $amount_received,
         $amount_solde,
     ) {
         return WalletPayment::create([
@@ -1276,6 +1280,7 @@ class TransfertServiceBackend
             'paiementChoix_phone' => $paiementChoix_phone ?? null,
             'paiementChoix_type' =>  $paiementChoix_type ?? null,
             'factureChoix_type' => $facture_choix_type ?? null,
+            'amount_received' => $amount_received ?? null,
             'amount_solde'  =>   $amount_solde  ?? null
         ]);
     }
@@ -1296,6 +1301,7 @@ class TransfertServiceBackend
         $paiementChoix_phone,
         $paiementChoix_type,
         $facture_choix_type,
+        $amount_received,
         $amount_solde,
     ) {
         return WalletPayment::create([
@@ -1318,6 +1324,7 @@ class TransfertServiceBackend
             'paiementChoix_phone' =>  $paiementChoix_phone ?? null,
             'paiementChoix_type' => $paiementChoix_type ?? null,
             'factureChoix_type' => $facture_choix_type ?? null,
+            'amount_received' => $amount_received ?? null,
             'amount_solde'  =>   $amount_solde ?? null
         ]);
     }

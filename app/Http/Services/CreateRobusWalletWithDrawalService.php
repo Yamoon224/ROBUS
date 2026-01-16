@@ -84,6 +84,27 @@ class CreateRobusWalletWithDrawalService
         ]);
     }
 
+      public function createRobusWalletWithDrawalRobusTransaction($transaction_amount_robus, $provider, $compte_number_robus)
+    {
+
+        return  $this->transctionRepository->create([
+            'wallet_id' =>  robus()->wallet->id,
+            'amount' => $transaction_amount_robus,
+            'description'  => 'Demande de retrait Robus par scanne',
+            'transaction_cost_id' => 1,
+            'created_by' => robus()->id,
+            'provider_id'  => $provider,
+            'balance_before' =>  robus()->wallet->amount,
+            'num_wallet' => strtoupper($compte_number_robus),
+            'choose_type_transaction' => 1,
+            'type_transaction' => 'Retrait',
+            'choose_type_transaction' => 2,
+            'code_validated' => null,
+            'phone'  =>   null,
+            'status'  => "PENDING"
+        ]);
+    }
+
     public function updateDrawalTransaction($verify_code, $wallet_user_search, $valuer_with_drawal, $percent_robus, $admin_civ)
     {
 

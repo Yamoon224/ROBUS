@@ -27,6 +27,7 @@ class PhoneCreditSingleCollection extends JsonResource
             'description'  =>  $this->description,
             'master_cost_percent' =>  number_format((float)$this->commission_masters, 2, '.', '') ?? null,
             'phone_cost_percent' =>  number_format((double)$this->commissions, 2, '.', '') ?? null,
+            'amount_received'  => number_format((double)$this->amount_received, 2, '.', ' ') ,
             'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ,
             'devise'  => optional($this->wallet->currencie)->code,
             'status'  =>  $this->status,

@@ -263,6 +263,41 @@ class PercentRobusAuthService
         }
     }
 
+     public function getRobusPercentagePixelInReload()
+    {
+
+        $userAuth = auth_user();
+
+        if (!$userAuth) {
+            return null;
+        }
+
+        $countryNameGroup = robus()->country->name_groupe;
+        if ($countryNameGroup == 'CIV'  || $countryNameGroup == 'AFL'  || $countryNameGroup == 'AFC'  || $countryNameGroup == 'AFE') {
+            return ReloadCost::whereId(4)->first();
+        } else if ($countryNameGroup == 'URP'  || $countryNameGroup == 'USA'  || $countryNameGroup == 'MAG' || $countryNameGroup == 'ASIE') {
+            return ReloadCost::whereId(5)->first();
+        }
+    }
+
+      public function getRobusPercentagePixelOutReload()
+    {
+
+        $userAuth = auth_user();
+
+        if (!$userAuth) {
+            return null;
+        }
+
+        $countryNameGroup = robus()->country->name_groupe;
+        if ($countryNameGroup == 'CIV'  || $countryNameGroup == 'AFL'  || $countryNameGroup == 'AFC'  || $countryNameGroup == 'AFE') {
+            return ReloadCost::whereId(7)->first();
+        } else if ($countryNameGroup == 'URP'  || $countryNameGroup == 'USA'  || $countryNameGroup == 'MAG' || $countryNameGroup == 'ASIE') {
+            return ReloadCost::whereId(6)->first();
+        }
+    }
+
+
     public function getRobusPercentageDjamo()
     {
         $countryNameGroup = robus()->country->name_groupe;

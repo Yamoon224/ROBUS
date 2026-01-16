@@ -3,6 +3,7 @@
     $route = Route::current()->getName();
     $countries = getCountriesForUser(Auth::guard('web')->user());
     $countrie_civ = getCountriesForVisitorsUser(Auth::guard('web')->user());
+    $cumulPendding = cumulTransaction();
 @endphp
 <!-- BEGIN: Side Menu -->
 
@@ -56,9 +57,20 @@
                     <a href="javascript:;"
                         class="side-menu {{ request()->is('transactions*') ? 'side-menu--active' : '' }}">
                         <div class="side-menu__icon"> <i data-feather="credit-card" class="block mx-auto"></i> </div>
-                        <div class="side-menu__title">
-                            Transactions
-                            <div class="side-menu__sub-icon "> <i data-feather="chevron-down"></i> </div>
+                        <div class="side-menu__title flex items-center justify-between">
+                            <span>Transactions</span>
+                            <div class="flex items-center gap-2 mr-3 ml-3">
+                                @if ($cumulPendding > 0)
+                                    <span
+                                        class="inline-flex items-center justify-center min-w-[24px] h-6 px-2 text-xs font-bold text-red-600 bg-white border-2 border-red-600 rounded-full shadow-sm transition-all duration-300 group-hover:scale-105 group-hover:shadow-md">
+                                        {{ $cumulPendding }}
+                                    </span>
+                                @endif
+                                <div
+                                    class="side-menu__sub-icon transform transition-transform duration-200 group-hover:rotate-180">
+                                    <i data-feather="chevron-down" class="w-4 h-4"></i>
+                                </div>
+                            </div>
                         </div>
                     </a>
                     <ul class="{{ request()->is('transactions*') ? 'side-menu__sub-open' : '' }}">
@@ -83,12 +95,11 @@
                             </a>
                         </li>
 
-                       @if (Auth::guard('web')->user()->hasPermissionTo('voir-transaction-visiteurs'))
+                        @if (Auth::guard('web')->user()->hasPermissionTo('voir-transaction-visiteurs'))
                             <li>
                                 <a href="{{ route('transactions.visitors') }}"
                                     class="side-menu {{ $route == 'transactions.visitors' ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> <i data-feather="activity"
-                                            class="block mx-auto"></i>
+                                    <div class="side-menu__icon"> <i data-feather="activity" class="block mx-auto"></i>
                                     </div>
                                     <div class="side-menu__title">Transactions Visiteurs </div>
                                 </a>
@@ -231,15 +242,15 @@
                             <li>
 
                                 <a href="{{ route('users.prospects.browse') }}"
-                                    class="side-menu {{ $route == 'users.prospects.browse' ||  $route == 'users.prospects.details' ? 'side-menu--active' : '' }}">
-                                    <div class="side-menu__icon"> 
-                                         <i data-feather="codesandbox" class="block mx-auto"></i>
+                                    class="side-menu {{ $route == 'users.prospects.browse' || $route == 'users.prospects.details' ? 'side-menu--active' : '' }}">
+                                    <div class="side-menu__icon">
+                                        <i data-feather="codesandbox" class="block mx-auto"></i>
                                     </div>
                                     <div class="side-menu__title"> Integrateurs</div>
                                 </a>
                             </li>
                         @endif
-                        
+
 
                         @if (Auth::guard('web')->user()->hasPermissionTo('com-zone'))
                             <li>
@@ -324,7 +335,7 @@
                     <ul class="{{ request()->is('visitors*') ? 'side-menu__sub-open' : '' }}">
 
 
-                        
+
                         @if (Auth::guard('web')->user()->hasPermissionTo('voir-historique-transfers'))
                             <li>
                                 <a href="{{ route('transactions.historiques.visitors') }}"
@@ -773,7 +784,7 @@
                                 </li>
                             @endif
 
-                             @if (Auth::user()->hasPermissionTo('pub'))
+                            @if (Auth::user()->hasPermissionTo('pub'))
                                 <li>
                                     <a href="{{ route('pubs.browse') }}"
                                         class="side-menu {{ $route == 'pubs.browse' ? 'side-menu--active' : '' }}">

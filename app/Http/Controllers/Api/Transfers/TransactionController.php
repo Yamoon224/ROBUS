@@ -601,6 +601,141 @@ class TransactionController extends Controller
         }
     }
 
+    public function robus_withdrawal(Request $request)
+    {
+
+        $wallet_user = Auth::guard('api')->user();
+        $amount_days = $this->validatedamountDays->getCeilingProperty();
+        $admin_civ = $this->validatedamountDays->adminCiv();
+        $valeur_ceiling  =  $wallet_user->silver_ceiling;
+        $admins = $this->validatedamountDays->adminAllcountries();
+
+        try {
+
+            if (robus()->is_under_distributer || robus()->is_api) {
+
+                if ($request->provider == 128) {
+
+
+                    $validator = Validator::make(
+                        $request->all(),
+                        [
+                            "num_wallet" => 'required',
+                            "amount" => 'required'
+                        ],
+                        [
+
+                            'num_wallet.required' => 'Votre numero est obligatoire',
+                            'amount.required' => 'Votre montant est obligatoire',
+
+                        ]
+                    );
+
+                    if ($validator->fails()) {
+                        return response()->json(
+                            [
+                                'success' => false,
+                                'message' => 'Champ is required ',
+                                'data' => $validator->errors()
+                            ],
+                            333
+                        );
+                    }
+
+                    $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
+
+                    // Wallet verify
+                    if (!$wallet_search || !$wallet_search->sidUser->is_custumers || !$wallet_search->sidUser->status || $request->num_wallet === $wallet_user->wallet->wallet_id) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Ce numéro n'est pas ROBUS ou est votre numéro",
+                            'data' => $validator->errors()
+                        ], 333);
+                    } else {
+
+                        if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+
+                            if ($this->validatedamountDays->validateAmountDrawel($request->amount, $request->num_wallet)) {
+
+                                $walletTransaction = $this->transactionWalletDrawal->createRobusWalletWithDrawalRobusTransaction($request->amount, $request->provider, $request->num_wallet);
+
+                                if ($walletTransaction != null) {
+
+                                    $percent_robus = $this->percentRobus->getRobusPercentageSDistributers();
+
+                                    if ($percent_robus != null) {
+
+                                        $valuer_with_drawal = $percent_robus->percent_with_drawal * $walletTransaction->amount;
+
+                                        $walletTransaction->update([
+                                            'type_transaction' => 'Retrait',
+                                            'status' => 'SUCCESS',
+                                            'costs_amount' => 0,
+                                            'code_validated' => null,
+                                            'created_by' => robus()->id,
+                                        ]);
+
+
+                                        $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
+
+                                        $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$walletTransaction->amount;
+
+                                        $walletUserSearch = $this->validatedamountDays->validatedWallet($request->num_wallet);
+
+                                        if ($this->transactionWalletDrawal->updateDrawalTransaction($walletTransaction, $walletUserSearch, $valuer_with_drawal, $percent_robus, $admin_civ)) {
+
+                                            $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $walletTransaction->amount . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+
+                                            if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+
+                                                $encode = substr($wallet_search->sidUser->phone,  -10);
+
+                                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                            }
+
+                                            if ($wallet_search->sidUser->email != null) {
+
+                                                Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
+                                            }
+
+                                            return $this->transactionWalletDrawal->sendNotificationWithDrawal($walletTransaction, $walletUserSearch, $admins);
+                                        } else {
+
+                                            return  json_message_response(false, "Erreur de demande de retait ! ", 333);
+                                        }
+                                    } else {
+                                        return  json_message_response(false, "Pas de retrait disponible dans cette zone ! ", 333);
+                                    }
+                                } else {
+
+                                    return  json_message_response(false, "Error de creation de transfert du montant!", 333);
+                                }
+                            } else {
+                                return   json_message_response(false, "Verifie votre solde de retrait !", 333);
+                            }
+                        } else {
+                            return   json_message_response(false, "Votre montant journalier est atteint !", 333);
+                        }
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Selectionne le type de retrait.',
+                    ], 500);
+                }
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous devez etre un distributer Robus.',
+                ], 500);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' => false,
+                'message' => 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS',
+            ], 333);
+        }
+    }
     public function mooney_withdrawal(Request $request)
     {
         $wallet_user = Auth::guard('api')->user();
@@ -686,7 +821,7 @@ class TransactionController extends Controller
 
                         if ($this->validatedamountDays->validateAmount($amount_payment)) {
 
-                            $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone , 2, $request->type , $request->numberPiece);
+                            $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type, $request->numberPiece);
 
                             if ($walletTransaction != null) {
 
@@ -767,7 +902,7 @@ class TransactionController extends Controller
             // If Distributer and S-distributer
             if (robus()->is_under_distributer || robus()->is_api) {
 
-                if ($request->provider == 9) {
+                if ($request->provider == 128) {
 
 
                     $validator = Validator::make(
@@ -934,7 +1069,6 @@ class TransactionController extends Controller
 
                             if ($percent_robus != null) {
 
-                                $commission_valeur = $percent_robus->percent * $verify_code->amount;
 
                                 $valuer_with_drawal = $percent_robus->percent_with_drawal * $verify_code->amount;
 

@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\IntegrationClient;
-
+use App\Http\Services\InterHomeService;
 
 
 
@@ -136,6 +136,61 @@ function adjustFeesWithRest($fees, $amount)
     ];
 }
 
+function cumulTransaction()
+{
+    $interHomeService = app(InterHomeService::class);
+
+    // Récupérer tous les counts
+    $counts = [
+        'push' => $interHomeService->getPushCountByStatus('PENDING'),
+        'transaction' => $interHomeService->getTransactionCountByStatus('PENDING'),
+        'payment' => $interHomeService->getPaymentCountByStatus('PENDING'),
+        'bank' => $interHomeService->getVirementCountByStatus('PENDING'),
+        'inter' => $interHomeService->getInterCountByStatus('PENDING'),
+        'card' => $interHomeService->getDepositCountByStatus('PENDING'),
+        'phone' => $interHomeService->getPhoneCreditCountByStatus('PENDING'),
+        'xbet' => $interHomeService->getXbetCountByStatus('PENDING'),
+        'djamo' => $interHomeService->getDjamoCountByStatus('PENDING'),
+        'bank_send' => $interHomeService->getBankSendCountByStatus('PENDING'),
+        'versement' => $interHomeService->getVersementCountByStatus('PENDING'),
+        'tresortMoney' => $interHomeService->getTresortMoneyCountByStatus('PENDING'),
+    ];
+
+    // Calculer le cumul total
+    $total = array_sum($counts);
+
+    return $total; // Retourne le cumul total
+}
+
+
+function getTransactionCount($walletModel, $status, $wallet_transactions, $transaction_days, $walletMy, $wallet_status)
+{
+
+    $query = $walletModel::join('wallets', $wallet_transactions, 'wallets.id')
+        ->whereDate($transaction_days, Carbon::today())
+        ->where($wallet_status, $status);
+
+    if (sabdy()->is_distributer) {
+        $query->where($walletMy, sabdy()->id);
+    } elseif (sabdy()->is_under_distributer) {
+        $query->where(function ($query) use ($wallet_transactions) {
+            $query->where($wallet_transactions, sabdy()->wallet->id);
+        });
+    } else {
+
+        $query->where(function ($query) use ($walletMy) {
+            $query->where($walletMy, sabdy()->id)
+                ->orWhere($walletMy, '!=', sabdy()->id);
+        })
+            ->where(function ($query) {
+                $countryId = sabdy()->country->id;
+                $query->where('wallets.country_id', '!=', $countryId)
+                    ->orWhere('wallets.country_id', '=', $countryId);
+            });
+    }
+
+    return $query->count();
+}
 
 function reloadCardPercent()
 {
@@ -502,7 +557,7 @@ function getOpenRobus()
 }
 function json_message_response($status, $message, $status_code)
 {
-    return response()->json(['success' => $status, 'message' => $message , 'status_code' => $status_code], $status_code);
+    return response()->json(['success' => $status, 'message' => $message, 'status_code' => $status_code], $status_code);
 }
 
 function json_custom_response($response, $status_code = 200)

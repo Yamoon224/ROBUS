@@ -132,7 +132,7 @@ class VersementService
             }
         } else {
 
-            $admin_valeur =  (float)  $percent_robus->amount_auther;
+            $admin_valeur =  (float) $percent_robus->percent_custumer * $walletPayment->amount;;
             $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur);
         }
 
