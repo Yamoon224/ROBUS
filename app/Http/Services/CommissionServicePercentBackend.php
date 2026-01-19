@@ -17,7 +17,7 @@ class CommissionServicePercentBackend
      * Distribuer la commission aux admins pour les compagnies acceptées
      */
 
-     public function getRobusPercentageBankSend(int $countryId): ?BankCommission
+    public function getRobusPercentageBankSend(int $countryId): ?BankCommission
     {
         // On ne traite que la CIV
         if (sabdy()->country->name_groupe !== 'CIV') {
@@ -102,6 +102,10 @@ class CommissionServicePercentBackend
                 return VirementPercent::whereId(12)->first();
             case 120:
                 return VirementPercent::whereId(13)->first();
+            case 11:
+                return VirementPercent::whereId(17)->first();
+            case 12:
+                return VirementPercent::whereId(16)->first();
             default:
                 return null;
         }

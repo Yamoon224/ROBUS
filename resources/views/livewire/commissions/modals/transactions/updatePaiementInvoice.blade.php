@@ -58,6 +58,14 @@
                                             {{ $offer_paiement_edit }}</span>
                                     </div>
                                 </div>
+                                 <div class="field-full">
+                                    <label class="form-label required">Nom & Prénom</label>
+                                    <div class="field-value">
+                                        <i class="fas fa-id-card"></i>
+                                        <span id="offer_paiement_name">
+                                            {{ $offer_paiement_name  ?? null}}</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="field-group">
                                 <div class="field field-full">

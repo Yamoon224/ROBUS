@@ -206,12 +206,6 @@ class CommissionService
                     'amount_under' =>  $userUnder->is_under_distributer ? $amountDeposit : 0,
                     'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ], [$walletColumn => $walletId]));
-
-                // if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
-                //     $walletCommission->decrement('amount', $amountDeposit);
-                // } else {
-                //     $adminUser->wallet->decrement('amount', $totalCommission);
-                // }
             }
         }
     }
@@ -243,11 +237,7 @@ class CommissionService
                     'description_underdistributer' =>  $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null
                 ], [$walletColumn => $walletId]));
 
-                // if ($walletCommission && $walletCommission->amount >= $amountDeposit) {
-                //     $walletCommission->decrement('amount', $amountDeposit);
-                // } else {
-                //     $adminUser->wallet->decrement('amount', $amountDeposit);
-                // }
+               
             }
         }
     }

@@ -109,6 +109,7 @@ class Transfers extends Component
     public $facture_choix_type_edit;
     public $paiementChoix_phone_edit;
     public $offer_paiement_edit;
+    public $offer_paiement_name;
     public $offer_paiement_edit_amount;
     public $phone_invoice_pre_edit;
     public $pre_id_invoice_edit;
@@ -1363,6 +1364,7 @@ class Transfers extends Component
         $this->facture_choix_type_edit = $check->factureChoix_type ?? null;
         $this->paiementChoix_phone_edit = $check->paiementChoix_phone ?? null;
         $this->offer_paiement_edit = $offer->name ?? null;
+        $this->offer_paiement_name = $check->name ?? null;
         $this->phone_invoice_pre_edit = $check->phone ?? null;
         $this->pre_id_invoice_edit = $check->id_invoice_pre ?? null;
 
@@ -1410,6 +1412,7 @@ class Transfers extends Component
         $this->facture_choix_type_edit = $check->factureChoix_type ?? null;
         $this->paiementChoix_phone_edit = $check->paiementChoix_phone ?? null;
         $this->offer_paiement_edit = $offer->name ?? null;
+        $this->offer_paiement_name = $check->name ?? null;
         $this->offer_paiement_edit_amount = $offer->amount ?? null;
         $this->phone_invoice_pre_edit = $check->phone ?? null;
         $this->pre_id_invoice_edit = $check->id_invoice_pre ?? null;
@@ -5347,19 +5350,19 @@ class Transfers extends Component
         $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été acceptée avec succès. Robus vous remercie';
         $encode = substr($check->wallet->sidUser->phone, -10);
 
-        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        sendTryCashMessage($check->wallet->sidUser->phone, $message);
+
     }
 
     protected function sendSuccessMessageNotification($check, $message)
     {
-        $encode = substr($check->wallet->sidUser->phone, -10);
-        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        sendTryCashMessage($check->wallet->sidUser->phone, $message);
+
     }
 
     protected function sendSuccessMessageCreateNotification($walletUser, $message)
     {
-        $encode = substr($walletUser->phone, -10);
-        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        sendTryCashMessage($walletUser->phone, $message);
     }
 
 
@@ -5368,7 +5371,8 @@ class Transfers extends Component
         $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été refusée . Robus vous remercie';
         $encode = substr($check->wallet->sidUser->phone, -10);
 
-        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        sendTryCashMessage($check->wallet->sidUser->phone, $message);
+
     }
 
     protected function sendRefundNotification($check)
@@ -5376,7 +5380,8 @@ class Transfers extends Component
         $message = 'Vous demande de transaction de ' . $check->amount . $check->wallet->currencie->code . ' par ' . $check->provider->name . ' le ' . $check->updated_at . ' a été remboursée . Robus vous remercie';
         $encode = substr($check->wallet->sidUser->phone, -10);
 
-        http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+        sendTryCashMessage($check->wallet->sidUser->phone, $message);
+
     }
 
     protected function notifyUsers($check, $admins, $msg_title, $msg, $admin_msg)

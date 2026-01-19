@@ -497,15 +497,18 @@ class TransfertServiceBackend
         $phone_inter_expe,
         $swit_code,
         $imagePath,
+        $imageFrontendPath,
+        $imageBackendPath,
+        $type_piece,
     ) {
 
         $amount_solde = sabdy()->wallet->amount - $amount_transaction;
 
-        return WalletBankSend::create([
+        return WalletInter::create([
             'wallet_id' => sabdy()->wallet->id,
             'amount' => $amount_transaction,
             'description' => "Demande de transaction Bank send",
-            'bank_cost_id' => $percent_robus->id,
+            'bank_commission_id' => $percent_robus->id,
             'phone' => $country_robus->indecative . $phone ?? null,
             'number_compte' => $account_number,
             'created_by' => sabdy()->id,
@@ -515,7 +518,7 @@ class TransfertServiceBackend
             'num_piece' => $num_piece_custumers ?? null,
             'name_benef' => $name_sender ?? null,
             'phone_inter_expe' => $phone_inter_expe ?? null,
-            'swit_code' => $swit_code ?? null,
+            'num_authers' => $swit_code ?? null,
             'validated_date' => $date_piece ?? null,
             'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->amount) : ($percent_robus->amount),
             'provider_type' => 1,
@@ -523,7 +526,9 @@ class TransfertServiceBackend
             'countrie_id' => $country_robus->id,
             'choose_type_transaction' => 1,
             'amount_solde' => $amount_solde ?? null,
-            'image' => $imagePath ?? null,
+            'image' => $imagePath ?? $imageFrontendPath,
+            'image_bakend' => $imageBackendPath ?? $imageFrontendPath,
+            'type_piece' => $type_piece ?? null,
         ]);
     }
     public function updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $wallet)
@@ -1222,9 +1227,9 @@ class TransfertServiceBackend
             'number_decoder' => $paiement_decoder_canal ?? null,
             'id_invoice' => $paiement_id_invoice ?? null,
             'number_contract' =>  $paiement_num_contrat ?? null,
-            'phone' => $pre_phone_invoice ?? null,
+            'phone' => null,
             'id_invoice_pre' => $pre_id_invoice ?? null,
-            'name' => $paiement_name_sodecie ?? $paiement_name,
+            'name' => $paiement_name ?? $pre_phone_invoice,
             'created_by' => Auth::guard('web')->user()->id,
             'provider_id' => $provider->id,
             'costs_amount' => $percent_robus->amount_canal,

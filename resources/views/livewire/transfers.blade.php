@@ -1320,3 +1320,18 @@
     @include('livewire.commissions.modals.transactions.reloadModalPage')
 
 </div>
+
+<script>
+    window.addEventListener('notification', event => {
+        const { type, message } = event.detail;
+
+        if (type === 'success') {
+            alert(message); // ou toast
+        }
+
+        if (type === 'error') {
+            alert(message);
+        }
+    });
+</script>
+

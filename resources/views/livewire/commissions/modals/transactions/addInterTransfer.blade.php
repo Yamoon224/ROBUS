@@ -55,19 +55,6 @@
 
                 @if ($choose_type_paiement == 1)
                     <input type="hidden" wire:init="loadChoose3">
-                    {{-- @if (sabdy()->country->name_groupe == 'AFL')
-                        @livewire('transaction-inters.transaction-west')
-                    @elseif (sabdy()->country->name_groupe == 'AFC')
-                        @livewire('transaction-inters.transaction-centrale')
-                    @elseif (sabdy()->country->name_groupe == 'MAG')
-                        @livewire('transaction-inters.transaction-maghreb')
-                    @elseif (sabdy()->country->name_groupe == 'URP')
-                        @livewire('transaction-inters.transaction-europe')
-                    @elseif (sabdy()->country->name_groupe == 'USA')
-                        @livewire('transaction-inters.transaction-usa')
-                    @elseif(sabdy()->country->code == 'CI')
-                        @livewire('transaction-inters.transaction-civ')
-                    @endif --}}
                     @livewire('transaction-inters.transaction-civ')
                 @elseif ($choose_type_paiement == 5)
                     @livewire('transaction-payments.payment-invoice')

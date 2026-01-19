@@ -90,9 +90,9 @@ class NotificationSendAdminService
                     . $walletRelaodCard->provider->name  .  ' le '
                     . $walletRelaodCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(sabdy()->phone,  -10);
+                
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                 sendTryCashMessage(sabdy()->phone , $message);
             }
         }
 
@@ -133,9 +133,9 @@ class NotificationSendAdminService
                     . $walletOrderCard->provider->name  .  ' le '
                     . $walletOrderCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(sabdy()->phone,  -10);
+                
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                 sendTryCashMessage(sabdy()->phone , $message);
             }
         }
         $msg = 'Votre demande est en cours de validation';
@@ -183,9 +183,9 @@ class NotificationSendAdminService
                     . $walletPhone->provider->name  .  ' le '
                     . $walletPhone->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(sabdy()->phone,  -10);
+                
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                 sendTryCashMessage(sabdy()->phone , $message);
             }
         }
         $admins = $this->getAdminCIVProperty();
@@ -217,18 +217,28 @@ class NotificationSendAdminService
     public function sendNotificationVirement($walletBank)
     {
 
-        if (sabdy()->is_custumers) {
-            if (sabdy()->country->code == "CI") {
+        try {
 
-                $message = 'Votre transaction de ' . $walletBank->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
-                    . $walletBank->provider->name  .  ' le '
-                    . $walletBank->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+            if (sabdy()->is_custumers) {
+                if (sabdy()->country->code == "CI") {
 
-                $encode = substr(sabdy()->phone,  -10);
+                    $message = 'Votre transaction de ' . $walletBank->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
+                        . $walletBank->provider->name  .  ' le '
+                        . $walletBank->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    
+
+                     sendTryCashMessage(sabdy()->phone , $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $msg = 'Votre demande de virement est en cours ';
         $msg_title = 'Demande de virement';
 
@@ -274,9 +284,9 @@ class NotificationSendAdminService
                     . $walletTransaction->provider->name  .  ' le '
                     . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
 
-                $encode = substr(sabdy()->phone,  -10);
+                
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                 sendTryCashMessage(sabdy()->phone , $message);
             }
         }
 
@@ -330,9 +340,7 @@ class NotificationSendAdminService
                     . $walletTransaction->provider->name  .  ' le '
                     . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
 
-                $encode = substr(sabdy()->phone,  -10);
-
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                sendTryCashMessage(sabdy()->phone, $message);
             }
         }
 

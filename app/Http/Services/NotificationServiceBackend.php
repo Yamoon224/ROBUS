@@ -13,6 +13,7 @@ use App\Notifications\AdminNotification;
 use App\Http\Controllers\Admin\MailController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeValidated;
+use Illuminate\Support\Facades\Log;
 
 class NotificationServiceBackend
 {
@@ -23,18 +24,26 @@ class NotificationServiceBackend
     public function sendCivGroupeNotification($walletTransaction)
     {
 
-        if (sabdy()->is_custumers) {
-            if (sabdy()->country->code == "CI") {
+        try {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
+            if (sabdy()->is_custumers) {
+                if (sabdy()->country->code == "CI") {
 
-                $encode = substr(sabdy()->phone,  -10);
+                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
+                        . $walletTransaction->provider->name  .  ' le '
+                        . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                     sendTryCashMessage(sabdy()->phone , $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $msg_title = 'Transfert Notional Robus';
         $msg = 'Vous avez effectué un transfert vers Robus avec succes';
         sabdy()->notify(
@@ -73,25 +82,34 @@ class NotificationServiceBackend
             $notify = new MailController();
             $notify->newTransaction($walletTransaction);
         }
-
     }
 
 
     public function sendNotificationTransactionMobile($walletTransaction)
     {
 
-        if (sabdy()->is_custumers) {
-            if (sabdy()->country->code == "CI") {
+        try {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
+            if (sabdy()->is_custumers) {
+                if (sabdy()->country->code == "CI") {
 
-                $encode = substr(sabdy()->phone,  -10);
+                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
+                        . $walletTransaction->provider->name  .  ' le '
+                        . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    
+
+                     sendTryCashMessage(sabdy()->phone , $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
 
         $msg_title = 'Transfert Mobile money';
         $msg = 'Vous avez effectué un transfert vers Mobile Money ';
@@ -137,18 +155,28 @@ class NotificationServiceBackend
     public function sendTransactionGroupeNotification($walletTransaction)
     {
 
-        if (sabdy()->is_custumers) {
-            if (sabdy()->country->code == "CI") {
+        try {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
+            if (sabdy()->is_custumers) {
+                if (sabdy()->country->code == "CI") {
 
-                $encode = substr(sabdy()->phone,  -10);
+                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
+                        . $walletTransaction->provider->name  .  ' le '
+                        . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    
+
+                     sendTryCashMessage(sabdy()->phone , $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $msg_title = 'Transfert Notional Robus';
         $msg = 'Vous avez effectué un transfert vers Robus avec succes';
         sabdy()->notify(
@@ -304,17 +332,35 @@ class NotificationServiceBackend
     }
     public function sendSuccessMessageCreateNotification($walletUser, $message)
     {
-        if ($walletUser->country->code == 'CI' && $walletUser->is_custumers == 1) {
-            $encode = substr($walletUser->phone, -10);
-            http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
+        try {
+
+            if ($walletUser->country->code == 'CI' && $walletUser->is_custumers == 1) {
+                $encode = substr($walletUser->phone, -10);
+                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 
     public function notifyDrawalUsers($walletUser, $wallet_search, $walletTransaction)
     {
-        if ($wallet_search->sidUser->email != null) {
+        try {
 
-            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
+
+            if ($wallet_search->sidUser->email != null) {
+
+                Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Robus vous a retiré la somme de  : ' . $walletTransaction->amount . ' Sur votre compte ' . ' Votre montant est de : ' .  $walletUser->wallet->amount));
+            }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 
@@ -334,44 +380,70 @@ class NotificationServiceBackend
     public function notificationSmsDepotSend($wallet_search, $message)
     {
 
-        if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+        try {
 
-            $encode = substr($wallet_search->sidUser->phone,  -10);
+            if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-        }
+                $encode = substr($wallet_search->sidUser->phone,  -10);
 
-        if ($wallet_search->sidUser->email != null) {
+                 sendTryCashMessage(sabdy()->phone , $message);
+            }
 
-            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+            if ($wallet_search->sidUser->email != null) {
+
+                Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message dépot : '  . $message));
+            }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
     }
 
     public function notificationRobusSend($message)
     {
 
-        if (sabdy()->country->code == 'CI') {
+        try {
 
-            $encode = substr(sabdy()->phone, -10);
+            if (sabdy()->country->code == 'CI') {
 
-            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                $encode = substr(sabdy()->phone, -10);
+
+                 sendTryCashMessage(sabdy()->phone , $message);
+            }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
     }
     public function sendNotification($walletTransaction)
     {
 
-        if (sabdy()->is_custumers) {
-            if (sabdy()->country->code == "CI") {
+        try {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
+            if (sabdy()->is_custumers) {
+                if (sabdy()->country->code == "CI") {
 
-                $encode = substr(sabdy()->phone,  -10);
+                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   ' par '
+                        . $walletTransaction->provider->name  .  ' le '
+                        . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    
+
+                     sendTryCashMessage(sabdy()->phone , $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $msg_title = 'Transfert Notional Robus';
         $msg = 'Vous avez effectué un transfert vers Robus avec succes';
         sabdy()->notify(
@@ -416,18 +488,27 @@ class NotificationServiceBackend
     public function sendNotificationMobile($walletTransaction)
     {
 
-        if (sabdy()->is_custumers) {
-            if (sabdy()->country->code == "CI") {
+        try {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
+            if (sabdy()->is_custumers) {
+                if (sabdy()->country->code == "CI") {
 
-                $encode = substr(sabdy()->phone,  -10);
+                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  sabdy()->wallet->currencie->code . ' ' .   'par '
+                        . $walletTransaction->provider->name  .  ' le '
+                        . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
 
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    
+
+                     sendTryCashMessage(sabdy()->phone , $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
 
         $msg_title = 'Transfert Mobile money';
         $msg = 'Vous avez effectué un transfert vers Mobile Money ';

@@ -140,11 +140,7 @@ class TransactionCiv extends Component
                 }
             }
         }
-
-
     }
-
-
 
     public function updatedTransactionAmountRobus()
     {

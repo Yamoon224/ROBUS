@@ -18,8 +18,27 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\IntegrationClient;
 use App\Http\Services\InterHomeService;
+use Illuminate\Support\Facades\Log;
 
 
+
+if (! function_exists('sendTryCashMessage')) {
+    /**
+     * Envoie un message via TryCash
+     */
+    function sendTryCashMessage($phone, $message)
+    {
+        $encode = substr($phone, -10);
+
+        try {
+            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=Bonjour%20doc&message=$message&api_token=21|cDXu8PK2lD3MaANrDc8qzeyMoG9ZohPVmSwphAQwe7e6eaac");
+        } catch (\Exception $e) {
+            // Ici tu peux logger l'erreur pour analyse
+            Log::error("Erreur TryCash: " . $e->getMessage());
+            return false;
+        }
+    }
+}
 
 if (! function_exists('applyRestrictionMap')) {
     function applyRestrictionMap($operators, &$component)

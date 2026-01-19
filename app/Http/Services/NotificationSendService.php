@@ -22,6 +22,7 @@ use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Log;
 
 
 class NotificationSendService
@@ -167,18 +168,30 @@ class NotificationSendService
     }
     public function sendNotificationReloadCard($walletRelaodCard)
     {
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
 
-                $message = 'Vous avez effectué une demande de rechargement de  ' . $walletRelaodCard->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletRelaodCard->provider->name  .  ' le '
-                    . $walletRelaodCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
+        try {
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
+
+                    $message = 'Vous avez effectué une demande de rechargement de  ' . $walletRelaodCard->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletRelaodCard->provider->name  .  ' le '
+                        . $walletRelaodCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
 
         $msg = 'Demande en cours de validation';
         $msg_title = 'Rechargement de carte';
@@ -222,18 +235,28 @@ class NotificationSendService
     public function sendNotificationOrderCard($walletOrderCard)
     {
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
+        try {
 
-                $message = 'Vous avez effectué une commande de carte de  ' . $walletOrderCard->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletOrderCard->provider->name  .  ' le '
-                    . $walletOrderCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                $encode = substr(robus()->phone,  -10);
+                    $message = 'Vous avez effectué une commande de carte de  ' . $walletOrderCard->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletOrderCard->provider->name  .  ' le '
+                        . $walletOrderCard->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $msg = 'Votre demande est en cours de validation';
         $msg_title = 'Commande carte';
         robus()->notify(new UserNotification(
@@ -278,19 +301,28 @@ class NotificationSendService
     public function sendNotificationPhoneCredit($walletPhone)
     {
 
+        try {
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                $message = 'Votre transaction de ' . $walletPhone->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletPhone->provider->name  .  ' le '
-                    . $walletPhone->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = 'Votre transaction de ' . $walletPhone->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletPhone->provider->name  .  ' le '
+                        . $walletPhone->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title = 'Credit téléphonique';
@@ -333,18 +365,29 @@ class NotificationSendService
     {
 
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
 
-                $message = 'Votre transaction de ' . $walletPush->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletPush->provider->name  .  ' le '
-                    . $walletPush->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+        try {
 
-                $encode = substr(robus()->phone,  -10);
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    $message = 'Votre transaction de ' . $walletPush->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletPush->provider->name  .  ' le '
+                        . $walletPush->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title = 'Transction Push';
@@ -385,19 +428,28 @@ class NotificationSendService
     public function sendNotificationTresort($walletTransaction)
     {
 
+        try {
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                $message = 'Votre transaction de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = 'Votre transaction de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletTransaction->provider->name  .  ' le '
+                        . $walletTransaction->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title = 'Transction Tresort Money';
@@ -440,19 +492,26 @@ class NotificationSendService
     public function sendNotificationDjamo($walletTransaction)
     {
 
+        try {
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
+                    $message = 'Votre transaction de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletTransaction->provider->name  .  ' le '
+                        . $walletTransaction->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $message = 'Votre transaction de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title = 'Transction Djamo';
@@ -493,19 +552,28 @@ class NotificationSendService
     public function sendNotification1xbets($walletXbet)
     {
 
+        try {
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                $message = 'Votre demande de ' . $walletXbet->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletXbet->provider->name  .  ' le '
-                    . $walletXbet->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = 'Votre demande de ' . $walletXbet->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletXbet->provider->name  .  ' le '
+                        . $walletXbet->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title =  $walletXbet->choose_type_transaction == 1 ? 'Réchargement 1Xbet' : 'Retrait 1Xbet';
@@ -545,17 +613,27 @@ class NotificationSendService
     {
 
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
+        try {
 
-                $message = 'Votre demande de ' . $walletWith->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletWith->provider->name  .  ' le '
-                    . $walletWith->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                $encode = substr(robus()->phone,  -10);
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    $message = 'Votre demande de ' . $walletWith->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletWith->provider->name  .  ' le '
+                        . $walletWith->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title =  "Réchargement";
@@ -603,19 +681,28 @@ class NotificationSendService
     public function sendNotificationBankSend($walletWith)
     {
 
+        try {
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                $message = 'Votre demande de ' . $walletWith->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletWith->provider->name  .  ' le '
-                    . $walletWith->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = 'Votre demande de ' . $walletWith->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletWith->provider->name  .  ' le '
+                        . $walletWith->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title =  "Bank send";
@@ -654,19 +741,27 @@ class NotificationSendService
     public function sendNotificationWaves($walletWaves)
     {
 
+        try {
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                $message = 'Votre demande de ' . $walletWaves->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletWaves->provider->name  .  ' le '
-                    . $walletWaves->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+                    $message = 'Votre demande de ' . $walletWaves->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletWaves->provider->name  .  ' le '
+                        . $walletWaves->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
 
-                http::get("https:https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
+
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title =  'Réchargement Wave ';
@@ -706,18 +801,26 @@ class NotificationSendService
     {
 
         $userAuth = auth_user();
-        if ($userAuth->is_custumers) {
-            if ($userAuth->country->code == "CI") {
 
-                $message = 'Votre transaction de ' . $walletBank->amount .  $userAuth->wallet->currencie->code . ' ' .   'par '
-                    . $walletBank->provider->name  .  ' le '
-                    . $walletBank->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+        try {
 
-                $encode = substr($userAuth->phone,  -10);
+            if ($userAuth->is_custumers) {
+                if ($userAuth->country->code == "CI") {
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    $message = 'Votre transaction de ' . $walletBank->amount .  $userAuth->wallet->currencie->code . ' ' .   'par '
+                        . $walletBank->provider->name  .  ' le '
+                        . $walletBank->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
         $msg = 'Votre demande de virement est en cours ';
         $msg_title = 'Demande de virement';
 
@@ -764,18 +867,26 @@ class NotificationSendService
     public function sendNotification($walletTransaction)
     {
 
+        try {
 
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   ' par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                $encode = substr(robus()->phone,  -10);
+                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   ' par '
+                        . $walletTransaction->provider->name  .  ' le '
+                        . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
 
         $msg_title = 'Transfert National Robus';
@@ -832,18 +943,28 @@ class NotificationSendService
 
     public function sendNotificationMobile($walletTransaction)
     {
-        if (robus()->is_custumers) {
-            if (robus()->country->code == "CI") {
 
-                $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
-                    . $walletTransaction->provider->name  .  ' le '
-                    . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
+        try {
 
-                $encode = substr(robus()->phone,  -10);
+            if (robus()->is_custumers) {
+                if (robus()->country->code == "CI") {
 
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                    $message = 'Vous avez effectué un transfert de ' . $walletTransaction->amount .  robus()->wallet->currencie->code . ' ' .   'par '
+                        . $walletTransaction->provider->name  .  ' le '
+                        . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
+
+
+
+                    sendTryCashMessage(robus()->phone, $message);
+                }
             }
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
         }
+
 
         $msg_title = 'Transfert Mobile money';
         $msg = 'Vous avez effectué un transfert vers Mobile Money ';

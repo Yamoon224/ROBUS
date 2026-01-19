@@ -194,6 +194,7 @@
                                                               </div>
 
                                                               {{ $item->number_phone ?? null }}
+                                                              
                                                           @elseif($item->paiementChoix_phone == 2)
                                                               <div
                                                                   class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
@@ -204,7 +205,6 @@
                                                                       </div>
                                                                   </div>
                                                               </div>
-                                                              {{ $item->number_decoder }}
                                                           @else
                                                               {{ $item->number_contract ?? null }}
                                                           @endif

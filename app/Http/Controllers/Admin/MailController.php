@@ -28,6 +28,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeValidated;
 use App\Models\Wallets\WalletBankSend;
+use Illuminate\Support\Facades\Log;
 
 class MailController extends Controller
 {
@@ -37,8 +38,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new CodeValidated($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -46,8 +51,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new CodeValidated($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -55,8 +64,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->email)->send(new NewAdmin($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -64,8 +77,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->email)->send(new ValdatedAccount($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -73,8 +90,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->email)->send(new OtpSend($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -82,8 +103,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data)->send(new OtpSend($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -91,16 +116,24 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletBank($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
     public function newXbet($data)
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletXbet($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -108,8 +141,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletPush($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -117,8 +154,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletVersement($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -127,8 +168,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletDjamo($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -136,8 +181,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletTresort($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -145,8 +194,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletTransaction($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -154,8 +207,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletPaiement($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -163,8 +220,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletInter($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -172,8 +233,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletReloadCard($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -181,8 +246,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletReload($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -190,8 +259,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->sidUser->email)->send(new WalletReloadAcompte($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -201,6 +274,7 @@ class MailController extends Controller
             Mail::to($data->wallet->sidUser->email)->send(new WalletPhoneCredit($data));
         } catch (\Throwable $th) {
             throw $th;
+            
         }
     }
 
@@ -208,8 +282,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletPush($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -217,8 +295,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletBankSendEmail($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -226,8 +308,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletCard($data));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -236,8 +322,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($dt->email)->send(new modifyPassword($dt));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 
@@ -245,8 +335,12 @@ class MailController extends Controller
     {
         try {
             Mail::to($dt->email)->send(new modifyPassword($dt));
-        } catch (\Throwable $th) {
-            throw $th;
+        } catch (\Throwable $e) {
+
+            Log::error('Erreur mail send Users', [
+                'error' => $e->getMessage(),
+            ]);
+
         }
     }
 }
