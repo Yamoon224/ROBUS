@@ -368,6 +368,7 @@ class TransfertPush extends Component
         $this->amount_push = '';
         $this->full_name_push = '';
         $this->stepPush = 1;
+        $this->choose_transaction = null;
         $this->emit('modal-hide-push');
         $this->emit('menu-push-active');
     }

@@ -333,6 +333,33 @@ class Transfers extends Component
     public $operatorsCompagnie;
     public $operatorsTransaction;
 
+    public $provider_inter_out_civ;
+    public $country_inter_out_civ;
+    public $phone_inter_out_civ;
+    public $compte_inter_number_robus;
+    public $account_number;
+    public $providers = [];
+    public $transaction_inter_amount_money;
+    public $transaction_bank_amount;
+    public $transaction_inter_amount_money_receved;
+    public $name_custumer;
+    public $name_bank;
+    public $number_accompte;
+    public $phone_inter_expe;
+    public $swit_code;
+    public $num_piece_custumer;
+    public $date_piece;
+    public $name;
+    public $name_sender;
+    public $image;
+    public $image_frontend;
+    public $image_backend;
+    public $image_preview;
+    public $image_preview_frontend;
+    public $image_preview_backend;
+    public $piece_type;
+
+
     protected $listeners = [
         '' => 'transactionInterReload',
         'transaction_inters' => 'transactionData',
@@ -2459,7 +2486,12 @@ class Transfers extends Component
 
                                 app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
 
-                                $this->updateUserWallet($commission_transaction);
+                                if ($check->choose_transaction == "Retrait") {
+                                    $this->updateUserDrawalWallet($check->amount_received);
+                                    $this->updateReloadWallet($check, $check->amount_received);
+                                } else {
+                                    $this->updateUserWallet($commission_transaction);
+                                }
 
                                 if (sabdy()->is_distributer == 1) {
 
@@ -2669,7 +2701,12 @@ class Transfers extends Component
 
                                 app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
 
-                                $this->updateUserWallet($commission_transaction);
+                                if ($check->choose_transaction == "Retrait") {
+                                    $this->updateUserDrawalWallet($check->amount_received);
+                                    $this->updateReloadWallet($check, $check->amount_received);
+                                } else {
+                                    $this->updateUserWallet($commission_transaction);
+                                }
 
                                 if (sabdy()->is_distributer == 1) {
 
@@ -2836,155 +2873,168 @@ class Transfers extends Component
         $admin_civ = $transactionData['admin_civ'];
         DB::beginTransaction();
 
-        // try {
+        try {
 
-        if ($check->status == 'PENDING') {
+            if ($check->status == 'PENDING') {
 
-            $this->validate(
-                [
-                    'tresortStatus' => 'required',
-                    'password_transaction' => 'required',
-                ],
-                [
+                $this->validate(
+                    [
+                        'tresortStatus' => 'required',
+                        'password_transaction' => 'required',
+                    ],
+                    [
 
-                    'tresortStatus.required' =>
-                    'Le statut est obligatoire',
-                    'password_transaction.required' =>
-                    'Le mot de passe est obligatoire'
-                ]
-            );
+                        'tresortStatus.required' =>
+                        'Le statut est obligatoire',
+                        'password_transaction.required' =>
+                        'Le mot de passe est obligatoire'
+                    ]
+                );
 
-            if (Hash::check($this->password_transaction, $user_auth->password)) {
+                if (Hash::check($this->password_transaction, $user_auth->password)) {
 
-                $check->update([
-                    'description' => $this->pushDescription ?? null,
-                    'updated_by' => sabdy()->id,
-                    'status' => $this->tresortStatus,
-                ]);
+                    $check->update([
+                        'description' => $this->pushDescription ?? null,
+                        'updated_by' => sabdy()->id,
+                        'status' => $this->tresortStatus,
+                    ]);
 
-                $this->password_transaction = "";
-                $this->tresortStatus = "";
-                $this->tresortId = "";
+                    $this->password_transaction = "";
+                    $this->tresortStatus = "";
+                    $this->tresortId = "";
 
-                if ($check->updated_by == sabdy()->id) {
+                    if ($check->updated_by == sabdy()->id) {
 
-                    if ($check->status == 'SUCCESS') {
+                        if ($check->status == 'SUCCESS') {
 
-                        if ($check->updated_by == sabdy()->id) {
+                            if ($check->updated_by == sabdy()->id) {
 
 
-                            $commission_transaction = $check->amount;
+                                $commission_transaction = $check->amount;
 
-                            $paymentXbet = app(TransfertServiceBackend::class)->createTresort($check, $transactionCode, $transactionCompiCode);
+                                $paymentXbet = app(TransfertServiceBackend::class)->createTresort($check, $transactionCode, $transactionCompiCode);
 
-                            app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
+                                app(TransfertServiceBackend::class)->createInvoiceVersement($paymentXbet);
 
-                            $this->updateUserWallet($commission_transaction);
-
-                            if (sabdy()->is_distributer == 1) {
-
-                                $this->updateAdminCom($check, $commission_transaction);
-                            }
-
-                            $valeur_amount_com = $check->adminCom->amount;
-
-                            if ($check->wallet->sidUser->is_under_distributer == true) {
-
-                                if ($valeur_amount_com !== null && $check->commissions !== null) {
-
-                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Push");
+                                if ($check->choose_transaction == "Retrait") {
+                                    $this->updateUserDrawalWallet($check->amount_received);
+                                    $this->updateReloadWallet($check, $check->amount_received);
                                 } else {
-                                    $this->cancelTresortField();
-                                    $this->emit('modal-hide-tresort-validated');
-                                    $this->emit('modal-hide-tresort');
-                                    $this->emit('success', 'Tresort Money Acceptée sans commission sous-distibuteur !');
-                                    return;
+                                    $this->updateUserWallet($commission_transaction);
                                 }
+
+
+                                if (sabdy()->is_distributer == 1) {
+
+                                    $this->updateAdminCom($check, $commission_transaction);
+                                }
+
+                                $valeur_amount_com = $check->adminCom->amount;
+
+                                if ($check->wallet->sidUser->is_under_distributer == true) {
+
+                                    if ($valeur_amount_com !== null && $check->commissions !== null) {
+
+                                        app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Push");
+                                    } else {
+                                        $this->cancelTresortField();
+                                        $this->emit('modal-hide-tresort-validated');
+                                        $this->emit('modal-hide-tresort');
+                                        $this->emit('success', 'Tresort Money Acceptée sans commission sous-distibuteur !');
+                                        return;
+                                    }
+                                } else {
+
+                                    app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                }
+
+                                $this->notifyUsers($check, $admins, 'Tresort Money', 'Demande de paiement de Tresort Money a été validé', 'Demande de paiement de Tresort Money validé');
+
+                                $message = 'Votre demande de transacton Trésort Money de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été acceptée avec succès ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                $this->cancelTresortField();
+                                $this->emit('modal-hide-push-validated');
+                                $this->emit('modal-hide-push');
+                                $this->emit('success', 'Achat de transaction Tresort Money validez avec succes !');
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                app(NotificationServiceBackend::class)->sendMailTresortNotification($check);
                             } else {
 
-                                app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                $this->cancelTresortField();
+                                $this->emit('modal-hide-push-validated');
+                                $this->emit('modal-hide-push');
+                                $this->emit('error', 'Pas vous le valideur !!');
+                                return;
                             }
+                        } elseif ($check->status == 'ERROR') {
 
-                            $this->notifyUsers($check, $admins, 'Tresort Money', 'Demande de paiement de Tresort Money a été validé', 'Demande de paiement de Tresort Money validé');
+                            if ($check->updated_by == Auth::guard('web')->user()->id) {
 
-                            $message = 'Votre demande de transacton Trésort Money de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été acceptée avec succès ' .
-                                'Robus vous remercie';
 
-                            if ($this->shouldNotifyCI($check)) {
+                                $commission = $check->amount + $check->costs_amount;
 
-                                $this->sendSuccessMessageNotification($check, $message);
+                                $this->updateReloadWallet($check, $commission);
+
+                                $this->updateWalletNull($check, $commission);
+
+
+                                $this->handleReloadClientCommission($check, $admin_civ);
+
+                                $paymentPush  = app(TransfertServiceBackend::class)->createTresort($check, $transactionCode, $transactionCompiCode);
+
+                                app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPush);
+
+                                $this->notifyUsers($check, $admins, 'Push', 'Demande de transaction Push a été refusé', 'Demande de Transaction Push refusé');
+
+                                $message = 'Votre demande de transaction Tresort Money de ' .
+                                    $check->amount .
+                                    $check->wallet->currencie->code .
+                                    ' ' .
+                                    'par ' .
+                                    $check->provider->name .
+                                    ' le ' .
+                                    $check->updated_at .
+                                    ' a été refusée ' .
+                                    'Robus vous remercie';
+
+                                if ($this->shouldNotifyCI($check)) {
+
+                                    $this->sendSuccessMessageNotification($check, $message);
+                                }
+
+                                if ($admins->count() > 0) {
+                                    $this->notifyAdmins($admins);
+                                }
+
+                                $this->cancelTresortField();
+                                $this->emit('modal-hide-tresort-validated');
+                                $this->emit('modal-hide-tresort');
+                                $this->emit('error', 'Achat de Push refusé !');
+                                app(NotificationServiceBackend::class)->sendMailTresortNotification($check);
+                            } else {
+                                $this->cancelTresortField();
+                                $this->emit('modal-hide-tresort-validated');
+                                $this->emit('modal-hide-tresort');
+                                $this->emit('error', 'Pas de modification !');
+                                return;
                             }
-
-                            $this->cancelTresortField();
-                            $this->emit('modal-hide-push-validated');
-                            $this->emit('modal-hide-push');
-                            $this->emit('success', 'Achat de transaction Tresort Money validez avec succes !');
-                            if ($admins->count() > 0) {
-                                $this->notifyAdmins($admins);
-                            }
-
-                            app(NotificationServiceBackend::class)->sendMailTresortNotification($check);
-                        } else {
-
-                            $this->cancelTresortField();
-                            $this->emit('modal-hide-push-validated');
-                            $this->emit('modal-hide-push');
-                            $this->emit('error', 'Pas vous le valideur !!');
-                            return;
-                        }
-                    } elseif ($check->status == 'ERROR') {
-
-                        if ($check->updated_by == Auth::guard('web')->user()->id) {
-
-
-                            $commission = $check->amount + $check->costs_amount;
-
-                            $this->updateReloadWallet($check, $commission);
-
-                            $this->updateWalletNull($check, $commission);
-
-
-                            $this->handleReloadClientCommission($check, $admin_civ);
-
-                            $paymentPush  = app(TransfertServiceBackend::class)->createTresort($check, $transactionCode, $transactionCompiCode);
-
-                            app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPush);
-
-                            $this->notifyUsers($check, $admins, 'Push', 'Demande de transaction Push a été refusé', 'Demande de Transaction Push refusé');
-
-                            $message = 'Votre demande de transaction Tresort Money de ' .
-                                $check->amount .
-                                $check->wallet->currencie->code .
-                                ' ' .
-                                'par ' .
-                                $check->provider->name .
-                                ' le ' .
-                                $check->updated_at .
-                                ' a été refusée ' .
-                                'Robus vous remercie';
-
-                            if ($this->shouldNotifyCI($check)) {
-
-                                $this->sendSuccessMessageNotification($check, $message);
-                            }
-
-                            if ($admins->count() > 0) {
-                                $this->notifyAdmins($admins);
-                            }
-
-                            $this->cancelTresortField();
-                            $this->emit('modal-hide-tresort-validated');
-                            $this->emit('modal-hide-tresort');
-                            $this->emit('error', 'Achat de Push refusé !');
-                            app(NotificationServiceBackend::class)->sendMailTresortNotification($check);
                         } else {
                             $this->cancelTresortField();
                             $this->emit('modal-hide-tresort-validated');
@@ -2994,45 +3044,38 @@ class Transfers extends Component
                         }
                     } else {
                         $this->cancelTresortField();
-                        $this->emit('modal-hide-tresort-validated');
                         $this->emit('modal-hide-tresort');
-                        $this->emit('error', 'Pas de modification !');
+                        $this->emit('modal-hide-tresort-validated');
+                        $this->emit('error', 'Pas le valideur !');
                         return;
                     }
                 } else {
                     $this->cancelTresortField();
                     $this->emit('modal-hide-tresort');
                     $this->emit('modal-hide-tresort-validated');
-                    $this->emit('error', 'Pas le valideur !');
+                    $this->emit('error', 'Mot de passe Incorrect !');
                     return;
                 }
+            } elseif ($this->password_transaction = "" ||  $this->pushStatus = "") {
+                $this->cancelTresortField();
+                $this->emit('modal-hide-tresort-validated');
+                $this->emit('modal-hide-tresort');
+                $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
+                return;
             } else {
                 $this->cancelTresortField();
                 $this->emit('modal-hide-tresort');
                 $this->emit('modal-hide-tresort-validated');
-                $this->emit('error', 'Mot de passe Incorrect !');
+                $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
                 return;
             }
-        } elseif ($this->password_transaction = "" ||  $this->pushStatus = "") {
+            DB::commit();
+        } catch (\Exception $exception) {
             $this->cancelTresortField();
             $this->emit('modal-hide-tresort-validated');
             $this->emit('modal-hide-tresort');
-            $this->emit('info', 'Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !! !');
-            return;
-        } else {
-            $this->cancelTresortField();
-            $this->emit('modal-hide-tresort');
-            $this->emit('modal-hide-tresort-validated');
-            $this->emit('info', 'Aucune donnée ou Vous avez cliquez deux fois de suite ou l\'operation a déja été traitée !!');
-            return;
+            $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
-        DB::commit();
-        // } catch (\Exception $exception) {
-        //     $this->cancelTresortField();
-        //     $this->emit('modal-hide-tresort-validated');
-        //     $this->emit('modal-hide-tresort');
-        //     $this->emit('error', 'Vous avez cliquez deux fois ou une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
-        // }
     }
 
     public function updateReloadCard()
@@ -4563,6 +4606,26 @@ class Transfers extends Component
         $this->transaction_amount_robus = '';
         $this->transaction_amount_money = '';
         $this->transaction_description_robus = '';
+
+        $this->provider_inter_out_civ = null;
+        $this->country_inter_out_civ = null;
+        $this->compte_inter_number_robus = '';
+        $this->name_custumer = '';
+        $this->num_piece_custumer = '';
+        $this->date_piece = '';
+        $this->name = '';
+        $this->name_sender = '';
+        $this->phone_inter_out_civ = '';
+        $this->transaction_inter_amount_money = '';
+        $this->transaction_inter_amount_money_receved = '';
+        $this->account_number = '';
+        $this->image_frontend = '';
+        $this->image_backend = '';
+        $this->image_preview_frontend = '';
+        $this->image_preview_backend = '';
+        $this->isPasswordValid = '';
+        $this->piece_type = null;
+
         $this->emit('modal-hide-inters');
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
@@ -5351,13 +5414,11 @@ class Transfers extends Component
         $encode = substr($check->wallet->sidUser->phone, -10);
 
         sendTryCashMessage($check->wallet->sidUser->phone, $message);
-
     }
 
     protected function sendSuccessMessageNotification($check, $message)
     {
         sendTryCashMessage($check->wallet->sidUser->phone, $message);
-
     }
 
     protected function sendSuccessMessageCreateNotification($walletUser, $message)
@@ -5372,7 +5433,6 @@ class Transfers extends Component
         $encode = substr($check->wallet->sidUser->phone, -10);
 
         sendTryCashMessage($check->wallet->sidUser->phone, $message);
-
     }
 
     protected function sendRefundNotification($check)
@@ -5381,7 +5441,6 @@ class Transfers extends Component
         $encode = substr($check->wallet->sidUser->phone, -10);
 
         sendTryCashMessage($check->wallet->sidUser->phone, $message);
-
     }
 
     protected function notifyUsers($check, $admins, $msg_title, $msg, $admin_msg)

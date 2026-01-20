@@ -72,7 +72,7 @@
                                       @foreach ($djamos as $key => $item)
                                           <tr class="intro-x">
                                               <td class="text-center w-40">
-                                                @include('components.infoTypeTransaction')
+                                                  @include('components.infoTypeDjamo')
 
                                                   <div
                                                       class="px-3 py-2 text-dark btn-rose dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
@@ -106,10 +106,15 @@
 
                                                           <!-- Bouton action -->
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                              <x-take-action-button action="ChooseUpdateDjamo"
-                                                                  :itemId="$item->id" label="Je prends en charge"
-                                                                  speed="ultra-fast" color="warning"
-                                                                  class="mb-2 md:mb-0" />
+                                                              @if ($item->choose_transaction == 'Retrait')
+                                                                  <x-take-action-button action="ChooseUpdateDjamo"
+                                                                      :itemId="$item->id" label="Je confirme"
+                                                                      speed="ultra-fast" color="warning" />
+                                                              @else
+                                                                  <x-take-action-button action="ChooseUpdateDjamo"
+                                                                      :itemId="$item->id" label="Je prends en charge"
+                                                                      speed="ultra-fast" color="warning" />
+                                                              @endif
                                                           @endif
 
                                                           <!-- Section QR code / image -->
@@ -121,7 +126,7 @@
                                                           <i class="fas fa-qrcode text-gray-400 text-xl"></i>
 
                                                           @if ($item->image)
-                                                              <img src="{{ asset($item->image) ?? asset('image_inters/' . $item->image)  }}"
+                                                              <img src="{{ asset_url($item->image) ?? asset_url('image_inters/' . $item->image) }}"
                                                                   alt="QR Code Djamo"
                                                                   class="qr-blur w-20 h-20 object-contain rounded-lg border border-gray-300 shadow-sm">
                                                           @else
@@ -135,7 +140,7 @@
                                                           <i class="fas fa-qrcode text-gray-400 text-xl"></i>
 
                                                           @if ($item->image)
-                                                              <img src="{{ asset($item->image) ?? asset('image_inters/' . $item->image)}}"
+                                                              <img src="{{ asset_url($item->image) ?? asset_url('image_inters/' . $item->image) }}"
                                                                   alt="QR Code Djamo"
                                                                   class="w-24 h-24 object-contain rounded-lg border border-gray-300 shadow-sm">
                                                           @else
@@ -165,7 +170,11 @@
                                                                               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                       </svg>
 
-                                                                      Modifier
+                                                                      @if ($item->choose_transaction == 'Retrait')
+                                                                          Reversement
+                                                                      @else
+                                                                          Modifier
+                                                                      @endif
                                                                   </a>
                                                               @endif
                                                           @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)

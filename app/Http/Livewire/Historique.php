@@ -15,6 +15,7 @@ use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 use App\Models\Wallets\WalletPush;
 use App\Models\Wallets\WalletDjamo;
+use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\WithMerchant;
 use Illuminate\Support\Carbon;
@@ -47,6 +48,7 @@ class Historique extends Component
     public $showDjamoButton = false;
     public $showPushButton = false;
     public $showTresortMoneyButton = false;
+    public $showBankSendButton= false;
     public $showWaveButton = false;
     public $operators;
     public $operatorsCompagnie;
@@ -90,6 +92,7 @@ class Historique extends Component
             'Historiques Wave' => 'showWaveButton',
             'Historiques Djamo' => 'showDjamoButton',
             'Historiques Push' => 'showPushButton',
+            'Historiques Bank send' => 'showBankSendButton',
             'Historiques Tresort Money' => 'showTresortMoneyButton',
         ];
 
@@ -148,6 +151,10 @@ class Historique extends Component
         $push_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletPush::class, 'PENDING', 'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
         $push_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletPush::class, 'SUCCESS',  'wallet_pushes.wallet_id', 'wallet_pushes.created_at', 'wallet_pushes.updated_by', 'wallet_pushes.status',  'wallet_pushes.is_web', false);
          
+        $bank_send_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletBankSend::class, 'ERROR',  'wallet_bank_sends.wallet_id', 'wallet_bank_sends.created_at', 'wallet_bank_sends.updated_by', 'wallet_bank_sends.status',  'wallet_bank_sends.is_web', false);
+        $bank_send_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletBankSend::class, 'PENDING', 'wallet_bank_sends.wallet_id', 'wallet_bank_sends.created_at', 'wallet_bank_sends.updated_by', 'wallet_bank_sends.status',  'wallet_bank_sends.is_web', false);
+        $bank_send_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletBankSend::class, 'SUCCESS',  'wallet_bank_sends.wallet_id', 'wallet_bank_sends.created_at', 'wallet_bank_sends.updated_by', 'wallet_bank_sends.status',  'wallet_bank_sends.is_web', false);
+
         $versment_error = app(HistoriqueService::class)->getTransactionCountHisto(WalletVersement::class, 'ERROR',  'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
         $versement_padding = app(HistoriqueService::class)->getTransactionCountHisto(WalletVersement::class, 'PENDING', 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
         $versement_success = app(HistoriqueService::class)->getTransactionCountHisto(WalletVersement::class, 'SUCCESS',  'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by', 'wallet_versements.status',  'wallet_versements.is_web', false);
@@ -176,15 +183,16 @@ class Historique extends Component
         $tresort_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', 'wallet_tresort_money.created_at', 'wallet_tresort_money.updated_by',  'wallet_tresort_money.status',  'wallet_tresort_money.amount',  'wallet_tresort_money.is_web', false);
         $versement_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletVersement::class, 'wallet_versements.wallet_id', 'wallet_versements.created_at', 'wallet_versements.updated_by',  'wallet_versements.status',  'wallet_versements.amount',  'wallet_versements.is_web', false);
         $djamo_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletDjamo::class, 'wallet_djamos.wallet_id', 'wallet_djamos.created_at', 'wallet_djamos.updated_by',  'wallet_djamos.status',  'wallet_djamos.amount',  'wallet_djamos.is_web', false);
+        $bankSend_amount = app(HistoriqueService::class)->getTodayTransactionAmountTotalHisto(WalletBankSend::class, 'wallet_bank_sends.wallet_id', 'wallet_bank_sends.created_at', 'wallet_bank_sends.updated_by',  'wallet_bank_sends.status',  'wallet_bank_sends.amount',  'wallet_bank_sends.is_web', false);
 
 
 
         return view('livewire.historique', [
 
             'walletSolde' => Wallet::where('sid_user_id', $walletUser->id)->sum('amount'),
-            'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error + $push_error + $versment_error + $tresort_error + $djamo_error ,
-            'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success + $push_success + $versement_success + $tresort_success + $djamo_success,
-            'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding + $push_padding + $tresort_padding + $djamo_padding + $versement_padding,
+            'sum_error' => $payment_error  + $transaction_error + $bank_error  +  $deposit_error +  $reload_error + $phone_credit_error +   $inter_error + $xbet_error + $push_error + $versment_error + $tresort_error + $djamo_error  + $bank_send_error,
+            'sum_success' => $payment_success  + $transaction_success + $bank_success  +  $deposit_success +  $reload_success + $phone_credit_success +   $inter_success +  $xbet_success + $push_success + $versement_success + $tresort_success + $djamo_success  + $bank_send_success,
+            'pending_success' => $payment_padding  + $transaction_padding + $bank_padding  +  $deposit_padding +  $reload_padding + $phone_credit_padding +   $inter_padding  + $xbet_padding + $push_padding + $tresort_padding + $djamo_padding + $versement_padding  + $bank_send_padding,
             'wallet_Banks_last' => WalletBank::where('is_web', false)
                 ->when(sabdy()->is_admin, function ($query) {
                     // Si c'est un administrateur, ne filtrez pas les résultats.
@@ -336,6 +344,20 @@ class Historique extends Component
                     // Si c'est un distributeur, filtrez par 'updated_by'.
                     return $query->where('updated_by', sabdy()->id);
                 })->select('wallet_pushes.*')->limit(5)->orderBy('wallet_pushes.created_at', 'desc')->get(),
+
+         'Wallet_bank_send_last' => WalletBankSend::whereIsWeb(false)
+                ->when(sabdy()->is_admin, function ($query) {
+                    // Si c'est un administrateur, ne filtrez pas les résultats.
+                    return $query;
+                })
+                ->when(sabdy()->is_under_distributer, function ($query) {
+                    // Si c'est un sous-distributeur, filtrez par 'created_by'.
+                    return $query->where('created_by', sabdy()->id);
+                })
+                ->when(sabdy()->is_distributer, function ($query) {
+                    // Si c'est un distributeur, filtrez par 'updated_by'.
+                    return $query->where('updated_by', sabdy()->id);
+                })->select('wallet_bank_sends.*')->limit(5)->orderBy('wallet_bank_sends.created_at', 'desc')->get(),
             
               'Wallet_tresort_last' => WalletTresortMoney::whereIsWeb(false)
                 ->when(sabdy()->is_admin, function ($query) {
@@ -372,6 +394,7 @@ class Historique extends Component
             'sum_push' =>  $push_amount,
             'sum_tresortMoney' =>  $tresort_amount,
             'sum_djamo' =>  $djamo_amount,
+            'sum_bankSend' =>  $bankSend_amount,
             'sum_deposit' => $deposit_amount,
             'sum_payment' => $payement_amount,
             'sum_reload' => $reload_amount,
@@ -396,6 +419,7 @@ class Historique extends Component
             'showVersementButton' => $this->showVersementButton,
             'showDjamoButton' => $this->showDjamoButton,
             'showPushButton' => $this->showPushButton,
+            'showBankSendButton' => $this->showBankSendButton,
             'showTresortMoneyButton' => $this->showTresortMoneyButton,
             'sum_under_distributers' => $this->historiqueService->getSDistributeurSumAdmin(),
             'sum_custumers' => $this->historiqueService->getCustumersSumAdmin(),

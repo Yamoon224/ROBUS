@@ -22,7 +22,7 @@
                                 <i class="fas fa-qrcode"></i>
 
                                 @if ($image_djamo)
-                                    <img src="{{ asset('storage/' . $image_djamo) }}" alt="QR Code Djamo"
+                                    <img src="{{ asset_url($image_djamo) ?? asset_url('image_inters/' . $image_djamo)  }}"
                                         class="w-24 h-24 object-contain rounded border">
                                 @else
                                     <span class="text-gray-500">Aucune image</span>

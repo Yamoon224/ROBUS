@@ -617,10 +617,10 @@
                                         <select wire:model.debounce.10ms="piece_type" id="piece_type"
                                             class="form-control">
                                             <option value="null" selected>Selectionnez le type de piece</option>
-                                            <option value="1"> Passport</option>
-                                            <option value="2"> CNI</option>
-                                            <option value="3"> Permis</option>
-                                            <option value="4"> Carte consulaire</option>
+                                            <option value="Passport"> Passport</option>
+                                            <option value="CNI"> CNI</option>
+                                            <option value="Permis"> Permis</option>
+                                            <option value="Carte consulaire"> Carte consulaire</option>
 
                                         </select>
                                         @error('piece_type')
@@ -629,7 +629,7 @@
                                     </div>
 
                                     @if (!is_null($piece_type))
-                                        @if ($piece_type == 1 || $piece_type == 4)
+                                        @if ($piece_type == "Passport" || $piece_type == "Carte consulaire")
                                             <div class="col-span-12 flex flex-col items-center gap-4">
 
                                                 <!-- Preview avec Base64 ou image existante -->
@@ -718,7 +718,7 @@
                                                 </div>
 
                                             </div>
-                                        @elseif ($piece_type == 2 || $piece_type == 3)
+                                        @elseif ($piece_type == "CNI" || $piece_type == "Permis")
                                             <div class="col-span-6 flex flex-col items-center gap-4">
 
                                                 <!-- Preview avec Base64 ou image existante -->

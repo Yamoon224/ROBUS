@@ -26,6 +26,7 @@
                             push="{{ json_encode($sum_push) }}"
                             djamo="{{ json_encode($sum_djamo) }}" 
                             versment="{{ json_encode($sum_versment) }}"
+                            bankSend="{{ json_encode($sum_bankSend) }}"
                             tresort="{{ json_encode($sum_tresortMoney) }}"></canvas>
 
                     </div>
@@ -127,8 +128,45 @@
                         </div>
                     </div>
                 @endif
-                @if ($showTransButton)
 
+
+                @if ($showBankSendButton)
+                    
+                 <div class="col-span-12 md:col-span-6 lg:col-span-4 mt-1">
+                    <div class="intro-y box p-5 mt-12 sm:mt-5 ">
+                        <div
+                            class="flex text-slate-500 border-b border-slate-200 dark:border-darkmode-300 border-dashed pb-3 mb-3 v">
+                            <div>Service Bank send</div>
+                            <div class="ml-auto">Date</div>
+                        </div>
+                        @foreach ($Wallet_bank_send_last as $djamo)
+                            <div class="flex items-center mb-5">
+                                <div class="flex items-center">
+                                    <div>{{ $djamo->provider->name ?? null }}</div>
+
+                                </div>
+                                <div class="ml-auto">{{ $djamo->created_at ?? null }}</div>
+                            </div>
+                        @endforeach
+                        <a href="{{ route('bankSends.historical') }}"
+                            class="btn btn-outline-secondary text-black w-full border-slate-300  border-dashed relative justify-start mb-2">
+                            <span class="truncate mr-5 text-black">Voir plus</span>
+                            <span
+                                class="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" icon-name="arrow-right"
+                                    data-lucide="arrow-right" class="lucide lucide-arrow-right w-4 h-4">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </span>
+                        </a>
+                    </div>
+                </div>
+
+                @endif
+                @if ($showTransButton)
 
                     <div class="col-span-12 md:col-span-6 lg:col-span-4 "
                         style="background-color: #fe6383; color:white;">
@@ -1047,6 +1085,39 @@
                         </a>
                     </div>
                 </div>
+
+                 <div class="col-span-12 md:col-span-6 lg:col-span-4 mt-1">
+                    <div class="intro-y box p-5 mt-12 sm:mt-5 ">
+                        <div
+                            class="flex text-slate-500 border-b border-slate-200 dark:border-darkmode-300 border-dashed pb-3 mb-3 v">
+                            <div>Service Bank send</div>
+                            <div class="ml-auto">Date</div>
+                        </div>
+                        @foreach ($Wallet_bank_send_last as $djamo)
+                            <div class="flex items-center mb-5">
+                                <div class="flex items-center">
+                                    <div>{{ $djamo->provider->name ?? null }}</div>
+
+                                </div>
+                                <div class="ml-auto">{{ $djamo->created_at ?? null }}</div>
+                            </div>
+                        @endforeach
+                        <a href="{{ route('bankSends.historical') }}"
+                            class="btn btn-outline-secondary text-black w-full border-slate-300  border-dashed relative justify-start mb-2">
+                            <span class="truncate mr-5 text-black">Voir plus</span>
+                            <span
+                                class="w-8 h-8 absolute flex justify-center items-center right-0 top-0 bottom-0 my-auto ml-auto mr-0.5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" icon-name="arrow-right"
+                                    data-lucide="arrow-right" class="lucide lucide-arrow-right w-4 h-4">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </span>
+                        </a>
+                    </div>
+                </div>
             @endif
 
         </div>
@@ -1065,6 +1136,7 @@
             var sumPush = JSON.parse($('#sum').attr('push'));
             var sumDjamo = JSON.parse($('#sum').attr('djamo'));
             var sumVersment = JSON.parse($('#sum').attr('versment'));
+            var sumBankSend = JSON.parse($('#sum').attr('bankSend'));
             var sumTresort = JSON.parse($('#sum').attr('tresort'));
             var _ctx = $('#sum');
 
@@ -1084,13 +1156,14 @@
                         'Djamo',
                         'Versement',
                         'Tresort',
+                        'Bank Send',
                     ],
                     datasets: [{
 
                         label: 'Activites',
                         data: [sumVirement, sumDeposit, sumPayment, sumReload,
                             sumTransaction, sumInter, sumPhone, sumXbet, sumPush, sumDjamo, sumVersment,
-                            sumTresort
+                            sumTresort , sumBankSend
                         ],
                         backgroundColor: [
                             '#84cc17', // ✅ sumVirement → vert clair
@@ -1104,7 +1177,9 @@
                             '#14b8a6', // ✅ sumPush → turquoise
                             '#9333ea', // ✅ sumDjamo → violet profond
                             '#a855f7', // ✅ sumVersment → mauve clair
-                            '#0ea5e9' // ✅ sumTresort → bleu ciel
+                            '#0ea5e9' ,// ✅ sumTresort → bleu ciel
+                            '#a855f7', // ✅ sumVersment → mauve clair
+
                         ],
                         borderColor: [
                             '#84cc17', // ✅ sumVirement → vert clair
@@ -1118,7 +1193,8 @@
                             '#14b8a6', // ✅ sumPush → turquoise
                             '#9333ea', // ✅ sumDjamo → violet profond
                             '#a855f7', // ✅ sumVersment → mauve clair
-                            '#0ea5e9' // ✅ sumTresort → bleu ciel
+                            '#0ea5e9', // ✅ sumTresort → bleu ciel
+                            '#a855f7', // ✅ sumVersment → mauve clair
                         ],
                         borderWidth: 1,
                     }]

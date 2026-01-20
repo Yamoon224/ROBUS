@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Traits\LogsActivity;
 use App\Models\Sid\SidUser;
+use App\Models\Costs\BankCommission;
 
 class WalletInter extends Model
 {
@@ -46,14 +47,15 @@ class WalletInter extends Model
         'updated_at' => 'datetime:d-m-Y H:i:s',
     ];
 
-       public function updatedByUser()
+    public function updatedByUser()
     {
         return $this->belongsTo(SidUser::class, 'updated_by', 'id');
     }
 
-    
-    public function adminCom(){
-    	return $this->hasOne(AdminsCom::class);
+
+    public function adminCom()
+    {
+        return $this->hasOne(AdminsCom::class);
     }
 
     public function provider()
@@ -80,6 +82,11 @@ class WalletInter extends Model
     public function phoneCost()
     {
         return $this->belongsTo(PhoneCreditCost::class, 'phone_credit_cost_id', 'id')->withTrashed();
+    }
+
+    public function bankSendCost()
+    {
+        return $this->belongsTo(BankCommission::class, 'bank_commission_id', 'id')->withTrashed();
     }
 
     public function transactionCost()

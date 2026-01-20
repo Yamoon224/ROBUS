@@ -17,6 +17,7 @@ use App\Models\Wallets\WalletWave;
 use App\Models\Wallets\WalletXbet;
 use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletVersement;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\WithMerchant;
@@ -2292,6 +2293,32 @@ class AdminHistoriqueController extends Controller
 
         $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_versment_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
         return $pdf->download('reporting_versement_days.pdf');
+    }
+
+     public function searchByBankSendDate(Request $request)
+    {
+        $this->validate($request, [
+            'search_begin' => 'required|date',
+            'search_end' => 'required|date|after_or_equal:search_begin',
+        ]);
+
+
+        $searchDateBegin = $request->input('search_begin');
+
+        $searchDateEnd = $request->input('search_end');
+
+        $walletTransactions = $this->getTransactionDate(WalletBankSend::class, $searchDateBegin, $searchDateEnd);
+
+        $account_penddings =  $this->getTransactionCount(WalletBankSend::class, 'PENDING', $searchDateBegin, $searchDateEnd);;
+
+        $account_success = $this->getTransactionCount(WalletBankSend::class, 'SUCCESS', $searchDateBegin, $searchDateEnd);
+
+        $account_errors = $this->getTransactionCount(WalletBankSend::class, 'ERROR', $searchDateBegin, $searchDateEnd);
+
+        $amount_total = $this->walletTransactionsDays(WalletBankSend::class, $searchDateBegin, $searchDateEnd);
+
+        $pdf = Pdf::loadView('pages.historicals.transactionsDays.pdf_bank_send_transactions', compact('amount_total', 'walletTransactions', 'account_penddings', 'account_success', 'account_errors', 'searchDateBegin', 'searchDateEnd'))->setOptions(['isHtml5ParserEnabled' => true, 'isPhpEnabled' => true]);
+        return $pdf->download('reporting_bank_send_days.pdf');
     }
 
     public function searchByTresortDate(Request $request)

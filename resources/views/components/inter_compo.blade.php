@@ -92,6 +92,15 @@
                                                         style="color: white;">
                                                         Rechargement carte
                                                     </span>
+                                                @elseif($item->provider_type == 10)
+                                                    <span
+                                                        class="alert alert-success  inline-flex items-center justify-center px-2 py-1 mb-3 
+                                              text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
+                                                        style="color: white;">
+                                                        Rechargement Bank send
+
+                                                      
+                                                    </span>
                                                 @endif
                                                 <div
                                                     class="px-3 py-2 text-dark btn-pink dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
@@ -332,17 +341,30 @@
                                                             </div>
                                                         </div>
                                                         {{ substr($item->number_compte ?? null, 0, 5) }}
+                                                    @elseif ($item->provider_type == 10)
+                                                        <div
+                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                            <div class="fc-event-title-container" style="color: white;">
+                                                                <div class="fc-event-title fc-sticky">
+                                                                    Rechargement Bank send</div>
+                                                            </div>
+                                                        </div>
+                                                        <p>Numéro Swift :  {{ substr($item->num_authers ?? null, 0, 5) }}</p>
+
+                                                        <p>Banque :  {{ substr($item->name ?? null, 0, 5) }}</p>
+                                                       
+                                                       
                                                     @endif
 
-                                                     <div class="flex items-center justify-center text-success mt-3">
+                                                    <div class="flex items-center justify-center text-success mt-3">
 
-                                                          @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                              <x-take-action-button action="ChooseUpdateInter"
-                                                                  :itemId="$item->id" label="Je prends en charge"
-                                                                  speed="ultra-fast" color="warning" />
-                                                          @endif
+                                                        @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                            <x-take-action-button action="ChooseUpdateInter"
+                                                                :itemId="$item->id" label="Je prends en charge"
+                                                                speed="ultra-fast" color="warning" />
+                                                        @endif
 
-                                                      </div>
+                                                    </div>
                                                 @else
                                                     @if ($item->provider_type == 8)
                                                         <div

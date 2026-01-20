@@ -156,6 +156,8 @@ class HistoriqueService
         $user = Auth::guard('web')->user();
         $todays = Carbon::now();
         $convertions = $todays->toDateString();
+        $searchDateBegin = $todays->toDateString();
+        $searchDateEnd = $todays->toDateString();
         $bank_historicals = collect();
 
 
@@ -199,6 +201,8 @@ class HistoriqueService
             'bank_historicals',
             'account_penddings',
             'account_success',
+            'searchDateBegin',
+            'searchDateEnd',
             'account_errors'
         ))->setOptions(['defaultFont' => 'sans-serif']);
 

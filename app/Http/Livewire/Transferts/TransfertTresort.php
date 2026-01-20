@@ -362,6 +362,8 @@ class TransfertTresort extends Component
         $this->amount_tresort = '';
         $this->full_name_tresort = '';
         $this->stepTresort = 1;
+        $this->choose_transaction = null;
+
         $this->emit('modal-hide-tresort');
         $this->emit('menu-tresort-active');
     }

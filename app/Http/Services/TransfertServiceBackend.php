@@ -77,6 +77,7 @@ class TransfertServiceBackend
                 'num_piece' => null,
                 'validated_date' => null,
                 'created_by' => sabdy()->id,
+            'balance_before' => sabdy()->wallet->amount,
                 'provider_id' => $provider->id,
                 'choose_type_transaction' => 1,
                 'type_transaction' => 'Depot',
@@ -106,6 +107,8 @@ class TransfertServiceBackend
                 'provider_id'  =>   $provider->id,
                 'num_wallet'   =>  null,
                 'costs_amount' => $valuer_deposit_com,
+            'balance_before' => sabdy()->wallet->amount,
+
                 'name_complet' => $name_custumers ?? null,
                 'num_piece' => $identity_number ?? null,
                 'choose_transaction' => $choose_transaction ?? 1,
@@ -133,6 +136,8 @@ class TransfertServiceBackend
                 'costs_amount' => 0,
                 'choose_type_transaction' => 1,
                 'amount_received'  => $valeur_receive,
+            'balance_before' => sabdy()->wallet->amount,
+
                 'type_transaction' => 'Réequilibrage',
                 'type_received' => 'Transfert',
                 'status'  => "SUCCESS",
@@ -240,6 +245,7 @@ class TransfertServiceBackend
             'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->percent_under_distributer * $val_amount) : ($percent_robus->percent * $val_amount),
             'provider_type' => 1,
             'type_transaction' => 'Depot',
+            'balance_before' => sabdy()->wallet->amount,
             'type_received' => 'Transfert',
             'status' => 'SUCCESS',
             'country_id' => $country_robus->id,
@@ -264,6 +270,7 @@ class TransfertServiceBackend
             'costs_amount' => ($percent_robus->percent * $val_amount),
             'choose_type_transaction' => $choose_type_transaction,
             'num_acompte'  =>  $numberAcompte ?? null,
+            'balance_before' => sabdy()->wallet->amount,
             'full_name' =>  $fullName ?? null,
             'citie_name' =>  $citieXbet ?? null,
             'area_name' =>  $areaXbet ?? null,
@@ -286,11 +293,12 @@ class TransfertServiceBackend
             'provider_id'  =>  $provider->id,
             'costs_amount' => ($percent_robus->percent * $val_amount),
             'phone'  =>  $phoneNumber ?? null,
+            'balance_before' => sabdy()->wallet->amount,
             'full_name' =>  $fullName ?? null,
             'identity_number' =>  $identity_number ?? null,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
-            'choose_transaction' => $choose_transaction ?? 1
+            'choose_transaction' => $choose_transaction == 1 ? "Transfert" : "Retrait"
 
         ]);
     }
@@ -309,10 +317,11 @@ class TransfertServiceBackend
             'costs_amount' => ($percent_robus->percent * $val_amount),
             'phone'  =>  $phoneNumber ?? null,
             'full_name' =>  $fullName ?? null,
+            'balance_before' => sabdy()->wallet->amount,
             'status'  => "PENDING",
             'amount_received'  =>  $amountReceved ?? 0.0,
             'identity_number' =>  $identity_number ?? null,
-            'choose_transaction' => $choose_transaction ?? 1
+            'choose_transaction' => $choose_transaction == 1 ? "Transfert" : "Retrait"
 
         ]);
     }
@@ -330,6 +339,7 @@ class TransfertServiceBackend
             'costs_amount' => ($percent_robus->percent * $val_amount),
             'virement_percent_id' => $percent_robus->id,
             'num_accompte'   => $numberAccount ?? null,
+            'balance_before' => sabdy()->wallet->amount,
             'bank_code' => $bankCode ?? null,
             'guichet_code' => $guichetCode ?? null,
             'num_authers' => $numberRib ?? null,
@@ -353,10 +363,11 @@ class TransfertServiceBackend
             'costs_amount' => ($percent_robus->percent * $val_amount),
             'image'  =>  $image ?? null,
             'full_name' =>  $fullName ?? null,
+            'balance_before' => sabdy()->wallet->amount,
             'status'  => "PENDING",
             'identity_number' =>  $identity_number ?? null,
             'amount_received'  =>  $amountReceved ?? 0.0,
-            'choose_transaction' => $choose_transaction ?? 1
+            'choose_transaction' => $choose_transaction == 1 ? "Transfert" :  "Retrait"
 
         ]);
     }
@@ -420,6 +431,7 @@ class TransfertServiceBackend
             'transaction_cost_id' => $percent_robus->id,
             'phone' => $country_robus->indecative . $phone ?? null,
             'number_compte' => $account_number,
+            'balance_before' => sabdy()->wallet->amount,
             'created_by' => sabdy()->id,
             'provider_id' => $provider_payment,
             'name_complet' => $name_custumers ?? null,
@@ -470,6 +482,7 @@ class TransfertServiceBackend
             'name_complet' => $name_custumers ?? null,
             'name' => $name ?? null,
             'num_piece' => $num_piece_custumers ?? null,
+            'balance_before' => sabdy()->wallet->amount,
             'name_benef' => $name_sender ?? null,
             'validated_date' => $date_piece ?? null,
             'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->percent_merchands * $amount_transaction) : ($percent_robus->percent * $amount_transaction),
@@ -504,11 +517,12 @@ class TransfertServiceBackend
 
         $amount_solde = sabdy()->wallet->amount - $amount_transaction;
 
-        return WalletInter::create([
+
+        return WalletBankSend::create([
             'wallet_id' => sabdy()->wallet->id,
             'amount' => $amount_transaction,
             'description' => "Demande de transaction Bank send",
-            'bank_commission_id' => $percent_robus->id,
+            'bank_cost_id' => $percent_robus->id,
             'phone' => $country_robus->indecative . $phone ?? null,
             'number_compte' => $account_number,
             'created_by' => sabdy()->id,
@@ -518,7 +532,8 @@ class TransfertServiceBackend
             'num_piece' => $num_piece_custumers ?? null,
             'name_benef' => $name_sender ?? null,
             'phone_inter_expe' => $phone_inter_expe ?? null,
-            'num_authers' => $swit_code ?? null,
+            'swit_code' => $swit_code ?? null,
+            'balance_before' => sabdy()->wallet->amount,
             'validated_date' => $date_piece ?? null,
             'costs_amount' => sabdy()->is_under_distributer ? ($percent_robus->amount) : ($percent_robus->amount),
             'provider_type' => 1,
@@ -746,7 +761,7 @@ class TransfertServiceBackend
         ]);
     }
 
-        public function createErrorBankSend($check, $transactionCode, $transactionCompiCode)
+    public function createErrorBankSend($check, $transactionCode, $transactionCompiCode)
     {
         return  InvoiceBankSend::create([
             'wallet_bank_send_id' => $check->id,
@@ -910,6 +925,7 @@ class TransfertServiceBackend
                 'created_by' => Auth::guard('web')->user()->id,
                 'provider_id' => $provider->id,
                 'code_validated' => null,
+                'balance_before' => sabdy()->wallet->amount,
                 'amount_received'  => $commission_send,
                 'choose_type_transaction' => $choose_type_transaction,
                 'type_transaction' => 'Compense',
@@ -946,6 +962,7 @@ class TransfertServiceBackend
             'costs_amount' => $amount_user->amount,
             'firstname' => $firstname_user,
             'lastname' => $lastname_user,
+            'balance_before' => sabdy()->wallet->amount,
             'phone' => $phone_user,
             'status' => 'PENDING',
             'amount_solde' => $amount_solde ?? null,
@@ -1000,6 +1017,7 @@ class TransfertServiceBackend
             'phone_credit_cost_id' => 1,
             'created_by' => Auth::guard('web')->user()->id,
             'provider_id' => $provider->id,
+            'balance_before' => sabdy()->wallet->amount,
             'costs_amount' => $percent_robus->percent  *  $amount_phone_credit,
             'phone' => Auth::guard('web')->user()->country->indecative .  $number_phone_credit,
             'status' => 'PENDING',
@@ -1189,6 +1207,7 @@ class TransfertServiceBackend
                 'description' => $reloadcard_description,
                 'num_carte' =>  $account_number_reload_card,
                 'name' => $name_reloadcard,
+            'balance_before' => sabdy()->wallet->amount,
                 'deposit_cost_id' => 2,
                 'costs_amount' =>  $amount_user,
                 'created_by' => Auth::guard('web')->user()->id,
@@ -1230,6 +1249,7 @@ class TransfertServiceBackend
             'phone' => null,
             'id_invoice_pre' => $pre_id_invoice ?? null,
             'name' => $paiement_name ?? $pre_phone_invoice,
+            'balance_before' => sabdy()->wallet->amount,
             'created_by' => Auth::guard('web')->user()->id,
             'provider_id' => $provider->id,
             'costs_amount' => $percent_robus->amount_canal,
@@ -1275,6 +1295,7 @@ class TransfertServiceBackend
             'number_contract' => $paiement_num_contrat ?? null,
             'phone' => $pre_phone_invoice ?? null,
             'id_invoice_pre' => $pre_id_invoice ?? null,
+            'balance_before' => sabdy()->wallet->amount,
             'name' => $paiement_name_sodecie ?? null,
             'created_by' => Auth::guard('web')->user()->id,
             'provider_id' => $provider->id,
@@ -1321,6 +1342,7 @@ class TransfertServiceBackend
             'id_invoice_pre' =>  $pre_id_invoice ?? null,
             'name' => $paiement_name_cie ?? null,
             'created_by' => Auth::guard('web')->user()->id,
+            'balance_before' => sabdy()->wallet->amount,
             'provider_id' => $provider->id,
             'number_phone' => $paiement_phone_canal ?? null,
             'offer_id' => $offer->id ?? null,
@@ -1349,11 +1371,10 @@ class TransfertServiceBackend
 
         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-            $encode = substr($wallet_search->sidUser->phone,  -10);
-
             $message = 'Code de validation : ' . $code_valdated  . ' . Ne partagez ce code qu\'avec un agent ROBUS lors d\'une transaction ' . ' Expire dans 5 min';
 
-            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            sendTryCashMessage($wallet_search->sidUser->phone, $message);
+
         }
 
         if ($wallet_search->sidUser->email != null) {
@@ -1368,6 +1389,7 @@ class TransfertServiceBackend
             'transaction_cost_id' => 1,
             'created_by' => sabdy()->id,
             'provider_id'  => $provider,
+            'balance_before' => sabdy()->wallet->amount,
             'num_wallet' => strtoupper($compte_number_robus),
             'choose_type_transaction' => 1,
             'costs_amount' => $amount_drawal_percent,

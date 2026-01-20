@@ -405,6 +405,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('pushs/reporting_push_historical', [HistoricalController::class, 'reporting_push_historical'])->name('push.historical.reporting_push_historical');
             Route::get('versments/reporting_versment_historical', [HistoricalController::class, 'reporting_versment_historical'])->name('versments.historical.reporting_versment_historical');
             Route::get('djamos/reporting_djamo_historical', [HistoricalController::class, 'reporting_djamo_historical'])->name('djamos.historical.reporting_djamo_historical');
+            Route::get('banksends/reporting_banksend_historical', [HistoricalController::class, 'reporting_banksend_historical'])->name('bankSends.historical.reporting_bankSend_historical');
             Route::get('tresort_money/reporting_tresort_historical', [HistoricalController::class, 'reporting_tresort_historical'])->name('tresort_money.historical.reporting_tresort_historical');
 
             Route::get('/inters_historical', [HistoricalController::class, 'browse_inter'])->name('inters.historical');
@@ -417,6 +418,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('/versment_historical', [HistoricalController::class, 'browse_versments'])->name('versments.historical');
             Route::get('/push_historical', [HistoricalController::class, 'browse_push'])->name('pushs.historical');
             Route::get('/djamo_historical', [HistoricalController::class, 'browse_djamo'])->name('djamos.historical');
+            Route::get('/banksend_historical', [HistoricalController::class, 'browse_banksend'])->name('bankSends.historical');
             Route::get('/tresort_historical', [HistoricalController::class, 'browse_tresort'])->name('tresorts.historical');
         });
 
@@ -523,6 +525,7 @@ Route::group(['prefix' => ''], function () {
             Route::get('push_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByPushsDate'])->name('pushs.historical.reporting_transaction_days_historical.admins');
             Route::get('djamo_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByDjamoDate'])->name('djamos.historical.reporting_transaction_days_historical.admins');
             Route::get('versment_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByVersmentDate'])->name('versments.historical.reporting_transaction_days_historical.admins');
+            Route::get('bankSend_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByBankSendDate'])->name('banksends.historical.reporting_transaction_days_historical.admins');
             Route::get('tresort_days/reporting_transaction_days_historical', [AdminHistoriqueController::class, 'searchByTresortDate'])->name('tresorts.historical.reporting_transaction_days_historical.admins');
 
             Route::get('payments/reporting_payment_historical/{id}', [AdminHistoriqueController::class, 'reporting_payment_historical'])->name('payments.historical.reporting_payment_historical.admins');

@@ -17,6 +17,7 @@ use App\Models\Wallets\WalletTransaction;
 use App\Http\Services\HistoriqueService;
 use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletPush;
+use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletVersement;
 
@@ -260,6 +261,21 @@ class HistoricalController extends Controller
         );
     }
 
+      public function reporting_banksend_historical()
+    {
+
+        return $this->historiqueService->generateDailyReport(
+            modelClass: WalletBankSend::class,
+            relationTableWallet: 'wallet_bank_sends.wallet_id',
+            walletCreatedBy: 'wallet_bank_sends.created_by',
+            walletAll: 'wallet_bank_sends.*',
+            walletCreated: 'wallet_bank_sends.created_at',
+            walletStatus: 'wallet_bank_sends.status',
+            viewPath: 'pages.historicals.transactionsDays.pdf_bank_send_transactions',
+            fileName: 'reporting_bank_send.pdf',
+        );
+    }
+
     public function reporting_tresort_historical()
     {
 
@@ -447,6 +463,20 @@ class HistoricalController extends Controller
     public function browse_reloads()
     {
         return view('firms.pages.browse_reloads');
+    }
+
+    public function browse_banksend()
+    {
+        if (propect()) {
+            return view('pages.historicals.integrators.browse_bankSend');
+        } else {
+
+            if (!Auth::guard('web')->user()->hasPermissionTo('historiques')) {
+                abort(403);
+            }
+
+            return view('pages.historicals.browse_bankSend');
+        }
     }
 
     public function browse_prospect_reloads()
@@ -670,14 +700,12 @@ class HistoricalController extends Controller
 
             return view('pages.historicals.browse_djamo');
         }
-
-   
     }
 
     public function browse_tresort()
     {
 
-         if (propect()) {
+        if (propect()) {
             return view('pages.historicals.integrators.browse_tresort');
         } else {
 
@@ -687,7 +715,6 @@ class HistoricalController extends Controller
 
             return view('pages.historicals.browse_tresort');
         }
-
     }
 
 
@@ -704,7 +731,7 @@ class HistoricalController extends Controller
     public function browse_drawer()
     {
 
-         if (propect()) {
+        if (propect()) {
             return view('pages.historicals.integrators.browse_drawer');
         } else {
 
@@ -714,6 +741,5 @@ class HistoricalController extends Controller
 
             return view('pages.historicals.browse_drawer');
         }
-
     }
 }

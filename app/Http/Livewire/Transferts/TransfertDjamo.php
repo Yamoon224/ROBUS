@@ -280,7 +280,7 @@ class TransfertDjamo extends Component
                     $percent_robus,
                     $amount_solde,
                     $this->full_name_djamo,
-                    $savedPath, // Utiliser le chemin choisi
+                    $savedPath, 
                     $amountReceved,
                     $this->identity_number,
                     $this->choose_transaction
@@ -496,6 +496,8 @@ class TransfertDjamo extends Component
         $this->amount_djamo = '';
         $this->full_name_djamo = '';
         $this->stepDjamo = 1;
+        $this->choose_transaction = null;
+        
         $this->emit('modal-hide-djamo');
         $this->emit('menu-djamo-active');
     }

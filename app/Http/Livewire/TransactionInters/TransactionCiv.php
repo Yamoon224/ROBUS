@@ -705,6 +705,12 @@ class TransactionCiv extends Component
         $this->transaction_inter_amount_money = '';
         $this->transaction_inter_amount_money_receved = '';
         $this->account_number = '';
+        $this->image_frontend = '';
+        $this->image_backend = '';
+        $this->image_preview_frontend = '';
+        $this->image_preview_backend = '';
+        $this->isPasswordValid = '';
+        $this->piece_type = null;
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
         $this->emit('modal-hide-inters');
@@ -731,6 +737,11 @@ class TransactionCiv extends Component
         $this->name = '';
         $this->name_sender = '';
         $this->account_number = '';
+        $this->image_preview_frontend = '';
+        $this->image_preview_backend = '';
+        $this->piece_type = '';
+        $this->isPasswordValid = false;
+        $this->isValidating = false;
         $this->transaction_inter_amount_money_receved = '';
         $this->emit('modal-hide-inters-validated');
         $this->emit('menu-inters-active');
@@ -1012,7 +1023,7 @@ class TransactionCiv extends Component
         $provider_payment = Provider::whereId($this->provider_inter_out_civ)->first();
         $valeur_ceiling = sabdy()->silver_ceiling;
 
-        // try {
+        try {
 
 
         $this->validate([
@@ -1730,11 +1741,11 @@ class TransactionCiv extends Component
             $this->emit('modal-hide-inters');
             $this->emit('error', 'Veuillez verifiez votre mot de passe SVP !');
         }
-        // } catch (\Exception $exception) {
-        //     $this->resetInterField();
-        //     $this->emit('modal-hide-inters');
-        //     $this->emit('error', 'Error de message demande a l\'admin !');
-        // }
+        } catch (\Exception $exception) {
+            $this->resetInterField();
+            $this->emit('modal-hide-inters');
+            $this->emit('error', 'Error de message demande a l\'admin !');
+        }
     }
 
 
