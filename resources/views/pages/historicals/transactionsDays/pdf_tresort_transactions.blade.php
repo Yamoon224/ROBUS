@@ -397,7 +397,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                             <div class="tiny-slider py-5">
                                 <div class="px-5">
                                     <div class="overflow-x-auto" id="#emp">
-                                        @include('components.tableTresort')
+                                        @include('components.reports.tableTresort')
 
                                     </div>
                                 </div>

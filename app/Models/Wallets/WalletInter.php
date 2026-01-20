@@ -79,6 +79,8 @@ class WalletInter extends Model
     {
         return $this->belongsTo(BankCost::class, 'bank_cost_id', 'id')->withTrashed();
     }
+
+    
     public function phoneCost()
     {
         return $this->belongsTo(PhoneCreditCost::class, 'phone_credit_cost_id', 'id')->withTrashed();

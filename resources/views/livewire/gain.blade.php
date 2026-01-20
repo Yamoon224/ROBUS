@@ -1,17 +1,17 @@
 <div>
 
     <div class="intro-y block sm:flex items-center h-10 mt-3">
-        <h2 class="text-lg font-medium truncate mr-5">   Liste des gains de l'adminmistrateur</h2>
+        <h2 class="text-lg font-medium truncate mr-5"> Liste des gains de l'adminmistrateur</h2>
         <div class="flex items-center sm:ml-auto mt-3 sm:mt-0">
 
             <a class="btn btn-primary shadow-md" href="{{ route('admin.browse_gain_distributer') }}">Validation
                 distributeur </a>
-           
+
         </div>
     </div>
     <div class="intro-y grid grid-cols-12 gap-5 mt-5">
-        
-        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_3">
+
+        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in bg-success">
             <div><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                     stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"
                     class="feather feather-trending-down font-medium-5">
@@ -19,8 +19,8 @@
                     <polyline points="17 18 23 18 23 12"></polyline>
                 </svg>
             </div>
-            <div class="font-medium text-historique mt-6">Montant journalier admin</div>
-            <div class="text-slate-500 mt-3">
+            <div class="font-medium text-historique mt-6 text-white">Montant journalier admin</div>
+            <div class="text-slate-500 mt-3 text-white">
                 {{ number_format($sum_gain_days, 2, ',', ' ') ?? null }} FCFA
             </div>
         </div>
@@ -51,17 +51,19 @@
             </div>
         </div>
 
-        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in ">
-            
+        <div class="col-span-12 sm:col-span-3 2xl:col-span-3 box p-5 cursor-pointer zoom-in style_facture_home2 ">
+
             <div>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
-                  </svg>
-                  
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M2.25 18 9 11.25l4.306 4.306a11.95 11.95 0 0 1 5.814-5.518l2.74-1.22m0 0-5.94-2.281m5.94 2.28-2.28 5.941" />
+                </svg>
+
             </div>
             <div class="font-medium text-historique mt-6">Montant Banque journalier</div>
             <div class="text-slate-500 mt-3">
-                {{ $sum_gain_banques  ?? null }} FCFA
+                {{ $sum_gain_banques ?? null }} FCFA
             </div>
         </div>
     </div>
@@ -120,14 +122,98 @@
                 <tbody>
                     @if ($gains->count() > 0)
                         @foreach ($gains as $item)
+                            @php
+                                $types = [
+                                    'wallet_bank_id' => [
+                                        'label' => 'Virements bancaires',
+                                        'relation' => 'walletBank',
+                                    ],
+                                    'wallet_transaction_id' => [
+                                        'label' => 'Transactions',
+                                        'relation' => 'walletTransaction',
+                                    ],
+                                    'wallet_deposit_id' => [
+                                        'label' => 'Rechargement de carte',
+                                        'relation' => 'walletDeposit',
+                                    ],
+                                    'wallet_inter_id' => [
+                                        'label' => 'International',
+                                        'relation' => 'walletInter',
+                                    ],
+                                    'wallet_payment_id' => [
+                                        'label' => 'Paiements',
+                                        'relation' => 'walletPayment',
+                                    ],
+                                    'wallet_phone_credit_id' => [
+                                        'label' => 'Crédit téléphonique',
+                                        'relation' => 'walletPhoneCredit',
+                                    ],
+                                    'wallet_reload_id' => [
+                                        'label' => 'Rechargement de carte',
+                                        'relation' => 'walletReload',
+                                    ],
+                                    'bank_card_id' => [
+                                        'label' => 'Commande de carte',
+                                        'relation' => 'orderCard',
+                                    ],
+                                    'wallet_xbet_id' => [
+                                        'label' => 'Transactions 1Xbet',
+                                        'relation' => 'walletXbet',
+                                    ],
+                                    'wallet_wave_id' => [
+                                        'label' => 'Transactions Wave',
+                                        'relation' => 'walletWave',
+                                    ],
+                                    'wallet_push_id' => [
+                                        'label' => 'Transactions Push',
+                                        'relation' => 'walletPush',
+                                    ],
+                                    'wallet_djamo_id' => [
+                                        'label' => 'Transactions Djamo',
+                                        'relation' => 'walletDjamo',
+                                    ],
+                                    'wallet_tresort_money_id' => [
+                                        'label' => 'Transactions Tresort Money',
+                                        'relation' => 'walletTresort',
+                                    ],
+                                    'wallet_versement_id' => [
+                                        'label' => 'Transactions Versements bancaires',
+                                        'relation' => 'walletVersement',
+                                    ],
+                                    'wallet_bank_send_id' => [
+                                        'label' => 'Transactions Bank Send',
+                                        'relation' => 'walletBankSend',
+                                    ],
+                                ];
+
+                                $current = null;
+
+                                foreach ($types as $column => $config) {
+                                    if (!is_null($item->{$column})) {
+                                        $current = $config;
+                                        $relationData = $item->{$config['relation']};
+                                        break;
+                                    }
+                                }
+                            @endphp
                             <tr class="intro-x">
+
                                 <td class="w-40">
-                                    <p href="" class="font-medium whitespace-nowrap">
-                                        {{ $item->created_at ?? null }}</p>
+                                    <div class="mb-3">
+                                        @include('components.info')
+                                    </div>
                                 </td>
                                 <td class="w-56">
-                                    <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                        <div class="text-slate-300 text-xs  mt-0.5"> {{ $item->amount ?? null }} Frcfa
+
+                                    <div class="amount-section">
+                                        <div class="amount-label">Montant reçu</div>
+                                        <div class="amount-received">
+                                            <div class="flex items-baseline justify-between">
+                                                <span class="amount-received-value">
+                                                    {{ number_format($item->amount, 2, ',', ' ') ?? '0,00' }} Frcfa
+                                                </span>
+
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="text-slate-500  mt-0.5">
@@ -139,210 +225,65 @@
 
                                 </td>
                                 <td class="w-40">
-                                    @if ($item->wallet_bank_id != null)
-                                        <div class="flex items-center justify-center text-success">
 
-                                            <a class="flex items-center mr-3">
-                                                Virements bancaires
-                                            </a>
-                                        </div>
-                                        <div class="text-slate-500 items-center mt-0.5">
-                                            <span
-                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->walletBank->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletBank->costs_amount ?? null }}
-                                                {{ $item->walletBank->wallet->currencie->code ?? null }}
-                                            </span>
-                                        </div>
-                                    @elseif($item->wallet_transaction_id != null)
-                                        <div class="flex items-center justify-center text-success">
 
-                                            <a class="flex items-center mr-3">
-                                                Transactions
-                                            </a>
-
+                                    @if ($current && $relationData)
+                                        <div class="user-badges-container">
+                                            @if ($relationData->wallet->sidUser->is_under_distributer == 1)
+                                                <div class="user-badge user-badge--distributor">
+                                                    Sous-distributeur
+                                                </div>
+                                            @elseif ($relationData->wallet->sidUser->is_custumers == 1)
+                                                <div class="user-badge user-badge--customer">
+                                                    Client
+                                                </div>
+                                            @elseif ($relationData->wallet->sidUser->is_company == 1)
+                                                <div class="user-badge user-badge--compagnie">
+                                                    Société
+                                                </div>
+                                            @elseif ($relationData->wallet->sidUser->is_api == 1)
+                                                <div class="user-badge user-badge--compagnie">
+                                                    Integrateur
+                                                </div>
+                                            @else
+                                                <div class="user-badge user-badge--admin">
+                                                    Administrateur
+                                                </div>
+                                            @endif
                                         </div>
-                                        <div class="text-slate-500 items-center mt-0.5">
-                                            <span
-                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->walletTransaction->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletTransaction->costs_amount ?? 'Retrait' }}
-                                                {{ $item->walletTransaction->wallet->currencie->code ?? null }}
-                                            </span>
-                                        </div>
-                                    @elseif($item->wallet_deposit_id != null)
-                                        <div class="flex items-center justify-center text-success">
 
-                                            <a class="flex items-center mr-3">
-                                                Rechargement de carte
-                                            </a>
-
+                                        <div class="transaction-badges-container">
+                                            <div
+                                                class="transaction-badge transaction-badge--distributor text-white text-center">
+                                                {{ $current['label'] }}
+                                            </div>
                                         </div>
-                                        <div class="text-slate-500 items-center mt-0.5">
-                                            <span
-                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->walletDeposit->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletDeposit->costs_amount ?? null }}
-                                                {{ $item->walletDeposit->wallet->currencie->code ?? null }}
-                                            </span>
-                                        </div>
-                                    @elseif($item->wallet_inter_id != null)
-                                        <div class="flex items-center justify-center text-success">
 
-                                            <a class="flex items-center mr-3">
-                                                International
-                                            </a>
-
+                                        <div class="mb-3">
+                                            <div class="px-3 py-2 bg-blue-900 text-white rounded font-medium">
+                                                {{ $relationData->wallet->country->name ?? '-' }}
+                                            </div>
                                         </div>
-                                        <div class="text-slate-500 items-center mt-0.5">
-                                            <span
-                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->walletInter->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletInter->costs_amount ?? null }}
-                                                {{ $item->walletInter->wallet->currencie->code ?? null }}
-                                            </span>
-                                        </div>
-                                    @elseif($item->wallet_payment_id != null)
-                                        <div class="flex items-center justify-center text-success">
 
-                                            <a class="flex items-center mr-3">
-                                                Paiements
-                                            </a>
-
-                                        </div>
-                                        <div class="text-slate-500 items-center mt-0.5">
-                                            <span
-                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->walletPayment->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletPayment->costs_amount ?? null }}
-                                                {{ $item->walletPayment->wallet->currencie->code ?? null }}
-                                            </span>
-                                        </div>
-                                    @elseif($item->wallet_phone_credit_id != null)
-                                        <div class="flex items-center justify-center text-success">
-
-                                            <a class="flex items-center mr-3">
-                                                Credit telephonique
-                                            </a>
-
-                                        </div>
-                                        <div class="text-slate-500 items-center mt-0.5">
-                                            <span
-                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->walletPhoneCredit->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletPhoneCredit->costs_amount ?? null }}
-                                                {{ $item->walletPhoneCredit->wallet->currencie->code ?? null }}
-                                            </span>
-                                        </div>
-                                    @elseif($item->wallet_reload_id != null)
-                                        <div class="flex items-center justify-center text-success">
-
-                                            <a class="flex items-center mr-3">
-                                                Rechargement de carte
-                                            </a>
-
-                                        </div>
-                                        <div class="text-slate-500 items-center mt-0.5">
-                                            <span
-                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->walletReload->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->walletReload->costs_amount ?? null }}
-                                                {{ $item->walletReload->wallet->currencie->code ?? null }}
-                                            </span>
-                                        </div>
-                                    @elseif($item->bank_card_id != null)
-                                        <div class="flex items-center justify-center text-success">
-
-                                            <a class="flex items-center mr-3">
-                                                Commande de carte
-                                            </a>
-
-                                        </div>
-                                        <div class="text-slate-500 items-center mt-0.5">
-                                            <span
-                                                class="alert alert-secondary inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                {{ $item->orderCard->wallet->country->name ?? null }} <br> <br>
-                                                montant : {{ $item->orderCard->costs_amount ?? null }}
-                                                {{ $item->orderCard->wallet->currencie->code ?? null }}
-                                            </span>
+                                        <div class="amount-section">
+                                            <div class="amount-label">Montant</div>
+                                            <div class="amount-balance">
+                                                <div class="flex items-baseline justify-between">
+                                                    <span class="amount-balance-value">
+                                                        {{ number_format($relationData->costs_amount ?? 0, 2, ',', ' ') }}
+                                                    </span>
+                                                    <span class="amount-balance-currency">
+                                                        {{ $relationData->wallet->currencie->code ?? '' }}
+                                                    </span>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </td>
+
                                 <td class="w-40">
-                                    @if ($item->status == 'PENDING')
-                                        <div class="flex items-center justify-center text-pending">
-                                            <span
-                                                class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                En-attente
-                                            </span>
+                                    @include('components.info_status')
 
-                                        </div>
-                                    @elseif ($item->status == 'ERROR')
-                                        <div class="flex items-center justify-center text-danger">
-                                            <div
-                                                class="flex items-center justify-center text-pending">
-                                                <span
-                                                    class="alert alert-danger  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                    Refusé
-                                                </span>
-
-                                            </div>
-
-                                        </div>
-                                        <div class="flex items-center justify-center text-pending">
-                                            <span
-                                                class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                              text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                style="color: white;">
-                                                Traiter
-                                            </span>
-
-                                        </div>
-                                    @elseif($item->status == 'REFUND')
-                                        <div class="flex items-center justify-center text-primary">
-                                            <div
-                                                class="flex items-center justify-center text-pending">
-                                                <span
-                                                    class="alert alert-primary   inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                                    Remboursé
-                                                </span>
-
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center justify-center text-pending">
-                                            <span
-                                                class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                              text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                style="color: white;">
-                                                Traiter
-                                            </span>
-
-                                        </div>
-                                    @else
-                                        <div class="flex items-center justify-center text-success">
-                                            <div
-                                                class="flex items-center justify-center text-pending">
-                                                <span
-                                                    class="alert  alert-success inline-flex items-center justify-center px-2 py-1 mb-3 
-                                              text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                    style="color: white;">
-                                                    Accepté
-                                                </span>
-
-
-                                            </div>
-
-                                        </div>
-                                        <div class="flex items-center justify-center text-pending">
-                                            <span
-                                                class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
-                                              text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                                style="color: white;">
-                                                Traiter
-                                            </span>
-
-                                        </div>
-                                    @endif
                                 </td>
                             </tr>
                         @endforeach

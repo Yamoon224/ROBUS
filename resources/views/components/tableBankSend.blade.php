@@ -21,8 +21,8 @@
           </tr>
       </thead>
       <tbody>
-          @if ($bankSend_historicals->count() > 0)
-              @foreach ($bankSend_historicals as $key => $item)
+          @if ($verment_historicals->count() > 0)
+              @foreach ($verment_historicals as $key => $item)
                   <tr class="intro-x">
                       <td class="text-center w-40">
                           <div

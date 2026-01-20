@@ -21,13 +21,13 @@
           </tr>
       </thead>
       <tbody>
-          @if ($bankSend_historicals->count() > 0)
-              @foreach ($bankSend_historicals as $key => $item)
+          @if ($bank_historicals->count() > 0)
+              @foreach ($bank_historicals as $key => $item)
                   <tr class="intro-x">
                       <td class="text-center w-40">
                           <div
                               class="px-3 py-2 text-dark btn-teal dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                              <div class="fc-event-title-container" style="color: white;">
+                              <div class="fc-event-title-container" >
                                   <div class="fc-event-title fc-sticky">
                                       {{ $item->provider->name ?? null }}
 
@@ -112,7 +112,7 @@
                                           <span
                                               class="alert  alert-warning inline-flex items-center justify-center px-2 py-1 mb-3 
                                                                                       text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                                              style="color: white;">
+                                              >
                                               Déjà choisir
                                           </span>
 

@@ -95,14 +95,21 @@
                         @foreach ($gains as $item)
                             <tr class="intro-x">
                                 <td class="w-40">
-                                    <p href="" class="font-medium whitespace-nowrap">
-                                        {{ $item->created_at ?? null }}</p>
+                                    <div class="mb-3">
+                                        @include('components.info')
+                                    </div>
                                 </td>
                                 <td class="w-56">
-                                    <div class="text-slate-300 text-xs  mt-0.5 mb-2">
-                                        <div class="text-slate-300 text-xs  mt-0.5">
-                                            {{ $item->amount_distributer ?? null }}
-                                            {{ $item->sidUser->wallet->currencie->code ?? null }}
+                                    <div class="amount-section">
+                                        <div class="amount-label">Montant reçu</div>
+                                        <div class="amount-received">
+                                            <div class="flex items-baseline justify-between">
+                                                <span class="amount-received-value">
+                                                    {{ number_format($item->amount_distributer, 2, ',', ' ') ?? '0,00' }}
+                                                    {{ $item->sidUser->wallet->currencie->code ?? null }}
+                                                </span>
+
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="text-slate-500  mt-0.5">
@@ -114,26 +121,9 @@
 
                                 </td>
                                 <td class="w-40">
-                                    <div class="mt-0.5 mb-2">
-                                        <div class="mt-0.5">
-                                            <div
-                                                class="px-3 py-2 text-primary bg-primary/10 dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium">
-                                                <div class="fc-event-title-container">
-                                                    <div class="fc-event-title fc-sticky">
-                                                        Sous-distributeur</div>
-                                                </div>
-                                            </div>
-                                            {{ $item->sidUser->firstname ?? null }}
-                                            {{ $item->sidUser->lastname ?? null }}
-                                        </div>
-                                    </div>
-                                    <div class="mt-0.5">
-                                        <span
-                                            class="alert alert-secondary  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
-                                            {{ $item->sidUser->country->name ?? null }} ville :
-                                            {{ $item->sidUser->city->name ?? null }}
-                                        </span>
-                                    </div>
+
+                                    @include('components.infoUserGain')
+
                                 </td>
                             </tr>
                         @endforeach

@@ -196,6 +196,7 @@ class HistoriqueService
         }
 
         $bank_historicals = $query->get();
+        $amount_total = (clone $query)->sum('amount');
 
         $pdf = Pdf::loadView($viewPath, compact(
             'bank_historicals',
@@ -203,7 +204,8 @@ class HistoriqueService
             'account_success',
             'searchDateBegin',
             'searchDateEnd',
-            'account_errors'
+            'account_errors',
+            'amount_total'
         ))->setOptions(['defaultFont' => 'sans-serif']);
 
         return $pdf->download($fileName);
@@ -518,7 +520,7 @@ class HistoriqueService
 
         $wallets = $walletTransaction::where($walletTransactionIsWeb, false);
 
-       $walletUser = Auth::guard('web')->check()
+        $walletUser = Auth::guard('web')->check()
             ? Auth::guard('web')->user()
             : (Auth::guard('integration')->check()
                 ? Auth::guard('integration')->user()
@@ -551,7 +553,7 @@ class HistoriqueService
 
         $wallets = $walletTransaction::whereIsWeb(false)->whereBetween('created_at', [$beginDate, $endDate]);
 
-      $walletUser = Auth::guard('web')->check()
+        $walletUser = Auth::guard('web')->check()
             ? Auth::guard('web')->user()
             : (Auth::guard('integration')->check()
                 ? Auth::guard('integration')->user()

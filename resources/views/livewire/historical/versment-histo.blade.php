@@ -2,7 +2,7 @@
 
   <x-report-widget 
         :formRoute="route('versments.historical.reporting_transaction_days_historical.admins')" 
-        :downloadRoute="route('djamos.historical.reporting_djamo_historical')" 
+        :downloadRoute="route('versments.historical.reporting_versment_historical')" 
         title="Les activités des transactions versements"
         totalText="Transaction total" 
         :totalCount="$user ?? 0" 

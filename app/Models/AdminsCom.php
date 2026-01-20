@@ -18,7 +18,9 @@ use App\Models\Wallets\WalletTresortMoney;
 use App\Models\Wallets\WalletDjamo;
 use App\Models\Wallets\WalletCommission;
 use App\Models\Wallets\WalletAdmin;
+use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletVersement;
+use App\Models\Wallets\WalletWave;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,6 +47,12 @@ class AdminsCom extends Model
     public function walletDeposit()
     {
         return $this->belongsTo(WalletDeposit::class, 'wallet_deposit_id', 'id')->withTrashed();
+    }
+
+
+    public function walletBankSend()
+    {
+        return $this->belongsTo(WalletBankSend::class, 'wallet_bank_send_id', 'id')->withTrashed();
     }
 
     public function orderCard()
@@ -107,11 +115,12 @@ class AdminsCom extends Model
         return $this->belongsTo(WalletTresortMoney::class, 'wallet_tresort_money_id', 'id')->withTrashed();
     }
 
-    // public function walletWave()
-    // {
-    //     return $this->belongsTo(WalletWave::class, 'wallet_wave_id', 'id')->withTrashed();
-    // }
+    public function walletWave()
+    {
+        return $this->belongsTo(WalletWave::class, 'wallet_wave_id', 'id')->withTrashed();
+    }
 
+  
 
     public function sidUser()
     {

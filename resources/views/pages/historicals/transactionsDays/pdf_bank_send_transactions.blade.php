@@ -325,7 +325,7 @@ Template Name: Rubick - HTML Admin Dashboard Template
                         <div class="intro-y box col-span-12">
                             <div class=" items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                                 <h2 class="font-medium text-base mr-auto">
-                                    Informations sur les transactions bank send 
+                                    Informations sur les transactions bank send
                                 </h2>
                             </div>
                             <div class="tiny-slider py-5">
@@ -391,13 +391,13 @@ Template Name: Rubick - HTML Admin Dashboard Template
                         <div class="intro-y box col-span-12">
                             <div class=" items-center px-5 py-3 border-b border-slate-200/60 dark:border-darkmode-400">
                                 <h2 class="font-medium text-base mr-auto">
-                                    Liste des transactions des bank send 
+                                    Liste des transactions des bank send
                                 </h2>
                             </div>
                             <div class="tiny-slider py-5">
                                 <div class="px-5">
                                     <div class="overflow-x-auto" id="#emp">
-                                        @include('components.tableBankSend')
+                                        @include('components.reports.tableBankSendReport')
 
                                     </div>
                                 </div>

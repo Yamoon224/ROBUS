@@ -13,6 +13,7 @@ use App\Models\Custumers\Country;
 use App\Models\Wallets\WalletBank;
 use Illuminate\Support\Facades\DB;
 use App\Models\Wallets\WalletInter;
+use App\Models\Wallets\WalletBankSend;
 use App\Models\Wallets\WalletReload;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Wallets\WalletDeposit;
@@ -650,22 +651,15 @@ class CountrieController extends Controller
 
             // Admin
             $sum_bank =  $this->historiqueService->getCumulsWalletTransactions(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.commissions', 'wallet_banks.status');
-
             $sum_deposit =  $this->historiqueService->getCumulsWalletTransactions(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.commissions', 'wallet_deposits.status');
             $sum_payment =  $this->historiqueService->getCumulsWalletTransactions(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.commissions', 'wallet_payments.status');
             $sum_transaction =  $this->historiqueService->getCumulsWalletTransactions(WalletTransaction::class, 'wallet_transactions.wallet_id', $countrie->id, 'wallet_transactions.commissions', 'wallet_transactions.status');
             $sum_inter =  $this->historiqueService->getCumulsWalletTransactions(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.commissions', 'wallet_inters.status');
             $sum_phoneCredit =  $this->historiqueService->getCumulsWalletTransactions(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.commissions', 'wallet_phone_credits.status');
             $sum_xbet =  $this->historiqueService->getCumulsWalletTransactions(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.commissions', 'wallet_xbets.status');
-
-
             $sum_amount_distributer =  $this->historiqueService->getSDistributeurSumCountryAdmin($countrie->id);
             $sum_amount_custumers =  $this->historiqueService->getCustumersSumCountrieAdmin($countrie->id);
-
-
             $cumul_solde = $sum_bank +  $sum_deposit +  $sum_payment + $sum_transaction + $sum_inter +  $sum_phoneCredit + $sum_xbet;
-
-
             $wallet_banks =  $this->historiqueService->getWalletLimitViews(WalletBank::class, 'wallet_banks.wallet_id', $countrie->id, 'wallet_banks.commissions', 'wallet_banks.status',  'wallet_banks.created_at');
             $wallet_deposits =  $this->historiqueService->getWalletLimitViews(WalletDeposit::class, 'wallet_deposits.wallet_id', $countrie->id, 'wallet_deposits.commissions', 'wallet_deposits.status',  'wallet_deposits.created_at');
             $wallet_payments =  $this->historiqueService->getWalletLimitViews(WalletPayment::class, 'wallet_payments.wallet_id', $countrie->id, 'wallet_payments.commissions', 'wallet_payments.status',  'wallet_payments.created_at');
@@ -673,8 +667,14 @@ class CountrieController extends Controller
             $wallet_inters =  $this->historiqueService->getWalletLimitViews(WalletInter::class, 'wallet_inters.wallet_id', $countrie->id, 'wallet_inters.commissions', 'wallet_inters.status',  'wallet_inters.created_at');
             $wallet_phones =  $this->historiqueService->getWalletLimitViews(WalletPhoneCredit::class, 'wallet_phone_credits.wallet_id', $countrie->id, 'wallet_phone_credits.commissions', 'wallet_phone_credits.status',  'wallet_phone_credits.created_at');
             $wallet_xbets =  $this->historiqueService->getWalletLimitViews(WalletXbet::class, 'wallet_xbets.wallet_id', $countrie->id, 'wallet_xbets.commissions', 'wallet_xbets.status',  'wallet_xbets.created_at');
-            $sum_wallet_companies = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_company');
 
+            $wallet_push =  $this->historiqueService->getWalletLimitViews(WalletPush::class, 'wallet_pushes.wallet_id', $countrie->id, 'wallet_pushes.commissions', 'wallet_pushes.status',  'wallet_pushes.created_at');
+            $wallet_djamo =  $this->historiqueService->getWalletLimitViews(WalletDjamo::class, 'wallet_djamos.wallet_id', $countrie->id, 'wallet_djamos.commissions', 'wallet_djamos.status',  'wallet_djamos.created_at');
+            $wallet_banksend =  $this->historiqueService->getWalletLimitViews(WalletBankSend::class, 'wallet_bank_sends.wallet_id', $countrie->id, 'wallet_bank_sends.commissions', 'wallet_bank_sends.status',  'wallet_bank_sends.created_at');
+            $wallet_tresort =  $this->historiqueService->getWalletLimitViews(WalletTresortMoney::class, 'wallet_tresort_money.wallet_id', $countrie->id, 'wallet_tresort_money.commissions', 'wallet_tresort_money.status',  'wallet_tresort_money.created_at');
+            $wallet_virement =  $this->historiqueService->getWalletLimitViews(WalletVersement::class, 'wallet_versements.wallet_id', $countrie->id, 'wallet_versements.commissions', 'wallet_versements.status',  'wallet_versements.created_at');
+
+            $sum_wallet_companies = $this->historiqueService->sumwalletCountry($countrie->id, 'sid_users.is_company');
             $sum_wallet_drawer = $this->getWalletWithMerchantSumUserDaysProperty($countrie->id);
             $With_drawer_merchant = $this->getWalletWithMerchantSumUserDaygetProperty($countrie->id);
             $With_drawer_compagnie = $this->getWalletWithMerchantCompagnieSumUserDaysProperty($countrie->id);
@@ -697,6 +697,13 @@ class CountrieController extends Controller
                 'custumers_countries',
                 'wallet_banks',
                 'wallet_deposits',
+
+                'wallet_push',
+                'wallet_djamo',
+                'wallet_banksend',
+                'wallet_tresort',
+                'wallet_virement',
+
                 'wallet_payments',
                 'wallet_transactions',
                 'wallet_inters',
