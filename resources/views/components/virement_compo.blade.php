@@ -104,6 +104,9 @@
                                                       <p class="font-medium whitespace-nowrap mb-2">
                                                           {{ substr($item->number_compte ?? null, 0, 6) }}
                                                       </p>
+                                                        <p class="font-medium whitespace-nowrap mb-2">
+                                                          {{ substr($item->full_name ?? null, 0, 6) }}
+                                                      </p>
                                                       <div class="flex items-center justify-center text-success mt-3">
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                               <x-take-action-button action="ChooseUpdateVirement"
@@ -116,6 +119,7 @@
                                                       <p class="font-medium whitespace-nowrap">
                                                           {{ $item->phone ?? null }}
                                                           {{ $item->number_compte ?? null }}
+                                                          {{ $item->full_name ?? null }}
                                                       </p>
                                                   @endif
                                               </td>

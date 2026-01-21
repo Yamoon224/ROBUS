@@ -146,6 +146,7 @@ class PaystackWebhookController extends Controller
                     'payment_method' => 'paystack',
                     'created_at' => now(),
                     'updated_at' => now(),
+                    'payment_link' => $response['data']['authorization_url'] ?? null
                 ]);
 
                 Log::info('Transaction Paystack initialisée', [

@@ -166,6 +166,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::get('reload/show/{id}', [ReloadController::class, 'reload_show']);
             Route::post('reload/delete/{id}', [ReloadController::class, 'delete_reload']);
             Route::get('search_reload/{amount_reload}', [ReloadController::class, 'search_reload']);
+            Route::get('search_share_reload/{amount_reload}', [ReloadController::class, 'search_share_reload']);
             Route::get('search_pixel_in_reload/{amount_reload}', [ReloadController::class, 'search_pixel_in_reload']);
             Route::get('search_pixel_out_reload/{amount_reload}', [ReloadController::class, 'search_pixel_out_reload']);
 

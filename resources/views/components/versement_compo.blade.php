@@ -104,6 +104,10 @@
                                                       <p class="font-medium whitespace-nowrap mt-3">
                                                           Guichet : {{ substr($item->bank_code, 0, 5) }}
                                                       </p>
+
+                                                       <p class="font-medium whitespace-nowrap mt-3">
+                                                          Nom & Prenom : {{ substr($item->full_name, 0, 5) }}
+                                                      </p>
                                                       <div class="flex items-center justify-center text-success mt-3">
 
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
@@ -137,6 +141,10 @@
                                                               <div class="flex justify-between mt-3">
                                                                   <dt class="font-medium text-gray-900">Clé RIB :</dt>
                                                                   <dd>{{ $item->num_authers ?? '—' }}</dd>
+                                                              </div>
+                                                              <div class="flex justify-between mt-3">
+                                                                  <dt class="font-medium text-gray-900">Nom & Prénom :</dt>
+                                                                  <dd>{{ $item->full_name ?? '—' }}</dd>
                                                               </div>
                                                           </dl>
 

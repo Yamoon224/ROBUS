@@ -36,9 +36,9 @@
                         src="{{ asset_url('dist/providers/' . $providerImage) }}" alt="Provider">
                 </div>
                 <div class="form-section">
-                    <div class="field-group">
+                     <div class="field-group">
 
-                        <div class="field">
+                        <div class="field full">
                             <label class="form-label required">Canal Versement</label>
                             <div class="field-value">
                                 <i class="fas fa-network-wired"></i>
@@ -46,12 +46,25 @@
                             </div>
 
                         </div>
+                       
+                    </div>
+                    <div class="field-group">
+
+                       
                         <div class="field">
                             <label class="form-label required">Numero du compte</label>
                             <div class="field-value">
                                 <i class="fas fa-user"></i>
                                 <span id="numAccompte"> {{ $numAccompte ?? null }}</span>
                             </div>
+                        </div>
+                         <div class="field">
+                            <label class="form-label required">Nom & Prénom</label>
+                            <div class="field-value">
+                                <i class="fas fa-network-wired"></i>
+                                <span id="name"> {{ $name ?? null }}</span>
+                            </div>
+
                         </div>
                     </div>
                     <div class="field-group">
@@ -70,6 +83,7 @@
                             </div>
                         </div>
                     </div>
+
 
                     <div class="field-group">
                         <div class="field">

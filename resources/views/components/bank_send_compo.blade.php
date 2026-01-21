@@ -122,13 +122,7 @@
                                                       @include('components.info')
 
                                                   </div>
-                                                  <div
-                                                      class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                      <div class="fc-event-title-container" style="color: white;">
-                                                          <div class="fc-event-title fc-sticky">
-                                                              Paiement Mooney</div>
-                                                      </div>
-                                                  </div>
+                                                 
                                                   @if ($item->updated_by == null)
                                                       {{ substr($item->phone ?? null, 0, 6) }}
                                                       <p class="font-medium whitespace-nowrap">
@@ -163,13 +157,7 @@
 
                                                       </div>
                                                   @else
-                                                      <div
-                                                          class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
-                                                          <div class="fc-event-title-container" style="color: white;">
-                                                              <div class="fc-event-title fc-sticky">
-                                                                  Paiement Mooney</div>
-                                                          </div>
-                                                      </div>
+                                                     
                                                       {{ $item->phone ?? null }}
                                                       <p class="font-medium whitespace-nowrap">
                                                           Nom& Prenom(S) :

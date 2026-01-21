@@ -39,7 +39,8 @@ class VersementService
         $number_phone,
         $number_decoder,
         $id_invoice,
-        $number_contract
+        $number_contract,
+        $name
     ) {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;
@@ -55,7 +56,7 @@ class VersementService
             'num_accompte'   => $number_decoder ?? null,
             'bank_code' => $id_invoice ?? null,
             'guichet_code' => $number_contract ?? null,
-            // 'name' => $name ?? null,
+            'full_name' => $name ?? null,
             'created_by' => robus()->id,
             'provider_id'  =>    $provider,
             'num_authers' => $number_phone ?? null,

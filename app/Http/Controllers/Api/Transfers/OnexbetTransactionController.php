@@ -184,6 +184,36 @@ class OnexbetTransactionController extends Controller
                                         'data' => $validator->errors()
                                 ], 333);
                         }
+
+                        if (robus()->is_custumers == true) {
+
+                                if ($request->choose_type_transaction == 2) {
+
+                                        // 🚫 Interdire l’auto-retrait
+                                        if ($request->code_compte == $request->id_xbet) {
+                                                return json_message_response(
+                                                        false,
+                                                        "Vous ne pouvez pas effectuer un retrait vue que le code de retrait est identique au numero du compte Xbet.",
+                                                        403
+                                                );
+                                        }
+
+                                        // 🔍 Vérifier si un dépôt Xbet a déjà été effectué
+                                        $hasDepositXbet = WalletXbet::where('num_acompte', $request->id_xbet)
+                                                ->where('wallet_id', robus()->wallet->id)
+                                                ->exists();
+
+                                        if (! $hasDepositXbet) {
+                                                return json_message_response(
+                                                        false,
+                                                        "Vous ne pouvez pas retirer vers ce compte Xbet tant qu’aucun dépôt n’a été effectué.",
+                                                        403
+                                                );
+                                        }
+                                }
+                        }
+
+
                         if ($request->provider == 87) {
 
                                 if ($percent_robus != null) {

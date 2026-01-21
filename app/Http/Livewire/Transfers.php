@@ -182,6 +182,9 @@ class Transfers extends Component
     public $swit_bank_edit;
     public $date_bank_edit;
     public $image_bank_edit;
+    public $image_back_bank_edit;
+    public $type_image;
+    public $countrydetails;
 
     // Transactions
     public $transaction_description;
@@ -1241,6 +1244,7 @@ class Transfers extends Component
         $this->bank_code_edit = $check->bank_code;
         $this->guichet_edit = $check->guichet_code;
         $this->num_auther_edit = $check->num_authers;
+        $this->name = $check->full_name;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         $this->emit($state);
     }
@@ -1468,6 +1472,9 @@ class Transfers extends Component
         $this->swit_bank_edit = $check->swit_code ?? null;
         $this->date_bank_edit = $check->validated_date ?? null;
         $this->image_bank_edit = $check->image ?? null;
+        $this->image_back_bank_edit = $check->image_bakend ?? null;
+        $this->type_image = $check->type_piece ?? null;
+        $this->countrydetails = $check->country->name ?? null;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
 
         $this->emit($state);

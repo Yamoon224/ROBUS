@@ -211,7 +211,7 @@ class VersementController extends Controller
 
                         if ($this->validatedamountDays->validateAmount($amount_valeur)) {
 
-                            $walletPayment =  $this->paymentService->createRobusWalletTransactionPayment($reel_amount, $valeur_received, $amount_valeur, $request->provider, $percent_robus, $request->num_accompte, $request->bank_code,  $request->guichet_code, $request->num_authers);
+                            $walletPayment =  $this->paymentService->createRobusWalletTransactionPayment($reel_amount, $valeur_received, $amount_valeur, $request->provider, $percent_robus, $request->num_accompte, $request->bank_code,  $request->guichet_code, $request->num_authers , $request->name);
 
                             if ($walletPayment != null) {
 

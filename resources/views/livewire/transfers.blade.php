@@ -188,7 +188,7 @@
                                 @endif
 
                                 @if ($showVersementButton)
-                                    <div class="report-box__indicator bg-success tooltip cursor-pointer">
+                                    <div class="report-box__indicator bgent_com-success tooltip cursor-pointer">
                                         Succès Versements {{ $versement_success }}
                                     </div>
 

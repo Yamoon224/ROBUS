@@ -432,7 +432,14 @@ Route::group(['prefix' => ''], function () {
             Route::get('/wallet_deposits/{key}', [CountrieController::class, 'show_under_deposit'])->name('countries.deposits.Show_under_distributer');
             Route::get('/wallet_reloads/{key}', [CountrieController::class, 'show_under_reload'])->name('countries.reloads.Show_under_distributer');
             Route::get('/wallet_inters/{key}', [CountrieController::class, 'show_under_inter'])->name('countries.inters.Show_under_distributer');
-            Route::get('/wallet_phones/{key}', [CountrieController::class, 'sdrawer_historicalhow_under_phone'])->name('countries.phones.Show_under_distributer');
+            Route::get('/wallet_phones/{key}', [CountrieController::class, 'show_under_phone'])->name('countries.phones.Show_under_distributer');
+
+            Route::get('/wallet_pushs/{key}', [CountrieController::class, 'show_under_push'])->name('countries.pushs.Show_under_distributer');
+            Route::get('/wallet_djamos/{key}', [CountrieController::class, 'show_under_djamo'])->name('countries.djamos.Show_under_distributer');
+            Route::get('/wallet_tresorts/{key}', [CountrieController::class, 'show_under_tresort'])->name('countries.tresorts.Show_under_distributer');
+            Route::get('/wallet_banksends/{key}', [CountrieController::class, 'show_under_banksend'])->name('countries.banksends.Show_under_distributer');
+            Route::get('/wallet_virements/{key}', [CountrieController::class, 'show_under_virements'])->name('countries.virements.Show_under_distributer');
+
 
 
             Route::get('/view/{key}', [CountrieController::class, 'Show_under_distributer'])->name('countries.Show_under_distributer');
@@ -458,6 +465,12 @@ Route::group(['prefix' => ''], function () {
             Route::get('/wallet_inters/{key}', [CountrieController::class, 'show_distri_inter'])->name('countries.inters.Show_distri_distributer');
             Route::get('/wallet_phones/{key}', [CountrieController::class, 'show_distri_phone'])->name('countries.phones.Show_distri_distributer');
 
+
+            Route::get('/wallet_pushs/{key}', [CountrieController::class, 'show_distri_push'])->name('countries.pushs.Show_distri_distributer');
+            Route::get('/wallet_djamos/{key}', [CountrieController::class, 'show_distri_djamo'])->name('countries.djamos.Show_distri_distributer');
+            Route::get('/wallet_tresorts/{key}', [CountrieController::class, 'show_distri_tresort'])->name('countries.tresorts.Show_distri_distributer');
+            Route::get('/wallet_banksends/{key}', [CountrieController::class, 'show_distri_banksend'])->name('countries.banksends.Show_distri_distributer');
+            Route::get('/wallet_virements/{key}', [CountrieController::class, 'show_distri_virements'])->name('countries.virements.Show_distri_distributer');
 
             Route::get('/view/{key}', [CountrieController::class, 'Show_distri_distributer'])->name('countries.Show_distri_distributer');
 
