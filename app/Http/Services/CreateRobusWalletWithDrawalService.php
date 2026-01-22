@@ -54,11 +54,9 @@ class CreateRobusWalletWithDrawalService
 
         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-            $encode = substr($wallet_search->sidUser->phone,  -10);
-
             $message = 'Code de validation : ' . $code_valdated  . ' . Ne partagez ce code qu\'avec un agent ROBUS lors d\'une transaction ' . ' Expire dans 5 min';
 
-            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            sendTryCashMessage($wallet_search->sidUser->phone , $message);
         }
 
         if ($wallet_search->sidUser->email != null) {

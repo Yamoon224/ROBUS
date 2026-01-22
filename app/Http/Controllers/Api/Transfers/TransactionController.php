@@ -644,78 +644,95 @@ class TransactionController extends Controller
 
                     $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
 
-                    // Wallet verify
-                    if (!$wallet_search || !$wallet_search->sidUser->is_custumers || !$wallet_search->sidUser->status || $request->num_wallet === $wallet_user->wallet->wallet_id) {
+                    // 1️⃣ Wallet inexistant
+                    if (!$wallet_search) {
                         return response()->json([
                             'success' => false,
-                            'message' => "Ce numéro n'est pas ROBUS ou est votre numéro",
-                            'data' => $validator->errors()
-                        ], 333);
-                    } else {
+                            'message' => "Ce wallet n'existe pas ou n'est pas ROBUS",
+                        ], 404);
+                    }
 
-                        if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+                    // 2️⃣ Utilisateur inexistant ou invalide
+                    if (
+                        !$wallet_search ||
+                        !optional($wallet_search->sidUser)->is_custumers ||
+                        !optional($wallet_search->sidUser)->status ||
+                        $request->num_wallet === $wallet_user->wallet->wallet_id
+                    ) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Ce numéro n'est pas ROBUS, est invalide ou vous appartient",
+                        ], 403);
+                    }
 
-                            if ($this->validatedamountDays->validateAmountDrawel($request->amount, $request->num_wallet)) {
+                    // 3️⃣ Empêcher l’auto-transfert
+                    if ($request->num_wallet === $wallet_user->wallet->wallet_id) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Vous ne pouvez pas effectuer une transaction vers votre propre wallet",
+                        ], 400);
+                    }
+                    // Wallet verify
+                    if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                                $walletTransaction = $this->transactionWalletDrawal->createRobusWalletWithDrawalRobusTransaction($request->amount, $request->provider, $request->num_wallet);
+                        if ($this->validatedamountDays->validateAmountDrawel($request->amount, $request->num_wallet)) {
 
-                                if ($walletTransaction != null) {
+                            $walletTransaction = $this->transactionWalletDrawal->createRobusWalletWithDrawalRobusTransaction($request->amount, $request->provider, $request->num_wallet);
 
-                                    $percent_robus = $this->percentRobus->getRobusPercentageSDistributers();
+                            if ($walletTransaction != null) {
 
-                                    if ($percent_robus != null) {
+                                $percent_robus = $this->percentRobus->getRobusPercentageSDistributers();
 
-                                        $valuer_with_drawal = $percent_robus->percent_with_drawal * $walletTransaction->amount;
+                                if ($percent_robus != null) {
 
-                                        $walletTransaction->update([
-                                            'type_transaction' => 'Retrait',
-                                            'status' => 'SUCCESS',
-                                            'costs_amount' => 0,
-                                            'code_validated' => null,
-                                            'created_by' => robus()->id,
-                                        ]);
+                                    $valuer_with_drawal = $percent_robus->percent_with_drawal * $walletTransaction->amount;
+
+                                    $walletTransaction->update([
+                                        'type_transaction' => 'Retrait',
+                                        'status' => 'SUCCESS',
+                                        'costs_amount' => 0,
+                                        'code_validated' => null,
+                                        'created_by' => robus()->id,
+                                    ]);
 
 
-                                        $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
+                                    $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
 
-                                        $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$walletTransaction->amount;
+                                    $amount_solde_drawal = (float)$walletAmountSend->amount - (float)$walletTransaction->amount;
 
-                                        $walletUserSearch = $this->validatedamountDays->validatedWallet($request->num_wallet);
+                                    $walletUserSearch = $this->validatedamountDays->validatedWallet($request->num_wallet);
 
-                                        if ($this->transactionWalletDrawal->updateDrawalTransaction($walletTransaction, $walletUserSearch, $valuer_with_drawal, $percent_robus, $admin_civ)) {
+                                    if ($this->transactionWalletDrawal->updateDrawalTransaction($walletTransaction, $walletUserSearch, $valuer_with_drawal, $percent_robus, $admin_civ)) {
 
-                                            $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $walletTransaction->amount . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
+                                        $message = 'Vous venez d\'effectuer un retrait d\'un montant de ' . $walletTransaction->amount . $wallet_search->currencie->code . ' chez ' . robus()->firstname . ' ' . robus()->lastname . ' votre nouveau solde est de ' . $amount_solde_drawal . $wallet_search->currencie->code . "\nROBUS VOUS REMERCIE POUR VOTRE FIDELITE";
 
-                                            if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
+                                        if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-                                                $encode = substr($wallet_search->sidUser->phone,  -10);
-
-                                                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-                                            }
-
-                                            if ($wallet_search->sidUser->email != null) {
-
-                                                Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
-                                            }
-
-                                            return $this->transactionWalletDrawal->sendNotificationWithDrawal($walletTransaction, $walletUserSearch, $admins);
-                                        } else {
-
-                                            return  json_message_response(false, "Erreur de demande de retait ! ", 333);
+                                            sendTryCashMessage($wallet_search->sidUser->phone, $message);
                                         }
+
+                                        if ($wallet_search->sidUser->email != null) {
+
+                                            Mail::to($wallet_search->sidUser->email)->send(new CodeValidated('Message rétrait : '  . $message));
+                                        }
+
+                                        return $this->transactionWalletDrawal->sendNotificationWithDrawal($walletTransaction, $walletUserSearch, $admins);
                                     } else {
-                                        return  json_message_response(false, "Pas de retrait disponible dans cette zone ! ", 333);
+
+                                        return  json_message_response(false, "Erreur de demande de retait ! ", 333);
                                     }
                                 } else {
-
-                                    return  json_message_response(false, "Error de creation de transfert du montant!", 333);
+                                    return  json_message_response(false, "Pas de retrait disponible dans cette zone ! ", 333);
                                 }
                             } else {
-                                return   json_message_response(false, "Verifie votre solde de retrait !", 333);
+
+                                return  json_message_response(false, "Error de creation de transfert du montant!", 333);
                             }
                         } else {
-                            return   json_message_response(false, "Votre montant journalier est atteint !", 333);
+                            return   json_message_response(false, "Verifie votre solde de retrait !", 333);
                         }
+                    } else {
+                        return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                     }
                 } else {
                     return response()->json([
@@ -933,43 +950,62 @@ class TransactionController extends Controller
                     // Seach wallet User
                     $wallet_search = $this->robusTransactionService->searchWalletRobus($request->num_wallet);
 
-                    // Wallet verify
-                    if (!$wallet_search || !$wallet_search->sidUser->is_custumers || !$wallet_search->sidUser->status || $request->num_wallet === $wallet_user->wallet->wallet_id) {
+                    // 1️⃣ Wallet inexistant
+                    if (!$wallet_search) {
                         return response()->json([
                             'success' => false,
-                            'message' => "Ce numéro n'est pas ROBUS ou est votre numéro",
-                            'data' => $validator->errors()
-                        ], 333);
-                    } else {
+                            'message' => "Ce wallet n'existe pas ou n'est pas ROBUS",
+                        ], 404);
+                    }
 
-                        if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
+                    // 2️⃣ Utilisateur inexistant ou invalide
+                    if (
+                        !$wallet_search ||
+                        !optional($wallet_search->sidUser)->is_custumers ||
+                        !optional($wallet_search->sidUser)->status ||
+                        $request->num_wallet === $wallet_user->wallet->wallet_id
+                    ) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Ce numéro n'est pas ROBUS, est invalide ou vous appartient",
+                        ], 403);
+                    }
 
-                            if ($this->validatedamountDays->validateAmountDrawel($request->amount, $request->num_wallet)) {
+                    // 3️⃣ Empêcher l’auto-transfert
+                    if ($request->num_wallet === $wallet_user->wallet->wallet_id) {
+                        return response()->json([
+                            'success' => false,
+                            'message' => "Vous ne pouvez pas effectuer une transaction vers votre propre wallet",
+                        ], 400);
+                    }
+                    // Wallet verify
+                    if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                                $walletTransaction = $this->transactionWalletDrawal->createRobusWalletWithDrawalTransaction($request->amount, $request->provider, $request->num_wallet,  $wallet_search);
+                        if ($this->validatedamountDays->validateAmountDrawel($request->amount, $request->num_wallet)) {
 
-                                if ($walletTransaction != null) {
+                            $walletTransaction = $this->transactionWalletDrawal->createRobusWalletWithDrawalTransaction($request->amount, $request->provider, $request->num_wallet,  $wallet_search);
 
-                                    return response()->json([
-                                        'success' => true,
-                                        'data' => [
-                                            'id'      => $walletTransaction->id,
-                                            'provider' => $walletTransaction->provider->name,
-                                            'amount' => $walletTransaction->amount,
-                                            'status' => $walletTransaction->status,
-                                        ],
-                                        'message' => ('Votre demande de retrait en-cours de validation .')
-                                    ], 200);
-                                } else {
+                            if ($walletTransaction != null) {
 
-                                    return  json_message_response(false, "Error de creation de transfert du montant!", 333);
-                                }
+                                return response()->json([
+                                    'success' => true,
+                                    'data' => [
+                                        'id'      => $walletTransaction->id,
+                                        'provider' => $walletTransaction->provider->name,
+                                        'amount' => $walletTransaction->amount,
+                                        'status' => $walletTransaction->status,
+                                    ],
+                                    'message' => ('Votre demande de retrait en-cours de validation .')
+                                ], 200);
                             } else {
-                                return   json_message_response(false, "Verifie votre solde de retrait !", 333);
+
+                                return  json_message_response(false, "Error de creation de transfert du montant!", 333);
                             }
                         } else {
-                            return   json_message_response(false, "Votre montant journalier est atteint !", 333);
+                            return   json_message_response(false, "Verifie votre solde de retrait !", 333);
                         }
+                    } else {
+                        return   json_message_response(false, "Votre montant journalier est atteint !", 333);
                     }
                 } else {
                     return response()->json([
@@ -1090,9 +1126,7 @@ class TransactionController extends Controller
 
                                     if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-                                        $encode = substr($wallet_search->sidUser->phone,  -10);
-
-                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                        sendTryCashMessage($wallet_search->sidUser->phone, $message);
                                     }
 
                                     if ($wallet_search->sidUser->email != null) {
