@@ -37,7 +37,7 @@ class RobusTransactionService
         $this->commissionServices = $commissionServices;
     }
 
-    public function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal)
+    public function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal , $amount_before_drawal)
     {
         $val_amount = $transaction_amount_robus;
 
@@ -64,12 +64,13 @@ class RobusTransactionService
                 'type_received' => 'Transfert',
                 'status' => 'SUCCESS',
                 'amount_solde' => $amount_solde ?? null,
-                'amount_solde_drawal' => $amount_drawal ?? null
+                'amount_solde_drawal' => $amount_drawal ?? null,
+                'amount_solde_before_drawal' => $amount_before_drawal ?? null,
             ]
         );
     }
 
-    public function createRobusWalletTransactionDistributer($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal)
+    public function createRobusWalletTransactionDistributer($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal , $amount_before_drawal)
     {
         $val_amount = $transaction_amount_robus;
 
@@ -96,7 +97,8 @@ class RobusTransactionService
                 'type_received' => 'Transfert',
                 'status' => 'SUCCESS',
                 'amount_solde' => $amount_solde ?? null,
-                'amount_solde_drawal' => $amount_drawal ?? null
+                'amount_solde_drawal' => $amount_drawal ?? null,
+                'amount_solde_before_drawal' => $amount_before_drawal ?? null,
             ]
         );
     }
@@ -280,7 +282,9 @@ class RobusTransactionService
 
         if ($commission_transaction_val_inter_convertion_send) {
 
-            $walletTransaction->update(['amount_received' => $commission_transaction_val_inter_convertion_send]);
+            $walletTransaction->update([
+                'amount_received' => $commission_transaction_val_inter_convertion_send,
+            ]);
 
             if ($wallet_search) {
 

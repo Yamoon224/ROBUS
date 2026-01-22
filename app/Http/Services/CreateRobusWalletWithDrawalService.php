@@ -158,6 +158,7 @@ class CreateRobusWalletWithDrawalService
             [
                 'amount_solde'  => $amount_solde ?? null,
                 'amount_solde_drawal' => $amount_solde_drawal ?? null,
+                'amount_solde_before_drawal' => $walletAmountSend->amount ?? null,
                 'amount_received'  => $amount_payment_receved ?? null,
             ]
         );

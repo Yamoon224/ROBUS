@@ -9,6 +9,7 @@ use App\Http\Services\NotificationSendService;
 use App\Http\Services\PercentRobusAuthService;
 use App\Http\Services\ValidateDailyLimitService;
 use App\Http\Services\XbetService;
+use App\Models\Wallets\Wallet;
 use App\Models\Wallets\WalletXbet;
 use App\Repositories\OnexbetRepository;
 use Illuminate\Http\Request;
@@ -220,24 +221,31 @@ class OnexbetTransactionController extends Controller
 
                                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                                                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                                                if ($request->choose_type_transaction == 1) {
-                                                        // Transaction de dépôt
-                                                        $amountReceved =  $reel_amount;
-                                                        $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
+                                                if ($this->validatedamountDays->validateAmount($request->amount)) {
+
+                                                        $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+
+                                                        if ($request->choose_type_transaction == 1) {
+
+                                                                $amountReceved = (float) $reel_amount - (float) ($percent_robus->percent * $reel_amount);
+
+                                                                $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
+                                                        } else {
+
+                                                                $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
+                                                                $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved);
+                                                        }
+
+                                                        if ($transactionResult['success']) {
+
+                                                                $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
+                                                                return $this->messageAfterValidated($transactionResult['walletXbet']);
+                                                        } else {
+                                                                return json_message_response(false, $transactionResult['message'], 333);
+                                                        }
                                                 } else {
-                                                        // Transaction de retrait
-                                                        $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
-                                                        $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved);
-                                                }
-
-                                                if ($transactionResult['success']) {
-
-                                                        $this->notificationPhone->sendNotification1xbets($transactionResult['walletXbet']);
-                                                        return $this->messageAfterValidated($transactionResult['walletXbet']);
-                                                } else {
-                                                        return json_message_response(false, $transactionResult['message'], 333);
+                                                        return json_message_response(false, "Vérifiez votre solde !!", 341);
                                                 }
                                         } else {
                                                 return json_message_response(false, "Votre montant journalier est atteint !!", 333);
@@ -474,6 +482,58 @@ class OnexbetTransactionController extends Controller
                                         'amount_receive' => $commission_wave_val_nat_receive,
                                 ],
                         ], 200);
+                } catch (\Exception $exception) {
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'Une erreur s\'est produite lors de la recherche.',
+                        ], 500);
+                }
+        }
+
+        public function search_first_xbet($wallet_id,  $is_drawal = false)
+        {
+                try {
+
+                        $is_drawal = filter_var($is_drawal, FILTER_VALIDATE_BOOLEAN);
+
+                        // 🔎 Récupération du wallet
+                        $wallet = Wallet::where('wallet_id', $wallet_id)->first();
+
+                        if (!$wallet) {
+                                return response()->json([
+                                        'success' => false,
+                                        'message' => 'Aucun wallet trouvé pour ce numéro de wallet.',
+                                ], 404);
+                        }
+
+                        // 🔁 Recherche XBET
+                        $query = WalletXbet::where('wallet_id', $wallet->id);
+
+                        // Retrait → première transaction
+                        if ($is_drawal) {
+                                $walletXbet = $query
+                                        ->orderBy('created_at', 'asc')
+                                        ->first();
+                        }
+                        // Dépôt → dernière transaction
+                        else {
+                                $walletXbet = $query
+                                        ->orderBy('created_at', 'desc')
+                                        ->first();
+                        }
+
+                        if ($walletXbet) {
+                                return response()->json([
+                                        'success' => true,
+                                        'data' => $walletXbet->choose_type_transaction == 1 ? "Dépôt" : "Retrait",
+                                        'num_acompte' => $walletXbet->num_acompte ?? null,
+                                ], 200);
+                        }
+
+                        return response()->json([
+                                'success' => false,
+                                'message' => 'Aucun enregistrement trouvé pour ce numéro de Xbet.',
+                        ], 404);
                 } catch (\Exception $exception) {
                         return response()->json([
                                 'success' => false,

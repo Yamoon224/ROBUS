@@ -216,10 +216,10 @@ class TransactionController extends Controller
                     $percent_robus = $this->percentRobus->getRobusPercentageSDistributers();
 
                     // Vérifier si l'utilisateur est un client et non un distributeur, un administrateur, ou un distributeur
-                    $isCustomer = $wallet_search->sidUser->is_custumers;
-                    $isNotDistributor = !$wallet_search->sidUser->is_under_distributer;
-                    $isNotAdmin = !$wallet_search->sidUser->is_admin;
-                    $isNotDistributor = !$wallet_search->sidUser->is_distributer;
+                    $isCustomer = optional($wallet_search->sidUser)->is_custumers;
+                    $isNotDistributor = !optional($wallet_search->sidUser)->is_under_distributer;
+                    $isNotAdmin = !optional($wallet_search->sidUser)->is_admin;
+                    $isNotDistributor = !optional($wallet_search->sidUser)->is_distributer;
 
                     if ($isCustomer && $isNotDistributor && $isNotAdmin && $isNotDistributor) {
 
@@ -244,7 +244,7 @@ class TransactionController extends Controller
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
 
-                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
+                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal , $walletAmountSend->amount);
 
                                     if ($walletTransaction != null) {
 
@@ -252,9 +252,7 @@ class TransactionController extends Controller
 
                                         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-                                            $encode = substr($wallet_search->sidUser->phone,  -10);
-
-                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                            sendTryCashMessage($wallet_search->sidUser->phone, $message);
                                         }
 
                                         if ($wallet_search->sidUser->email != null) {
@@ -300,7 +298,7 @@ class TransactionController extends Controller
 
                                 $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
-                                $walletTransaction =  $this->robusTransactionService->createRobusWalletTransactionDistributer($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
+                                $walletTransaction =  $this->robusTransactionService->createRobusWalletTransactionDistributer($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal , $walletAmountSend->amount);
 
                                 if ($walletTransaction != null) {
 
@@ -308,9 +306,8 @@ class TransactionController extends Controller
 
                                     if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-                                        $encode = substr($wallet_search->sidUser->phone,  -10);
+                                        sendTryCashMessage($wallet_search->sidUser->phone, $message);
 
-                                        http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
                                     }
 
                                     if ($wallet_search->sidUser->email != null) {
@@ -343,11 +340,11 @@ class TransactionController extends Controller
 
                     // Code validated
                     $isWalletSearchNull = $wallet_search === null;
-                    $isCustomer = $wallet_search->sidUser->is_custumers;
-                    $isCustomerStatusFalse = $wallet_search->sidUser->status === false;
+                    $isCustomer =   !optional($wallet_search->sidUser)->is_custumers;
+                    $isCustomerStatusFalse =   !optional($wallet_search->sidUser)->status === false;
                     $isSameWalletAsUser = $request->num_wallet === $wallet_user->wallet->wallet_id;
-                    $isUnderDistributor = $wallet_search->sidUser->is_under_distributer === true;
-                    $isAdmin_all = $wallet_search->sidUser->is_admin === true;
+                    $isUnderDistributor =   !optional($wallet_search->sidUser)->is_under_distributer === true;
+                    $isAdmin_all =   !optional($wallet_search->sidUser)->is_admin === true;
 
                     // Is custumers
                     if ($isWalletSearchNull || !$isCustomer || $isCustomerStatusFalse || $isSameWalletAsUser || $isUnderDistributor || $isAdmin_all) {
@@ -381,7 +378,7 @@ class TransactionController extends Controller
 
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
-                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal);
+                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal , $walletAmountSend->amount);
 
                                     if ($walletTransaction != null) {
 
@@ -389,9 +386,7 @@ class TransactionController extends Controller
 
                                         if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-                                            $encode = substr($wallet_search->sidUser->phone,  -10);
-
-                                            http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                                            sendTryCashMessage($wallet_search->sidUser->phone, $message);
                                         }
 
                                         if ($wallet_search->sidUser->email != null) {

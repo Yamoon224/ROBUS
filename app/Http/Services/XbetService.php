@@ -109,6 +109,8 @@ class XbetService
 
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
+        $amount_drawal =(float) robus()->wallet->amount + (float) $amount_commission;
+
 
         if (robus()->is_under_distributer || robus()->is_api) {
 
@@ -162,7 +164,7 @@ class XbetService
             robus()->wallet->update([
                 'reload_by' => robus()->firstname . ' ' . robus()->lastname,
                 'sid_user_relod' => robus()->id,
-                'amount' => DB::raw('amount-'  .  $amount_solde),
+                'amount' => DB::raw('amount-'  .  $amount_drawal),
             ]);
 
             $admin_valeur =  $amount * $percent_robus->percent;

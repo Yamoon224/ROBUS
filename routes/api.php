@@ -130,7 +130,8 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             // 1Xbets
             Route::post('oneXbet/store', [OnexbetTransactionController::class, 'create_OnexbetTranaction']);
             Route::post('oneXbet/delete/{inter_providersid}', [OnexbetTransactionController::class, 'delete_wallet_xbet']);
-            Route::get('search_onexbet/{amount_wave}/{is_drawal?}', [OnexbetTransactionController::class, 'search_xbet']);
+            Route::get('search_onexbet/{amount_wave}/{is_drawal?}/{is_net_amount?}', [OnexbetTransactionController::class, 'search_xbet']);
+            Route::get('search_first_onexbet/{wallet_id}/{is_drawal?}', [OnexbetTransactionController::class, 'search_first_xbet']);
             Route::get('search_onexbet_received/{amount_received}', [OnexbetTransactionController::class, 'search_xbet_received']);
 
             // WithTransactions
@@ -195,7 +196,7 @@ Route::group(['prefix' => 'v1', 'as' => 'api.'], function () {
             Route::post('phone_credits/store', [PhoneCreditController::class, 'create_phone_credit']);
             Route::get('phone_credit/show/{id}', [PhoneCreditController::class, 'phone_credit_show']);
             Route::post('phone_credit/delete/{id}', [PhoneCreditController::class, 'delete_phone_credit']);
-            Route::get('search_phone_credit/{commission_id}', [PhoneCreditController::class, 'search_phone_credit']);
+            Route::get('search_phone_credit/{commission_id}/{is_net_amount?}', [PhoneCreditController::class, 'search_phone_credit']);
             Route::get('search_phone_credit_received/{amount_received}', [PhoneCreditController::class, 'search_phone_received']);
 
             // Inters
