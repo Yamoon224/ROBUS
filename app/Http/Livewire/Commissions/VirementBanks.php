@@ -23,10 +23,10 @@ class VirementBanks extends Component
     public $comission_master;
     public $comissionCompanie;
 
-    public $percent_custumer;
-    public $percent_admin_custumer;
-    public $percent_bank_custumer;
-    public $percent_bank_under;
+    public $percent_bank_custumer = 0;
+    public $percent_bank_under = 0;
+    public $percent_custumer = 0;
+    public $percent_admin_custumer = 0;
 
     public $editTypeTresort = false;
     public $editTypePush = false;
@@ -47,10 +47,10 @@ class VirementBanks extends Component
         $this->percent_deposit = $check->percent_merchands * 100;
         $this->comissionCompanie = $check->percent_companie * 100;
         $this->distributer_custumer = $check->distributer_custumer;
-        
-        $this->percent_custumer = $check->percent_custumer * 100;
-        $this->percent_admin_custumer = $check->percent_admin_custumer * 100;
-        $this->percent_bank_custumer = $check->percent_bank_custumer * 100;
+
+        $this->percent_custumer = $check->percent_custumer * 100 ?? null;
+        $this->percent_admin_custumer = $check->percent_admin_custumer * 100 ?? null;
+        $this->percent_bank_custumer = $check->percent_bank_custumer * 100 ?? null;
         $this->percent_bank_under = $check->percent_bank_under * 100;
 
         $this->emit($state);
@@ -102,15 +102,15 @@ class VirementBanks extends Component
     public function resetField()
     {
         $this->transaction_name = '';
-        $this->percent_admin = '';
-        $this->percent_deposit = '';
-        $this->percent_with_drawal = '';
-        $this->percent_transaction = '';
-        $this->comissionCompanie = '';
-        $this->percent_custumer = '';
-        $this->percent_admin_custumer = '';
-        $this->percent_bank_custumer = '';
-        $this->percent_bank_under = '';
+        $this->percent_admin = 0;
+        $this->percent_deposit = 0;
+        $this->percent_with_drawal = 0;
+        $this->percent_transaction = 0;
+        $this->comissionCompanie = 0;
+        $this->percent_custumer = 0;
+        $this->percent_admin_custumer = 0;
+        $this->percent_bank_custumer = 0;
+        $this->percent_bank_under = 0;
         $this->emit('modal-hide', 'hide');
     }
 
@@ -140,5 +140,4 @@ class VirementBanks extends Component
             "virementbanks" => $virements->orderBy('name', 'desc')->latest()->get(),
         ]);
     }
-
 }

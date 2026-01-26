@@ -83,6 +83,7 @@ class PaymentService
         $id_invoice,
         $number_contract,
         $name,
+        $amountReceved
     ) {
 
         $amount_solde = robus()->wallet->amount - $amount_valeur;
@@ -100,6 +101,7 @@ class PaymentService
             'name' => $name ?? null,
             'created_by' => robus()->id,
             'provider_id'  =>    $provider,
+            'amount_received' => $amountReceved ?? null,
             'number_phone' => $number_phone ?? null,
             'costs_amount' => $percent_robus->amount_canal ?? null,
             'offer_id'  =>  $offers->id ?? null,

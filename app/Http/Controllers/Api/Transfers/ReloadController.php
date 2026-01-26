@@ -310,9 +310,7 @@ class ReloadController extends Controller
                                 . $walletReload->provider->name  .  ' a '
                                 . $walletReload->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
 
-                            $encode = substr(Auth::guard('api')->user()->phone,  -10);
-
-                            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                            sendTryCashMessage(robus()->phone , $message);
                         }
 
                         $msg = 'Demande en cours de validation';
@@ -1237,8 +1235,7 @@ class ReloadController extends Controller
 
                     $total_percent = (float) $percent_robus->percent + (float) $percent_robus->percent_admin;
                     $commission_phone_credit_val_nat_pay =   $total_percent  *  $reel_amount;
-
-                    $commission_phone_credit_commission =  (float) $reel_amount -  (float) $total_percent ;
+                    $commission_phone_credit_commission =   $reel_amount -   ($reel_amount *  ((float)$percent_robus->percent + (float) $percent_robus->percent_admin)) ;
 
                     $countryNameGroup = robus()->country->name_groupe;
 

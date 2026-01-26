@@ -355,7 +355,7 @@ class withTransactionController extends Controller
                         $totalDebitUser = $totalDebitCfa * ($bankRate / $userRate);
 
                         if ($totalDebitUser > robus()->wallet->amount) {
-                                return json_message_response(false, "Solde insuffisant", 422);
+                                return json_message_response(false, "Veuillez verifier votre solde", 422);
                         }
 
                         /**ivalents
@@ -379,11 +379,11 @@ class withTransactionController extends Controller
 
                                 // Générer un nom unique
                                 if ($file_front) {
-                                        
+
                                         $front_file = uniqid('front_') . '.' . $file_front->getClientOriginalExtension();
                                         $file_front->move($destination_path, $front_file);
 
-                                        $imagePath ="/bank_sends/" . robus()->id .  "/$front_file";
+                                        $imagePath = "/bank_sends/" . robus()->id .  "/$front_file";
                                 }
 
                                 // 👉 Image verso
@@ -391,7 +391,7 @@ class withTransactionController extends Controller
                                         $backend_file = uniqid('back_') . '.' . $file_backend->getClientOriginalExtension();
                                         $file_backend->move($destination_path, $backend_file);
 
-                                        $imageBackendPath ="/bank_sends/" . robus()->id .  "/$backend_file";
+                                        $imageBackendPath = "/bank_sends/" . robus()->id .  "/$backend_file";
                                 }
                         }
 
@@ -541,6 +541,10 @@ class withTransactionController extends Controller
                                                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
                                                 $amountReceved =  $reel_amount;
+
+                                                if (!$this->validatedamountDays->validateAmount($amountReceved)) {
+                                                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
+                                                }
                                                 $transactionResult = $this->processTresortTransaction($request, $percent_robus, $amountReceved, $is_drawal);
 
                                                 if ($transactionResult['success']) {
@@ -685,6 +689,13 @@ class withTransactionController extends Controller
                                                         $imagePath =  "/qr_djamos/" . "/$front_file";
                                                 }
 
+
+                                                $val_amount_send = $reel_amount;
+
+                                                if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
+                                                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
+                                                }
+
                                                 $transactionResult = $this->processDjamoTransaction($request, $percent_robus, $amountReceved,  $imagePath, $is_drawal);
 
                                                 if ($transactionResult['success']) {
@@ -742,10 +753,10 @@ class withTransactionController extends Controller
                 }
 
                 if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
-                        return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
+                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal , $request->type , $request->numberPiece);
+                $walletPush =  $this->withService->createWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal, $request->type, $request->numberPiece);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -771,10 +782,10 @@ class withTransactionController extends Controller
                 }
 
                 if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
-                        return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
+                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionTresortMoney($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal , $request->type , $request->numberPiece);
+                $walletPush =  $this->withService->createWalletTransactionTresortMoney($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal, $request->type, $request->numberPiece);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -786,6 +797,7 @@ class withTransactionController extends Controller
 
         private function processDjamoTransaction($request, $percent_robus, $amountReceved, $imagePath, $is_drawal)
         {
+                
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
                 $user = auth_user();
@@ -797,15 +809,15 @@ class withTransactionController extends Controller
                 }
 
                 if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
-                        return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
+                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
                 }
 
-                $walletPush =  $this->withService->createWalletTransactionDjamo($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $imagePath, $is_drawal , $request->type , $request->numberPiece);
+                $walletPush =  $this->withService->createWalletTransactionDjamo($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $imagePath, $is_drawal, $request->type, $request->numberPiece);
+                
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
 
-                // Mettre à jour le montant reçu dans le service OneXbet
                 if (!$this->withService->updateamountDjamoReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletPush, $request->amount, $is_drawal)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
@@ -830,7 +842,7 @@ class withTransactionController extends Controller
                 ], 200);
         }
 
-          public function messageAfterDjamoValidated($walletPush)
+        public function messageAfterDjamoValidated($walletPush)
         {
 
                 return response()->json([

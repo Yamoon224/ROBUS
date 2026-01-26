@@ -147,42 +147,7 @@ class UserController extends Controller
     public function dashboard()
     {
 
-        $appStatusResult = $this->authService->appDispoRobus(AppStatus::class);
-        $userSession = SidUser::findOrFail(robus()->id);
-        $is_under = robus()->is_under_distributer;
-        $is_api_integrate = robus()->is_api;
-
-        // if ($is_under) {
-
-        //     $userSession = SidUser::findOrFail(robus()->id);
-
-        //     if (!$userSession->session_id ) {
-        //         return response()->json([
-        //             'success' => false,
-        //             'message' => 'Vous avez été déconnecté pour inactivité. Veuillez vous reconnecter pour accéder au service.'
-        //         ], 333);
-        //     }
-
-        //     // Pas besoin de Carbon::parse si ton champ est bien casté en datetime
-        //     // $expirationDate = $userSession->session_expires_at;
-        //     // || !$userSession->session_expires_at
-
-        //     // if (now()->gt($expirationDate)) {
-        //     //     $userSession->update([
-        //     //         'session_id' => null,
-        //     //         'session_expires_at' => null
-        //     //     ]);
-
-        //     //     return response()->json([
-        //     //         'success' => false,
-        //     //         'message' => 'Session expirée pour inactivité. Veuillez vous reconnecter pour accéder au service.'
-        //     //     ], 333);
-        //     // }
-        // }
-
-        // if (!$appStatusResult['success']) {
-        //     return response()->json($appStatusResult, 200);
-        // }
+      
 
         $wallet_solde = Wallet::where('sid_user_id', robus()->id)->first();
         $dashboard_data['wallet_user'] = new WalletSingleCollection($wallet_solde);
@@ -204,17 +169,6 @@ class UserController extends Controller
         $walletVirements = $this->transactionAccount->getUserAllTransactions(WalletVersement::class, $wallet_solde);
         $walletBankSend = $this->transactionAccount->getUserAllTransactions(WalletBankSend::class, $wallet_solde);
 
-        $som_commissions = $this->transactionAccount->getWalletSumGainUser(WalletTransaction::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPayment::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletBank::class) +  $this->transactionAccount->getWalletSumGainUser(WalletPhoneCredit::class)
-            + $this->transactionAccount->getWalletSumGainUser(WalletDeposit::class) + $this->transactionAccount->getWalletSumGainUser(BankCard::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletInter::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletXbet::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletWave::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletPush::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletDjamo::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletTresortMoney::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletVersement::class) +
-            $this->transactionAccount->getWalletSumGainUser(WalletBankSend::class);
 
         $dashboard_data['Transactions'] = TransactionSingleCollection::collection($walletTransaction);
         $dashboard_data['Commission remonté'] = RemonteSingleCollection::collection($walletRemonte);
@@ -239,7 +193,6 @@ class UserController extends Controller
         return response()->json([
             'success' => true,
             'historicals' =>  $dashboard_data,
-            'som_commission' => $is_under || $is_api_integrate ? $som_commissions . ' ' . robus()->wallet->currencie->code  : " Vous devez etre un Sous distributeur pour avoir accees a son dashboard ",
         ], 200);
     }
 

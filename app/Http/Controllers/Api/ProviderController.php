@@ -77,6 +77,7 @@ class ProviderController extends Controller
         $countrieId = robus()->country->id;
         $dashboard_data = [];
 
+        
         try {
             // 1️⃣ Cas où l'app est indisponible
             // if (!$appStatusResult['success']) {

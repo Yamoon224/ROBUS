@@ -222,19 +222,25 @@ class OnexbetTransactionController extends Controller
                                         if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
 
-                                                if ($this->validatedamountDays->validateAmount($request->amount)) {
+                                                $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                                                        $reel_amount = $this->validatedamountDays->search_amount($request->amount);
+                                                if ($request->choose_type_transaction == 1) {
+                                                        $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
+                                                } else {
+                                                        $val_amount_send = $reel_amount + (float) ($percent_robus->percent_with_drawal * $reel_amount);
+                                                }
+
+                                                if ($this->validatedamountDays->validateAmount($val_amount_send)) {
 
                                                         if ($request->choose_type_transaction == 1) {
 
                                                                 $amountReceved = (float) $reel_amount - (float) ($percent_robus->percent * $reel_amount);
 
-                                                                $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
+                                                                $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved , $val_amount_send);
                                                         } else {
 
                                                                 $amountReceved =  $reel_amount - (float) ($percent_robus->percent_with_drawal *  $reel_amount);
-                                                                $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved);
+                                                                $transactionResult = $this->processWithdrawalTransaction($request, $percent_robus, $amountReceved , $val_amount_send);
                                                         }
 
                                                         if ($transactionResult['success']) {
@@ -271,14 +277,9 @@ class OnexbetTransactionController extends Controller
 
 
         // Fonction pour traiter la transaction de dépôt
-        private function processDepositTransaction($request, $percent_robus, $amountReceved)
-        {
+        private function processDepositTransaction($request, $percent_robus, $amountReceved, $val_amount_send)
+        {       
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
-
-                $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
-                if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
-                        return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
-                }
 
                 $walletXbet =  $this->oneXbetService->createRobusWalletTransactionOneBet($reel_amount, $request->provider, $percent_robus, $request->id_compte,  $request->full_name, $amountReceved);
                 if ($walletXbet == null) {
@@ -286,7 +287,7 @@ class OnexbetTransactionController extends Controller
                 }
 
                 // Mettre à jour le montant reçu dans le service OneXbet
-                if (!$this->oneXbetService->updateamountOneBetReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletXbet, $request->amount)) {
+                if (!$this->oneXbetService->updateamountOneBetReceveid($this->validatedamountDays->adminCiv(), $percent_robus, $walletXbet, $request->amount , $val_amount_send)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
@@ -294,11 +295,10 @@ class OnexbetTransactionController extends Controller
         }
 
         // Fonction pour traiter la transaction de retrait
-        private function processWithdrawalTransaction($request, $percent_robus, $amountReceved)
+        private function processWithdrawalTransaction($request, $percent_robus, $amountReceved , $val_amount_send)
         {
 
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
-
 
                 $walletXbet =  $this->oneXbetService->createRobusWalletDrawalOneBet($reel_amount, $request->provider, $percent_robus, $request->code_compte, $request->countrie, $request->citie, $request->id_xbet, $amountReceved);
                 if ($walletXbet == null) {
@@ -306,7 +306,7 @@ class OnexbetTransactionController extends Controller
                 }
 
                 // Mettre à jour le montant reçu dans le service OneXbet
-                if (!$this->oneXbetService->updateamountOneBetDrawal($this->validatedamountDays->adminCiv(), $percent_robus, $walletXbet,  $reel_amount)) {
+                if (!$this->oneXbetService->updateamountOneBetDrawal($this->validatedamountDays->adminCiv(), $percent_robus, $walletXbet,  $reel_amount, $val_amount_send)) {
                         return ['success' => false, 'message' => 'Erreur lors de la mise à jour du montant reçu!'];
                 }
 
@@ -527,6 +527,8 @@ class OnexbetTransactionController extends Controller
                                         'success' => true,
                                         'data' => $walletXbet->choose_type_transaction == 1 ? "Dépôt" : "Retrait",
                                         'num_acompte' => $walletXbet->num_acompte ?? null,
+                                        'city_robus' => $walletXbet->city_robus ?? null,
+                                        'street_robus' => $walletXbet->street_robus ?? null,
                                 ], 200);
                         }
 

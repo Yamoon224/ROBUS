@@ -305,9 +305,7 @@ class WithService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr($user->phone, -10);
-
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                sendTryCashMessage($user->phone , $message);
             }
         }
 
@@ -408,9 +406,7 @@ class WithService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr($user->phone, -10);
-
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                sendTryCashMessage($user->phone , $message);
             }
         }
 
@@ -511,9 +507,7 @@ class WithService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr($user->phone, -10);
-
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                sendTryCashMessage($user->phone , $message);
             }
         }
 
@@ -616,9 +610,7 @@ class WithService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr($user->phone, -10);
-
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                sendTryCashMessage($user->phone , $message);
             }
         }
 

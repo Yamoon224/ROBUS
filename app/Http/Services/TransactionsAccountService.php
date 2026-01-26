@@ -12,6 +12,86 @@ use Illuminate\Support\Facades\DB;
 class TransactionsAccountService
 {
 
+
+    public function getLastTransactionsForWallet($walletId, $limit = 6)
+    {
+        return DB::table(function ($query) use ($walletId) {
+
+            $query->from('wallet_payments')
+                ->select('id', 'amount', 'created_at', DB::raw("'payment' as type"))
+                ->where('wallet_id', $walletId)
+
+                ->unionAll(
+                    DB::table('wallet_banks')
+                        ->select('id', 'amount', 'created_at', DB::raw("'bank' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('wallet_phone_credits')
+                        ->select('id', 'amount', 'created_at', DB::raw("'phone_credit' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('bank_cards')
+                        ->select('id', 'amount', 'created_at', DB::raw("'bank_card' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('wallet_xbets')
+                        ->select('id', 'amount', 'created_at', DB::raw("'xbet' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('wallet_waves')
+                        ->select('id', 'amount', 'created_at', DB::raw("'wave' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('wallet_pushes')
+                        ->select('id', 'amount', 'created_at', DB::raw("'push' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('wallet_djamos')
+                        ->select('id', 'amount', 'created_at', DB::raw("'djamo' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('wallet_tresort_money')
+                        ->select('id', 'amount', 'created_at', DB::raw("'tresor' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('wallet_versements')
+                        ->select('id', 'amount', 'created_at', DB::raw("'virement' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('wallet_bank_sends')
+                        ->select('id', 'amount', 'created_at', DB::raw("'bank_send' as type"))
+                        ->where('wallet_id', $walletId)
+                )
+
+                ->unionAll(
+                    DB::table('wallet_deposits')
+                        ->select('id', 'amount', 'created_at', DB::raw("'deposit' as type"))
+                        ->where('wallet_id', $walletId)
+                );
+        }, 'transactions')
+            ->orderByDesc('created_at')
+            ->limit($limit)
+            ->get();
+    }
+
     public function getTransactionUserWallet($wallet, $id, $num_wallet, $wallet_user)
     {
         return  $wallet::where('wallet_id', $id)
@@ -341,7 +421,7 @@ class TransactionsAccountService
     public function getUserTransactions($wallets, $wallet_solde, $numWallet)
     {
 
-   
+
 
         return $wallets::query()
             ->where(function ($query) use ($wallet_solde, $numWallet) {
@@ -357,14 +437,12 @@ class TransactionsAccountService
 
     public function getUserAllTransactions($wallets, $wallet_solde)
     {
-      
+
 
         return   $wallets::query()
             ->where(function ($query) use ($wallet_solde) {
                 $query->where('wallet_id', $wallet_solde->id);
             })
-            // ->where('created_at', '>=', $startOfWeek)
-            // ->where('created_at', '<=', $endOfWeek)
             ->limit(6)
             ->orderBy('created_at', 'desc')
             ->get();

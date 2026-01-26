@@ -182,7 +182,7 @@ class BankCardController extends Controller
                             return  json_message_response(false, "Error de creation de transfert du montant !", 333);
                         }
                     } else {
-                        return json_message_response(false, "Verifié votre solde !!", 333);
+                        return json_message_response(false, "Veuillez verifier votre solde", 333);
                     }
                 } else {
                     return json_message_response(false, "Votre montant journalier est atteint !!", 333);
@@ -383,7 +383,7 @@ class BankCardController extends Controller
                             return  json_message_response(false, "Error de creation de transfert du montant !", 333);
                         }
                     } else {
-                        return json_message_response(false, "Verifié votre solde !!", 333);
+                        return json_message_response(false, "Veuillez verifier votre solde", 333);
                     }
                 } else {
                     return json_message_response(false, "Votre montant journalier est atteint !!", 333);

@@ -83,7 +83,7 @@ class XbetService
         ]);
     }
 
-    public function updateamountOneBetReceveid($admin_civ, $percent_robus, $walletXbet, $amount)
+    public function updateamountOneBetReceveid($admin_civ, $percent_robus, $walletXbet, $amount , $amount_commission)
     {
 
         $userId = robus()->id;
@@ -105,11 +105,9 @@ class XbetService
         }
 
 
-        $amount_commission = $amount + ($percent_robus->percent * $amount);
+        $amount__commission = $amount + ($percent_robus->percent * $amount);
 
-        $amount_solde = robus()->wallet->amount - $amount_commission;
-
-        $amount_drawal =(float) robus()->wallet->amount + (float) $amount_commission;
+        $amount_solde = robus()->wallet->amount - $amount__commission;
 
 
         if (robus()->is_under_distributer || robus()->is_api) {
@@ -164,7 +162,7 @@ class XbetService
             robus()->wallet->update([
                 'reload_by' => robus()->firstname . ' ' . robus()->lastname,
                 'sid_user_relod' => robus()->id,
-                'amount' => DB::raw('amount-'  .  $amount_drawal),
+                'amount' => DB::raw('amount-'  .  $amount_commission),
             ]);
 
             $admin_valeur =  $amount * $percent_robus->percent;
@@ -175,7 +173,7 @@ class XbetService
         return true;
     }
 
-    public function updateamountOneBetDrawal($admin_civ, $percent_robus, $walletXbet, $amount)
+    public function updateamountOneBetDrawal($admin_civ, $percent_robus, $walletXbet, $amount , $amount_commission)
     {
 
 
@@ -198,9 +196,9 @@ class XbetService
         }
 
 
-        $amount_commission = $amount + ($percent_robus->percent_with_drawal * $amount);
+        $amount__commission = $amount + ($percent_robus->percent_with_drawal * $amount);
 
-        $amount_solde = robus()->wallet->amount - $amount_commission;
+        $amount_solde = robus()->wallet->amount - $amount__commission;
 
         $walletXbet->update([
             'amount_solde' => $amount_solde,

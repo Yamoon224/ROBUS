@@ -259,7 +259,6 @@ class PaymentController extends Controller
 
                             $amount_send = $reel_amount;
                             $amount_valeur = $reel_amount + (float) $percent_robus->amount_auther;
-
                             $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
                         } else {
 
@@ -290,7 +289,7 @@ class PaymentController extends Controller
                                 }
                             } else {
 
-                                $walletPayment =  $this->paymentService->createRobusWalletTransactionPaymentOffer($amount_send, $request->provider, $percent_robus, $request->number_phone, $offers,  $request->paiementChoix_phone, $request->facture_choix_type, $request->number_decoder, $request->id_invoice, $request->number_contract , $request->name);
+                                $walletPayment =  $this->paymentService->createRobusWalletTransactionPaymentOffer($amount_send, $request->provider, $percent_robus, $request->number_phone, $offers,  $request->paiementChoix_phone, $request->facture_choix_type, $request->number_decoder, $request->id_invoice, $request->number_contract, $request->name, $amountReceved);
 
                                 if ($walletPayment != null) {
 
@@ -306,7 +305,7 @@ class PaymentController extends Controller
                                 }
                             }
                         } else {
-                            return json_message_response(false, "Verifié votre solde !!", 333);
+                            return json_message_response(false, "Veuillez verifier votre solde", 333);
                         }
                     } else {
                         return json_message_response(false, "Votre montant journalier est atteint !!", 333);

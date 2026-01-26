@@ -178,18 +178,23 @@ class WaveTransactionController extends Controller
 
                                                 if ($this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
 
-                                                        // Transaction de retrait
-                                                        $amountReceved =  $reel_amount - (float) ($percent_robus->percent  *  $reel_amount);
-                                                        $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
+                                                        if ($this->validatedamountDays->validateAmountVirement($reel_amount)) {
 
-                                                        if ($transactionResult['success']) {
+                                                                // Transaction de retrait
+                                                                $amountReceved =  $reel_amount - (float) ($percent_robus->percent  *  $reel_amount);
+                                                                $transactionResult = $this->processDepositTransaction($request, $percent_robus, $amountReceved);
+
+                                                                if ($transactionResult['success']) {
 
 
-                                                                $this->notificationPhone->sendNotificationWaves($transactionResult['walletWave']);
+                                                                        $this->notificationPhone->sendNotificationWaves($transactionResult['walletWave']);
 
-                                                                return $this->messageAfterValidated($transactionResult['walletWave']);
+                                                                        return $this->messageAfterValidated($transactionResult['walletWave']);
+                                                                } else {
+                                                                        return json_message_response(false, $transactionResult['message'], 333);
+                                                                }
                                                         } else {
-                                                                return json_message_response(false, $transactionResult['message'], 333);
+                                                                return json_message_response(false, "Veuillez verifier votre solde", 333);
                                                         }
                                                 } else {
                                                         return json_message_response(false, "Votre montant journalier est atteint !!", 333);
@@ -231,7 +236,7 @@ class WaveTransactionController extends Controller
                         return ['success' => false, 'message' => 'Vérifiez votre solde !!'];
                 }
 
-                $walletWave =  $this->waveService->createRobusWalletTransactionWave( $reel_amount, $request->provider, $percent_robus, $amountReceved);
+                $walletWave =  $this->waveService->createRobusWalletTransactionWave($reel_amount, $request->provider, $percent_robus, $amountReceved);
 
                 if ($walletWave == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];

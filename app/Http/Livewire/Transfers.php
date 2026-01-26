@@ -1543,7 +1543,7 @@ class Transfers extends Component
                             if ($check->updated_by == Auth::guard('web')->user()->id) {
 
 
-                                $commission_transaction = $check->amount;
+                                $commission_transaction = $check->amount_received;
 
                                 $paymentPhoneCredit = app(TransfertServiceBackend::class)->createPhoneCredit($check, $transactionCode, $transactionCompiCode);
 
@@ -3565,7 +3565,7 @@ class Transfers extends Component
                                 $commission =  $check->amount;
                             } else {
 
-                                $commission =  $check->amount + $check->costs_amount;
+                                $commission =  $check->amount;
                             }
 
                             $this->updateReloadWallet($check, $commission);
@@ -3927,7 +3927,7 @@ class Transfers extends Component
                         if ($check->status == 'SUCCESS') {
 
 
-                            $commission_transaction =  $check->amount;
+                            $commission_transaction =  $check->amount_received;
 
                             $paymentCreated = app(TransfertServiceBackend::class)->createPayment($check, $transactionCode, $transactionCompiCode);
 

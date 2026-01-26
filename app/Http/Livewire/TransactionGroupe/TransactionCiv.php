@@ -516,7 +516,7 @@ class TransactionCiv extends Component
 
                                         $this->resetTransactionField();
                                         $this->emit('modal-hide-transfers');
-                                        $this->emit('error', 'Verifié votre solde !!');
+                                        $this->emit('error', 'Veuillez verifier votre solde');
                                     }
                                 } else {
 
@@ -590,7 +590,7 @@ class TransactionCiv extends Component
                                 } else {
                                     $this->resetTransactionField();
                                     $this->emit('modal-hide-transfers');
-                                    $this->emit('error', 'Verifié votre solde !!');
+                                    $this->emit('error', 'Veuillez verifier votre solde');
                                 }
                             } else {
                                 $this->resetTransactionField();

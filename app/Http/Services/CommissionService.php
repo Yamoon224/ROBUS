@@ -91,12 +91,6 @@ class CommissionService
                     'description_underdistributer' => null,
                 ], [$walletColumn => $walletId]));
 
-
-                // if ($walletAdmin && $walletAdmin->amount >= $totalCommission) {
-                //     $walletAdmin->increment('amount', $totalCommission);
-                // } else {
-                //     $adminUser->wallet->increment('amount', $totalCommission);
-                // }
             }
         }
     }

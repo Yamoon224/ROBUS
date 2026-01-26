@@ -244,7 +244,7 @@ class TransactionController extends Controller
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
 
-                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal , $walletAmountSend->amount);
+                                    $walletTransaction =  $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
 
                                     if ($walletTransaction != null) {
 
@@ -274,7 +274,7 @@ class TransactionController extends Controller
                                         return  json_message_response(false, "Error de creation de transfert du montant!", 333);
                                     }
                                 } else {
-                                    return json_message_response(false, "Verifié votre solde !!", 341);
+                                    return json_message_response(false, "Veuillez verifier votre solde", 341);
                                 }
                             } else {
                                 return json_message_response(false, "Votre montant journalier est atteint !!", 350);
@@ -298,7 +298,7 @@ class TransactionController extends Controller
 
                                 $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
-                                $walletTransaction =  $this->robusTransactionService->createRobusWalletTransactionDistributer($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal , $walletAmountSend->amount);
+                                $walletTransaction =  $this->robusTransactionService->createRobusWalletTransactionDistributer($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
 
                                 if ($walletTransaction != null) {
 
@@ -307,7 +307,6 @@ class TransactionController extends Controller
                                     if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
                                         sendTryCashMessage($wallet_search->sidUser->phone, $message);
-
                                     }
 
                                     if ($wallet_search->sidUser->email != null) {
@@ -378,7 +377,7 @@ class TransactionController extends Controller
 
                                     $amount_solde_drawal_round = round((float)$walletAmountSend->amount + (float)$valeur_received, 2);
 
-                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal , $walletAmountSend->amount);
+                                    $walletTransaction = $this->robusTransactionService->createRobusWalletTransaction($request->amount, $percent_robus, $request->provider, $request->num_wallet, $amount_solde_drawal, $walletAmountSend->amount);
 
                                     if ($walletTransaction != null) {
 
