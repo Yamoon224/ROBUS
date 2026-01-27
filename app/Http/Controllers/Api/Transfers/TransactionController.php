@@ -340,13 +340,13 @@ class TransactionController extends Controller
                     // Code validated
                     $isWalletSearchNull = $wallet_search === null;
                     $isCustomer =   !optional($wallet_search->sidUser)->is_custumers;
-                    $isCustomerStatusFalse =   !optional($wallet_search->sidUser)->status === false;
+                    $isCustomerStatusFalse =   optional($wallet_search->sidUser)->status === false;
                     $isSameWalletAsUser = $request->num_wallet === $wallet_user->wallet->wallet_id;
-                    $isUnderDistributor =   !optional($wallet_search->sidUser)->is_under_distributer === true;
-                    $isAdmin_all =   !optional($wallet_search->sidUser)->is_admin === true;
+                    $isUnderDistributor =   optional($wallet_search->sidUser)->is_under_distributer === true;
+                    $isAdmin_all =   optional($wallet_search->sidUser)->is_admin === true;
 
                     // Is custumers
-                    if ($isWalletSearchNull || !$isCustomer || $isCustomerStatusFalse || $isSameWalletAsUser || $isUnderDistributor || $isAdmin_all) {
+                    if ($isWalletSearchNull || $isCustomer || $isCustomerStatusFalse || $isSameWalletAsUser || $isUnderDistributor || $isAdmin_all) {
 
                         return response()->json(
                             [

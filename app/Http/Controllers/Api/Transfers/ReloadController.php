@@ -1219,7 +1219,6 @@ class ReloadController extends Controller
     {
 
 
-
         try {
 
             $percent_robus =  $this->percentRobus->getRobusPercentageReload();

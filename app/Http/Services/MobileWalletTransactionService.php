@@ -81,6 +81,7 @@ class MobileWalletTransactionService
                 'costs_amount' => $valuer_deposit_com,
                 'name_complet' => $name_custumers ?? null,
                 'num_piece' => $num_piece_custumers ?? null,
+                'balance_before' => robus()->wallet->amount,
                 'validated_date' => $date_piece ?? null,
                 'choose_type_transaction' => $choose_type_transaction ?? 1,
                 'amount_received'  => 0,
