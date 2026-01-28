@@ -40,15 +40,16 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="col-span-6">
-                    <label for="modal-form-1" class="form-label">Pourcentage Banque<span class="text-danger">
+                  <div class="col-span-6">
+                    <label for="modal-form-1" class="form-label">Pourcentage SD<span class="text-danger">
                             *</span></label>
-                    <input wire:model.defer="percent_bank_under" id="modal-form-1" type="number" class="form-control"
-                        placeholder="Pourcentage banque">
-                    @error('percent_bank_under')
+                    <input wire:model.defer="percent_deposit" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage">
+                    @error('percent_deposit')
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+              
                 <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Pourcentage Compagnie<span class="text-danger">
                             *</span></label>

@@ -174,16 +174,17 @@ class withTransactionController extends Controller
 
                                         $request->all(),
                                         [
-                                                "provider" => 'required',
                                                 "phone" => 'required',
+                                                "provider" => 'required',
                                                 "amount" => 'required',
+                                                "full_name" => 'required',
                                         ],
                                         [
 
                                                 'phone.required' => 'Votre numero est obligatoire',
-                                                'provider.required' => 'Votre fournisseur est obligatoire',
                                                 'amount.required' => 'Votre montant est obligatoire',
-
+                                                'provider.required' => 'Votre fournisseur est obligatoire',
+                                                'full_name.required' => 'Nom est obligatoire'
 
                                         ]
                                 );
@@ -209,7 +210,24 @@ class withTransactionController extends Controller
 
                                                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                                                $amountReceved =  $reel_amount;
+
+                                                if (!$is_drawal) {
+
+                                                        if (!$this->validatedamountDays->validateAmount($reel_amount)) {
+                                                                return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
+                                                        }
+                                                }
+
+                                                if ($user->is_under_distributer || $user->is_api) {
+                                                        $amountReceved =  $reel_amount;
+                                                } else {
+
+                                                        $percent = $is_drawal
+                                                                ? $percent_robus->percent_with_drawal
+                                                                : $percent_robus->percent;
+                                                        $amountReceved =  (float) $reel_amount -  (float) ($percent * $reel_amount);
+                                                }
+
                                                 $transactionResult = $this->processPushTransaction($request, $percent_robus, $amountReceved, $is_drawal);
 
                                                 if ($transactionResult['success']) {
@@ -429,7 +447,9 @@ class withTransactionController extends Controller
                                 ? (float) $amountCfa
                                 : (float) $level->amount + $amountCfa;
 
-                        $totalAmountRecevedUser = $totalAmountReceivedCfa * ($bankRate / $userRate);
+                        $totalAmountRecevedCustumer = (float) $totalAmountReceivedCfa - (float) $level->amount;
+
+                        $totalAmountRecevedUser = $totalAmountRecevedCustumer * ($bankRate / $userRate);
 
                         $this->withService->updateamountReceveidBankSend(
                                 $this->validatedamountDays->adminCiv(),
@@ -540,11 +560,23 @@ class withTransactionController extends Controller
 
                                                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                                                $amountReceved =  $reel_amount;
 
-                                                if (!$this->validatedamountDays->validateAmount($amountReceved)) {
-                                                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
+                                                if (!$is_drawal) {
+                                                        if (!$this->validatedamountDays->validateAmount($reel_amount)) {
+                                                                return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
+                                                        }
                                                 }
+
+                                                if ($user->is_under_distributer || $user->is_api) {
+                                                        $amountReceved =  $reel_amount;
+                                                } else {
+
+                                                        $percent = $is_drawal
+                                                                ? $percent_robus->percent_with_drawal
+                                                                : $percent_robus->percent;
+                                                        $amountReceved =  (float) $reel_amount -  (float) ($percent * $reel_amount);
+                                                }
+
                                                 $transactionResult = $this->processTresortTransaction($request, $percent_robus, $amountReceved, $is_drawal);
 
                                                 if ($transactionResult['success']) {
@@ -664,7 +696,7 @@ class withTransactionController extends Controller
 
                                                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                                                $amountReceved =  $reel_amount;
+
 
                                                 $file_front = $request->file('image_piece');
                                                 $imagePath = null;
@@ -692,9 +724,24 @@ class withTransactionController extends Controller
 
                                                 $val_amount_send = $reel_amount;
 
-                                                if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
-                                                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
+
+                                                if (!$is_drawal) {
+                                                        if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
+                                                                return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
+                                                        }
                                                 }
+
+                                                if ($user->is_under_distributer || $user->is_api) {
+                                                        $amountReceved =  $reel_amount;
+                                                } else {
+
+                                                        $percent = $is_drawal
+                                                                ? $percent_robus->percent_with_drawal
+                                                                : $percent_robus->percent;
+
+                                                        $amountReceved =  (float) $reel_amount -  (float) ($percent * $reel_amount);
+                                                }
+
 
                                                 $transactionResult = $this->processDjamoTransaction($request, $percent_robus, $amountReceved,  $imagePath, $is_drawal);
 
@@ -742,20 +789,6 @@ class withTransactionController extends Controller
                 }
 
 
-                if ($user && $user->is_under_distributer || $user->is_api) {
-                        $val_amount_send = $reel_amount;
-                } else {
-
-                        $percent = $is_drawal
-                                ? $percent_robus->percent_with_drawal
-                                : $percent_robus->percent;
-                        $val_amount_send = $reel_amount + ($reel_amount * (float) $percent);
-                }
-
-                if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
-                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
-                }
-
                 $walletPush =  $this->withService->createWalletTransactionPush($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal, $request->type, $request->numberPiece);
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
@@ -773,17 +806,6 @@ class withTransactionController extends Controller
         {
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                $user = auth_user();
-
-                if ($user && $user->is_under_distributer || $user->is_api) {
-                        $val_amount_send = $reel_amount;
-                } else {
-                        $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
-                }
-
-                if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
-                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
-                }
 
                 $walletPush =  $this->withService->createWalletTransactionTresortMoney($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $is_drawal, $request->type, $request->numberPiece);
                 if ($walletPush == null) {
@@ -797,23 +819,12 @@ class withTransactionController extends Controller
 
         private function processDjamoTransaction($request, $percent_robus, $amountReceved, $imagePath, $is_drawal)
         {
-                
+
                 $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
-                $user = auth_user();
-
-                if ($user && $user->is_under_distributer || $user->is_api) {
-                        $val_amount_send = $reel_amount;
-                } else {
-                        $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
-                }
-
-                if (!$this->validatedamountDays->validateAmount($val_amount_send)) {
-                        return ['success' => false, 'message' => 'Veuillez verifier votre solde'];
-                }
 
                 $walletPush =  $this->withService->createWalletTransactionDjamo($reel_amount, $request->provider, $percent_robus, $request->phone,  $request->full_name, $amountReceved, $imagePath, $is_drawal, $request->type, $request->numberPiece);
-                
+
                 if ($walletPush == null) {
                         return ['success' => false, 'message' => 'Erreur de création de transfert du montant!'];
                 }
@@ -994,7 +1005,14 @@ class withTransactionController extends Controller
 
                                 $commission_invoice =  $this->percentRobus->getRobusPercentageDrawal($providerId);
 
-                                $commission_paiement =  $commission_invoice->percent  * $amount_paiement;
+                                if ($wallet_user->is_under_distributer == 1 || $wallet_user->is_api) {
+
+                                        $commission_paiement =  $commission_invoice->percent  * $amount_paiement;
+                                } else {
+
+                                        $commission_paiement =  $commission_invoice->percent_custum_drawal  * $amount_paiement;
+                                }
+
 
                                 if ($wallet_user->country->code == 'CI') {
 
@@ -1002,7 +1020,7 @@ class withTransactionController extends Controller
 
                                                 $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_with_drawal  * $amount_paiement;
 
-                                                $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_paiement;
+                                                $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount ;
 
                                                 $commission_transaction_val_percent_pay =  (float) $commission_paiement;
                                         } else {
@@ -1131,13 +1149,14 @@ class withTransactionController extends Controller
                                  */
                                 $commissionUser = $commissionCfa * ($bankCurrencyValue / $userCurrencyValue);
                                 $amountUser     = $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
+                                $amountRecevedUser     = (float)  $amountUser  - (float)  $commissionUser;
 
                                 return response()->json([
                                         'success' => true,
                                         'data' => [
                                                 'amount_send'    => $amountUser,
                                                 'amount_pay'     => $commissionUser,
-                                                'amount_receive' => $amountUser,
+                                                'amount_receive' => $amountRecevedUser,
                                         ],
                                 ], 200);
                         }

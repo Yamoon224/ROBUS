@@ -258,13 +258,13 @@ class PaymentController extends Controller
                         if ($request->provider != 7) {
 
                             $amount_send = $reel_amount;
-                            $amount_valeur = $reel_amount + (float) $percent_robus->amount_auther;
+                            $amount_valeur = $request->provider == 8 ?  $reel_amount : $reel_amount + (float) $percent_robus->amount_auther ;
                             $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
                         } else {
 
                             $amount_send = $offers->amount;
                             $amount_valeur = $offers->amount + $percent_robus->amount_canal;
-                            $amountReceved = $reel_amount - (float) ($percent_robus->amount_canal);
+                            $amountReceved = $offers->amount;
                         }
 
 
@@ -423,7 +423,7 @@ class PaymentController extends Controller
 
                 if ($wallet_user->country->code == 'CI') {
 
-                    if ($wallet_user->is_under_distributer == 1) {
+                    if ($wallet_user->is_under_distributer == 1 || $wallet_user->is_api == 1) {
 
                         $commission_paiement_invoice_val_nat_pay =  (float) $commission_invoice->comission_auther;
 

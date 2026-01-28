@@ -207,7 +207,11 @@ class VersementController extends Controller
 
                         $valeur_received = $request->amount -  $percent_amount;
 
-                        $amount_valeur = $percent_amount + (float)  $request->amount;
+                        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
+                            $amount_valeur = $request->amount;
+                        } else {
+                            $amount_valeur = $request->amount;
+                        }
 
                         if ($this->validatedamountDays->validateAmount($amount_valeur)) {
 

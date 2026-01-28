@@ -99,6 +99,8 @@ class VersementService
             'amount_solde' => $amount_solde,
         ]);
 
+        $amount_bank =  $percent_robus->percent_bank_custumer * $walletPayment->amount;
+
         if (robus()->is_under_distributer || robus()->is_api) {
 
             $valuer_deposit =  $percent_robus->percent_merchands * $walletPayment->amount;
@@ -123,18 +125,18 @@ class VersementService
 
                     $walletPayment->increment('commission_companie', $valuer_companie);
 
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_versement_id', $walletPayment->id, $compagnie_amount, $valuer_deposit);
+                    $this->commissionServices->distributeAdminAndBankCommissionAcceptedCompanies($admin_civ, 'wallet_versement_id', $walletPayment->id, $compagnie_amount, $valuer_deposit, $amount_bank);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur, $valuer_deposit);
+                    $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur, $valuer_deposit, $amount_bank);
                 }
             } else {
 
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_nocomission);
+                $this->commissionServices->distributeAdminAndBankCommissions($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_nocomission,  $amount_bank);
             }
         } else {
 
             $admin_valeur =  (float) $percent_robus->percent_custumer * $walletPayment->amount;;
-            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur);
+            $this->commissionServices->distributeAdminAndBankCommissions($admin_civ, 'wallet_versement_id', $walletPayment->id, $admin_valeur,  $amount_bank);
         }
 
         return true;

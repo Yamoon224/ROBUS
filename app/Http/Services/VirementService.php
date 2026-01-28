@@ -113,7 +113,6 @@ class VirementService
                 }
 
             } else {
-
                 $amountDeposit = (float) $amount_user->amount;
                 $this->commissionServices->distributeAdminCommissions($admin_civ , 'wallet_bank_id', $walletBank->id, $amountDeposit);
             }

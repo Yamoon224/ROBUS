@@ -258,11 +258,13 @@ class WithService
             'balance_before' => $user->wallet->amount
         ]);
 
-        $user->wallet->update([
-            'reload_by' => $user->firstname . ' ' . $user->lastname,
-            'sid_user_relod' => $user->id,
-            'amount' => DB::raw('amount-'  .  $amount_commission),
-        ]);
+        if (!$is_drawal) {
+            $user->wallet->update([
+                'reload_by' => $user->firstname . ' ' . $user->lastname,
+                'sid_user_relod' => $user->id,
+                'amount' => DB::raw('amount-'  .  $amount_commission),
+            ]);
+        }
 
         $valuer_deposit = $percent_commission *  $amount;
         $percent_valeur_compagnie = $percent_compagnie *  $amount;
@@ -305,7 +307,7 @@ class WithService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                sendTryCashMessage($user->phone , $message);
+                sendTryCashMessage($user->phone, $message);
             }
         }
 
@@ -406,7 +408,7 @@ class WithService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                sendTryCashMessage($user->phone , $message);
+                sendTryCashMessage($user->phone, $message);
             }
         }
 
@@ -438,7 +440,7 @@ class WithService
         if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
         } else {
-            $amount_commission = $amount + ($percent_robus->percent * $amount);
+            $amount_commission = $amount;
         }
 
         $amount_solde = $user->wallet->amount - $amount_commission;
@@ -448,11 +450,14 @@ class WithService
             'balance_before' => $user->wallet->amount
         ]);
 
-        $user->wallet->update([
-            'reload_by' => $user->firstname . ' ' . $user->lastname,
-            'sid_user_relod' => $user->id,
-            'amount' => DB::raw('amount-'  .  $amount_commission),
-        ]);
+        if (!$is_drawal) {
+
+            $user->wallet->update([
+                'reload_by' => $user->firstname . ' ' . $user->lastname,
+                'sid_user_relod' => $user->id,
+                'amount' => DB::raw('amount-'  .  $amount_commission),
+            ]);
+        }
 
         $percent = $is_drawal
             ? $percent_robus->percent_with_drawal
@@ -507,7 +512,7 @@ class WithService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                sendTryCashMessage($user->phone , $message);
+                sendTryCashMessage($user->phone, $message);
             }
         }
 
@@ -550,11 +555,13 @@ class WithService
             'balance_before' => $user->wallet->amount
         ]);
 
-        $user->wallet->update([
-            'reload_by' => $user->firstname . ' ' . $user->lastname,
-            'sid_user_relod' => $user->id,
-            'amount' => DB::raw('amount-'  .  $amount_commission),
-        ]);
+        if (!$is_drawal) {
+            $user->wallet->update([
+                'reload_by' => $user->firstname . ' ' . $user->lastname,
+                'sid_user_relod' => $user->id,
+                'amount' => DB::raw('amount-'  .  $amount_commission),
+            ]);
+        }
 
         $percent = $is_drawal
             ? $percent_robus->percent_with_drawal
@@ -610,7 +617,7 @@ class WithService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                sendTryCashMessage($user->phone , $message);
+                sendTryCashMessage($user->phone, $message);
             }
         }
 

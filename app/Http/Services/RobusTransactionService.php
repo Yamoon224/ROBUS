@@ -37,7 +37,7 @@ class RobusTransactionService
         $this->commissionServices = $commissionServices;
     }
 
-    public function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal , $amount_before_drawal)
+    public function createRobusWalletTransaction($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal)
     {
         $val_amount = $transaction_amount_robus;
 
@@ -70,7 +70,7 @@ class RobusTransactionService
         );
     }
 
-    public function createRobusWalletTransactionDistributer($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal , $amount_before_drawal)
+    public function createRobusWalletTransactionDistributer($transaction_amount_robus, $percent_robus, $provider, $compte_number_robus, $amount_drawal, $amount_before_drawal)
     {
         $val_amount = $transaction_amount_robus;
 
@@ -178,7 +178,7 @@ class RobusTransactionService
                         $valeur_single = ($admin_valeur_convertion + $admin_valeur_convertion_drawal) / $nmbre_admin;
 
                         foreach ($admin_civ as $user) {
-                            $this->commissionServices->processAdminCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
+                            $this->commissionServices->processAdminDrawalCommissionSDistributer($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit);
                         }
                     }
                 }
@@ -406,7 +406,6 @@ class RobusTransactionService
 
         $wallet = robus()->wallet;
 
-        // $master_id = $this->robusMasterTransaction->mastersId();
 
         // Préparez les valeurs mises à jour
         $updatedValues = [
@@ -420,10 +419,6 @@ class RobusTransactionService
         // Percent admin 
         $valeur_percent_admin  = $percent_robus->percent * $transaction_amount_robus;
 
-        // $valuer_master =  $master_id ? $percent_robus->percent_masters * $valeur_percent_admin : 0;
-
-        // $admin_received = (float)$valeur_percent_admin - $valuer_master;
-
         if ($country_civ->currencie->value > robus()->country->currencie->value) {
 
             $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
@@ -435,7 +430,6 @@ class RobusTransactionService
             $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
         }
 
-        // $walletTransaction->increment('commission_masters', $valuer_master);
 
         if ($admin_civ->count() > 0) {
 
@@ -453,6 +447,13 @@ class RobusTransactionService
                     'amount_with_draw' =>  0,
                     'description' => 'Commission administrateur',
                 ]);
+
+                $walletAdmin = WalletAdmin::find(1);
+                if ($walletAdmin && $walletAdmin->amount >= $valeur_single) {
+                    $walletAdmin->increment('amount', $valeur_single);
+                } else {
+                    $admin_single->wallet->increment('amount', $valeur_single);
+                }
             }
         }
 

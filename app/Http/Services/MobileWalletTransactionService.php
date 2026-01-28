@@ -30,7 +30,7 @@ class MobileWalletTransactionService
         $this->commissionServices = $commissionServices;
     }
 
-      public function createRobusDrawalWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone, $choose_type_transaction, $type , $numberPiece)
+    public function createRobusDrawalWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone, $choose_type_transaction, $type, $numberPiece)
     {
 
         $val_amount = $transaction_amount_money;
@@ -151,7 +151,7 @@ class MobileWalletTransactionService
         return true;
     }
 
-      public function processCommissionsDrawalMobile($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ)
+    public function processCommissionsDrawalMobile($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ)
     {
 
         $commission =  $transaction_amount_money;
@@ -162,13 +162,13 @@ class MobileWalletTransactionService
 
 
         // Préparez les valeurs mises à jour
-        $updatedValues = [
-            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-            'sid_user_relod' => robus()->id,
-            'amount' => DB::raw('amount - ' . $commission),
-        ];
+        // $updatedValues = [
+        //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+        //     'sid_user_relod' => robus()->id,
+        //     'amount' => DB::raw('amount - ' . $commission),
+        // ];
 
-        $wallet->update($updatedValues);
+        // $wallet->update($updatedValues);
 
         $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
 
@@ -285,7 +285,7 @@ class MobileWalletTransactionService
         return true;
     }
 
-      public function processCommissionsDrawalDistributer($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ)
+    public function processCommissionsDrawalDistributer($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ)
     {
 
         $commission =  $transaction_amount_money;
@@ -311,13 +311,13 @@ class MobileWalletTransactionService
         }
 
         // Préparez les valeurs mises à jour
-        $updatedValues = [
-            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-            'sid_user_relod' => robus()->id,
-            'amount' => DB::raw('amount - ' . $commission),
-        ];
+        // $updatedValues = [
+        //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+        //     'sid_user_relod' => robus()->id,
+        //     'amount' => DB::raw('amount - ' . $commission),
+        // ];
 
-        $wallet->update($updatedValues);
+        // $wallet->update($updatedValues);
 
         $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
 

@@ -20,7 +20,7 @@ use App\Events\PaymentFailed;
 use App\Events\PaymentPending;
 use App\Models\Invoices\InvoiceReload;
 use Carbon\Carbon;
-use App\Models\Wallets\WalletAdmin;
+use App\Models\Wallets\WalletCommission;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\PercentRobusAuthService;
 
@@ -330,21 +330,28 @@ class PaystackWebhookController extends Controller
                     ->where('country_id', 107)
                     ->first();
 
-                $walletAdmin = WalletAdmin::find(1);
-
+                $walletAdmin = WalletCommission::find(1);
+                $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
 
                 if (!$commission_robus) {
                     throw new \Exception('Coût Robus introuvable');
                 }
 
-                $totalAmount = (float) $transaction->amount_received - $total_commission;
+                if (!$wallet_commission) {
+                    throw new \Exception("Wallet commission introuvable");
+                }
+
+                $totalAmount = $transaction->amount;
+
+                $total_admin_commission = $transaction->costs_amount;
 
                 if ($totalAmount <= 0) {
                     throw new \Exception('Montant final invalide');
                 }
 
                 if ($walletAdmin && $walletAdmin->amount >= $totalAmount) {
-                    $walletAdmin->decrement('amount', $totalAmount);
+                    $wallet_commission->decrement('amount', $totalAmount);
+                    $walletAdmin->increment('amount', $total_admin_commission);
                 } else {
                     $admin_single->wallet->decrement('amount', $totalAmount);
                 }
@@ -352,7 +359,7 @@ class PaystackWebhookController extends Controller
                 $transaction->wallet->update([
                     'reload_by' => $transaction->user_id,
                     'sid_user_relod' => $transaction->user_id,
-                    'amount' => DB::raw('amount+' . $totalAmount),
+                    'amount' => DB::raw('amount+' . $amountReceived),
                 ]);
             }
 
@@ -623,6 +630,7 @@ class PaystackWebhookController extends Controller
                     if ($data['status'] === 'success' && $transaction->status !== 'success') {
                         return $this->handleSuccessfulCharge($data);
                     } elseif (in_array($data['status'], ['failed', 'abandoned']) && $transaction->status === 'pending') {
+                       
                         $amountPaid = $data['amount'] / 100;
                         $paystackFees = ($data['fees'] ?? 0) / 100;
                         $amountReceived = $amountPaid - $paystackFees;

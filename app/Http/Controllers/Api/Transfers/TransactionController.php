@@ -758,24 +758,46 @@ class TransactionController extends Controller
 
         try {
 
-            $validator = Validator::make(
 
-                $request->all(),
-                [
-                    "phone" => 'required',
-                    "provider" => 'required',
-                    "amount" => 'required',
-                    "name_custumer" => 'required',
-                ],
-                [
+            if (robus()->is_under_distributer || robus()->is_api) {
 
-                    'phone.required' => 'Votre numero est obligatoire',
-                    'provider.required' => 'Votre operateur est obligatoire',
-                    'amount.required' => 'Votre montant est obligatoire',
-                    'name_custumer.required' => 'Nom est obligatoire',
+                $validator = Validator::make(
 
-                ]
-            );
+                    $request->all(),
+                    [
+                        "phone" => 'required',
+                        "provider" => 'required',
+                        "amount" => 'required',
+                    ],
+                    [
+
+                        'phone.required' => 'Votre numero est obligatoire',
+                        'provider.required' => 'Votre operateur est obligatoire',
+                        'amount.required' => 'Votre montant est obligatoire',
+
+                    ]
+                );
+            } else {
+
+                $validator = Validator::make(
+
+                    $request->all(),
+                    [
+                        "phone" => 'required',
+                        "provider" => 'required',
+                        "amount" => 'required',
+                    ],
+                    [
+
+                        'phone.required' => 'Votre numero est obligatoire',
+                        'provider.required' => 'Votre operateur est obligatoire',
+                        'amount.required' => 'Votre montant est obligatoire',
+
+                    ]
+                );
+            }
+
+
 
             if ($validator->fails()) {
                 return response()->json(
@@ -811,13 +833,9 @@ class TransactionController extends Controller
                             if (robus()->country->name_groupe == 'CIV') {
 
                                 $valeur_received = $request->amount;
-
-                                $amount_payment = $request->amount;
                             } else {
 
                                 $valeur_received = $request->amount - $percent_amount;
-
-                                $amount_payment =  $request->amount + $percent_amount;
                             }
 
                             $cost_payment = $percent_amount;
@@ -826,42 +844,34 @@ class TransactionController extends Controller
                             $valeur_received = $request->amount - $percent_amount;
 
                             $cost_payment = $percent_amount;
-
-                            $amount_payment =  $request->amount + $percent_amount;
                         }
 
-                        if ($this->validatedamountDays->validateAmount($amount_payment)) {
+                        $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type, $request->numberPiece);
 
-                            $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type, $request->numberPiece);
+                        if ($walletTransaction != null) {
 
-                            if ($walletTransaction != null) {
+                            if ($this->mobileWalletTransactionService->updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)) {
 
-                                if ($this->mobileWalletTransactionService->updateAmountRobusReceivedMobile($walletTransaction, $valeur_received)) {
+                                if (robus()->is_under_distributer || robus()->is_api) {
+                                    $processCommission = $this->mobileWalletTransactionService->processCommissionsDrawalDistributer($request->amount, $percent_robus, $walletTransaction, $admin_civ);
+                                } else {
 
-                                    if (robus()->is_under_distributer || robus()->is_api) {
-                                        $processCommission = $this->mobileWalletTransactionService->processCommissionsDrawalDistributer($request->amount, $percent_robus, $walletTransaction, $admin_civ);
-                                    } else {
-
-                                        $processCommission = $this->mobileWalletTransactionService->processCommissionsDrawalMobile($request->amount, $percent_robus, $walletTransaction, $admin_civ);
-                                    }
-
-                                    if ($processCommission) {
-
-                                        $this->notifications->sendNotificationMobile($walletTransaction);
-
-                                        return $this->messageAfterValidated($walletTransaction);
-                                    } else {
-
-                                        return  json_message_response(false, "Error de transferts du montant!", 333);
-                                    }
+                                    $processCommission = $this->mobileWalletTransactionService->processCommissionsDrawalMobile($request->amount, $percent_robus, $walletTransaction, $admin_civ);
                                 }
-                            } else {
 
-                                return  json_message_response(false, "Error de createtion transferts !", 333);
+                                if ($processCommission) {
+
+                                    $this->notifications->sendNotificationMobile($walletTransaction);
+
+                                    return $this->messageAfterValidated($walletTransaction);
+                                } else {
+
+                                    return  json_message_response(false, "Error de transferts du montant!", 333);
+                                }
                             }
                         } else {
 
-                            return   json_message_response(false, "Verifié votre solde SVP !", 333);
+                            return  json_message_response(false, "Error de createtion transferts !", 333);
                         }
                     } else {
 

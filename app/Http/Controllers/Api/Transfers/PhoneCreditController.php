@@ -193,7 +193,7 @@ class PhoneCreditController extends Controller
                                 $amountReceved = $reel_amount;
                             } else {
 
-                                $val_amount_send = $reel_amount + (float) ($percent_robus->percent * $reel_amount);
+                                $val_amount_send = $reel_amount ;
                                 $amountReceved = $reel_amount - (float) ($percent_robus->percent * $reel_amount);
                             }
 
@@ -321,65 +321,94 @@ class PhoneCreditController extends Controller
 
 
     // Search Valeur receive and valeur pay of Virement
-    public function search_phone_credit($amount)
+    public function search_phone_credit($amount_phone_credit)
     {
-        if (!$amount || !is_numeric($amount)) {
-            return response()->json(['success' => false], 200);
-        }
 
-        $default_max = 2000000;
+        $default_valeur = 2000000;
+
 
         try {
 
-            $percent = Cache::remember(
-                'percent_phone_credit',
-                300,
-                fn() => $this->percentRobus->getRobusPercentagePhoneCredit()
-            );
+            $percent_robus =  $this->percentRobus->getRobusPercentagePhoneCredit();
 
-            if (!$percent) {
-                return response()->json(['success' => false], 200);
-            }
+            if ($percent_robus != null) {
 
-            return Cache::remember(
-                "phone_credit_$amount",
-                60,
-                function () use ($amount, $percent, $default_max) {
+                if ($amount_phone_credit != '') {
 
-                    $realAmount = (float) $amount;
+                    $reel_amount = $this->validatedamountDays->search_amount($amount_phone_credit);
 
-                    if ($realAmount > $default_max) {
-                        return [
-                            'success' => true,
-                            'data' => [
-                                'amount_pay' => 0,
-                                'amount_send' => 0,
-                                'amount_receive' => "Montant maxi : $default_max",
-                            ],
-                        ];
+                    $commission_phone_credit_val_nat_pay = 0;
+                    $commission_phone_credit_val_nat_receive = 0;
+                    $commission_virement_val_nat_send = 0;
+                    $commission_phone_credit_commission = 0;
+                    //  Conversion valeur
+                    $conversion_valeur_end  =  $default_valeur;
+
+                    if ($conversion_valeur_end  < $reel_amount) {
+
+                        $commission_phone_credit_val_nat_pay = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+
+                        $commission_phone_credit_val_nat_receive = "Montant maxi est  : " .  number_format($conversion_valeur_end, 2, ',', ' ');
+                    } else {
+
+                        if (robus()->is_under_distributer) {
+
+
+                            $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
+
+                            // $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
+
+                            $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $reel_amount;
+
+                            $valeur_receive =  $reel_amount;
+
+                            if ($valeur_receive < 0) {
+
+                                $commission_phone_credit_val_nat_receive = "Montant negatif";
+                            } else {
+
+                                $commission_phone_credit_val_nat_receive =  $valeur_receive;
+                            }
+                        } else {
+
+                            $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
+
+                            // $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
+
+                            $commission_phone_credit_commission =   $percent_robus->percent  *  $reel_amount;
+
+                            $valeur_receive =  $reel_amount - $commission_phone_credit_val_nat_pay;
+
+                            if ($valeur_receive < 0) {
+
+                                $commission_phone_credit_val_nat_receive = "Montant negatif";
+                            } else {
+
+                                $commission_phone_credit_val_nat_receive =  $valeur_receive;
+                            }
+                        }
                     }
 
-                    $feePay = $percent->percent * $realAmount;
-                    $feeCommission = (robus()->is_under_distributer || robus()->is_api)
-                        ? $percent->percent_merchands * $realAmount
-                        : $feePay;
-
-                    $receive = (robus()->is_under_distributer || robus()->is_api)
-                        ? $realAmount
-                        : max(0, $realAmount - $feePay);
-
-                    return [
-                        'success' => true,
-                        'data' => [
-                            'amount_pay' => round($feeCommission, 2),
-                            'amount_send' => round($feePay, 2),
-                            'amount_receive' => round($receive, 2),
+                    return response()->json([
+                        'success' => $percent_robus != null ? true : false,
+                        'data' =>  [
+                            'amount_pay' => $commission_phone_credit_commission,
+                            'amount_send' => $commission_phone_credit_val_nat_pay,
+                            'amount_receive' => $commission_phone_credit_val_nat_receive,
                         ],
-                    ];
+                    ], 200);
                 }
-            );
-        } catch (\Throwable $e) {
-            return response()->json(['success' => false], 200);
+            } else {
+                return response()->json([
+                    'success' =>  false,
+                    'message' => 'Pas de Virement dans cette zone ...',
+                ], 200);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'success' =>  false,
+                'message' => 'Pas d\'utilisateur',
+            ], 200);
         }
     }
 
@@ -417,8 +446,6 @@ class PhoneCreditController extends Controller
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
 
-                            // $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
-
                             $valeur_receive =  $reel_amount;
 
                             $commission_phone_credit_commission =   $percent_robus->percent_merchands  *  $reel_amount;
@@ -433,8 +460,6 @@ class PhoneCreditController extends Controller
                         } else {
 
                             $commission_phone_credit_val_nat_pay =   $percent_robus->percent  *  $reel_amount;
-
-                            // $percent_real = adjustFeesWithRest($commission_phone_credit_val_nat_pay , $reel_amount);
 
                             $commission_phone_credit_commission =   $percent_robus->percent  *  $reel_amount;
 

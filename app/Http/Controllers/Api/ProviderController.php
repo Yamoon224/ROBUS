@@ -145,7 +145,7 @@ class ProviderController extends Controller
                 'walletPhoneInter' => [9, 'phoneInter'],
                 'walletVirementBank' => [10, 'virementBank'],
                 'walletReloadCardInter' => [11, 'reloadCardInter'],
-                'walletTransaction' => [1, 'transaction'],
+                'walletTransaction' => [[1, 23], 'transaction'],
                 'walletTresort' => [23, 'tresort'],
                 'walletBankSend' => [27, 'bankSend'],
                 'walletInterPush' => [21, 'interPush'],

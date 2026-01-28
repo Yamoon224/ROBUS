@@ -310,7 +310,7 @@ class ReloadController extends Controller
                                 . $walletReload->provider->name  .  ' a '
                                 . $walletReload->created_at . ' votre demande est en-cours de validation ' . 'Robus vous remercie';
 
-                            sendTryCashMessage(robus()->phone , $message);
+                            sendTryCashMessage(robus()->phone, $message);
                         }
 
                         $msg = 'Demande en cours de validation';
@@ -1234,7 +1234,7 @@ class ReloadController extends Controller
 
                     $total_percent = (float) $percent_robus->percent + (float) $percent_robus->percent_admin;
                     $commission_phone_credit_val_nat_pay =   $total_percent  *  $reel_amount;
-                    $commission_phone_credit_commission =   $reel_amount -   ($reel_amount *  ((float)$percent_robus->percent + (float) $percent_robus->percent_admin)) ;
+                    $commission_phone_credit_commission =   $reel_amount -   ($reel_amount *  ((float)$percent_robus->percent + (float) $percent_robus->percent_admin));
 
                     $countryNameGroup = robus()->country->name_groupe;
 
@@ -1265,7 +1265,7 @@ class ReloadController extends Controller
         }
     }
 
-      public function search_share_reload($amount_reload)
+    public function search_share_reload($amount_reload)
     {
 
 
@@ -1285,8 +1285,7 @@ class ReloadController extends Controller
 
                     $total_percent = (float) $percent_robus->percent + (float) $percent_robus->percent_admin;
                     $commission_phone_credit_val_nat_pay =   $total_percent  *  $reel_amount;
-
-                    $commission_phone_credit_commission =  (float) $reel_amount -  (float) $total_percent ;
+                    $commission_phone_credit_commission =   $reel_amount -   ($reel_amount *  ((float)$percent_robus->percent + (float) $percent_robus->percent_admin));
 
                     $countryNameGroup = robus()->country->name_groupe;
 
@@ -1338,7 +1337,7 @@ class ReloadController extends Controller
                     $total_percent = (float) $percent_robus->percent + (float) $percent_robus->percent_admin;
                     $commission_phone_credit_val_nat_pay =   $total_percent  *  $reel_amount;
 
-                    $commission_phone_credit_commission =  (float) $reel_amount -  (float) $total_percent ;
+                    $commission_phone_credit_commission =  (float) $reel_amount -  (float) $total_percent;
 
                     $countryNameGroup = robus()->country->name_groupe;
 
@@ -1369,7 +1368,7 @@ class ReloadController extends Controller
         }
     }
 
-     public function search_pixel_out_reload($amount_reload)
+    public function search_pixel_out_reload($amount_reload)
     {
 
 
@@ -1390,7 +1389,7 @@ class ReloadController extends Controller
                     $total_percent = (float) $percent_robus->percent + (float) $percent_robus->percent_admin;
                     $commission_phone_credit_val_nat_pay =   $total_percent  *  $reel_amount;
 
-                    $commission_phone_credit_commission =  (float) $reel_amount -  (float) $total_percent ;
+                    $commission_phone_credit_commission =  (float) $reel_amount -  (float) $total_percent;
 
                     $countryNameGroup = robus()->country->name_groupe;
 

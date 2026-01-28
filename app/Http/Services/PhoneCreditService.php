@@ -71,7 +71,7 @@ class PhoneCreditService
             $activeCButtons = [];
         }
 
-        $amount_commission = (robus()?->is_under_distributer || robus()?->is_api) ?  $amount  : $amount + ($percent_robus->percent * $amount);
+        $amount_commission =  $amount ;
         $amount_solde = robus()->wallet->amount - $amount_commission;
 
         $walletPhone->update([

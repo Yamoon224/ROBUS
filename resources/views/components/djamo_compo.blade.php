@@ -103,6 +103,9 @@
                                                   @if ($item->updated_by == null)
                                                       <div
                                                           class="flex flex-col md:flex-row items-center justify-center gap-4 mt-4 p-4 ">
+                                                          <p class="font-medium whitespace-nowrap mt-1">
+                                                              Numero : {{ $item->phone ?? null }}
+                                                          </p>
 
                                                           <!-- Bouton action -->
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))

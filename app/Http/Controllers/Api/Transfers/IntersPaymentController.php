@@ -529,14 +529,10 @@ class IntersPaymentController extends Controller
 
                                             $percent_amount = $percent_robus->percent_under_distributer * $request->amount;
 
-                                            // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
-
                                             $valeur_received = $request->amount -  $percent_amount;
                                         } else {
 
                                             $percent_amount = $percent_robus->percent * $request->amount;
-
-                                            // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
 
                                             $valeur_received = $request->amount -  $percent_amount;
                                         }
@@ -666,7 +662,7 @@ class IntersPaymentController extends Controller
 
                                             $valeur_received = $request->amount -  $percent_amount;
 
-                                            $valeur_amount = $request->amount + $percent_amount;
+                                            $valeur_amount = $request->amount ;
                                         }
 
                                         $file_front = $request->file('image_piece');
@@ -840,8 +836,6 @@ class IntersPaymentController extends Controller
                                 $amount_receved = $request->amount;
 
                                 $valeur_convertion_amount =   $this->convertionservice->convertAdminCommissionPayment($percent_robus->amount_auther);
-
-                                // $valeur_convertion =  $request->amount + $valeur_convertion_amount;
 
                                 $valeur_convertion =   $request->amount;
 

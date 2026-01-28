@@ -88,7 +88,7 @@ class VirementBanks extends Component
             'percent_custumer'  => $this->percent_custumer,
             'percent_admin_custumer'  => $this->percent_admin_custumer,
             'percent_bank_custumer'  => $this->percent_bank_custumer,
-            'percent_bank_under'  => $this->percent_bank_under,
+            // 'percent_bank_under'  => $this->percent_bank_under,
 
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
