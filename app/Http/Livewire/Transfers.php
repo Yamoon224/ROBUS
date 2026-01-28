@@ -4248,7 +4248,7 @@ class Transfers extends Component
 
             if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
                 DB::rollBack();
-                $this->emit('menu-paiement-active');
+                $this->emit('menu-bankSend-active');
                 $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
                 event(new ChoosePaymentEvent($walletUpdate));
                 return;
@@ -4258,20 +4258,20 @@ class Transfers extends Component
 
                 if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
-                    $this->updateWallet($walletUpdate, ChoosePaymentEvent::class, 'modal-hide-paiement', 'menu-paiement-active', 'Vous avez choisi un paiement');
+                    $this->updateWallet($walletUpdate, ChoosePaymentEvent::class, 'modal-hide-bankSend', 'menu-bankSend-active', 'Vous avez choisi un paiement bank send');
                 } else {
-                    $this->emit('menu-paiement-active');
+                    $this->emit('menu-bankSend-active');
                     $this->emit(
                         'error',
                         'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
                     );
                 }
             } else {
-                $this->emit('menu-paiement-active');
+                $this->emit('menu-bankSend-active');
                 $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
             }
         } catch (\Exception $exception) {
-            $this->emit('menu-paiement-active');
+            $this->emit('menu-bankSend-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
     }

@@ -19,14 +19,17 @@ class VirementInterService
     public $intersRepository;
     public $convertionService;
     public $operatorRestrictionService;
+    public $commissionServices;
 
     public function __construct(
         IntersRepository $inter_Reposi,
         ConvertionService $convertionService,
         OperatorRestrictionService $operatorRestrictionService,
+        CommissionService $commissionServices
     ) {
         $this->intersRepository = $inter_Reposi;
         $this->convertionService = $convertionService;
+        $this->commissionServices = $commissionServices;
         $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
@@ -145,7 +148,6 @@ class VirementInterService
                 $totalAmount = (float)$valuer_deposit + $amountCompanie;
                 $valuer_depositUnder = (float) $valuer_deposit;
 
-
                 $walletBank->update([
                     'commissions' => DB::raw('commissions+'  .  $valuer_deposit),
                 ]);
@@ -162,65 +164,24 @@ class VirementInterService
 
                     $walletBank->increment('commission_companie', $amountCompanie);
 
-                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletBank, $admin_cumul_convertion, $valeur_amount_admin);
-                } else {
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_inter_id' ,$walletBank->id, $admin_cumul_convertion, $valeur_amount_admin);
 
-                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletBank, $valeur_amount_admin, $admin_valeur_convertion);
+                } else {
+                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ , 'wallet_inter_id', $walletBank->id, $valeur_amount_admin , $admin_valeur_convertion);
                 }
             } else {
 
                 $admin_valeur_convertion = $percent_valeur;
+                $this->commissionServices->distributeAdminCommissions($admin_civ , 'wallet_inter_id', $walletBank->id, $admin_valeur_convertion);
 
-                $this->distributeAdminCommissions($admin_civ, $walletBank, $admin_valeur_convertion);
             }
         } else {
 
             $valeur_amount_admin = $percent_valeur;
-
-            $this->distributeAdminCommissions($admin_civ, $walletBank, $valeur_amount_admin);
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_inter_id' ,$walletBank->id, $valeur_amount_admin);
         }
-
 
         return true;
     }
 
-    private function distributeAdminCommissions($adminCiv, $walletBank, $totalCommission)
-    {
-        if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $totalCommission / $adminCiv->count();
-
-            foreach ($adminCiv as $user) {
-                $adminUser = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' => $commissionPerAdmin,
-                    'sid_user_id' => $adminUser->id,
-                    'wallet_inter_id' => $walletBank->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' =>  0,
-                    'description_underdistributer' => null,
-                ]);
-            }
-        }
-    }
-
-    private function distributeAdminCommissionAccepteds($adminCiv, $walletBank, $totalCommission, $amountDeposit)
-    {
-        if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $totalCommission / $adminCiv->count();
-
-            foreach ($adminCiv as $user) {
-                $adminUser = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' => $commissionPerAdmin,
-                    'sid_user_id' => $adminUser->id,
-                    'wallet_inter_id' => $walletBank->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $amountDeposit : 0,
-                    'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
-                ]);
-            }
-        }
-    }
 }

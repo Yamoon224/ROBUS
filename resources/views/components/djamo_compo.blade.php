@@ -151,6 +151,7 @@
                                                                   disponible</span>
                                                           @endif
                                                       </div>
+                                                      
                                                   @endif
                                               </td>
 

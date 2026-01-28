@@ -851,7 +851,7 @@ class IntersPaymentController extends Controller
 
                                 $valeur_convertion =   $this->convertionservice->convertAdminCommissionPayment($offers->amount);
 
-                                $amount_receved = $valeur_convertion;
+                                $amount_receved = $valeur_convertion ;
 
                                 $amount_commission = $percent_robus->amount_canal;
 
@@ -882,7 +882,7 @@ class IntersPaymentController extends Controller
                                     $valeur_convertion_amount_receved
                                 );
 
-                                if ($request->provider != 7) {
+                                if ($request->provider != 52) {
 
                                     if ($walletPayment != null) {
 
@@ -1089,8 +1089,6 @@ class IntersPaymentController extends Controller
                                     $convertion_amount_begin =  $this->convertionservice->convertAdminCommissionPayment($valeur_first->amount_begin);
 
                                     $convertion_amount_end =  $this->convertionservice->convertAdminCommissionPayment($valeur_end->amount_end);
-
-                                    $amount_conv_countrie =  $this->convertionservice->convertAdminCommissionPayment($amount_request);
 
                                     // Convertion valeurs
                                     if ($convertion_amount_begin > $request->amount) {
@@ -1657,89 +1655,6 @@ class IntersPaymentController extends Controller
         }
     }
 
-    public function processTransactionForCIV($request, $country_robus, $percent_robus, $amount_days, $valeur_ceiling)
-    {
-
-        // Amount max send country
-        $valeur_max_send  =  $country_robus->amount_max_send;
-        if (!$this->validatedamountDays->validateDailyLimit($amount_days, $valeur_ceiling)) {
-            return json_message_response(false, "Le montant maximal journalier est atteint !", 300);
-        } elseif (!$this->validatedamountDays->validateAmountSendLimit($request->amount, $valeur_max_send)) {
-            return   json_message_response(false, "Le montant maximum a envoyé est de : " . $valeur_max_send . ' '  . $country_robus->currencie->code, 333);
-        }
-
-
-        foreach ($percent_robus->levelTransactions as $amount_user) {
-
-            if ($request->amount >= $amount_user->amount_begin && $request->amount <= $amount_user->amount_end) {
-
-                $valeur_received = ($amount_user->percent === null) ?
-                    $request->amount - $amount_user->amount :
-                    $request->amount - ($amount_user->percent * $request->amount);
-
-                $amount_cost = ($amount_user->percent === null) ?
-                    $amount_user->amount : ($amount_user->percent * $request->amount);
-
-                $amount_percent = ($amount_user->percent === null) ?
-                    $amount_user->amount : ($amount_user->percent * $request->amount);
-
-                if (!$this->validatedamountDays->validateAmount($request->amount)) {
-                    return json_message_response(false, "Vérifiez votre solde SVP !", 300);
-                }
-
-
-                if ($request->provider == 51) {
-
-
-                    // Update Info valeurs
-                    $walletAmountSend = Wallet::where('wallet_id',  $request->number_compte)->first();
-
-                    $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$request->amount;
-
-                    $walletInter = $this->interServices->createRobusWalletInter($request->amount, $percent_robus, $country_robus, $request->provider, $request->number_compte, $request->provider_type, $amount_solde_drawal);
-
-                    if ($walletInter === null) {
-
-                        return json_message_response(false, "Erreur de demande de transfert !", 300);
-                    }
-
-                    if ($this->interServices->updateAmountRobusReceived($walletInter, $country_robus, $valeur_received, $request->number_compte)) {
-                        if ($this->interServices->processCommissionsRobusOutCiv($request->amount, $percent_robus, $walletInter)) {
-                            $this->interServices->sendNotificationRobus($walletInter);
-                            return $this->messageAfterValidated($walletInter);
-                        } else {
-
-                            return   json_message_response(false, "Error de transferts du montant !", 300);
-                        }
-                    } else {
-
-                        return   json_message_response(false, "Error de demande transferts  !", 300);
-                    }
-                } else {
-
-                    $walletInter = $this->interServices->createMobileWalletInterCIV($request->amount, $percent_robus, $country_robus, $request->provider, $request->phone, $request->provider_type, $amount_cost, $request->name_custumer, $request->num_piece_custumer, $request->date_piece);
-
-                    if ($walletInter === null) {
-                        return json_message_response(false, "Erreur de demande de transfert !", 300);
-                    }
-
-                    if ($this->interServices->updateAmountReceived($walletInter, $country_robus, $valeur_received, $request->number_compte)) {
-                        if ($this->interServices->processCommissionsMobileRobus($request->amount, $amount_percent, $country_robus, $walletInter)) {
-                            $this->interServices->sendNotificationRobus($walletInter);
-                            return $this->messageAfterValidated($walletInter);
-                        } else {
-                            return json_message_response(false, "Erreur de transfert du montant !", 300);
-                        }
-                    } else {
-                        return json_message_response(false, "Erreur de demande de transfert !", 300);
-                    }
-                    $walletInter = $this->interServices->createRobusWalletInterCIV($request->amount, $percent_robus, $country_robus, $request->provider, $request->number_compte, $request->provider_type, $amount_user->amount);
-                }
-            }
-        }
-
-        return json_message_response(false, "Pas de plage de dates chez nous !", 300);
-    }
 
     /**
      * Delete Inter transaction

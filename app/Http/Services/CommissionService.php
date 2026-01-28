@@ -58,11 +58,6 @@ class CommissionService
                     'description_underdistributer' => $userUnder->is_under_distributer ? 'Paiement commission sous-distributer' : null,
                 ], [$walletColumn => $walletId]));
 
-                // if ($walletCommission && $walletCommission->amount >= $total_commission) {
-                //     $walletCommission->decrement('amount', $total_commission);
-                // } else {
-                //     $adminUser->wallet->decrement('amount', $total_commission);
-                // }
             }
         }
     }

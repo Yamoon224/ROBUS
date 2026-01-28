@@ -99,7 +99,7 @@
                                                         style="color: white;">
                                                         Rechargement Bank send
 
-                                                      
+
                                                     </span>
                                                 @endif
                                                 <div
@@ -349,11 +349,10 @@
                                                                     Rechargement Bank send</div>
                                                             </div>
                                                         </div>
-                                                        <p>Numéro Swift :  {{ substr($item->num_authers ?? null, 0, 5) }}</p>
+                                                        <p>Numéro Swift :
+                                                            {{ substr($item->num_authers ?? null, 0, 5) }}</p>
 
-                                                        <p>Banque :  {{ substr($item->name ?? null, 0, 5) }}</p>
-                                                       
-                                                       
+                                                        <p>Banque : {{ substr($item->name ?? null, 0, 5) }}</p>
                                                     @endif
 
                                                     <div class="flex items-center justify-center text-success mt-3">
@@ -466,6 +465,19 @@
                                                             </div>
                                                         </div>
                                                         {{ $item->number_compte ?? null }}
+                                                    @elseif ($item->provider_type == 10)
+                                                        <div
+                                                            class="px-3 py-2 text-dark bg-pending dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
+                                                            <div class="fc-event-title-container"
+                                                                style="color: white;">
+                                                                <div class="fc-event-title fc-sticky">
+                                                                    Rechargement Bank send</div>
+                                                            </div>
+                                                        </div>
+                                                        <p>Numéro Swift :
+                                                            {{ substr($item->num_authers ?? null, 0, 5) }}</p>
+
+                                                        <p>Banque : {{ substr($item->name ?? null, 0, 5) }}</p>
                                                     @endif
                                                 @endif
                                             </td>

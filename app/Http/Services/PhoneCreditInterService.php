@@ -18,14 +18,18 @@ class PhoneCreditInterService
     public $intersRepository;
     public $convertionService;
     protected $operatorRestrictionService;
+    protected $commissionServices;
 
     public function __construct(
         IntersRepository $inter_Reposi,
         ConvertionService $convertionService,
         OperatorRestrictionService $operatorRestrictionService,
+        CommissionService $commissionServices
+
     ) {
         $this->intersRepository = $inter_Reposi;
         $this->convertionService = $convertionService;
+        $this->commissionServices = $commissionServices;
         $this->operatorRestrictionService = $operatorRestrictionService;
     }
 
@@ -130,60 +134,22 @@ class PhoneCreditInterService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
                     $walletPhone->increment('commission_companie', $valuer_companie);
-                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletPhone, $admin_convertion, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_inter_id',  $walletPhone->id, $admin_convertion, $valuer_deposit);
                 } else {
-                    $this->distributeAdminCommissionAccepteds($admin_civ, $walletPhone, $commission_convertion, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_inter_id',  $walletPhone->id, $commission_convertion, $valuer_deposit);
+
                 }
             } else {
 
-                $this->distributeAdminCommissions($admin_civ, $walletPhone, $admin_valeur_convertion);
+                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_inter_id',  $walletPhone->id, $admin_valeur_convertion);
             }
         } else {
 
-            $this->distributeAdminCommissions($admin_civ, $walletPhone, $admin_valeur_convertion);
-        }
+            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_inter_id',  $walletPhone->id, $admin_valeur_convertion);
 
+        }
 
         return true;
     }
 
-    private function distributeAdminCommissions($adminCiv, $walletPhone, $totalCommission)
-    {
-        if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $totalCommission / $adminCiv->count();
-
-            foreach ($adminCiv as $user) {
-                $adminUser = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $commissionPerAdmin,
-                    'sid_user_id' =>   $adminUser->id,
-                    'wallet_inter_id' => $walletPhone->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' =>  0,
-                    'description_underdistributer' =>  null
-                ]);
-            }
-        }
-    }
-
-    private function distributeAdminCommissionAccepteds($adminCiv, $walletPhone, $totalCommission, $amountDeposit)
-    {
-        if ($adminCiv->count() > 0) {
-            $commissionPerAdmin = $totalCommission / $adminCiv->count();
-
-            foreach ($adminCiv as $user) {
-                $adminUser = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' => $commissionPerAdmin,
-                    'sid_user_id' => $adminUser->id,
-                    'wallet_inter_id' => $walletPhone->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' => (robus()?->is_under_distributer || robus()?->is_api) ?  $amountDeposit : 0,
-                    'description_underdistributer' => (robus()?->is_under_distributer || robus()?->is_api) ?  'Paiement commission sous-distributer' : null
-                ]);
-            }
-        }
-    }
 }

@@ -16,12 +16,27 @@
                     <div class="col-span-12">
                         <div class="field field-full">
                             <label class="form-label required">Image de la carte</label>
+
                             <div class="field-value flex items-center gap-2">
                                 <i class="fas fa-qrcode"></i>
 
                                 @if ($image_bank_edit)
-                                    <img src="{{ asset_url($image_bank_edit) ?? asset_url('image_inters/' . $image_djamo) }}"
-                                        class="w-24 h-24 object-contain rounded border">
+                                    @php
+                                        $img = asset_url($image_bank_edit) ?? asset_url('image_inters/' . $image_djamo);
+                                    @endphp
+
+                                    <a href="{{ $img }}" download target="_blank" class="relative group">
+                                        <img src="{{ $img }}"
+                                            class="w-24 h-24 object-contain rounded border cursor-pointer" />
+
+                                        <!-- Icône téléchargement -->
+                                        <span
+                                            class="absolute inset-0 flex items-center justify-center
+                                   bg-black/40 text-white opacity-0 group-hover:opacity-100
+                                   rounded transition">
+                                            <i class="fas fa-download text-lg"></i>
+                                        </span>
+                                    </a>
                                 @else
                                     <span class="text-gray-500">Aucune image</span>
                                 @endif
@@ -32,33 +47,66 @@
                     <div class="col-span-6">
                         <div class="field field-full">
                             <label class="form-label required">Image Front de la carte</label>
+
                             <div class="field-value flex items-center gap-2">
                                 <i class="fas fa-qrcode"></i>
 
                                 @if ($image_bank_edit)
-                                    <img src="{{ asset_url($image_bank_edit) ?? asset_url('image_inters/' . $image_djamo) }}"
-                                        class="w-24 h-24 object-contain rounded border">
+                                    @php
+                                        $imgFront =
+                                            asset_url($image_bank_edit) ?? asset_url('image_inters/' . $image_djamo);
+                                    @endphp
+
+                                    <a href="{{ $imgFront }}" download target="_blank" class="relative group">
+                                        <img src="{{ $imgFront }}"
+                                            class="w-24 h-24 object-contain rounded border cursor-pointer">
+
+                                        <span
+                                            class="absolute inset-0 flex items-center justify-center
+                                 bg-black/40 text-white opacity-0 group-hover:opacity-100
+                                 rounded transition">
+                                            <i class="fas fa-download"></i>
+                                        </span>
+                                    </a>
                                 @else
                                     <span class="text-gray-500">Aucune image</span>
                                 @endif
                             </div>
                         </div>
                     </div>
+
                     <div class="col-span-6">
                         <div class="field field-full">
-                            <label class="form-label required">Image arriere de la carte</label>
+                            <label class="form-label required">Image arrière de la carte</label>
+
                             <div class="field-value flex items-center gap-2">
                                 <i class="fas fa-qrcode"></i>
 
                                 @if ($image_back_bank_edit)
-                                    <img src="{{ asset_url($image_back_bank_edit) ?? asset_url('image_inters/' . $image_djamo) }}"
-                                        class="w-24 h-24 object-contain rounded border">
+                                    @php
+                                        $imgBack =
+                                            asset_url($image_back_bank_edit) ??
+                                            asset_url('image_inters/' . $image_djamo);
+                                    @endphp
+
+                                    <a href="{{ $imgBack }}" download target="_blank" class="relative group">
+                                        <img src="{{ $imgBack }}"
+                                            class="w-24 h-24 object-contain rounded border cursor-pointer">
+
+                                        <span
+                                            class="absolute inset-0 flex items-center justify-center
+                                 bg-black/40 text-white opacity-0 group-hover:opacity-100
+                                 rounded transition">
+                                            <i class="fas fa-download"></i>
+                                        </span>
+                                    </a>
                                 @else
                                     <span class="text-gray-500">Aucune image</span>
                                 @endif
                             </div>
                         </div>
                     </div>
+
                 @endif
                 <div class="col-span-4 mt-3">
                     <label class="form-label">Canal transfers d'argent <span class="text-danger">*</span></label>
@@ -135,7 +183,7 @@
                     </div>
                 </div>
 
-                 <div class="col-span-4 ">
+                <div class="col-span-4 ">
                     <label class="form-label">Montant <span class="text-danger">*</span></label>
                     <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <i class="fas fa-money-bill-wave text-gray-500 mr-3"></i>
@@ -152,7 +200,7 @@
                 </div>
             </div>
 
-    
+
             <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-3">
                 <div class="col-span-12 mt-space">
                     <label for="bank_description_edit" class="form-label">Commentaire</label>

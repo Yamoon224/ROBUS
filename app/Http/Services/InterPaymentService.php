@@ -229,77 +229,6 @@ class InterPaymentService
     }
 
 
-    public function processCommissionMobileDistributers($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
-    {
-
-
-
-        $wallet = robus()->wallet;
-
-
-        // Préparez les valeurs mises à jour
-        $updatedValues = [
-            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-            'sid_user_relod' => robus()->id,
-            'amount' => DB::raw('amount - ' . $amount),
-        ];
-
-        $wallet->update($updatedValues);
-
-
-        $valuer_deposit = $percent_robus->percent_deposit_under_distributer *  $amount;
-
-        // Commissions Inters 
-        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
-
-            // Percent admin 
-            $valeur_amount_admin  = $percent_robus->percent_under_distributer * $amount;
-
-            // 20%
-
-            $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
-
-            $walletInter->update([
-                'commissions' => DB::raw('commissions+'  . $valuer_deposit),
-            ]);
-        }
-
-        if (robus()->country->currencie->value > $country_robus->currencie->value) {
-
-            //   Convertion  in CFA
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        } elseif (robus()->country->currencie->value == $country_robus->currencie->value) {
-
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin;
-        } elseif (robus()->country->currencie->value < $country_robus->currencie->value) {
-
-            //   Convertion  in CFA
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        }
-
-
-        if ($admin_civ->count() > 0) {
-
-            $nmbre_admin = $admin_civ->count();
-
-            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_inter_id' =>  $walletInter->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' => $valuer_deposit,
-                    'description_underdistributer' => 'Paiement commission sous-distributer'
-                ]);
-            }
-        }
-
-        return true;
-    }
 
     public function processCommissionsMobileRobus($amount_valeur, $percent_robus, $walletInter)
     {
@@ -327,137 +256,20 @@ class InterPaymentService
                 ' votre demande est en-cours de validation ' .
                 'Robus vous remercie';
 
-            $encode = substr(robus()->phone, -10);
-
-            Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+            sendTryCashMessage(robus()->phone , $message);
         }
 
         $valeur_percent_admin  = $percent_robus;
 
         $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
 
+        $this->commissionServices->distributeAdminCommissions($admins, 'wallet_inter_id', $walletInter->id, $admin_valeur_convertion);
 
-        if ($admins->count() > 0) {
-
-            $nmbre_admin = $admins->count();
-
-            $valeur_single = ($admin_valeur_convertion) / $nmbre_admin;
-
-            foreach ($admins as $user) {
-                $admin_single = SidUser::find($user->id);
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_inter_id' =>  $walletInter->id,
-                    'description' => 'Commission administrateur',
-                ]);
-            }
-        }
 
         return true;
     }
 
-    public function processCommissionMobileCIV($amount, $percent_robus, $country_robus, $walletInter, $admin_civ)
-    {
 
-        $country_civ = Country::whereId(107)
-            ->first();
-
-        $wallet = robus()->wallet;
-
-
-        // Préparez les valeurs mises à jour
-        $updatedValues = [
-            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-            'sid_user_relod' => robus()->id,
-            'amount' => DB::raw('amount - ' . $amount),
-        ];
-
-        $wallet->update($updatedValues);
-
-
-
-        // Commissions Inters 
-        if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
-
-            // Percent admin 
-            $valeur_amount_admin  = $percent_robus->percent * $amount;
-
-            // 50 %
-            $valeur_percent_admin = $percent_robus->percent_admin * $valeur_amount_admin;
-            // 20%
-            $valuer_deposit = $percent_robus->percent_deposit *  $valeur_amount_admin;
-
-            $walletInter->update([
-                'commissions' => DB::raw('commissions+'  . $valuer_deposit),
-            ]);
-        } else {
-
-            if (robus()->country->code == 'CI') {
-
-                $message =  'Vous avez effectué un paiement de ' . $walletInter->amount .  robus()->wallet->currencie->code .
-                    ' ' .
-                    'par ' . $walletInter->provider->name .
-                    ' a ' . $walletInter->created_at .
-                    ' votre demande est en-cours de validation ' .
-                    'Robus vous remercie';
-
-                $encode = substr(robus()->phone, -10);
-
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
-            }
-
-            $valeur_percent_admin  = $percent_robus->percent * $amount;
-
-            $valuer_deposit = $percent_robus->percent_deposit *  $valeur_percent_admin;
-
-            // Percent admin 
-        }
-
-
-        if (robus()->country->currencie->value > $country_robus->currencie->value) {
-
-            //   Convertion  in CFA
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        } elseif (robus()->country->currencie->value == $country_robus->currencie->value) {
-
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin;
-        } elseif (robus()->country->currencie->value < $country_robus->currencie->value) {
-
-            //   Convertion  in CFA
-            $admin_valeur_convertion =   (float)  $valeur_percent_admin *   (float) robus()->country->currencie->value;
-        }
-
-
-        if ($admin_civ->count() > 0) {
-
-            $nmbre_admin = $admin_civ->count();
-
-            $valeur_single = $admin_valeur_convertion / $nmbre_admin;
-
-            foreach ($admin_civ as $user) {
-                $admin_single = SidUser::find($user->id);
-
-                AdminsCom::create([
-                    'amount' =>   $valeur_single,
-                    'sid_user_id' =>   $admin_single->id,
-                    'wallet_inter_id' =>  $walletInter->id,
-                    'description' => 'Commission administrateur',
-                    'amount_under' => $valuer_deposit,
-                    'description_underdistributer' => 'Paiement commission sous-distributer'
-                ]);
-                $admin_single->wallet->update([
-                    'reload_by' => robus()->firstname .
-                        ' ' .
-                        robus()->lastname,
-                    'sid_user_relod' => robus()->id,
-                    'amount' => DB::raw('amount+' . $valeur_single),
-                ]);
-            }
-        }
-
-        return true;
-    }
     public function sendNotification($walletInter)
     {
 
@@ -724,7 +536,6 @@ class InterPaymentService
             'djamo_percent_id' => $provider_payment == 104 ? $action_percent_id : null,
             'push_percent_id'       => $provider_payment == 105 ? $action_percent_id : null,
             'argent_tresort_id'       => $provider_payment == 106 ? $action_percent_id : null,
-            // 'bank_commission_id' => $percent_push_action ?? null,
             'phone' => $country_robus->indecative . $phone ?? null,
             'number_compte' => $account_number,
             'created_by' => robus()->id,
@@ -781,7 +592,6 @@ class InterPaymentService
             'country_id' => $country_robus->id,
             'choose_type_transaction' => $provider_type,
             'amount_solde' => $amount_solde ?? null,
-            // 'amount_received' => $amount_received ?? null
         ]);
     }
 
@@ -796,6 +606,7 @@ class InterPaymentService
             'amount' => $amount_transaction,
             'description' => null,
             'inter_cost_id' => null,
+            'balance_before' =>  robus()->wallet->amount,
             'transaction_cost_id' => $percent_robus->id,
             'phone' => $country_robus->indecative . $phone ?? null,
             'number_compte' => null,
@@ -824,6 +635,7 @@ class InterPaymentService
             'inter_cost_id' => null,
             'transaction_cost_id' => $percent_robus->id,
             'phone' =>  null,
+            'balance_before' =>  robus()->wallet->amount,
             'number_compte' => strtoupper($number_compte),
             'created_by' => robus()->id,
             'provider_id' => $provider_payment,
@@ -1171,9 +983,8 @@ class InterPaymentService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr(robus()->phone, -10);
+                sendTryCashMessage(robus()->phone , $message);
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
 
             // Percent admin 
@@ -1273,9 +1084,8 @@ class InterPaymentService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr(robus()->phone, -10);
+                sendTryCashMessage(robus()->phone , $message);
 
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
             }
 
             // Percent admin 
@@ -1362,9 +1172,7 @@ class InterPaymentService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                $encode = substr(robus()->phone, -10);
-
-                Http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                sendTryCashMessage(robus()->phone , $message);
             }
             // Percent admin 
             $valeur_percent_admin  = $percent_robus->percent_admin * $amount_valeur;

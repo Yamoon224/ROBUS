@@ -227,37 +227,26 @@ class MobileWalletTransactionService
 
         $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
 
-        // Commissions Inters 
         if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
-            // 50 %
             $valuer_admin = $percent_robus->percent_admin * $valeur_percent_valeur;
 
-            // 20%
             $valuer_deposit = $percent_robus->percent_deposit *  $commission;
 
             $valuer_companie = $percent_robus->percent_companie * $commission;
 
-
             if ($country_civ->currencie->value > robus()->country->currencie->value) {
-
-                //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
                 $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
                 $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
-                $percents =   (float)  $valeur_percent_valeur *   (float) robus()->country->currencie->value;
             } elseif ($country_civ->currencie->value == robus()->country->currencie->value) {
-                //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit;
                 $percent_valeur_convertion =   (float)  $valuer_admin;
                 $percent_valeur_compagnie =   (float)  $valuer_companie;
-                $percents =   (float)  $valeur_percent_valeur;
             } else {
-                //   Convertion  in CFA
                 $admin_valeur_convertion =   (float)  $valuer_deposit *   (float) robus()->country->currencie->value;
                 $percent_valeur_convertion =   (float)  $valuer_admin *   (float) robus()->country->currencie->value;
                 $percent_valeur_compagnie =   (float)  $valuer_companie *   (float) robus()->country->currencie->value;
-                $percents =   (float)  $valeur_percent_valeur *   (float) robus()->country->currencie->value;
             }
 
             if (!empty($activeButtons['showRemonterMoneyButton'])) {
