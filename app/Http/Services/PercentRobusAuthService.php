@@ -173,12 +173,13 @@ class PercentRobusAuthService
     public function getRobusPercentageOnexbet()
     {
         $countryNameGroup = robus()->country->name_groupe;
+        $isSpecialProfile = robus()->is_under_distributer || robus()->is_api;
 
         switch ($countryNameGroup) {
             case 'CIV':
-                return Onexbet::whereId(1)->first();
+                return $isSpecialProfile ?  Onexbet::whereId(1)->first() :  Onexbet::whereId(4)->first() ;
             default:
-                return Onexbet::whereId(1)->first();
+                return $isSpecialProfile ?  Onexbet::whereId(2)->first() :  Onexbet::whereId(5)->first() ;
         }
     }
 

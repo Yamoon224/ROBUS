@@ -108,11 +108,6 @@ class PhoneCreditService
                 } else {
                     $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_phone_credit_id',  $walletPhone->id, $amount_percent, $valuer_deposit);
                 }
-            } else {
-
-                $admin_valeur =  $amount * $percent_robus->percent;
-
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_phone_credit_id',  $walletPhone->id, $admin_valeur);
             }
         } else {
 

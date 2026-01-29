@@ -219,7 +219,7 @@ class VirementController extends Controller
                                             $amountReceved =  (float) $reel_amount;
                                         } else {
 
-                                            $amount_valeur = (float)$amount_user->amount + (float)$reel_amount;
+                                            $amount_valeur = (float)$reel_amount;
 
                                             $amountReceved =  (float) $reel_amount -  (float) $amount_user->amount;
                                         }

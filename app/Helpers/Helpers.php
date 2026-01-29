@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use App\Models\IntegrationClient;
 use App\Http\Services\InterHomeService;
+use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\Log;
 
 
@@ -111,6 +112,18 @@ if (!function_exists('getCloseMasterRobusData')) {
         return AppCloseMaster::orderBy('id', 'asc')->get();
     }
 }
+
+if (!function_exists('sidUserInfo')) {
+    function sidUserInfo($id)
+    {
+        $user = SidUser::find($id); 
+        if ($user) {
+            return $user->firstname . ' ' . $user->lastname;
+        }
+        return null;
+    }
+}
+
 
 function adjustFeesWithRest($fees, $amount)
 {

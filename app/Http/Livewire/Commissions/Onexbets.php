@@ -84,11 +84,11 @@ class Onexbets extends Component
     public function resetField()
     {
         $this->transaction_name = '';
-        $this->percent_admin = '';
-        $this->percent_deposit = '';
-        $this->percent_with_drawal = '';
-        $this->percent_transaction = '';
-        $this->comissionCompanie = '';
+        $this->percent_admin = 0;
+        $this->percent_deposit = 0;
+        $this->percent_with_drawal = 0;
+        $this->percent_transaction = 0;
+        $this->comissionCompanie = 0;
         $this->emit('modal-hide', 'hide');
     }
 

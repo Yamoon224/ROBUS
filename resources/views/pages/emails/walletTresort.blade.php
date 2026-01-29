@@ -523,7 +523,7 @@
                                                             style="box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol';color:#3d4852;font-size:18px;font-weight:bold;margin-top:0;text-align:left">
                                                             {{ $content->provider->name ?? null }}
                                                             Numero : {{ $content->phone ?? null }}
-                                                            Nom & prénom : {{ $content->full_name ?? null }}
+                                                            {{-- Nom & prénom : {{ $content->full_name ?? null }} --}}
                                                         </h1>
                                                         a
                                                         {{ $content->created_at ?? null }}

@@ -138,6 +138,9 @@
                                                           @endif
                                                       </div>
                                                   @else
+                                                      <p class="font-medium whitespace-nowrap mt-1">
+                                                          Numero : {{ $item->phone ?? null }}
+                                                      </p>
                                                       <div
                                                           class="flex flex-col items-center justify-center gap-2 p-2 bg-gray-50 mt-3">
                                                           <i class="fas fa-qrcode text-gray-400 text-xl"></i>
@@ -151,7 +154,6 @@
                                                                   disponible</span>
                                                           @endif
                                                       </div>
-                                                      
                                                   @endif
                                               </td>
 
@@ -162,7 +164,9 @@
                                               <td class="w-40">
                                                   <div class="flex justify-center items-center">
                                                       @if ($item->updated_by != null)
-                                                          @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
+                                                          @if (
+                                                              ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                                  ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <a wire:click="editDjamo({{ $item->id }}, 'update-djamo-modal')"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
@@ -177,7 +181,7 @@
                                                                       @if ($item->choose_transaction == 'Retrait')
                                                                           Reversement
                                                                       @else
-                                                                          Modifier
+                                                                          Traité maintenant
                                                                       @endif
                                                                   </a>
                                                               @endif

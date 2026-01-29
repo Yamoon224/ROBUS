@@ -43,7 +43,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -56,7 +55,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -69,7 +67,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -82,7 +79,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -95,7 +91,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -108,7 +103,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -121,7 +115,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
     public function newXbet($data)
@@ -133,7 +126,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -146,11 +138,10 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
-      public function newVersementBanque($data)
+    public function newVersementBanque($data)
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletVersement($data));
@@ -159,12 +150,11 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
 
-     public function newDjamo($data)
+    public function newDjamo($data)
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletDjamo($data));
@@ -173,20 +163,26 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
-      public function newTresort($data)
+    public function newTresort($data)
     {
         try {
-            Mail::to($data->wallet->sidUser->email)->send(new WalletTresort($data));
+
+            $email = optional($data->wallet->sidUser)->email;
+            if ($email) {
+                Mail::to($data->wallet->sidUser->email)->send(new WalletTresort($data));
+            } else {
+                Log::warning('Impossible d’envoyer le mail Tresort : email introuvable', [
+                    'transaction_id' => $data->id
+                ]);
+            }
         } catch (\Throwable $e) {
 
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -199,7 +195,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -212,7 +207,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -225,7 +219,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -238,7 +231,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -251,11 +243,10 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
-     public function newReloadAcompteCommission($data)
+    public function newReloadAcompteCommission($data)
     {
         try {
             Mail::to($data->sidUser->email)->send(new WalletReloadAcompte($data));
@@ -264,7 +255,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -274,11 +264,10 @@ class MailController extends Controller
             Mail::to($data->wallet->sidUser->email)->send(new WalletPhoneCredit($data));
         } catch (\Throwable $th) {
             throw $th;
-            
         }
     }
 
-     public function newWithTransaction($data)
+    public function newWithTransaction($data)
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletPush($data));
@@ -287,11 +276,10 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
-     public function newBankSend($data)
+    public function newBankSend($data)
     {
         try {
             Mail::to($data->wallet->sidUser->email)->send(new WalletBankSendEmail($data));
@@ -300,7 +288,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -313,7 +300,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -327,7 +313,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 
@@ -340,7 +325,6 @@ class MailController extends Controller
             Log::error('Erreur mail send Users', [
                 'error' => $e->getMessage(),
             ]);
-
         }
     }
 }

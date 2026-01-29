@@ -365,7 +365,7 @@ class withTransactionController extends Controller
 
                         $totalDebitCfa = $isDistributor
                                 ? (float) $amountCfa
-                                : (float) $level->amount + $amountCfa;
+                                : (float) $amountCfa;
 
                         /** ===============================
                          *  6️⃣ Vérification solde utilisateur
@@ -445,7 +445,7 @@ class withTransactionController extends Controller
 
                         $totalAmountReceivedCfa = $isDistributor
                                 ? (float) $amountCfa
-                                : (float) $level->amount + $amountCfa;
+                                : (float) $amountCfa;
 
                         $totalAmountRecevedCustumer = (float) $totalAmountReceivedCfa - (float) $level->amount;
 

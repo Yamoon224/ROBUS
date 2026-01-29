@@ -20,94 +20,116 @@ class EventServiceProvider extends ServiceProvider
     //     ],
     // ];
 
-    protected $listen = [
-        // choose Listeners
-        'App\Events\ChoosePaymentEvent' => [
-            'App\Listeners\PaymentChoose',
-        ],
-        'App\Events\ChoosePhoneCreditEvent' => [
-            'App\Listeners\ChoosePhoneCreditEvent',
-        ],
-        'App\Events\ChooseReloadCardEvent' => [
-            'App\Listeners\ReloadCardChoose',
-        ],
-        'App\Events\ChooseTransactionEvent' => [
-            'App\Listeners\TransactionChoose',
-        ],
-        'App\Events\ChooseVirementEvent' => [
-            'App\Listeners\VirementChoose',
-        ],
-        'App\Events\ChooseXbetEvent' => [
-            'App\Listeners\XbetChoose',
-        ],
-        'App\Events\ChooseInterEvent' => [
-            'App\Listeners\InterChoose',
+  protected $listen = [
+        // Auth
+        Registered::class => [
+            SendEmailVerificationNotification::class,
         ],
 
-        // Created Listeners
-        'App\Events\CreateWalletBankEvent' => [
-            'App\Listeners\CreateBank',
+        // --- Choose Events ---
+        \App\Events\ChoosePaymentEvent::class => [
+            \App\Listeners\PaymentChoose::class,
         ],
-        'App\Events\CreateWalletInterEvent' => [
-            'App\Listeners\CreateInter',
+        \App\Events\ChoosePhoneCreditEvent::class => [
+            \App\Listeners\PhoneCreditChoose::class, 
         ],
-        'App\Events\CreateWalletPaiementEvent' => [
-            'App\Listeners\CreatePaiement',
+        \App\Events\ChooseReloadCardEvent::class => [
+            \App\Listeners\ReloadCardChoose::class,
         ],
-        'App\Events\CreateWalletPhoneCreditEvent' => [
-            'App\Listeners\CreatePhoneCredit',
+        \App\Events\ChooseTransactionEvent::class => [
+            \App\Listeners\TransactionChoose::class,
         ],
-        'App\Events\CreateWalletReloadCardEvent' => [
-            'App\Listeners\CreateReloadCard',
+        \App\Events\ChooseVirementEvent::class => [
+            \App\Listeners\VirementChoose::class,
         ],
-        'App\Events\CreateWalletTransfersEvent' => [
-            'App\Listeners\CreateTransfert',
+        \App\Events\ChooseXbetEvent::class => [
+            \App\Listeners\XbetChoose::class,
         ],
-
-        'App\Events\CreateReloadEvent' => [
-            'App\Listeners\ReloadAccompte',
-        ],
-
-        // Events Visitors
-
-        // Create Wallet Transactions
-        'App\Events\Visitors\CreateWalletInterVisEvent' => [
-            'App\Listeners\Visitors\CreateInterVis',
-        ],
-        'App\Events\Visitors\CreateWalletPhoneCreditVisEvent' => [
-            'App\Listeners\Visitors\CreatePhoneCreditVis',
-        ],
-        'App\Events\Visitors\CreateWalletReloadCardVisEvent' => [
-            'App\Listeners\Visitors\CreateReloadCardVis',
-        ],
-        'App\Events\Visitors\CreateWalletTransfersVisEvent' => [
-            'App\Listeners\Visitors\CreateTransfertVis',
-        ],
-        'App\Events\Visitors\CreateWalletPhoneCreditVisEvent' => [
-            'App\Listeners\Visitors\CreateXbetVis',
+        
+        \App\Events\ChooseInterEvent::class => [
+            \App\Listeners\InterChoose::class,
         ],
 
-        // Choose valeurs
-
-        'App\Events\Visitors\ChoosePhoneVisEvent' => [
-            'App\Listeners\Visitors\PhoneCreditChooseVis',
-        ],
-        'App\Events\Visitors\ChooseCardVisEvent' => [
-            'App\Listeners\Visitors\ReloadCardChooseVis',
-        ],
-        'App\Events\Visitors\ChooseTransactionVisEvent' => [
-            'App\Listeners\Visitors\TransactionChooseVis',
-        ],
-        'App\Events\Visitors\ChooseXbetVisEvent' => [
-            'App\Listeners\Visitors\XbetChooseVis',
-        ],
-        'App\Events\Visitors\ChooseInterVisEvent' => [
-            'App\Listeners\Visitors\InterChooseVis',
+        // New event
+         \App\Events\ChooseTresortEvent::class => [
+            \App\Listeners\TresortMoneyChoose::class,
         ],
 
-        // Ajoutez d'autres événements et leurs listeners ici...
+         \App\Events\ChooseBankSendEvent::class => [
+            \App\Listeners\BankSendChoose::class,
+        ],
+
+         \App\Events\ChooseDjamoEvent::class => [
+            \App\Listeners\DjamoChoose::class,
+        ],
+
+         \App\Events\ChooseVersementEvent::class => [
+            \App\Listeners\VersementChoose::class,
+        ],
+
+        \App\Events\ChoosePushEvent::class => [
+            \App\Listeners\PushChoose::class,
+        ],
+
+
+
+        // --- Create Events ---
+        \App\Events\CreateWalletBankEvent::class => [
+            \App\Listeners\CreateBank::class,
+        ],
+        \App\Events\CreateWalletInterEvent::class => [
+            \App\Listeners\CreateInter::class,
+        ],
+        \App\Events\CreateWalletPaiementEvent::class => [
+            \App\Listeners\CreatePaiement::class,
+        ],
+        \App\Events\CreateWalletPhoneCreditEvent::class => [
+            \App\Listeners\CreatePhoneCredit::class,
+        ],
+        \App\Events\CreateWalletReloadCardEvent::class => [
+            \App\Listeners\CreateReloadCard::class,
+        ],
+        \App\Events\CreateWalletTransfersEvent::class => [
+            \App\Listeners\CreateTransfert::class,
+        ],
+        \App\Events\CreateReloadEvent::class => [
+            \App\Listeners\ReloadAccompte::class,
+        ],
+
+        // --- Visitor Events ---
+        \App\Events\Visitors\CreateWalletInterVisEvent::class => [
+            \App\Listeners\Visitors\CreateInterVis::class,
+        ],
+        \App\Events\Visitors\CreateWalletPhoneCreditVisEvent::class => [
+            \App\Listeners\Visitors\CreatePhoneCreditVis::class,
+        ],
+        \App\Events\Visitors\CreateWalletReloadCardVisEvent::class => [
+            \App\Listeners\Visitors\CreateReloadCardVis::class,
+        ],
+        \App\Events\Visitors\CreateWalletTransfersVisEvent::class => [
+            \App\Listeners\Visitors\CreateTransfertVis::class,
+        ],
+        \App\Events\Visitors\CreateWalletOneXbetVisEvent::class => [
+            \App\Listeners\Visitors\CreateXbetVis::class,
+        ],
+
+        // --- Choose Visitor Events ---
+        \App\Events\Visitors\ChoosePhoneVisEvent::class => [
+            \App\Listeners\Visitors\PhoneCreditChooseVis::class,
+        ],
+        \App\Events\Visitors\ChooseCardVisEvent::class => [
+            \App\Listeners\Visitors\ReloadCardChooseVis::class,
+        ],
+        \App\Events\Visitors\ChooseTransactionVisEvent::class => [
+            \App\Listeners\Visitors\TransactionChooseVis::class,
+        ],
+        \App\Events\Visitors\ChooseXbetVisEvent::class => [
+            \App\Listeners\Visitors\XbetChooseVis::class,
+        ],
+        \App\Events\Visitors\ChooseInterVisEvent::class => [
+            \App\Listeners\Visitors\InterChooseVis::class,
+        ],
     ];
-
     /**
      * Register any events for your application.
      *

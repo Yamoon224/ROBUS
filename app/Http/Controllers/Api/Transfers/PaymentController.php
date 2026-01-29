@@ -258,7 +258,7 @@ class PaymentController extends Controller
                         if ($request->provider != 7) {
 
                             $amount_send = $reel_amount;
-                            $amount_valeur = $request->provider == 8 ?  $reel_amount : $reel_amount + (float) $percent_robus->amount_auther ;
+                            $amount_valeur = $request->provider == 8 ?  $reel_amount : $reel_amount  ;
                             $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
                         } else {
 

@@ -555,7 +555,8 @@
                                             <td class="w-56">
                                                 <div class="flex justify-center items-center">
                                                     @if ($item->updated_by != null)
-                                                        @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
+                                                        @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                                  ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                             @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                 <a wire:click="editInter({{ $item->id }}, 'update-interTransfers-modal')"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"

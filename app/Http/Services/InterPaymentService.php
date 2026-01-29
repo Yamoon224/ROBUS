@@ -140,15 +140,19 @@ class InterPaymentService
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_inter_id',  $walletInter->id, $company_valeur_convertion, $deposit_valeur_convertion);
                 }
             } else {
-                $valeur_percent_admin  = $percent_robus->percent * $amount;
+                $valeur_percent_admin  = $percent_robus->percent_admin * $amount;
+                $valeur_percent_banque  = $percent_robus->percent_banque * $amount;
                 $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
-                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion, $valuer_deposit);
+                $banque_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_banque);
+                $this->commissionServices->distributeAdminBanqueCommissions($admin_civ, 'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion, $valeur_percent_banque, $banque_valeur_convertion);
             }
         } else {
 
-            $valeur_percent_admin  = $percent_robus->percent * $amount;
+            $valeur_percent_admin  = $percent_robus->percent_admin * $amount;
+            $valeur_percent_banque  = $percent_robus->percent_banque * $amount;
             $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
-            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion);
+            $banque_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_banque);
+            $this->commissionServices->distributeAdminBanqueCommissions($admin_civ, 'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion, $valeur_percent_banque, $banque_valeur_convertion);
         }
 
         return true;
@@ -256,7 +260,7 @@ class InterPaymentService
                 ' votre demande est en-cours de validation ' .
                 'Robus vous remercie';
 
-            sendTryCashMessage(robus()->phone , $message);
+            sendTryCashMessage(robus()->phone, $message);
         }
 
         $valeur_percent_admin  = $percent_robus;
@@ -983,8 +987,7 @@ class InterPaymentService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                sendTryCashMessage(robus()->phone , $message);
-
+                sendTryCashMessage(robus()->phone, $message);
             }
 
             // Percent admin 
@@ -1084,8 +1087,7 @@ class InterPaymentService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                sendTryCashMessage(robus()->phone , $message);
-
+                sendTryCashMessage(robus()->phone, $message);
             }
 
             // Percent admin 
@@ -1172,7 +1174,7 @@ class InterPaymentService
                     ' votre demande est en-cours de validation ' .
                     'Robus vous remercie';
 
-                sendTryCashMessage(robus()->phone , $message);
+                sendTryCashMessage(robus()->phone, $message);
             }
             // Percent admin 
             $valeur_percent_admin  = $percent_robus->percent_admin * $amount_valeur;

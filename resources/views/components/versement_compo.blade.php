@@ -160,7 +160,8 @@
                                               <td class="w-40">
                                                   <div class="flex justify-center items-center">
                                                       @if ($item->updated_by != null)
-                                                          @if ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id)
+                                                          @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                                  ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <a wire:click="editVersement({{ $item->id }}, 'update-versement-modal')"
                                                                       class="btn btn-primary mr-1 mb-2 btn-sm"
@@ -171,7 +172,7 @@
                                                                               stroke-linejoin="round" stroke-width="2"
                                                                               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                       </svg>
-                                                                      Modifier
+                                                                      Traité maitenant
                                                                   </a>
                                                               @endif
                                                           @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)

@@ -83,7 +83,7 @@ class XbetService
         ]);
     }
 
-    public function updateamountOneBetReceveid($admin_civ, $percent_robus, $walletXbet, $amount , $amount_commission)
+    public function updateamountOneBetReceveid($admin_civ, $percent_robus, $walletXbet, $amount, $amount_commission)
     {
 
         $userId = robus()->id;
@@ -173,7 +173,7 @@ class XbetService
         return true;
     }
 
-    public function updateamountOneBetDrawal($admin_civ, $percent_robus, $walletXbet, $amount , $amount_commission)
+    public function updateamountOneBetDrawal($admin_civ, $percent_robus, $walletXbet, $amount, $amount_commission)
     {
 
 
@@ -204,12 +204,13 @@ class XbetService
             'amount_solde' => $amount_solde,
         ]);
 
-        robus()->wallet->update([
-            'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-            'sid_user_relod' => robus()->id,
-            'amount' => DB::raw('amount-'  .  $amount_commission),
-        ]);
-
+        if ($walletXbet->choose_type_transaction == 1) {
+            robus()->wallet->update([
+                'reload_by' => robus()->firstname . ' ' . robus()->lastname,
+                'sid_user_relod' => robus()->id,
+                'amount' => DB::raw('amount-'  .  $amount_commission),
+            ]);
+        }
 
         if (robus()->is_under_distributer || robus()->is_api) {
 

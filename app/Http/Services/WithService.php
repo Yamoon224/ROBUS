@@ -289,9 +289,6 @@ class WithService
                 } else {
                     $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_push_id',  $walletWith->id, $valeur_percent_no_under, $valuer_deposit);
                 }
-            } else {
-
-                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_push_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
             }
         } else {
 
@@ -341,15 +338,15 @@ class WithService
 
         $percent = $percent_robus->amount;
 
-
         $percent_commission =  $percent_robus->percent_under;
 
         $percent_compagnie = $percent_robus->percent_companie;
 
+
         if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
         } else {
-            $amount_commission = $amount + ($percent);
+            $amount_commission = $amount;
         }
 
         $amount_solde = $user->wallet->amount - $amount_commission;
@@ -392,12 +389,15 @@ class WithService
                 }
             } else {
 
-                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
+                $percent_banque = $percent_robus->percent_bank;
+                $percent_admin = (float) $percent_robus->percent_admin + (float) $percent_robus->percent_companie;
+                $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_admin, $valuer_deposit, $percent_banque);
             }
         } else {
 
-
-            $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_bank_send_id', $walletWith->id, $valeur_percent_no_under);
+            $percent_banque = $percent_robus->percent_bank;
+            $percent_admin = (float) $percent_robus->percent_admin + (float) $percent_robus->percent_companie;
+            $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_admin, $valuer_deposit, $percent_banque);
 
             if ($user->country->code == 'CI') {
 
@@ -495,8 +495,6 @@ class WithService
                 } else {
                     $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_djamo_id', $walletWith->id, $valuer_deposit);
                 }
-            } else {
-                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_djamo_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
             }
         } else {
 
@@ -545,7 +543,7 @@ class WithService
         if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
         } else {
-            $amount_commission = $amount + ($percent_robus->percent * $amount);
+            $amount_commission = $amount;
         }
 
         $amount_solde = $user->wallet->amount - $amount_commission;
@@ -600,9 +598,6 @@ class WithService
                 } else {
                     $this->commissionServices->distributeAdminCommissionUnders($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valuer_deposit);
                 }
-            } else {
-
-                $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_tresort_money_id', $walletWith->id, $valeur_amount_admin, $valuer_deposit);
             }
         } else {
 

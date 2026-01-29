@@ -1,7 +1,15 @@
-    @if ($item->status == 'PENDING')
-        <div class="flex items-center justify-center text-pending">
+    @if ($item->status == 'PENDING' || $item->status == 'PROCESSING')
+
+        @if ($item->updated_by)
+            <div class="transaction-progress-alert w-full text-center text-blue-500">
+
+                Choisi par
+                {{ sidUserInfo($item->updated_by) }}
+            </div>
+        @endif
+        <div class="flex items-center justify-center text-pending mt-3">
             <span
-                class="alert alert-pending  inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
+                class="alert alert-pending inline-flex items-center justify-center px-2 py-1 mb-3 text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded">
                 En-attente
             </span>
 
@@ -20,7 +28,7 @@
             <span
                 class="alert  alert-dark inline-flex items-center justify-center px-2 py-1 mb-3 
                                                                   text-xs font-bold leading-none text-indigo-100 bg-indigo-700 rounded"
-                style="color: white;">
+                style="color: rgb(110, 83, 83);">
                 Traiter
             </span>
 

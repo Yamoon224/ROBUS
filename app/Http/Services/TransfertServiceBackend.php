@@ -1175,13 +1175,11 @@ class TransfertServiceBackend
     }
 
 
-    public function createInvoiceVersement($check)
+    public function createInvoiceVersement($check  , string $walletType)
     {
         return  AutherTransactionInvoice::create([
             'title' => 'Achat de Transaction',
             'auther_transaction_id' => $check->id,
-            // 'one_bet_transaction_id' => $paymentPhoneCredit->id,
-            // 'company_id' => Auth::guard('web')->user()->company->id,
             'description' => $check->description ?? null,
             'status' => $check->status,
             'created_by' => Auth::guard('web')->user()->id,

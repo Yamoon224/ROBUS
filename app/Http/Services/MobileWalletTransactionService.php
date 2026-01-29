@@ -265,9 +265,6 @@ class MobileWalletTransactionService
                 } else {
                     $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_convertion, $percent_valeur_convertion);
                 }
-            } else {
-
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_convertion);
             }
         }
 

@@ -112,15 +112,11 @@ class WaveService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterWaveCButton'])) {
 
-                    // $compagnie_amount =  $percent_robus->percent_companie +  $percent_robus->comission_auther;
-
                     $valuer_companie = $percent_robus->percent_companie * $amount;
 
                     $walletWave->increment('commission_companie', $valuer_companie);
 
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_wave_id', $walletWave->id, $valuer_companie, $valuer_deposit);
-                } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_wave_id', $walletWave->id, $admin_valeur, $valuer_deposit);
                 }
             } else {
 

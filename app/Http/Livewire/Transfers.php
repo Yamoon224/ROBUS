@@ -11,6 +11,7 @@ use App\Events\ChooseTransactionEvent;
 use App\Events\ChooseVirementEvent;
 use App\Events\ChooseXbetEvent;
 use App\Events\ChooseTresortEvent;
+use App\Events\ChooseBankSendEvent;
 use App\Events\ChooseDjamoEvent;
 use App\Events\ChooseVersementEvent;
 use App\Events\ChoosePushEvent;
@@ -671,11 +672,11 @@ class Transfers extends Component
         $temps_ecoule = strtotime($compare_date);
         $ecoule_min = date('s', $temps_ecoule);
         $rt = rand(40, 906769895) * time() + $ecoule_min;
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
         $provider = Provider::whereId($this->provider_transaction)->first();
         $valeur_ceiling = $walletUser->silver_ceiling;
         $som_transfers =  app(TotalAmoutUserServiveBackend::class)->getSumValTransactionProperty();
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
         $rt = rand(40, 500000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
@@ -962,7 +963,7 @@ class Transfers extends Component
     public function addTransactionWithdrawal()
     {
 
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
         $rt = rand(40, 500000) * time();
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
@@ -1517,7 +1518,7 @@ class Transfers extends Component
 
         try {
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate([
                     'phoneCreditStatus' => 'required',
@@ -1528,7 +1529,7 @@ class Transfers extends Component
 
                     $check->update([
                         'description' => $this->description_phone_credit ?? null,
-                        'updated_by' => Auth::guard('web')->user()->id,
+                        'updated_by' => sabdy()->id,
                         'status' => $this->phoneCreditStatus,
                     ]);
 
@@ -1548,7 +1549,7 @@ class Transfers extends Component
 
                             $this->updateUserWallet($commission_transaction);
 
-                            if (Auth::guard('web')->user()->is_distributer == 1) {
+                            if (sabdy()->is_distributer == 1) {
 
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
@@ -1699,7 +1700,7 @@ class Transfers extends Component
         try {
 
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate([
                     'bankStatus' => 'required',
@@ -1710,7 +1711,7 @@ class Transfers extends Component
 
                     $check->update([
                         'description' => $this->bank_description_edit ?? null,
-                        'updated_by' => Auth::guard('web')->user()->id,
+                        'updated_by' => sabdy()->id,
                         'status' => $this->bankStatus,
                     ]);
 
@@ -1718,18 +1719,18 @@ class Transfers extends Component
                     $this->bankStatus = "";
                     $this->bankId = "";
 
-                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+                    if ($check->updated_by == sabdy()->id) {
 
                         if ($check->status == 'SUCCESS') {
 
 
-                            $commission_transaction = $check->amount;
+                            $commission_transaction = $check->amount_received;
 
                             app(TransfertServiceBackend::class)->createBankSend($check, $transactionCode, $transactionCompiCode);
 
                             $this->updateUserWallet($commission_transaction);
 
-                            if (Auth::guard('web')->user()->is_distributer == 1) {
+                            if (sabdy()->is_distributer == 1) {
 
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
@@ -1752,7 +1753,7 @@ class Transfers extends Component
                                 }
                             } else {
 
-                                app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                app(CommissionServiceBackend::class)->handleAdminBankSendCommission($check, $admin_civ);
                             }
 
                             $this->notifyUsers($check, $admins, 'Bank Send', 'Demande de paiement bank send a été validé', 'Demande de paiement bank send validé');
@@ -1784,17 +1785,15 @@ class Transfers extends Component
                         } elseif ($check->status == 'ERROR') {
 
 
-                            $commission = $check->amount + $check->costs_amount;
+                            $commission = $check->amount;
 
                             $this->updateReloadWallet($check, $commission);
 
                             $this->updateWalletNull($check, $commission);
 
 
-                            $this->handleReloadClientCommission($check, $admin_civ);
-
-                            $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createErrorBankSend($check, $transactionCode, $transactionCompiCode);
-
+                            $this->handleReloadClientCommission($check, $admin_civ);;
+                            app(TransfertServiceBackend::class)->createErrorBankSend($check, $transactionCode, $transactionCompiCode);
 
                             $this->notifyUsers($check, $admins, 'Bank Send', 'Demande de Bank Send refusé', 'Demande de Bank Send refusé');
 
@@ -1882,7 +1881,7 @@ class Transfers extends Component
 
         try {
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate([
                     'xbetStatus' => 'required',
@@ -1912,7 +1911,13 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoiceXbet($check, $paymentXbet);
 
-                            $this->updateUserWallet($commission_transaction);
+                            if ($check->choose_type_transaction == 2) {
+                                $this->updateUserDrawalWallet($check->amount_received);
+                                $this->updateReloadWallet($check, $check->amount_received);
+                            } else {
+                                $this->updateUserWallet($commission_transaction);
+                            }
+
 
                             if (sabdy()->is_distributer == 1) {
 
@@ -1969,9 +1974,13 @@ class Transfers extends Component
 
                             $commission = $check->amount;
 
-                            $this->updateReloadWallet($check, $commission);
+                            if ($check->choose_type_transaction == 2) {
+                                $this->updateReloadDrawalWallet($check);
+                            } else {
+                                $this->updateReloadWallet($check, $commission);
 
-                            $this->updateWalletNull($check, $commission);
+                                $this->updateWalletNull($check, $commission);
+                            }
 
 
                             $this->handleReloadClientCommission($check, $admin_civ);
@@ -2181,7 +2190,7 @@ class Transfers extends Component
 
         try {
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate(
                     [
@@ -2276,19 +2285,17 @@ class Transfers extends Component
                         } elseif ($check->status == 'ERROR') {
 
 
-
                             $commission = $check->amount;
 
                             $this->updateReloadWallet($check, $commission);
 
                             $this->updateWalletNull($check, $commission);
 
-
                             $this->handleReloadClientCommission($check, $admin_civ);
 
                             $paymentPhoneCredit  = app(TransfertServiceBackend::class)->createVersement($check, $transactionCode, $transactionCompiCode);
 
-                            app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPhoneCredit);
+                            app(TransfertServiceBackend::class)->createInvoiceVersement($paymentPhoneCredit);
 
                             $this->notifyUsers($check, $admins, 'Versement', 'Demande de Versement a été refusé', 'Demande de Versement refusé');
 
@@ -2373,7 +2380,7 @@ class Transfers extends Component
 
         try {
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate(
                     [
@@ -2475,16 +2482,18 @@ class Transfers extends Component
 
                             $commission = $check->amount;
 
-                            $this->updateReloadWallet($check, $commission);
-
-                            $this->updateWalletNull($check, $commission);
-
+                            if ($check->choose_transaction == "Retrait") {
+                                $this->updateReloadDrawalWallet($check);
+                            } else {
+                                $this->updateReloadWallet($check, $commission);
+                                $this->updateWalletNull($check, $commission);
+                            }
 
                             $this->handleReloadClientCommission($check, $admin_civ);
 
                             $paymentPush  = app(TransfertServiceBackend::class)->createPush($check, $transactionCode, $transactionCompiCode);
 
-                            app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPush);
+                            app(TransfertServiceBackend::class)->createInvoiceVersement($paymentPush);
 
                             $this->notifyUsers($check, $admins, 'Push', 'Demande de transaction Push a été refusé', 'Demande de Transaction Push refusé');
 
@@ -2569,7 +2578,7 @@ class Transfers extends Component
 
         try {
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate(
                     [
@@ -2671,16 +2680,19 @@ class Transfers extends Component
 
                             $commission = $check->amount;
 
-                            $this->updateReloadWallet($check, $commission);
-
-                            $this->updateWalletNull($check, $commission);
+                            if ($check->choose_transaction == "Retrait") {
+                                $this->updateReloadDrawalWallet($check);
+                            } else {
+                                $this->updateReloadWallet($check, $commission);
+                                $this->updateWalletNull($check, $commission);
+                            }
 
 
                             $this->handleReloadClientCommission($check, $admin_civ);
 
                             $paymentPush  = app(TransfertServiceBackend::class)->createDjamo($check, $transactionCode, $transactionCompiCode);
 
-                            app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPush);
+                            app(TransfertServiceBackend::class)->createInvoiceVersement($paymentPush);
 
                             $this->notifyUsers($check, $admins, 'Djamo', 'Demande de transaction Djamo a été refusé', 'Demande de Transaction Djamo refusé');
 
@@ -2765,7 +2777,8 @@ class Transfers extends Component
 
         try {
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
+
 
                 $this->validate(
                     [
@@ -2783,11 +2796,13 @@ class Transfers extends Component
 
                 if (Hash::check($this->password_transaction, $user_auth->password)) {
 
+
                     $check->update([
-                        'description' => $this->pushDescription ?? null,
+                        'description' => $this->tresortDescription ?? null,
                         'updated_by' => sabdy()->id,
                         'status' => $this->tresortStatus,
                     ]);
+
 
                     $this->password_transaction = "";
                     $this->tresortStatus = "";
@@ -2855,30 +2870,32 @@ class Transfers extends Component
                             }
 
                             $this->cancelTresortField();
-                            $this->emit('modal-hide-push-validated');
-                            $this->emit('modal-hide-push');
+                            $this->emit('modal-hide-tresort-validated');
+                            $this->emit('modal-hide-tresort');
                             $this->emit('success', 'Achat de transaction Tresort Money validez avec succes !');
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
-
                             app(NotificationServiceBackend::class)->sendMailTresortNotification($check);
                         } elseif ($check->status == 'ERROR') {
 
                             $commission = $check->amount;
 
-                            $this->updateReloadWallet($check, $commission);
-
-                            $this->updateWalletNull($check, $commission);
-
+                            if ($check->choose_transaction == "Retrait") {
+                                $this->updateReloadDrawalWallet($check);
+                            } else {
+                                $this->updateReloadWallet($check, $commission);
+                                $this->updateWalletNull($check, $commission);
+                            }
 
                             $this->handleReloadClientCommission($check, $admin_civ);
 
                             $paymentPush  = app(TransfertServiceBackend::class)->createTresort($check, $transactionCode, $transactionCompiCode);
 
-                            app(TransfertServiceBackend::class)->createInvoiceVersement($check, $paymentPush);
+                            app(TransfertServiceBackend::class)->createInvoiceVersement($paymentPush);
 
-                            $this->notifyUsers($check, $admins, 'Push', 'Demande de transaction Push a été refusé', 'Demande de Transaction Push refusé');
+                            $this->notifyUsers($check, $admins, 'Tresort Money', 'Demande de transaction Push a été refusé', 'Demande de Transaction Push refusé');
+
 
                             $message = 'Votre demande de transaction Tresort Money de ' .
                                 $check->amount .
@@ -2896,14 +2913,16 @@ class Transfers extends Component
                                 $this->sendSuccessMessageNotification($check, $message);
                             }
 
-                            if ($admins->count() > 0) {
-                                $this->notifyAdmins($admins);
-                            }
 
                             $this->cancelTresortField();
                             $this->emit('modal-hide-tresort-validated');
                             $this->emit('modal-hide-tresort');
-                            $this->emit('error', 'Achat de Push refusé !');
+                            $this->emit('error', 'Achat de Tresort Money refusé !');
+
+                            if ($admins->count() > 0) {
+                                $this->notifyAdmins($admins);
+                            }
+
                             app(NotificationServiceBackend::class)->sendMailTresortNotification($check);
                         } else {
                             $this->cancelTresortField();
@@ -2919,6 +2938,7 @@ class Transfers extends Component
                         $this->emit('error', 'Pas le valideur !');
                         return;
                     }
+                    DB::commit();
                 } else {
                     $this->cancelTresortField();
                     $this->emit('modal-hide-tresort');
@@ -2926,7 +2946,7 @@ class Transfers extends Component
                     $this->emit('error', 'Mot de passe Incorrect !');
                     return;
                 }
-            } elseif ($this->password_transaction = "" ||  $this->pushStatus = "") {
+            } elseif ($this->password_transaction = "" ||  $this->tresortStatus = "") {
                 $this->cancelTresortField();
                 $this->emit('modal-hide-tresort-validated');
                 $this->emit('modal-hide-tresort');
@@ -2962,7 +2982,7 @@ class Transfers extends Component
 
         try {
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate([
                     'reloadcardStatus' => 'required',
@@ -2975,7 +2995,7 @@ class Transfers extends Component
 
                     $check->update([
                         'description' => $this->reloadcard_description_edit ?? null,
-                        'updated_by' => Auth::guard('web')->user()->id,
+                        'updated_by' => sabdy()->id,
                         'status' => $this->reloadcardStatus,
                     ]);
 
@@ -2983,7 +3003,7 @@ class Transfers extends Component
                     $this->reloadcardStatus = "";
                     $this->reloadcardId = "";
 
-                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+                    if ($check->updated_by == sabdy()->id) {
 
                         if ($check->status == 'SUCCESS') {
 
@@ -2995,7 +3015,7 @@ class Transfers extends Component
 
                             $this->updateUserWallet($commission_transaction);
 
-                            if (Auth::guard('web')->user()->is_distributer == 1) {
+                            if (sabdy()->is_distributer == 1) {
 
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
@@ -3054,7 +3074,7 @@ class Transfers extends Component
                             if ($check->wallet->sidUser->is_under_distributer == 1) {
                                 $commission =  $check->amount;
                             } else {
-                                $commission =  $check->amount + $check->costs_amount;
+                                $commission =  $check->amount;
                             }
 
                             $this->updateReloadWallet($check, $commission);
@@ -3154,7 +3174,7 @@ class Transfers extends Component
         try {
 
 
-            if ($check->status == 'PENDING' && $check->updated_by == Auth::guard('web')->user()->id) {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate([
                     'transactionStatus' => 'required',
@@ -3168,7 +3188,7 @@ class Transfers extends Component
 
                     $check->update([
                         'description' => $this->transaction_description_edit ?? null,
-                        'updated_by' => Auth::guard('web')->user()->id,
+                        'updated_by' => sabdy()->id,
                         'status' => $this->transactionStatus,
                     ]);
 
@@ -3176,7 +3196,7 @@ class Transfers extends Component
                     $this->transactionStatus = "";
                     $this->transactionId = "";
 
-                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+                    if ($check->updated_by == sabdy()->id) {
 
                         if ($check->status == 'SUCCESS') {
 
@@ -3191,7 +3211,7 @@ class Transfers extends Component
                                 $this->updateUserWallet($commission_transaction);
                             }
 
-                            if (Auth::guard('web')->user()->is_distributer == 1) {
+                            if (sabdy()->is_distributer == 1) {
 
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
@@ -3228,23 +3248,13 @@ class Transfers extends Component
 
                                 if ($check->provider->id != 9) {
 
-
                                     $commission =  $check->amount;
-
-
-                                    $this->updateReloadWallet($check, $commission);
-
-                                    $this->updateWalletNull($check, $commission);
-
 
                                     $this->handleReloadCommission($check, $admin_civ);
                                 } else {
 
-                                    $commission =  $check->amount + $check->costs_amount;
+                                    $commission =  $check->amount;
 
-                                    $this->updateReloadWallet($check, $commission);
-
-                                    $this->updateWalletNull($check, $commission);
 
                                     $this->handleReloadClientCommission($check, $admin_civ);
                                 }
@@ -3254,15 +3264,18 @@ class Transfers extends Component
                                     $commission =  $check->amount;
                                 } else {
 
-                                    $commission =  $check->amount + $check->costs_amount;
+                                    $commission =  $check->amount;
                                 }
 
-
-                                $this->updateReloadWallet($check, $commission);
-
-                                $this->updateWalletNull($check, $commission);
-
                                 $this->handleReloadClientCommission($check, $admin_civ);
+                            }
+
+
+                            if ($check->type_transaction == "Retrait") {
+                                $this->updateReloadDrawalWallet($check);
+                            } else {
+                                $this->updateReloadWallet($check, $commission);
+                                $this->updateWalletNull($check, $commission);
                             }
 
 
@@ -3334,7 +3347,7 @@ class Transfers extends Component
         $admin_civ = $transactionData['admin_civ'];
         try {
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate([
                     'virementStatus' => 'required',
@@ -3346,7 +3359,7 @@ class Transfers extends Component
 
                     $check->update([
                         'description' => $this->virementDescription_edit ?? null,
-                        'updated_by' => Auth::guard('web')->user()->id,
+                        'updated_by' => sabdy()->id,
                         'status' => $this->virementStatus,
                     ]);
 
@@ -3354,7 +3367,7 @@ class Transfers extends Component
                     $this->virementStatus = "";
                     $this->virementId = "";
 
-                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+                    if ($check->updated_by == sabdy()->id) {
 
 
                         if ($check->status == 'SUCCESS') {
@@ -3367,7 +3380,7 @@ class Transfers extends Component
 
                             $this->updateUserWallet($commission_transaction);
 
-                            if (Auth::guard('web')->user()->is_distributer == 1) {
+                            if (sabdy()->is_distributer == 1) {
 
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
@@ -3528,7 +3541,7 @@ class Transfers extends Component
         try {
 
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
                 $this->validate(
                     [
@@ -3652,12 +3665,11 @@ class Transfers extends Component
                                     }
                                 } else {
 
-
                                     app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                                 }
                             } else {
 
-                                app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
+                                app(CommissionServiceBackend::class)->handleAdminBankCommission($check, $admin_civ);
                             }
 
 
@@ -3765,7 +3777,7 @@ class Transfers extends Component
 
         try {
 
-            if ($check->status == 'PENDING') {
+            if ($check->status == 'PROCESSING' && $check->updated_by == sabdy()->id) {
 
 
                 $this->validate([
@@ -3777,7 +3789,7 @@ class Transfers extends Component
 
                     $check->update([
                         'description' => $this->payment_description_robus ?? null,
-                        'updated_by' => Auth::guard('web')->user()->id,
+                        'updated_by' => sabdy()->id,
                         'status' => $this->paiementStatus,
                     ]);
 
@@ -3785,7 +3797,7 @@ class Transfers extends Component
                     $this->paiementStatus = "";
                     $this->paiementId = "";
 
-                    if ($check->updated_by == Auth::guard('web')->user()->id) {
+                    if ($check->updated_by == sabdy()->id) {
 
                         if ($check->status == 'SUCCESS') {
 
@@ -3798,7 +3810,7 @@ class Transfers extends Component
 
                             $this->updateUserWallet($commission_transaction);
 
-                            if (Auth::guard('web')->user()->is_distributer == 1) {
+                            if (sabdy()->is_distributer == 1) {
 
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
@@ -3837,7 +3849,7 @@ class Transfers extends Component
                                 }
                             } else {
 
-                                if ($check->provider_id != 7) {
+                                if ($check->provider_id == 7) {
                                     app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                                 } else {
                                     app(CommissionServiceBackend::class)->handleAdminPaimentCommission($check, $admin_civ);
@@ -3855,7 +3867,11 @@ class Transfers extends Component
                             $this->sendMailPaiementNotification($check);
                         } elseif ($check->status == 'ERROR') {
 
-                            $commission =  $check->amount;
+                            if ($check->provider_id == 7) {
+                                $commission =  $check->amount + $check->costs_amount;
+                            } else {
+                                $commission =  $check->amount;
+                            }
 
                             $this->updateReloadWallet($check, $commission);
 
@@ -3939,6 +3955,21 @@ class Transfers extends Component
     }
 
     //Begin  Choose User adminto validated transactions
+
+    protected function updatedChooseWallet($walletUpdate,  $menuActive)
+    {
+        try {
+
+            $walletUpdate->update([
+                'updated_by' => sabdy()->id,
+                'status'    => 'PROCESSING',
+            ]);
+        } catch (\Exception $exception) {
+            $this->emit($menuActive);
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
     protected function updateWallet($walletUpdate, $event, $modalHide, $menuActive, $infoMessage)
     {
         try {
@@ -3947,6 +3978,7 @@ class Transfers extends Component
                 'updated_by' => sabdy()->id,
             ]);
 
+            $walletUpdate->refresh();
             event(new $event($walletUpdate));
             DB::commit();
             $this->emit($modalHide);
@@ -3967,23 +3999,43 @@ class Transfers extends Component
 
             $walletUpdate = WalletTransaction::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-transaction-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChooseTransactionEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
-                $this->updateWallet($walletUpdate, ChooseTransactionEvent::class, 'modal-hide-transfers', 'menu-transaction-active', 'Vous avez choisi transaction');
-            } else {
+
+
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-transaction-active');
-                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-transaction-active');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-transaction-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+            return;
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChooseTransactionEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-transfers');
+        $this->emit('menu-transaction-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
     public function ChooseUpdateXbet($id)
@@ -3991,40 +4043,44 @@ class Transfers extends Component
 
         DB::beginTransaction();
 
-        $sidAuth = Auth::guard('web')->user();
-
         try {
 
             $walletUpdate = WalletXBet::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-xbet-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChooseXbetEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
 
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
-
-                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
-
-                    $this->updateWallet($walletUpdate, ChooseXbetEvent::class, 'modal-hide-xbet', 'menu-xbet-active', 'Vous avez choisi une transaction 1Xbets');
-                } else {
-                    $this->emit('menu-xbet-active');
-                    $this->emit(
-                        'error',
-                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                    );
-                }
-            } else {
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-xbet-active');
-                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-xbet-active');
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-xbet-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChooseXbetEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-xbet');
+        $this->emit('menu-xbet-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
 
@@ -4033,40 +4089,47 @@ class Transfers extends Component
 
         DB::beginTransaction();
 
-        $sidAuth = Auth::guard('web')->user();
+        $sidAuth = sabdy();
 
         try {
 
             $walletUpdate = WalletVersement::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-versement-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChooseVersementEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
 
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
 
-                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
-
-                    $this->updateWallet($walletUpdate, ChooseVersementEvent::class, 'modal-hide-versement', 'menu-versement-active', 'Vous avez choisi un versement');
-                } else {
-                    $this->emit('menu-versement-active');
-                    $this->emit(
-                        'error',
-                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                    );
-                }
-            } else {
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-versement-active');
-                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-versement-active');
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-versement-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChooseVersementEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-versement');
+        $this->emit('menu-versement-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
 
@@ -4075,11 +4138,23 @@ class Transfers extends Component
 
         DB::beginTransaction();
 
-        $sidAuth = Auth::guard('web')->user();
+        $sidAuth = sabdy();
 
         try {
 
             $walletUpdate = WalletDjamo::lockForUpdate()->findOrFail($id);
+
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
+                $this->emit('menu-djamo-active');
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
+                return;
+            }
+
 
             if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
                 DB::rollBack();
@@ -4089,26 +4164,29 @@ class Transfers extends Component
                 return;
             }
 
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
-
-                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
-
-                    $this->updateWallet($walletUpdate, ChooseDjamoEvent::class, 'modal-hide-djamo', 'menu-djamo-active', 'Vous avez choisi un djamo');
-                } else {
-                    $this->emit('menu-djamo-active');
-                    $this->emit(
-                        'error',
-                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                    );
-                }
-            } else {
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-djamo-active');
-                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-djamo-active');
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-djamo-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChooseDjamoEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-djamo');
+        $this->emit('menu-djamo-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
     public function ChooseUpdateTresort($id)
@@ -4116,7 +4194,6 @@ class Transfers extends Component
 
         DB::beginTransaction();
 
-        $sidAuth = Auth::guard('web')->user();
 
         try {
 
@@ -4130,26 +4207,29 @@ class Transfers extends Component
                 return;
             }
 
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
-
-                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
-
-                    $this->updateWallet($walletUpdate, ChooseTresortEvent::class, 'modal-hide-tresort', 'menu-tresort-active', 'Vous avez choisi une transaction de Tresort Money');
-                } else {
-                    $this->emit('menu-tresort-active');
-                    $this->emit(
-                        'error',
-                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                    );
-                }
-            } else {
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-tresort-active');
-                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-tresort-active');
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-tresort-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChooseTresortEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-tresort');
+        $this->emit('menu-tresort-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
 
@@ -4158,40 +4238,47 @@ class Transfers extends Component
 
         DB::beginTransaction();
 
-        $sidAuth = Auth::guard('web')->user();
+        $sidAuth = sabdy();
 
         try {
 
             $walletUpdate = WalletPush::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-push-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChoosePushEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
 
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
 
-                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
-
-                    $this->updateWallet($walletUpdate, ChoosePushEvent::class, 'modal-hide-push', 'menu-push-active', 'Vous avez choisi un réchargement Push');
-                } else {
-                    $this->emit('menu-push-active');
-                    $this->emit(
-                        'error',
-                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                    );
-                }
-            } else {
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-push-active');
-                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-push-active');
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-push-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChoosePushEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-push');
+        $this->emit('menu-push-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
     public function ChooseUpdatePayment($id)
@@ -4199,40 +4286,46 @@ class Transfers extends Component
 
         DB::beginTransaction();
 
-        $sidAuth = Auth::guard('web')->user();
-
         try {
 
             $walletUpdate = WalletPayment::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-paiement-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChoosePaymentEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
 
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
 
-                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
-
-                    $this->updateWallet($walletUpdate, ChoosePaymentEvent::class, 'modal-hide-paiement', 'menu-paiement-active', 'Vous avez choisi un paiement');
-                } else {
-                    $this->emit('menu-paiement-active');
-                    $this->emit(
-                        'error',
-                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                    );
-                }
-            } else {
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-paiement-active');
-                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-paiement-active');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-paiement-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChoosePaymentEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-paiement');
+        $this->emit('menu-paiement-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
     public function ChooseUpdateBankSend($id)
@@ -4240,40 +4333,47 @@ class Transfers extends Component
 
         DB::beginTransaction();
 
-        $sidAuth = Auth::guard('web')->user();
 
         try {
 
             $walletUpdate = WalletBankSend::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-bankSend-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChoosePaymentEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
 
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
 
-                if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
-
-                    $this->updateWallet($walletUpdate, ChoosePaymentEvent::class, 'modal-hide-bankSend', 'menu-bankSend-active', 'Vous avez choisi un paiement bank send');
-                } else {
-                    $this->emit('menu-bankSend-active');
-                    $this->emit(
-                        'error',
-                        'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                    );
-                }
-            } else {
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-bankSend-active');
-                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-bankSend-active');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-bankSend-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChooseBankSendEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-bankSend');
+        $this->emit('menu-bankSend-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
     public function ChooseUpdateInter($id)
@@ -4285,145 +4385,180 @@ class Transfers extends Component
 
             $walletUpdate = WalletInter::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-inters-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChooseInterEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
-            if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
 
-                $this->updateWallet($walletUpdate, ChooseInterEvent::class, 'modal-hide-inters', 'menu-inters-active', 'Vous avez choisi transfert international');
-            } else {
+
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-inters-active');
-                $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-transaction-active');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-inters-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChooseInterEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-inters');
+        $this->emit('menu-inters-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
     public function ChooseUpdateVirement($id)
     {
         DB::beginTransaction();
-        $sidAuth = Auth::guard('web')->user();
+        $sidAuth = sabdy();
 
         try {
 
             $walletUpdate = WalletBank::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING'  && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-virement-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChooseVirementEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
 
-            if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
-
-                if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
-
-                    $this->updateWallet($walletUpdate, ChooseVirementEvent::class, 'modal-hide-virement', 'menu-virement-active', 'Vous avez choisi une demande de virement');
-                } else {
-                    $this->emit('menu-virement-active');
-                    $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
-                }
-            } else {
-                //  $this->emit('modal-hide-virement');
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-virement-active');
-                $this->emit(
-                    'error',
-                    'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                );
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-virement-active');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-virement-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChooseVirementEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-virement');
+        $this->emit('menu-virement-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
     public function ChooseUpdateReloadCard($id)
     {
         DB::beginTransaction();
 
-        $sidAuth = Auth::guard('web')->user();
-
         try {
 
             $walletUpdate = WalletDeposit::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-reloadCarte-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChooseReloadCardEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
 
-            if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
-                if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
-
-                    $this->updateWallet($walletUpdate, ChooseReloadCardEvent::class, 'modal-hide-reloadCarte', 'menu-reloadCarte-active', 'Vous avez choisi rechargement de carte');
-                } else {
-                    $this->emit('menu-reloadCarte-active');
-                    $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
-                }
-            } else {
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-reloadCarte-active');
-                $this->emit(
-                    'error',
-                    'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                );
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-reloadCarte-active');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-reloadCarte-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChooseReloadCardEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-reloadCarte');
+        $this->emit('menu-reloadCarte-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
     public function ChooseUpdatePhoneCredit($id)
     {
 
-        // DB::beginPhoneCredit();
-
-        $sidAuth = Auth::guard('web')->user();
 
         try {
 
             $walletUpdate = WalletPhoneCredit::lockForUpdate()->findOrFail($id);
 
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
+            if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
+
+                DB::commit();
                 $this->emit('menu-phoneCredit-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChoosePhoneCreditEvent($walletUpdate));
+                $this->emit(
+                    'info',
+                    'Désolé, cette transaction a déjà été traitée ou n’est plus en attente.'
+                );
                 return;
             }
 
-            if ($walletUpdate->wallet->country->id == $sidAuth->country->id) {
 
-                if (Auth::guard('web')->user()->is_distributer == 1 || Auth::guard('web')->user()->is_admin == 1) {
-
-                    $this->updateWallet($walletUpdate, ChoosePhoneCreditEvent::class, 'modal-hide-phoneCredit', 'menu-phoneCredit-active', 'Vous avez choisi le rechargement de credit telephonique');
-                } else {
-                    $this->emit('menu-phoneCredit-active');
-                    $this->emit('info', 'Desolez Vous avez ne pouvez pas choisi');
-                }
-            } else {
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
                 $this->emit('menu-phoneCredit-active');
-                $this->emit(
-                    'error',
-                    'Vous ne pouvez pas valider cette transaction ... ! Merci bien !'
-                );
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
             }
-        } catch (\Exception $exception) {
+
+            $this->updatedChooseWallet($walletUpdate, 'menu-phoneCredit-active');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
             $this->emit('menu-phoneCredit-active');
             $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
         }
+
+        DB::afterCommit(function () use ($walletUpdate) {
+            event(new ChoosePhoneCreditEvent($walletUpdate));
+        });
+
+        $this->emit('modal-hide-phoneCredit');
+        $this->emit('menu-phoneCredit-active');
+        $this->emit('info', 'Transaction choisie avec succès.');
     }
 
     // End Choose   
@@ -4775,7 +4910,7 @@ class Transfers extends Component
         $push = WalletPush::whereIsWeb(false);
         $versement = WalletVersement::whereIsWeb(false);
         $tresortMoney = WalletTresortMoney::whereIsWeb(false);
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
         $commission_paiement_invoice_val_nat_pay_frais = null;
         $commission_transaction_val_nal_pay = null;
         $code_validated_val_nat = null;
@@ -4794,41 +4929,58 @@ class Transfers extends Component
         }
 
         // Transactions
-        $transactions = $transaction->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
-            ->where('wallet_transactions.status', 'PENDING')
-            ->where('wallet_transactions.phone', '!=', null);
 
-        if ($walletUser->is_under_distributer) {
-            $transactions->where('wallet_transactions.wallet_id', $walletUser->wallet->id);
-        }
-
-        $transactions = $transactions->select('wallet_transactions.*')
+        $transactions = $transaction
+            ->join('wallets', 'wallet_transactions.wallet_id', 'wallets.id')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_transactions.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_transactions.status', 'PROCESSING')
+                            ->where('wallet_transactions.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_transactions.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_transactions.*')
             ->orderBy('wallet_transactions.created_at', 'desc')
             ->paginate(15);
 
 
-        // Paiements
-        $paiements = $paiement->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
+
+        $paiements = $paiement
+            ->join('wallets', 'wallet_payments.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_payments.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $paiements->where('wallet_payments.wallet_id', $walletUser->wallet->id);
-        }
-
-        $paiements = $paiements->select('wallet_payments.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_payments.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_payments.status', 'PROCESSING')
+                            ->where('wallet_payments.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_payments.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_payments.*')
             ->orderBy('wallet_payments.created_at', 'desc')
             ->paginate(15);
 
-        $tresortMoneys = $tresortMoney->join('wallets', 'wallet_tresort_money.wallet_id', 'wallets.id')
+
+        $tresortMoneys = $tresortMoney
+            ->join('wallets', 'wallet_tresort_money.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_tresort_money.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $tresortMoneys->where('wallet_tresort_money.wallet_id', $walletUser->wallet->id);
-        }
-
-        $tresortMoneys = $tresortMoneys->select('wallet_tresort_money.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_tresort_money.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_tresort_money.status', 'PROCESSING')
+                            ->where('wallet_tresort_money.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_tresort_money.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_tresort_money.*')
             ->orderBy('wallet_tresort_money.created_at', 'desc')
             ->paginate(15);
 
@@ -4836,41 +4988,54 @@ class Transfers extends Component
         $virements = $virement_bank
             ->join('wallets', 'wallet_banks.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_banks.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $virements->where('wallet_banks.wallet_id', $walletUser->wallet->id);
-        }
-
-        $virements = $virements->select('wallet_banks.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_banks.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_banks.status', 'PROCESSING')
+                            ->where('wallet_banks.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_banks.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_banks.*')
             ->orderBy('wallet_banks.created_at', 'desc')
             ->paginate(15);
 
-        // Transactions Internationales
+
+
         $internationals = $inter_search
             ->join('wallets', 'wallet_inters.wallet_id', 'wallets.id')
-            ->where('wallet_inters.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $internationals->where('wallet_inters.wallet_id', $walletUser->wallet->id);
-        }
-
-        $internationals = $internationals->select('wallet_inters.*')
+            ->where('wallets.country_id', $walletUser->country->id)
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_inters.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_inters.status', 'PROCESSING')
+                            ->where('wallet_inters.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_inters.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_inters.*')
             ->orderBy('wallet_inters.created_at', 'desc')
             ->paginate(15);
 
 
-        // Reload Cards
         $reloadCards = $reload_card
             ->join('wallets', 'wallet_deposits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_deposits.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $reloadCards->where('wallet_deposits.wallet_id', $walletUser->wallet->id);
-        }
-
-        $reloadCards = $reloadCards->select('wallet_deposits.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_deposits.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_deposits.status', 'PROCESSING')
+                            ->where('wallet_deposits.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_deposits.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_deposits.*')
             ->orderBy('wallet_deposits.created_at', 'desc')
             ->paginate(15);
 
@@ -4878,41 +5043,53 @@ class Transfers extends Component
         $phoneCredits = $phone_credit
             ->join('wallets', 'wallet_phone_credits.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_phone_credits.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $phoneCredits->where('wallet_phone_credits.wallet_id', $walletUser->wallet->id);
-        }
-
-        $phoneCredits = $phoneCredits->select('wallet_phone_credits.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_phone_credits.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_phone_credits.status', 'PROCESSING')
+                            ->where('wallet_phone_credits.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_phone_credits.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_phone_credits.*')
             ->orderBy('wallet_phone_credits.created_at', 'desc')
             ->paginate(15);
 
-        // New valeurs sends
 
         $xbets = $xbet
             ->join('wallets', 'wallet_xbets.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_xbets.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $xbets->where('wallet_xbets.wallet_id', $walletUser->wallet->id);
-        }
-
-        $xbets = $xbets->select('wallet_xbets.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_xbets.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_xbets.status', 'PROCESSING')
+                            ->where('wallet_xbets.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_xbets.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_xbets.*')
             ->orderBy('wallet_xbets.created_at', 'desc')
             ->paginate(15);
+
 
         $djamos = $djamo
             ->join('wallets', 'wallet_djamos.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_djamos.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $djamos->where('wallet_djamos.wallet_id', $walletUser->wallet->id);
-        }
-
-        $djamos = $djamos->select('wallet_djamos.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_djamos.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_djamos.status', 'PROCESSING')
+                            ->where('wallet_djamos.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_djamos.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_djamos.*')
             ->orderBy('wallet_djamos.created_at', 'desc')
             ->paginate(15);
 
@@ -4920,42 +5097,54 @@ class Transfers extends Component
         $bankSends = $bankSend
             ->join('wallets', 'wallet_bank_sends.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_bank_sends.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $bankSends->where('wallet_bank_sends.wallet_id', $walletUser->wallet->id);
-        }
-
-        $bankSends = $bankSends->select('wallet_bank_sends.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_bank_sends.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_bank_sends.status', 'PROCESSING')
+                            ->where('wallet_bank_sends.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_bank_sends.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_bank_sends.*')
             ->orderBy('wallet_bank_sends.created_at', 'desc')
             ->paginate(15);
+
 
         $pushs = $push
             ->join('wallets', 'wallet_pushes.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_pushes.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $pushs->where('wallet_pushes.wallet_id', $walletUser->wallet->id);
-        }
-
-        $pushs = $pushs->select('wallet_pushes.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_pushes.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_pushes.status', 'PROCESSING')
+                            ->where('wallet_pushes.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_pushes.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_pushes.*')
             ->orderBy('wallet_pushes.created_at', 'desc')
             ->paginate(15);
 
         $versements = $versement
             ->join('wallets', 'wallet_versements.wallet_id', 'wallets.id')
             ->where('wallets.country_id', $walletUser->country->id)
-            ->where('wallet_versements.status', 'PENDING');
-
-        if ($walletUser->is_under_distributer) {
-            $versements->where('wallet_versements.wallet_id', $walletUser->wallet->id);
-        }
-
-        $versements = $versements->select('wallet_versements.*')
+            ->where(function ($q) use ($walletUser) {
+                $q->where('wallet_versements.status', 'PENDING')
+                    ->orWhere(function ($q2) use ($walletUser) {
+                        $q2->where('wallet_versements.status', 'PROCESSING')
+                            ->where('wallet_versements.updated_by', $walletUser->id);
+                    });
+            })
+            ->when($walletUser->is_under_distributer, function ($q) use ($walletUser) {
+                $q->where('wallet_versements.wallet_id', $walletUser->wallet->id);
+            })
+            ->select('wallet_versements.*')
             ->orderBy('wallet_versements.created_at', 'desc')
             ->paginate(15);
-
 
 
         return view('livewire.transfers', [
@@ -4975,7 +5164,7 @@ class Transfers extends Component
             'djamos' => $djamos,
             'bankSends' => $bankSends,
             'tresortMoneys' => $tresortMoneys,
-            'countrie_number_local' => Auth::guard('web')->user()->country
+            'countrie_number_local' => sabdy()->country
                 ->indecative,
             'wallet_search' => $wallet
                 ->where(
@@ -5129,18 +5318,18 @@ class Transfers extends Component
 
     protected function updateUserWallet($commission_transaction)
     {
-        return Auth::guard('web')->user()->wallet->update([
-            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-            'sid_user_relod' => Auth::guard('web')->user()->id,
+        return sabdy()->wallet->update([
+            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+            'sid_user_relod' => sabdy()->id,
             'amount' => DB::raw('amount+' . $commission_transaction),
         ]);
     }
 
     protected function updateUserDrawalWallet($commission_transaction)
     {
-        return Auth::guard('web')->user()->wallet->update([
-            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-            'sid_user_relod' => Auth::guard('web')->user()->id,
+        return sabdy()->wallet->update([
+            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+            'sid_user_relod' => sabdy()->id,
             'amount' => DB::raw('amount-' . $commission_transaction),
         ]);
     }
@@ -5149,9 +5338,19 @@ class Transfers extends Component
     {
 
         return $check->wallet->update([
-            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-            'sid_user_relod' => Auth::guard('web')->user()->id,
+            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+            'sid_user_relod' => sabdy()->id,
             'amount' => DB::raw('amount+' . $commission),
+        ]);
+    }
+
+    protected function updateReloadDrawalWallet($check)
+    {
+
+        return $check->wallet->update([
+            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+            'sid_user_relod' => sabdy()->id
+            // 'amount' => DB::raw('amount+' . 0),
         ]);
     }
 
@@ -5159,8 +5358,8 @@ class Transfers extends Component
     {
 
         return $walletUser->wallet->update([
-            'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-            'sid_user_relod' => Auth::guard('web')->user()->id,
+            'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+            'sid_user_relod' => sabdy()->id,
             'amount' => DB::raw('amount-' . $transaction_amount_robus),
         ]);
     }
@@ -5196,10 +5395,10 @@ class Transfers extends Component
                 ]);
 
                 $admin_single->wallet->update([
-                    'reload_by' =>  Auth::guard('web')->user()->firstname .
+                    'reload_by' =>  sabdy()->firstname .
                         ' ' .
-                        Auth::guard('web')->user()->lastname,
-                    'sid_user_relod' =>  Auth::guard('web')->user()->id,
+                        sabdy()->lastname,
+                    'sid_user_relod' =>  sabdy()->id,
                     'amount' => DB::raw('amount+' . $valeur_single),
                 ]);
             }
@@ -5218,7 +5417,7 @@ class Transfers extends Component
             'amount_received' => null,
             'amount_solde'  => $amount_solde ?? null,
             'amount_solde_drawal' => $amount_solde_drawal ?? null,
-            'created_by' => Auth::guard('web')->user()->id,
+            'created_by' => sabdy()->id,
         ]);
     }
 
@@ -5263,7 +5462,7 @@ class Transfers extends Component
     {
         $check->adminCom->update([
             'amount_distributer' => $commission_transaction,
-            'sid_user_id' => Auth::guard('web')->user()->id,
+            'sid_user_id' => sabdy()->id,
             'description_distributer' => 'Validation distributeur',
         ]);
     }
@@ -5475,8 +5674,8 @@ class Transfers extends Component
                 ]);
 
                 $admin_single->wallet->update([
-                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                    'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                    'sid_user_relod' => sabdy()->id,
                     'amount' => DB::raw('amount-' . $valeur_amount_com),
                 ]);
             }
@@ -5505,8 +5704,8 @@ class Transfers extends Component
 
                 // Update amount admin
                 $admin_single->wallet->update([
-                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                    'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                    'sid_user_relod' => sabdy()->id,
                     'amount' => DB::raw('amount+' . $valeur_amount_com),
                 ]);
             }
@@ -5606,8 +5805,8 @@ class Transfers extends Component
                 AdminsCom::create($transaction_data);
 
                 $admin_single->wallet->update([
-                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                    'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                    'sid_user_relod' => sabdy()->id,
                     'amount' => DB::raw('amount+' . $valeur_single),
                 ]);
             }
@@ -5648,10 +5847,10 @@ class Transfers extends Component
                 ]);
 
                 $admin_single->wallet->update([
-                    'reload_by' =>  Auth::guard('web')->user()->firstname .
+                    'reload_by' =>  sabdy()->firstname .
                         ' ' .
-                        Auth::guard('web')->user()->lastname,
-                    'sid_user_relod' =>  Auth::guard('web')->user()->id,
+                        sabdy()->lastname,
+                    'sid_user_relod' =>  sabdy()->id,
                     'amount' => DB::raw('amount-' . $valeur_single),
                 ]);
             }
@@ -5679,8 +5878,8 @@ class Transfers extends Component
                 ]);
 
                 $admin_single->wallet->update([
-                    'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
-                    'sid_user_relod' => Auth::guard('web')->user()->id,
+                    'reload_by' => sabdy()->firstname . ' ' . sabdy()->lastname,
+                    'sid_user_relod' => sabdy()->id,
                     'amount' => DB::raw('amount+' . $valeur_amount_com),
                 ]);
             }
@@ -5695,7 +5894,7 @@ class Transfers extends Component
         $tr = str_shuffle('123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ');
         $transactionCode = sprintf('%0.9s', str_shuffle($rt . $tr));
         $transactionCompiCode = sprintf('%0.8s', str_shuffle($rt . $tr));
-        $user_auth = Auth::guard('web')->user();
+        $user_auth = sabdy();
         $admins = $this->getAdminValeurProperty();
         $admin_civ = SidUser::whereStatus(true)
             ->whereIsAdmin(true)
@@ -5714,7 +5913,7 @@ class Transfers extends Component
 
     public function getNationTransactionProperty()
     {
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
 
         $transaction_nationnal = Provider::join(
             'country_services',
@@ -5733,7 +5932,7 @@ class Transfers extends Component
 
     public function getPaiementTransactionProperty()
     {
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
 
         $payments = Provider::join(
             'country_services',
@@ -5754,7 +5953,7 @@ class Transfers extends Component
 
     public function getVirementTransactionProperty()
     {
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
 
         $virement_transaction = Provider::join(
             'country_services',
@@ -5777,7 +5976,7 @@ class Transfers extends Component
 
         $admins = SidUser::whereStatus(true)
             ->whereIsAdmin(true)
-            ->where('country_id', Auth::guard('web')->user()->country->id)
+            ->where('country_id', sabdy()->country->id)
             ->get();
 
         return  $admins;
@@ -5828,7 +6027,7 @@ class Transfers extends Component
 
     public function getReloadTransactionProperty()
     {
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
 
         $reload_transaction = Provider::join(
             'country_services',
@@ -5848,7 +6047,7 @@ class Transfers extends Component
 
     public function getPhoneCreditTransactionProperty()
     {
-        $walletUser = Auth::guard('web')->user();
+        $walletUser = sabdy();
 
         $phone_transaction = Provider::join(
             'country_services',
@@ -5936,7 +6135,7 @@ class Transfers extends Component
 
     private function getWalletDepositSum(string $model, string $table)
     {
-        $userCountryId = Auth::guard('web')->user()->country->id;
+        $userCountryId = sabdy()->country->id;
 
         $walletDepositQuery = $model::join('wallets', "{$table}.wallet_id", '=', 'wallets.id')
             ->where('wallets.country_id', $userCountryId)

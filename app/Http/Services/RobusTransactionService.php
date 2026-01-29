@@ -200,9 +200,7 @@ class RobusTransactionService
                             $this->commissionServices->processAdminCommissionSDistributerAndComp($user->id, $walletTransaction->id, $valeur_single, $valuer_deposit, $valuer_companie);
                         }
                     }
-                } else {
                 }
-
 
                 if ($admin_civ->count() > 0) {
                     $nmbre_admin = $admin_civ->count();

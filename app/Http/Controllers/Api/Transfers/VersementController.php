@@ -324,49 +324,65 @@ class VersementController extends Controller
 
         $wallet_user = robus();
 
-        // valeur amount virement bank
-
+        $amount_min = 20700;
         try {
 
-            // Invoice auther
-            if ($amount_paiement != '') {
-
-                $reel_amount = $this->validatedamountDays->search_amount($amount_paiement);
-
-                $commission_invoice =  $this->percentRobus->getRobusPercentageVersement($providerId);
-
-                if ($wallet_user->country->code == 'CI') {
-
-                    if ($wallet_user->is_under_distributer == 1 || $wallet_user->is_api) {
-
-                        $commission_paiement =  $commission_invoice->percent  * $amount_paiement;
-
-                        $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_merchands  * $amount_paiement;
-
-                        $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_paiement;
-
-                        $commission_transaction_val_percent_pay =  (float) $commission_paiement;
-                    } else {
-
-                        $commission_custumer_paiement =  $commission_invoice->percent_custumer  * $amount_paiement;
-
-                        $commission_paiement_invoice_val_nat_pay =   $commission_custumer_paiement;
-
-                        $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount - (float) $commission_custumer_paiement;
-
-                        $commission_transaction_val_percent_pay =  (float) $commission_custumer_paiement;
-                    }
-
-                    return response()->json([
-                        'success' => $commission_invoice != null ? true : false,
-                        'data' =>  [
-                            'amount_pay' => $commission_paiement_invoice_val_nat_pay,
-                            'amount_send' => $commission_transaction_val_percent_pay,
-                            'amount_receive' => $commission_paiement_invoice_val_nat_receive,
-                        ],
-                    ], 200);
-                }
+            if (empty($amount_paiement)) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'amount_pay' => 0,
+                        'amount_send' => 0,
+                        'amount_receive' => 'Veuillez saisir un montant valide.',
+                    ],
+                ], 200);
             }
+
+            if ((float) $amount_paiement < $amount_min) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'amount_pay' => 0,
+                        'amount_send' => 0,
+                        'amount_receive' =>
+                        'Le montant minimum est de 20700 FCFA.',
+                    ],
+                ], 200);
+            }
+
+            $reel_amount = $this->validatedamountDays->search_amount($amount_paiement);
+
+            $commission_invoice =  $this->percentRobus->getRobusPercentageVersement($providerId);
+
+            if (!$commission_invoice || $wallet_user->country->code !== 'CI') {
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'amount_pay' => 0,
+                        'amount_send' => 0,
+                        'amount_receive' => 'Opération non autorisée.',
+                    ],
+                ], 200);
+            }
+
+            if ($wallet_user->is_under_distributer == 1 || $wallet_user->is_api) {
+                $commission_pay = $commission_invoice->percent * $amount_paiement;
+                $amount_pay = $commission_invoice->percent_merchands * $amount_paiement;
+            } else {
+                $commission_pay = $commission_invoice->percent_custumer * $amount_paiement;
+                $amount_pay = $commission_pay;
+            }
+
+            $amount_receive = (float) $reel_amount - (float) $commission_pay;
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'amount_pay' =>  $amount_pay,
+                    'amount_send' =>  $commission_pay,
+                    'amount_receive' =>  $amount_receive,
+                ],
+            ], 200);
         } catch (\Exception $exception) {
             return response()->json([
                 'success' =>  false,
