@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\MailController;
 use App\Models\Sid\SidUser;
 use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
+use App\constants\NotificationMessages;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Log;
@@ -31,47 +32,84 @@ class NotificationSendService
 
     public function sendNotificationPayment($walletPayment)
     {
-        $msg = 'Demande en cours de validation';
-        $msg_title = 'Paiement facture';
-        $admins = $this->getAdminCIVProperty();
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
-        $notifs = robus()->unreadNotifications;
-        event(new CreateWalletPaiementEvent($walletPayment));
-        Notification::send($admins, new AdminNotification('Demande de paiement'));
 
-        if ($admins->count() > 0) {
+        try {
 
-            foreach ($admins  as $user) {
+            $msg = 'Demande en cours de validation';
+            $msg_title = 'Paiement facture';
 
-                $admin_single = SidUser::find($user->id);
+            safeNotify(
+                robus(),
+                new UserNotification([
+                    'title' => $msg_title,
+                    'message' => $msg
+                ])
+            );
+        } catch (\Throwable $e) {
+            Log::warning('Notification utilisateur échouée', [
+                'error' => $e->getMessage()
+            ]);
+        }
+        try {
+            event(new CreateWalletPaiementEvent($walletPayment));
+        } catch (\Throwable $e) {
+            Log::warning('Event CreateWalletPaiementEvent échoué', [
+                'error' => $e->getMessage()
+            ]);
+        }
+        // ===============================
+        // 3. Notifications Admins
+        // ===============================
+        try {
 
-                $notifs = $admin_single->unreadNotifications;
+            $admins = $this->getAdminCIVProperty();
 
-                event(new AdminNotifEvent($notifs));
+            if ($admins->count() > 0) {
+
+                safeNotifyMany(
+                    $admins,
+                    new AdminNotification(NotificationMessages::ADMIN_PAYMENT_REQUEST)
+                );
+                foreach ($admins as $user) {
+
+                    $admin_single = SidUser::find($user->id);
+
+                    if ($admin_single) {
+                        $notifs = $admin_single->unreadNotifications;
+                        event(new AdminNotifEvent($notifs));
+                    }
+                }
             }
+        } catch (\Throwable $e) {
+            Log::warning('Notifications admin échouées', [
+                'error' => $e->getMessage()
+            ]);
         }
 
-        if (robus()->email != null) {
-
-            $notify = new MailController;
-            $notify->newPaiement($walletPayment);
+        // ===============================
+        // 4. Email (non bloquant)
+        // ===============================
+        try {
+            if (!empty(robus()->email)) {
+                (new MailController)->newPaiement($walletPayment);
+            }
+        } catch (\Throwable $e) {
+            Log::warning('Email paiement échoué', [
+                'error' => $e->getMessage()
+            ]);
         }
+
+        // ===============================
+        // 5. RÉPONSE TOUJOURS OK
+        // ===============================
         return response()->json([
             'success' => true,
             'data' => [
-                'id'      => $walletPayment->id,
+                'id'     => $walletPayment->id,
                 'amount' => $walletPayment->amount,
-                // 'provider' => $walletPayment->provider->name,
-                // 'number_decoder' => $walletPayment->number_decoder,
-                // 'id_invoice' => $walletPayment->id_invoice,
-                // 'number_contract' => $walletPayment->number_contract,
-                // 'name' => $walletPayment->name,
-                // 'number_phone' => $walletPayment->number_phone,
-                // 'offer_id' => $walletPayment->offer_id,
-                // 'name' => $walletPayment->name,
                 'status' => $walletPayment->status,
             ],
-            'message' => ('Votre commande de facture a bien été prise en compte.')
+            'message' => 'Votre commande de facture a bien été prise en compte.'
         ], 200);
     }
 
@@ -80,10 +118,21 @@ class NotificationSendService
         $msg = 'Demande en cours de validation';
         $msg_title = 'Versement Bancaire';
         $admins = $this->getAdminCIVProperty();
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletPaiementEvent($walletPayment));
-        Notification::send($admins, new AdminNotification('Demande de versement Bancaire'));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::ADMIN_BANK_TRANSFER_REQUEST)
+        );
 
         if ($admins->count() > 0) {
 
@@ -107,14 +156,6 @@ class NotificationSendService
             'data' => [
                 'id'      => $walletPayment->id,
                 'amount' => $walletPayment->amount,
-                // 'provider' => $walletPayment->provider->name,
-                // 'number_decoder' => $walletPayment->number_decoder,
-                // 'id_invoice' => $walletPayment->id_invoice,
-                // 'number_contract' => $walletPayment->number_contract,
-                // 'name' => $walletPayment->name,
-                // 'number_phone' => $walletPayment->number_phone,
-                // 'offer_id' => $walletPayment->offer_id,
-                // 'name' => $walletPayment->name,
                 'status' => $walletPayment->status,
             ],
             'message' => ('Votre demande de versement bancaire a bien été prise en compte.')
@@ -126,10 +167,20 @@ class NotificationSendService
         $msg = 'Demande en cours de validation';
         $msg_title = 'Paiement canal';
         $admins = $this->getAdminCIVProperty();
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletPaiementEvent($walletPayment));
-        Notification::send($admins, new AdminNotification('Demande de paiement'));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::ADMIN_PAYMENT_REQUEST)
+        );
 
         if ($admins->count() > 0) {
 
@@ -153,14 +204,6 @@ class NotificationSendService
             'data' => [
                 'id'      => $walletPayment->id,
                 'amount' => $walletPayment->amount,
-                // 'provider' => $walletPayment->provider->name,
-                // 'number_decoder' => $walletPayment->number_decoder,
-                // 'id_invoice' => $walletPayment->id_invoice,
-                // 'number_contract' => $walletPayment->number_contract,
-                // 'name' => $walletPayment->name,
-                // 'number_phone' => $walletPayment->number_phone,
-                // 'offer_id' => $walletPayment->offer_id,
-                // 'name' => $walletPayment->name,
                 'status' => $walletPayment->status,
             ],
             'message' => ('Votre demande de paiement de facture a bien été prise en compte.')
@@ -192,14 +235,24 @@ class NotificationSendService
         }
 
 
-
         $msg = 'Demande en cours de validation';
         $msg_title = 'Rechargement de carte';
         $admins = $this->getAdminCIVProperty();
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletReloadCardEvent($walletRelaodCard));
-        Notification::send($admins, new AdminNotification('Demande de rechargement de carte de ' . ' ' . $walletRelaodCard->wallet->sidUser->firstname));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_CARD)
+        );
+
 
         if ($admins->count() > 0) {
 
@@ -221,11 +274,6 @@ class NotificationSendService
             'success' => true,
             'data' => [
                 'id'      => $walletRelaodCard->id,
-                // 'provider' => $walletRelaodCard->provider->name,
-                // 'amount' => $walletRelaodCard->amount,
-                // 'num_carte' => $walletRelaodCard->num_carte,
-                // 'name' => $walletRelaodCard->name,
-                // 'description' => $walletRelaodCard->description,
                 'status' => $walletRelaodCard->status,
             ],
             'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
@@ -259,18 +307,21 @@ class NotificationSendService
 
         $msg = 'Votre demande est en cours de validation';
         $msg_title = 'Commande carte';
-        robus()->notify(new UserNotification(
-            [
+       safeNotify(
+            robus(),
+            new UserNotification([
                 'title' => $msg_title,
                 'message' => $msg
-            ]
-        ));
+            ])
+        );
 
         $admins = $this->getAdminCIVProperty();
         $notifs = robus()->unreadNotifications;
         event(new CreateCardBankEvent($walletOrderCard));
-        Notification::send($admins, new AdminNotification('Commande de carte de ' . ' ' . $walletOrderCard->wallet->sidUser->firstname));
-
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::ORDER_RELOAD_CARD)
+        );
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -326,10 +377,20 @@ class NotificationSendService
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title = 'Credit téléphonique';
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletPhoneCreditEvent($walletPhone));
-        Notification::send($admins, new AdminNotification('Demande de credit de ' . ' ' . $walletPhone->wallet->sidUser->firstname));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::PHONE_CREDIT_RELOAD_CARD)
+        );
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -351,10 +412,7 @@ class NotificationSendService
             'success' => true,
             'data' => [
                 'id'      => $walletPhone->id,
-                // 'provider' => $walletPhone->provider->name,
                 'amount' => $walletPhone->amount,
-                // 'phone' => $walletPhone->phone,
-                // 'description' => $walletPhone->description,
                 'status' => $walletPhone->status,
             ],
             'message' => ('Le crédit téléphonique a été créé avec succès.')
@@ -391,10 +449,20 @@ class NotificationSendService
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title = 'Transction Push';
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletPushEvent($walletPush));
-        Notification::send($admins, new AdminNotification('Demande de transaction Push de ' . ' ' . $walletPush->wallet->sidUser->firstname));
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_PUSH)
+        );
+
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -453,10 +521,19 @@ class NotificationSendService
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title = 'Transction Tresort Money';
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletTresortEvent($walletTransaction));
-        Notification::send($admins, new AdminNotification('Demande de transaction Tresort Money de ' . ' ' . $walletTransaction->wallet->sidUser->firstname));
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_TRESORT)
+        );
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -515,10 +592,19 @@ class NotificationSendService
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title = 'Transction Djamo';
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletDjamoEvent($walletTransaction));
-        Notification::send($admins, new AdminNotification('Demande de transaction Djamo de ' . ' ' . $walletTransaction->wallet->sidUser->firstname));
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_DJAMO)
+        );
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -577,10 +663,20 @@ class NotificationSendService
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title =  $walletXbet->choose_type_transaction == 1 ? 'Réchargement 1Xbet' : 'Retrait 1Xbet';
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletOneXbet($walletXbet));
-        Notification::send($admins, new AdminNotification($walletXbet->choose_type_transaction == 1 ? 'Demande de rechargement 1xbet de ' : 'Demande de retrait 1xbet de '  . ' ' . $walletXbet->wallet->sidUser->firstname));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification($walletXbet->choose_type_transaction == 1  ? NotificationMessages::WALLET_RELOAD_XBET  : 'Demande de retrait 1xbet')
+        );
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -637,10 +733,20 @@ class NotificationSendService
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title =  "Réchargement";
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletOneXbet($walletWith));
-        Notification::send($admins, new AdminNotification("Demande de rechargement"));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_WITH)
+        );
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -706,10 +812,20 @@ class NotificationSendService
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title =  "Bank send";
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletBankSend($walletWith));
-        Notification::send($admins, new AdminNotification("Demande de rechargement bank send"));
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_BANK)
+        );
+
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -765,10 +881,20 @@ class NotificationSendService
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title =  'Réchargement Wave ';
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWaveEvent($walletWaves));
-        Notification::send($admins, new AdminNotification('Demande de rechargement par wave de ' . ' ' . $walletWaves->wallet->sidUser->firstname));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_WAVE)
+        );
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -824,16 +950,23 @@ class NotificationSendService
         $msg = 'Votre demande de virement est en cours ';
         $msg_title = 'Demande de virement';
 
-        robus()->notify(new UserNotification([
-            'title' => $msg_title,
-            'message' => $msg,
-        ]));
-
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
 
         $admins = $this->getAdminCIVProperty();
         $notifs =  $userAuth->unreadNotifications;
         event(new CreateWalletBankEvent($walletBank));
-        Notification::send($admins, new AdminNotification('Demande de virement de ' . ' ' . $walletBank->wallet->sidUser->firstname));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_VIREMENT)
+        );
+
         if ($admins->count() > 0) {
 
 
@@ -891,24 +1024,22 @@ class NotificationSendService
 
         $msg_title = 'Transfert National Robus';
         $msg = 'Vous avez effectué un transfert vers Robus avec succes';
-        robus()->notify(
+        safeNotify(
+            robus(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletTransfersEvent($walletTransaction));
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus vers Client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
         );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Robus vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
+
 
         if ($admins->count() > 0) {
 
@@ -931,10 +1062,7 @@ class NotificationSendService
             'success' => true,
             'data' => [
                 'id'      => $walletTransaction->id,
-                // 'provider' => $walletTransaction->provider->name,
                 'amount' => $walletTransaction->amount,
-                // 'phone' => $walletTransaction->phone,
-                // 'num_wallet' => $walletTransaction->num_wallet,
                 'status' => $walletTransaction->status,
             ],
             'message' => ('La transaction a été effectuée avec succès.')
@@ -968,26 +1096,23 @@ class NotificationSendService
 
         $msg_title = 'Transfert Mobile money';
         $msg = 'Vous avez effectué un transfert vers Mobile Money ';
-        robus()->notify(
+      safeNotify(
+            robus(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletTransfersEvent($walletTransaction));
         // $this->emit('transaction_inter_sends', $walletTransaction->id);
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+       
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus vers le client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
         );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Mobile Money vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
-
+ 
 
         if ($admins->count() > 0) {
 

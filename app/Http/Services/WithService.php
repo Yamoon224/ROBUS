@@ -248,7 +248,7 @@ class WithService
         if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
         } else {
-            $amount_commission = $amount + ($percent * $amount);
+            $amount_commission = $amount ;
         }
 
         $amount_solde = $user->wallet->amount - $amount_commission;

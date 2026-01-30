@@ -18,6 +18,7 @@ use App\Notifications\AdminNotification;
 use App\Notifications\UserNotification;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
+use App\constants\NotificationMessages;
 
 
 class NotificationWebService
@@ -31,7 +32,11 @@ class NotificationWebService
 
         $admins = $this->getAdminCIVProperty();
         event(new CreateReloadWebEvent($walletRelaodCard));
-        Notification::send($admins, new AdminNotification('Demande de rechargement de carte de Visiteurs' . ' ' . $walletRelaodCard->name));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_CARD)
+        );
 
         if ($admins->count() > 0) {
 
@@ -44,11 +49,7 @@ class NotificationWebService
                 event(new AdminNotifEvent($notifs));
             }
         }
-        // if (robus()->email != null) {
 
-        //     $notify = new MailController;
-        //     $notify->newReload($walletRelaodCard);
-        // }
         return response()->json([
             'success' => true,
             'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
@@ -60,8 +61,11 @@ class NotificationWebService
 
 
         $admins = $this->getAdminCIVProperty();
-        // event(new CreateReloadWebEvent($walletTransaction));
-        Notification::send($admins, new AdminNotification('Demande de transaction  de Visiteurs' . ' ' . $walletTransaction->name_complet));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
+        );
 
         if ($admins->count() > 0) {
 
@@ -74,14 +78,9 @@ class NotificationWebService
                 event(new AdminNotifEvent($notifs));
             }
         }
-        // if (robus()->email != null) {
-
-        //     $notify = new MailController;
-        //     $notify->newReload($walletRelaodCard);
-        // }
         return response()->json([
             'success' => true,
-            'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
+            'message' => ('VotrnotificationOrderCarde demande de réchargement de carte a bien été prise en compte.')
         ], 200);
     }
 
@@ -91,7 +90,10 @@ class NotificationWebService
 
         $admins = $this->getAdminCIVProperty();
         event(new CreateReloadWebEvent($walletInter));
-        Notification::send($admins, new AdminNotification('Demande de transaction international  de Visiteurs' . ' ' . $walletInter->name_complet));
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_INTER)
+        );
 
         if ($admins->count() > 0) {
 
@@ -104,11 +106,7 @@ class NotificationWebService
                 event(new AdminNotifEvent($notifs));
             }
         }
-        // if (robus()->email != null) {
 
-        //     $notify = new MailController;
-        //     $notify->newReload($walletRelaodCard);
-        // }
         return response()->json([
             'success' => true,
             'message' => ('Votre demande a bien été prise en compte.')
@@ -123,7 +121,11 @@ class NotificationWebService
 
         $admins = $this->getAdminCIVProperty();
         event(new CreateReloadWebEvent($walletXbet));
-        Notification::send($admins, new AdminNotification('Demande de depot 1xbet  de Visiteurs' . ' ' . $walletXbet->full_name));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_XBET)
+        );
 
         if ($admins->count() > 0) {
 
@@ -136,11 +138,6 @@ class NotificationWebService
                 event(new AdminNotifEvent($notifs));
             }
         }
-        // if (robus()->email != null) {
-
-        //     $notify = new MailController;
-        //     $notify->newReload($walletRelaodCard);
-        // }
         return response()->json([
             'success' => true,
             'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
@@ -154,7 +151,11 @@ class NotificationWebService
 
         $admins = $this->getAdminCIVProperty();
         event(new CreateReloadWebEvent($walletPhone));
-        Notification::send($admins, new AdminNotification('Demande de credit téléphonique de Visiteurs' . ' ' . $walletPhone->full_name));
+
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::PHONE_CREDIT_RELOAD_CARD)
+        );
 
         if ($admins->count() > 0) {
 
@@ -167,11 +168,7 @@ class NotificationWebService
                 event(new AdminNotifEvent($notifs));
             }
         }
-        // if (robus()->email != null) {
 
-        //     $notify = new MailController;
-        //     $notify->newReload($walletRelaodCard);
-        // }
         return response()->json([
             'success' => true,
             'message' => ('Votre demande de réchargement de carte a bien été prise en compte.')
@@ -189,18 +186,26 @@ class NotificationWebService
                     . $walletXbet->provider->name  .  ' le '
                     . $walletXbet->created_at . '  bien été prise en compte le traitement se fera dans Maxi 5min ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
-
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                sendTryCashMessage(robus()->phone, $message);
             }
         }
         $admins = $this->getAdminCIVProperty();
         $msg = 'Demande en cours de validation';
         $msg_title =  $walletXbet->choose_type_transaction == 1 ? 'Réchargement 1Xbet' : 'Retrait 1Xbet';
-        robus()->notify(new UserNotification(['title' => $msg_title, 'message' => $msg]));
+        safeNotify(
+            robus(),
+            new UserNotification([
+                'title' => $msg_title,
+                'message' => $msg
+            ])
+        );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletOneXbet($walletXbet));
-        Notification::send($admins, new AdminNotification($walletXbet->choose_type_transaction == 1 ? 'Demande de rechargement 1xbet de ' : 'Demande de retrait 1xbet de '  . ' ' . $walletXbet->wallet->sidUser->firstname));
+        safeNotifyMany(
+            $admins,
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_XBET)
+        );
+
         if ($admins->count() > 0) {
 
             foreach ($admins  as $user) {
@@ -239,32 +244,28 @@ class NotificationWebService
                     . $walletTransaction->provider->name  .  ' le '
                     . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
-
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                sendTryCashMessage(robus()->phone, $message);
             }
         }
 
         $msg_title = 'Transfert National Robus';
         $msg = 'Vous avez effectué un transfert vers Robus avec succes';
-        robus()->notify(
+        safeNotify(
+            robus(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletTransfersEvent($walletTransaction));
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus vers Client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
         );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Robus vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
+
 
         if ($admins->count() > 0) {
 
@@ -306,34 +307,27 @@ class NotificationWebService
                     . $walletTransaction->provider->name  .  ' le '
                     . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
 
-                $encode = substr(robus()->phone,  -10);
-
-                http::get("//app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+                sendTryCashMessage(robus()->phone, $message);
             }
         }
 
         $msg_title = 'Transfert Mobile money';
         $msg = 'Vous avez effectué un transfert vers Mobile Money ';
-        robus()->notify(
+        safeNotify(
+            robus(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = robus()->unreadNotifications;
         event(new CreateWalletTransfersEvent($walletTransaction));
         // $this->emit('transaction_inter_sends', $walletTransaction->id);
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus vers le client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
         );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Mobile Money vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
-
 
         if ($admins->count() > 0) {
 

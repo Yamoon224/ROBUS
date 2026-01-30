@@ -824,8 +824,8 @@ class TransactionController extends Controller
 
                     if ($this->validatedamountDays->validateAmountSendLimit($request->amount, $valeur_max_send)) {
 
-                        $percent_amount = $percent_robus->percent * $request->amount;
 
+                        $percent_amount = (robus()->is_under_distributer || robus()->is_api) ? $percent_robus->percent_with_drawal * $request->amount : $percent_robus->percent_custum_drawal * $request->amount;
 
                         if (robus()->is_under_distributer || robus()->is_api) {
 
@@ -1324,9 +1324,13 @@ class TransactionController extends Controller
 
                     $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
 
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer , $amount_transaction);
+
                     $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay_custumer;
 
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $commission_transaction_val_nat_receive;
+
+
                 }
 
 
@@ -1338,11 +1342,11 @@ class TransactionController extends Controller
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
-            } else {
+            }else {
                 return response()->json([
                     'success' =>  false,
                     'message' => 'Saisie le montant SVP',
-                ], 200);
+                ], 200); 
             }
         } catch (\Exception $exception) {
             return response()->json([
@@ -1492,7 +1496,7 @@ class TransactionController extends Controller
                 $commission_transaction_val_nat_receive = (float)$amount_transaction;
 
                 // Si l'utilisateur est sous distributeur, admin ou distributeur
-                if ($data->sidUser->is_under_distributer || $data->sidUser->is_admin || $data->sidUser->is_distributer) {
+                if ($data->sidUser->is_under_distributer || $data->sidUser->is_admin || $data->sidUser->is_distributer || $data->sidUser->is_api) {
 
                     $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
 
@@ -1506,21 +1510,18 @@ class TransactionController extends Controller
                     $commission_transaction = $this->searchTransaction->getCommissionTransactionForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
                     $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay, $amount_transaction);
+                    $isUnders = (bool) (robus()?->is_under_distributer || robus()?->is_api);
+                    if ($commission_transaction && $data?->sidUser?->is_custumers) {
 
-                    if ($commission_transaction) {
+                        $commission_transaction_val_percent_pay = $commission_transaction_val_percent_pay;
+                        $commission_transaction_val_nat_pay = $isUnders ? (float)$commission_transaction->percent_deposit * (float) $commission_transaction_val_percent_pay : (float)$commission_transaction->percent_deposit * $amount_transaction;
+                        $commission_transaction_val_nat_receive = (float)$amount_transaction - (float) $commission_transaction_val_percent_pay;
+                    }
 
-                        if ($data->sidUser->is_custumers) {
+                    $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
 
-                            $commission_transaction_val_percent_pay = $commission_transaction_val_percent_pay;
-                            $commission_transaction_val_nat_pay = (float)$commission_transaction->percent_deposit * $amount_transaction;
-                            $commission_transaction_val_nat_receive = (float)$amount_transaction - (float) $commission_transaction_val_percent_pay;
-                        }
-
-                        $conversion_valeur_end = $this->searchTransaction->calculateConversionValeurEnd($default_valeur);
-
-                        if ($conversion_valeur_end < $amount_transaction) {
-                            $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
-                        }
+                    if ($conversion_valeur_end < $amount_transaction) {
+                        $commission_transaction_val_nat_pay = "Montant maximal est : " . number_format($conversion_valeur_end, 2, ',', ' ');
                     }
                 }
 

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\MailController;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\CodeValidated;
 use Illuminate\Support\Facades\Log;
+use App\constants\NotificationMessages;
 
 class NotificationServiceBackend
 {
@@ -33,7 +34,7 @@ class NotificationServiceBackend
                         . $walletTransaction->provider->name  .  ' le '
                         . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
-                     sendTryCashMessage(sabdy()->phone , $message);
+                    sendTryCashMessage(sabdy()->phone, $message);
                 }
             }
         } catch (\Throwable $e) {
@@ -46,25 +47,20 @@ class NotificationServiceBackend
 
         $msg_title = 'Transfert Notional Robus';
         $msg = 'Vous avez effectué un transfert vers Robus avec succes';
-        sabdy()->notify(
+        safeNotify(
+            sabdy(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = sabdy()->unreadNotifications;
         event(new CreateWalletTransfersEvent($walletTransaction));
-        // $this->emit('transaction_inter_sends', $walletTransaction->id);
         $admins = app(TotalAmoutUserServiveBackend::class)->getAdminCIVProperty();
-        Notification::send(
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus vers le client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
         );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Robus vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 
@@ -97,9 +93,9 @@ class NotificationServiceBackend
                         . $walletTransaction->provider->name  .  ' le '
                         . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
 
-                    
 
-                     sendTryCashMessage(sabdy()->phone , $message);
+
+                    sendTryCashMessage(sabdy()->phone, $message);
                 }
             }
         } catch (\Throwable $e) {
@@ -113,24 +109,20 @@ class NotificationServiceBackend
 
         $msg_title = 'Transfert Mobile money';
         $msg = 'Vous avez effectué un transfert vers Mobile Money ';
-        sabdy()->notify(
+        safeNotify(
+            sabdy(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = sabdy()->unreadNotifications;
         event(new CreateWalletTransfersEvent($walletTransaction));
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus vers le client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
         );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Mobile Money vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 
@@ -164,9 +156,9 @@ class NotificationServiceBackend
                         . $walletTransaction->provider->name  .  ' le '
                         . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
-                    
 
-                     sendTryCashMessage(sabdy()->phone , $message);
+
+                    sendTryCashMessage(sabdy()->phone, $message);
                 }
             }
         } catch (\Throwable $e) {
@@ -179,25 +171,20 @@ class NotificationServiceBackend
 
         $msg_title = 'Transfert Notional Robus';
         $msg = 'Vous avez effectué un transfert vers Robus avec succes';
-        sabdy()->notify(
+        safeNotify(
+            sabdy(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = sabdy()->unreadNotifications;
         event(new CreateWalletTransfersEvent($walletTransaction));
-        // $this->emit('transaction_inter_sends', $walletTransaction->id);
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus vers le client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
         );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Robus vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 
@@ -225,24 +212,21 @@ class NotificationServiceBackend
 
         $msg_title = 'Transfert internationnal Robus';
         $msg = 'Votre transfert vers Robus effectué avec success ';
-        sabdy()->notify(
+        safeNotify(
+            sabdy(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = sabdy()->unreadNotifications;
         event(new CreateWalletInterEvent($walletInter));
         $admins = SidUser::whereStatus(true)->whereIsAdmin(true)->where('country_id', $walletInter->country_id)->get();
-        Notification::send(
+
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert  Robus de ' .
-                    ' ' . $walletInter->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::WALLET_RELOAD_ROBUS)
         );
-        Notification::send($admins, new AdminNotification('Transfers d\'argent Robus de ' .
-            ' ' . $walletInter->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 
@@ -336,8 +320,8 @@ class NotificationServiceBackend
         try {
 
             if ($walletUser->country->code == 'CI' && $walletUser->is_custumers == 1) {
-                $encode = substr($walletUser->phone, -10);
-                http::get("https://app.smspro.africa/api/http/sms/send?recipient=225$encode&sender_id=ROBUS&message=$message&api_token=20|OCxFaENhPjLssgD7GpVWLyDVbRNBrKAsQfjeW67i41f1b7af");
+
+                sendTryCashMessage($walletUser->phone, $message);
             }
         } catch (\Throwable $e) {
 
@@ -384,9 +368,7 @@ class NotificationServiceBackend
 
             if ($wallet_search->sidUser->country->name_groupe == 'CIV') {
 
-                $encode = substr($wallet_search->sidUser->phone,  -10);
-
-                 sendTryCashMessage(sabdy()->phone , $message);
+                sendTryCashMessage(sabdy()->phone, $message);
             }
 
             if ($wallet_search->sidUser->email != null) {
@@ -410,7 +392,7 @@ class NotificationServiceBackend
 
                 $encode = substr(sabdy()->phone, -10);
 
-                 sendTryCashMessage(sabdy()->phone , $message);
+                sendTryCashMessage(sabdy()->phone, $message);
             }
         } catch (\Throwable $e) {
 
@@ -431,9 +413,9 @@ class NotificationServiceBackend
                         . $walletTransaction->provider->name  .  ' le '
                         . $walletTransaction->created_at . ' votre transfert effectué avec success ' . 'Robus vous remercie';
 
-                    
 
-                     sendTryCashMessage(sabdy()->phone , $message);
+
+                    sendTryCashMessage(sabdy()->phone, $message);
                 }
             }
         } catch (\Throwable $e) {
@@ -446,25 +428,20 @@ class NotificationServiceBackend
 
         $msg_title = 'Transfert Notional Robus';
         $msg = 'Vous avez effectué un transfert vers Robus avec succes';
-        sabdy()->notify(
+        safeNotify(
+            sabdy(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = sabdy()->unreadNotifications;
         event(new CreateWalletTransfersEvent($walletTransaction));
-        // $this->emit('transaction_inter_sends', $walletTransaction->id);
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus vers le client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::ADMIN_PAYMENT_REQUEST)
         );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Robus vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 
@@ -478,10 +455,6 @@ class NotificationServiceBackend
             }
         }
 
-        // if (sabdy()->email != null) {
-        //     $notify = new MailController();
-        //     $notify->newTransaction($walletTransaction);
-        // }
         return true;
     }
 
@@ -497,9 +470,9 @@ class NotificationServiceBackend
                         . $walletTransaction->provider->name  .  ' le '
                         . $walletTransaction->created_at . ' votre demande est en cours de validation ' . 'Robus vous remercie';
 
-                    
 
-                     sendTryCashMessage(sabdy()->phone , $message);
+
+                    sendTryCashMessage(sabdy()->phone, $message);
                 }
             }
         } catch (\Throwable $e) {
@@ -512,24 +485,20 @@ class NotificationServiceBackend
 
         $msg_title = 'Transfert Mobile money';
         $msg = 'Vous avez effectué un transfert vers Mobile Money ';
-        sabdy()->notify(
+        safeNotify(
+            sabdy(),
             new UserNotification([
                 'title' => $msg_title,
-                'message' => $msg,
+                'message' => $msg
             ])
         );
         $notifs = sabdy()->unreadNotifications;
         event(new CreateWalletTransfersEvent($walletTransaction));
         $admins = $this->getAdminCIVProperty();
-        Notification::send(
+        safeNotifyMany(
             $admins,
-            new AdminNotification(
-                'Transfert Robus vers le client ' .
-                    ' ' . $walletTransaction->wallet->sidUser->firstname
-            )
+            new AdminNotification(NotificationMessages::ADMIN_PAYMENT_REQUEST)
         );
-        Notification::send($admins, new AdminNotification('Transfert d\'argent Mobile Money vers ' .
-            ' ' . $walletTransaction->wallet->sidUser->firstname));
 
         if ($admins->count() > 0) {
 
@@ -543,10 +512,6 @@ class NotificationServiceBackend
             }
         }
 
-        if (sabdy()->email != null) {
-            // $notify = new MailController();
-            // $notify->newTransaction($walletTransaction);
-        }
 
         return true;
     }

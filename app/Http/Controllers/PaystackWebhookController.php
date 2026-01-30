@@ -20,7 +20,7 @@ use App\Events\PaymentFailed;
 use App\Events\PaymentPending;
 use App\Models\Invoices\InvoiceReload;
 use Carbon\Carbon;
-use App\Models\Wallets\WalletCommission;
+use App\Models\Wallets\WalletAdmin;
 use App\Http\Controllers\Admin\MailController;
 use App\Http\Services\PercentRobusAuthService;
 
@@ -330,7 +330,7 @@ class PaystackWebhookController extends Controller
                     ->where('country_id', 107)
                     ->first();
 
-                $walletAdmin = WalletCommission::find(1);
+                $walletAdmin = WalletAdmin::find(1);
                 $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
 
                 if (!$commission_robus) {

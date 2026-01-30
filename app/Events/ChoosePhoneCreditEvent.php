@@ -41,7 +41,8 @@ class ChoosePhoneCreditEvent implements ShouldBroadcastNow
     {
         return [
             'id' =>  $this->phone->id,
-            'updated_by' => $this->phone->updated_by, 
+            'updated_by' => $this->phone->updated_by,
+            'userId'  =>   $this->phone->wallet->sidUser->id ?? 12,
         ];
     }
 

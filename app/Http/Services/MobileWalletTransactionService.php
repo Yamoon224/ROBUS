@@ -154,23 +154,11 @@ class MobileWalletTransactionService
     public function processCommissionsDrawalMobile($transaction_amount_money, $percent_robus, $walletTransaction, $admin_civ)
     {
 
-        $commission =  $transaction_amount_money;
         $country_civ = Country::whereId(107)
             ->first();
 
-        $wallet = robus()->wallet;
 
-
-        // Préparez les valeurs mises à jour
-        // $updatedValues = [
-        //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-        //     'sid_user_relod' => robus()->id,
-        //     'amount' => DB::raw('amount - ' . $commission),
-        // ];
-
-        // $wallet->update($updatedValues);
-
-        $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
+        $valeur_percent_valeur  = $percent_robus->percent_custum_drawal * $transaction_amount_money;
 
         $valuer_admin = $valeur_percent_valeur;
 
@@ -356,10 +344,7 @@ class MobileWalletTransactionService
                 } else {
                     $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_convertion, $percent_valeur_convertion);
                 }
-            } else {
-
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_convertion);
-            }
+            } 
         }
 
         return true;

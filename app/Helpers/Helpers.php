@@ -20,7 +20,52 @@ use App\Models\IntegrationClient;
 use App\Http\Services\InterHomeService;
 use App\Models\Sid\SidUser;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Notification as NotificationFacade;
 
+if (!function_exists('safeNotifyMany')) {
+
+    function safeNotifyMany($users, Notification $notification): void
+    {
+        try {
+
+            if (empty($users) || count($users) === 0) {
+                return;
+            }
+
+            NotificationFacade::send($users, $notification);
+        } catch (\Throwable $e) {
+
+            Log::warning('Notification multiple ignorée', [
+                'users_count' => is_countable($users) ? count($users) : null,
+                'notification' => get_class($notification),
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+}
+
+if (!function_exists('safeNotify')) {
+
+    function safeNotify($user, Notification $notification): void
+    {
+        try {
+
+            if (!$user) {
+                return;
+            }
+
+            $user->notify($notification);
+        } catch (\Throwable $e) {
+
+            Log::warning('Notification ignorée (quota ou erreur)', [
+                'user_id' => optional($user)->id,
+                'notification' => get_class($notification),
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+}
 
 
 if (! function_exists('sendTryCashMessage')) {
@@ -116,7 +161,7 @@ if (!function_exists('getCloseMasterRobusData')) {
 if (!function_exists('sidUserInfo')) {
     function sidUserInfo($id)
     {
-        $user = SidUser::find($id); 
+        $user = SidUser::find($id);
         if ($user) {
             return $user->firstname . ' ' . $user->lastname;
         }

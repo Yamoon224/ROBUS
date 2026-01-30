@@ -1175,7 +1175,7 @@ class TransfertServiceBackend
     }
 
 
-    public function createInvoiceVersement($check  , string $walletType)
+    public function createInvoiceVersement($check)
     {
         return  AutherTransactionInvoice::create([
             'title' => 'Achat de Transaction',
