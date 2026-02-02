@@ -48,8 +48,7 @@
                             </div>
                         </div>
                     @else
-
-                    <div class="field-group">
+                        <div class="field-group">
                             <div class="field">
                                 <label class="form-label required">Numéro téléphone</label>
                                 <div class="field-value">
@@ -57,6 +56,17 @@
                                     <span id="transaction_phone_edit"> {{ $transaction_phone_edit ?? null }}</span>
                                 </div>
                             </div>
+
+                            @if ($provider_transaction_edit == 'Moov')
+                                <div class="field-full">
+                                    <label class="form-label required">Reference du paiement</label>
+                                    <div class="field-value">
+                                        <i class="fas fa-user"></i>
+                                        <span id="references"> {{ $references ?? null }}</span>
+                                    </div>
+                                </div>
+                            @endif
+
                             <div class="field">
                                 <label class="form-label required">Montant</label>
                                 <div class="field-value">
@@ -66,9 +76,10 @@
                                         {{ $currency_custumers ?? null }}</span>
                                 </div>
                             </div>
+
                         </div>
 
-                    
+
                     @endif
                     <div class="modal-body-transfers  grid grid-cols-12 gap-4 gap-y-3">
                         <div class="col-span-12">
@@ -103,7 +114,7 @@
                                 class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300  dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
                             <label for="bordered-radio-16"
                                 class="py-4 ml-2 w-full text-sm font-medium text-gray-900 dark:text-gray-300">
-                                 <i class="fas fa-times-circle style_error"></i>
+                                <i class="fas fa-times-circle style_error"></i>
                                 Refusé</label>
                             @error('transactionStatus')
                                 <span class="text-danger">{{ $message }}</span>

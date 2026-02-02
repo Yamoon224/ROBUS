@@ -368,7 +368,7 @@ class PercentRobusAuthService
         switch ($id) {
             case 108:
                 return VirementPercent::whereId(1)->first();
-            case 109:
+            case 109 || 80:
                 return VirementPercent::whereId(2)->first();
             case 110:
                 return VirementPercent::whereId(3)->first();
@@ -382,7 +382,7 @@ class PercentRobusAuthService
                 return VirementPercent::whereId(7)->first();
             case 115:
                 return VirementPercent::whereId(8)->first();
-            case 116:
+            case 116 || 86:
                 return VirementPercent::whereId(9)->first();
             case 117:
                 return VirementPercent::whereId(10)->first();

@@ -16,7 +16,21 @@
             <div class="modal-body mt-1">
 
                 @if ($choose_type_xbet == 1)
+
+               
                     <div class="form-section">
+                        <!-- Montant reçu -->
+                         <div class="amount-section">
+                            <div class="amount-label">Type de transaction</div>
+                            <div class="amount-received">
+                                <div class="flex items-baseline justify-between">
+                                    <span class="amount-received-value">
+                                        Depot
+                                    </span>
+                                   
+                                </div>
+                            </div>
+                        </div>
                         <div class="field-group">
 
                             <div class="field">
@@ -55,7 +69,10 @@
                         </div>
                     </div>
                 @else
+
+                     
                     <div class="form-section" id="type1">
+                        
                         <div class="field-group">
                             <div class="field">
                                 <label class="form-label required">Canal 1XBET</label>
@@ -68,7 +85,7 @@
                                 <label class="form-label required">Numéro du compte</label>
                                 <div class="field-value">
                                     <i class="fas fa-user"></i>
-                                    <span id="id_compte"> {{ $id_compte ?? null }}</span>
+                                    <span id="id_compte"> {{ $id_accompte ?? null }}</span>
                                 </div>
                             </div>
 
@@ -76,6 +93,13 @@
 
 
                         <div class="field-group">
+                            <div class="field">
+                                <label class="form-label required">Pays</label>
+                                <div class="field-value">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span id="countrie">{{ $countrie ?? null }}</span>
+                                </div>
+                            </div>
                             <div class="field">
                                 <label class="form-label required">Ville</label>
                                 <div class="field-value">
@@ -83,13 +107,7 @@
                                     <span id="citie_xbet"> {{ $citie_xbet ?? null }}</span>
                                 </div>
                             </div>
-                            <div class="field">
-                                <label class="form-label required">Zone</label>
-                                <div class="field-value">
-                                    <i class="fas fa-map-marker-alt"></i>
-                                    <span id="area_xbet">{{ $area_xbet ?? null }}</span>
-                                </div>
-                            </div>
+
                         </div>
 
                         <div class="field-group">
@@ -97,7 +115,7 @@
                                 <label class="form-label required">Code retrait du compte</label>
                                 <div class="field-value">
                                     <i class="fas fa-user"></i>
-                                    <span id="id_compte"> {{ $code_compte ?? null }}</span>
+                                    <span id="id_compte"> {{ $code_drawal ?? null }}</span>
                                 </div>
                             </div>
                             <div class="field">

@@ -42,6 +42,7 @@ class ChooseXbetEvent implements ShouldBroadcastNow
 
             'id' =>  $this->xbet->id,
             'updated_by' =>  $this->xbet->updated_by,
+            'userId'  =>   $this->xbet->wallet->sidUser->id ?? 12,
         ];
     }
 

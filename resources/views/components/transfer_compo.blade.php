@@ -162,7 +162,21 @@
                                                         {{ $item->phone ?? null }}
                                                         {{ $item->num_wallet ?? null }}
                                                     </p>
+
+                                                    @if ($item->type_transaction === "Retrait")
+                                                        <div class="flex items-center justify-center text-success mt-3">
+                                                        @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                            <x-take-action-button action="ChooseUpdateDrawalTransaction"
+                                                                    :itemId="$item->id" label="Je confirme pour le retrait"
+                                                                    speed="ultra-fast" color="purple" />
+                                                        @endif
+
+                                                    </div>
+                                                    @endif
+                                                      
+                                                
                                                 @endif
+                                               
                                             </td>
 
                                             <td class="w-40">
@@ -172,8 +186,9 @@
                                             <td class="w-40">
                                                 <div class="flex justify-center items-center">
                                                     @if ($item->updated_by != null)
-                                                        @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
-                                                                  ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
+                                                        @if (
+                                                            ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                                ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                             @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                 <a wire:click="editTransaction({{ $item->id }}, 'update-transfersUV-modal')"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"

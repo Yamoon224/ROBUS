@@ -119,7 +119,7 @@
                     <label class="form-label">Nom & prenom du bénéficiaire <span class="text-danger">*</span></label>
                     <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <i class="fas fa-phone text-gray-500 mr-3"></i>
-                        <span class="text-gray-800 font-mono">{{ $name_bank_edit ?? 'Non renseigné' }}</span>
+                        <span class="text-gray-800 font-mono">{{ $name_benef ?? 'Non renseigné' }}</span>
                     </div>
                 </div>
                 <div class="col-span-4 mt-3">
@@ -142,7 +142,7 @@
                     <label class="form-label">Nom & prenom de l'expediteur <span class="text-danger">*</span></label>
                     <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <i class="fas fa-money-bill-transfer text-gray-500 mr-3"></i>
-                        <span class="text-gray-800 font-medium">{{ $name_sender_bank_edit ?? 'Non spécifié' }}</span>
+                        <span class="text-gray-800 font-medium">{{ $name_bank_edit ?? 'Non spécifié' }}</span>
                     </div>
                 </div>
                 <div class="col-span-4">
@@ -172,7 +172,7 @@
                     <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                         <i class="fas fa-money-bill-transfer text-gray-500 mr-3"></i>
                         <span
-                            class="text-gray-800 font-medium">{{ $account_number_bank_edit ?? 'Non spécifié' }}</span>
+                            class="text-gray-800 font-medium">{{ $name_sender_bank_edit ?? 'Non spécifié' }}</span>
                     </div>
                 </div>
                 <div class="col-span-4">

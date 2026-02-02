@@ -55,6 +55,10 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\TresortMoneyChoose::class,
         ],
 
+         \App\Events\ChooseDrawalEvent::class => [
+            \App\Listeners\DrawalChoose::class,
+        ],
+
          \App\Events\ChooseBankSendEvent::class => [
             \App\Listeners\BankSendChoose::class,
         ],

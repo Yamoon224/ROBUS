@@ -42,6 +42,7 @@ class ChooseVersementEvent implements ShouldBroadcastNow
 
             'id' => $this->versement->id,
             'updated_by'  => $this->versement->updated_by,
+            'userId'  =>   $this->versement->wallet->sidUser->id ?? 12,
         ];
     }
 

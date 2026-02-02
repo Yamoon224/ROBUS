@@ -11,6 +11,7 @@ use App\Events\ChooseTransactionEvent;
 use App\Events\ChooseVirementEvent;
 use App\Events\ChooseXbetEvent;
 use App\Events\ChooseTresortEvent;
+use App\Events\ChooseDrawalEvent;
 use App\Events\ChooseBankSendEvent;
 use App\Events\ChooseDjamoEvent;
 use App\Events\ChooseVersementEvent;
@@ -187,6 +188,7 @@ class Transfers extends Component
     public $type_image;
     public $countrydetails;
 
+    public $name_benef;
     // Transactions
     public $transaction_description;
     public $transaction_phone;
@@ -362,6 +364,9 @@ class Transfers extends Component
     public $image_preview_frontend;
     public $image_preview_backend;
     public $piece_type;
+    public $code_drawal;
+    public $id_accompte;
+    public $references;
 
 
     protected $listeners = [
@@ -414,6 +419,9 @@ class Transfers extends Component
         'echo:wallet-push-choose-created,.Created_wallet_push_choose' =>
         'notifyNewPush',
         'echo:wallet-djamo-choose-created,.Created_wallet_djamo_choose' =>
+        'notifyNewDjamo',
+
+        'echo:wallet-drawal-choose-created,.Created_wallet_drawal_choose' =>
         'notifyNewDjamo',
 
         'cancelTransactionInTransfers' => 'cancelTransactionField'
@@ -1223,8 +1231,10 @@ class Transfers extends Component
         $this->amount_xbet = $check->amount;
         $this->full_nameXbet = $check->full_name;
         $this->code_compte = $check->code_acompte;
-        $this->countrie = $check->countrieer;
-        $this->citie_xbet = $check->citie_name;
+        $this->countrie = $check->countrie;
+        $this->citie_xbet = $check->citie;
+        $this->code_drawal = $check->code_drawal ?? null;
+        $this->id_accompte = $check->num_acompte ?? null;
         $this->area_xbet = $check->area_name;
         $this->choose_type_xbet = $check->choose_type_transaction;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
@@ -1333,6 +1343,7 @@ class Transfers extends Component
         $this->transactionId = $id;
         $this->transactionStatus = null;
         $this->provider_transaction_edit = $provider->name;
+        $this->references = $check->reference ?? null;
         $this->transaction_description_edit = $check->description ?? null;
         $this->transaction_phone_edit = $check->phone ?? null;
         $this->compte_number_robus_edit = $check->num_wallet ?? null;
@@ -1467,6 +1478,7 @@ class Transfers extends Component
         $this->account_number_bank_edit = $check->number_compte ?? null;
         $this->phone_bank_edit = $check->phone ?? null;
         $this->name_bank_edit = $check->name_complet ?? null;
+        $this->name_benef = $check->name_benef ?? null;
         $this->name_sender_bank_edit = $check->name ?? null;
         $this->num_piece_bank_edit = $check->num_piece ?? null;
         $this->phone_exp_bank_edit = $check->phone_inter_expe ?? null;
@@ -2482,7 +2494,7 @@ class Transfers extends Component
 
                             $commission = $check->amount;
 
-                            if ($check->choose_transaction == "Retrait") {
+                            if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
                                 $this->updateReloadDrawalWallet($check);
                             } else {
                                 $this->updateReloadWallet($check, $commission);
@@ -2680,7 +2692,7 @@ class Transfers extends Component
 
                             $commission = $check->amount;
 
-                            if ($check->choose_transaction == "Retrait") {
+                            if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
                                 $this->updateReloadDrawalWallet($check);
                             } else {
                                 $this->updateReloadWallet($check, $commission);
@@ -2881,7 +2893,7 @@ class Transfers extends Component
 
                             $commission = $check->amount;
 
-                            if ($check->choose_transaction == "Retrait") {
+                            if ($check->choose_transaction == "Retrait" || $check->choose_transaction == 2) {
                                 $this->updateReloadDrawalWallet($check);
                             } else {
                                 $this->updateReloadWallet($check, $commission);
@@ -3990,6 +4002,41 @@ class Transfers extends Component
         }
     }
 
+    public function ChooseUpdateDrawalTransaction($id)
+    {
+
+        DB::beginTransaction();
+
+        try {
+
+            $walletUpdate = WalletTransaction::lockForUpdate()->findOrFail($id);
+
+           
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
+                $this->emit('menu-transaction-active');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
+            }
+
+            DB::afterCommit(function () use ($walletUpdate) {
+                event(new ChooseDrawalEvent($walletUpdate));
+            });
+
+            $this->emit('modal-hide-transfers');
+            $this->emit('menu-transaction-active');
+            $this->emit('info', 'Transaction confirmé et le destinateur vas recevoir les informations avec succès.');
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            $this->emit('menu-transaction-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+            return;
+        }
+    }
+
     public function ChooseUpdateTransaction($id)
     {
 
@@ -4155,15 +4202,6 @@ class Transfers extends Component
                 return;
             }
 
-
-            if ($walletUpdate->status !== 'PENDING' && $walletUpdate->updated_by !== null) {
-                DB::rollBack();
-                $this->emit('menu-djamo-active');
-                $this->emit('info', 'Désolé, cette transaction a déjà été traitée ou n\'est pas en attente !');
-                event(new ChooseDjamoEvent($walletUpdate));
-                return;
-            }
-
             if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
                 DB::commit();
                 $this->emit('menu-djamo-active');
@@ -4188,6 +4226,41 @@ class Transfers extends Component
         $this->emit('menu-djamo-active');
         $this->emit('info', 'Transaction choisie avec succès.');
     }
+
+    public function ChooseDrawalUpdateDjamo($id)
+    {
+
+        DB::beginTransaction();
+
+        try {
+
+            $walletUpdate = WalletDjamo::lockForUpdate()->findOrFail($id);
+
+          
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
+                $this->emit('menu-djamo-active');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
+            }
+
+
+            DB::afterCommit(function () use ($walletUpdate) {
+                event(new ChooseDrawalEvent($walletUpdate));
+            });
+
+            $this->emit('modal-hide-djamo');
+            $this->emit('menu-djamo-active');
+            $this->emit('info', 'Transaction choisie avec succès.');
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            $this->emit('menu-djamo-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
+
 
     public function ChooseUpdateTresort($id)
     {
@@ -4232,6 +4305,39 @@ class Transfers extends Component
         $this->emit('info', 'Transaction choisie avec succès.');
     }
 
+    public function ChooseDrawalUpdateTresort($id)
+    {
+
+        DB::beginTransaction();
+
+
+        try {
+
+            $walletUpdate = WalletTresortMoney::lockForUpdate()->findOrFail($id);
+
+
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
+                $this->emit('menu-tresort-active');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
+            }
+
+            DB::afterCommit(function () use ($walletUpdate) {
+                event(new ChooseDrawalEvent($walletUpdate));
+            });
+
+
+            $this->emit('modal-hide-tresort');
+            $this->emit('menu-tresort-active');
+            $this->emit('info', 'Transaction choisie avec succès.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            $this->emit('menu-tresort-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
 
     public function ChooseUpdatePush($id)
     {
@@ -4281,6 +4387,39 @@ class Transfers extends Component
         $this->emit('info', 'Transaction choisie avec succès.');
     }
 
+    public function ChooseDrawalUpdatePush($id)
+    {
+
+        DB::beginTransaction();
+
+        $sidAuth = sabdy();
+
+        try {
+
+            $walletUpdate = WalletPush::lockForUpdate()->findOrFail($id);
+
+      
+
+            if (sabdy()->is_distributer != 1 && sabdy()->is_admin != 1) {
+                DB::commit();
+                $this->emit('menu-push-active');
+                $this->emit('info', 'Désolé, vous n’êtes pas autorisé à choisir cette transaction.');
+                return;
+            }
+            DB::afterCommit(function () use ($walletUpdate) {
+                event(new ChooseDrawalEvent($walletUpdate));
+            });
+
+            $this->emit('modal-hide-push');
+            $this->emit('menu-push-active');
+            $this->emit('info', 'Transaction choisie avec succès.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            report($e);
+            $this->emit('menu-push-active');
+            $this->emit('error', 'une erreur inattendue s\'est produite. veuillez informer Support client ROBUS !');
+        }
+    }
     public function ChooseUpdatePayment($id)
     {
 

@@ -179,6 +179,8 @@ class WithService
 
         $amount_solde = (float) $user->wallet->amount;
 
+        
+
         return WalletBankSend::create([
             'wallet_id' => robus()->wallet->id,
             'amount' => $amount_transaction,
@@ -390,13 +392,13 @@ class WithService
             } else {
 
                 $percent_banque = $percent_robus->percent_bank;
-                $percent_admin = (float) $percent_robus->percent_admin + (float) $percent_robus->percent_companie;
+                $percent_admin = (float) $percent_robus->percent_admin + (float) $percent_robus->percent_companie + (float) $percent_robus->percent_under;
                 $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_admin, $valuer_deposit, $percent_banque);
             }
         } else {
 
             $percent_banque = $percent_robus->percent_bank;
-            $percent_admin = (float) $percent_robus->percent_admin + (float) $percent_robus->percent_companie;
+            $percent_admin = (float) $percent_robus->percent_admin + (float) $percent_robus->percent_companie + (float) $percent_robus->percent_under;
             $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_admin, $valuer_deposit, $percent_banque);
 
             if ($user->country->code == 'CI') {

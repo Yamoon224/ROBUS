@@ -43,6 +43,8 @@ class ChooseVirementEvent implements ShouldBroadcastNow
 
             'id' =>  $this->bank->id,
             'updated_by' =>  $this->bank->updated_by,
+            'userId'  =>   $this->bank->wallet->sidUser->id ?? 12,
+
         ];
     }
 

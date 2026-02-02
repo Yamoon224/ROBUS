@@ -42,6 +42,8 @@ class ChoosePaymentEvent implements ShouldBroadcastNow
 
             'id' => $this->paiement->id,
             'updated_by'  => $this->paiement->updated_by,
+            'userId'  =>   $this->paiement->wallet->sidUser->id ?? 12,
+
         ];
     }
 

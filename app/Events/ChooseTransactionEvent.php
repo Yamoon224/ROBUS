@@ -41,6 +41,7 @@ class ChooseTransactionEvent implements ShouldBroadcastNow
         return [
             'id' =>  $this->transfers->id,
             'updated_by'  =>  $this->transfers->updated_by,
+            'userId'  =>   $this->transfers->wallet->sidUser->id ?? 12,
         ];
     }
 

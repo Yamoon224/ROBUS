@@ -42,6 +42,8 @@ class ChooseDjamoEvent implements ShouldBroadcastNow
 
             'id' =>  $this->djamo->id,
             'updated_by' =>  $this->djamo->updated_by,
+            'userId'  =>   $this->djamo->wallet->sidUser->id ?? 12,
+
         ];
     }
 

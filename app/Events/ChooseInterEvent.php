@@ -42,6 +42,7 @@ class ChooseInterEvent implements ShouldBroadcastNow
         return [
             'id' =>  $this->inter->id,
             'updated_by' =>  $this->inter->updated_by,
+            'userId'  =>   $this->inter->wallet->sidUser->id ?? 12,
 
         ];
     }

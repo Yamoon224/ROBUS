@@ -42,6 +42,7 @@ class ChooseTresortEvent implements ShouldBroadcastNow
 
             'id' =>  $this->tresort->id,
             'updated_by' =>  $this->tresort->updated_by,
+            'userId'  =>   $this->tresort->wallet->sidUser->id ?? 12,
         ];
     }
 

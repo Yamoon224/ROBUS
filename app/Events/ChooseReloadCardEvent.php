@@ -42,6 +42,8 @@ class ChooseReloadCardEvent implements ShouldBroadcastNow
         return [
             'id' => $this->card->id,
             'updated_by'  =>  $this->card->updated_by,
+            'userId'  =>   $this->card->wallet->sidUser->id ?? 12,
+
         ];
     }
 

@@ -30,7 +30,7 @@ class MobileWalletTransactionService
         $this->commissionServices = $commissionServices;
     }
 
-    public function createRobusDrawalWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone, $choose_type_transaction, $type, $numberPiece)
+    public function createRobusDrawalWalletTransactionDistributer($percent_robus, $provider, $transaction_amount_money, $date_piece, $num_piece_custumers, $name_custumers, $valuer_deposit_com, $transaction_phone, $choose_type_transaction, $type, $numberPiece , $reference)
     {
 
         $val_amount = $transaction_amount_money;
@@ -46,6 +46,7 @@ class MobileWalletTransactionService
                 'phone'   => robus()->country->indecative . $transaction_phone,
                 'created_by' => robus()->id,
                 'provider_id'  =>   $provider,
+                'reference'  =>   $reference,
                 'num_wallet'   =>  null,
                 'costs_amount' => $valuer_deposit_com,
                 'name_complet' => $name_custumers ?? null,

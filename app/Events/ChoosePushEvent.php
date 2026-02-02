@@ -42,6 +42,7 @@ class ChoosePushEvent implements ShouldBroadcastNow
 
             'id' =>  $this->push->id,
             'updated_by' =>  $this->push->updated_by,
+            'userId'  =>   $this->push->wallet->sidUser->id ?? 12,
         ];
     }
 

@@ -42,6 +42,7 @@ class ChooseWaveEvent implements ShouldBroadcastNow
 
             'id' =>  $this->wave->id,
             'updated_by' =>  $this->wave->updated_by,
+            'userId'  =>   $this->wave->wallet->sidUser->id ?? 12,
         ];
     }
 

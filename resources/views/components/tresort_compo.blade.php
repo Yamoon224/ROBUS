@@ -127,7 +127,7 @@
                                                       <div class="flex items-center justify-center text-success mt-3">
 
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-                                                              @if ($item->choose_transaction == 'Retrait')
+                                                              @if ($item->choose_transaction == 1)
                                                                   <x-take-action-button action="ChooseUpdateTresort"
                                                                       :itemId="$item->id" label="Je confirme"
                                                                       speed="ultra-fast" color="warning" />
@@ -159,6 +159,19 @@
                                                               </div>
                                                           </dl>
                                                       </div>
+                                                        @if ($item->choose_transaction == 2)
+                                                          <div
+                                                              class="flex items-center justify-center text-success mt-3">
+                                                              @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                  <x-take-action-button
+                                                                      action="ChooseDrawalUpdateTresort"
+                                                                      :itemId="$item->id"
+                                                                      label="Je confirme pour le retrait"
+                                                                      speed="ultra-fast" color="purple" />
+                                                              @endif
+
+                                                          </div>
+                                                      @endif
                                                   @endif
                                               </td>
 

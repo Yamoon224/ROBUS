@@ -71,7 +71,7 @@
                                       @foreach ($pushs as $key => $item)
                                           <tr class="intro-x">
                                               <td class="text-center w-40">
-                                                @include('components.infoTypeDjamo')
+                                                  @include('components.infoTypeDjamo')
 
                                                   <div
                                                       class="px-3 py-2 text-dark btn-pink dark:bg-darkmode-400 dark:text-slate-300 rounded font-medium mb-2">
@@ -122,8 +122,7 @@
 
                                                       <div class="flex items-center justify-center mt-4">
                                                           @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
-
-                                                            @if ($item->choose_transaction == 'Retrait')
+                                                              @if ($item->choose_transaction == 1)
                                                                   <x-take-action-button action="ChooseUpdatePush"
                                                                       :itemId="$item->id" label="Je confirme"
                                                                       speed="ultra-fast" color="warning" />
@@ -152,7 +151,22 @@
                                                               </div>
                                                           </dl>
                                                       </div>
+                                                      @if ($item->choose_transaction == 2)
+                                                          <div
+                                                              class="flex items-center justify-center text-success mt-3">
+                                                              @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
+                                                                  <x-take-action-button
+                                                                      action="ChooseDrawalUpdatePush"
+                                                                      :itemId="$item->id"
+                                                                      label="Je confirme pour le retrait"
+                                                                      speed="ultra-fast" color="purple" />
+                                                              @endif
+
+                                                          </div>
+                                                      @endif
                                                   @endif
+
+
                                               </td>
 
                                               <td class="w-40">
@@ -161,7 +175,8 @@
                                               <td class="w-40">
                                                   <div class="flex justify-center items-center">
                                                       @if ($item->updated_by != null)
-                                                          @if (($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
+                                                          @if (
+                                                              ($item->status == 'PENDING' && $item->updated_by == Auth::guard('web')->user()->id) ||
                                                                   ($item->status === 'PROCESSING' && $item->updated_by == Auth::guard('web')->user()->id))
                                                               @if (Auth::guard('web')->user()->hasPermissionTo('traitement-demande'))
                                                                   <a wire:click="editPush({{ $item->id }}, 'update-push-modal')"
@@ -173,7 +188,7 @@
                                                                               stroke-linejoin="round" stroke-width="2"
                                                                               d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                                                                       </svg>
-                                                                       @if ($item->choose_transaction == 'Retrait')
+                                                                      @if ($item->choose_transaction == 'Retrait')
                                                                           Reversement
                                                                       @else
                                                                           Traité maintenant

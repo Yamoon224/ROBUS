@@ -41,6 +41,8 @@ class ChooseReloadEvent implements ShouldBroadcastNow
         return [
             'id' => $this->reload->id,
             'updated_by' =>  $this->reload->updated_by,
+            'userId'  =>   $this->reload->wallet->sidUser->id ?? 12,
+
         ];
     }
 
