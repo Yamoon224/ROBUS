@@ -45,7 +45,7 @@ class UpdatePaiementEvent implements ShouldBroadcastNow
             'amount' =>  $this->paiement_id->amount ?? null,
             'type' =>  'Payment',
             'description'  =>   $this->paiement_id->description,
-            'amount_wallet' => $this->paiement_id->wallet->amount . ' ' . $this->paiement_id->wallet->currencie->code,
+            'amount_wallet' => $this->paiement_id->amount_solde,
             'date_created' => $this->paiement_id->created_at,
             'date_treatment' => $this->paiement_id->payment->created_at ?? null,
             'Reference'  => $this->paiement_id->payment->transaction_id ?? null,

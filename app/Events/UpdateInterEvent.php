@@ -45,7 +45,7 @@ class UpdateInterEvent implements ShouldBroadcastNow
             'amount' =>  $this->inter_id->amount ?? null,
             'type' =>  'Inter',
             'description'  =>   $this->inter_id->description,
-            'amount_wallet' =>  $this->inter_id->wallet->amount . ' ' . $this->inter_id->wallet->currencie->code,
+            'amount_wallet' =>  $this->inter_id->amount_solde,
             'date_created' =>  $this->inter_id->created_at,
             'date_treatment' =>  $this->inter_id->transactionInter->created_at ?? null,
             'Reference'  => $this->inter_id->transactionInter->transaction_id ?? null,

@@ -45,8 +45,9 @@ class UpdateXbetEvent implements ShouldBroadcastNow
             'amount' =>  $this->xbet_id->amount,
             'type' =>  'Xbet',
             'description'  =>   $this->xbet_id->description,
-            'amount_wallet' =>  $this->xbet_id->wallet->amount . ' ' . $this->xbet_id->wallet->currencie->code,
+            'amount_wallet' =>  $this->xbet_id->amount_solde,
             'date_created' =>   $this->xbet_id->created_at,
+            'userId'  =>   $this->xbet_id->wallet->sidUser->id,
         ];
     }
 

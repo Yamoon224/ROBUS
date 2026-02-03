@@ -48,7 +48,7 @@ class UpdateBankEvent implements ShouldBroadcastNow
             'amount' =>  $this->bank_id->amount ?? null,
             'type' =>  'Virement',
             'description'  => $this->bank_id->description,
-            'amount_wallet' =>  $this->bank_id->wallet->amount . ' ' . $this->bank_id->wallet->currencie->code,
+            'amount_wallet' =>  $this->bank_id->amount_solde,
             'date_created' =>  $this->bank_id->created_at,
             'date_treatment' =>  $this->bank_id->paymentBank->created_at ?? null,
             'Reference'  => $this->bank_id->paymentBank->transaction_id ?? null,

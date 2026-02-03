@@ -45,7 +45,7 @@ class UpdatePhoneCreditEvent implements ShouldBroadcastNow
             'amount' =>  $this->phone_id->amount ?? null,
             'type' =>  'Phone_credit',
             'description'  => $this->phone_id->description,
-            'amount_wallet' => $this->phone_id->wallet->amount . ' ' . $this->phone_id->wallet->currencie->code,
+            'amount_wallet' => $this->phone_id->amount_solde,
             'Reference'  => $this->phone_id->paymentPhone->transaction_id ?? null,
             'date_treatment' =>  $this->phone_id->paymentPhone->created_at ?? null,
             'phone' => $this->phone_id->phone  ?? null,

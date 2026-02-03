@@ -397,6 +397,262 @@ class PaystackWebhookController extends Controller
         }
     }
 
+    private function handleSuccessWebfulCharge(array $data)
+    {
+        DB::beginTransaction();
+
+
+        try {
+            // Récupérer la transaction
+            $transaction = WalletReload::where('reference', $data['reference'])->first();
+
+            if (!$transaction) {
+                Log::error('Transaction non trouvée', ['reference' => $data['reference']]);
+                DB::rollBack();
+            }
+
+            // Vérifier si la transaction a déjà été traitée
+            if ($transaction->status === 'success') {
+                Log::info('Transaction déjà traitée', ['reference' => $data['reference']]);
+            }
+
+            // Valider le montant
+            $expectedAmount = $transaction->amount * 100; // Convertir en kobo/centimes
+            if ($data['amount'] != $expectedAmount) {
+                Log::error('Montant incorrect', [
+                    'expected' => $expectedAmount,
+                    'received' => $data['amount'],
+                    'reference' => $data['reference']
+                ]);
+                DB::rollBack();
+            }
+
+            $wallet = $transaction->wallet;
+            $wallet_details = Wallet::whereId($transaction->wallet_id)->first();
+            $countryNameGroup = $wallet_details->country->name_groupe;
+            if ($countryNameGroup == 'CIV' || $countryNameGroup == 'AFL' || $countryNameGroup == 'AFC' || $countryNameGroup == 'AFE') {
+                $commission_robus = ReloadCost::whereId(2)->first();
+            } elseif ($countryNameGroup == 'URP' || $countryNameGroup == 'USA' || $countryNameGroup == 'MAG' || $countryNameGroup == 'ASIE') {
+                $commission_robus = ReloadCost::whereId(3)->first();
+            }
+
+            $total_percent = (float) $commission_robus->percent + (float) $commission_robus->percent_admin;
+            $total_commission = $total_percent * $transaction->amount;
+            $amountReceived = (float) $transaction->amount - (float)$total_commission;
+            // Mettre à jour la transaction
+            $transaction->update([
+                'status' => 'success',
+                'gateway_response' => $data['gateway_response'],
+                'paid_at' => Carbon::parse($data['paid_at']),
+                'payment_method' => $data['channel'],
+                'currency' =>  $data['currency'] ?? 'XOF',
+                'balance_before' =>  $wallet->amount,
+                'amount_solde' => $wallet->amount,
+                'amount_received' => $amountReceived,
+                'ip_address' => $data['ip_address'] ?? null,
+                'fees' => $total_commission ?? 0,
+                'costs_amount' => $total_commission ?? 0,
+                'authorization' => json_encode($data['authorization'] ?? []),
+                'customer' => json_encode($data['customer'] ?? []),
+                'metadata' => json_encode(array_merge(
+                    json_decode($transaction->metadata, true) ?? [],
+                    $data['metadata'] ?? []
+                )),
+                'verified' => true,
+                'verified_at' => now(),
+                'raw_response' => json_encode($data),
+            ]);
+
+            // Mettre à jour le solde du portefeuille
+            if ($wallet) {
+                $oldBalance = $wallet->amount;
+                $newBalance = $oldBalance + $transaction->amount_received;
+
+                // Créer une transaction dans l'historique du portefeuille
+                PaymentReload::create([
+                    'wallet_reload_id' => $transaction->id,
+                    'sid_user_id' => $wallet->sid_user_id,
+                    'type' => 'credit',
+                    'transaction_id' => $data['reference'],
+                    'pay_amount' => $transaction->amount,
+                    'fee_amount' => $total_commission ?? 0,
+                    'received_amount' => $transaction->amount_received,
+                    'balance_before' => $oldBalance,
+                    'balance_after' => $newBalance,
+                    'description' => 'Recharge via Paystack - ' . $data['reference'],
+                    'reference' => $data['reference'],
+                    'operator_transaction_name' =>  "Paystack",
+                    'status' => 'completed',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+
+                $admin_single =  SidUser::whereIsAdmin(true)
+                    ->where('country_id', 107)
+                    ->first();
+
+                $walletAdmin = WalletAdmin::find(1);
+                $wallet_commission = Wallet::where('wallet_id', "CI44RTZU")->first();
+
+                if (!$commission_robus) {
+                    throw new \Exception('Coût Robus introuvable');
+                }
+
+                if (!$wallet_commission) {
+                    throw new \Exception("Wallet commission introuvable");
+                }
+
+                $totalAmount = $transaction->amount;
+
+                $total_admin_commission = $transaction->costs_amount;
+
+                if ($totalAmount <= 0) {
+                    throw new \Exception('Montant final invalide');
+                }
+
+                if ($walletAdmin && $walletAdmin->amount >= $totalAmount) {
+                    $wallet_commission->decrement('amount', $totalAmount);
+                    $walletAdmin->increment('amount', $total_admin_commission);
+                } else {
+                    $admin_single->wallet->decrement('amount', $totalAmount);
+                }
+                // Update wallet Transactions
+                $transaction->wallet->update([
+                    'reload_by' => $transaction->user_id,
+                    'sid_user_relod' => $transaction->user_id,
+                    'amount' => DB::raw('amount+' . $amountReceived),
+                ]);
+            }
+
+
+            // Déclencher l'événement de paiement réussi
+            event(new PaymentSuccessful($transaction, $data));
+
+            // Envoyer une notification
+            $this->sendSuccessNotification($transaction);
+
+            DB::commit();
+
+            Log::info('Paiement traité avec succès', [
+                'reference' => $data['reference'],
+                'user_id' => $transaction->user_id,
+                'amount' => $transaction->amount
+            ]);
+
+            if ($transaction->status === 'success') {
+                return redirect()->route('payment.success', ['reference' => $data['reference']]);
+            } else {
+                return redirect()->route('payment.failed', ['reference' => $data['reference']]);
+            }
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            Log::error('Erreur lors du traitement du paiement', [
+                'reference' => $data['reference'],
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return redirect()->route('payment.failed', ['reference' => "robus_null"]);
+        }
+    }
+
+    private function handleCancelledWebCharge(array $data)
+    {
+        DB::beginTransaction();
+
+        try {
+            $transaction = WalletReload::where('reference', $data['reference'])->first();
+
+            if (!$transaction) {
+                DB::rollBack();
+                Log::error('Transaction non trouvée', ['reference' => $data['reference']]);
+                return response()->json(['status' => 'error', 'message' => 'Transaction non trouvée'], 404);
+            }
+
+            if ($transaction->status === 'success') {
+                DB::rollBack();
+                Log::info('Transaction déjà traitée', ['reference' => $data['reference']]);
+                return response()->json(['status' => 'already_processed'], 200);
+            }
+
+            $wallet = $transaction->wallet;
+
+            if (!$wallet) {
+                DB::rollBack();
+                Log::error('Wallet introuvable', ['reference' => $data['reference']]);
+                return response()->json(['status' => 'error', 'message' => 'Wallet introuvable'], 400);
+            }
+
+            $statusMap = [
+                'success' => 'success',
+                'failed' => 'failed',
+                'abandoned' => 'cancelled',
+                'cancelled' => 'cancelled'
+            ];
+
+            $paymentStatus = $statusMap[$data['status']] ?? 'failed';
+
+            // Mettre à jour la transaction
+            $transaction->update([
+                'status' => $paymentStatus,
+                'gateway_response' => $data['gateway_response'] ?? null,
+                'paid_at' => isset($data['paid_at']) ? Carbon::parse($data['paid_at']) : null,
+                'payment_method' => $data['channel'] ?? null,
+                'currency' => $data['currency'] ?? 'XOF',
+                'balance_before' => $wallet->amount,
+                'amount_solde' => $wallet->amount,
+                'fees' => isset($data['fees']) ? $data['fees'] / 100 : 0,
+                'authorization' => json_encode($data['authorization'] ?? []),
+                'customer' => json_encode($data['customer'] ?? []),
+                'metadata' => json_encode(array_merge(
+                    json_decode($transaction->metadata, true) ?? [],
+                    $data['metadata'] ?? []
+                )),
+                'verified' => $paymentStatus === 'success',
+                'verified_at' => $paymentStatus === 'success' ? now() : null,
+                'raw_response' => json_encode($data),
+            ]);
+
+            // Créditer wallet seulement si succès
+            $oldBalance = $wallet->amount;
+            $newBalance = $oldBalance + $transaction->amount;
+
+            PaymentReload::create([
+                'wallet_reload_id' => $transaction->id,
+                'sid_user_id' => $wallet->sid_user_id,
+                'type' => 'credit',
+                'transaction_id' => $transaction->reference,
+                'pay_amount' => $transaction->amount,
+                'fee_amount' => isset($data['fees']) ? $data['fees'] / 100 : 0,
+                'received_amount' => $transaction->amount,
+                'balance_before' => $oldBalance,
+                'balance_after' => $newBalance,
+                'description' => 'Recharge via Paystack - ' . $transaction->reference,
+                'reference' => $transaction->reference,
+                'operator_transaction_name' => 'Paystack',
+                'status' => 'completed',
+            ]);
+            // Déclencher l'événement succès et notification
+            event(new PaymentSuccessful($transaction, $data));
+            $this->sendSuccessNotification($transaction);
+
+            DB::commit();
+
+            return redirect()->route('payment.failed', ['reference' => $data['reference']]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Erreur traitement paiement', [
+                'reference' => $data['reference'],
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            return response()->json(['status' => 'error', 'message' => 'Erreur interne'], 500);
+        }
+    }
+
     private function handleCancelledCharge(array $data)
     {
         DB::beginTransaction();
@@ -616,6 +872,7 @@ class PaystackWebhookController extends Controller
         }
 
         try {
+
             $paystackService = new PaystackService();
             $verification = $paystackService->verifyTransaction($reference);
 
@@ -630,16 +887,19 @@ class PaystackWebhookController extends Controller
                     if ($data['status'] === 'success' && $transaction->status !== 'success') {
                         return $this->handleSuccessfulCharge($data);
                     } elseif (in_array($data['status'], ['failed', 'abandoned']) && $transaction->status === 'pending') {
-                       
+
                         $amountPaid = $data['amount'] / 100;
                         $paystackFees = ($data['fees'] ?? 0) / 100;
                         $amountReceived = $amountPaid - $paystackFees;
+                        $wallet = $transaction->wallet;
 
                         $transaction->update([
                             'status' => 'failed',
                             'gateway_response' => $data['gateway_response'],
                             'verified' => true,
                             'verified_at' => now(),
+                            'balance_before' =>  $wallet->amount,
+                            'amount_solde' => $wallet->amount,
                             'fees' => $paystackFees,
                             'amount_received' => $amountReceived,
                             'raw_response' => json_encode($data),
@@ -688,6 +948,7 @@ class PaystackWebhookController extends Controller
         }
     }
 
+
     /**
      * Endpoint pour le callback de redirection
      */
@@ -697,44 +958,66 @@ class PaystackWebhookController extends Controller
         $trxref = $request->query('trxref');
         $status = $request->query('status');
 
-        // Utiliser trxref si reference n'est pas présent
+
         $reference = $reference ?: $trxref;
 
+
         if (!$reference) {
-            Log::warning('Callback Paystack sans référence', ['query' => $request->query()]);
-            return redirect()->route('payment.error');
+            return response()->json([
+                'success' => false,
+                'message' => 'Référence invalide'
+            ], 400);
         }
 
-        // Vérifier la transaction
-        $transaction = WalletReload::with(['user', 'wallet'])->where('reference', $reference)->first();
+        $paystackService = new PaystackService();
+        $verification = $paystackService->verifyTransaction($reference);
 
-        if (!$transaction) {
-            Log::warning('Transaction non trouvée pour callback', ['reference' => $reference]);
-            return redirect()->route('payment.error')->with('message', 'Transaction non trouvée');
+
+        if (!$verification || !$verification['status']) {
+            return response()->json(['message' => 'Verification failed'], 200);
         }
 
-        // Si le statut n'est pas fourni dans l'URL, vérifier auprès de Paystack
-        if (!$status) {
-            try {
-                $paystackService = new PaystackService();
-                $verification = $paystackService->verifyTransaction($reference);
 
-                if ($verification['status']) {
-                    $status = $verification['data']['status'];
+
+        if ($verification['status']) {
+
+            // Transaction trouvée, vérifier si elle est déjà enregistrée
+            $transaction = WalletReload::where('reference', $reference)->first();
+
+
+            if ($transaction) {
+                $data = $verification['data'];
+
+                // Mettre à jour la transaction selon le statut
+                if ($data['status'] === 'success' && $transaction->status !== 'success') {
+
+                    return $this->handleSuccessWebfulCharge($data);
+                } elseif (in_array($data['status'], ['failed', 'abandoned']) && $transaction->status === 'pending') {
+
+                    $amountPaid = $data['amount'] / 100;
+                    $paystackFees = ($data['fees'] ?? 0) / 100;
+                    $amountReceived = $amountPaid - $paystackFees;
+                    $wallet = $transaction->wallet;
+
+                    $transaction->update([
+                        'status' => 'failed',
+                        'gateway_response' => $data['gateway_response'],
+                        'verified' => true,
+                        'verified_at' => now(),
+                        'balance_before' =>  $wallet->amount,
+                        'amount_solde' => $wallet->amount,
+                        'fees' => $paystackFees,
+                        'amount_received' => $amountReceived,
+                        'raw_response' => json_encode($data),
+                    ]);
+
+                    return $this->handleCancelledWebCharge($data);
+                } else {
+                    return redirect()->route('payment.failed', ['reference' => "Je crois que vous avez deja utiliser ce retour de paiement "]);
                 }
-            } catch (\Exception $e) {
-                Log::error('Erreur vérification callback', [
-                    'reference' => $reference,
-                    'error' => $e->getMessage()
-                ]);
             }
-        }
-
-        // Rediriger selon le statut
-        if ($status === 'success' || $transaction->status === 'success') {
-            return redirect()->route('payment.success', ['reference' => $reference]);
         } else {
-            return redirect()->route('payment.failed', ['reference' => $reference]);
+            return redirect()->route('payment.failed', ['reference' => "Paiment impossible"]);
         }
     }
 
@@ -743,15 +1026,25 @@ class PaystackWebhookController extends Controller
      */
     public function paymentSuccess($reference)
     {
+
+        if (!$reference) {
+            return redirect()->route('payment.failed', ['reference' => 'unknown'])
+                ->with('error', 'Référence manquante');
+        }
+
         $transaction = WalletReload::where('reference', $reference)->first();
 
         if (!$transaction) {
-            abort(404, 'Transaction non trouvée');
+            return redirect()->route('payment.failed', ['reference' => $reference])
+                ->with('error', 'Transaction non trouvée');
         }
 
-        return view('payment.success', [
-            'transaction' => $transaction,
-            'user' => $transaction->user
+        if ($transaction->status !== 'success') {
+            return redirect()->route('payment.failed', ['reference' => $reference]);
+        }
+
+        return view('pages.payment_success', [
+            'transaction' => $transaction
         ]);
     }
 
@@ -760,15 +1053,25 @@ class PaystackWebhookController extends Controller
      */
     public function paymentFailed($reference)
     {
+
+        if (!$reference) {
+            return redirect()->route('payment.failed', ['reference' => 'unknown'])
+                ->with('error', 'Référence manquante');
+        }
+
         $transaction = WalletReload::where('reference', $reference)->first();
 
         if (!$transaction) {
-            abort(404, 'Transaction non trouvée');
+            return redirect()->route('payment.failed', ['reference' => $reference])
+                ->with('error', 'Transaction non trouvée');
         }
 
-        return view('payment.failed', [
-            'transaction' => $transaction,
-            'user' => $transaction->user
+        if ($transaction->status !== 'success') {
+            return redirect()->route('payment.failed', ['reference' => $reference]);
+        }
+
+        return view('pages.payment_failed', [
+            'transaction' => $transaction
         ]);
     }
 

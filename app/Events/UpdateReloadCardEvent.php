@@ -45,7 +45,7 @@ class UpdateReloadCardEvent implements ShouldBroadcastNow
             'amount' =>  $this->card_id->amount,
             'type' =>  'Reload_card',
             'description'  => $this->card_id->description,
-            'amount_wallet' =>  $this->card_id->wallet->amount . ' ' . $this->card_id->wallet->currencie->code,
+            'amount_wallet' =>  $this->card_id->amount_solde,
             'date_created' =>  $this->card_id->created_at,
             'date_treatment' =>  $this->card_id->deposit->created_at ?? null,
             'Reference'  => $this->card_id->deposit->transaction_id ?? null,

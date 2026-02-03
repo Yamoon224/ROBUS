@@ -45,25 +45,12 @@ class UpdateTransferEvent implements ShouldBroadcastNow
             'amount' =>  $this->transfers_id->amount,
             'type' =>  'Transaction',
             'description'  =>   $this->transfers_id->description,
-            'amount_wallet' =>  $this->transfers_id->wallet->amount . ' ' . $this->transfers_id->wallet->currencie->code,
+            'amount_wallet' =>  $this->transfers_id->amount_solde,
             'date_created' =>   $this->transfers_id->created_at,
             'date_treatment' =>  $this->transfers_id->transaction->created_at ?? null,
             'Reference'  => $this->transfers_id->transaction->transaction_id  ?? null,
-            // 'userId'  =>   $this->transfers_id->wallet->sidUser->id,
-
-            // 'name' =>   $this->transfers_id->name  ?? null,
-            // 'payment_cost_percent' =>   $this->transfers_id->transactionCost->percent  ?? null,
-            // 'number_decoder' =>   $this->transfers_id->number_decoder  ?? null,
-            // 'id_invoice' =>   $this->transfers_id->id_invoice  ?? null,
-            // 'number_decoder' =>   $this->transfers_id->number_decoder  ?? null,
-            // 'offer' => $this->transfers_id->offer->name  ?? null,
-            // 'number_contract' =>   $this->transfers_id->number_contract  ?? null,
-            // 'number_phone' =>   $this->transfers_id->number_phone  ?? null,
-            // 'paiementChoix_phone' =>   $this->transfers_id->paiementChoix_phone  ?? null,
-            // 'factureChoix_type' =>   $this->transfers_id->factureChoix_type  ?? null,
-            // 'devise'  =>  $this->transfers_id->wallet->currencie->code,
-            // 'updated_by'  =>  $this->transfers_id->updated_by,
-            // 'status'  =>   $this->transfers_id->status,
+            'status'  =>   $this->transfers_id->status,
+            'userId'  =>   $this->transfers_id->wallet->sidUser->id,
         ];
     }
 

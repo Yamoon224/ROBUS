@@ -20,7 +20,7 @@ class EventServiceProvider extends ServiceProvider
     //     ],
     // ];
 
-  protected $listen = [
+    protected $listen = [
         // Auth
         Registered::class => [
             SendEmailVerificationNotification::class,
@@ -31,7 +31,7 @@ class EventServiceProvider extends ServiceProvider
             \App\Listeners\PaymentChoose::class,
         ],
         \App\Events\ChoosePhoneCreditEvent::class => [
-            \App\Listeners\PhoneCreditChoose::class, 
+            \App\Listeners\PhoneCreditChoose::class,
         ],
         \App\Events\ChooseReloadCardEvent::class => [
             \App\Listeners\ReloadCardChoose::class,
@@ -45,36 +45,35 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\ChooseXbetEvent::class => [
             \App\Listeners\XbetChoose::class,
         ],
-        
+
         \App\Events\ChooseInterEvent::class => [
             \App\Listeners\InterChoose::class,
         ],
 
         // New event
-         \App\Events\ChooseTresortEvent::class => [
+        \App\Events\ChooseTresortEvent::class => [
             \App\Listeners\TresortMoneyChoose::class,
         ],
 
-         \App\Events\ChooseDrawalEvent::class => [
+        \App\Events\ChooseDrawalEvent::class => [
             \App\Listeners\DrawalChoose::class,
         ],
 
-         \App\Events\ChooseBankSendEvent::class => [
+        \App\Events\ChooseBankSendEvent::class => [
             \App\Listeners\BankSendChoose::class,
         ],
 
-         \App\Events\ChooseDjamoEvent::class => [
+        \App\Events\ChooseDjamoEvent::class => [
             \App\Listeners\DjamoChoose::class,
         ],
 
-         \App\Events\ChooseVersementEvent::class => [
+        \App\Events\ChooseVersementEvent::class => [
             \App\Listeners\VersementChoose::class,
         ],
 
         \App\Events\ChoosePushEvent::class => [
             \App\Listeners\PushChoose::class,
         ],
-
 
 
         // --- Create Events ---
@@ -133,6 +132,64 @@ class EventServiceProvider extends ServiceProvider
         \App\Events\Visitors\ChooseInterVisEvent::class => [
             \App\Listeners\Visitors\InterChooseVis::class,
         ],
+
+        // Updated events
+        // \App\Events\UpdateBankEvent::class => [
+        //     \App\Listeners\BankUpdate::class,
+        // ],
+
+
+        // \App\Events\UpdateBankSendEvent::class => [
+        //     \App\Listeners\BankSend::class,
+        // ],
+        // \App\Events\UpdateDjamoEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+        // \App\Events\UpdateInterEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+        // \App\Events\UpdateOrderCardEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+        // \App\Events\UpdatePaiementEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+        // \App\Events\UpdatePhoneCreditEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+
+        //   \App\Events\UpdatePushEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+
+        //    \App\Events\UpdateReloadCardEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+
+
+        //    \App\Events\UpdateReloadEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+
+
+        //    \App\Events\UpdateTransferEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+
+
+        //   \App\Events\UpdateTresortEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+
+        //   \App\Events\UpdateVersmentEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+        //   \App\Events\UpdateWaveEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
+        //   \App\Events\UpdateXbetEvent::class => [
+        //     \App\Listeners\Visitors\InterChooseVis::class,
+        // ],
     ];
     /**
      * Register any events for your application.

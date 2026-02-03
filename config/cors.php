@@ -15,20 +15,31 @@ return [
     |
     */
 
-    'paths' => ['api/*', 'passport/csrf-cookie'],
+     'paths' => [
+        'api/*',
+        'broadcasting/auth',
+    ],
 
-    'allowed_methods' => ['GET' , 'POST', 'PUT' , 'DELETE'],
+    'allowed_methods' => ['POST', 'GET', 'OPTIONS'],
 
-    'allowed_origins' => ['https://robus.home.ci/'],
+    'allowed_origins' => [
+        'https://robus.home.ci',
+        'https://votre-app-flutter.com',
+    ],
 
     'allowed_origins_patterns' => [],
 
-    'allowed_headers' => ['content-type' , 'accept' , 'x-custom-header'],
+    'allowed_headers' => [
+        'Authorization',
+        'Content-Type',
+        'Accept',
+        'X-Requested-With',
+        'X-Socket-ID',
+    ],
 
-    'exposed_headers' => ['x-custom-response-header'],
+    'exposed_headers' => [],
 
-    'max_age' => 8,
+    'max_age' => 86400,
 
-    'supports_credentials' => false,
-
+    'supports_credentials' => true,
 ];

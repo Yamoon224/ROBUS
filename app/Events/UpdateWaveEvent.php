@@ -45,8 +45,9 @@ class UpdateWaveEvent implements ShouldBroadcastNow
             'amount' =>  $this->wave_id->amount,
             'type' =>  'UV Wave',
             'description'  =>   $this->wave_id->description,
-            'amount_wallet' =>  $this->wave_id->wallet->amount . ' ' . $this->wave_id->wallet->currencie->code,
+            'amount_wallet' =>  $this->wave_id->amount_solde,
             'date_created' =>   $this->wave_id->created_at,
+            'userId'  =>   $this->wave_id->wallet->sidUser->id,
         ];
     }
 

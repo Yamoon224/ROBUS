@@ -46,7 +46,7 @@ class UpdateOrderCardEvent implements ShouldBroadcastNow
             'date_created' =>  $this->paiement_id->created_at,
             'type' =>  'Commande de carte',
             'date_treatment' =>  $this->paiement_id->updated_at ?? null,
-            // 'Reference'  => $this->paymentReload)->transaction_id,
+            'amount_wallet' =>  $this->paiement_id->amount_solde,
             'number_card' =>  $this->paiement_id->number_card,
             'ref_card' =>  $this->paiement_id->ref_card,
             'identity_doc'  => $this->paiement_id->identity_doc,

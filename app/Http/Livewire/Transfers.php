@@ -16,6 +16,12 @@ use App\Events\ChooseBankSendEvent;
 use App\Events\ChooseDjamoEvent;
 use App\Events\ChooseVersementEvent;
 use App\Events\ChoosePushEvent;
+use App\Events\UpdateBankSendEvent;
+use App\Events\UpdateDjamoEvent;
+use App\Events\UpdatePushEvent;
+use App\Events\UpdateXbetEvent;
+use App\Events\UpdateTresortEvent;
+use App\Events\UpdateVersmentEvent;
 use App\Events\UpdatePhoneCreditEvent;
 use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
@@ -28,7 +34,6 @@ use App\Http\Services\TotalAmoutUserServiveBackend;
 use App\Models\AdminsCom;
 use App\Models\Costs\BankCost;
 use App\Models\Costs\PaymentCost;
-use App\Models\Costs\PhoneCreditCost;
 use App\Models\Costs\TransactionCost;
 use App\Models\Custumers\Country;
 use App\Models\Offer;
@@ -1012,6 +1017,7 @@ class Transfers extends Component
 
                 // Temps 5m of transactions
 
+                
                 $ecoule = strtotime($verify_code->created_at);
 
                 $compare_date = date('H:i:s', $ecoule);
@@ -1510,7 +1516,7 @@ class Transfers extends Component
         $this->country_virement_edit = $country->name ?? null;
         $this->amount_virement_edit = $check->amount;
         $this->account_number_user_edit = $check->number_compte;
-        $this->currency_custumers = $check->wallet->currencie->code ?? null;
+        $this->currency_custumers = $check->wasubDistributorllet->currencie->code ?? null;
         $this->emit($state);
     }
 
@@ -1525,7 +1531,6 @@ class Transfers extends Component
         $user_auth = $transactionData['user_auth'];
         $admins = $transactionData['admins'];
         $admin_civ = $transactionData['admin_civ'];
-        $percent_robus = PhoneCreditCost::whereId(1)->first();
         DB::beginTransaction();
 
         try {
@@ -1843,6 +1848,8 @@ class Transfers extends Component
                             $this->emit('error', 'Pas de modification !');
                             return;
                         }
+                        event(new UpdateBankSendEvent($check));
+
                     } else {
                         $this->cancelBankSendField();
                         $this->emit('modal-hide-bankSend-validated');
@@ -2035,6 +2042,8 @@ class Transfers extends Component
                             $this->emit('error', 'Pas de modification !');
                             return;
                         }
+                        event(new UpdateXbetEvent($check));
+
                     } else {
                         $this->cancelXbetField();
                         $this->emit('modal-hide-xbet');
@@ -2343,6 +2352,9 @@ class Transfers extends Component
                             $this->emit('error', 'Pas de modification !');
                             return;
                         }
+
+                        event(new UpdateVersmentEvent($check));
+
                     } else {
                         $this->cancelVersementField();
                         $this->emit('modal-hide-versement');
@@ -2541,6 +2553,9 @@ class Transfers extends Component
                             $this->emit('error', 'Pas de modification !');
                             return;
                         }
+
+                        event(new UpdatePushEvent($check));
+
                     } else {
                         $this->cancelPushField();
                         $this->emit('modal-hide-push');
@@ -2747,6 +2762,9 @@ class Transfers extends Component
                         $this->emit('error', 'Pas le valideur !');
                         return;
                     }
+
+                        event(new UpdateDjamoEvent($check));
+
                 } else {
                     $this->cancelDjamoField();
                     $this->emit('modal-hide-djamo');
@@ -2943,6 +2961,9 @@ class Transfers extends Component
                             $this->emit('error', 'Pas de modification !');
                             return;
                         }
+
+                        event(new UpdateTresortEvent($check));
+
                     } else {
                         $this->cancelTresortField();
                         $this->emit('modal-hide-tresort');

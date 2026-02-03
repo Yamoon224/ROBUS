@@ -45,7 +45,7 @@ class UpdateReloadEvent implements ShouldBroadcastNow
             'amount' =>  $this->reload_id->amount,
             'type' =>  'Reload_account',
             'description'  =>  $this->reload_id->description,
-            'amount_wallet' =>  $this->reload_id->wallet->amount . ' ' . $this->reload_id->wallet->currencie->code,
+            'amount_wallet' =>  $this->reload_id->amount_solde,
             'date_created' =>  $this->reload_id->created_at ?? null,
             'date_treatment' =>  $this->reload_id->paymentReload->created_at ?? null,
             'Reference'  => $this->reload_id->paymentReload->transaction_id ?? null,
