@@ -448,7 +448,7 @@ class withTransactionController extends Controller
                                 ? (float) $amountCfa
                                 : (float) $amountCfa;
 
-                        $totalAmountRecevedCustumer = (float) $totalAmountReceivedCfa - (float) $level->amount;
+                        $totalAmountRecevedCustumer =  $isDistributor ?  (float) $totalAmountReceivedCfa : (float) $totalAmountReceivedCfa - (float) $level->amount;
 
                         $totalAmountRecevedUser = $totalAmountRecevedCustumer * ($bankRate / $userRate);
 
@@ -1238,7 +1238,7 @@ class withTransactionController extends Controller
                                 }
                         }
 
-                        $net_amount = $reel_amount - $commission;
+                        $net_amount = (robus()->is_under_distributer || robus()->is_api) ? $reel_amount : $reel_amount - $commission;
 
                         return response()->json([
                                 'success' => true,

@@ -275,7 +275,6 @@ class WithService
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
-            $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
 
             if (!empty($activeButtons['showRemonterPushButton'])) {
 
@@ -289,7 +288,7 @@ class WithService
                     $walletWith->increment('commission_companie', $percent_valeur_compagnie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_push_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_push_id',  $walletWith->id, $valeur_percent_no_under, $valuer_deposit);
+                    $this->commissionServices->distributeAdminCommissionNoAccepteds($admin_civ,  'wallet_push_id',  $walletWith->id, $valuer_deposit);
                 }
             }
         } else {
@@ -480,8 +479,6 @@ class WithService
 
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
-
-            $valeur_amount_admin  = $percent_robus->percent_admin * $amount;
 
             if (!empty($activeButtons['showRemonterDjamoButton'])) {
 

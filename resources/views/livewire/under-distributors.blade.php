@@ -351,43 +351,53 @@
                             </td>
                             <td class="w-40">
                                 @if ($item->is_under_distributer)
-                                    <div class="flex items-start ">
-                                        <div class="absolute  top-0 mr-5 mt-3 dropdown">
-                                            <div class="text-slate-500 text-xs  mt-0.5 ">
-                                                <i class="fas fa-lock w-3 h-4 mr-2"></i>Commisions
-                                            </div>
-                                            <a class="dropdown-toggle w-5 h-5 block" href="javascript:;"
-                                                aria-expanded="false" data-tw-toggle="dropdown"> <svg
-                                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    icon-name="more-horizontal" data-lucide="more-horizontal"
-                                                    class="lucide lucide-more-horizontal w-5 h-5 text-slate-500">
-                                                    <circle cx="12" cy="12" r="1"></circle>
-                                                    <circle cx="19" cy="12" r="1"></circle>
-                                                    <circle cx="5" cy="12" r="1"></circle>
-                                                </svg>
+                                    <div class="flex items-center justify-between mb-6">
+                                        <div class="text-slate-500 text-xs flex items-center">
+                                            <i class="fas fa-lock w-3 h-3 mr-2"></i>
+                                            Commissions
+                                        </div>
 
+                                        <div class="dropdown relative">
+                                            <a class="dropdown-toggle block" href="javascript:;"
+                                                data-tw-toggle="dropdown">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                    class="w-5 h-5 text-slate-500 hover:text-slate-700" fill="none"
+                                                    viewBox="0 0 24 24" stroke="currentColor">
+                                                    <circle cx="12" cy="12" r="1" />
+                                                    <circle cx="19" cy="12" r="1" />
+                                                    <circle cx="5" cy="12" r="1" />
+                                                </svg>
                                             </a>
 
-                                            <div class="dropdown-menu w-90" id="_8vqni2v1b"
-                                                data-popper-placement="bottom-end"
-                                                style="position: absolute; inset: 0px 0px auto auto; margin: 0px; width: 30% !import; transform: translate(0px, 20px);">
-                                                <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
+                                            <div class="dropdown-menu dropdown-large" >
+                                                <div  class="dropdown-content grid grid-cols-2 gap-2 p-3 max-h-72 overflow-y-auto">
 
-                                                    @foreach ($operatorsCommissions as $operator)
+                                                    @php
+                                                        $limitedOperators = $operatorsCommissions->take(50);
+                                                    @endphp
+
+                                                    @foreach ($limitedOperators as $operator)
                                                         <label
-                                                            class="flex items-center px-4 py-3 hover:bg-slate-50 cursor-pointer transition-colors">
+                                                            class="flex items-center px-2 py-1 hover:bg-slate-50 rounded cursor-pointer">
                                                             <input
-                                                                wire:click="editUpdateCommission({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
-                                                                value="{{ $operator->id }}" type="checkbox"
-                                                                class="h-4 w-4 text-blue-600 border-slate-300 rounded focus:ring-blue-500 transition-colors"
-                                                                @if (in_array($operator->id, $old_operators)) checked @endif>
-                                                            <span class="ml-3 text-sm text-slate-700 truncate flex-1">
+                                                                wire:click.debounce.150ms="editUpdateCommission({{ json_encode(['user_id' => $item->id, 'operator_id' => $operator->id]) }})"
+                                                                type="checkbox"
+                                                                class="h-4 w-4 text-blue-600 border-slate-300 rounded"
+                                                                @checked(in_array($operator->id, $old_operators))>
+
+                                                            <span class="ml-2 text-sm text-slate-700 truncate">
                                                                 {{ $operator->name ?? 'Non renseigné' }}
                                                             </span>
                                                         </label>
                                                     @endforeach
+
+                                                    @if ($operatorsCommissions->count() > 50)
+                                                        <div
+                                                            class="col-span-2 text-center pt-2 border-t text-xs text-gray-500">
+                                                            {{ $operatorsCommissions->count() - 50 }} autres non
+                                                            affichés
+                                                        </div>
+                                                    @endif
                                                 </div>
                                             </div>
                                         </div>
@@ -446,8 +456,7 @@
 
                                                 </a>
 
-                                                <div class="dropdown-menu w-90" data-popper-placement="bottom-end"
-                                                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px); width: 400px; z-index:50;">
+                                                <div class="dropdown-menu dropdown-xlarge" >
                                                     <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
                                                         @foreach ($operators as $operator)
                                                             <label
@@ -487,13 +496,13 @@
                                             <a class=" mr-1 mb-2 "
                                                 href="{{ route('unders.admins.show', ['id' => $item->id]) }}">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                icon-name="eye" data-lucide="eye"
-                                                class="lucide lucide-eye block mx-auto h-15 mr-1">
-                                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                                <circle cx="12" cy="12" r="3"></circle>
-                                            </svg>
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    icon-name="eye" data-lucide="eye"
+                                                    class="lucide lucide-eye block mx-auto h-15 mr-1">
+                                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                                    <circle cx="12" cy="12" r="3"></circle>
+                                                </svg>
 
                                             </a>
                                         @endif

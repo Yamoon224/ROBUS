@@ -113,9 +113,9 @@ class ReloadCardService
                     $walletOrderCard->increment('commission_companie', $valuer_companie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_companie, $valuer_deposit);
                 } else {
+                    $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
                 }
             } else {
-
                 $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $admin_valeur_no);
             }
         } else {

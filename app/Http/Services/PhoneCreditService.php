@@ -106,7 +106,7 @@ class PhoneCreditService
                     $walletPhone->increment('commission_companie', $valuer_companie);
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_phone_credit_id',  $walletPhone->id, $valuer_companie, $valuer_deposit);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_phone_credit_id',  $walletPhone->id, $amount_percent, $valuer_deposit);
+                    $this->commissionServices->distributeAdminNoCommissionCompagnies($admin_civ,  'wallet_phone_credit_id',  $walletPhone->id, $valuer_deposit);
                 }
             }
         } else {

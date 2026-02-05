@@ -167,9 +167,7 @@
 
                                             </a>
 
-                                            <div class="dropdown-menu w-90" id="_8vqni2v1b"
-                                                data-popper-placement="bottom-end"
-                                                style="position: absolute; inset: 0px 0px auto auto; margin: 0px; width: 30% !import; transform: translate(0px, 20px);">
+                                            <div class="dropdown-menu dropdown-large">
                                                 <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
 
                                                     @foreach ($operatorsCommissions as $operator)
@@ -268,8 +266,7 @@
 
                                                 </a>
 
-                                                <div class="dropdown-menu w-90" data-popper-placement="bottom-end"
-                                                    style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px); width: 400px; z-index:50;">
+                                                <div class="dropdown-menu dropdown-xlarge">
                                                     <div class="dropdown-content grid grid-cols-3 gap-2 p-3">
                                                         @foreach ($operators as $operator)
                                                             <label

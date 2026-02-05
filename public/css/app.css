@@ -19,6 +19,17 @@
 */
 
 /* Styles améliorés avec bordures plus visibles */
+
+.dropdown-menu.dropdown-xlarge {
+    width: 60% !important;
+    max-width: 60%;
+}
+
+.dropdown-menu.dropdown-large {
+    width: 50% !important;
+    max-width: 50% ;
+}
+
 .nav-tab-link {
     color: #4b5563;
     background-color: transparent;

@@ -46,7 +46,7 @@ class TransactionSingleCollection extends JsonResource
             'Reference'  => optional($this->transaction)->transaction_id,
             'name' =>  $this->name,
             'description'  =>  $this->description,
-            'payment_cost_percent' => number_format((double)$this->commissions, 2, '.', '') ?? null,
+            'payment_cost_percent' => number_format((double)$this->commissions, 2, '.', '') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ?? null,
             'number_decoder' =>  $this->number_decoder,
             'num_wallet' =>  $this->num_wallet,
             'id_invoice' =>  $this->id_invoice,
@@ -56,7 +56,7 @@ class TransactionSingleCollection extends JsonResource
             'number_phone' =>  $this->number_phone,
             'paiementChoix_phone' =>  $this->paiementChoix_phone,
             'factureChoix_type' =>  $this->factureChoix_type,
-            'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ,
+            'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ,
             'devise'  =>  optional(optional($this->wallet)->currencie)->code ?? "CFA",
             // optional($this->currencie)->code
             'status'  =>  $this->status,

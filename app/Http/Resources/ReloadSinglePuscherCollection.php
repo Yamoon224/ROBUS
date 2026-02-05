@@ -17,14 +17,11 @@ class ReloadSinglePuscherCollection extends JsonResource
     {
         $wallet_send = Wallet::where('wallet_id',  $this->account_wallet)->first();
 
-        if($wallet_send != null)
-        {
+        if ($wallet_send != null) {
             $wallet_send = Wallet::where('wallet_id',  $this->account_wallet)->first();
-
-        }else {
+        } else {
 
             $wallet_send = null;
-
         }
         return [
             'id' => (int) $this->id,
@@ -42,10 +39,10 @@ class ReloadSinglePuscherCollection extends JsonResource
             'type_received'  => $this->type_received,
             'phone'  => null,
             'date_treatment' =>  optional($this->paymentReload)->created_at,
-            'Reference'  => optional($this->paymentReload)->transaction_id,
+            'Reference'  => optional($this->paymentReload)->transaction_id ?? $this->reference,
             'name' =>  $this->name,
             'description'  =>  $this->description,
-            'payment_cost_percent' => number_format((float)$this->commissions, 2, '.', '') ?? null,
+            'payment_cost_percent' => number_format((float)$this->commissions, 2, '.', '') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ?? null,
             'number_decoder' => null,
             'num_wallet' =>  $this->account_wallet,
             'id_invoice' =>  null,
@@ -55,7 +52,8 @@ class ReloadSinglePuscherCollection extends JsonResource
             'number_phone' => null,
             'paiementChoix_phone' =>  null,
             'factureChoix_type' =>  null,
-            'frais' => null,
+                                    'frais' => number_format((double)$this->costs_amount, 2, '.', ' ') ?? null,
+
             'devise'  => optional($this->wallet->currencie)->code,
             // optional($this->currencie)->code
             'status'  =>  $this->status,

@@ -43,7 +43,7 @@ class VirementSingleCollection extends JsonResource
             'phone'  => $this->phone ?? null,
             'name' => null,
             'description'  =>  $this->description ?? null,
-            'payment_cost_percent' => number_format((float)$this->commissions, 2, '.', '') ?? null,
+            'payment_cost_percent' => number_format((float)$this->commissions, 2, '.', '') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ?? null,
             'number_decoder' =>  null,
             'num_wallet' => null,
             'id_invoice' =>  null,
@@ -55,7 +55,7 @@ class VirementSingleCollection extends JsonResource
             'factureChoix_type' =>  null,
             // optional($this->currencie)->code
             'amount_solde_drawal' =>  null,
-            'frais' => number_format((float)$this->costs_amount, 2, '.', ' '),
+            'frais' => number_format((float)$this->costs_amount, 2, '.', ' ') . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA") ,
             'devise'  => optional($this->wallet->currencie)->code,
             'status'  =>  $this->status,
             'balance_before'  => $this->balance_before . ' ' . (optional(optional($this->wallet)->currencie)->code ?? "CFA"),

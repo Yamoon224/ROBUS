@@ -21,6 +21,11 @@
 
 /* Classe pour flouter l'image */
 
+.dropdown-menu.dropdown-large {
+    width: 400px !important;
+    max-width: 400px;
+}
+
 .transaction-badges-container {
   display: flex;
     flex-direction: column;

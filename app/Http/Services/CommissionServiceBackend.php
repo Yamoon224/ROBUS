@@ -172,6 +172,46 @@ class CommissionServiceBackend
         }
     }
 
+    public function handleUnderDistributorPaiementCommission($check, $admin_civ, $description)
+    {
+        $amount_admin = (float) $check->adminCom->amount ;
+        $amount_invoice = (float) $check->adminCom->amount_cie + (float)$check->adminCom->amount_under;
+        $amount_offer = (float) $check->adminCom->amount ;
+        $payment_seach = $check->adminCom->walletPayment->provider_id;
+        $walletCommission = WalletCommission::find(1);
+        $walletAdmin = WalletAdmin::find(1);
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' => $payment_seach == 7 ?  $amount_offer  : $amount_admin,
+                    'sid_user_id' =>   $admin_single->id,
+                    'description' => $description,
+                    'status'  => "SUCCESS",
+                    'amount_under' =>  $amount_invoice,
+                    'description_underdistributer' =>  $description
+                ]);
+
+                if ($payment_seach == 7) {
+                    if ($walletAdmin && $walletAdmin->amount >= $amount_offer) {
+                        $walletAdmin->increment('amount', $amount_offer);
+                    } 
+                } else {
+
+                    if ($walletCommission && $walletCommission->amount >= $amount_invoice) {
+                        $walletCommission->decrement('amount', $amount_invoice);
+                        $walletAdmin->increment('amount', $amount_admin);
+                    } else {
+                        $admin_single->wallet->decrement('amount', $amount_invoice);
+                        $walletAdmin->increment('amount', $amount_admin);
+                    }
+                }
+            }
+        }
+    }
+
     public function handleUnderBankDistributorCommission($check, $admin_civ, $description)
     {
         $valeur_amount_com = (float) $check->adminCom->amount + (float)$check->adminCom->amount_compagnie;

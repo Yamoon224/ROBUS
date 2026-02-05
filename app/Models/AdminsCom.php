@@ -104,7 +104,6 @@ class AdminsCom extends Model
         return $this->belongsTo(WalletCommission::class, 'wallet_commission_id', 'id')->withTrashed();
     }
 
-
     public function walletDjamo()
     {
         return $this->belongsTo(WalletDjamo::class, 'wallet_djamo_id', 'id')->withTrashed();
@@ -120,7 +119,6 @@ class AdminsCom extends Model
         return $this->belongsTo(WalletWave::class, 'wallet_wave_id', 'id')->withTrashed();
     }
 
-  
 
     public function sidUser()
     {

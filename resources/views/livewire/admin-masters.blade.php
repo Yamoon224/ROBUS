@@ -158,7 +158,7 @@
                                                 </a>
 
 
-                                                <div class="dropdown-menu w-80" id="_8vqni2v1b"
+                                                <div class="dropdown-menu dropdown-large" id="_8vqni2v1b"
                                                     data-popper-placement="bottom-end"
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px);">
                                                     <div class="dropdown-content">

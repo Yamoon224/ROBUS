@@ -139,7 +139,7 @@
 
                                                 </a>
 
-                                                <div class="dropdown-menu w-90" data-popper-placement="bottom-end"
+                                                <div class="dropdown-menu dropdown-xlarge" data-popper-placement="bottom-end"
                                                     style="position: absolute; inset: 0px 0px auto auto; margin: 0px; transform: translate(0px, 20px); z-index: 50;">
 
                                                     <div class="dropdown-content grid grid-cols-3 gap-2 p-3">

@@ -210,8 +210,6 @@ class PaymentController extends Controller
                             'number_phone' => 'required',
                             'offer' => 'required',
                             'name' => 'required',
-
-
                         ];
 
                         $validationMessages = [
@@ -225,7 +223,6 @@ class PaymentController extends Controller
                             'number_decoder' => 'required|max:14',
                             'offer' => 'required',
                             'name' => 'required',
-
                         ];
 
                         $validationMessages = [
@@ -243,7 +240,7 @@ class PaymentController extends Controller
                 if ($validator->fails()) {
                     return response()->json([
                         'success' => false,
-                        'message' => 'QUelque champs obligatoire',
+                        'message' => 'Quelque champs obligatoire',
                         'data' => $validator->errors()
                     ], 333);
                 }
@@ -255,16 +252,31 @@ class PaymentController extends Controller
                         $reel_amount = $this->validatedamountDays->search_amount($request->amount);
 
 
-                        if ($request->provider != 7) {
+                        if (robus()->is_under_distributer || robus()->is_api) {
+                            if ($request->provider != 7) {
 
-                            $amount_send = $reel_amount;
-                            $amount_valeur = $request->provider == 8 ?  $reel_amount : $reel_amount  ;
-                            $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
+                                $amount_send = $reel_amount;
+                                $amount_valeur = $request->provider == 8 ?  $reel_amount : $reel_amount;
+                                $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
+                            } else {
+
+                                $amount_send = $offers->amount;
+                                $amount_valeur = $offers->amount + $percent_robus->comission_canal;
+                                $amountReceved = $offers->amount;
+                            }
                         } else {
 
-                            $amount_send = $offers->amount;
-                            $amount_valeur = $offers->amount + $percent_robus->amount_canal;
-                            $amountReceved = $offers->amount;
+                            if ($request->provider != 7) {
+
+                                $amount_send = $reel_amount;
+                                $amount_valeur = $request->provider == 8 ?  $reel_amount : $reel_amount;
+                                $amountReceved = $reel_amount - (float) ($percent_robus->amount_auther);
+                            } else {
+
+                                $amount_send = $offers->amount;
+                                $amount_valeur = $offers->amount + $percent_robus->amount_canal;
+                                $amountReceved = $offers->amount;
+                            }
                         }
 
 

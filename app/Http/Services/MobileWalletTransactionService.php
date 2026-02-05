@@ -252,7 +252,7 @@ class MobileWalletTransactionService
 
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_compagnie, $admin_valeur_convertion);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_convertion, $percent_valeur_convertion);
+                    $this->commissionServices->distributeAdminCommissionNoCompagnies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion, $admin_valeur_convertion);
                 }
             }
         }
