@@ -342,16 +342,14 @@ class TransactionController extends Controller
                     $isCustomer =   !optional($wallet_search->sidUser)->is_custumers;
                     $isCustomerStatusFalse =   optional($wallet_search->sidUser)->status === false;
                     $isSameWalletAsUser = $request->num_wallet === $wallet_user->wallet->wallet_id;
-                    $isUnderDistributor =   optional($wallet_search->sidUser)->is_under_distributer === true;
                     $isAdmin_all =   optional($wallet_search->sidUser)->is_admin === true;
-
                     // Is custumers
-                    if ($isWalletSearchNull || $isCustomer || $isCustomerStatusFalse || $isSameWalletAsUser || $isUnderDistributor || $isAdmin_all) {
+                    if ($isWalletSearchNull || $isCustomer || $isCustomerStatusFalse || $isSameWalletAsUser || $isAdmin_all) {
 
                         return response()->json(
                             [
                                 'success' => false,
-                                'message' => 'Ce numéro n\'est pas ROBUS ou est votre numéro ou un distributeur',
+                                'message' => 'La demande ne peut pas être traitée : le numéro saisi est invalide, correspond à votre propre numéro ou appartient à un compte non autorisé.',
                             ],
                             333
                         );
@@ -364,14 +362,15 @@ class TransactionController extends Controller
 
                                 if ($this->validatedamountDays->validateAmount($request->amount)) {
 
-                                    $percent_amount = $percent_robus->percent * $request->amount;
+                                    $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
 
-                                    // $percent_real = adjustFeesWithRest($percent_amount , $request->amount);
+                                    $is_unders = $walletAmountSend->sidUser->is_under_distributer;
+
+                                    $percent_amount = $is_unders ? $percent_robus->percent_under_scanner * $request->amount : $percent_robus->percent * $request->amount;
 
                                     $valeur_received = (float) $request->amount - $percent_amount;
 
                                     // Update Info valeurs
-                                    $walletAmountSend = Wallet::where('wallet_id',  $request->num_wallet)->first();
 
                                     $amount_solde_drawal = (float)$walletAmountSend->amount + (float)$valeur_received;
 
@@ -683,6 +682,7 @@ class TransactionController extends Controller
 
                                     $walletTransaction->update([
                                         'type_transaction' => 'Retrait',
+                                        'type_received' => 'Depot',
                                         'status' => 'SUCCESS',
                                         'costs_amount' => 0,
                                         'code_validated' => null,
@@ -846,7 +846,7 @@ class TransactionController extends Controller
                             $cost_payment = $percent_amount;
                         }
 
-                        $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type, $request->numberPiece , $request->reference);
+                        $walletTransaction =  $this->mobileWalletTransactionService->createRobusDrawalWalletTransactionDistributer($percent_robus, $request->provider, $request->amount, $request->date_piece, $request->num_piece_custumer, $request->name_custumer, $cost_payment, $request->phone, 2, $request->type, $request->numberPiece, $request->reference);
 
                         if ($walletTransaction != null) {
 
@@ -1324,13 +1324,11 @@ class TransactionController extends Controller
 
                     $commission_transaction_val_percent_pay_custumer = (float)$commission_transaction->percent_custum_drawal * $amount_transaction;
 
-                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer , $amount_transaction);
+                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay_custumer, $amount_transaction);
 
                     $commission_transaction_val_nat_receive = (float)$amount_transaction - $commission_transaction_val_percent_pay_custumer;
 
                     $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_with_drawal * $commission_transaction_val_nat_receive;
-
-
                 }
 
 
@@ -1342,11 +1340,11 @@ class TransactionController extends Controller
                         'amount_receive' => $commission_transaction_val_nat_receive,
                     ],
                 ], 200);
-            }else {
+            } else {
                 return response()->json([
                     'success' =>  false,
                     'message' => 'Saisie le montant SVP',
-                ], 200); 
+                ], 200);
             }
         } catch (\Exception $exception) {
             return response()->json([
@@ -1508,12 +1506,17 @@ class TransactionController extends Controller
 
                     // Si l'utilisateur n'est pas sous distributeur, admin ou distributeur
                     $commission_transaction = $this->searchTransaction->getCommissionTransactionForCountryGroup(robus()->country->name_groupe, robus()->is_under_distributer);
-                    $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
-                    $percent_real = adjustFeesWithRest($commission_transaction_val_percent_pay, $amount_transaction);
+
                     $isUnders = (bool) (robus()?->is_under_distributer || robus()?->is_api);
+
                     if ($commission_transaction && $data?->sidUser?->is_custumers) {
 
-                        $commission_transaction_val_percent_pay = $commission_transaction_val_percent_pay;
+                        $commission_transaction_val_percent_pay = (float)$commission_transaction->percent * $amount_transaction;
+                        $commission_transaction_val_nat_pay = $isUnders ? (float)$commission_transaction->percent_deposit * (float) $commission_transaction_val_percent_pay : (float)$commission_transaction->percent_deposit * $amount_transaction;
+                        $commission_transaction_val_nat_receive = (float)$amount_transaction - (float) $commission_transaction_val_percent_pay;
+                    } else if ($commission_transaction && $data?->sidUser?->is_under_distributer) {
+
+                        $commission_transaction_val_percent_pay = (float)$commission_transaction->percent_under_scanner * $amount_transaction;
                         $commission_transaction_val_nat_pay = $isUnders ? (float)$commission_transaction->percent_deposit * (float) $commission_transaction_val_percent_pay : (float)$commission_transaction->percent_deposit * $amount_transaction;
                         $commission_transaction_val_nat_receive = (float)$amount_transaction - (float) $commission_transaction_val_percent_pay;
                     }

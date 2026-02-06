@@ -35,7 +35,7 @@
                     @enderror
                 </div>
 
-                <div class="col-span-12">
+                <div class="col-span-6">
                     <label for="modal-form-1" class="form-label">Pourcentage Compagnie<span class="text-danger">
                             *</span></label>
                     <input wire:model.defer="comissionCompanie" id="modal-form-1" type="number" class="form-control"
@@ -44,6 +44,17 @@
                         <span class="text-danger">{{ $message }}</span>
                     @enderror
                 </div>
+
+                <div class="col-span-6">
+                    <label for="modal-form-1" class="form-label">Pourcentage Scanne client<span class="text-danger">
+                            *</span></label>
+                    <input wire:model.defer="percent_scanner" id="modal-form-1" type="number" class="form-control"
+                        placeholder="Pourcentage scanne client">
+                    @error('percent_scanner')
+                        <span class="text-danger">{{ $message }}</span>
+                    @enderror
+                </div>
+
 
                 @if ($distributer_custumer)
                     <div class="col-span-6">

@@ -27,6 +27,7 @@ class Transaction extends Component
     public $distributer_custumer;
     public $comission_master;
     public $comissionCompanie;
+    public $percent_scanner;
 
 
     public function add()
@@ -90,6 +91,7 @@ class Transaction extends Component
         $this->percent_with_drawal_master = $check->percent_custum_drawal_master * 100;
 
         $this->percent_deposit = $check->percent_deposit * 100;
+        $this->percent_scanner = $check->percent_under_scanner * 100;
         $this->comissionCompanie = $check->percent_companie * 100;
         $this->distributer_custumer = $check->distributer_custumer;
         $this->emit($state);
@@ -125,6 +127,7 @@ class Transaction extends Component
             'percent_custum_drawal_admin'  => $this->percent_with_drawal_admin,
             'percent_custum_drawal_companie'  => $this->percent_with_drawal_companie,
             'percent_custum_drawal_master'  => $this->percent_with_drawal_master,
+            'percent_under_scanner'  => $this->percent_scanner,
             'status' => 1,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
@@ -190,6 +193,7 @@ class Transaction extends Component
         $this->percent_with_drawal = $check->percent_with_drawal * 100;
         $this->percent_deposit = $check->percent_deposit * 100;
         $this->distributer_custumer = $check->distributer_custumer;
+        $this->percent_scanner = $check->percent_under_scanner  * 100;
         $this->comissionCompanie = $check->percent_companie  * 100;
         $this->emit($state);
     }
@@ -217,6 +221,7 @@ class Transaction extends Component
             'percent_companie' => $this->percent_deposit,
             'percent_with_drawal'  => $this->percent_with_drawal,
             'status' => 1,
+            'percent_under_scanner'  => $this->percent_scanner,
             'created_by' => Auth::guard('web')->user()->id,
         ]);
 
@@ -238,6 +243,7 @@ class Transaction extends Component
         $this->percent_with_drawal_admin = '';
         $this->percent_with_drawal_companie = '';
         $this->percent_with_drawal_master = '';
+        $this->percent_scanner = '';
         $this->emit('modal-hide', 'hide');
     }
 

@@ -3,9 +3,7 @@
 namespace App\Http\Services;
 
 
-use App\Models\AdminsCom;
-use App\Models\Invoices\OneBetInvoice;
-use App\Models\Payments\OneBetTransaction;
+
 use App\Models\Wallets\WalletBankSend;
 use App\Models\Sid\SidUser;
 use App\Repositories\TresortRepository;
@@ -14,6 +12,7 @@ use App\Repositories\DjamoRepository;
 use Illuminate\Support\Facades\DB;
 use App\Http\Services\OperatorRestrictionService;
 use Illuminate\Support\Facades\Http;
+use App\Models\Custumers\Country;
 
 class WithService
 {
@@ -179,7 +178,7 @@ class WithService
 
         $amount_solde = (float) $user->wallet->amount;
 
-        
+
 
         return WalletBankSend::create([
             'wallet_id' => robus()->wallet->id,
@@ -250,7 +249,7 @@ class WithService
         if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
         } else {
-            $amount_commission = $amount ;
+            $amount_commission = $amount;
         }
 
         $amount_solde = $user->wallet->amount - $amount_commission;
@@ -337,12 +336,18 @@ class WithService
             $activeCButtons = [];
         }
 
-        $percent = $percent_robus->amount;
+        $countryBank = Country::findOrFail(107);
+        $userRate = robus()->country->currencie->value;
+        $bankRate = $countryBank->currencie->value;
+
 
         $percent_commission =  $percent_robus->percent_under;
 
         $percent_compagnie = $percent_robus->percent_companie;
 
+        $percent_amount_admin = $percent_robus->percent_admin;
+
+        $percent_amount_bank = $percent_robus->percent_bank;
 
         if ($user && $user->is_under_distributer || $user->is_api) {
             $amount_commission = $amount;
@@ -366,39 +371,36 @@ class WithService
 
         $valuer_deposit = $percent_commission;
         $percent_valeur_compagnie = $percent_compagnie;
-        $valeur_percent_no_under  = $percent;
 
         // Commissions Inters 
         if ($user && $user->is_under_distributer || $user->is_api == 1) {
 
-            $valeur_amount_admin  = $percent_robus->percent_admin;
-
             if (!empty($activeButtons['showRemonterBankSendButton'])) {
 
 
+                $amountUnderDeposit = $valuer_deposit * ($userRate / $bankRate);
+
                 $walletWith->update([
-                    'commissions' => DB::raw('COALESCE(commissions, 0) + ' . (float) $valuer_deposit),
+                    'commissions' => DB::raw('COALESCE(commissions, 0) + ' . (float) $amountUnderDeposit),
                 ]);
 
                 $account_accepted = $user->is_accepted_companie ?? false;
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterBankSendCButton'])) {
-                    $walletWith->increment('commission_companie', $percent_valeur_compagnie);
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_valeur_compagnie, $valuer_deposit);
+                    $amountCompanieDeposit = $percent_valeur_compagnie * ($userRate / $bankRate);
+                    $walletWith->increment('commission_companie', $amountCompanieDeposit);
+                    $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_bank_send_id', $walletWith->id,  $percent_amount_admin, $percent_valeur_compagnie, $valuer_deposit, $percent_amount_bank);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ,  'wallet_bank_send_id',  $walletWith->id, $valeur_percent_no_under, $valuer_deposit);
+                    $admin_cumul_amount = (float) $percent_amount_admin  +  (float) $percent_compagnie;
+                    $this->commissionServices->distributeAdminNoCompagnieBankSendCommissions($admin_civ, 'wallet_bank_send_id', $walletWith->id, $admin_cumul_amount, $valuer_deposit, $percent_amount_bank);
                 }
             } else {
-
-                $percent_banque = $percent_robus->percent_bank;
                 $percent_admin = (float) $percent_robus->percent_admin + (float) $percent_robus->percent_companie + (float) $percent_robus->percent_under;
-                $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_admin, $valuer_deposit, $percent_banque);
+                $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_admin, $valuer_deposit, $percent_amount_bank);
             }
         } else {
-
-            $percent_banque = $percent_robus->percent_bank;
             $percent_admin = (float) $percent_robus->percent_admin + (float) $percent_robus->percent_companie + (float) $percent_robus->percent_under;
-            $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_admin, $valuer_deposit, $percent_banque);
+            $this->commissionServices->distributeAdminAndBankCommissionAccepteds($admin_civ, 'wallet_bank_send_id', $walletWith->id, $percent_admin, $valuer_deposit, $percent_amount_bank);
 
             if ($user->country->code == 'CI') {
 

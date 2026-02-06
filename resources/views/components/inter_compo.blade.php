@@ -561,7 +561,7 @@
                                                                 <a wire:click="editInter({{ $item->id }}, 'update-interTransfers-modal')"
                                                                     class="btn btn-primary mr-1 mb-2 btn-sm"
                                                                     href="javascript:;" title="Modifier">
-                                                                    Modifier
+                                                                     Traité mainteant
                                                                 </a>
                                                             @endif
                                                         @elseif ($item->status == 'SUCCESS' && $item->updated_by == Auth::guard('web')->user()->id)

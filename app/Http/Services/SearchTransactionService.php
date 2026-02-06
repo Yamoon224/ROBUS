@@ -35,6 +35,7 @@ class SearchTransactionService
                 'walletId' => $data->wallet_id ?? null,
                 'name' => $data->sidUser->firstname . ' ' . $data->sidUser->lastname,
                 'user' => $data->sidUser->firstname . ' ' . $data->sidUser->lastname,
+                'unders' => $data->sidUser->is_under_distributer == true ? "unders" : "custumers",
                 'countrie' => $data->country->name ?? null,
                 'currencie' => $data->currencie->currency ?? null,
                 'image' => $data->sidUser->image ?? null,

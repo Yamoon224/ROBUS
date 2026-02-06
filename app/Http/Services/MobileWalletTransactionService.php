@@ -52,6 +52,7 @@ class MobileWalletTransactionService
                 'name_complet' => $name_custumers ?? null,
                 'num_piece' => $num_piece_custumers ?? null,
                 'validated_date' => $date_piece ?? null,
+                'balance_before' => robus()->wallet->amount,
                 'choose_type_transaction' => $choose_type_transaction ?? 1,
                 'amount_received'  => 0,
                 'type_transaction' => $choose_type_transaction == 1 ? 'Depot' : 'Retrait',
@@ -285,14 +286,6 @@ class MobileWalletTransactionService
             $activeCButtons = [];
         }
 
-        // Préparez les valeurs mises à jour
-        // $updatedValues = [
-        //     'reload_by' => robus()->firstname . ' ' . robus()->lastname,
-        //     'sid_user_relod' => robus()->id,
-        //     'amount' => DB::raw('amount - ' . $commission),
-        // ];
-
-        // $wallet->update($updatedValues);
 
         $valeur_percent_valeur  = $percent_robus->percent * $transaction_amount_money;
 
@@ -343,7 +336,7 @@ class MobileWalletTransactionService
 
                     $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_compagnie, $admin_valeur_convertion);
                 } else {
-                    $this->commissionServices->distributeAdminCommissionAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $percent_valeur_convertion, $percent_valeur_convertion);
+                    $this->commissionServices->distributeAdminCommissionNoAccepteds($admin_civ, 'wallet_transaction_id', $walletTransaction->id, $admin_valeur_convertion);
                 }
             } 
         }

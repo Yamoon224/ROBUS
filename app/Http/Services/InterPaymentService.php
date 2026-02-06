@@ -116,15 +116,15 @@ class InterPaymentService
 
 
         $valuer_deposit = $percent_robus->percent_deposit_under_distributer *  $amount;
-        $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
+
+        $valeur_percent_banque  = $percent_robus->percent_banque * $amount;
+        $valeur_percent_admin  = $percent_robus->percent_admin * $amount;
+        $banque_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_banque);
+        $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
 
         // Commissions Inters 
         if (robus()->is_under_distributer == 1 || robus()->is_api == 1) {
 
-            $valeur_amount_admin  = $percent_robus->percent_under_distributer * $amount;
-            $valeur_percent_admin =  (float) $valeur_amount_admin - (float) $valuer_deposit;
-            $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
-            $deposit_valeur_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
 
             if (!empty($activeButtons['showRemonterInterButton'])) {
 
@@ -133,25 +133,21 @@ class InterPaymentService
                 ]);
 
                 $account_accepted = robus()->is_accepted_companie ?? false;
+                
+                $deposit_valeur_convertion =  $this->convertionService->convertAdminCommission($valuer_deposit);
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterInterCButton'])) {
+                    $percent_valeur_compagnie = $percent_robus->percent_companie *  $amount;
                     $walletInter->increment('commission_companie', $percent_valeur_compagnie);
                     $company_valeur_convertion =  $this->convertionService->convertAdminCommission($percent_valeur_compagnie);
-                    $this->commissionServices->distributeAdminCommissionAcceptedCompanies($admin_civ,  'wallet_inter_id',  $walletInter->id, $company_valeur_convertion, $deposit_valeur_convertion);
+                    $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ,  'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion, $company_valeur_convertion, $deposit_valeur_convertion, $banque_valeur_convertion);
+                } else {
+                    $this->commissionServices->distributeAdminBanqueInterCommissions($admin_civ, 'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion, $banque_valeur_convertion, $deposit_valeur_convertion);
                 }
             } else {
-                $valeur_percent_admin  = $percent_robus->percent_admin * $amount;
-                $valeur_percent_banque  = $percent_robus->percent_banque * $amount;
-                $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
-                $banque_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_banque);
                 $this->commissionServices->distributeAdminBanqueCommissions($admin_civ, 'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion, $valeur_percent_banque, $banque_valeur_convertion);
             }
         } else {
-
-            $valeur_percent_admin  = $percent_robus->percent_admin * $amount;
-            $valeur_percent_banque  = $percent_robus->percent_banque * $amount;
-            $admin_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_admin);
-            $banque_valeur_convertion =  $this->convertionService->convertAdminCommission($valeur_percent_banque);
             $this->commissionServices->distributeAdminBanqueCommissions($admin_civ, 'wallet_inter_id',  $walletInter->id, $admin_valeur_convertion, $valeur_percent_banque, $banque_valeur_convertion);
         }
 

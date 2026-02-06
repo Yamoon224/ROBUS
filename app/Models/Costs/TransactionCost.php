@@ -127,6 +127,13 @@ class TransactionCost extends Model
         $this->attributes['percent_custum_drawal_deposit'] = $value / 100 ? json_encode($value / 100) : null;
     }
 
+
+    public function setPercentUnderScannerAttribute($value)
+    {
+        $this->attributes['percent_under_scanner'] = $value / 100 ? json_encode($value / 100) : null;
+    }
+
+    
     public function getPercentAdminAttribute($value)
     {
         $val = isset($value) ? json_decode($value, true) : null;

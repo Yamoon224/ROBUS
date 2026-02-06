@@ -373,7 +373,7 @@ class withTransactionController extends Controller
                         $totalDebitUser = $totalDebitCfa * ($bankRate / $userRate);
 
                         if ($totalDebitUser > robus()->wallet->amount) {
-                                return json_message_response(false, "Veuillez verifier votre solde", 422);
+                                return json_message_response(false, "Veuillez verifeir votre solde", 422);
                         }
 
                         /**ivalents
@@ -421,7 +421,7 @@ class withTransactionController extends Controller
                                 $level,
                                 $country_robus,
                                 $request->provider,
-                                $request->phone_out, 
+                                $request->phone_out,
                                 $request->name_custumer,
                                 $request->num_piece,
                                 $request->date_piece,
@@ -448,7 +448,7 @@ class withTransactionController extends Controller
                                 ? (float) $amountCfa
                                 : (float) $amountCfa;
 
-                        $totalAmountRecevedCustumer =  $isDistributor ?  (float) $totalAmountReceivedCfa : (float) $totalAmountReceivedCfa - (float) $level->amount;
+                        $totalAmountRecevedCustumer = (float) $totalAmountReceivedCfa - (float) $level->amount;
 
                         $totalAmountRecevedUser = $totalAmountRecevedCustumer * ($bankRate / $userRate);
 
@@ -1021,7 +1021,7 @@ class withTransactionController extends Controller
 
                                                 $commission_paiement_invoice_val_nat_pay =  $commission_invoice->percent_with_drawal  * $amount_paiement;
 
-                                                $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount ;
+                                                $commission_paiement_invoice_val_nat_receive =  (float) $reel_amount;
 
                                                 $commission_transaction_val_percent_pay =  (float) $commission_paiement;
                                         } else {
@@ -1145,12 +1145,15 @@ class withTransactionController extends Controller
                                         ? (float) $level->percent_under
                                         : (float) $level->amount;
 
+                                $commissionCfaUnder =  (float) $level->amount;
                                 /**
                                  * 🔁 Conversion CFA → devise utilisateur
                                  */
-                                $commissionUser = $commissionCfa * ($bankCurrencyValue / $userCurrencyValue);
-                                $amountUser     = $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
-                                $amountRecevedUser     = (float)  $amountUser  - (float)  $commissionUser;
+                                $commissionUser = ($commissionCfa * ($bankCurrencyValue / $userCurrencyValue)) ;
+                                $commissionUnder = ($commissionCfaUnder * ($bankCurrencyValue / $userCurrencyValue)) ;
+                                $amountUser     =  $isDistributor ? (float) $commissionUnder : $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
+                                $amountUnderReceived     =  $amountCfa * ($bankCurrencyValue / $userCurrencyValue);
+                                $amountRecevedUser     =  $isDistributor ? ((float)  $amountUnderReceived  - (float) $commissionUnder) : ((float)  $amountUser  - (float)  $commissionUser);
 
                                 return response()->json([
                                         'success' => true,

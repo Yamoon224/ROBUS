@@ -5,7 +5,7 @@
     <div class="intro-y col-span-12 flex flex-wrap sm:flex-nowrap items-center mt-2">
 
         <div class="hidden md:block mx-auto text-slate-500"></div>
-        
+
         <div class="hidden md:block ml-8 text-slate-500"></div>
         <div class="input-group input-group-md" style="margin-top: 13px;width: 250px;">
             <div class="w-56 relative text-slate-500">
@@ -34,7 +34,7 @@
                         <th class="whitespace-nowrap text-center">Pourcentage</th>
                         <th class="whitespace-nowrap text-center">Pourcentage Admin</th>
                         <th class="whitespace-nowrap text-center">Pourcentage S-agent depot</th>
-                        <th class="whitespace-nowrap text-center">Pourcentage  retrait</th>
+                        <th class="whitespace-nowrap text-center">Pourcentage retrait</th>
                         <th class="whitespace-nowrap text-center">Pourcentage Compagnie</th>
                         <th class="text-center whitespace-nowrap">Actions</th>
                     </tr>
@@ -49,12 +49,14 @@
                                     {{-- </p> --}}
 
                                 </td>
-                               
+
                                 <td class="text-center">
                                     <p class="font-medium whitespace-nowrap">
                                         {{ $item->percent * 100 ?? null }} %
                                     </p>
-
+                                    <p class="font-medium whitespace-nowrap mt-1">
+                                        Scanne client : {{ $item->percent_under_scanner * 100 ?? null }} %
+                                    </p>
                                 </td>
                                 <td class="text-center">
                                     <p class="font-medium whitespace-nowrap">
@@ -70,7 +72,7 @@
                                 </td>
                                 <td class="w-40">
                                     <p class="font-medium whitespace-nowrap">
-                                        S-agent  : {{ $item->percent_with_drawal * 100 ?? null }} %
+                                        S-agent : {{ $item->percent_with_drawal * 100 ?? null }} %
                                     </p>
                                     <p class="font-medium whitespace-nowrap mt-1">
                                         Client : {{ $item->percent_custum_drawal * 100 ?? null }} %
@@ -79,10 +81,10 @@
                                         Admin : {{ $item->percent_custum_drawal_admin * 100 ?? null }} %
                                     </p>
                                     <p class="font-medium whitespace-nowrap mt-1">
-                                        Compagnie :  {{ $item->percent_custum_drawal_companie * 100 ?? null }} %
+                                        Compagnie : {{ $item->percent_custum_drawal_companie * 100 ?? null }} %
                                     </p>
                                     <p class="font-medium whitespace-nowrap mt-1">
-                                        Master :  {{ $item->percent_custum_drawal_master * 100 ?? null }} %
+                                        Master : {{ $item->percent_custum_drawal_master * 100 ?? null }} %
                                     </p>
                                 </td>
 
@@ -122,7 +124,7 @@
         </div>
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
             <h2 class="alert alert-dark  intro-y text-lg font-medium">
-               Transactions sur le site visiteurs
+                Transactions sur le site visiteurs
             </h2>
 
             <table class="table table-bordered table-hover -intro-x mt-6">
@@ -185,7 +187,7 @@
         </div>
         <div class="intro-y col-span-12 overflow-auto lg:overflow-visible">
             <h2 class="alert alert-dark  intro-y text-lg font-medium">
-               Transactions sur les entreprises
+                Transactions sur les entreprises
             </h2>
 
             <table class="table table-bordered table-hover -intro-x mt-6">

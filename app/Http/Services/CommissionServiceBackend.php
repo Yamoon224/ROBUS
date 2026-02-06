@@ -111,6 +111,38 @@ class CommissionServiceBackend
         }
     }
 
+     public function handleAdminBankSendUnderCommission($check, $admin_civ)
+    {
+        $amountValeur = $check->adminCom->amount ?? 0;
+        $amountBank = $check->adminCom->amount_bank ?? 0;
+        $walletAdmin = WalletAdmin::find(1);
+        $walletCommission = WalletCommission::find(1);
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' => $amountValeur,
+                    'sid_user_id' => $admin_single->id,
+                    'description' => 'Commission administrateur',
+                    'status' => "SUCCESS",
+                ]);
+
+                if ($walletAdmin && $walletCommission) {
+                    $walletAdmin->increment('amount', $amountValeur);
+                    $walletCommission->increment('amount', $amountBank);
+                } else {
+                    $admin_single->wallet->update([
+                        'reload_by' => Auth::guard('web')->user()->firstname . ' ' . Auth::guard('web')->user()->lastname,
+                        'sid_user_relod' => Auth::guard('web')->user()->id,
+                        'amount' => DB::raw('amount+' . $amountValeur),
+                    ]);
+                }
+            }
+        }
+    }
+
     public function handleAdminPaimentCommission($check, $admin_civ)
     {
         $amountValeur = $check->adminCom->amount;
@@ -148,6 +180,33 @@ class CommissionServiceBackend
     public function handleUnderDistributorCommission($check, $admin_civ, $description)
     {
         $valeur_amount_com = (float) $check->adminCom->amount + (float)$check->adminCom->amount_compagnie;
+        $walletCommission = WalletCommission::find(1);
+
+        if ($admin_civ->count() > 0) {
+
+            foreach ($admin_civ as $user) {
+                $admin_single = SidUser::find($user->id);
+                $check->adminCom->update([
+                    'amount' =>   $valeur_amount_com,
+                    'sid_user_id' =>   $admin_single->id,
+                    'description' => $description,
+                    'status'  => "SUCCESS",
+                    'amount_under' =>  $valeur_amount_com,
+                    'description_underdistributer' =>  $description
+                ]);
+
+                if ($walletCommission && $walletCommission->amount >= $valeur_amount_com) {
+                    $walletCommission->decrement('amount', $valeur_amount_com);
+                } else {
+                    $admin_single->wallet->decrement('amount', $valeur_amount_com);
+                }
+            }
+        }
+    }
+
+      public function handleUnderDistributorAndCompanieCommission($check, $admin_civ, $description)
+    {
+        $valeur_amount_com = (float) $check->adminCom->amount_under + (float)$check->adminCom->amount_compagnie;
         $walletCommission = WalletCommission::find(1);
 
         if ($admin_civ->count() > 0) {

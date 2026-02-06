@@ -13,7 +13,118 @@
 
             @if ($choose_type_paiement == 1)
                 <!-- Transfers d'argent -->
-                <div class="mb-2 mr-6 ml-6 text-center text-primary dark:text-white text-xl mt-3">Transfers d'argent
+                @if ($type_inter_image == 'Passeport')
+                    <div class="col-span-12">
+                        <div class="field field-full">
+                            <label class="form-label required">Image de la carte</label>
+
+                            <div class="field-value flex items-center gap-2">
+                                <i class="fas fa-qrcode"></i>
+
+                                @if ($image_frontend_inter_edit)
+                                    @php
+                                        $img = asset_url($image_frontend_inter_edit) ?? asset_url('image_inters/' . $image_frontend_inter_edit);
+                                    @endphp
+
+                                    <a href="{{ $img }}" download target="_blank" class="relative group">
+                                        <img src="{{ $img }}"
+                                            class="w-24 h-24 object-contain rounded border cursor-pointer" />
+
+                                        <!-- Icône téléchargement -->
+                                        <span
+                                            class="absolute inset-0 flex items-center justify-center
+                                   bg-black/40 text-white opacity-0 group-hover:opacity-100
+                                   rounded transition">
+                                            <i class="fas fa-download text-lg"></i>
+                                        </span>
+                                    </a>
+                                @else
+                                    <span class="text-gray-500">Aucune image</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @else
+                    <div class="col-span-6">
+                        <div class="field field-full">
+                            <label class="form-label required">Image Front de la carte</label>
+
+                            <div class="field-value flex items-center gap-2">
+                                <i class="fas fa-qrcode"></i>
+
+                                @if ($image_frontend_inter_edit)
+                                    @php
+                                        $imgFront =
+                                            asset_url($image_frontend_inter_edit) ?? asset_url('image_inters/' . $image_frontend_inter_edit);
+                                    @endphp
+
+                                    <a href="{{ $imgFront }}" download target="_blank" class="relative group">
+                                        <img src="{{ $imgFront }}"
+                                            class="w-24 h-24 object-contain rounded border cursor-pointer">
+
+                                        <span
+                                            class="absolute inset-0 flex items-center justify-center
+                                 bg-black/40 text-white opacity-0 group-hover:opacity-100
+                                 rounded transition">
+                                            <i class="fas fa-download"></i>
+                                        </span>
+                                    </a>
+                                @else
+                                    <span class="text-gray-500">Aucune image</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-span-6">
+                        <div class="field field-full">
+                            <label class="form-label required">Image arrière de la carte</label>
+
+                            <div class="field-value flex items-center gap-2">
+                                <i class="fas fa-qrcode"></i>
+
+                                @if ($image_backend_inter_edit)
+                                    @php
+                                        $imgBack =
+                                            asset_url($image_backend_inter_edit) ??
+                                            asset_url('image_inters/' . $image_backend_inter_edit);
+                                    @endphp
+
+                                    <a href="{{ $imgBack }}" download target="_blank" class="relative group">
+                                        <img src="{{ $imgBack }}"
+                                            class="w-24 h-24 object-contain rounded border cursor-pointer">
+
+                                        <span
+                                            class="absolute inset-0 flex items-center justify-center
+                                 bg-black/40 text-white opacity-0 group-hover:opacity-100
+                                 rounded transition">
+                                            <i class="fas fa-download"></i>
+                                        </span>
+                                    </a>
+                                @else
+                                    <span class="text-gray-500">Aucune image</span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                @endif
+                <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Numero piece <span class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-money-bill-wave text-gray-500 mr-3"></i>
+                            <span class="text-gray-800 font-medium">{{ $num_piece_inter_edit ?? '0' }}</span>
+                        </div>
+                    </div>
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Validite piece <span class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-globe text-gray-500 mr-3"></i>
+                            <span
+                                class="text-gray-800 font-medium">{{ $validated_piece_inter_edit ?? 'Non spécifié' }}</span>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-body-virement grid grid-cols-12 gap-4 gap-y-3 mt-6">
                     <div class="col-span-6">
@@ -25,7 +136,7 @@
                         </div>
                     </div>
                     <div class="col-span-6">
-                        <label class="form-label">Numéro <span class="text-danger">*</span></label>
+                        <label class="form-label">Numéro du bénéficiaire<span class="text-danger">*</span></label>
                         <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
                             <i class="fas fa-phone text-gray-500 mr-3"></i>
                             <span
@@ -34,6 +145,23 @@
                     </div>
                 </div>
                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Nom du béneficiaire <span class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-money-bill-wave text-gray-500 mr-3"></i>
+                            <span class="text-gray-800 font-medium">{{ $name_benef_inter_edit ?? '0' }}</span>
+                        </div>
+                    </div>
+                    <div class="col-span-6 mt-space-padding">
+                        <label class="form-label">Nom du déposant <span class="text-danger">*</span></label>
+                        <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                            <i class="fas fa-globe text-gray-500 mr-3"></i>
+                            <span
+                                class="text-gray-800 font-medium">{{ $name_sender_inter_edit ?? 'Non spécifié' }}</span>
+                        </div>
+                    </div>
+                </div>
+                 <div class="modal-body grid grid-cols-12 gap-4 gap-y-3">
                     <div class="col-span-6 mt-space-padding">
                         <label class="form-label">Montant <span class="text-danger">*</span></label>
                         <div class="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">

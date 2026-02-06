@@ -154,16 +154,9 @@ class PaymentService
             if (!empty($activeButtons['showRemonterPaiementButton'])) {
 
 
-                if ($walletPayment->provider_id != 7) {
-                    $valor_commission =  $percent_robus->amount_auther;
-                    $banque_valeur =  (float)  $valor_commission * (float)$percent_robus->percent_banque;
-                    $valuer_deposit = (float) $valor_commission * (float)$percent_robus->percent_merchands;
-                } else {
-
-                    $valor_commission =  $percent_robus->comission_canal;
-                    $banque_valeur =  0;
-                    $valuer_deposit = 0;
-                }
+                $banque_valeur =  (float)  $percent_robus->bank_comission;
+                $valuer_deposit = (float) $percent_robus->percent_merchands;
+                $admin_valeur =  (float)  $percent_robus->amount_auther;
 
                 $walletPayment->update([
                     'commissions' => $valuer_deposit,
@@ -174,7 +167,7 @@ class PaymentService
 
                 if ($account_accepted && !empty($activeCButtons['showRemonterPaiementCButton'])) {
 
-                    $valuer_companie = (float) $valor_commission * (float)$percent_robus->percent_companie;
+                    $valuer_companie = (float) $percent_robus->percent_companie;
 
                     $walletPayment->increment('commission_companie', $valuer_companie);
 
@@ -183,16 +176,10 @@ class PaymentService
                     $this->commissionServices->distributeAdminCommissionUnderBankAcceptedCompanies($admin_civ, 'wallet_payment_id', $walletPayment->id,  $valuer_admin_compagnie, $valuer_companie, $valuer_deposit, $banque_valeur);
                 } else {
 
-                    if ($walletPayment->provider_id == 7) {
-                        $banque_valeur =  0;
-                        $valuer_deposit = 0;
-                        $admin_valeur =   $percent_robus->comission_canal;
-                    } else {
-                        $valor_commission =  $percent_robus->amount_auther;
-                        $banque_valeur =  (float)  $valor_commission * (float)$percent_robus->percent_banque;
-                        $valuer_deposit = (float) $valor_commission * (float)$percent_robus->percent_merchands;
-                        $admin_valeur =  (float) $valor_commission - ((float)$valuer_deposit + (float)$banque_valeur);
-                    }
+                    $valor_commission = $percent_robus->amount_auther;
+                    $banque_valeur =   (float)$percent_robus->percent_banque;
+                    $valuer_deposit = (float)$percent_robus->percent_merchands;
+                    $admin_valeur =  (float) $valor_commission - ((float)$valuer_deposit + (float)$banque_valeur);
                     $this->commissionServices->distributeAdminNoCompagniePaimentCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur, $valuer_deposit, $banque_valeur);
                 }
             } else {
@@ -201,8 +188,9 @@ class PaymentService
                     $admin_valeur =   $percent_robus->comission_canal;
                     $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur);
                 } else {
-                    $admin_valeur =  (float)  $percent_robus->amount_auther;
+
                     $banque_valeur =  (float)  $percent_robus->bank_comission;
+                    $admin_valeur =  (float)  $percent_robus->amount_auther -  (float) $banque_valeur;
                     $this->commissionServices->distributeAdminPaimentCommissions($admin_civ, 'wallet_payment_id', $walletPayment->id, $admin_valeur, $banque_valeur);
                 }
             }

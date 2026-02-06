@@ -22,6 +22,12 @@ use App\Events\UpdatePushEvent;
 use App\Events\UpdateXbetEvent;
 use App\Events\UpdateTresortEvent;
 use App\Events\UpdateVersmentEvent;
+
+use App\Events\UpdateInterEvent;
+use App\Events\UpdateTransferEvent;
+use App\Events\UpdateOrderCardEvent;
+use App\Events\UpdatePaiementEvent;
+
 use App\Events\UpdatePhoneCreditEvent;
 use App\Events\CreateWalletTransfersEvent;
 use App\Http\Controllers\Admin\MailController;
@@ -136,6 +142,14 @@ class Transfers extends Component
     public $amount_inter_edit;
     public $account_number_inter_edit;
     public $phone_inter_edit;
+
+    public $name_benef_inter_edit;
+    public $name_sender_inter_edit;
+    public $image_backend_inter_edit;
+    public $image_frontend_inter_edit;
+    public $num_piece_inter_edit;
+    public $validated_piece_inter_edit;
+
     public $amount_inter_robus_edit;
     public $country_inter_robus_edit;
     //Edit Invoice
@@ -191,6 +205,7 @@ class Transfers extends Component
     public $image_bank_edit;
     public $image_back_bank_edit;
     public $type_image;
+    public $type_inter_image;
     public $countrydetails;
 
     public $name_benef;
@@ -284,6 +299,8 @@ class Transfers extends Component
     public $image_djamo;
     public $amountDjamo;
     public $fullNameDjamo_edit;
+    public $image_piece_inter;
+
 
     // Update tresort
     public $tresortId;
@@ -1234,7 +1251,7 @@ class Transfers extends Component
         $this->xbetProvider = $provider->name;
         $this->xbetDescription = $check->description;
         $this->id_compte = $check->num_acompte ?? $check->num_acompte;
-        $this->amount_xbet = $check->amount;
+        $this->amount_xbet = $check->amount_received;
         $this->full_nameXbet = $check->full_name;
         $this->code_compte = $check->code_acompte;
         $this->countrie = $check->countrie;
@@ -1257,7 +1274,7 @@ class Transfers extends Component
         $this->provider_versement_id = $provider->id;
         $this->versementDescription = $check->description;
         $this->numAccompte = $check->num_accompte;
-        $this->versementAmount = $check->amount;
+        $this->versementAmount = $check->amount_received;
         $this->bank_code_edit = $check->bank_code;
         $this->guichet_edit = $check->guichet_code;
         $this->num_auther_edit = $check->num_authers;
@@ -1275,7 +1292,7 @@ class Transfers extends Component
         $this->provider_push = $provider->name;
         $this->pushDescription = $check->description;
         $this->numberPhone_edit = $check->phone;
-        $this->amountPush = $check->amount;
+        $this->amountPush = $check->amount_received;
         $this->fullName_edit = $check->full_name;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         $this->emit($state);
@@ -1290,7 +1307,7 @@ class Transfers extends Component
         $this->provider_djamo = $provider->name;
         $this->djamoDescription = $check->description;
         $this->image_djamo = $check->image;
-        $this->amountDjamo = $check->amount;
+        $this->amountDjamo = $check->amount_received;
         $this->fullNameDjamo_edit = $check->full_name;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         $this->emit($state);
@@ -1305,7 +1322,7 @@ class Transfers extends Component
         $this->provider_tresort = $provider->name;
         $this->tresortDescription = $check->description;
         $this->numberPhoneTres_edit = $check->phone;
-        $this->amountTresort = $check->amount;
+        $this->amountTresort = $check->amount_received;
         $this->fullNameTres_edit = $check->full_name;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         $this->emit($state);
@@ -1314,13 +1331,20 @@ class Transfers extends Component
     // Begin Edit informations
     public function editReloadCard($id, $state)
     {
-        $check = WalletDeposit::whereId($id)->first();
-        $provider = Provider::whereId($check->provider_id)->first();
+        $check = WalletDeposit::with([
+            'provider:id,name',  // Seulement les colonnes nécessaires
+            'wallet.currencie:id,code'  // Chaînage de relations
+        ])->find($id);  // find() est plus optimisé que whereId()->first()
+
+        // 2. Vérification d'existence
+        if (!$check) {
+            return; // ou gestion d'erreur
+        }
         $this->reloadcardId = $id;
         $this->reloadcard_description_edit = $check->description;
         $this->reloadcardStatus = null;
-        $this->provider_reloadcard_edit = $provider->name;
-        $this->amount_reloadcard_edit = $check->amount;
+        $this->provider_reloadcard_edit = $check->provider->name ?? null;  // Via relation chargée
+        $this->amount_reloadcard_edit = $check->amount_received;
         $this->account_number_reloadcard_edit = $check->num_carte;
         $this->name_reloadcard_edit = $check->name;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
@@ -1336,7 +1360,7 @@ class Transfers extends Component
         $this->phoneCreditStatus = null;
         $this->provider_phone_credit_edit = $provider->name;
         $this->number_phone_credit_edit = $check->phone;
-        $this->amount_phone_credit_edit = $check->amount;
+        $this->amount_phone_credit_edit = $check->amount_received;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         $this->emit($state);
     }
@@ -1353,8 +1377,8 @@ class Transfers extends Component
         $this->transaction_description_edit = $check->description ?? null;
         $this->transaction_phone_edit = $check->phone ?? null;
         $this->compte_number_robus_edit = $check->num_wallet ?? null;
-        $this->transaction_amount_robus_edit = $check->amount ?? null;
-        $this->transaction_amount_money_edit = $check->amount ?? null;
+        $this->transaction_amount_robus_edit = $check->amount_received ?? null;
+        $this->transaction_amount_money_edit = $check->amount_received ?? null;
         $this->transaction_description_robus_edit = $check->description ?? null;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         $this->emit($state);
@@ -1372,8 +1396,8 @@ class Transfers extends Component
         $this->transaction_description_edit = $check->description ?? null;
         $this->transaction_phone_edit = $check->phone ?? null;
         $this->compte_number_robus_edit = $check->num_wallet ?? null;
-        $this->transaction_amount_robus_edit = $check->amount ?? null;
-        $this->transaction_amount_money_edit = $check->amount ?? null;
+        $this->transaction_amount_robus_edit = $check->amount_received ?? null;
+        $this->transaction_amount_money_edit = $check->amount_received ?? null;
         $this->transaction_description_robus_edit = $check->description ?? null;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         $this->emit($state);
@@ -1393,10 +1417,19 @@ class Transfers extends Component
         $this->interStatus = null;
         $this->provider_inter_edit = $provider->id;
         $this->country_inter_edit = $country->id ?? null;
-        $this->amount_inter_edit = $check->amount ?? null;
+        $this->amount_inter_edit = $check->amount_received ?? null;
         $this->account_number_inter_edit = $check->number_compte ?? null;
         $this->phone_inter_edit = $check->phone ?? null;
-        $this->amount_inter_robus_edit = $check->amount ?? null;
+        $this->amount_inter_robus_edit = $check->amount_received ?? null;
+
+        $this->name_benef_inter_edit = $check->name_benef ?? null;
+        $this->name_sender_inter_edit = $check->name_complet ?? null;
+        $this->image_backend_inter_edit = $check->image_bakend ?? null;
+        $this->image_frontend_inter_edit = $check->image ?? null;
+        $this->num_piece_inter_edit = $check->num_piece ?? null;
+        $this->validated_piece_inter_edit = $check->validated_date ?? null;
+        $this->type_inter_image = $check->type_piece ?? null;
+
         $this->country_inter_robus_edit = $country->id ?? null;
         $this->currency_custumers = $check->wallet->currencie->code ?? null;
         //Edit Invoice
@@ -1408,8 +1441,8 @@ class Transfers extends Component
         $this->paiement_phone_canal_edit = $check->number_phone ?? null;
         $this->paiement_name_sodecie_edit = $check->name ?? null;
         $this->paiement_name_cie_edit = $check->name ?? null;
-        $this->paiement_amount_t_sodecie_edit = $check->amount ?? null;
-        $this->paiement_amount_total_edit = $check->amount ?? null;
+        $this->paiement_amount_t_sodecie_edit = $check->amount_received ?? null;
+        $this->paiement_amount_total_edit = $check->amount_received ?? null;
         $this->facture_choix_type_edit = $check->factureChoix_type ?? null;
         $this->paiementChoix_phone_edit = $check->paiementChoix_phone ?? null;
         $this->offer_paiement_edit = $offer->name ?? null;
@@ -1420,7 +1453,7 @@ class Transfers extends Component
         // Edit Phone credit
         $this->provider_phone_credit_inter_edit = $provider->name ?? null;
         $this->number_phone_credit_inter_edit = $check->phone ?? null;
-        $this->amount_phone_credit_inter_edit = $check->amount ?? null;
+        $this->amount_phone_credit_inter_edit = $check->amount_received ?? null;
         $this->country_inter_robus_inter_edit =  $check->wallet->country->name;
         $this->devise_user =   $check->wallet->currencie->code;
 
@@ -1429,9 +1462,9 @@ class Transfers extends Component
         $this->firstname_user_inter_edit = $check->firstname .  ' ' . $check->lastname ?? null;
         $this->name_relo_user_inter_edit = $check->name ?? null;
         $this->phone_user_inter_edit = $check->phone ?? null;
-        $this->amount_virement_inter_edit = $check->amount ?? null;
+        $this->amount_virement_inter_edit = $check->amount_received ?? null;
         $this->account_number_user_bank_inter_edit = $check->number_compte ?? null;
-        $this->amount_virement_nsia_inter_edit = $check->amount ?? null;
+        $this->amount_virement_nsia_inter_edit = $check->amount_received ?? null;
 
         //  Edit Paiment Invoice
         $this->phone_invoice_inter_edit = $check->phone_invoice ?? null;
@@ -1455,14 +1488,14 @@ class Transfers extends Component
         $this->paiement_phone_canal_edit = $check->number_phone ?? null;
         $this->paiement_name_sodecie_edit = $check->name ?? null;
         $this->paiement_name_cie_edit = $check->name ?? null;
-        $this->paiement_amount_t_sodecie_edit = $check->amount ?? null;
-        $this->paiement_amount_total_edit = $check->amount ?? null;
+        $this->paiement_amount_t_sodecie_edit = $check->amount_received ?? null;
+        $this->paiement_amount_total_edit = $check->amount_received ?? null;
         $this->paiementStatus = null;
         $this->facture_choix_type_edit = $check->factureChoix_type ?? null;
         $this->paiementChoix_phone_edit = $check->paiementChoix_phone ?? null;
         $this->offer_paiement_edit = $offer->name ?? null;
         $this->offer_paiement_name = $check->name ?? null;
-        $this->offer_paiement_edit_amount = $offer->amount ?? null;
+        $this->offer_paiement_edit_amount = $offer->amount_received ?? null;
         $this->phone_invoice_pre_edit = $check->phone ?? null;
         $this->pre_id_invoice_edit = $check->id_invoice_pre ?? null;
         $this->devise_user =   $check->wallet->currencie->code;
@@ -1480,7 +1513,7 @@ class Transfers extends Component
         $this->bankStatus = null;
         $this->provider_bank_edit = $provider->name;
         $this->country_bank_edit = $country->id ?? null;
-        $this->amount_bank_edit = $check->amount ?? null;
+        $this->amount_bank_edit = $check->amount_received ?? null;
         $this->account_number_bank_edit = $check->number_compte ?? null;
         $this->phone_bank_edit = $check->phone ?? null;
         $this->name_bank_edit = $check->name_complet ?? null;
@@ -1514,7 +1547,7 @@ class Transfers extends Component
         $this->lastname_user_edit = $check->lastname;
         $this->phone_user_edit = $check->phone;
         $this->country_virement_edit = $country->name ?? null;
-        $this->amount_virement_edit = $check->amount;
+        $this->amount_virement_edit = $check->amount_received;
         $this->account_number_user_edit = $check->number_compte;
         $this->currency_custumers = $check->wasubDistributorllet->currencie->code ?? null;
         $this->emit($state);
@@ -1590,7 +1623,7 @@ class Transfers extends Component
                                 app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                             }
 
-                            $this->notifyUsers($check, $admins, 'Credit téléphonique', 'Demande de paiement de crédit a été validé', 'Demande de paiement de crédit validé');
+                            $this->notifyUsers($check, $admins, 'Credit téléphonique', 'La demande de Transferts de credit téléphonique a été acceptée après analyse', 'La demande de Transferts de credit téléphonique a été acceptée après analyse');
 
                             $message = 'Votre demande de credit de ' .
                                 $check->amount .
@@ -1611,7 +1644,7 @@ class Transfers extends Component
                             $this->cancelPhoneCreditField();
                             $this->emit('modal-hide-phoneCredit-validated');
                             $this->emit('modal-hide-phoneCredit');
-                            $this->emit('success', 'Achat de credit accepté !');
+                            $this->emit('success', 'La demande de Transferts de credit téléphonique a été acceptée après analyse');
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
@@ -1631,7 +1664,7 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoicePhoneCredit($check, $paymentPhoneCredit);
 
-                            $this->notifyUsers($check, $admins, 'Credit téléphonique', 'Demande de crédit a été refusé', 'Demande de crédit refusé');
+                            $this->notifyUsers($check, $admins, 'Credit téléphonique', 'La demande de Transferts de credit téléphonique a été rejetée après analyse', 'La demande de Transferts de credit téléphonique a été rejetée après analyse');
 
                             $message = 'Votre demande de crédit de ' .
                                 $check->amount .
@@ -1656,7 +1689,7 @@ class Transfers extends Component
                             $this->cancelPhoneCreditField();
                             $this->emit('modal-hide-phoneCredit-validated');
                             $this->emit('modal-hide-phoneCredit');
-                            $this->emit('error', 'Achat de credit refusé !');
+                            $this->emit('error', 'La demande de Transferts de credit téléphonique a été rejetée après analyse');
                             $this->sendMailPhoneCreditNotification($check);
                         } else {
                             $this->cancelPhoneCreditField();
@@ -1758,13 +1791,13 @@ class Transfers extends Component
 
                                 if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Credit telephonique");
+                                    app(CommissionServiceBackend::class)->handleAdminBankSendUnderCommission($check, $admin_civ, "Tranfert Bank Send");
                                 } else {
 
                                     $this->cancelBankSendField();
                                     $this->emit('modal-hide-bankSend-validated');
                                     $this->emit('modal-hide-bankSend');
-                                    $this->emit('success', 'Credit téléphonique Acceptée sans commission sous-distibuteur !');
+                                    $this->emit('success', 'Tranfert Bank Send Acceptée sans commission sous-distibuteur !');
 
                                     return;
                                 }
@@ -1773,7 +1806,7 @@ class Transfers extends Component
                                 app(CommissionServiceBackend::class)->handleAdminBankSendCommission($check, $admin_civ);
                             }
 
-                            $this->notifyUsers($check, $admins, 'Bank Send', 'Demande de paiement bank send a été validé', 'Demande de paiement bank send validé');
+                            $this->notifyUsers($check, $admins, 'Bank Send', 'La demande de Transferts Bank send a été acceptée après analyse', 'La demande de Transferts Bank send a été acceptée après analyse');
 
                             $message = 'Votre demande de bank Send de ' .
                                 $check->amount .
@@ -1794,7 +1827,7 @@ class Transfers extends Component
                             $this->cancelBankSendField();
                             $this->emit('modal-hide-bankSend-validated');
                             $this->emit('modal-hide-bankSend');
-                            $this->emit('success', 'Bank send accepté !');
+                            $this->emit('success', 'La demande de Transferts Bank send a été acceptée après analyse');
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
@@ -1812,7 +1845,7 @@ class Transfers extends Component
                             $this->handleReloadClientCommission($check, $admin_civ);;
                             app(TransfertServiceBackend::class)->createErrorBankSend($check, $transactionCode, $transactionCompiCode);
 
-                            $this->notifyUsers($check, $admins, 'Bank Send', 'Demande de Bank Send refusé', 'Demande de Bank Send refusé');
+                            $this->notifyUsers($check, $admins, 'Bank Send', 'La demande de Transferts Bank send a été rejetée après analyse', 'La demande de Transferts Bank send a été rejetée après analyse');
 
                             $message = 'Votre demande de Bank Send de ' .
                                 $check->amount .
@@ -1837,8 +1870,7 @@ class Transfers extends Component
                             $this->cancelBankSendField();
                             $this->emit('modal-hide-bankSend-validated');
                             $this->emit('modal-hide-bankSend');
-                            $this->emit('success', 'Bank send accepté !');
-                            $this->emit('error', 'Bank Send refusé !');
+                            $this->emit('error', 'La demande de Transferts Bank Send a été rejetée après analyse');
                             $this->sendMailPhoneCreditNotification($check);
                         } else {
                             $this->cancelBankSendField();
@@ -1961,7 +1993,7 @@ class Transfers extends Component
                                 app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                             }
 
-                            $this->notifyUsers($check, $admins, '1Xbet', 'Demande de paiement de 1xbet a été validé', 'Demande de paiement de 1xbet validé');
+                            $this->notifyUsers($check, $admins, '1Xbet', 'La demande de Transferts Xbet a été acceptée après analyse', 'La demande de Transferts Xbet a été acceptée après analyse');
 
                             $message = 'Votre demande de 1xbet de ' .
                                 $check->amount .
@@ -1982,7 +2014,7 @@ class Transfers extends Component
                             $this->cancelXbetField();
                             $this->emit('modal-hide-xbet-validated');
                             $this->emit('modal-hide-xbet');
-                            $this->emit('success', 'Achat de transaction 1xbet validez avec succes !');
+                            $this->emit('success', 'La demande de Transferts Xbet a été acceptée après analyse');
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
@@ -2007,7 +2039,7 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoiceXbet($check, $paymentPhoneCredit);
 
-                            $this->notifyUsers($check, $admins, '1Xbet', 'Demande de 1Xbet a été refusé', 'Demande de 1Xbet refusé');
+                            $this->notifyUsers($check, $admins, '1Xbet', 'La demande de Transferts Xbet a été rejetée après analyse', 'La Demande de 1Xbet rejetée');
 
                             $message = 'Votre demande de 1xbet de ' .
                                 $check->amount .
@@ -2032,7 +2064,7 @@ class Transfers extends Component
                             $this->cancelXbetField();
                             $this->emit('modal-hide-xbet-validated');
                             $this->emit('modal-hide-xbet');
-                            $this->emit('error', 'Achat de credit refusé !');
+                            $this->emit('error', 'La demande de Transferts Xbet a été rejetée après analyse');
                             app(NotificationServiceBackend::class)->sendMailXbetNotification($check);
                         } else {
                             $this->cancelXbetField();
@@ -2274,7 +2306,7 @@ class Transfers extends Component
                                 app(CommissionServiceBackend::class)->handleAdminBankCommission($check, $admin_civ);
                             }
 
-                            $this->notifyUsers($check, $admins, 'Versement', 'Demande de paiement de Versement a été validé', 'Demande de paiement de Versement validé');
+                            $this->notifyUsers($check, $admins, 'Versement', 'La demande de versement bancaire a été acceptée après analyse', 'La demande de versement bancaire a été acceptée après analyse');
 
                             $message = 'Votre demande de Versement de ' .
                                 $check->amount .
@@ -2295,7 +2327,7 @@ class Transfers extends Component
                             $this->cancelVersementField();
                             $this->emit('modal-hide-versement-validated');
                             $this->emit('modal-hide-versement');
-                            $this->emit('success', 'Achat de transaction 1xbet validez avec succes !');
+                            $this->emit('success', 'La demande de versement bancaire a été acceptée après analyse.');
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
@@ -2316,7 +2348,7 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoiceVersement($paymentPhoneCredit);
 
-                            $this->notifyUsers($check, $admins, 'Versement', 'Demande de Versement a été refusé', 'Demande de Versement refusé');
+                            $this->notifyUsers($check, $admins, 'Versement', 'La demande de Versement a été rejetée', 'La demande de versement bancaire a été rejetée après analyse.');
 
                             $message = 'Votre demande de Versement de ' .
                                 $check->amount .
@@ -2341,7 +2373,7 @@ class Transfers extends Component
                             $this->cancelVersementField();
                             $this->emit('modal-hide-versement-validated');
                             $this->emit('modal-hide-versement');
-                            $this->emit('error', 'Achat de credit refusé !');
+                            $this->emit('error', 'La demande de versement bancaire a été rejetée après analyse.');
                             app(NotificationServiceBackend::class)->sendMailVersementNotification($check);
                         } else {
                             $this->cancelVersementField();
@@ -2458,7 +2490,7 @@ class Transfers extends Component
 
                                 if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Push");
+                                    app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Transaction Push");
                                 } else {
                                     $this->cancelPushField();
                                     $this->emit('modal-hide-push-validated');
@@ -2471,7 +2503,7 @@ class Transfers extends Component
                                 app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                             }
 
-                            $this->notifyUsers($check, $admins, 'Push', 'Demande de paiement de Push a été validé', 'Demande de paiement de Versement validé');
+                            $this->notifyUsers($check, $admins, 'Push', 'La demande de transfert push a été acceptée après analyse', 'La demande de transfert push a été acceptée après analyse');
 
                             $message = 'Votre demande de transacton Push de ' .
                                 $check->amount .
@@ -2492,7 +2524,7 @@ class Transfers extends Component
                             $this->cancelPushField();
                             $this->emit('modal-hide-push-validated');
                             $this->emit('modal-hide-push');
-                            $this->emit('success', 'Achat de transaction Push validez avec succes !');
+                            $this->emit('success', 'La demande de transfert push a été acceptée après analyse');
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
@@ -2516,7 +2548,7 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoiceVersement($paymentPush);
 
-                            $this->notifyUsers($check, $admins, 'Push', 'Demande de transaction Push a été refusé', 'Demande de Transaction Push refusé');
+                            $this->notifyUsers($check, $admins, 'Push', 'La demande de transfert push a été rejetée après analyse', 'La demande de transfert push a été rejetée après analyse');
 
                             $message = 'Votre demande de transaction Push de ' .
                                 $check->amount .
@@ -2541,7 +2573,7 @@ class Transfers extends Component
                             $this->cancelPushField();
                             $this->emit('modal-hide-push-validated');
                             $this->emit('modal-hide-push');
-                            $this->emit('error', 'Achat de Push refusé !');
+                            $this->emit('error', 'La demande de transfert push a été rejetée après analyse');
                             app(NotificationServiceBackend::class)->sendMailPushNotification($check);
                         } else {
                             $this->cancelPushField();
@@ -2658,7 +2690,7 @@ class Transfers extends Component
 
                                 if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Djamo");
+                                    app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Transaction Djamo");
                                 } else {
                                     $this->cancelDjamoField();
                                     $this->emit('modal-hide-djamo-validated');
@@ -2671,7 +2703,7 @@ class Transfers extends Component
                                 app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                             }
 
-                            $this->notifyUsers($check, $admins, 'Djamo', 'Demande de paiement de Djamo a été validé', 'Demande de paiement de Versement validé');
+                            $this->notifyUsers($check, $admins, 'Djamo', 'La demande de transfert Djamo a été acceptée après analyse', 'La demande de transfert Djamo a été acceptée après analyse');
 
                             $message = 'Votre demande de transacton Djamo de ' .
                                 $check->amount .
@@ -2692,7 +2724,7 @@ class Transfers extends Component
                             $this->cancelDjamoField();
                             $this->emit('modal-hide-djamo-validated');
                             $this->emit('modal-hide-djamo');
-                            $this->emit('success', 'Achat de transaction Djamo validez avec succes !');
+                            $this->emit('success', 'La demande de transfert Djamo a été acceptée après analyse.');
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
@@ -2717,7 +2749,7 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoiceVersement($paymentPush);
 
-                            $this->notifyUsers($check, $admins, 'Djamo', 'Demande de transaction Djamo a été refusé', 'Demande de Transaction Djamo refusé');
+                            $this->notifyUsers($check, $admins, 'Djamo', 'La demande de transfert Djamo a été rejetée après analyse', 'La demande de transfert Djamo a été rejetée après analyse');
 
                             $message = 'Votre demande de transaction Djamo de ' .
                                 $check->amount .
@@ -2742,7 +2774,7 @@ class Transfers extends Component
                             $this->cancelDjamoField();
                             $this->emit('modal-hide-djamo-validated');
                             $this->emit('modal-hide-djamo');
-                            $this->emit('error', 'Achat de djamo refusé !');
+                            $this->emit('error', 'La demande de transfert Djamo a été rejetée après analyse');
                             app(NotificationServiceBackend::class)->sendMailDjamoNotification($check);
                         } else {
                             $this->cancelDjamoField();
@@ -2863,7 +2895,7 @@ class Transfers extends Component
 
                                 if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transaction Push");
+                                    app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Transaction Push");
                                 } else {
                                     $this->cancelTresortField();
                                     $this->emit('modal-hide-tresort-validated');
@@ -2876,7 +2908,7 @@ class Transfers extends Component
                                 app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
                             }
 
-                            $this->notifyUsers($check, $admins, 'Tresort Money', 'Demande de paiement de Tresort Money a été validé', 'Demande de paiement de Tresort Money validé');
+                            $this->notifyUsers($check, $admins, 'Tresort Money', 'La demande de transfert Tresort Money a été acceptée après analyse', 'La demande de transfert Tresort Money a été acceptée après analyse');
 
                             $message = 'Votre demande de transacton Trésort Money de ' .
                                 $check->amount .
@@ -2897,7 +2929,7 @@ class Transfers extends Component
                             $this->cancelTresortField();
                             $this->emit('modal-hide-tresort-validated');
                             $this->emit('modal-hide-tresort');
-                            $this->emit('success', 'Achat de transaction Tresort Money validez avec succes !');
+                            $this->emit('success', 'La demande de transfert Tresort Money a été acceptée après analyse');
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
                             }
@@ -2919,7 +2951,7 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoiceVersement($paymentPush);
 
-                            $this->notifyUsers($check, $admins, 'Tresort Money', 'Demande de transaction Push a été refusé', 'Demande de Transaction Push refusé');
+                            $this->notifyUsers($check, $admins, 'Tresort Money', 'La demande de transfert Tresort Money a été rejetée après analyse', 'La demande de transfert Tresort Money a été rejetée après analyse');
 
 
                             $message = 'Votre demande de transaction Tresort Money de ' .
@@ -2942,7 +2974,7 @@ class Transfers extends Component
                             $this->cancelTresortField();
                             $this->emit('modal-hide-tresort-validated');
                             $this->emit('modal-hide-tresort');
-                            $this->emit('error', 'Achat de Tresort Money refusé !');
+                            $this->emit('error', 'La demande de transfert Tresort Money a été rejetée après analyse');
 
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
@@ -3048,7 +3080,7 @@ class Transfers extends Component
                             }
 
 
-                            $this->notifyUsers($check, $admins, 'Réchargement de carte', 'Demande de réchargement de carte a été validé', 'Demande de rechargement de carte validé');
+                            $this->notifyUsers($check, $admins, 'Réchargement de carte', 'La demande de Rechargement de carte a été acceptée après analyse', 'La demande de Rechargement de carte a été acceptée après analyse');
 
 
                             $message = 'Votre demande de rechargement de carte de ' .
@@ -3073,12 +3105,12 @@ class Transfers extends Component
 
                                 if ($valeur_amount_com !== null && $check->commissions !== null) {
 
-                                    app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Rechargement de carte");
+                                    app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Rechargement de carte");
                                 } else {
                                     $this->cancelReloadCardField();
                                     $this->emit('modal-hide-reloadCard');
                                     $this->emit('modal-hide-reloadCard-validated');
-                                    $this->emit('success', 'Rechargement Acceptée sans commission sous-distibuteur !');
+                                    $this->emit('success', 'Rechargement de carte Acceptée sans commission sous-distibuteur !');
                                     return;
                                 }
                             } else {
@@ -3089,7 +3121,7 @@ class Transfers extends Component
                             $this->cancelReloadCardField();
                             $this->emit('modal-hide-reloadCard-validated');
                             $this->emit('modal-hide-reloadCard');
-                            $this->emit('success', 'Rechargement acceptée !');
+                            $this->emit('success', 'La demande de Rechargement de carte a été acceptée après analyse.');
 
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
@@ -3108,12 +3140,9 @@ class Transfers extends Component
 
                             $this->updateWalletNull($check, $commission);
 
-                            // Valeur amount commission distributeur
-                            $valeur_amount_com = $check->adminCom->amount;
-
                             $this->handleReloadClientCommission($check, $admin_civ);
 
-                            $this->notifyUsers($check, $admins, 'Réchargement de carte', 'Demande de réchargement de carte a été refusée', 'Demande de rechargement de carte refusée');
+                            $this->notifyUsers($check, $admins, 'Réchargement de carte', 'La demande de Rechargement de carte a été rejetée après analyse', 'La demande de Rechargement de carte a été rejetée après analyse');
 
                             $message = 'Votre demande de rechargement de carte de ' .
                                 $check->amount .
@@ -3138,7 +3167,7 @@ class Transfers extends Component
                             $this->cancelReloadCardField();
                             $this->emit('modal-hide-reloadCard-validated');
                             $this->emit('modal-hide-reloadCard');
-                            $this->emit('error', 'Rechargement refusé !');
+                            $this->emit('error', 'La demande de Rechargement de carte a été rejetée après analyse');
 
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
@@ -3152,6 +3181,8 @@ class Transfers extends Component
                             $this->emit('error', 'Pas de modification !');
                             return;
                         }
+
+                        event(new UpdateOrderCardEvent($check));
                     } else {
                         $this->cancelReloadCardField();
                         $this->emit('modal-hide-reloadCard-validated');
@@ -3250,7 +3281,7 @@ class Transfers extends Component
 
                             if ($check->wallet->sidUser->is_under_distributer == true) {
 
-                                app(CommissionServiceBackend::class)->handleUnderDistributorCommission($check, $admin_civ, "Paiment commission Transactions");
+                                app(CommissionServiceBackend::class)->handleUnderDistributorAndCompanieCommission($check, $admin_civ, "Paiment commission Transactions");
                             } else {
 
                                 app(CommissionServiceBackend::class)->handleAdminCommission($check, $admin_civ);
@@ -3258,7 +3289,7 @@ class Transfers extends Component
 
 
 
-                            $this->notifyUsers($check, $admins, 'Transfers', 'Demande de transfert a été validé', 'Demande de transfers validé');
+                            $this->notifyUsers($check, $admins, 'Transfers', 'Le transfert a été accepté après vérification et validation.', 'Demande de transfert a été accepté après vérification et validation.');
 
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
@@ -3266,7 +3297,7 @@ class Transfers extends Component
                             $this->cancelTransactionField();
                             $this->emit('modal-hide-transfers-validated');
                             $this->emit('modal-hide-transfers');
-                            $this->emit('success', 'Transfers accepte !');
+                            $this->emit('success', 'Le transfert a été accepté après vérification et validation.');
                             $this->sendMailNotification($check);
                         } elseif ($check->status == 'ERROR') {
 
@@ -3309,7 +3340,7 @@ class Transfers extends Component
                             $transaction = app(TransfertServiceBackend::class)->createErrorTransaction($check, $transactionCode, $transactionCompiCode);
                             app(TransfertServiceBackend::class)->createInvoiceTransaction($check, $transaction);
 
-                            $this->notifyUsers($check, $admins, 'Transfers', 'Demande de transfert a été refusé', 'Demande de transfers refusé');
+                            $this->notifyUsers($check, $admins, 'Transfers', 'Demande de transfert a été refusé', 'La demande de transfert a été rejetée après analyse');
 
                             if ($this->shouldNotifyCI($check)) {
                                 $this->sendErrorNotification($check);
@@ -3322,7 +3353,7 @@ class Transfers extends Component
                             $this->resetTransactionField();
                             $this->emit('modal-hide-transfers-validated');
                             $this->emit('modal-hide-transfers');
-                            $this->emit('warning', 'Transfers Refusé !');
+                            $this->emit('warning', 'La demande de transfert a été rejetée après analyse !');
 
                             $this->sendMailNotification($check);
                         }
@@ -3333,6 +3364,8 @@ class Transfers extends Component
                         $this->emit('error', 'Aucune donnée !');
                         return;
                     }
+
+                    event(new UpdateTransferEvent($check));
                 } else {
                     $this->cancelTransactionField();
                     $this->emit('modal-hide-transfers-validated');
@@ -3412,7 +3445,7 @@ class Transfers extends Component
                                 $this->updateAdminCom($check, $commission_transaction);
                             }
 
-                            $this->notifyUsers($check, $admins, 'Versement bancaire', 'Demande de versement a été validé', 'Demande de versement a été validé');
+                            $this->notifyUsers($check, $admins, 'Versement bancaire', 'La demande de Virement bancaire a été accepté après vérification et validation.', 'La demande de Virement bancaire a été accepté après vérification et validation.');
 
                             $message =
                                 'Votre demande de versement de ' .
@@ -3457,7 +3490,7 @@ class Transfers extends Component
                             $this->cancelVirementField();
                             $this->emit('modal-hide-virement');
                             $this->emit('modal-hide-virement-validated');
-                            $this->emit('success', 'Virement Accepté !');
+                            $this->emit('success', 'La demande de Virement bancaire a été accepté après vérification et validation.');
                             $this->sendMailVersementNotification($check);
                         } elseif ($check->status == 'ERROR') {
 
@@ -3479,7 +3512,7 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoiceVirement($check, $virementWallet);
 
-                            $this->notifyUsers($check, $admins, 'Versement bancaire', 'Demande de versement a été refusé', 'Demande de versement refusé');
+                            $this->notifyUsers($check, $admins, 'Versement bancaire', 'Demande de versement a été refusé', 'La demande de Virement a été rejetée après analyse.');
 
                             $message =
                                 'Votre demande de virement de ' .
@@ -3510,7 +3543,7 @@ class Transfers extends Component
                             $this->cancelVirementField();
                             $this->emit('modal-hide-virement-validated');
                             $this->emit('modal-hide-virement');
-                            $this->emit('error', 'Virement refusée !');
+                            $this->emit('error', 'La demande de Virement a été rejetée après analyse.');
                             $this->sendMailVersementNotification($check);
                         } else {
                             $this->cancelVirementField();
@@ -3518,6 +3551,8 @@ class Transfers extends Component
                             $this->emit('modal-hide-virement');
                             $this->emit('success', 'Virement modifié !');
                         }
+
+                        event(new UpdateVersmentEvent($check));
                     } else {
                         $this->cancelVirementField();
                         $this->emit('modal-hide-virement');
@@ -3700,7 +3735,7 @@ class Transfers extends Component
                             }
 
 
-                            $this->notifyUsers($check, $admins, 'Paiement internationnal', 'Demande de  transfers internationnal a été validé', 'Demande de transfers internationnal validé');
+                            $this->notifyUsers($check, $admins, 'Paiement internationnal', 'La demande de Transferts a l_\'internationnal a été rejetée après analyse.', 'La demande de Transferts a l_\'internationnal a été rejetée après analyse.');
 
                             if ($admins->count() > 0) {
                                 $this->notifyAdmins($admins);
@@ -3709,7 +3744,7 @@ class Transfers extends Component
                             $this->resetInterField();
                             $this->emit('modal-hide-inters-validated');
                             $this->emit('modal-hide-inters');
-                            $this->emit('success', 'Transfers Accepte !');
+                            $this->emit('success', 'La demande de Transferts a l_\'internationnal a été acceptée après analyse.');
                             $this->sendMailInterNotification($check);
                         } elseif ($check->status == 'ERROR') {
 
@@ -3732,7 +3767,7 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoiceInter($check, $interWallet);
 
-                            $this->notifyUsers($check, $admins, 'Paiement interbational', 'Demande de paiement international a été refusé', 'Demande de paiement international refusé');
+                            $this->notifyUsers($check, $admins, 'Paiement interbational', 'Demande de paiement international a été rejetée', 'La demande de Transferts a l_\'internationnal a été rejetée après analyse.');
 
                             $message = 'Votre demande de paiement de ' .
                                 $check->amount .
@@ -3757,9 +3792,11 @@ class Transfers extends Component
                             $this->resetInterField();
                             $this->emit('modal-hide-inters-validated');
                             $this->emit('modal-hide-inters');
-                            $this->emit('error', 'Transfers refusé !');
+                            $this->emit('error', 'La demande de Transferts a l_\'internationnal a été rejetée après analyse.');
                             $this->sendMailInterNotification($check);
                         }
+
+                        event(new UpdateInterEvent($check));
                     } else {
                         $this->resetInterField();
                         $this->emit('modal-hide-inters-validated');
@@ -3911,7 +3948,7 @@ class Transfers extends Component
 
                             app(TransfertServiceBackend::class)->createInvoicePayment($check, $paymentCreated);
 
-                            $this->notifyUsers($check, $admins, 'Paiement de facture', 'Demande de paiement de facture a été refusé', 'Demande de paiement de facture refusé');
+                            $this->notifyUsers($check, $admins, 'Paiement de facture', 'Demande de paiement de facture a été rejetée', 'La demande de paiement de facture a été rejetée après analyse.');
 
                             $message = 'Votre demande de paiement de facture de ' .
                                 $check->amount .
@@ -3936,7 +3973,7 @@ class Transfers extends Component
                             $this->cancelPaiementField();
                             $this->emit('modal-hide-paiement-validated');
                             $this->emit('modal-hide-paiement');
-                            $this->emit('error', 'Payment Refusé !');
+                            $this->emit('error', 'La demande de paiement de facture a été rejetée après analyse.');
                             $this->sendMailPaiementNotification($check);
                         } else {
                             $this->cancelPaiementField();
@@ -3945,6 +3982,8 @@ class Transfers extends Component
                             $this->emit('success', 'Payment modifié !');
                             return;
                         }
+
+                        event(new UpdatePaiementEvent($check));
                     } else {
                         $this->cancelPaiementField();
                         $this->emit('modal-hide-paiement');
@@ -4061,7 +4100,7 @@ class Transfers extends Component
     public function ChooseUpdateTransaction($id)
     {
 
-        
+
         $walletUpdate = WalletTransaction::findOrFail($id);
 
         if ($walletUpdate->status !== 'PENDING' || $walletUpdate->updated_by !== null) {
@@ -4283,7 +4322,7 @@ class Transfers extends Component
     public function ChooseDrawalUpdateDjamo($id)
     {
 
-         $walletUpdate = WalletDjamo::findOrFail($id);
+        $walletUpdate = WalletDjamo::findOrFail($id);
 
         if ($walletUpdate->updated_by !== sabdy()->id) {
             $this->emit('menu-djamo-active');
@@ -4376,7 +4415,7 @@ class Transfers extends Component
     public function ChooseDrawalUpdateTresort($id)
     {
 
-          $walletUpdate = WalletTresortMoney::findOrFail($id);
+        $walletUpdate = WalletTresortMoney::findOrFail($id);
 
         if ($walletUpdate->updated_by !== sabdy()->id) {
             $this->emit('menu-tresort-active');
@@ -5910,6 +5949,8 @@ class Transfers extends Component
                     'amount' =>   0,
                     'amount_cie' => 0,
                     'amount_bank' => 0,
+                    'amount_compagnie' => 0,
+                    'amount_total' => 0,
                     'status'  => "ERROR",
                     'sid_user_id' =>   $admin_single->id,
                     'description' => 'Remboursement de la commission client',

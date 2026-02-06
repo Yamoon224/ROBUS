@@ -115,8 +115,6 @@ class ReloadCardService
                 } else {
                     $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $valuer_deposit);
                 }
-            } else {
-                $this->commissionServices->distributeAdminCommissions($admin_civ, 'wallet_deposit_id', $walletOrderCard->id, $admin_valeur_no);
             }
         } else {
 
